@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="./lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="styles/css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="app/app.js"></script>
+  </head>
+  <body ng-app="LOCALHYPER">
+
+    <ion-pane>
+      <ion-header-bar class="bar bar-header bar-calm">
+            <button class="button button-icon icon ion-arrow-left-c"></button>
+            <h1 class="title">Hyper</h1>
+            <button class="button button-clear button-positive">Forgot</button>
+      </ion-header-bar>
+
+      <ion-content>
+         <div class="list list-inset">
+            <label class="item item-input">
+              <input type="text" placeholder=" Username">
+            </label>
+            <label class="item item-input">
+              <input type="text" placeholder="Password">
+            </label>
+        </div>
+      <div class="padding">
+        <button class="button button-block button-dark">Login</button>
+      </div>
+      </ion-content>
+
+    </ion-pane>
+  </body>
+</html>

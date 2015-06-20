@@ -1,0 +1,52 @@
+<ion-side-menus 
+	cache-view="false"
+	enable-menu-with-back-views="true"
+	ng-controller="SideMenuCtrl">
+
+	<ion-side-menu-content>
+		<ion-nav-bar 
+			class="bar-positive" 
+			no-tap-scroll="App.noTapScroll()">
+
+			<ion-nav-back-button> </ion-nav-back-button>
+		</ion-nav-bar>
+
+		<ion-nav-view name="appContent"> </ion-nav-view>
+	</ion-side-menu-content>
+	
+	<ion-side-menu 
+		side="left"
+		is-enabled="App.menuEnabled.left">
+
+		<div class="list">
+        	<!-- <a class="item" menu-close
+                ng-click="App.navigate('view-users')">
+                View User
+            </a>
+
+            <a class="item" menu-close
+                ng-click="App.navigate('add-users')">
+                Add User
+            </a> -->
+
+            <a
+            	class="item" 
+            	menu-close
+            	ng-repeat="menu in subMenu"
+                ng-click="App.navigate('{{::menu.menuItemName | toStateNameFormat}}')">
+                {{::menu.menuItemName}}
+            </a>
+
+            <a class="item" menu-close
+                ng-click="App.navigate('add-lead')">
+                Add Lead
+            </a>
+			
+			<a class="item" menu-close
+                ng-click="App.logout()">
+                Logout
+            </a>
+        </div>
+	</ion-side-menu>
+
+</ion-side-menus>
