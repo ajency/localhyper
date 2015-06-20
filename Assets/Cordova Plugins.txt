@@ -1,0 +1,8 @@
+List of cordova plugins used:
+
+1) ionic plugin add com.ionic.keyboard
+2) ionic plugin add cordova-plugin-console
+3) ionic plugin add cordova-plugin-device
+4) ionic plugin add cordova-plugin-splashscreen
+5) ionic plugin add cordova-plugin-whitelist
+6) ionic plugin add https://github.com/asanka-x/Phonegap-SMS
