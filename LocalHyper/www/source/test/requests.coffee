@@ -35,9 +35,9 @@ angular.module 'LocalHyper.test', []
 
 		.state 'requests',
 			url: '/requests'
-			parent: 'auth'
+			parent: 'main'
 			views: 
-				"authContent":
+				"appContent":
 					controller: 'RequestCtrl'
 					templateUrl: 'views/requests.html'
 ]

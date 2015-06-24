@@ -22,10 +22,10 @@ angular.module('LocalHyper.test').controller('OffersCtrl', [
   '$stateProvider', function($stateProvider) {
     return $stateProvider.state('offers', {
       url: '/offers',
-      parent: 'auth',
+      parent: 'main',
       cache: false,
       views: {
-        "authContent": {
+        "appContent": {
           controller: 'OffersCtrl',
           templateUrl: 'views/offers.html'
         }

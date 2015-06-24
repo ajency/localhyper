@@ -1,11 +1,5 @@
 <ion-view view-title="Local Hyper">
 
-	<ion-nav-buttons side="secondary">
-		<button class="button button-clear button-positive">
-			Forgot
-		</button>
-	</ion-nav-buttons>
-
 	<ion-content>
 		<div class="list list-inset">
 			<label class="item item-input">
@@ -18,7 +12,19 @@
 		</div>
 
 		<div class="padding">
-			<button class="button button-block button-dark" ng-click="App.navigate('requests')">Login</button>
+			<button 
+				class="button button-block button-dark"
+				ng-click="App.navigate('products')">
+				Login
+			</button>
+		</div>
+
+		<div class="padding">
+			<button 
+				class="button button-block button-dark" 
+				ng-click="App.navigate('requests')">
+				Test Push
+			</button>
 		</div>
 	</ion-content>
 

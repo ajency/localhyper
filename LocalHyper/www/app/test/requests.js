@@ -33,9 +33,9 @@ angular.module('LocalHyper.test', []).controller('RequestCtrl', [
   '$stateProvider', function($stateProvider) {
     return $stateProvider.state('requests', {
       url: '/requests',
-      parent: 'auth',
+      parent: 'main',
       views: {
-        "authContent": {
+        "appContent": {
           controller: 'RequestCtrl',
           templateUrl: 'views/requests.html'
         }

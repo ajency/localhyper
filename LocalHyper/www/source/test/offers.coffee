@@ -24,10 +24,10 @@ angular.module 'LocalHyper.test'
 
 		.state 'offers',
 			url: '/offers'
-			parent: 'auth'
+			parent: 'main'
 			cache: false
 			views: 
-				"authContent":
+				"appContent":
 					controller: 'OffersCtrl'
 					templateUrl: 'views/offers.html'
 ]

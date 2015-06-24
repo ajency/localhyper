@@ -12,33 +12,29 @@ angular.module 'LocalHyper.auth', []
 
 	$stateProvider
 
-		.state 'auth',
-			url: '/auth'
-			templateUrl: 'views/auth/auth.html'
-
 		.state 'start',
 			url: '/start'
-			parent: 'auth'
+			parent: 'main'
 			views: 
-				"authContent":
+				"appContent":
 					templateUrl: 'views/auth/start.html'
 					controller: 'StartCtrl'
 
 		.state 'login',
 			url: '/login'
-			parent: 'auth'
+			parent: 'main'
 			cache: false
 			views: 
-				"authContent":
+				"appContent":
 					controller: 'LoginCtrl'
 					templateUrl: 'views/auth/login.html'
 
 		.state 'sign-up',
 			url: '/signup'
-			parent: 'auth'
+			parent: 'main'
 			cache: false
 			views: 
-				"authContent":
+				"appContent":
 					controller: 'SignUpCtrl'
 					templateUrl: 'views/auth/sign-up.html'
 ]
