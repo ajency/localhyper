@@ -1,0 +1,24 @@
+<ion-view view-title="Offers">
+
+	<ion-content>
+
+		<ion-item 
+			class="aj-bg"
+			ng-if="product.localNotification"
+			ng-click="product.localNotification=false;">
+			You have new offers
+		</ion-item>
+
+		<ion-list>
+
+		    <ion-item ng-repeat="offer in view.offers">
+				<h2>Location: {{offer.location}}</h2>
+				<p>Price: {{offer.price}}</p>
+				<p>Delivery Time: {{offer.deliveryTime}}</p>
+		    </ion-item>
+
+		</ion-list>
+		
+	</ion-content>
+
+</ion-view>

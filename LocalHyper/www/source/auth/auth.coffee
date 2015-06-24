@@ -1,6 +1,13 @@
 angular.module 'LocalHyper.auth', []
 
 
+.controller 'StartCtrl', ['$scope', 'App', ($scope, App)->
+	
+	$scope.$on '$ionicView.afterEnter', ->
+		App.hideSplashScreen()
+]
+
+
 .config ['$stateProvider', ($stateProvider)->
 
 	$stateProvider
@@ -15,6 +22,7 @@ angular.module 'LocalHyper.auth', []
 			views: 
 				"authContent":
 					templateUrl: 'views/auth/start.html'
+					controller: 'StartCtrl'
 
 		.state 'login',
 			url: '/login'

@@ -1,4 +1,10 @@
-angular.module('LocalHyper.auth', []).config([
+angular.module('LocalHyper.auth', []).controller('StartCtrl', [
+  '$scope', 'App', function($scope, App) {
+    return $scope.$on('$ionicView.afterEnter', function() {
+      return App.hideSplashScreen();
+    });
+  }
+]).config([
   '$stateProvider', function($stateProvider) {
     return $stateProvider.state('auth', {
       url: '/auth',
@@ -8,7 +14,8 @@ angular.module('LocalHyper.auth', []).config([
       parent: 'auth',
       views: {
         "authContent": {
-          templateUrl: 'views/auth/start.html'
+          templateUrl: 'views/auth/start.html',
+          controller: 'StartCtrl'
         }
       }
     }).state('login', {

@@ -6,3 +6,5 @@ List of cordova plugins used:
 4) ionic plugin add cordova-plugin-splashscreen
 5) ionic plugin add cordova-plugin-whitelist
 6) ionic plugin add https://github.com/asanka-x/Phonegap-SMS
+7) ionic plugin add https://github.com/phonegap-build/PushPlugin.git
+8) com.parse.cordova.core.pushplugin (Custom Plugin)

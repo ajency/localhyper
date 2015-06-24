@@ -2,15 +2,16 @@ angular.module('LocalHyper.common', []).factory('App', [
   '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard) {
     var App;
     return App = {
+      start: true,
       validateEmail: /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/,
       menuEnabled: {
         left: false,
         right: false
       },
-      isPlatformAndroid: function() {
+      isAndroid: function() {
         return ionic.Platform.isAndroid();
       },
-      isPlatformIOS: function() {
+      isIOS: function() {
         return ionic.Platform.isIOS();
       },
       isWebView: function() {
@@ -32,7 +33,7 @@ angular.module('LocalHyper.common', []).factory('App', [
         }
       },
       noTapScroll: function() {
-        return "" + (!this.isPlatformIOS());
+        return "" + (!this.isIOS());
       },
       navigate: function(state, params, opts) {
         var animate, back;

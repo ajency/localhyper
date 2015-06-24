@@ -23,10 +23,18 @@
     {
       "locator": "https://github.com/asanka-x/Phonegap-SMS",
       "id": "info.asankan.phonegap.smsplugin"
+    },
+    {
+      "locator": "/Users/deepak/Desktop/com.parse.cordova.core.pushplugin",
+      "id": "com.parse.cordova.core.pushplugin"
+    },
+    {
+      "locator": "https://github.com/phonegap-build/PushPlugin.git",
+      "id": "com.phonegap.plugins.PushPlugin"
     }
   ],
   "cordovaPlatforms": [
-    "ios",
-    "android"
+    "android",
+    "ios"
   ]
 }

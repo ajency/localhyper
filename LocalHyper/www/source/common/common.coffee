@@ -8,14 +8,16 @@ angular.module 'LocalHyper.common', []
 
 		App = 
 
+			start: true
+
 			validateEmail: /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/
 
 			menuEnabled : left: false, right: false
 
-			isPlatformAndroid : ->
+			isAndroid : ->
 				ionic.Platform.isAndroid()
 
-			isPlatformIOS : ->
+			isIOS : ->
 				ionic.Platform.isIOS()
 
 			isWebView : ->
@@ -34,7 +36,7 @@ angular.module 'LocalHyper.common', []
 
 			noTapScroll : ->
 				#Enable scroll to top on header click only for iOS
-				"#{!@.isPlatformIOS()}"
+				"#{!@isIOS()}"
 
 			navigate : (state, params={}, opts={})->
 				if !_.isEmpty(opts)
