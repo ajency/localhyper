@@ -4,6 +4,7 @@ _    = require 'underscore'
 Parse.Cloud.useMasterKey()
 
 # {"request":"one", "location": "Panjim", "price": "Rs 10000", "deliveryTime": "1 Day", "installationId": "2cc36140-8568-46d6-a88a-6451a978d968"}
+# {"request":"one", "location": "Panjim", "price": "Rs 10000", "deliveryTime": "1 Day", "installationId": "9d2c434f-eed9-45b7-920b-563956e982b2"}
 
 getPushData = (installationId, pushOptions)->
 	defer = $q.defer()
