@@ -22,3 +22,11 @@ Route::controllers( [
     'auth' => 'Auth\AuthController',
     'password' => 'Auth\PasswordController',
 ] );
+
+/**
+ * Backend Admin routes
+ */
+Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
+    Route::get( '/', 'Admin\AdminController@index' );
+    Route::resource( 'category', 'Admin\category\CategoryController' );
+});    
