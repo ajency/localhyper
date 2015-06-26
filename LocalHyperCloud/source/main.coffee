@@ -77,3 +77,56 @@ Parse.Cloud.define "addOffers", (request, response)->
 	, (object, error)->
 		response.error "ERROR: Could not save offer"
 
+
+Parse.Cloud.define "sendSMSCode", (request, response)->
+	phone = request.params.phone
+	verificationCode = Math.floor(Math.random()*99999).toString()
+
+	onSuccess = ->
+		response.success verificationCode
+
+	onError = (error)->
+		response.error error
+
+	query = new Parse.Query 'SMSVerify'
+	query.equalTo "phone", phone
+	query.find()
+	.then (obj)->
+		if _.isEmpty obj
+			SMSVerify = Parse.Object.extend "SMSVerify"
+			verify = new SMSVerify()
+			verify.set 'phone', phone
+			verify.set 'verificationCode', verificationCode
+
+			#Send sms
+			verify.save().then onSuccess, onError
+		else
+			obj = obj[0]
+			obj.set 'phone', phone
+			obj.set 'verificationCode', verificationCode
+
+			#Send sms
+			obj.save().then onSuccess, onError
+
+	, onError
+
+
+Parse.Cloud.define "verifySMSCode", (request, response)->
+	phone = request.params.phone
+	code = request.params.code
+
+	query = new Parse.Query 'SMSVerify'
+	query.equalTo "phone", phone
+
+	query.find()
+	.then (obj)->
+		obj = obj[0]
+		verificationCode = obj.get 'verificationCode'
+		if verificationCode is code
+			obj.destroy()
+			response.success {'verified': true}
+		else
+			response.success {'verified': false}
+	, (error)->
+		response.error error
+

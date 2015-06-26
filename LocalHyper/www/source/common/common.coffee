@@ -23,6 +23,9 @@ angular.module 'LocalHyper.common', []
 			isWebView : ->
 				ionic.Platform.isWebView()
 
+			deviceUUID : ->
+				if @isWebView() then device.uuid else 'DUMMYUUID'
+
 			hideSplashScreen : ->
 				$cordovaSplashscreen.hide() if @isWebView()
 

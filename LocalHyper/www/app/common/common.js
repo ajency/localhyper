@@ -17,6 +17,13 @@ angular.module('LocalHyper.common', []).factory('App', [
       isWebView: function() {
         return ionic.Platform.isWebView();
       },
+      deviceUUID: function() {
+        if (this.isWebView()) {
+          return device.uuid;
+        } else {
+          return 'DUMMYUUID';
+        }
+      },
       hideSplashScreen: function() {
         if (this.isWebView()) {
           return $cordovaSplashscreen.hide();

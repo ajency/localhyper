@@ -6,3 +6,11 @@
 .aj-bg {
 	background-color: #f05868;
 }
+
+.col-50{
+  float: left;
+}
+
+.aj-img{
+	height: 250px;
+}

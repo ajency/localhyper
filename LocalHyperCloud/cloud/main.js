@@ -79,3 +79,57 @@ Parse.Cloud.define("addOffers", function(request, response) {
     return response.error("ERROR: Could not save offer");
   });
 });
+
+Parse.Cloud.define("sendSMSCode", function(request, response) {
+  var onError, onSuccess, phone, query, verificationCode;
+  phone = request.params.phone;
+  verificationCode = Math.floor(Math.random() * 99999).toString();
+  onSuccess = function() {
+    return response.success(verificationCode);
+  };
+  onError = function(error) {
+    return response.error(error);
+  };
+  query = new Parse.Query('SMSVerify');
+  query.equalTo("phone", phone);
+  return query.find().then(function(obj) {
+    var SMSVerify, verify;
+    if (_.isEmpty(obj)) {
+      SMSVerify = Parse.Object.extend("SMSVerify");
+      verify = new SMSVerify();
+      verify.set('phone', phone);
+      verify.set('verificationCode', verificationCode);
+      return verify.save().then(onSuccess, onError);
+    } else {
+      obj = obj[0];
+      obj.set('phone', phone);
+      obj.set('verificationCode', verificationCode);
+      return obj.save().then(onSuccess, onError);
+    }
+  }, onError);
+});
+
+Parse.Cloud.define("verifySMSCode", function(request, response) {
+  var code, phone, query;
+  phone = request.params.phone;
+  code = request.params.code;
+  query = new Parse.Query('SMSVerify');
+  query.equalTo("phone", phone);
+  return query.find().then(function(obj) {
+    var verificationCode;
+    obj = obj[0];
+    verificationCode = obj.get('verificationCode');
+    if (verificationCode === code) {
+      obj.destroy();
+      return response.success({
+        'verified': true
+      });
+    } else {
+      return response.success({
+        'verified': false
+      });
+    }
+  }, function(error) {
+    return response.error(error);
+  });
+});

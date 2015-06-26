@@ -5,9 +5,14 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.products', 'LocalHyper.test']
 
 
-.run ['$rootScope', 'App', 'Push', '$timeout', ($rootScope, App, Push, $timeout)->
+.constant 'PARSE', 
+	APP_ID: 'bv6HajGGe6Ver72lkjIiV0jYbJL5ll0tTWNG3obY'
+	JS_KEY: 'uxqIu6soZAOzPXHuLQDhOwBuA3KWAAuuK75l1Z3x'
 
-	Parse.initialize 'bv6HajGGe6Ver72lkjIiV0jYbJL5ll0tTWNG3obY', 'uxqIu6soZAOzPXHuLQDhOwBuA3KWAAuuK75l1Z3x'
+
+.run ['$rootScope', 'App', 'Push', '$timeout', 'PARSE', ($rootScope, App, Push, $timeout, PARSE)->
+
+	Parse.initialize PARSE.APP_ID, PARSE.JS_KEY
 
 	$rootScope.App = App
 	$rootScope.product = 
