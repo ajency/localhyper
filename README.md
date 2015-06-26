@@ -1,3 +1,3 @@
 LocalHyper
 
-Cross Platform Mobile App (Android/iOS)
+Backend for Cross Platform Mobile App (Android/iOS)
