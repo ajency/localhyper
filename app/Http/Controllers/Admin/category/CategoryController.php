@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Parse\ParseObject;
 use Parse\ParseQuery;
+use \Session;
 
 class CategoryController extends Controller
 {
@@ -81,7 +82,15 @@ class CategoryController extends Controller
         }
         
 
-        $category = CategoryController::createParseCategory($catData);
+        $create_category = CategoryController::createParseCategory($catData);
+
+        if ($create_category['status']) {
+           $request->session()->flash('success_message','Category Successfully added');
+        }
+        else{
+           $request->session()->flash('error_message',$create_category['msg']); 
+        }
+        
 
         return redirect("/admin/category/create");
 
@@ -154,10 +163,11 @@ class CategoryController extends Controller
 
 
           } catch (ParseException $ex) {
-          // The object was not retrieved successfully.
-          // error is a ParseException with an error code and message.
-              echo 'Failed to create new object, with error message: ' . $ex->getMessage();
-              return $ex->getMessage();
+              // The object was not retrieved successfully.
+              // error is a ParseException with an error code and message.
+
+              $resp = array('status' => 0 , 'msg' => 'Failed to create new object, with error message: '.$ex->getMessage());
+              return $resp;
           }
         }
 
@@ -165,13 +175,14 @@ class CategoryController extends Controller
 
           try {
             $category->save();
-            return $category->getObjectId();
+            $resp = array('status' => 1 , 'data' => $category->getObjectId());
+            return $resp;
           } 
           catch (ParseException $ex) {  
           // Execute any logic that should take place if the save fails.
           // error is a ParseException object with an error code and message.
-              echo 'Failed to create new object, with error message: ' . $ex->getMessage();
-              return $ex->getMessage();
+              $resp = array('status' => 0 , 'msg' => 'Failed to create new object, with error message: '.$ex->getMessage());
+              return $resp;
 
           } 
 

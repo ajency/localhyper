@@ -14,6 +14,7 @@
 					<h5>Add a Category</h5>
 					<hr>
 					<div class="row">
+						@include('admin.flashmessage')
 						<div class="col-sm-4">
 							<form id="add_project" method="POST" action="{{ url('admin/category') }}" data-parsley-validate>
 
