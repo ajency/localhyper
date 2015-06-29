@@ -134,31 +134,32 @@ class CategoryController extends Controller
         $category->set("sort_order", $categoryData['sort_order']);
         $category->setArray("image", $categoryData['image']);
 
-        // get category object by id
+        // get parent category object by id
         $categoryQuery = new ParseQuery("Category");
         try {
           $parentCategory = $categoryQuery->get($categoryData['parent_category']);
-            // The object was retrieved successfully.
-        } catch (ParseException $ex) {
-          // The object was not retrieved successfully.
-          // error is a ParseException with an error code and message.
-          echo 'Failed to create new object, with error message: ' . $ex->getMessage();
-          return $ex->getMessage();
-        }
+          $category->set("parent_category", $parentCategory);
 
-        try {
-          $category->save();
-          // dd($category->getObjectId());
-          // echo 'New object created with objectId: ' . $category->getObjectId();
-          return $category->getObjectId();
-        } 
-        catch (ParseException $ex) {  
+          try {
+            $category->save();
+            return $category->getObjectId();
+          } 
+          catch (ParseException $ex) {  
           // Execute any logic that should take place if the save fails.
           // error is a ParseException object with an error code and message.
               echo 'Failed to create new object, with error message: ' . $ex->getMessage();
               return $ex->getMessage();
 
-        }
+          }          
+
+      } catch (ParseException $ex) {
+          // The object was not retrieved successfully.
+          // error is a ParseException with an error code and message.
+          echo 'Failed to create new object, with error message: ' . $ex->getMessage();
+          return $ex->getMessage();
+      }
+
+ 
 
     }
     public static function getParseCategories($categoryFilter=[]){
