@@ -33,8 +33,9 @@
 						        	<select class="form-control js-select-parent-folder-tree" name="parent_category" required=""data-parsley-required>
 						        		<option value="">Select Parent</option>
 						        		<option value="0">None</option>
-						        	<!-- <option value="209">Root/Firms/Ascot Wealth Management system</option>
-						        	<option value="199">Root/Firms/Clients</option> -->
+						        		@foreach ($categories as $category)
+						        		<option value="{{$category['cat_id']}}">{{$category['cat_name']}}</option>
+						        		@endforeach
 						        	</select> 
 						        </div>
 				                

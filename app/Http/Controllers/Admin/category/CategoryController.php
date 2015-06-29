@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Parse\ParseObject;
+use Parse\ParseQuery;
 
 class CategoryController extends Controller
 {
@@ -30,10 +31,20 @@ class CategoryController extends Controller
     // add an item /category/create
     public function create()
     {
-        
-                return view('admin.category.add')
-                        ->with('x1', 123)
-                        ->with('x2', 'sdfsf');
+        $allCategories = CategoryController::getParseCategories();
+
+        $catList = array();
+
+        foreach ($allCategories as $catObject) {
+              $catList[] = array(
+                            'cat_id' =>$catObject->getObjectId(),
+                            'cat_name' => $catObject->get('name')
+                            );
+              
+
+        }
+        return view('admin.category.add')
+        ->with('categories', $catList);
     }
 
     /**
@@ -54,6 +65,7 @@ class CategoryController extends Controller
             'name' => $categoryData['category_name'], 
             'description' => $categoryData['description'], 
             'sort_order' => (int)$categoryData['sort_id'], 
+            'parent_category' => $categoryData['parent_category'], 
             'image' => array('src' => $categoryData['image_url']), 
             );
 
@@ -121,7 +133,19 @@ class CategoryController extends Controller
         // $category->set("parent_category", $categoryData['parent_category']);
         $category->set("sort_order", $categoryData['sort_order']);
         $category->setArray("image", $categoryData['image']);
-        
+
+        // get category object by id
+        $categoryQuery = new ParseQuery("Category");
+        try {
+          $parentCategory = $categoryQuery->get($categoryData['parent_category']);
+            // The object was retrieved successfully.
+        } catch (ParseException $ex) {
+          // The object was not retrieved successfully.
+          // error is a ParseException with an error code and message.
+          echo 'Failed to create new object, with error message: ' . $ex->getMessage();
+          return $ex->getMessage();
+        }
+
         try {
           $category->save();
           // dd($category->getObjectId());
@@ -137,4 +161,13 @@ class CategoryController extends Controller
         }
 
     }
+    public static function getParseCategories($categoryFilter=[]){
+       
+        $categoryQuery = new ParseQuery("Category");
+        
+        $results = $categoryQuery->find();
+
+        return $results;
+
+    }    
 }
