@@ -24,7 +24,9 @@
                                     <table class="table table-bordered" id="example2" >
                                         <thead>
                                             <tr>
+                                                <th>Category ID</th>
                                                 <th>Category Name</th>
+                                                <th>Parent</th>
                                                 <th>Created On</th>
                                                 <th>Modified On</th>
                                             </tr>
@@ -32,7 +34,9 @@
                                         <tbody> 
                                         @foreach ($categories as $category)
                                             <tr class="" onclick="location.href='{{ url( '/admin/category/' . $category['id']) }}'">
+                                                <td>{{ $category['id'] }}</td>
                                                 <td>{{ $category['name'] }}</td>
+                                                <td>{{ $category['parent'] }}</td>
                                                 <td>{{ date_format($category['created_at'], 'Y-m-d H:i:s')  }}</td>
                                                 <td>{{ date_format($category['modified_at'], 'Y-m-d H:i:s') }}</td>
                                             </tr>

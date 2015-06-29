@@ -26,16 +26,27 @@ class CategoryController extends Controller
         $catList = array();
 
         foreach ($allCategories as $catObject) {
-              $catList[] = array(
+              $catArr = array(
                             'id' =>$catObject->getObjectId(),
                             'name' => $catObject->get('name'),
                             'created_at' => $catObject->getCreatedAt(),
                             'modified_at' => $catObject->getUpdatedAt(),
                             );
+
+              if (!$catObject->get('parent_category')) {
+                  $catArr['parent'] = 'None' ;
+              }
+              else{
+                $parent_category = $catObject->get('parent_category');
+                $parent_category->fetch();
+                $catArr['parent'] = $parent_category->get('name');
+              }
+
+              $catList[] = $catArr;
               
 
         } 
-       
+
         return view('admin.category.list')
         ->with('categories', $catList);
     }
