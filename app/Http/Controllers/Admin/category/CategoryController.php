@@ -21,7 +21,23 @@ class CategoryController extends Controller
     // listing /category
     public function index()
     {
-        //
+        $allCategories = CategoryController::getParseCategories();
+
+        $catList = array();
+
+        foreach ($allCategories as $catObject) {
+              $catList[] = array(
+                            'id' =>$catObject->getObjectId(),
+                            'name' => $catObject->get('name'),
+                            'created_at' => $catObject->getCreatedAt(),
+                            'modified_at' => $catObject->getUpdatedAt(),
+                            );
+              
+
+        } 
+       
+        return view('admin.category.list')
+        ->with('categories', $catList);
     }
 
     /**
