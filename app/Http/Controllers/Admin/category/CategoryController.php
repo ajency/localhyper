@@ -60,18 +60,29 @@ class CategoryController extends Controller
         $parent_category = $request->input('parent_category');
         $sort_id = $request->input('sort_id');
 
+        // get all category form data
         $categoryData = $request->all();
+
+        // unset parent category if set as none ie root
+        if ($categoryData['parent_category'] == "0"){
+            unset($categoryData['parent_category']);
+        }
+
         $catData = array(
             'name' => $categoryData['category_name'], 
             'description' => $categoryData['description'], 
             'sort_order' => (int)$categoryData['sort_id'], 
-            'parent_category' => $categoryData['parent_category'], 
             'image' => array('src' => $categoryData['image_url']), 
             );
 
+        // set parent category only if parent_category is set
+        if (isset($categoryData['parent_category'])) {
+           $catData['parent_category'] = $categoryData['parent_category'];
+        }
+        
+
         $category = CategoryController::createParseCategory($catData);
 
-        // return redirect("/admin/category/".$category);
         return redirect("/admin/category/create");
 
     }
@@ -130,15 +141,27 @@ class CategoryController extends Controller
         $category = new ParseObject("Category");
         $category->set("name", $categoryData['name']);
         $category->set("description", $categoryData['description']);
-        // $category->set("parent_category", $categoryData['parent_category']);
+        
         $category->set("sort_order", $categoryData['sort_order']);
         $category->setArray("image", $categoryData['image']);
 
-        // get parent category object by id
-        $categoryQuery = new ParseQuery("Category");
-        try {
-          $parentCategory = $categoryQuery->get($categoryData['parent_category']);
-          $category->set("parent_category", $parentCategory);
+        if (isset($categoryData['parent_category'])) {
+            // get parent category object by id
+            $categoryQuery = new ParseQuery("Category");
+            try {
+              $parentCategory = $categoryQuery->get($categoryData['parent_category']);
+              $category->set("parent_category", $parentCategory);
+
+
+          } catch (ParseException $ex) {
+          // The object was not retrieved successfully.
+          // error is a ParseException with an error code and message.
+              echo 'Failed to create new object, with error message: ' . $ex->getMessage();
+              return $ex->getMessage();
+          }
+        }
+
+
 
           try {
             $category->save();
@@ -150,14 +173,7 @@ class CategoryController extends Controller
               echo 'Failed to create new object, with error message: ' . $ex->getMessage();
               return $ex->getMessage();
 
-          }          
-
-      } catch (ParseException $ex) {
-          // The object was not retrieved successfully.
-          // error is a ParseException with an error code and message.
-          echo 'Failed to create new object, with error message: ' . $ex->getMessage();
-          return $ex->getMessage();
-      }
+          } 
 
  
 
