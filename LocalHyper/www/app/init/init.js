@@ -1,5 +1,5 @@
 angular.module('LocalHyper.init', []).controller('InitCtrl', [
-  '$ionicPlatform', '$scope', 'App', 'Push', '$rootScope', function($ionicPlatform, $scope, App, Push, $rootScope) {
+  '$ionicPlatform', '$scope', 'App', 'Push', '$rootScope', 'Storage', function($ionicPlatform, $scope, App, Push, $rootScope, Storage) {
     var getOffers;
     getOffers = function() {
       var Offers, ids, productOffers, query;
@@ -60,9 +60,13 @@ angular.module('LocalHyper.init', []).controller('InitCtrl', [
     return $ionicPlatform.ready(function() {
       App.hideKeyboardAccessoryBar();
       App.setStatusBarStyle();
-      App.navigate('start', {}, {
-        animate: false,
-        back: false
+      Storage.slideTutorial('get').then(function(value) {
+        var goto;
+        goto = _.isNull(value) ? "tutorial" : "departments";
+        return App.navigate(goto, {}, {
+          animate: false,
+          back: false
+        });
       });
       return Push.register();
     });

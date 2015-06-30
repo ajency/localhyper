@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.init', []
 
 
-.controller 'InitCtrl', ['$ionicPlatform', '$scope', 'App', 'Push', '$rootScope'
-	, ($ionicPlatform, $scope, App, Push, $rootScope)->
+.controller 'InitCtrl', ['$ionicPlatform', '$scope', 'App', 'Push', '$rootScope', 'Storage'
+	, ($ionicPlatform, $scope, App, Push, $rootScope, Storage)->
 
 		getOffers = ->
 			Offers = Parse.Object.extend "Offers"
@@ -57,7 +57,11 @@ angular.module 'LocalHyper.init', []
 		$ionicPlatform.ready ->
 			App.hideKeyboardAccessoryBar()
 			App.setStatusBarStyle()
-			App.navigate 'start', {}, {animate: false, back: false}
+
+			Storage.slideTutorial 'get'
+			.then (value)->
+				goto = if _.isNull value then "tutorial" else "departments"
+				App.navigate goto, {}, {animate: false, back: false}
 
 			Push.register()
 ]

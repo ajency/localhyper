@@ -2,9 +2,9 @@ angular.module 'LocalHyper.common', []
 
 
 .factory 'App', ['$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate'
-	, '$window', '$cordovaStatusbar', '$cordovaKeyboard'
+	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout'
 	, ($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window
-	, $cordovaStatusbar, $cordovaKeyboard)->
+	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout)->
 
 		App = 
 
@@ -23,11 +23,18 @@ angular.module 'LocalHyper.common', []
 			isWebView : ->
 				ionic.Platform.isWebView()
 
+			isOnline : ->
+				if @isWebView() then $cordovaNetwork.isOnline()
+				else navigator.onLine
+
 			deviceUUID : ->
 				if @isWebView() then device.uuid else 'DUMMYUUID'
 
 			hideSplashScreen : ->
-				$cordovaSplashscreen.hide() if @isWebView()
+				if @isWebView()
+					$timeout -> 
+						$cordovaSplashscreen.hide()
+					, 500
 
 			hideKeyboardAccessoryBar : ->
 				if $window.cordova && $window.cordova.plugins.Keyboard
@@ -56,6 +63,11 @@ angular.module 'LocalHyper.common', []
 
 			dragContent : (bool)->
 				$ionicSideMenuDelegate.canDragContent bool
+
+			isLoggedIn : ->
+				user = Parse.User.current()
+				loggedIn = if _.isNull(user) then false else true
+				loggedIn
 
 ]
 

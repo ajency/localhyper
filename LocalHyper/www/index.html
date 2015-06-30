@@ -16,6 +16,7 @@
 	<script src="lib/jquery/dist/jquery.min.js"></script>
 	<script src="lib/underscore/underscore-min.js"></script>
 	<script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
+	<script src="lib/localforage/dist/localforage.min.js"></script>
 	<script src="lib/crypto-js/crypto-js.js"></script>
 	<script src="lib/crypto-js/aes.js"></script>
 
@@ -24,19 +25,29 @@
 
 	<!-- common -->
 	<script src="app/common/common.js"></script>
+	<script src="app/common/cordova-components.js"></script>
 	<script src="app/common/push-handler.js"></script>
 
 	<!-- init -->
 	<script src="app/init/init.js"></script>
+	<script src="app/init/slide-tutorial.js"></script>
+
+	<!-- storage -->
+	<script src="app/storage/storage.js"></script>
 
 	<!-- auth -->
 	<script src="app/auth/auth.js"></script>
 	<script src="app/auth/auth-api.js"></script>
+	<script src="app/auth/sms-api.js"></script>
 	<script src="app/auth/login.js"></script>
-	<script src="app/auth/sign-up.js"></script>
+	<script src="app/auth/register.js"></script>
 
 	<!-- main -->
 	<script src="app/main/main.js"></script>
+
+	<!-- categories -->
+	<script src="app/categories/categories.js"></script>
+	<script src="app/categories/departments.js"></script>
 
 	<!-- products -->
 	<script src="app/products/products.js"></script>

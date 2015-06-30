@@ -81,30 +81,43 @@ Parse.Cloud.define("addOffers", function(request, response) {
 });
 
 Parse.Cloud.define("sendSMSCode", function(request, response) {
-  var onError, onSuccess, phone, query, verificationCode;
+  var code, onError, phone, query, save;
   phone = request.params.phone;
-  verificationCode = Math.floor(Math.random() * 99999).toString();
-  onSuccess = function() {
-    return response.success(verificationCode);
-  };
+  code = (Math.floor(Math.random() * 90000) + 10000).toString();
   onError = function(error) {
     return response.error(error);
+  };
+  save = function(obj, attempts) {
+    if (attempts > 3) {
+      return response.success({
+        attemptsExceeded: true
+      });
+    } else {
+      obj.set({
+        'phone': phone,
+        'verificationCode': code,
+        'attempts': attempts
+      });
+      return obj.save().then(function() {
+        return response.success({
+          code: code,
+          attemptsExceeded: false
+        });
+      }, onError);
+    }
   };
   query = new Parse.Query('SMSVerify');
   query.equalTo("phone", phone);
   return query.find().then(function(obj) {
-    var SMSVerify, verify;
+    var SMSVerify, attempts, verify;
     if (_.isEmpty(obj)) {
       SMSVerify = Parse.Object.extend("SMSVerify");
       verify = new SMSVerify();
-      verify.set('phone', phone);
-      verify.set('verificationCode', verificationCode);
-      return verify.save().then(onSuccess, onError);
+      return save(verify, 1);
     } else {
       obj = obj[0];
-      obj.set('phone', phone);
-      obj.set('verificationCode', verificationCode);
-      return obj.save().then(onSuccess, onError);
+      attempts = obj.get('attempts');
+      return save(obj, attempts + 1);
     }
   }, onError);
 });

@@ -42,7 +42,7 @@ Parse.Cloud.define "addOffers", (request, response)->
 	price           = request.params.price.toString()
 	deliveryTime    = request.params.deliveryTime.toString()
 	installationId  = request.params.installationId.toString()
-	req = request.params.request.toString()
+	req 			= request.params.request.toString()
 
 	Offers = Parse.Object.extend "Offers"
 	offers = new Offers()
@@ -80,13 +80,25 @@ Parse.Cloud.define "addOffers", (request, response)->
 
 Parse.Cloud.define "sendSMSCode", (request, response)->
 	phone = request.params.phone
-	verificationCode = Math.floor(Math.random()*99999).toString()
-
-	onSuccess = ->
-		response.success verificationCode
+	code  = (Math.floor(Math.random()*90000)+10000).toString()
 
 	onError = (error)->
 		response.error error
+
+	save = (obj, attempts)->
+		if attempts > 3
+			response.success attemptsExceeded: true
+		else
+			obj.set 
+				'phone': phone
+				'verificationCode': code
+				'attempts': attempts
+
+			#Send sms
+			obj.save()
+			.then ->
+				response.success code: code, attemptsExceeded: false
+			, onError
 
 	query = new Parse.Query 'SMSVerify'
 	query.equalTo "phone", phone
@@ -95,26 +107,17 @@ Parse.Cloud.define "sendSMSCode", (request, response)->
 		if _.isEmpty obj
 			SMSVerify = Parse.Object.extend "SMSVerify"
 			verify = new SMSVerify()
-			verify.set 'phone', phone
-			verify.set 'verificationCode', verificationCode
-
-			#Send sms
-			verify.save().then onSuccess, onError
+			save verify, 1
 		else
 			obj = obj[0]
-			obj.set 'phone', phone
-			obj.set 'verificationCode', verificationCode
-
-			#Send sms
-			obj.save().then onSuccess, onError
-
+			attempts = obj.get 'attempts'
+			save obj, attempts+1
 	, onError
 
 
 Parse.Cloud.define "verifySMSCode", (request, response)->
 	phone = request.params.phone
-	code = request.params.code
-
+	code  = request.params.code
 	query = new Parse.Query 'SMSVerify'
 	query.equalTo "phone", phone
 
@@ -124,9 +127,9 @@ Parse.Cloud.define "verifySMSCode", (request, response)->
 		verificationCode = obj.get 'verificationCode'
 		if verificationCode is code
 			obj.destroy()
-			response.success {'verified': true}
-		else
-			response.success {'verified': false}
+			response.success 'verified': true
+		else 
+			response.success 'verified': false
 	, (error)->
 		response.error error
 

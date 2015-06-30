@@ -1,8 +1,8 @@
 #App - LocalHyper
 
 angular.module 'LocalHyper', ['ionic', 'ngCordova'
-	, 'LocalHyper.common', 'LocalHyper.init'
-	, 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.products', 'LocalHyper.test']
+	, 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage'
+	, 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.test']
 
 
 .constant 'PARSE', 
@@ -43,5 +43,6 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 
 	$ionicConfigProvider.views.forwardCache true
 	$ionicConfigProvider.backButton.previousTitleText(false).text ''
+	$ionicConfigProvider.navBar.alignTitle 'center'
 ]
 

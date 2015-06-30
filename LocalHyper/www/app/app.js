@@ -1,4 +1,4 @@
-angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.products', 'LocalHyper.test']).constant('PARSE', {
+angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.test']).constant('PARSE', {
   APP_ID: 'bv6HajGGe6Ver72lkjIiV0jYbJL5ll0tTWNG3obY',
   JS_KEY: 'uxqIu6soZAOzPXHuLQDhOwBuA3KWAAuuK75l1Z3x'
 }).run([
@@ -31,6 +31,7 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
 ]).config([
   '$ionicConfigProvider', function($ionicConfigProvider) {
     $ionicConfigProvider.views.forwardCache(true);
-    return $ionicConfigProvider.backButton.previousTitleText(false).text('');
+    $ionicConfigProvider.backButton.previousTitleText(false).text('');
+    return $ionicConfigProvider.navBar.alignTitle('center');
   }
 ]);
