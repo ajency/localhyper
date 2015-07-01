@@ -122,6 +122,12 @@ Parse.Cloud.define("sendSMSCode", function(request, response) {
   }, onError);
 });
 
+Parse.Cloud.afterSave("SMSVerify", function(request) {
+  var obj, verificationCode;
+  obj = request.object;
+  return verificationCode = obj.get('verificationCode');
+});
+
 Parse.Cloud.define("verifySMSCode", function(request, response) {
   var code, phone, query;
   phone = request.params.phone;

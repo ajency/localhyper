@@ -93,8 +93,7 @@ Parse.Cloud.define "sendSMSCode", (request, response)->
 				'phone': phone
 				'verificationCode': code
 				'attempts': attempts
-
-			#Send sms
+			
 			obj.save()
 			.then ->
 				response.success code: code, attemptsExceeded: false
@@ -113,6 +112,13 @@ Parse.Cloud.define "sendSMSCode", (request, response)->
 			attempts = obj.get 'attempts'
 			save obj, attempts+1
 	, onError
+
+
+Parse.Cloud.afterSave "SMSVerify", (request)->
+	#Send sms
+	obj = request.object
+	verificationCode = obj.get 'verificationCode'
+
 
 
 Parse.Cloud.define "verifySMSCode", (request, response)->
