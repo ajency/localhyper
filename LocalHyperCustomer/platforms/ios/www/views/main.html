@@ -1,0 +1,72 @@
+<ion-side-menus
+	enable-menu-with-back-views="true"
+	ng-controller="SideMenuCtrl">
+
+	<ion-side-menu-content>
+		<ion-nav-bar 
+			class="bar-light"
+			no-tap-scroll="App.noTapScroll()">
+			
+			<!-- Notification icon  -->
+			<ion-nav-buttons side="secondary">
+				<button 
+					class="button button-clear button-assertive" 
+					ng-if="product.globalNotification;"
+					ng-click="App.navigate('requests');">
+					New
+				</button>
+			</ion-nav-buttons>
+
+			<ion-nav-back-button> </ion-nav-back-button>
+		</ion-nav-bar>
+
+		<ion-nav-view name="appContent"> </ion-nav-view>
+	</ion-side-menu-content>
+	
+	<ion-side-menu 
+		side="left"
+		is-enabled="App.menuEnabled.left">
+		
+		<ion-content class="aj-menu-bg">
+
+			<ion-list class="aj-menutext">
+
+				<ion-item menu-close>
+					<i class="ion ion-briefcase"></i> Store
+				</ion-item>
+
+				<hr>
+
+				<ion-item menu-close>
+					<i class="ion ion-ios-telephone"></i> Call us
+				</ion-item>
+
+				<ion-item menu-close>
+					<i class="ion ion-android-share-alt"></i> Share
+				</ion-item>
+
+				<ion-item menu-close>
+					<i class="ion ion-ios-star"></i> Rate us
+				</ion-item>
+
+				<ion-item menu-close>
+					<i class="ion ion-help-circled"></i> Help
+				</ion-item>
+
+				<ion-item menu-close>
+					<i class="ion ion-heart"></i> Suggest a product
+				</ion-item>
+
+				<ion-item menu-close>
+					<i class="ion ion-information-circled"></i> About us
+				</ion-item>
+
+				<hr>
+
+			<ion-list>
+
+	    </ion-content>
+
+	</ion-side-menu>
+
+</ion-side-menus>
