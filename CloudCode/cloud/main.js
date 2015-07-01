@@ -1,28 +1,46 @@
 (function() {
-  var Category;
+  var _;
 
-  Category = Parse.Object.extend('Category');
+  _ = require('underscore.js');
 
-  Parse.Cloud.beforeSave('Category', function(request, response) {
-    var query;
-    if (!request.object.get('name')) {
-      response.error('A Category must have a name.');
-    } else {
-      query = new Parse.Query(Category);
-      query.equalTo('name', request.object.get('name'));
-      query.first({
-        success: function(object) {
-          if (object) {
-            response.error('A Category with this name already exists.');
-          } else {
-            response.success();
+  Parse.Cloud.job('productImport', function(request, response) {
+    var BulkImport, query, queryFindPromise;
+    BulkImport = Parse.Object.extend('bulkImport');
+    query = new Parse.Query(BulkImport);
+    query.include("import_based_id");
+    queryFindPromise = query.find();
+    queryFindPromise.done((function(_this) {
+      return function(results) {
+        var ProductItem, productSavedArr;
+        ProductItem = Parse.Object.extend('ProductItem');
+        productSavedArr = [];
+        _.each(results, function(result) {
+          var products;
+          products = result.get("json");
+          console.log("length " + products.length);
+          _.each(products, function(product) {
+            var productItem;
+            productItem = new ProductItem();
+            productItem.set("name", product.name);
+            productItem.set("images", product.images);
+            productItem.set("model_number", product.model_number);
+            return productSavedArr.push(productItem);
+          });
+          return console.log("length of prodArr " + productSavedArr.length);
+        });
+        return Parse.Object.saveAll(productSavedArr, {
+          success: function(objs) {
+            response.success("Successful");
+          },
+          error: function(error) {
+            return response.error("Failure");
           }
-        },
-        error: function(error) {
-          response.error('Could not validate uniqueness for this Category object.');
-        }
-      });
-    }
+        });
+      };
+    })(this));
+    return queryFindPromise.fail(function(error) {
+      return response.error("The error is - " + error);
+    });
   });
 
 }).call(this);
