@@ -55,16 +55,16 @@
         });
         return Parse.Object.saveAll(productSavedArr, {
           success: function(objs) {
-            response.success("Successful");
+            response.success("Successfully added the products");
           },
           error: function(error) {
-            return response.error("Failure");
+            return response.error("Failed to add products due to - " + error.message);
           }
         });
       };
     })(this));
     return queryFindPromise.fail(function(error) {
-      return response.error("The error is - " + error);
+      return response.error("Error in products upload - " + error.message);
     });
   });
 

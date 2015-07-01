@@ -129,13 +129,13 @@ Parse.Cloud.job 'productImport', (request, response) ->
 		# save all the newly created objects
 		Parse.Object.saveAll productSavedArr,
 		  success: (objs) ->
-		    response.success "Successful"
+		    response.success "Successfully added the products"
 		    return
 		  error: (error) ->
-		    response.error "Failure"
+		    response.error "Failed to add products due to - #{error.message}"
 		
 	queryFindPromise.fail (error) ->
-		response.error "The error is - #{error}"
+		response.error "Error in products upload - #{error.message}"
 	
 
 	
