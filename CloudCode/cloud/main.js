@@ -1,6 +1,10 @@
 (function() {
   var _;
 
+  Parse.Cloud.define('generateCategoryHierarchy', function(request, response) {
+    response.success('Hello world!');
+  });
+
   _ = require('underscore.js');
 
   Parse.Cloud.job('productImport', function(request, response) {

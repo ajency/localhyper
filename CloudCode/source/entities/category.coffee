@@ -19,3 +19,7 @@
 #         return
 #   return
 
+Parse.Cloud.define 'generateCategoryHierarchy', (request, response) ->
+  response.success 'Hello world!'
+  return
+
