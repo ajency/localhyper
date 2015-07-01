@@ -89,6 +89,9 @@ Parse.Cloud.job 'productImport', (request, response) ->
 				productItem.set "name", product.name
 				productItem.set "images", product.images
 				productItem.set "model_number", product.model_number
+				productItem.set "mrp", parseInt product.mrp
+				productItem.set "popularity", product.popularity
+				productItem.set "group", product.group
 
 				# set product category
 				categoryObj = 
@@ -104,10 +107,24 @@ Parse.Cloud.job 'productImport', (request, response) ->
 					"className":"Brand",
 					"objectId":product.brand					
 
-				productItem.set "brand", brandObj							
+				productItem.set "brand", brandObj	
+				
+				attributeValueArr = []
+				attributes = product.attrs
+
+				_.each attributes, (attributeId) ->
+					attribObj = 
+						"__type" : "Pointer",
+						"className":"AttributeValues",
+						"objectId":attributeId
+
+					attributeValueArr.push(attribObj)
+
+				productItem.set "attrs", attributeValueArr						
+
 
 				productSavedArr.push(productItem)
-			console.log "length of prodArr #{productSavedArr.length}"
+			
 	
 		# save all the newly created objects
 		Parse.Object.saveAll productSavedArr,

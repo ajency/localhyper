@@ -17,12 +17,15 @@
         _.each(results, function(result) {
           var products;
           products = result.get("json");
-          _.each(products, function(product) {
-            var brandObj, categoryObj, productItem;
+          return _.each(products, function(product) {
+            var attributeValueArr, attributes, brandObj, categoryObj, productItem;
             productItem = new ProductItem();
             productItem.set("name", product.name);
             productItem.set("images", product.images);
             productItem.set("model_number", product.model_number);
+            productItem.set("mrp", parseInt(product.mrp));
+            productItem.set("popularity", product.popularity);
+            productItem.set("group", product.group);
             categoryObj = {
               "__type": "Pointer",
               "className": "Category",
@@ -35,9 +38,20 @@
               "objectId": product.brand
             };
             productItem.set("brand", brandObj);
+            attributeValueArr = [];
+            attributes = product.attrs;
+            _.each(attributes, function(attributeId) {
+              var attribObj;
+              attribObj = {
+                "__type": "Pointer",
+                "className": "AttributeValues",
+                "objectId": attributeId
+              };
+              return attributeValueArr.push(attribObj);
+            });
+            productItem.set("attrs", attributeValueArr);
             return productSavedArr.push(productItem);
           });
-          return console.log("length of prodArr " + productSavedArr.length);
         });
         return Parse.Object.saveAll(productSavedArr, {
           success: function(objs) {
