@@ -1,5 +1,3 @@
-_ = require('underscore.js')
-
 # saveJsonPerson = (fileTestSave) ->
 #   #Get the pffile testfile
 #   testFile = fileTestSave.get('testFile')

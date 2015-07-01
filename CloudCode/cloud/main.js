@@ -1,11 +1,83 @@
 (function() {
-  var _;
-
-  Parse.Cloud.define('generateCategoryHierarchy', function(request, response) {
-    response.success('Hello world!');
-  });
+  var _, treeify;
 
   _ = require('underscore.js');
+
+  treeify = function(list, idAttr, parentAttr, childrenAttr) {
+    var lookup, treeList;
+    if (!idAttr) {
+      idAttr = 'id';
+    }
+    if (!parentAttr) {
+      parentAttr = 'parent';
+    }
+    if (!childrenAttr) {
+      childrenAttr = 'children';
+    }
+    treeList = [];
+    lookup = {};
+    list.forEach(function(obj) {
+      lookup[obj[idAttr]] = obj;
+      obj[childrenAttr] = [];
+    });
+    list.forEach(function(obj) {
+      var parentId;
+      if (obj[parentAttr] !== null) {
+        parentId = obj[parentAttr];
+        lookup[parentId][childrenAttr].push(obj);
+      } else {
+        treeList.push(obj);
+      }
+    });
+    return treeList;
+  };
+
+  Parse.Cloud.define('generateCategoryHierarchy', function(request, response) {
+    var Category, queryCategory, queryFindPromise, sortBy;
+    sortBy = request.params.sortBy;
+    Category = Parse.Object.extend('Category');
+    queryCategory = new Parse.Query(Category);
+    queryCategory.include("parent_category");
+    queryFindPromise = queryCategory.find();
+    queryFindPromise.done((function(_this) {
+      return function(results) {
+        var categoryHierarchyTree, list, responseData;
+        list = [];
+        _.each(results, function(resultobj) {
+          var listObj, parentCat;
+          listObj = {
+            id: resultobj.id,
+            name: resultobj.get('name'),
+            sort_order: resultobj.get('sort_order')
+          };
+          if (_.isObject(resultobj.get('parent_category'))) {
+            parentCat = resultobj.get('parent_category');
+            listObj['parent'] = parentCat.id;
+          } else {
+            listObj['parent'] = null;
+          }
+          return list.push(listObj);
+        });
+        categoryHierarchyTree = treeify(list, 'id', 'parent', 'children');
+        responseData = {
+          "success": true,
+          "data": _.sortBy(categoryHierarchyTree, sortBy)
+        };
+        return response.success(responseData);
+      };
+    })(this));
+    return queryFindPromise.fail((function(_this) {
+      return function(error) {
+        var responseData;
+        responseData = {
+          "success": false,
+          "errorCode": error.code,
+          "msg": error.msg
+        };
+        return response.error(responseData);
+      };
+    })(this));
+  });
 
   Parse.Cloud.job('productImport', function(request, response) {
     var BulkImport, query, queryFindPromise;
