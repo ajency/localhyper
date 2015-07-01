@@ -4,7 +4,7 @@
 
 	<ion-side-menu-content>
 		<ion-nav-bar 
-			class="bar-calm"
+			class="bar-light"
 			no-tap-scroll="App.noTapScroll()">
 			
 			<!-- Notification icon  -->
@@ -26,12 +26,47 @@
 	<ion-side-menu 
 		side="left"
 		is-enabled="App.menuEnabled.left">
+		
+		<ion-content class="aj-menu-bg">
 
-		<div class="list">
-        	<a class="item" menu-close>
-                Logout
-            </a>
-        </div>
+			<ion-list class="aj-menutext">
+
+				<ion-item menu-close>
+					<i class="ion ion-briefcase"></i> Store
+				</ion-item>
+
+				<hr>
+
+				<ion-item menu-close>
+					<i class="ion ion-ios-telephone"></i> Call us
+				</ion-item>
+
+				<ion-item menu-close>
+					<i class="ion ion-android-share-alt"></i> Share
+				</ion-item>
+
+				<ion-item menu-close>
+					<i class="ion ion-ios-star"></i> Rate us
+				</ion-item>
+
+				<ion-item menu-close>
+					<i class="ion ion-help-circled"></i> Help
+				</ion-item>
+
+				<ion-item menu-close>
+					<i class="ion ion-heart"></i> Suggest a product
+				</ion-item>
+
+				<ion-item menu-close>
+					<i class="ion ion-information-circled"></i> About us
+				</ion-item>
+
+				<hr>
+
+			<ion-list>
+
+	    </ion-content>
+
 	</ion-side-menu>
 
 </ion-side-menus>

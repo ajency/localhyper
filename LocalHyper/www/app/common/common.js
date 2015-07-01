@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common', []).factory('App', [
-  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard) {
+  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout) {
     var App;
     return App = {
       start: true,
@@ -17,6 +17,13 @@ angular.module('LocalHyper.common', []).factory('App', [
       isWebView: function() {
         return ionic.Platform.isWebView();
       },
+      isOnline: function() {
+        if (this.isWebView()) {
+          return $cordovaNetwork.isOnline();
+        } else {
+          return navigator.onLine;
+        }
+      },
       deviceUUID: function() {
         if (this.isWebView()) {
           return device.uuid;
@@ -26,7 +33,9 @@ angular.module('LocalHyper.common', []).factory('App', [
       },
       hideSplashScreen: function() {
         if (this.isWebView()) {
-          return $cordovaSplashscreen.hide();
+          return $timeout(function() {
+            return $cordovaSplashscreen.hide();
+          }, 500);
         }
       },
       hideKeyboardAccessoryBar: function() {
@@ -65,6 +74,12 @@ angular.module('LocalHyper.common', []).factory('App', [
       },
       dragContent: function(bool) {
         return $ionicSideMenuDelegate.canDragContent(bool);
+      },
+      isLoggedIn: function() {
+        var loggedIn, user;
+        user = Parse.User.current();
+        loggedIn = _.isNull(user) ? false : true;
+        return loggedIn;
       }
     };
   }
