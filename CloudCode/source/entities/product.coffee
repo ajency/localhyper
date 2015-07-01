@@ -83,12 +83,20 @@ Parse.Cloud.job 'productImport', (request, response) ->
 		_.each results, (result) ->
 			
 			products =  result.get("json")
-			console.log "length #{products.length}"
+
 			_.each products, (product) ->
 				productItem = new ProductItem()
 				productItem.set "name", product.name
 				productItem.set "images", product.images
 				productItem.set "model_number", product.model_number
+
+				# set product category
+				categoryObj = 
+					"__type" : "Pointer",
+					"className":"Category",
+					"objectId":product.category
+
+				productItem.set "category", categoryObj				
 
 				productSavedArr.push(productItem)
 			console.log "length of prodArr #{productSavedArr.length}"

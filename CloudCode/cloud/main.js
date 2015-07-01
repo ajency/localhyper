@@ -17,13 +17,18 @@
         _.each(results, function(result) {
           var products;
           products = result.get("json");
-          console.log("length " + products.length);
           _.each(products, function(product) {
-            var productItem;
+            var categoryObj, productItem;
             productItem = new ProductItem();
             productItem.set("name", product.name);
             productItem.set("images", product.images);
             productItem.set("model_number", product.model_number);
+            categoryObj = {
+              "__type": "Pointer",
+              "className": "Category",
+              "objectId": product.category
+            };
+            productItem.set("category", categoryObj);
             return productSavedArr.push(productItem);
           });
           return console.log("length of prodArr " + productSavedArr.length);
