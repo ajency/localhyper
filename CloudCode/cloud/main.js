@@ -18,7 +18,7 @@
           var products;
           products = result.get("json");
           _.each(products, function(product) {
-            var categoryObj, productItem;
+            var brandObj, categoryObj, productItem;
             productItem = new ProductItem();
             productItem.set("name", product.name);
             productItem.set("images", product.images);
@@ -29,6 +29,12 @@
               "objectId": product.category
             };
             productItem.set("category", categoryObj);
+            brandObj = {
+              "__type": "Pointer",
+              "className": "Brand",
+              "objectId": product.brand
+            };
+            productItem.set("brand", brandObj);
             return productSavedArr.push(productItem);
           });
           return console.log("length of prodArr " + productSavedArr.length);
