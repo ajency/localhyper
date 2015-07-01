@@ -7,6 +7,9 @@
       "applicationId": "bv6HajGGe6Ver72lkjIiV0jYbJL5ll0tTWNG3obY",
       "masterKey": "0lg6VtTcJ0ITdwKYFNtZwBkbAIyp62tSahIt9VUh"
     },
+    "ParseCloud": {
+      "link": "LocalHyper"
+    },
     "_default": {
       "link": "LocalHyper"
     }
