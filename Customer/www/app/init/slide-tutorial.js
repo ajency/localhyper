@@ -3,6 +3,12 @@ angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
     $scope.slide = {
       active: 4
     };
+    $scope.$on('$ionicView.beforeEnter', function() {
+      return $('.aj-slide-img').css({
+        width: screen.width,
+        height: screen.height
+      });
+    });
     $scope.$on('$ionicView.afterEnter', function() {
       $ionicSlideBoxDelegate.enableSlide(false);
       return App.hideSplashScreen();
@@ -14,14 +20,14 @@ angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
       }
     };
     $scope.onSlideRight = function() {
-      if ($scope.slide.active !== 0) {
-        return $ionicSlideBoxDelegate.enableSlide(true);
-      }
+      var slide;
+      slide = $scope.slide.active !== 0 ? true : false;
+      return $ionicSlideBoxDelegate.enableSlide(slide);
     };
     $scope.onSlideLeft = function() {
-      if ($scope.slide.active !== 4) {
-        return $ionicSlideBoxDelegate.enableSlide(true);
-      }
+      var slide;
+      slide = $scope.slide.active !== 4 ? true : false;
+      return $ionicSlideBoxDelegate.enableSlide(slide);
     };
     return $scope.onGetStarted = function() {
       return Storage.slideTutorial('set').then(function() {

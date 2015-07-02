@@ -1,4 +1,4 @@
-#App - LocalHyper
+#App - ShopOye Customer App
 
 angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage'

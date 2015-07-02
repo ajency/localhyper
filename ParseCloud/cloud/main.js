@@ -83,7 +83,7 @@ Parse.Cloud.define("addOffers", function(request, response) {
 Parse.Cloud.define("sendSMSCode", function(request, response) {
   var code, onError, phone, query, save;
   phone = request.params.phone;
-  code = (Math.floor(Math.random() * 90000) + 10000).toString();
+  code = (Math.floor(Math.random() * 900000) + 100000).toString();
   onError = function(error) {
     return response.error(error);
   };

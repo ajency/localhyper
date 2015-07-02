@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common', []).factory('App', [
-  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout) {
+  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q) {
     var App;
     return App = {
       start: true,
@@ -80,6 +80,20 @@ angular.module('LocalHyper.common', []).factory('App', [
         user = Parse.User.current();
         loggedIn = _.isNull(user) ? false : true;
         return loggedIn;
+      },
+      getInstallationId: function() {
+        var defer;
+        defer = $q.defer();
+        if (this.isWebView()) {
+          parsePlugin.getInstallationId(function(installationId) {
+            return defer.resolve(installationId);
+          }, function(error) {
+            return defer.reject(error);
+          });
+        } else {
+          defer.resolve('DUMMY_INSTALLATION_ID');
+        }
+        return defer.promise;
       }
     };
   }

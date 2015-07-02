@@ -80,7 +80,7 @@ Parse.Cloud.define "addOffers", (request, response)->
 
 Parse.Cloud.define "sendSMSCode", (request, response)->
 	phone = request.params.phone
-	code  = (Math.floor(Math.random()*90000)+10000).toString()
+	code  = (Math.floor(Math.random()*900000)+100000).toString()
 
 	onError = (error)->
 		response.error error

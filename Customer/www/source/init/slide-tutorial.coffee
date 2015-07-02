@@ -6,6 +6,11 @@ angular.module 'LocalHyper.init'
 
 		$scope.slide = 
 			active: 4
+
+		$scope.$on '$ionicView.beforeEnter', ->
+			$('.aj-slide-img').css
+				width: screen.width
+				height: screen.height
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			$ionicSlideBoxDelegate.enableSlide false
@@ -17,18 +22,17 @@ angular.module 'LocalHyper.init'
 				$ionicSlideBoxDelegate.enableSlide false
 
 		$scope.onSlideRight = ->
-			if $scope.slide.active isnt 0
-				$ionicSlideBoxDelegate.enableSlide true
+			slide = if $scope.slide.active isnt 0 then true else false
+			$ionicSlideBoxDelegate.enableSlide slide
 
 		$scope.onSlideLeft = ->
-			if $scope.slide.active isnt 4
-				$ionicSlideBoxDelegate.enableSlide true
+			slide = if $scope.slide.active isnt 4 then true else false
+			$ionicSlideBoxDelegate.enableSlide slide
 
 		$scope.onGetStarted = ->
 			Storage.slideTutorial 'set'
 			.then ->
 				App.navigate "departments", {}, {animate: false, back: false}
-
 ]
 
 

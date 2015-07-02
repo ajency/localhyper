@@ -16,8 +16,8 @@
 }
 
 .aj-slide-img {
-	width: inherit;
-	height: inherit;
+	background-repeat: no-repeat;
+	background-size: contain;
 }
 
 .aj-slide-img .started {
@@ -86,6 +86,33 @@
 
 .platform-ios .popover {
 	height: 120px;
+}
+
+.aj-btn {
+	position: absolute;
+	width: 180px;
+	left: 90px;
+}
+
+.aj-text .list{
+	margin-left: 40px;
+	margin-right: 40px;
+}
+
+.aj-text .gray {
+	color: #999494;
+}
+
+.aj-text input, h5, h3, h4, .center{
+	text-align: center;
+}
+
+.aj-text .item{
+	border-style: none none solid none;
+}
+
+.aj-text .no-border{
+	border: none;
 }
 
 
