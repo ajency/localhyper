@@ -83,7 +83,7 @@ Parse.Cloud.define("addOffers", function(request, response) {
 Parse.Cloud.define("sendSMSCode", function(request, response) {
   var code, onError, phone, query, save;
   phone = request.params.phone;
-  code = (Math.floor(Math.random() * 90000) + 10000).toString();
+  code = (Math.floor(Math.random() * 900000) + 100000).toString();
   onError = function(error) {
     return response.error(error);
   };
@@ -123,9 +123,26 @@ Parse.Cloud.define("sendSMSCode", function(request, response) {
 });
 
 Parse.Cloud.afterSave("SMSVerify", function(request) {
-  var obj, verificationCode;
+  var obj, phone, verificationCode;
   obj = request.object;
-  return verificationCode = obj.get('verificationCode');
+  phone = obj.get('phone');
+  verificationCode = obj.get('verificationCode');
+  return Parse.Cloud.httpRequest({
+    url: 'https://rest.nexmo.com/sms/json',
+    params: {
+      api_key: '343ea2a4',
+      api_secret: 'a682ae14',
+      from: 'ShopOye',
+      to: "91" + phone,
+      text: "Welcome to ShopOye. Your one time verification code is " + verificationCode
+    }
+  }).then(function(httpResponse) {
+    console.log("SMS SUCCESS");
+    return console.log(httpResponse.text);
+  }, function(httpResponse) {
+    console.log("SMS ERROR");
+    return console.error('Request failed with response code ' + httpResponse.status);
+  });
 });
 
 Parse.Cloud.define("verifySMSCode", function(request, response) {

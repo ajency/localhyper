@@ -1,7 +1,7 @@
 angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
   '$scope', 'App', 'Storage', '$ionicSlideBoxDelegate', function($scope, App, Storage, $ionicSlideBoxDelegate) {
     $scope.slide = {
-      active: 4
+      active: 0
     };
     $scope.$on('$ionicView.afterEnter', function() {
       $ionicSlideBoxDelegate.enableSlide(false);
@@ -14,14 +14,14 @@ angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
       }
     };
     $scope.onSlideRight = function() {
-      if ($scope.slide.active !== 0) {
-        return $ionicSlideBoxDelegate.enableSlide(true);
-      }
+      var slide;
+      slide = $scope.slide.active !== 0 ? true : false;
+      return $ionicSlideBoxDelegate.enableSlide(slide);
     };
     $scope.onSlideLeft = function() {
-      if ($scope.slide.active !== 4) {
-        return $ionicSlideBoxDelegate.enableSlide(true);
-      }
+      var slide;
+      slide = $scope.slide.active !== 4 ? true : false;
+      return $ionicSlideBoxDelegate.enableSlide(slide);
     };
     return $scope.onGetStarted = function() {
       return Storage.slideTutorial('set').then(function() {
@@ -30,6 +30,20 @@ angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
           back: false
         });
       });
+    };
+  }
+]).directive('ajFitToScreen', [
+  '$timeout', '$ionicSlideBoxDelegate', function($timeout, $ionicSlideBoxDelegate) {
+    return {
+      restrict: 'A',
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          return $('.aj-slide-img').css({
+            width: $(window).width(),
+            height: $(window).height()
+          });
+        });
+      }
     };
   }
 ]).config([

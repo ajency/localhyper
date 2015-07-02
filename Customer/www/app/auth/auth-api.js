@@ -67,11 +67,16 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           var password, passwordHash;
           password = "" + phone + UUID;
           passwordHash = _this.encryptPassword(password, phone);
-          user.set("displayName", name);
-          user.set("password", password);
-          user.set("passwordHash", passwordHash);
-          return user.save().then(function(success) {
-            return defer.resolve(success);
+          return App.getInstallationId().then(function(installationId) {
+            user.set({
+              "displayName": name,
+              "password": password,
+              "passwordHash": passwordHash,
+              "installationId": installationId
+            });
+            return user.save().then(function(success) {
+              return defer.resolve(success);
+            }, onError);
           }, onError);
         };
       })(this);
@@ -90,20 +95,29 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       return defer.promise;
     };
     AuthAPI.signUpNewUser = function(phone, name) {
-      var defer, password, passwordHash, user;
+      var defer, onError, password;
       defer = $q.defer();
       password = "" + phone + UUID;
-      user = new Parse.User();
-      user.set("username", phone);
-      user.set("displayName", name);
-      user.set("password", password);
-      passwordHash = this.encryptPassword(password, phone);
-      user.set("passwordHash", passwordHash);
-      user.signUp().then(function(success) {
-        return defer.resolve(success);
-      }, function(error) {
+      onError = function(error) {
         return defer.reject(error);
-      });
+      };
+      App.getInstallationId().then((function(_this) {
+        return function(installationId) {
+          var passwordHash, user;
+          user = new Parse.User();
+          user.set({
+            "username": phone,
+            "displayName": name,
+            "password": password,
+            "installationId": installationId
+          });
+          passwordHash = _this.encryptPassword(password, phone);
+          user.set("passwordHash", passwordHash);
+          return user.signUp().then(function(success) {
+            return defer.resolve(success);
+          }, onError);
+        };
+      })(this), onError);
       return defer.promise;
     };
     return AuthAPI;

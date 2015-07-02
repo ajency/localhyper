@@ -2,9 +2,9 @@ angular.module 'LocalHyper.common', []
 
 
 .factory 'App', ['$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate'
-	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout'
+	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q'
 	, ($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window
-	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout)->
+	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q)->
 
 		App = 
 
@@ -69,5 +69,16 @@ angular.module 'LocalHyper.common', []
 				loggedIn = if _.isNull(user) then false else true
 				loggedIn
 
+			getInstallationId : ->
+				defer = $q.defer()
+				if @isWebView()
+					parsePlugin.getInstallationId (installationId)-> 
+						defer.resolve installationId
+					, (error) ->
+						defer.reject error
+				else
+					defer.resolve 'DUMMY_INSTALLATION_ID'
+
+				defer.promise
 ]
 

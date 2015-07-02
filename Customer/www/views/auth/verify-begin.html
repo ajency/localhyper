@@ -1,0 +1,31 @@
+<ion-view view-title="Verify your phone number">
+
+	<ion-content class="aj-text">
+
+		<ion-item class="item-text-wrap no-border center">
+			Shopoye will send a one time SMS message to verify your phone number. Carrier SMS charges may apply.
+		</ion-item>
+		
+		<div class="list">
+			<h5>Please enter your full name</h5>
+			<label class="item item-input">
+				<input type="text" ng-model="user.name">
+			</label>
+			
+			</br>
+			<h5>Please enter your phone number</h5>
+			<label class="item item-input">
+				<input type="tel" maxlength="10" ng-model="user.phone">
+			</label>
+		</div>
+
+		<div class="padding">
+			<button 
+				class="button button-dark aj-btn"
+				ng-click="onProceed()">
+				Proceed
+			</button>
+		</div>
+	</ion-content>
+
+</ion-view>

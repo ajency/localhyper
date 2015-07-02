@@ -65,13 +65,19 @@ angular.module 'LocalHyper.auth'
 		updateUser = (user)=>
 			password = "#{phone}#{UUID}"
 			passwordHash = @encryptPassword password, phone
-			
-			user.set "displayName", name
-			user.set "password", password
-			user.set "passwordHash", passwordHash
-			user.save()
-			.then (success)->
-				defer.resolve success
+
+			App.getInstallationId()
+			.then (installationId)->
+				user.set 
+					"displayName": name
+					"password": password
+					"passwordHash": passwordHash
+					"installationId": installationId
+					
+				user.save()
+				.then (success)->
+					defer.resolve success
+				, onError
 			, onError
 
 		userQuery = new Parse.Query Parse.User
@@ -94,18 +100,25 @@ angular.module 'LocalHyper.auth'
 		defer = $q.defer()
 		password = "#{phone}#{UUID}"
 
-		user = new Parse.User()
-		user.set "username", phone
-		user.set "displayName", name
-		user.set "password", password
-
-		passwordHash = @encryptPassword password, phone
-		user.set "passwordHash", passwordHash
-		user.signUp()
-		.then (success)->
-			defer.resolve success
-		, (error)->
+		onError = (error)->
 			defer.reject error
+
+		App.getInstallationId()
+		.then (installationId)=>
+			user = new Parse.User()
+			user.set 
+				"username": phone
+				"displayName": name
+				"password": password
+				"installationId": installationId
+
+			passwordHash = @encryptPassword password, phone
+			user.set "passwordHash", passwordHash
+			user.signUp()
+			.then (success)->
+				defer.resolve success
+			, onError
+		, onError
 
 		defer.promise
 
