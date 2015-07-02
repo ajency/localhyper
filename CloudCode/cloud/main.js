@@ -134,9 +134,9 @@
     var ProductItem, allProductsQuery, brand, categoryBasedProducts, categoryId, displayLimit, innerQuery, limit, offset, page, query, queryFindPromise, selectedFilters, sortBy;
     categoryId = request.params.categoryId;
     selectedFilters = request.params.selectedFilters;
-    sortBy = request.params.sortBy;
-    offset = request.params.offset;
-    limit = request.params.limit;
+    sortBy = parseInt(request.params.sortBy);
+    offset = parseInt(request.params.offset);
+    limit = parseInt(request.params.limit);
     brand = request.params.brandId;
     categoryBasedProducts = [];
     ProductItem = Parse.Object.extend("ProductItem");
@@ -156,6 +156,11 @@
     queryFindPromise = query.find();
     queryFindPromise.done((function(_this) {
       return function(products) {
+        var result;
+        result = {
+          count: products.length,
+          products: products
+        };
         return response.success(products);
       };
     })(this));

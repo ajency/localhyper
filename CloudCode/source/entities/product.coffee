@@ -61,9 +61,9 @@ Parse.Cloud.define 'getProducts', (request, response) ->
   
 	categoryId = request.params.categoryId
 	selectedFilters = request.params.selectedFilters
-	sortBy = request.params.sortBy
-	offset = request.params.offset
-	limit = request.params.limit
+	sortBy = parseInt request.params.sortBy
+	offset = parseInt request.params.offset
+	limit = parseInt request.params.limit
 	brand = request.params.brandId
 
 	categoryBasedProducts = []
@@ -90,7 +90,19 @@ Parse.Cloud.define 'getProducts', (request, response) ->
 
 	queryFindPromise =query.find()
 
+	# ProductCollection = Parse.Collection.extend({
+	#     model: ProductItem,
+	#     query: query
+	# });
+
+	# @productCollection = new ProductCollection()
+
+	# queryFindPromise = @productCollection.fetch()	
+
 	queryFindPromise.done (products) =>
+		result = 
+			count: products.length
+			products: products
 		response.success products
 
 	queryFindPromise.fail (error) =>
