@@ -1,5 +1,5 @@
 (function() {
-  var _, treeify;
+  var $q, _, treeify;
 
   _ = require('underscore.js');
 
@@ -169,6 +169,83 @@
         return response.error(error.message);
       };
     })(this));
+  });
+
+  $q = require('cloud/lib/q.js');
+
+  Parse.Cloud.useMasterKey();
+
+  Parse.Cloud.define("sendSMSCode", function(request, response) {
+    var code, onError, phone, query, save;
+    phone = request.params.phone;
+    code = (Math.floor(Math.random() * 90000) + 10000).toString();
+    onError = function(error) {
+      return response.error(error);
+    };
+    save = function(obj, attempts) {
+      if (attempts > 3) {
+        return response.success({
+          attemptsExceeded: true
+        });
+      } else {
+        obj.set({
+          'phone': phone,
+          'verificationCode': code,
+          'attempts': attempts
+        });
+        return obj.save().then(function() {
+          return response.success({
+            code: code,
+            attemptsExceeded: false
+          });
+        }, onError);
+      }
+    };
+    query = new Parse.Query('SMSVerify');
+    query.equalTo("phone", phone);
+    return query.find().then(function(obj) {
+      var SMSVerify, attempts, verify;
+      if (_.isEmpty(obj)) {
+        SMSVerify = Parse.Object.extend("SMSVerify");
+        verify = new SMSVerify();
+        return save(verify, 1);
+      } else {
+        obj = obj[0];
+        attempts = obj.get('attempts');
+        return save(obj, attempts + 1);
+      }
+    }, onError);
+  });
+
+  Parse.Cloud.afterSave("SMSVerify", function(request) {
+    var obj, verificationCode;
+    obj = request.object;
+    return verificationCode = obj.get('verificationCode');
+  });
+
+  Parse.Cloud.define("verifySMSCode", function(request, response) {
+    var code, phone, query;
+    phone = request.params.phone;
+    code = request.params.code;
+    query = new Parse.Query('SMSVerify');
+    query.equalTo("phone", phone);
+    return query.find().then(function(obj) {
+      var verificationCode;
+      obj = obj[0];
+      verificationCode = obj.get('verificationCode');
+      if (verificationCode === code) {
+        obj.destroy();
+        return response.success({
+          'verified': true
+        });
+      } else {
+        return response.success({
+          'verified': false
+        });
+      }
+    }, function(error) {
+      return response.error(error);
+    });
   });
 
 }).call(this);
