@@ -42,7 +42,7 @@ treeify = (list, idAttr, parentAttr, childrenAttr) ->
     return
   treeList
 
-Parse.Cloud.define 'generateCategoryHierarchy', (request, response) ->
+Parse.Cloud.define 'getCategories', (request, response) ->
   
   sortBy = request.params.sortBy
   
@@ -63,6 +63,7 @@ Parse.Cloud.define 'generateCategoryHierarchy', (request, response) ->
         id : resultobj.id
         name: resultobj.get('name')
         sort_order: resultobj.get('sort_order')
+        image: resultobj.get('image')
       
       if _.isObject(resultobj.get('parent_category'))
         parentCat = resultobj.get('parent_category')

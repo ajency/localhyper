@@ -32,7 +32,7 @@
     return treeList;
   };
 
-  Parse.Cloud.define('generateCategoryHierarchy', function(request, response) {
+  Parse.Cloud.define('getCategories', function(request, response) {
     var Category, queryCategory, queryFindPromise, sortBy;
     sortBy = request.params.sortBy;
     Category = Parse.Object.extend('Category');
@@ -48,7 +48,8 @@
           listObj = {
             id: resultobj.id,
             name: resultobj.get('name'),
-            sort_order: resultobj.get('sort_order')
+            sort_order: resultobj.get('sort_order'),
+            image: resultobj.get('image')
           };
           if (_.isObject(resultobj.get('parent_category'))) {
             parentCat = resultobj.get('parent_category');
