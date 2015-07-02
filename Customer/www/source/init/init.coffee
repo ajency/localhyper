@@ -60,7 +60,7 @@ angular.module 'LocalHyper.init', []
 
 			Storage.slideTutorial 'get'
 			.then (value)->
-				goto = if _.isNull value then "tutorial" else "departments"
+				goto = if _.isNull value then "tutorial" else "categories"
 				App.navigate goto, {}, {animate: false, back: false}
 
 			Push.register()

@@ -14,7 +14,7 @@ angular.module 'LocalHyper.auth'
 		register = ->
 			AuthAPI.register $rootScope.user
 			.then (success)->
-				App.navigate 'departments', {}, {animate: false, back: false}
+				App.navigate 'categories', {}, {animate: false, back: false}
 			, (error)->
 				$scope.sms.errorAt = 'register'
 				$scope.view.display = 'error'

@@ -10,7 +10,7 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
     };
     register = function() {
       return AuthAPI.register($rootScope.user).then(function(success) {
-        return App.navigate('departments', {}, {
+        return App.navigate('categories', {}, {
           animate: false,
           back: false
         });

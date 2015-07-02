@@ -25,7 +25,7 @@ public class ParseApplication extends Application
 	public void onCreate() {
 		super.onCreate();
 		
-		Parse.initialize(this, "bv6HajGGe6Ver72lkjIiV0jYbJL5ll0tTWNG3obY", "nFwTrWqdJFuv2UXXbxzYj38yTAPtoIYiHyj4Dyc0");
+		Parse.initialize(this, "QN2IxFFiHCTm0oKSgI6KafqJJQ3nAxwQD8QiqrYZ", "Ns8Fx0RTUY7qfaZ16Mhm8XMb0dNVnlhx9Xjrz8OA");
 		PushService.setDefaultPushCallback(this, MainActivity.class);
 		ParseInstallation.getCurrentInstallation().saveInBackground();
 	}

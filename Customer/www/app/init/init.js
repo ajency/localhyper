@@ -62,7 +62,7 @@ angular.module('LocalHyper.init', []).controller('InitCtrl', [
       App.setStatusBarStyle();
       Storage.slideTutorial('get').then(function(value) {
         var goto;
-        goto = _.isNull(value) ? "tutorial" : "departments";
+        goto = _.isNull(value) ? "tutorial" : "categories";
         return App.navigate(goto, {}, {
           animate: false,
           back: false

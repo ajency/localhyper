@@ -25,7 +25,7 @@ angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
     };
     return $scope.onGetStarted = function() {
       return Storage.slideTutorial('set').then(function() {
-        return App.navigate("departments", {}, {
+        return App.navigate("categories", {}, {
           animate: false,
           back: false
         });
@@ -33,7 +33,7 @@ angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
     };
   }
 ]).directive('ajFitToScreen', [
-  '$timeout', '$ionicSlideBoxDelegate', function($timeout, $ionicSlideBoxDelegate) {
+  '$timeout', function($timeout) {
     return {
       restrict: 'A',
       link: function(scope, el, attrs) {

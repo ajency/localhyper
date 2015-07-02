@@ -6,8 +6,8 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 
 
 .constant 'PARSE', 
-	APP_ID: 'bv6HajGGe6Ver72lkjIiV0jYbJL5ll0tTWNG3obY'
-	JS_KEY: 'uxqIu6soZAOzPXHuLQDhOwBuA3KWAAuuK75l1Z3x'
+	APP_ID: 'QN2IxFFiHCTm0oKSgI6KafqJJQ3nAxwQD8QiqrYZ'
+	JS_KEY: 'R80kznvL5F5VEzAHQ0lRwsh9iEJ3EIDdZqv1AYmJ'
 
 
 .run ['$rootScope', 'App', 'Push', '$timeout', 'PARSE', ($rootScope, App, Push, $timeout, PARSE)->
