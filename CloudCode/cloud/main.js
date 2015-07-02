@@ -130,4 +130,40 @@
     });
   });
 
+  Parse.Cloud.define('getProducts', function(request, response) {
+    var ProductItem, allProductsQuery, brand, categoryBasedProducts, categoryId, displayLimit, innerQuery, limit, offset, page, query, queryFindPromise, selectedFilters, sortBy;
+    categoryId = request.params.categoryId;
+    selectedFilters = request.params.selectedFilters;
+    sortBy = request.params.sortBy;
+    offset = request.params.offset;
+    limit = request.params.limit;
+    brand = request.params.brandId;
+    categoryBasedProducts = [];
+    ProductItem = Parse.Object.extend("ProductItem");
+    allProductsQuery = new Parse.Query(ProductItem);
+    innerQuery = new Parse.Query("Category");
+    innerQuery.equalTo("objectId", categoryId);
+    query = new Parse.Query("ProductItem");
+    query.matchesQuery("category", innerQuery);
+    query.include("category");
+    query.include("brand");
+    query.include("attrs");
+    query.include("attrs.attribute");
+    page = offset;
+    displayLimit = limit;
+    query.limit(displayLimit);
+    query.skip(page * limit);
+    queryFindPromise = query.find();
+    queryFindPromise.done((function(_this) {
+      return function(products) {
+        return response.success(products);
+      };
+    })(this));
+    return queryFindPromise.fail((function(_this) {
+      return function(error) {
+        return response.error(error.message);
+      };
+    })(this));
+  });
+
 }).call(this);
