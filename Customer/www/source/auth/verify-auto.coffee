@@ -32,11 +32,11 @@ angular.module 'LocalHyper.auth'
 				$scope.view.display = 'error'
 
 		onSmsReceptionSuccess = (smsContent)->
-			console.log smsContent
 			content = smsContent.split '>'
 			content = content[1]
-			if s.contains(content, 'code')
-				code = s.words(content, ':')
+			if s.contains(content, 'Welcome to ShopOye')
+				content = content.replace '[Nexmo DEMO]', ''
+				code = s.words(content, 'code is')
 				code = s.trim code[1]
 				sms.code = code
 				verifySmsCode code
@@ -61,6 +61,8 @@ angular.module 'LocalHyper.auth'
 				sms.errorAt = 'requestSMSCode'
 				$scope.view.display = 'error'
 
+		requestSMSCode()
+
 		$scope.onTryAgain = ->
 			$scope.view.display = 'noError'
 			switch sms.errorAt
@@ -70,8 +72,6 @@ angular.module 'LocalHyper.auth'
 					verifySmsCode sms.code
 				when 'register'
 					register()
-
-		requestSMSCode()
 
 		$scope.$on '$ionicView.enter', ->
 			startSmsReception()

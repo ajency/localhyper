@@ -1,8 +1,8 @@
 angular.module('LocalHyper.auth').controller('VerifyBeginCtrl', [
   '$scope', '$rootScope', 'App', 'CToast', function($scope, $rootScope, App, CToast) {
     $rootScope.user = {
-      name: 'Deepak Prabhudesai',
-      phone: 9765436351
+      name: '',
+      phone: ''
     };
     return $scope.onProceed = function() {
       var name, phone, state;

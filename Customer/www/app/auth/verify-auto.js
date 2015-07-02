@@ -35,11 +35,11 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
     };
     onSmsReceptionSuccess = function(smsContent) {
       var code, content;
-      console.log(smsContent);
       content = smsContent.split('>');
       content = content[1];
-      if (s.contains(content, 'code')) {
-        code = s.words(content, ':');
+      if (s.contains(content, 'Welcome to ShopOye')) {
+        content = content.replace('[Nexmo DEMO]', '');
+        code = s.words(content, 'code is');
         code = s.trim(code[1]);
         sms.code = code;
         return verifySmsCode(code);
@@ -70,6 +70,7 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
         return $scope.view.display = 'error';
       });
     };
+    requestSMSCode();
     $scope.onTryAgain = function() {
       $scope.view.display = 'noError';
       switch (sms.errorAt) {
@@ -81,7 +82,6 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
           return register();
       }
     };
-    requestSMSCode();
     $scope.$on('$ionicView.enter', function() {
       return startSmsReception();
     });

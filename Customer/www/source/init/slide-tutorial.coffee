@@ -5,12 +5,7 @@ angular.module 'LocalHyper.init'
 	, ($scope, App, Storage, $ionicSlideBoxDelegate)->
 
 		$scope.slide = 
-			active: 4
-
-		$scope.$on '$ionicView.beforeEnter', ->
-			$('.aj-slide-img').css
-				width: screen.width
-				height: screen.height
+			active: 0
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			$ionicSlideBoxDelegate.enableSlide false
@@ -33,6 +28,17 @@ angular.module 'LocalHyper.init'
 			Storage.slideTutorial 'set'
 			.then ->
 				App.navigate "departments", {}, {animate: false, back: false}
+]
+
+
+.directive 'ajFitToScreen', ['$timeout', '$ionicSlideBoxDelegate', ($timeout, $ionicSlideBoxDelegate)->
+	restrict: 'A'
+	link: (scope, el, attrs)->
+		
+		$timeout ->
+			$('.aj-slide-img').css
+				width: $(window).width()
+				height: $(window).height()
 ]
 
 

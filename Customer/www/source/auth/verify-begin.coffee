@@ -5,8 +5,8 @@ angular.module 'LocalHyper.auth'
 	, ($scope, $rootScope, App, CToast)->
 
 		$rootScope.user = 
-			name: 'Deepak Prabhudesai'
-			phone: 9765436351
+			name: ''
+			phone: ''
 
 		$scope.onProceed = ->
 			name  = $rootScope.user.name

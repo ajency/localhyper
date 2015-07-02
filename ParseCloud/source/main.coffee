@@ -115,10 +115,26 @@ Parse.Cloud.define "sendSMSCode", (request, response)->
 
 
 Parse.Cloud.afterSave "SMSVerify", (request)->
-	#Send sms
+	#Send sms using twilio
 	obj = request.object
+	phone = obj.get 'phone'
 	verificationCode = obj.get 'verificationCode'
 
+	Parse.Cloud.httpRequest 
+		url: 'https://rest.nexmo.com/sms/json'
+		params:
+			api_key: '343ea2a4'
+			api_secret: 'a682ae14'
+			from: 'ShopOye'
+			to: "91#{phone}"
+			text: "Welcome to ShopOye. Your one time verification code is #{verificationCode}"
+
+	.then (httpResponse)->
+		console.log "SMS SUCCESS"
+		console.log httpResponse.text
+	, (httpResponse)->
+		console.log "SMS ERROR"
+		console.error 'Request failed with response code ' + httpResponse.status
 
 
 Parse.Cloud.define "verifySMSCode", (request, response)->
