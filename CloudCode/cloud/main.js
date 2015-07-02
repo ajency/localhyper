@@ -1,5 +1,5 @@
 (function() {
-  var $q, _, treeify;
+  var _, treeify;
 
   _ = require('underscore.js');
 
@@ -171,8 +171,6 @@
     })(this));
   });
 
-  $q = require('cloud/lib/q.js');
-
   Parse.Cloud.useMasterKey();
 
   Parse.Cloud.define("sendSMSCode", function(request, response) {
@@ -188,12 +186,11 @@
           attemptsExceeded: true
         });
       } else {
-        obj.set({
+        return obj.save({
           'phone': phone,
           'verificationCode': code,
           'attempts': attempts
-        });
-        return obj.save().then(function() {
+        }).then(function() {
           return response.success({
             code: code,
             attemptsExceeded: false
@@ -232,11 +229,9 @@
         text: "Welcome to ShopOye. Your one time verification code is " + verificationCode
       }
     }).then(function(httpResponse) {
-      console.log("SMS SUCCESS");
-      return console.log(httpResponse.text);
+      return console.log("SMS Sent: " + phone);
     }, function(httpResponse) {
-      console.log("SMS ERROR");
-      return console.error('Request failed with response code ' + httpResponse.status);
+      return console.log("SMS Error");
     });
   });
 
@@ -247,19 +242,16 @@
     query = new Parse.Query('SMSVerify');
     query.equalTo("phone", phone);
     return query.find().then(function(obj) {
-      var verificationCode;
+      var verificationCode, verified;
       obj = obj[0];
       verificationCode = obj.get('verificationCode');
-      if (verificationCode === code) {
+      verified = verificationCode === code ? true : false;
+      if (verified) {
         obj.destroy();
-        return response.success({
-          'verified': true
-        });
-      } else {
-        return response.success({
-          'verified': false
-        });
       }
+      return response.success({
+        'verified': verified
+      });
     }, function(error) {
       return response.error(error);
     });

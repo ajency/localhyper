@@ -1,5 +1,3 @@
-$q   = require 'cloud/lib/q.js'
-
 Parse.Cloud.useMasterKey()
 
 Parse.Cloud.define "sendSMSCode", (request, response)->
@@ -13,12 +11,10 @@ Parse.Cloud.define "sendSMSCode", (request, response)->
 		if attempts > 3
 			response.success attemptsExceeded: true
 		else
-			obj.set 
+			obj.save
 				'phone': phone
 				'verificationCode': code
 				'attempts': attempts
-			
-			obj.save()
 			.then ->
 				response.success code: code, attemptsExceeded: false
 			, onError
@@ -39,7 +35,7 @@ Parse.Cloud.define "sendSMSCode", (request, response)->
 
 
 Parse.Cloud.afterSave "SMSVerify", (request)->
-	#Send sms using twilio
+	#Send sms using Nexmo
 	obj = request.object
 	phone = obj.get 'phone'
 	verificationCode = obj.get 'verificationCode'
@@ -54,11 +50,9 @@ Parse.Cloud.afterSave "SMSVerify", (request)->
 			text: "Welcome to ShopOye. Your one time verification code is #{verificationCode}"
 
 	.then (httpResponse)->
-		console.log "SMS SUCCESS"
-		console.log httpResponse.text
+		console.log "SMS Sent: #{phone}"
 	, (httpResponse)->
-		console.log "SMS ERROR"
-		console.error 'Request failed with response code ' + httpResponse.status
+		console.log "SMS Error"
 
 
 Parse.Cloud.define "verifySMSCode", (request, response)->
@@ -71,11 +65,9 @@ Parse.Cloud.define "verifySMSCode", (request, response)->
 	.then (obj)->
 		obj = obj[0]
 		verificationCode = obj.get 'verificationCode'
-		if verificationCode is code
-			obj.destroy()
-			response.success 'verified': true
-		else 
-			response.success 'verified': false
+		verified = if verificationCode is code then true else false
+		obj.destroy() if verified
+		response.success 'verified': verified
 	, (error)->
 		response.error error
 
