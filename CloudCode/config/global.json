@@ -1,0 +1,17 @@
+{
+  "global": {
+    "parseVersion": "1.4.2"
+  },
+  "applications": {
+    "CloudCode": {
+      "link": "localhyper"
+    },
+    "_default": {
+      "link": "localhyper"
+    },
+    "localhyper": {
+      "applicationId": "QN2IxFFiHCTm0oKSgI6KafqJJQ3nAxwQD8QiqrYZ",
+      "masterKey": "tu7L2mISoZxJkaerbn468OZ7ZZKc5HwpqtbxuHMI"
+    }
+  }
+}
