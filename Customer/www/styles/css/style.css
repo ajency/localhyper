@@ -80,9 +80,7 @@
 }
 
 /*Ionic popover*/
-.platform-android .popover {
-	height: 115px;
-}
+
 
 .platform-ios .popover {
 	height: 120px;
