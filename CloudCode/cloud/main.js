@@ -311,21 +311,7 @@
     var obj, phone, verificationCode;
     obj = request.object;
     phone = obj.get('phone');
-    verificationCode = obj.get('verificationCode');
-    return Parse.Cloud.httpRequest({
-      url: 'https://rest.nexmo.com/sms/json',
-      params: {
-        api_key: '343ea2a4',
-        api_secret: 'a682ae14',
-        from: 'ShopOye',
-        to: "91" + phone,
-        text: "Welcome to ShopOye. Your one time verification code is " + verificationCode
-      }
-    }).then(function(httpResponse) {
-      return console.log("SMS Sent: " + phone);
-    }, function(httpResponse) {
-      return console.log("SMS Error");
-    });
+    return verificationCode = obj.get('verificationCode');
   });
 
   Parse.Cloud.define("verifySMSCode", function(request, response) {
