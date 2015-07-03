@@ -88,10 +88,13 @@ Parse.Cloud.define 'getProducts', (request, response) ->
 		query.matchesQuery("brand", innerBrandQuery)
 	
 
-	query.include("category")
+	# restrict which fields are being returned
+	query.select("image,name,mrp,brand")
+
 	query.include("brand")
-	query.include("attrs")
-	query.include("attrs.attribute")
+	# query.include("category")
+	# query.include("attrs")
+	# query.include("attrs.attribute")
 
 	# pagination
 	query.limit(displayLimit)

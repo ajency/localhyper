@@ -150,10 +150,8 @@
       innerBrandQuery.equalTo("objectId", brand);
       query.matchesQuery("brand", innerBrandQuery);
     }
-    query.include("category");
+    query.select("image,name,mrp,brand");
     query.include("brand");
-    query.include("attrs");
-    query.include("attrs.attribute");
     query.limit(displayLimit);
     query.skip(page * displayLimit);
     if (ascending === true) {
