@@ -131,37 +131,47 @@
   });
 
   Parse.Cloud.define('getProducts', function(request, response) {
-    var ProductItem, allProductsQuery, brand, categoryBasedProducts, categoryId, displayLimit, innerQuery, limit, offset, page, query, queryFindPromise, selectedFilters, sortBy;
+    var ProductItem, ascending, brand, categoryBasedProducts, categoryId, displayLimit, innerBrandQuery, innerQuery, page, query, queryFindPromise, selectedFilters, sortBy;
     categoryId = request.params.categoryId;
     selectedFilters = request.params.selectedFilters;
-    sortBy = parseInt(request.params.sortBy);
-    offset = parseInt(request.params.offset);
-    limit = parseInt(request.params.limit);
-    brand = request.params.brandId;
+    sortBy = request.params.sortBy;
+    ascending = request.params.ascending;
+    page = parseInt(request.params.page);
+    displayLimit = parseInt(request.params.displayLimit);
+    brand = request.params.brand;
     categoryBasedProducts = [];
     ProductItem = Parse.Object.extend("ProductItem");
-    allProductsQuery = new Parse.Query(ProductItem);
     innerQuery = new Parse.Query("Category");
     innerQuery.equalTo("objectId", categoryId);
     query = new Parse.Query("ProductItem");
     query.matchesQuery("category", innerQuery);
+    if (brand !== 'all') {
+      innerBrandQuery = new Parse.Query("Brand");
+      innerBrandQuery.equalTo("objectId", brand);
+      query.matchesQuery("brand", innerBrandQuery);
+    }
     query.include("category");
     query.include("brand");
     query.include("attrs");
     query.include("attrs.attribute");
-    page = offset;
-    displayLimit = limit;
     query.limit(displayLimit);
-    query.skip(page * limit);
+    query.skip(page * displayLimit);
+    if (ascending === true) {
+      query.ascending(sortBy);
+    } else {
+      query.descending(sortBy);
+    }
     queryFindPromise = query.find();
     queryFindPromise.done((function(_this) {
       return function(products) {
         var result;
         result = {
           count: products.length,
-          products: products
+          products: products,
+          filters: [],
+          sortableAttributes: ["mrp", "popularity"]
         };
-        return response.success(products);
+        return response.success(result);
       };
     })(this));
     return queryFindPromise.fail((function(_this) {

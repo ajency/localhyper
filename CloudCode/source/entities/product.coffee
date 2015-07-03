@@ -61,32 +61,47 @@ Parse.Cloud.define 'getProducts', (request, response) ->
   
 	categoryId = request.params.categoryId
 	selectedFilters = request.params.selectedFilters
-	sortBy = parseInt request.params.sortBy
-	offset = parseInt request.params.offset
-	limit = parseInt request.params.limit
-	brand = request.params.brandId
+	sortBy =  request.params.sortBy
+	ascending = request.params.ascending
+	page = parseInt request.params.page
+	displayLimit = parseInt request.params.displayLimit
+	
+	brand = request.params.brand
 
 	categoryBasedProducts = []
 
 	# get all category based products
 	ProductItem = Parse.Object.extend("ProductItem")
-	allProductsQuery = new Parse.Query(ProductItem)
 	
+	# query to get specific category
 	innerQuery = new Parse.Query("Category")
 	innerQuery.equalTo("objectId",categoryId)
 
+	# query to get products matching the child category
 	query = new Parse.Query("ProductItem");
 	query.matchesQuery("category", innerQuery)
+
+	# filter based on brand only if specific brand is fetched
+	if brand isnt 'all'
+		innerBrandQuery = new Parse.Query("Brand")
+		innerBrandQuery.equalTo("objectId",brand)
+		query.matchesQuery("brand", innerBrandQuery)
+	
+
 	query.include("category")
 	query.include("brand")
 	query.include("attrs")
 	query.include("attrs.attribute")
 
 	# pagination
-	page = offset
-	displayLimit = limit
 	query.limit(displayLimit)
-	query.skip(page * limit)
+	query.skip(page * displayLimit)
+
+	# sorting
+	if ascending is true
+		query.ascending(sortBy)
+	else
+		query.descending(sortBy)
 
 	queryFindPromise =query.find()
 
@@ -103,7 +118,10 @@ Parse.Cloud.define 'getProducts', (request, response) ->
 		result = 
 			count: products.length
 			products: products
-		response.success products
+			filters: []
+			sortableAttributes : ["mrp","popularity"]
+
+		response.success result
 
 	queryFindPromise.fail (error) =>
 		response.error error.message
