@@ -3,7 +3,16 @@
 
 @import "variables";
 
+/**** Fonts ****/
+@import url(../../styles/fonts/open-sans/open-sans.css);
 
+h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider {
+	font-family: 'opensans' !important;
+	color: #424242;
+}
+h1, h2, h3, h4, h5, h6{
+	font-weight: 800;
+}
 .bottom-fixed{
 	position:absolute;
 	bottom:0px;
@@ -12,4 +21,88 @@
 	  display: block;
 	  margin: auto;
 	  margin-top: 50%;
+}
+
+.margin-none{
+	margin:0px !important;
+}
+sm{
+   font-size: 11px;
+}
+.platform-android .popover {
+	height: 170px;
+	width: 250px;
+}
+.subdued{
+	  color: #747474;
+}
+/* HEADER */
+
+.has-header{
+	background:@gray-transperent;
+}
+.bar-header{
+	border-bottom:1px solid @gray-lighter !important;
+	.notification{
+		  height: 20px;
+		  width: 20px;
+		  text-align: center;
+		  padding: 2px 6px;
+		  margin-right: -15px;
+		  z-index: 9999;
+	}
+	
+}
+.number-count{
+	margin-bottom: -5px !important;
+}
+.aj-right-popover{
+	 hr{
+	    border: none;
+	    height: 3px;
+	    background-color: @gray-dark;
+	}
+	.item{
+		  padding: 11px 54px;
+		i{
+			font-size: 22px;
+		}
+	}
+}
+
+/* Menu */
+.sprite-icon{
+	  background: url(../../img/sprite.png)no-repeat;
+	  width: 30px;
+	  height: 30px;
+	  display: inline-block;
+	  margin-bottom: -10px;
+}
+.i-store{
+	.sprite-icon;
+	 background-position: -7px -8px;
+}
+.i-call{
+	.sprite-icon;
+	 background-position: -7px -60px;
+}
+.i-share{
+	.sprite-icon;
+	 background-position: -9px -120px;
+}
+.i-rate{
+	.sprite-icon;
+	 background-position: -9px -182px;
+}
+.i-help{
+	.sprite-icon;
+	 background-position: -9px -245px;
+}
+.i-suggest{
+	.sprite-icon;
+	 background-position: -9px -305px;
+}
+.i-about{
+	.sprite-icon;
+	 background-position: -9px -367px;
 }
