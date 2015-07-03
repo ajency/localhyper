@@ -81,13 +81,20 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
 
         Parse.Promise.when(findQs).then (attributeValuesArray) ->
             individualFindResults = _.flatten(_.toArray(attributeValuesArray))
-            console.log individualFindResults
-            _.groupBy(individualFindResults, 'attribute')
-            # resultAttribObject['attribValues'] = attributeValuesResult
-            # result.push resultAttribObject
+
+            finalArr = []
+            _.each individualFindResults , (individualResult) ->
+                object =
+                    "attributeId" : individualResult.get("attribute").id
+                    "attributeName" : individualResult.get("attribute").get "name"
+                    "group" : individualResult.get("attribute").get "group"
+                    "displayType" : individualResult.get("attribute").get "displayType"
+                    "value" : individualResult.get "value"
+                console.log object
+                finalArr.push object
             
             Parse.Promise.as()  
-            response.success individualFindResults 
+            response.success finalArr 
         , (error)->
             response.error error
 

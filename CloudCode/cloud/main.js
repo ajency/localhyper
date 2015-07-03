@@ -133,12 +133,23 @@
           return query.find();
         });
         return Parse.Promise.when(findQs).then(function(attributeValuesArray) {
-          var individualFindResults;
+          var finalArr, individualFindResults;
           individualFindResults = _.flatten(_.toArray(attributeValuesArray));
-          console.log(individualFindResults);
-          _.groupBy(individualFindResults, 'attribute');
+          finalArr = [];
+          _.each(individualFindResults, function(individualResult) {
+            var object;
+            object = {
+              "attributeId": individualResult.get("attribute").id,
+              "attributeName": individualResult.get("attribute").get("name"),
+              "group": individualResult.get("attribute").get("group"),
+              "displayType": individualResult.get("attribute").get("displayType"),
+              "value": individualResult.get("value")
+            };
+            console.log(object);
+            return finalArr.push(object);
+          });
           Parse.Promise.as();
-          return response.success(individualFindResults);
+          return response.success(finalArr);
         }, function(error) {
           return response.error(error);
         });
