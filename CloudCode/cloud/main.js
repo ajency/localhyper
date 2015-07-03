@@ -131,48 +131,67 @@
   });
 
   Parse.Cloud.define('getProducts', function(request, response) {
-    var ProductItem, ascending, brand, categoryBasedProducts, categoryId, displayLimit, innerBrandQuery, innerQuery, page, query, queryFindPromise, selectedFilters, sortBy;
+    var ascending, categoryId, displayLimit, filterableAttribQuery, findFilterableAttrib, page, selectedFilters, sortBy;
     categoryId = request.params.categoryId;
     selectedFilters = request.params.selectedFilters;
     sortBy = request.params.sortBy;
     ascending = request.params.ascending;
     page = parseInt(request.params.page);
     displayLimit = parseInt(request.params.displayLimit);
-    brand = request.params.brand;
-    categoryBasedProducts = [];
-    ProductItem = Parse.Object.extend("ProductItem");
-    innerQuery = new Parse.Query("Category");
-    innerQuery.equalTo("objectId", categoryId);
-    query = new Parse.Query("ProductItem");
-    query.matchesQuery("category", innerQuery);
-    if (brand !== 'all') {
-      innerBrandQuery = new Parse.Query("Brand");
-      innerBrandQuery.equalTo("objectId", brand);
-      query.matchesQuery("brand", innerBrandQuery);
-    }
-    query.select("image,name,mrp,brand");
-    query.include("brand");
-    query.limit(displayLimit);
-    query.skip(page * displayLimit);
-    if (ascending === true) {
-      query.ascending(sortBy);
-    } else {
-      query.descending(sortBy);
-    }
-    queryFindPromise = query.find();
-    queryFindPromise.done((function(_this) {
-      return function(products) {
-        var result;
-        result = {
-          count: products.length,
-          products: products,
-          filters: [],
-          sortableAttributes: ["mrp", "popularity"]
-        };
-        return response.success(result);
+    filterableAttribQuery = new Parse.Query("Category");
+    filterableAttribQuery.equalTo("objectId", categoryId);
+    filterableAttribQuery.select("filterable_attributes");
+    filterableAttribQuery.include("filterable_attributes");
+    findFilterableAttrib = filterableAttribQuery.find();
+    findFilterableAttrib.done((function(_this) {
+      return function(filters) {
+        var ProductItem, brand, endPrice, filterableProps, innerBrandQuery, innerQuery, price, query, queryFindPromise, startPrice;
+        ProductItem = Parse.Object.extend("ProductItem");
+        innerQuery = new Parse.Query("Category");
+        innerQuery.equalTo("objectId", categoryId);
+        query = new Parse.Query("ProductItem");
+        query.matchesQuery("category", innerQuery);
+        if ((selectedFilters !== "all") && (_.isObject(selectedFilters))) {
+          filterableProps = Object.keys(selectedFilters);
+          if (_.contains(filterableProps, "brand")) {
+            brand = selectedFilters["brand"];
+            innerBrandQuery = new Parse.Query("Brand");
+            innerBrandQuery.equalTo("objectId", brand);
+            query.matchesQuery("brand", innerBrandQuery);
+          }
+          if (_.contains(filterableProps, "price")) {
+            price = selectedFilters["price"];
+            startPrice = parseInt(price[0]);
+            endPrice = parseInt(price[1]);
+            query.greaterThanOrEqualTo("mrp", startPrice);
+            query.lessThanOrEqualTo("mrp", endPrice);
+          }
+        }
+        query.select("image,name,mrp,brand");
+        query.include("brand");
+        query.limit(displayLimit);
+        query.skip(page * displayLimit);
+        if (ascending === true) {
+          query.ascending(sortBy);
+        } else {
+          query.descending(sortBy);
+        }
+        queryFindPromise = query.find();
+        queryFindPromise.done(function(products) {
+          var result;
+          result = {
+            products: products,
+            filters: filters,
+            sortableAttributes: ["mrp", "popularity"]
+          };
+          return response.success(result);
+        });
+        return queryFindPromise.fail(function(error) {
+          return response.error(error.message);
+        });
       };
     })(this));
-    return queryFindPromise.fail((function(_this) {
+    return findFilterableAttrib.fail((function(_this) {
       return function(error) {
         return response.error(error.message);
       };

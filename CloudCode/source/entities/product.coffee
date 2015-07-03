@@ -60,73 +60,87 @@ Parse.Cloud.job 'productImport', (request, response) ->
 Parse.Cloud.define 'getProducts', (request, response) ->
   
 	categoryId = request.params.categoryId
-	selectedFilters = request.params.selectedFilters
+	selectedFilters = request.params.selectedFilters # "all" / {"brand": "","price": "", "otherAttrib"} 
 	sortBy =  request.params.sortBy
 	ascending = request.params.ascending
 	page = parseInt request.params.page
 	displayLimit = parseInt request.params.displayLimit
 	
-	brand = request.params.brand
 
-	categoryBasedProducts = []
+	# get filterable attributes for the child category
+	filterableAttribQuery = new Parse.Query("Category")
+	filterableAttribQuery.equalTo("objectId",categoryId)
+	filterableAttribQuery.select("filterable_attributes")
+	filterableAttribQuery.include("filterable_attributes")
 
-	# get all category based products
-	ProductItem = Parse.Object.extend("ProductItem")
+	findFilterableAttrib = filterableAttribQuery.find()
+
+	findFilterableAttrib.done (filters) =>
+
+		# get all category based products
+		ProductItem = Parse.Object.extend("ProductItem")
+		
+		# query to get specific category
+		innerQuery = new Parse.Query("Category")
+		innerQuery.equalTo("objectId",categoryId)
+
+		# query to get products matching the child category
+		query = new Parse.Query("ProductItem");
+		query.matchesQuery("category", innerQuery)
+
+		if (selectedFilters isnt "all") and (_.isObject(selectedFilters))
+			filterableProps = Object.keys(selectedFilters)
+
+			if _.contains(filterableProps, "brand")
+				brand = selectedFilters["brand"]
 	
-	# query to get specific category
-	innerQuery = new Parse.Query("Category")
-	innerQuery.equalTo("objectId",categoryId)
+				innerBrandQuery = new Parse.Query("Brand")
+				innerBrandQuery.equalTo("objectId",brand)
+				query.matchesQuery("brand", innerBrandQuery)
+			
+			if _.contains(filterableProps, "price")
+				price = selectedFilters["price"]
+				
+				startPrice = parseInt price[0]
+				endPrice = parseInt price[1]
+				
+				query.greaterThanOrEqualTo("mrp", startPrice)
+				query.lessThanOrEqualTo("mrp", endPrice)
+				
 
-	# query to get products matching the child category
-	query = new Parse.Query("ProductItem");
-	query.matchesQuery("category", innerQuery)
+		# restrict which fields are being returned
+		query.select("image,name,mrp,brand")
 
-	# filter based on brand only if specific brand is fetched
-	if brand isnt 'all'
-		innerBrandQuery = new Parse.Query("Brand")
-		innerBrandQuery.equalTo("objectId",brand)
-		query.matchesQuery("brand", innerBrandQuery)
-	
+		query.include("brand")
+		# query.include("category")
+		# query.include("attrs")
+		# query.include("attrs.attribute")
 
-	# restrict which fields are being returned
-	query.select("image,name,mrp,brand")
+		# pagination
+		query.limit(displayLimit)
+		query.skip(page * displayLimit)
 
-	query.include("brand")
-	# query.include("category")
-	# query.include("attrs")
-	# query.include("attrs.attribute")
+		# sorting
+		if ascending is true
+			query.ascending(sortBy)
+		else
+			query.descending(sortBy)
 
-	# pagination
-	query.limit(displayLimit)
-	query.skip(page * displayLimit)
+		queryFindPromise =query.find()
 
-	# sorting
-	if ascending is true
-		query.ascending(sortBy)
-	else
-		query.descending(sortBy)
+		queryFindPromise.done (products) =>
 
-	queryFindPromise =query.find()
+			result = 
+				products: products
+				filters: filters
+				sortableAttributes : ["mrp","popularity"]
 
-	# ProductCollection = Parse.Collection.extend({
-	#     model: ProductItem,
-	#     query: query
-	# });
+			response.success result
 
-	# @productCollection = new ProductCollection()
+		queryFindPromise.fail (error) =>
+			response.error error.message
 
-	# queryFindPromise = @productCollection.fetch()	
-
-	queryFindPromise.done (products) =>
-		result = 
-			count: products.length
-			products: products
-			filters: []
-			sortableAttributes : ["mrp","popularity"]
-
-		response.success result
-
-	queryFindPromise.fail (error) =>
+	findFilterableAttrib.fail (error) =>
 		response.error error.message
 	
 
