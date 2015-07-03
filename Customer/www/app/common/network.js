@@ -1,6 +1,6 @@
 angular.module('LocalHyper.common').factory('Network', [
   '$q', '$cordovaNetwork', function($q, $cordovaNetwork) {
-    var Network, isOnline, isValidUrl;
+    var Network, isHttpUrl, isOnline;
     Network = {};
     isOnline = function() {
       if (ionis.Platform.isWebView()) {
@@ -9,7 +9,7 @@ angular.module('LocalHyper.common').factory('Network', [
         return navigator.onLine;
       }
     };
-    isValidUrl = function(config) {
+    isHttpUrl = function(config) {
       if (s.contains(config.url, '.html')) {
         return false;
       } else {
@@ -17,15 +17,18 @@ angular.module('LocalHyper.common').factory('Network', [
       }
     };
     Network.request = function(config) {
-      if (isValidUrl(config)) {
+      if (isHttpUrl(config)) {
         if (isOnline()) {
           return config;
         } else {
-          return $q.reject('no-internet');
+          return $q.reject('offline');
         }
       } else {
         return config;
       }
+    };
+    Network.responseError = function(rejection) {
+      return $q.reject(rejection);
     };
     return Network;
   }

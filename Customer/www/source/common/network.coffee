@@ -9,14 +9,18 @@ angular.module 'LocalHyper.common'
 		if ionis.Platform.isWebView() then $cordovaNetwork.isOnline()
 		else navigator.onLine
 
-	isValidUrl = (config)->
+	isHttpUrl = (config)->
 		if s.contains(config.url, '.html') then false else true
 
 	Network.request = (config)->
-		if isValidUrl config
+		if isHttpUrl config
 			if isOnline() then config
-			else $q.reject 'no-internet'
+			else $q.reject 'offline'
 		else config
+
+	Network.responseError = (rejection)->
+		# if rejection is 'offline'
+		$q.reject rejection
 
 	Network
 ]
