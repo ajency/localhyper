@@ -114,11 +114,11 @@
     findCategoryPromise = categoryQuery.first();
     return findCategoryPromise.done((function(_this) {
       return function(categoryData) {
-        var filterable_attributes, result;
+        var filterable_attributes, findQs, result;
         filterable_attributes = categoryData.get('filterable_attributes');
         result = [];
-        _.each(filterable_attributes, function(attribute) {
-          var attributeId, attributeValues, findPromise, innerQuery, query, resultAttribObject;
+        findQs = _.map(filterable_attributes, function(attribute) {
+          var attributeId, attributeValues, innerQuery, query, resultAttribObject;
           attributeId = attribute.id;
           attributeValues = [];
           resultAttribObject = {
@@ -129,19 +129,19 @@
           innerQuery.equalTo("objectId", attributeId);
           query = new Parse.Query("AttributeValues");
           query.matchesQuery("attribute", innerQuery);
-          findPromise = query.find();
-          console.log(findPromise);
-          findPromise.done(function(attributeValuesResult) {
-            console.log("attrib values are:");
-            console.log(attributeValuesResult);
-            resultAttribObject['attribValues'] = attributeValuesResult;
-            return result.push(resultAttribObject);
-          });
-          return findPromise.fail(function(error) {
-            return response.error(error.message);
-          });
+          query.include("attribute");
+          return query.find();
         });
-        return response.success(result);
+        return Parse.Promise.when(findQs).then(function(attributeValuesArray) {
+          var individualFindResults;
+          individualFindResults = _.flatten(_.toArray(attributeValuesArray));
+          console.log(individualFindResults);
+          _.groupBy(individualFindResults, 'attribute');
+          Parse.Promise.as();
+          return response.success(individualFindResults);
+        }, function(error) {
+          return response.error(error);
+        });
       };
     })(this));
   });
