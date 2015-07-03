@@ -1,5 +1,5 @@
 (function() {
-  var _, treeify;
+  var _, getAttribValueMapping, treeify;
 
   _ = require('underscore.js');
 
@@ -76,6 +76,72 @@
           "msg": error.msg
         };
         return response.error(responseData);
+      };
+    })(this));
+  });
+
+  getAttribValueMapping = function(categoryId, filterableAttributes, secondaryAttributes) {
+    var AttributeValues, Attributes, Category, categoryQuery, findCategoryPromise;
+    if (filterableAttributes == null) {
+      filterableAttributes = true;
+    }
+    if (secondaryAttributes == null) {
+      secondaryAttributes = false;
+    }
+    Category = Parse.Object.extend('Category');
+    Attributes = Parse.Object.extend('Attributes');
+    AttributeValues = Parse.Object.extend('AttributeValues');
+    categoryQuery = new Parse.Query("Category");
+    categoryQuery.equalTo("objectId", categoryId);
+    categoryQuery.include("filterable_attributes");
+    findCategoryPromise = categoryQuery.first();
+    return findCategoryPromise.done((function(_this) {
+      return function(categoryData) {
+        return categoryData;
+      };
+    })(this));
+  };
+
+  Parse.Cloud.define('getAttribValueMapping', function(request, response) {
+    var AttributeValues, Attributes, Category, categoryId, categoryQuery, findCategoryPromise;
+    categoryId = request.params.categoryId;
+    Category = Parse.Object.extend('Category');
+    Attributes = Parse.Object.extend('Attributes');
+    AttributeValues = Parse.Object.extend('AttributeValues');
+    categoryQuery = new Parse.Query("Category");
+    categoryQuery.equalTo("objectId", categoryId);
+    categoryQuery.include("filterable_attributes");
+    findCategoryPromise = categoryQuery.first();
+    return findCategoryPromise.done((function(_this) {
+      return function(categoryData) {
+        var filterable_attributes, result;
+        filterable_attributes = categoryData.get('filterable_attributes');
+        result = [];
+        _.each(filterable_attributes, function(attribute) {
+          var attributeId, attributeValues, findPromise, innerQuery, query, resultAttribObject;
+          attributeId = attribute.id;
+          attributeValues = [];
+          resultAttribObject = {
+            'name': attribute.get("name"),
+            'id': attributeId
+          };
+          innerQuery = new Parse.Query("Attributes");
+          innerQuery.equalTo("objectId", attributeId);
+          query = new Parse.Query("AttributeValues");
+          query.matchesQuery("attribute", innerQuery);
+          findPromise = query.find();
+          console.log(findPromise);
+          findPromise.done(function(attributeValuesResult) {
+            console.log("attrib values are:");
+            console.log(attributeValuesResult);
+            resultAttribObject['attribValues'] = attributeValuesResult;
+            return result.push(resultAttribObject);
+          });
+          return findPromise.fail(function(error) {
+            return response.error(error.message);
+          });
+        });
+        return response.success(result);
       };
     })(this));
   });
@@ -167,7 +233,7 @@
             query.lessThanOrEqualTo("mrp", endPrice);
           }
         }
-        query.select("image,name,mrp,brand");
+        query.select("images,name,mrp,brand");
         query.include("brand");
         query.limit(displayLimit);
         query.skip(page * displayLimit);

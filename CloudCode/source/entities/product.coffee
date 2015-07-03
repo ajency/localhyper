@@ -1,3 +1,96 @@
+getAttribValueMapping = (categoryId,filterableAttributes=true,secondaryAttributes=false) ->
+	Category = Parse.Object.extend('Category')
+	Attributes = Parse.Object.extend('Attributes')
+	AttributeValues = Parse.Object.extend('AttributeValues')
+
+	# get category by given category id
+	categoryQuery = new Parse.Query("Category")
+	categoryQuery.equalTo("objectId", categoryId)
+	categoryQuery.include("filterable_attributes")
+	# categoryQuery.include("secondary_attributes")
+	
+	findCategoryPromise = categoryQuery.first()
+
+	# for such category find all the filterable_attributes and secondary_attributes
+	findCategoryPromise.done (categoryData) =>
+		# filterable_attributes = categoryData.get('filterable_attributes')
+
+		# _.each filterable_attributes, (f_attrib) ->
+			
+			# # query to get specific category
+			# innerQuery = new Parse.Query("Attributes")
+			# innerQuery.equalTo("objectId",attributeId)
+
+			# # query to get products matching the child category
+			# query = new Parse.Query("AttributeValues")
+			# query.matchesQuery("attribute", innerQuery)
+			
+			# # output
+			# [
+			# 	{
+			# 		"attribId":
+			# 		"attribName":
+			# 		"displayType":
+			# 		"attribValues": []
+
+			# 	}
+			# ]			
+
+		return categoryData
+
+
+Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
+	categoryId = request.params.categoryId
+	
+	Category = Parse.Object.extend('Category')
+	Attributes = Parse.Object.extend('Attributes')
+	AttributeValues = Parse.Object.extend('AttributeValues')
+
+	# get category by given category id
+	categoryQuery = new Parse.Query("Category")
+	categoryQuery.equalTo("objectId", categoryId)
+	categoryQuery.include("filterable_attributes")
+	# categoryQuery.include("secondary_attributes")
+	
+	findCategoryPromise = categoryQuery.first() 
+
+	# for such category find all the filterable_attributes and secondary_attributes
+	findCategoryPromise.done (categoryData) =>
+		filterable_attributes = categoryData.get('filterable_attributes')
+		result = []
+		_.each filterable_attributes , (attribute) ->
+			attributeId = attribute.id
+			attributeValues = []
+
+			resultAttribObject = 
+				'name' : attribute.get "name" 
+				'id' : attributeId 
+
+			# query to get specific category
+			innerQuery = new Parse.Query("Attributes")
+			innerQuery.equalTo("objectId",attributeId)
+
+			# query to get attributeValues having the attributeId
+			query = new Parse.Query("AttributeValues")
+			query.matchesQuery("attribute", innerQuery)
+
+			findPromise = query.find()
+
+			console.log findPromise
+			
+			findPromise.done (attributeValuesResult) ->
+				console.log "attrib values are:"
+				console.log attributeValuesResult
+				resultAttribObject['attribValues'] = attributeValuesResult
+				result.push resultAttribObject
+
+			findPromise.fail (error) ->
+				response.error error.message
+
+		response.success result
+				
+		
+
 Parse.Cloud.job 'productImport', (request, response) ->
 
 	ProductItem = Parse.Object.extend('ProductItem')
@@ -109,7 +202,7 @@ Parse.Cloud.define 'getProducts', (request, response) ->
 				
 
 		# restrict which fields are being returned
-		query.select("image,name,mrp,brand")
+		query.select("images,name,mrp,brand")
 
 		query.include("brand")
 		# query.include("category")
