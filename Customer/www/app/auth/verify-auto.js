@@ -70,7 +70,6 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
         return $scope.view.display = 'error';
       });
     };
-    requestSMSCode();
     $scope.onTryAgain = function() {
       $scope.view.display = 'noError';
       switch (sms.errorAt) {
@@ -82,6 +81,9 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
           return register();
       }
     };
+    $scope.$on('$ionicView.loaded', function() {
+      return requestSMSCode();
+    });
     $scope.$on('$ionicView.enter', function() {
       return startSmsReception();
     });

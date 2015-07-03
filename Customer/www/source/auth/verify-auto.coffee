@@ -61,8 +61,6 @@ angular.module 'LocalHyper.auth'
 				sms.errorAt = 'requestSMSCode'
 				$scope.view.display = 'error'
 
-		requestSMSCode()
-
 		$scope.onTryAgain = ->
 			$scope.view.display = 'noError'
 			switch sms.errorAt
@@ -72,6 +70,9 @@ angular.module 'LocalHyper.auth'
 					verifySmsCode sms.code
 				when 'register'
 					register()
+		
+		$scope.$on '$ionicView.loaded', ->
+			requestSMSCode()
 
 		$scope.$on '$ionicView.enter', ->
 			startSmsReception()

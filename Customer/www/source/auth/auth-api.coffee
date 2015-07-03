@@ -68,16 +68,13 @@ angular.module 'LocalHyper.auth'
 
 			App.getInstallationId()
 			.then (installationId)->
-				user.set 
+				user.save
 					"displayName": name
 					"password": password
 					"passwordHash": passwordHash
 					"installationId": installationId
-					
-				user.save()
-				.then (success)->
-					defer.resolve success
-				, onError
+			.then (success)->
+				defer.resolve success
 			, onError
 
 		userQuery = new Parse.Query Parse.User
@@ -100,9 +97,6 @@ angular.module 'LocalHyper.auth'
 		defer = $q.defer()
 		password = "#{phone}#{UUID}"
 
-		onError = (error)->
-			defer.reject error
-
 		App.getInstallationId()
 		.then (installationId)=>
 			user = new Parse.User()
@@ -111,14 +105,13 @@ angular.module 'LocalHyper.auth'
 				"displayName": name
 				"password": password
 				"installationId": installationId
-
-			passwordHash = @encryptPassword password, phone
-			user.set "passwordHash", passwordHash
+				"passwordHash": @encryptPassword(password, phone)
+			
 			user.signUp()
-			.then (success)->
-				defer.resolve success
-			, onError
-		, onError
+		.then (success)->
+			defer.resolve success
+		, (error)->
+			defer.reject error
 
 		defer.promise
 

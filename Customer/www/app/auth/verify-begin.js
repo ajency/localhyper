@@ -9,7 +9,7 @@ angular.module('LocalHyper.auth').controller('VerifyBeginCtrl', [
       name = $rootScope.user.name;
       phone = $rootScope.user.phone;
       if (_.contains([name, phone], '') || _.isUndefined(phone)) {
-        return CToast.show('Please enter all fields');
+        return CToast.show('Fill up all fields');
       } else {
         if (App.isOnline()) {
           state = App.isAndroid() ? 'verify-auto' : 'verify-manual';

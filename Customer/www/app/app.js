@@ -15,7 +15,7 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       var hideMenuStates;
       $rootScope.previousState = from.name;
       $rootScope.currentState = to.name;
-      hideMenuStates = ['start', 'login', 'sign-up'];
+      hideMenuStates = ['verify-begin', 'verify-auto', 'verify-manual'];
       if (_.contains(hideMenuStates, $rootScope.currentState)) {
         App.menuEnabled.left = false;
       } else {

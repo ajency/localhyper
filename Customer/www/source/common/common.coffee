@@ -58,8 +58,8 @@ angular.module 'LocalHyper.common', []
 		
 				$state.go state, params
 
-			goBack : ->
-				$ionicHistory.goBack()
+			goBack : (count)->
+				$ionicHistory.goBack count
 
 			dragContent : (bool)->
 				$ionicSideMenuDelegate.canDragContent bool

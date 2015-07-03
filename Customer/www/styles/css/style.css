@@ -115,5 +115,13 @@
 	border: none;
 }
 
+.aj-spinner svg{
+  display: block;
+  margin: 50% auto;
+  stroke: #8B8989;
+  width: 50px;
+  height: 50px;
+}
+
 
 

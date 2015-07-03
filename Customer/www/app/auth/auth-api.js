@@ -68,15 +68,14 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           password = "" + phone + UUID;
           passwordHash = _this.encryptPassword(password, phone);
           return App.getInstallationId().then(function(installationId) {
-            user.set({
+            return user.save({
               "displayName": name,
               "password": password,
               "passwordHash": passwordHash,
               "installationId": installationId
             });
-            return user.save().then(function(success) {
-              return defer.resolve(success);
-            }, onError);
+          }).then(function(success) {
+            return defer.resolve(success);
           }, onError);
         };
       })(this);
@@ -95,29 +94,27 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       return defer.promise;
     };
     AuthAPI.signUpNewUser = function(phone, name) {
-      var defer, onError, password;
+      var defer, password;
       defer = $q.defer();
       password = "" + phone + UUID;
-      onError = function(error) {
-        return defer.reject(error);
-      };
       App.getInstallationId().then((function(_this) {
         return function(installationId) {
-          var passwordHash, user;
+          var user;
           user = new Parse.User();
           user.set({
             "username": phone,
             "displayName": name,
             "password": password,
-            "installationId": installationId
+            "installationId": installationId,
+            "passwordHash": _this.encryptPassword(password, phone)
           });
-          passwordHash = _this.encryptPassword(password, phone);
-          user.set("passwordHash", passwordHash);
-          return user.signUp().then(function(success) {
-            return defer.resolve(success);
-          }, onError);
+          return user.signUp();
         };
-      })(this), onError);
+      })(this)).then(function(success) {
+        return defer.resolve(success);
+      }, function(error) {
+        return defer.reject(error);
+      });
       return defer.promise;
     };
     return AuthAPI;
