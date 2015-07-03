@@ -1,25 +1,36 @@
 angular.module 'LocalHyper.common'
 
 
-.factory 'Network', ['$q', '$cordovaNetwork', ($q, $cordovaNetwork)->
+.factory 'Network', ['$q', '$cordovaNetwork', '$rootScope', ($q, $cordovaNetwork, $rootScope)->
 
 	Network = {}
 
-	isOnline = ->
-		if ionis.Platform.isWebView() then $cordovaNetwork.isOnline()
-		else navigator.onLine
-
-	isHttpUrl = (config)->
-		if s.contains(config.url, '.html') then false else true
+	isHttpUrl = (url)->
+		if s.contains(url, '.html') then false else true
 
 	Network.request = (config)->
-		if isHttpUrl config
-			if isOnline() then config
+		url = config.url
+		if isHttpUrl url
+			if $rootScope.App.isOnline()
+				config.url = "https://api.parse.com/1/functions/#{url}"
+				if $rootScope.App.isLoggedIn()
+					token = $rootScope.App.getSessionToken()
+					config.headers['X-Parse-Session-Token'] = token
+				config
 			else $q.reject 'offline'
 		else config
 
 	Network.responseError = (rejection)->
-		# if rejection is 'offline'
+		#Reasons for response failure
+		#1) offline
+		#2) server_error
+		#3) session_expired
+		if _.has rejection, 'data'
+			if _.isNull rejection.data
+				rejection = 'server_error'
+			else if rejection.data.code is Parse.Error.INVALID_SESSION_TOKEN
+				rejection = "session_expired"
+
 		$q.reject rejection
 
 	Network
@@ -27,10 +38,10 @@ angular.module 'LocalHyper.common'
 
 
 .config ['$httpProvider', ($httpProvider)->
-
-	contentType = 'application/x-www-form-urlencoded; charset=UTF-8'
-	$httpProvider.defaults.headers.common['Content-Type'] = contentType
-	$httpProvider.defaults.headers.post['Content-Type']   = contentType
+	
+	$httpProvider.defaults.headers.post['Content-Type'] = 'application/json'
+	$httpProvider.defaults.headers.common['X-Parse-Application-Id'] = APP_ID
+	$httpProvider.defaults.headers.common['X-Parse-REST-API-Key']   = REST_API_KEY
 
 	$httpProvider.interceptors.push 'Network'
 ]

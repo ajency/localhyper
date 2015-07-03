@@ -16,7 +16,6 @@ angular.module 'LocalHyper.categories'
 		.state 'sub-categories',
 			url: '/sub-categories:parentID'
 			parent: 'main'
-			cache: false
 			views: 
 				"appContent":
 					templateUrl: 'views/categories/sub-categories.html'
@@ -27,7 +26,8 @@ angular.module 'LocalHyper.categories'
 							.then (categories)->
 								parent = _.filter categories, (category)->
 									category.id is $stateParams.parentID
-								data = 
-									parentTitle: parent[0].name
-									data: parent[0].children
+
+								children = parent[0].children
+								CategoriesAPI.subCategories 'set', children
+								parentTitle: parent[0].name, data: children
 ]

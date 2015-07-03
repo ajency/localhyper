@@ -1,26 +1,38 @@
-<ion-view view-title="Products">
+<ion-view>
+
+	<ion-nav-title>
+		{{view.title}}
+    </ion-nav-title>
 
 	<ion-content>
 
-		<ion-list>
+		<ion-refresher
+			on-refresh="view.onPullToRefresh()">
+		</ion-refresher>
 
+		<ion-list>
 			<div 
 				class="col col-50"
 				collection-repeat="product in view.products"
 				item-width="50%">
 
 				<ion-item class="item-image">
-					<img ng-src="{{product.url}}" class="aj-img">
+					<img ng-src="{{product.images[0].src}}" class="aj-img">
 				</ion-item>
 
 				<ion-item>
 					{{product.name}}
-					<p>Rs {{product.price}}<p>
+					<p>Rs {{product.mrp}}<p>
 				</ion-item>
 				
 			</div>
-
 		</ion-list>
+
+		<ion-infinite-scroll
+			on-infinite="view.onInfiniteScroll()"
+			ng-if="view.canLoadMore"
+			distance="1%">
+		</ion-infinite-scroll>
 
 	</ion-content>
 

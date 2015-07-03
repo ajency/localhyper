@@ -10,7 +10,6 @@ angular.module('LocalHyper.categories').controller('SubCategoriesCtrl', [
     return $stateProvider.state('sub-categories', {
       url: '/sub-categories:parentID',
       parent: 'main',
-      cache: false,
       views: {
         "appContent": {
           templateUrl: 'views/categories/sub-categories.html',
@@ -18,13 +17,15 @@ angular.module('LocalHyper.categories').controller('SubCategoriesCtrl', [
           resolve: {
             SubCategory: function($stateParams, CategoriesAPI) {
               return CategoriesAPI.getAll().then(function(categories) {
-                var data, parent;
+                var children, parent;
                 parent = _.filter(categories, function(category) {
                   return category.id === $stateParams.parentID;
                 });
-                return data = {
+                children = parent[0].children;
+                CategoriesAPI.subCategories('set', children);
+                return {
                   parentTitle: parent[0].name,
-                  data: parent[0].children
+                  data: children
                 };
               });
             }

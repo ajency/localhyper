@@ -69,6 +69,10 @@ angular.module 'LocalHyper.common', []
 				loggedIn = if _.isNull(user) then false else true
 				loggedIn
 
+			getSessionToken : ->
+				user = Parse.User.current()
+				user.getSessionToken()
+
 			getInstallationId : ->
 				defer = $q.defer()
 				if @isWebView()

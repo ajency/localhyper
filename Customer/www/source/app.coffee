@@ -5,14 +5,9 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.test']
 
 
-.constant 'PARSE', 
-	APP_ID: 'QN2IxFFiHCTm0oKSgI6KafqJJQ3nAxwQD8QiqrYZ'
-	JS_KEY: 'R80kznvL5F5VEzAHQ0lRwsh9iEJ3EIDdZqv1AYmJ'
+.run ['$rootScope', 'App', 'Push', '$timeout', ($rootScope, App, Push, $timeout)->
 
-
-.run ['$rootScope', 'App', 'Push', '$timeout', 'PARSE', ($rootScope, App, Push, $timeout, PARSE)->
-
-	Parse.initialize PARSE.APP_ID, PARSE.JS_KEY
+	Parse.initialize APP_ID, JS_KEY
 
 	$rootScope.App = App
 	$rootScope.product = 
@@ -20,7 +15,6 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		globalNotification: false
 		localNotification: false
 		request: ''
-
 	
 	$rootScope.$on '$stateChangeSuccess', (ev, to, toParams, from, fromParams)->
 		$rootScope.previousState = from.name

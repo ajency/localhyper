@@ -31,6 +31,7 @@ angular.module 'LocalHyper.categories', []
 				console.log data
 				$scope.view.onSuccess data
 			, (error)->
+				console.log error
 				$scope.view.onError 'Could not connect to server'
 				
 		$scope.onTryAgain = ->

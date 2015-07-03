@@ -1,9 +1,6 @@
-angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.test']).constant('PARSE', {
-  APP_ID: 'QN2IxFFiHCTm0oKSgI6KafqJJQ3nAxwQD8QiqrYZ',
-  JS_KEY: 'R80kznvL5F5VEzAHQ0lRwsh9iEJ3EIDdZqv1AYmJ'
-}).run([
-  '$rootScope', 'App', 'Push', '$timeout', 'PARSE', function($rootScope, App, Push, $timeout, PARSE) {
-    Parse.initialize(PARSE.APP_ID, PARSE.JS_KEY);
+angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.test']).run([
+  '$rootScope', 'App', 'Push', '$timeout', function($rootScope, App, Push, $timeout) {
+    Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
     $rootScope.product = {
       offers: [],
