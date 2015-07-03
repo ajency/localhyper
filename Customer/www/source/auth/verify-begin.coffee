@@ -13,7 +13,7 @@ angular.module 'LocalHyper.auth'
 			phone = $rootScope.user.phone
 			#Check valid phone no
 			if _.contains([name, phone], '') or _.isUndefined(phone)
-				CToast.show 'Please enter all fields'
+				CToast.show 'Fill up all fields'
 			else
 				if App.isOnline()
 					state = if App.isAndroid() then 'verify-auto' else 'verify-manual'

@@ -80,9 +80,7 @@
 }
 
 /*Ionic popover*/
-.platform-android .popover {
-	height: 115px;
-}
+
 
 .platform-ios .popover {
 	height: 120px;
@@ -113,6 +111,14 @@
 
 .aj-text .no-border{
 	border: none;
+}
+
+.aj-spinner svg{
+  display: block;
+  margin: 50% auto;
+  stroke: #8B8989;
+  width: 50px;
+  height: 50px;
 }
 
 

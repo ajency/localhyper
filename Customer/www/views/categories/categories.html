@@ -1,7 +1,7 @@
 <ion-view>
 
 	<ion-nav-title>
-		<b>shop<span class="aj-logo">oye</span></b>
+		<img src="img/logo.png"/>
     </ion-nav-title>
 
 	<ion-nav-buttons side="left">
@@ -11,13 +11,46 @@
 	</ion-nav-buttons>
 
 	<ion-nav-buttons side="right">
+		<span class="notification badge badge-assertive"">2</span>
 		<button 
-			class="button button-icon icon ion-android-more-vertical"
+			class="button button-icon ion-ios-person-outline"
 			ng-click="openRightPopover($event)">
 		</button>
 	</ion-nav-buttons>
 
-	<ion-content>
+	<ion-content ng-switch="view.display">
+
+		<ion-spinner
+			class="aj-spinner" 
+			ng-switch-when="loader">
+		</ion-spinner>
+
+		<ion-list ng-switch-when="noError">
+			<a 
+				class="item item-thumbnail-left"
+				ng-repeat="category in view.parentCategories"
+				ng-click="App.navigate('sub-categories', {parentID: category.id})">
+					<img ng-src="{{category.image.src}}">
+					<h2>{{category.name}}</h2>
+			</a>
+		</ion-list>
+
+		<div ng-switch-when="error">
+			<h3>Error</h3>
+
+			</br>
+			<h5 class="gray">{{view.errorMsg}}</h5>
+
+			<div class="padding">
+				<button 
+					class="button button-dark aj-btn"
+					ng-click="onTryAgain()">
+					Try again
+				</button>
+			</div>
+
+			</br>
+		</div>
 
 	</ion-content>
 </ion-view>
