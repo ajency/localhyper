@@ -64,15 +64,6 @@ angular.module 'LocalHyper.common', []
 			dragContent : (bool)->
 				$ionicSideMenuDelegate.canDragContent bool
 
-			isLoggedIn : ->
-				user = Parse.User.current()
-				loggedIn = if _.isNull(user) then false else true
-				loggedIn
-
-			getSessionToken : ->
-				user = Parse.User.current()
-				user.getSessionToken()
-
 			getInstallationId : ->
 				defer = $q.defer()
 				if @isWebView()

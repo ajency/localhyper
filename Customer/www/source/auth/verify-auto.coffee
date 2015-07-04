@@ -1,82 +1,96 @@
 angular.module 'LocalHyper.auth'
 
 
-.controller 'VerifyAutoCtrl', ['$scope', '$rootScope', 'App', 'SmsAPI', 'AuthAPI'
-	, ($scope, $rootScope, App, SmsAPI, AuthAPI)->
+.controller 'VerifyAutoCtrl', ['$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout'
+	, ($scope, App, SmsAPI, AuthAPI, User, $timeout)->
 
-		$scope.view = display: 'noError'
-
-		sms = 
-			code: ''
+		$scope.view =
+			display: 'noError'
+			smsCode: ''
 			errorAt: ''
+			errorType: ''
+			timeout: null
+			smsPluginSrc: "info.asankan.phonegap.smsplugin.smsplugin"
 
-		cordovaSmsPlugin = 
-			enabled: App.isWebView() and App.isAndroid()
-			src: "info.asankan.phonegap.smsplugin.smsplugin"
+			onError : (type, at)->
+				@display = 'error'
+				@errorType = type
+				@errorAt = at
 
-		register = ->
-			AuthAPI.register $rootScope.user
-			.then (success)->
-				App.navigate 'categories', {}, {animate: false, back: false}
-			, (error)->
-				sms.errorAt = 'register'
-				$scope.view.display = 'error'
+			startTimeout : ->
+				#Wait till 40 seconds for auto verification
+				@timeout = $timeout ->
+					App.navigate 'verify-manual'
+				, 40000
 
-		verifySmsCode = (code)->
-			SmsAPI.verifySMSCode $rootScope.user.phone, code
-			.then (data)->
-				if data.verified
-					register()
-			, (error)->
-				sms.errorAt = 'verifySmsCode'
-				$scope.view.display = 'error'
+			cancelTimeout : ->
+				$timeout.cancel @timeout
 
-		onSmsReceptionSuccess = (smsContent)->
-			content = smsContent.split '>'
-			content = content[1]
-			if s.contains(content, 'Welcome to ShopOye')
-				content = content.replace '[Nexmo DEMO]', ''
-				code = s.words(content, 'code is')
-				code = s.trim code[1]
-				sms.code = code
-				verifySmsCode code
+			requestSMSCode : ->
+				@startTimeout()
+				SmsAPI.requestSMSCode @user.phone
+				.then (data)=>
+					console.log data
+					if data.attemptsExceeded
+						@display = 'maxAttempts'
+						@cancelTimeout() 
+				, (error)=>
+					@onError error, 'requestSMSCode'
+					@cancelTimeout()
 
-		startSmsReception = ->
-			if cordovaSmsPlugin.enabled
-				smsplugin = cordova.require cordovaSmsPlugin.src
-				smsplugin.startReception onSmsReceptionSuccess
+			startSmsReception : ->
+				if App.isWebView()
+					smsplugin = cordova.require @smsPluginSrc
+					smsplugin.startReception @onSmsReceptionSuccess
 
-		stopSmsReception = ->
-			if cordovaSmsPlugin.enabled
-				smsplugin = cordova.require cordovaSmsPlugin.src
-				smsplugin.stopReception()
+			stopSmsReception : ->
+				if App.isWebView()
+					smsplugin = cordova.require @smsPluginSrc
+					smsplugin.stopReception()
 
-		requestSMSCode = ->
-			SmsAPI.requestSMSCode $rootScope.user.phone
-			.then (data)->
-				console.log data
-				if data.attemptsExceeded
-					$scope.view.display = 'maxAttempts'
-			, (error)->
-				sms.errorAt = 'requestSMSCode'
-				$scope.view.display = 'error'
+			onSmsReceptionSuccess : (smsContent)->
+				content = smsContent.split '>'
+				content = content[1]
+				if s.contains content, 'Welcome to ShopOye'
+					@cancelTimeout()
+					content = content.replace '[Nexmo DEMO]', ''
+					code = s.words(content, 'code is')
+					code = s.trim code[1]
+					@smsCode = code
+					@verifySmsCode()
 
-		$scope.onTryAgain = ->
-			$scope.view.display = 'noError'
-			switch sms.errorAt
-				when 'requestSMSCode'
-					requestSMSCode()
-				when 'verifySmsCode'
-					verifySmsCode sms.code
-				when 'register'
-					register()
-		
-		$scope.$on '$ionicView.loaded', ->
-			requestSMSCode()
+			verifySmsCode : ->
+				SmsAPI.verifySMSCode @user.phone, @smsCode
+				.then (data)=>
+					@register() if data.verified
+				, (error)=>
+					@onError error, 'verifySmsCode'
+
+			register : ->
+				AuthAPI.register @user
+				.then (success)->
+					App.navigate 'categories', {}, {animate: false, back: false}
+				, (error)=>
+					@onError error, 'register'
+
+			onTapToRetry : ->
+				@display = 'noError'
+				switch @errorAt
+					when 'requestSMSCode'
+						@requestSMSCode()
+					when 'verifySmsCode'
+						@verifySmsCode()
+					when 'register'
+						@register()
+
+		$scope.$on '$ionicView.beforeEnter', ->
+			$scope.view.user = User.info 'get'
 
 		$scope.$on '$ionicView.enter', ->
-			startSmsReception()
+			$scope.view.startSmsReception()
+			$scope.view.requestSMSCode()
 
 		$scope.$on '$ionicView.leave', ->
-			stopSmsReception()
+			$scope.view.stopSmsReception()
+			$scope.view.cancelTimeout()
 ]

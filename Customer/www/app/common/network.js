@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common').factory('Network', [
-  '$q', '$cordovaNetwork', '$rootScope', function($q, $cordovaNetwork, $rootScope) {
+  '$q', '$cordovaNetwork', '$rootScope', 'User', function($q, $cordovaNetwork, $rootScope, User) {
     var Network, isHttpUrl;
     Network = {};
     isHttpUrl = function(url) {
@@ -10,14 +10,13 @@ angular.module('LocalHyper.common').factory('Network', [
       }
     };
     Network.request = function(config) {
-      var token, url;
+      var url;
       url = config.url;
       if (isHttpUrl(url)) {
         if ($rootScope.App.isOnline()) {
-          config.url = "https://api.parse.com/1/functions/" + url;
-          if ($rootScope.App.isLoggedIn()) {
-            token = $rootScope.App.getSessionToken();
-            config.headers['X-Parse-Session-Token'] = token;
+          config.url = "https://api.parse.com/1/" + url;
+          if (User.isLoggedIn()) {
+            config.headers['X-Parse-Session-Token'] = User.getSessionToken();
           }
           return config;
         } else {

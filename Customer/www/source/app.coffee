@@ -10,6 +10,7 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	Parse.initialize APP_ID, JS_KEY
 
 	$rootScope.App = App
+	
 	$rootScope.product = 
 		offers: []
 		globalNotification: false
@@ -21,7 +22,7 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		$rootScope.currentState = to.name
 
 		#Enable/disable menu
-		hideMenuStates = ['verify-begin', 'verify-auto', 'verify-manual']
+		hideMenuStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual']
 		if _.contains hideMenuStates, $rootScope.currentState
 			App.menuEnabled.left = false
 		else App.menuEnabled.left = true

@@ -121,5 +121,12 @@
   height: 50px;
 }
 
+.aj-verify-spinner svg{
+  display: block;
+  margin: 0% auto;
+  stroke: #8B8989;
+  width: 40px;
+  height: 40px;
+}
 
 

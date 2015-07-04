@@ -16,7 +16,7 @@ angular.module 'LocalHyper.products'
 			"page": opts.page
 			"displayLimit": 6
 
-		$http.post 'getProducts', params
+		$http.post 'functions/getProducts', params
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->

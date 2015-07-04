@@ -1,39 +1,39 @@
 angular.module 'LocalHyper.common'
 
 
-.factory 'Network', ['$q', '$cordovaNetwork', '$rootScope', ($q, $cordovaNetwork, $rootScope)->
+.factory 'Network', ['$q', '$cordovaNetwork', '$rootScope', 'User'
+	, ($q, $cordovaNetwork, $rootScope, User)->
 
-	Network = {}
+		Network = {}
 
-	isHttpUrl = (url)->
-		if s.contains(url, '.html') then false else true
+		isHttpUrl = (url)->
+			if s.contains(url, '.html') then false else true
 
-	Network.request = (config)->
-		url = config.url
-		if isHttpUrl url
-			if $rootScope.App.isOnline()
-				config.url = "https://api.parse.com/1/functions/#{url}"
-				if $rootScope.App.isLoggedIn()
-					token = $rootScope.App.getSessionToken()
-					config.headers['X-Parse-Session-Token'] = token
-				config
-			else $q.reject 'offline'
-		else config
+		Network.request = (config)->
+			url = config.url
+			if isHttpUrl url
+				if $rootScope.App.isOnline()
+					config.url = "https://api.parse.com/1/#{url}"
+					if User.isLoggedIn()
+						config.headers['X-Parse-Session-Token'] = User.getSessionToken()
+					config
+				else $q.reject 'offline'
+			else config
 
-	Network.responseError = (rejection)->
-		#Reasons for response failure
-		#1) offline
-		#2) server_error
-		#3) session_expired
-		if _.has rejection, 'data'
-			if _.isNull rejection.data
-				rejection = 'server_error'
-			else if rejection.data.code is Parse.Error.INVALID_SESSION_TOKEN
-				rejection = "session_expired"
+		Network.responseError = (rejection)->
+			#Reasons for response failure
+			#1) offline
+			#2) server_error
+			#3) session_expired
+			if _.has rejection, 'data'
+				if _.isNull rejection.data
+					rejection = 'server_error'
+				else if rejection.data.code is Parse.Error.INVALID_SESSION_TOKEN
+					rejection = "session_expired"
 
-		$q.reject rejection
+			$q.reject rejection
 
-	Network
+		Network
 ]
 
 

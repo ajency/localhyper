@@ -13,7 +13,7 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
         "page": opts.page,
         "displayLimit": 6
       };
-      $http.post('getProducts', params).then(function(data) {
+      $http.post('functions/getProducts', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);

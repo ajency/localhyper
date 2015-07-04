@@ -3,7 +3,7 @@
 	<ion-nav-buttons side="right">
 		<button 
 			class="button"
-			ng-click="onNext()">
+			ng-click="view.onNext()">
 			Next
 		</button>
 	</ion-nav-buttons>
@@ -14,15 +14,15 @@
 		<div class="list" ng-switch="view.display">
 
 			<div ng-switch-when="noError">
-				<h5 class="gray">To complete your phone number verification, please enter the 6 digit activation code sent to +91{{user.phone}}</h5>
+				<h5 class="gray">To complete your phone number verification, please enter the 6 digit activation code sent to +91{{view.user.phone}}</h5>
 
 				</br>
 				<label class="item item-input">
-					<input type="tel" maxlength="6" ng-model="sms.code">
+					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode">
 				</label>
 
 				</br></br>
-				<h4 ng-click="onResendCode()">Resend the code?</h4>
+				<h4 ng-click="view.requestSMSCode()">Resend the code?</h4>
 
 			</div>
 
@@ -36,26 +36,15 @@
 
 				</br>
 				<label class="item item-input">
-					<input type="tel" maxlength="6" ng-model="sms.code">
+					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode">
 				</label>
 			</div>
 
-			<div ng-switch-when="error">
-				<h3>Error</h3>
-
-				</br>
-				<h5 class="gray">Please check your network connection and try again</h5>
-
-				<div class="padding">
-					<button 
-						class="button button-dark aj-btn"
-						ng-click="onTryAgain()">
-						Try again
-					</button>
-				</div>
-
-				</br>
-			</div>
+			<aj-error 
+				ng-switch-when="error"
+				error-type="view.errorType"
+				tap-to-retry="view.onTapToRetry()">
+			</aj-error>
 
 		</div>
 

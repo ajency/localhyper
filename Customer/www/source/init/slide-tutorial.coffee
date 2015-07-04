@@ -5,7 +5,7 @@ angular.module 'LocalHyper.init'
 	, ($scope, App, Storage, $ionicSlideBoxDelegate)->
 
 		$scope.slide = 
-			active: 0
+			active: 4
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			$ionicSlideBoxDelegate.enableSlide false
@@ -27,7 +27,7 @@ angular.module 'LocalHyper.init'
 		$scope.onGetStarted = ->
 			Storage.slideTutorial 'set'
 			.then ->
-				App.navigate "categories", {}, {animate: false, back: false}
+				App.navigate "categories", {}, {animate: true, back: false}
 ]
 
 
@@ -48,7 +48,10 @@ angular.module 'LocalHyper.init'
 
 		.state 'tutorial',
 			url: '/tutorial'
-			templateUrl: 'views/init/slide-tutorial.html'
-			controller: 'SlideTutorialCtrl'
+			parent: 'main'
+			views: 
+				"appContent":
+					templateUrl: 'views/init/slide-tutorial.html'
+					controller: 'SlideTutorialCtrl'
 ]
 

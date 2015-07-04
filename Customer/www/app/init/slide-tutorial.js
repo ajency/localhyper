@@ -1,7 +1,7 @@
 angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
   '$scope', 'App', 'Storage', '$ionicSlideBoxDelegate', function($scope, App, Storage, $ionicSlideBoxDelegate) {
     $scope.slide = {
-      active: 0
+      active: 4
     };
     $scope.$on('$ionicView.afterEnter', function() {
       $ionicSlideBoxDelegate.enableSlide(false);
@@ -26,7 +26,7 @@ angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
     return $scope.onGetStarted = function() {
       return Storage.slideTutorial('set').then(function() {
         return App.navigate("categories", {}, {
-          animate: false,
+          animate: true,
           back: false
         });
       });
@@ -50,8 +50,13 @@ angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
   '$stateProvider', function($stateProvider) {
     return $stateProvider.state('tutorial', {
       url: '/tutorial',
-      templateUrl: 'views/init/slide-tutorial.html',
-      controller: 'SlideTutorialCtrl'
+      parent: 'main',
+      views: {
+        "appContent": {
+          templateUrl: 'views/init/slide-tutorial.html',
+          controller: 'SlideTutorialCtrl'
+        }
+      }
     });
   }
 ]);

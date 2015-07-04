@@ -1,5 +1,5 @@
 angular.module('LocalHyper.auth').factory('AuthAPI', [
-  '$q', 'App', function($q, App) {
+  '$q', 'App', '$http', function($q, App, $http) {
     var AuthAPI, UUID;
     UUID = App.deviceUUID();
     AuthAPI = {};
@@ -20,77 +20,80 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       decrypted = CryptoJS.AES.decrypt(passwordHash, key);
       return decrypted.toString(CryptoJS.enc.Utf8);
     };
-    AuthAPI.isExistingUser = function(phone) {
-      var defer, userQuery;
+    AuthAPI.register = function(user) {
+      var defer, name, phone;
       defer = $q.defer();
-      userQuery = new Parse.Query(Parse.User);
-      userQuery.equalTo("username", phone);
-      userQuery.find().then(function(userObj) {
-        var existing;
-        existing = _.isEmpty(userObj) ? false : true;
-        return defer.resolve(existing);
+      phone = user.phone.toString();
+      name = user.name;
+      $http.get('users', {
+        where: {
+          "username": phone
+        }
+      }).then((function(_this) {
+        return function(data) {
+          var existingUser, userObj;
+          userObj = data.data.results;
+          existingUser = _.isEmpty(userObj) ? false : true;
+          if (existingUser) {
+            return _this.loginExistingUser(phone, name);
+          } else {
+            return _this.signUpNewUser(phone, name);
+          }
+        };
+      })(this)).then(function(success) {
+        return defer.resolve(success);
       }, function(error) {
         return defer.reject(error);
       });
       return defer.promise;
     };
-    AuthAPI.register = function(user) {
-      var defer, name, onError, onSuccess, phone;
-      defer = $q.defer();
-      phone = user.phone.toString();
-      name = user.name;
-      onSuccess = function(success) {
-        return defer.resolve(success);
-      };
-      onError = function(error) {
-        return defer.reject(error);
-      };
-      this.isExistingUser(phone).then((function(_this) {
-        return function(exists) {
-          if (exists) {
-            return _this.loginExistingUser(phone, name).then(onSuccess, onError);
-          } else {
-            return _this.signUpNewUser(phone, name).then(onSuccess, onError);
-          }
-        };
-      })(this), onError);
-      return defer.promise;
-    };
     AuthAPI.loginExistingUser = function(phone, name) {
-      var defer, onError, updateUser, userQuery;
+      var defer, newPassword, newPasswordHash, oldPassword, oldPasswordhash;
       defer = $q.defer();
-      onError = function(error) {
-        return defer.reject(error);
-      };
-      updateUser = (function(_this) {
+      oldPassword = oldPasswordhash = '';
+      newPassword = newPasswordHash = '';
+      $http.get('users', {
+        where: {
+          "username": phone
+        }
+      }).then((function(_this) {
+        return function(data) {
+          var userObj;
+          userObj = data.data.results[0];
+          oldPasswordhash = userObj.passwordHash;
+          oldPassword = _this.decryptPassword(oldPasswordhash, phone);
+          return Parse.User.logOut();
+        };
+      })(this)).then(function() {
+        return Parse.User.logIn(phone, oldPassword);
+      }).then((function(_this) {
         return function(user) {
-          var password, passwordHash;
-          password = "" + phone + UUID;
-          passwordHash = _this.encryptPassword(password, phone);
+          newPassword = "" + phone + UUID;
+          newPasswordHash = _this.encryptPassword(newPassword, phone);
           return App.getInstallationId().then(function(installationId) {
             return user.save({
               "displayName": name,
-              "password": password,
-              "passwordHash": passwordHash,
+              "password": newPassword,
+              "passwordHash": newPasswordHash,
               "installationId": installationId
             });
-          }).then(function(success) {
-            return defer.resolve(success);
-          }, onError);
+          });
         };
-      })(this);
-      userQuery = new Parse.Query(Parse.User);
-      userQuery.equalTo("username", phone);
-      userQuery.find().then((function(_this) {
-        return function(userObj) {
-          var password, passwordHash;
-          passwordHash = userObj[0].get('passwordHash');
-          password = _this.decryptPassword(passwordHash, phone);
-          return Parse.User.logOut().then(function() {
-            return Parse.User.logIn(phone, password).then(updateUser, onError);
-          }, onError);
+      })(this)).then(function() {
+        return Parse.User.logOut();
+      }).then(function() {
+        return Parse.User.logIn(phone, newPassword);
+      }).then(function(success) {
+        return defer.resolve(success);
+      }, (function(_this) {
+        return function(error) {
+          if (_.has(error, 'code')) {
+            return _this.onParseJsError(defer, error);
+          } else {
+            return defer.reject(error);
+          }
         };
-      })(this), onError);
+      })(this));
       return defer.promise;
     };
     AuthAPI.signUpNewUser = function(phone, name) {
@@ -112,10 +115,22 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
         };
       })(this)).then(function(success) {
         return defer.resolve(success);
-      }, function(error) {
-        return defer.reject(error);
-      });
+      }, (function(_this) {
+        return function(error) {
+          return _this.onParseJsError(defer, error);
+        };
+      })(this));
       return defer.promise;
+    };
+    AuthAPI.onParseJsError = function(defer, error) {
+      switch (error.code) {
+        case Parse.Error.CONNECTION_FAILED:
+          return defer.reject('server_error');
+        case Parse.Error.INVALID_SESSION_TOKEN:
+          return defer.reject('session_expired');
+        default:
+          return defer.reject('unknown_error');
+      }
     };
     return AuthAPI;
   }
