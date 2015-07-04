@@ -97,37 +97,6 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
             response.success finalArr 
         , (error)->
             response.error error
-
-        # _.each filterable_attributes , (attribute) ->
-        #   attributeId = attribute.id
-        #   attributeValues = []
-
-        #   resultAttribObject = 
-        #       'name' : attribute.get "name" 
-        #       'id' : attributeId 
-
-        #   # query to get specific category
-        #   innerQuery = new Parse.Query("Attributes")
-        #   innerQuery.equalTo("objectId",attributeId)
-
-        #   # query to get attributeValues having the attributeId
-        #   query = new Parse.Query("AttributeValues")
-        #   query.matchesQuery("attribute", innerQuery)
-
-        #   findPromise = query.find()
-
-        #   console.log findPromise
-            
-        #   findPromise.done (attributeValuesResult) ->
-        #       console.log "attrib values are:"
-        #       console.log attributeValuesResult
-        #       resultAttribObject['attribValues'] = attributeValuesResult
-        #       result.push resultAttribObject
-
-
-
-        
-                
         
 
 Parse.Cloud.job 'productImport', (request, response) ->
@@ -276,7 +245,27 @@ Parse.Cloud.define 'getProducts', (request, response) ->
         response.error error.message
     
 
-    
+Parse.Cloud.define 'getProduct', (request, response) ->  
+    productId = request.params.productId 
+
+    # get product by productID
+    ProductItem = Parse.Object.extend("ProductItem")
+    queryProductItem = new Parse.Query(ProductItem)
+
+    queryProductItem.equalTo("objectId", productId)
+    queryProductItem.include("attrs")
+    queryProductItem.include("attrs.attribute")
+    queryProductItem.include("category")
+
+    queryProductItem.first()
+    .then (ProductData)->
+        response.success ProductData
+    , (error)->
+        response.error error    
+
+
+
+
 
     
 

@@ -275,6 +275,22 @@
     })(this));
   });
 
+  Parse.Cloud.define('getProduct', function(request, response) {
+    var ProductItem, productId, queryProductItem;
+    productId = request.params.productId;
+    ProductItem = Parse.Object.extend("ProductItem");
+    queryProductItem = new Parse.Query(ProductItem);
+    queryProductItem.equalTo("objectId", productId);
+    queryProductItem.include("attrs");
+    queryProductItem.include("attrs.attribute");
+    queryProductItem.include("category");
+    return queryProductItem.first().then(function(ProductData) {
+      return response.success(ProductData);
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   Parse.Cloud.useMasterKey();
 
   Parse.Cloud.define("sendSMSCode", function(request, response) {
