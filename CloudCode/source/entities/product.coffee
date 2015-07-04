@@ -58,15 +58,12 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
     findCategoryPromise.done (categoryData) =>
         filterable_attributes = categoryData.get('filterable_attributes')
         
-        result = []
+        findQs = []
 
         findQs = _.map(filterable_attributes, (attribute) ->
+            
             attributeId = attribute.id
             attributeValues = []
-
-            resultAttribObject = 
-                'name' : attribute.get "name" 
-                'id' : attributeId 
 
             # query to get specific category
             innerQuery = new Parse.Query("Attributes")
@@ -79,18 +76,21 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
             query.find()
         )
 
-        Parse.Promise.when(findQs).then (attributeValuesArray) ->
-            individualFindResults = _.flatten(_.toArray(attributeValuesArray))
+        Parse.Promise.when(findQs).then ->
+
+            individualFindResults = _.flatten(_.toArray(arguments))
 
             finalArr = []
             _.each individualFindResults , (individualResult) ->
+                
                 object =
                     "attributeId" : individualResult.get("attribute").id
                     "attributeName" : individualResult.get("attribute").get "name"
                     "group" : individualResult.get("attribute").get "group"
                     "displayType" : individualResult.get("attribute").get "displayType"
+                    "valueId" : individualResult.id
                     "value" : individualResult.get "value"
-                console.log object
+                
                 finalArr.push object
             
             Parse.Promise.as()  

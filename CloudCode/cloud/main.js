@@ -114,17 +114,13 @@
     findCategoryPromise = categoryQuery.first();
     return findCategoryPromise.done((function(_this) {
       return function(categoryData) {
-        var filterable_attributes, findQs, result;
+        var filterable_attributes, findQs;
         filterable_attributes = categoryData.get('filterable_attributes');
-        result = [];
+        findQs = [];
         findQs = _.map(filterable_attributes, function(attribute) {
-          var attributeId, attributeValues, innerQuery, query, resultAttribObject;
+          var attributeId, attributeValues, innerQuery, query;
           attributeId = attribute.id;
           attributeValues = [];
-          resultAttribObject = {
-            'name': attribute.get("name"),
-            'id': attributeId
-          };
           innerQuery = new Parse.Query("Attributes");
           innerQuery.equalTo("objectId", attributeId);
           query = new Parse.Query("AttributeValues");
@@ -132,9 +128,9 @@
           query.include("attribute");
           return query.find();
         });
-        return Parse.Promise.when(findQs).then(function(attributeValuesArray) {
+        return Parse.Promise.when(findQs).then(function() {
           var finalArr, individualFindResults;
-          individualFindResults = _.flatten(_.toArray(attributeValuesArray));
+          individualFindResults = _.flatten(_.toArray(arguments));
           finalArr = [];
           _.each(individualFindResults, function(individualResult) {
             var object;
@@ -143,9 +139,9 @@
               "attributeName": individualResult.get("attribute").get("name"),
               "group": individualResult.get("attribute").get("group"),
               "displayType": individualResult.get("attribute").get("displayType"),
+              "valueId": individualResult.id,
               "value": individualResult.get("value")
             };
-            console.log(object);
             return finalArr.push(object);
           });
           Parse.Promise.as();
