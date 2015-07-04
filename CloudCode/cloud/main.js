@@ -1,5 +1,5 @@
 (function() {
-  var _, getAttribValueMapping, treeify;
+  var _, treeify;
 
   _ = require('underscore.js');
 
@@ -80,42 +80,33 @@
     })(this));
   });
 
-  getAttribValueMapping = function(categoryId, filterableAttributes, secondaryAttributes) {
-    var AttributeValues, Attributes, Category, categoryQuery, findCategoryPromise;
-    if (filterableAttributes == null) {
-      filterableAttributes = true;
-    }
-    if (secondaryAttributes == null) {
-      secondaryAttributes = false;
-    }
-    Category = Parse.Object.extend('Category');
-    Attributes = Parse.Object.extend('Attributes');
-    AttributeValues = Parse.Object.extend('AttributeValues');
-    categoryQuery = new Parse.Query("Category");
-    categoryQuery.equalTo("objectId", categoryId);
-    categoryQuery.include("filterable_attributes");
-    findCategoryPromise = categoryQuery.first();
-    return findCategoryPromise.done((function(_this) {
-      return function(categoryData) {
-        return categoryData;
-      };
-    })(this));
-  };
-
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
-    var AttributeValues, Attributes, Category, categoryId, categoryQuery, findCategoryPromise;
+    var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
     categoryId = request.params.categoryId;
+    filterableAttributes = request.params.filterableAttributes;
+    secondaryAttributes = request.params.secondaryAttributes;
     Category = Parse.Object.extend('Category');
     Attributes = Parse.Object.extend('Attributes');
     AttributeValues = Parse.Object.extend('AttributeValues');
     categoryQuery = new Parse.Query("Category");
     categoryQuery.equalTo("objectId", categoryId);
-    categoryQuery.include("filterable_attributes");
+    if (filterableAttributes) {
+      categoryQuery.include("filterable_attributes");
+    }
+    if (secondaryAttributes) {
+      categoryQuery.include("secondary_attributes");
+    }
     findCategoryPromise = categoryQuery.first();
     return findCategoryPromise.done((function(_this) {
       return function(categoryData) {
         var filterable_attributes, findQs;
-        filterable_attributes = categoryData.get('filterable_attributes');
+        filterable_attributes = [];
+        if (filterableAttributes) {
+          filterable_attributes = categoryData.get('filterable_attributes');
+        }
+        if (secondaryAttributes) {
+          filterable_attributes = _.union(filterable_attributes, categoryData.get('secondary_attributes'));
+        }
         findQs = [];
         findQs = _.map(filterable_attributes, function(attribute) {
           var attributeId, attributeValues, innerQuery, query;

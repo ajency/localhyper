@@ -1,46 +1,7 @@
-getAttribValueMapping = (categoryId,filterableAttributes=true,secondaryAttributes=false) ->
-    Category = Parse.Object.extend('Category')
-    Attributes = Parse.Object.extend('Attributes')
-    AttributeValues = Parse.Object.extend('AttributeValues')
-
-    # get category by given category id
-    categoryQuery = new Parse.Query("Category")
-    categoryQuery.equalTo("objectId", categoryId)
-    categoryQuery.include("filterable_attributes")
-    # categoryQuery.include("secondary_attributes")
-    
-    findCategoryPromise = categoryQuery.first()
-
-    # for such category find all the filterable_attributes and secondary_attributes
-    findCategoryPromise.done (categoryData) =>
-        # filterable_attributes = categoryData.get('filterable_attributes')
-
-        # _.each filterable_attributes, (f_attrib) ->
-            
-            # # query to get specific category
-            # innerQuery = new Parse.Query("Attributes")
-            # innerQuery.equalTo("objectId",attributeId)
-
-            # # query to get products matching the child category
-            # query = new Parse.Query("AttributeValues")
-            # query.matchesQuery("attribute", innerQuery)
-            
-            # # output
-            # [
-            #   {
-            #       "attribId":
-            #       "attribName":
-            #       "displayType":
-            #       "attribValues": []
-
-            #   }
-            # ]         
-
-        return categoryData
-
-
 Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
     categoryId = request.params.categoryId
+    filterableAttributes = request.params.filterableAttributes
+    secondaryAttributes = request.params.secondaryAttributes    
     
     Category = Parse.Object.extend('Category')
     Attributes = Parse.Object.extend('Attributes')
@@ -49,14 +10,23 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
     # get category by given category id
     categoryQuery = new Parse.Query("Category")
     categoryQuery.equalTo("objectId", categoryId)
-    categoryQuery.include("filterable_attributes")
-    # categoryQuery.include("secondary_attributes")
+
+    if filterableAttributes
+        categoryQuery.include("filterable_attributes")
+    if secondaryAttributes
+        categoryQuery.include("secondary_attributes")
     
     findCategoryPromise = categoryQuery.first() 
 
     # for such category find all the filterable_attributes and secondary_attributes
     findCategoryPromise.done (categoryData) =>
-        filterable_attributes = categoryData.get('filterable_attributes')
+        filterable_attributes = []
+
+        if filterableAttributes
+            filterable_attributes = categoryData.get('filterable_attributes')
+
+        if secondaryAttributes
+           filterable_attributes = _.union(filterable_attributes, categoryData.get('secondary_attributes') )         
         
         findQs = []
 
