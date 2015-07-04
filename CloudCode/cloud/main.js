@@ -282,6 +282,7 @@
     queryProductItem = new Parse.Query(ProductItem);
     queryProductItem.equalTo("objectId", productId);
     queryProductItem.include("attrs");
+    queryProductItem.include("brand");
     queryProductItem.include("attrs.attribute");
     queryProductItem.include("category");
     return queryProductItem.first().then(function(ProductData) {

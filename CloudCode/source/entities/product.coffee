@@ -254,6 +254,7 @@ Parse.Cloud.define 'getProduct', (request, response) ->
 
     queryProductItem.equalTo("objectId", productId)
     queryProductItem.include("attrs")
+    queryProductItem.include("brand")
     queryProductItem.include("attrs.attribute")
     queryProductItem.include("category")
 
