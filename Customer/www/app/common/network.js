@@ -1,24 +1,24 @@
 angular.module('LocalHyper.common').factory('Network', [
-  '$q', '$cordovaNetwork', function($q, $cordovaNetwork) {
-    var Network, isHttpUrl, isOnline;
+  '$q', '$cordovaNetwork', '$rootScope', function($q, $cordovaNetwork, $rootScope) {
+    var Network, isHttpUrl;
     Network = {};
-    isOnline = function() {
-      if (ionis.Platform.isWebView()) {
-        return $cordovaNetwork.isOnline();
-      } else {
-        return navigator.onLine;
-      }
-    };
-    isHttpUrl = function(config) {
-      if (s.contains(config.url, '.html')) {
+    isHttpUrl = function(url) {
+      if (s.contains(url, '.html')) {
         return false;
       } else {
         return true;
       }
     };
     Network.request = function(config) {
-      if (isHttpUrl(config)) {
-        if (isOnline()) {
+      var token, url;
+      url = config.url;
+      if (isHttpUrl(url)) {
+        if ($rootScope.App.isOnline()) {
+          config.url = "https://api.parse.com/1/functions/" + url;
+          if ($rootScope.App.isLoggedIn()) {
+            token = $rootScope.App.getSessionToken();
+            config.headers['X-Parse-Session-Token'] = token;
+          }
           return config;
         } else {
           return $q.reject('offline');
@@ -28,16 +28,22 @@ angular.module('LocalHyper.common').factory('Network', [
       }
     };
     Network.responseError = function(rejection) {
+      if (_.has(rejection, 'data')) {
+        if (_.isNull(rejection.data)) {
+          rejection = 'server_error';
+        } else if (rejection.data.code === Parse.Error.INVALID_SESSION_TOKEN) {
+          rejection = "session_expired";
+        }
+      }
       return $q.reject(rejection);
     };
     return Network;
   }
 ]).config([
   '$httpProvider', function($httpProvider) {
-    var contentType;
-    contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
-    $httpProvider.defaults.headers.common['Content-Type'] = contentType;
-    $httpProvider.defaults.headers.post['Content-Type'] = contentType;
+    $httpProvider.defaults.headers.post['Content-Type'] = 'application/json';
+    $httpProvider.defaults.headers.common['X-Parse-Application-Id'] = APP_ID;
+    $httpProvider.defaults.headers.common['X-Parse-REST-API-Key'] = REST_API_KEY;
     return $httpProvider.interceptors.push('Network');
   }
 ]);

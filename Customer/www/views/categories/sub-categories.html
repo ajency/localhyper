@@ -10,7 +10,8 @@
 
 			<div 
 				class="col col-50"
-				ng-repeat="category in view.subCategories">
+				ng-repeat="category in view.subCategories"
+				ng-click="App.navigate('products', {categoryID: category.id})">
 
 				<ion-item class="item-image">
 					<img ng-src="{{category.image.src}}" class="aj-img">

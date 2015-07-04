@@ -30,6 +30,7 @@ angular.module('LocalHyper.categories', []).controller('CategoriesCtrl', [
         console.log(data);
         return $scope.view.onSuccess(data);
       }, function(error) {
+        console.log(error);
         return $scope.view.onError('Could not connect to server');
       });
     };

@@ -81,6 +81,11 @@ angular.module('LocalHyper.common', []).factory('App', [
         loggedIn = _.isNull(user) ? false : true;
         return loggedIn;
       },
+      getSessionToken: function() {
+        var user;
+        user = Parse.User.current();
+        return user.getSessionToken();
+      },
       getInstallationId: function() {
         var defer;
         defer = $q.defer();
