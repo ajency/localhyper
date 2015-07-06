@@ -1,19 +1,9 @@
 angular.module('LocalHyper.categories', []).controller('CategoriesCtrl', [
-  '$scope', 'App', '$ionicPopover', 'CategoriesAPI', function($scope, App, $ionicPopover, CategoriesAPI) {
+  '$scope', 'App', 'CategoriesAPI', function($scope, App, CategoriesAPI) {
     $scope.view = {
       display: 'loader',
       errorType: '',
-      userPopover: null,
       parentCategories: [],
-      loadPopOver: function() {
-        return $ionicPopover.fromTemplateUrl('views/right-popover.html', {
-          scope: $scope
-        }).then((function(_this) {
-          return function(popover) {
-            return _this.userPopover = popover;
-          };
-        })(this));
-      },
       getCategories: function() {
         return CategoriesAPI.getAll().then((function(_this) {
           return function(data) {
@@ -40,7 +30,6 @@ angular.module('LocalHyper.categories', []).controller('CategoriesCtrl', [
       }
     };
     $scope.$on('$ionicView.loaded', function() {
-      $scope.view.loadPopOver();
       return $scope.view.getCategories();
     });
     return $scope.$on('$ionicView.afterEnter', function() {

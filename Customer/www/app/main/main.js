@@ -1,6 +1,19 @@
 angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
-  '$scope', 'App', function($scope, App) {
+  '$scope', 'App', '$ionicPopover', function($scope, App, $ionicPopover) {
     return $scope.view = {
+      userPopover: null,
+      init: function() {
+        return this.loadPopOver();
+      },
+      loadPopOver: function() {
+        return $ionicPopover.fromTemplateUrl('views/right-popover.html', {
+          scope: $scope
+        }).then((function(_this) {
+          return function(popover) {
+            return _this.userPopover = popover;
+          };
+        })(this));
+      },
       onBackClick: function() {
         var count;
         if (App.currentState === 'verify-manual') {
