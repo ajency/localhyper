@@ -185,13 +185,30 @@ sm {
 .sub-categories {
   background: #ffffff;
 }
-.sub-categories .col-50 {
+.sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
   min-height: 240px;
   float: left;
 }
-.sub-categories .col-50 h3 {
+.sub-categories .border-card h3 {
   font-size: 14px;
   font-weight: 600;
+}
+.sub-categories .border-card .right-image {
+  height: 70px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+.sub-categories .border-card .amount {
+  position: absolute;
+  bottom: 10px;
+}
+.product-list .border-card {
+  height: 100px !important;
+  min-height: 170px;
+}
+.product-list h4 {
+  color: #f35a59;
 }
