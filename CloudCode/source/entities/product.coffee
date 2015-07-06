@@ -1,74 +1,3 @@
-Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
-    categoryId = request.params.categoryId
-    filterableAttributes = request.params.filterableAttributes
-    secondaryAttributes = request.params.secondaryAttributes    
-    
-    Category = Parse.Object.extend('Category')
-    Attributes = Parse.Object.extend('Attributes')
-    AttributeValues = Parse.Object.extend('AttributeValues')
-
-    # get category by given category id
-    categoryQuery = new Parse.Query("Category")
-    categoryQuery.equalTo("objectId", categoryId)
-
-    if filterableAttributes
-        categoryQuery.include("filterable_attributes")
-    if secondaryAttributes
-        categoryQuery.include("secondary_attributes")
-    
-    findCategoryPromise = categoryQuery.first() 
-
-    # for such category find all the filterable_attributes and secondary_attributes
-    findCategoryPromise.done (categoryData) =>
-        filterable_attributes = []
-
-        if filterableAttributes
-            filterable_attributes = categoryData.get('filterable_attributes')
-
-        if secondaryAttributes
-           filterable_attributes = _.union(filterable_attributes, categoryData.get('secondary_attributes') )         
-        
-        findQs = []
-
-        findQs = _.map(filterable_attributes, (attribute) ->
-            
-            attributeId = attribute.id
-            attributeValues = []
-
-            # query to get specific category
-            innerQuery = new Parse.Query("Attributes")
-            innerQuery.equalTo("objectId",attributeId)
-
-            # query to get attributeValues having the attributeId
-            query = new Parse.Query("AttributeValues")
-            query.matchesQuery("attribute", innerQuery)
-            query.include("attribute")
-            query.find()
-        )
-
-        Parse.Promise.when(findQs).then ->
-
-            individualFindResults = _.flatten(_.toArray(arguments))
-
-            finalArr = []
-            _.each individualFindResults , (individualResult) ->
-                
-                object =
-                    "attributeId" : individualResult.get("attribute").id
-                    "attributeName" : individualResult.get("attribute").get "name"
-                    "group" : individualResult.get("attribute").get "group"
-                    "displayType" : individualResult.get("attribute").get "displayType"
-                    "valueId" : individualResult.id
-                    "value" : individualResult.get "value"
-                
-                finalArr.push object
-            
-            Parse.Promise.as()  
-            response.success finalArr 
-        , (error)->
-            response.error error
-        
-
 Parse.Cloud.job 'productImport', (request, response) ->
 
     ProductItem = Parse.Object.extend('ProductItem')
@@ -131,7 +60,7 @@ Parse.Cloud.job 'productImport', (request, response) ->
 Parse.Cloud.define 'getProducts', (request, response) ->
   
     categoryId = request.params.categoryId
-    selectedFilters = request.params.selectedFilters # "all" / {"brand": "","price": "", "otherAttrib"} 
+    selectedFilters = request.params.selectedFilters # "all" / {"brand": "","price": "", "other_filters": [{"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}, {"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}]} 
     sortBy =  request.params.sortBy
     ascending = request.params.ascending
     page = parseInt request.params.page
@@ -142,11 +71,17 @@ Parse.Cloud.define 'getProducts', (request, response) ->
     filterableAttribQuery = new Parse.Query("Category")
     filterableAttribQuery.equalTo("objectId",categoryId)
     filterableAttribQuery.select("filterable_attributes")
+    filterableAttribQuery.select("supported_brands")
+    filterableAttribQuery.select("price_range")
     filterableAttribQuery.include("filterable_attributes")
+    filterableAttribQuery.include("supported_brands")
 
-    findFilterableAttrib = filterableAttribQuery.find()
+    findFilterableAttrib = filterableAttribQuery.first()
 
-    findFilterableAttrib.done (filters) =>
+    findFilterableAttrib.done (categoryData) =>
+        filters = categoryData.get "filterable_attributes"
+        supported_brands = categoryData.get "supported_brands"
+        price_range = categoryData.get "price_range"
 
         # get all category based products
         ProductItem = Parse.Object.extend("ProductItem")
@@ -177,15 +112,31 @@ Parse.Cloud.define 'getProducts', (request, response) ->
                 
                 query.greaterThanOrEqualTo("mrp", startPrice)
                 query.lessThanOrEqualTo("mrp", endPrice)
+
+            if _.contains(filterableProps, "other_filters")
+                console.log "has other_filters"
+                AttributeValues = Parse.Object.extend('AttributeValues')
+                otherFilters = selectedFilters['other_filters']
+                # otherFilters = [attribValueId1, attribBalueId2, attribBalueId3]
+
+                AttributeValues = Parse.Object.extend("AttributeValues")
+                attribValuePointers = _.map(otherFilters, (attribValueId) ->
+                    AttributeValuePointer = new AttributeValues()
+                    AttributeValuePointer.id = attribValueId
+                    AttributeValuePointer
+                )
+                attribValuePointers = otherFilters
+                console.log attribValuePointers
+                query.containedIn('attrs', attribValuePointers)
                 
 
         # restrict which fields are being returned
-        query.select("images,name,mrp,brand")
+        query.select("images,name,mrp,brand,attrs")
 
         query.include("brand")
         # query.include("category")
-        # query.include("attrs")
-        # query.include("attrs.attribute")
+        query.include("attrs")
+        query.include("attrs.attribute")
 
         # pagination
         query.limit(displayLimit)
@@ -204,6 +155,8 @@ Parse.Cloud.define 'getProducts', (request, response) ->
             result = 
                 products: products
                 filters: filters
+                supportedBrands: supported_brands
+                priceRange: price_range
                 sortableAttributes : ["mrp","popularity"]
 
             response.success result
