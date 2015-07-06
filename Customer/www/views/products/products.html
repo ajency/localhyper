@@ -14,10 +14,11 @@
 			<div 
 				class="col col-50"
 				collection-repeat="product in view.products"
-				item-width="50%">
-				    {{product.name}}
+				item-width="50%"
+				ng-click="App.navigate('single-product', {productID: product.objectId})">
+
+					{{product.name}}
 					<p>Rs {{product.mrp}}<p>
-				
 					<img ng-src="{{product.images[0].src}}" class="aj-img center-block">
 			
 

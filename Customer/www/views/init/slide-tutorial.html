@@ -1,10 +1,10 @@
 <ion-view hide-nav-bar="true">
 
 	<ion-slide-box 
-		active-slide="slide.active"
-		on-slide-changed="onSlideChange($index)"
-		on-drag-right="onSlideRight()"
-		on-drag-left="onSlideLeft()"
+		active-slide="view.activeSlide"
+		on-slide-changed="view.onSlideChange($index)"
+		on-drag-right="view.onSlideRight()"
+		on-drag-left="view.onSlideLeft()"
 		aj-fit-to-screen>
 
 		<ion-slide>
@@ -34,7 +34,7 @@
 				
 				<button 
 					class="button button-stable started"
-					ng-click="onGetStarted()">
+					ng-click="view.onGetStarted()">
 					Get Started
 				</button>
 			</div>

@@ -1,20 +1,13 @@
 angular.module 'LocalHyper.categories', []
 
 
-.controller 'CategoriesCtrl', ['$scope', 'App', '$ionicPopover', 'CategoriesAPI'
-	, ($scope, App, $ionicPopover, CategoriesAPI)->
+.controller 'CategoriesCtrl', ['$scope', 'App', 'CategoriesAPI'
+	, ($scope, App, CategoriesAPI)->
 
 		$scope.view = 
 			display: 'loader'
 			errorType: ''
-			userPopover: null
 			parentCategories: []
-
-			loadPopOver : ->
-				$ionicPopover.fromTemplateUrl 'views/right-popover.html',
-					scope: $scope
-				.then (popover)=>
-					@userPopover = popover
 
 			getCategories : ->
 				CategoriesAPI.getAll()
@@ -38,7 +31,6 @@ angular.module 'LocalHyper.categories', []
 
 
 		$scope.$on '$ionicView.loaded', ->
-			$scope.view.loadPopOver()
 			$scope.view.getCategories()
 
 		$scope.$on '$ionicView.afterEnter', ->

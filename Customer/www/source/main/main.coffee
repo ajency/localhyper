@@ -1,9 +1,19 @@
 angular.module 'LocalHyper.main', []
 
 
-.controller 'SideMenuCtrl', ['$scope', 'App', ($scope, App)->
+.controller 'SideMenuCtrl', ['$scope', 'App', '$ionicPopover', ($scope, App, $ionicPopover)->
 
 	$scope.view = 
+		userPopover: null
+
+		init : ->
+			@loadPopOver()
+
+		loadPopOver : ->
+			$ionicPopover.fromTemplateUrl 'views/right-popover.html',
+				scope: $scope
+			.then (popover)=>
+				@userPopover = popover
 
 		onBackClick : ->
 			if App.currentState is 'verify-manual'
