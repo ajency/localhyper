@@ -212,7 +212,7 @@
     findFilterableAttrib = filterableAttribQuery.first();
     findFilterableAttrib.done((function(_this) {
       return function(categoryData) {
-        var AttributeValues, ProductItem, attribValuePointers, brand, endPrice, filterableProps, filters, innerBrandQuery, innerQuery, otherFilters, price, price_range, query, queryFindPromise, startPrice, supported_brands;
+        var AttributeValues, ProductItem, brand, endPrice, filterableProps, filters, innerBrandQuery, innerQuery, otherFilters, price, price_range, query, queryFindPromise, startPrice, supported_brands;
         filters = categoryData.get("filterable_attributes");
         supported_brands = categoryData.get("supported_brands");
         price_range = categoryData.get("price_range");
@@ -240,16 +240,18 @@
             console.log("has other_filters");
             AttributeValues = Parse.Object.extend('AttributeValues');
             otherFilters = selectedFilters['other_filters'];
-            AttributeValues = Parse.Object.extend("AttributeValues");
-            attribValuePointers = _.map(otherFilters, function(attribValueId) {
-              var AttributeValuePointer;
-              AttributeValuePointer = new AttributeValues();
-              AttributeValuePointer.id = attribValueId;
-              return AttributeValuePointer;
+            _.each(otherFilters, function(sameAttribFilters) {
+              var attribValuePointers;
+              AttributeValues = Parse.Object.extend("AttributeValues");
+              attribValuePointers = [];
+              attribValuePointers = _.map(sameAttribFilters, function(attribValueId) {
+                var AttributeValuePointer;
+                AttributeValuePointer = new AttributeValues();
+                AttributeValuePointer.id = attribValueId;
+                return AttributeValuePointer;
+              });
+              return query.containedIn('attrs', attribValuePointers);
             });
-            attribValuePointers = otherFilters;
-            console.log(attribValuePointers);
-            query.containedIn('attrs', attribValuePointers);
           }
         }
         query.select("images,name,mrp,brand,attrs");
@@ -351,7 +353,21 @@
     var obj, phone, verificationCode;
     obj = request.object;
     phone = obj.get('phone');
-    return verificationCode = obj.get('verificationCode');
+    verificationCode = obj.get('verificationCode');
+    return Parse.Cloud.httpRequest({
+      url: 'https://rest.nexmo.com/sms/json',
+      params: {
+        api_key: '343ea2a4',
+        api_secret: 'a682ae14',
+        from: 'ShopOye',
+        to: "91" + phone,
+        text: "Welcome to ShopOye. Your one time verification code is " + verificationCode
+      }
+    }).then(function(httpResponse) {
+      return console.log("SMS Sent: " + phone);
+    }, function(httpResponse) {
+      return console.log("SMS Error");
+    });
   });
 
   Parse.Cloud.define("verifySMSCode", function(request, response) {

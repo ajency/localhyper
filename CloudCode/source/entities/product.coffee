@@ -117,18 +117,22 @@ Parse.Cloud.define 'getProducts', (request, response) ->
                 console.log "has other_filters"
                 AttributeValues = Parse.Object.extend('AttributeValues')
                 otherFilters = selectedFilters['other_filters']
-                # otherFilters = [attribValueId1, attribBalueId2, attribBalueId3]
+                # otherFilters = [[attribValueId1, attribBalueId2], [attribBalueId3],[attribBalueId4,attribBalueId5]]
 
-                AttributeValues = Parse.Object.extend("AttributeValues")
-                attribValuePointers = _.map(otherFilters, (attribValueId) ->
-                    AttributeValuePointer = new AttributeValues()
-                    AttributeValuePointer.id = attribValueId
-                    AttributeValuePointer
-                )
-                attribValuePointers = otherFilters
-                console.log attribValuePointers
-                query.containedIn('attrs', attribValuePointers)
-                
+                # applying multiple constraints is like an AND on constraints
+                _.each otherFilters , (sameAttribFilters) ->
+                    AttributeValues = Parse.Object.extend("AttributeValues")
+                    attribValuePointers = []
+                    attribValuePointers = _.map(sameAttribFilters, (attribValueId) ->
+                        AttributeValuePointer = new AttributeValues()
+                        AttributeValuePointer.id = attribValueId
+                        AttributeValuePointer
+                    )
+
+                    query.containedIn('attrs', attribValuePointers)
+
+                # lists objects matching any of the values in a list of value (can be used for OR condition)
+
 
         # restrict which fields are being returned
         query.select("images,name,mrp,brand,attrs")

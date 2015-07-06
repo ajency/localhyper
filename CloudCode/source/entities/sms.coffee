@@ -40,19 +40,19 @@ Parse.Cloud.afterSave "SMSVerify", (request)->
 	phone = obj.get 'phone'
 	verificationCode = obj.get 'verificationCode'
 
-	# Parse.Cloud.httpRequest 
-	# 	url: 'https://rest.nexmo.com/sms/json'
-	# 	params:
-	# 		api_key: '343ea2a4'
-	# 		api_secret: 'a682ae14'
-	# 		from: 'ShopOye'
-	# 		to: "91#{phone}"
-	# 		text: "Welcome to ShopOye. Your one time verification code is #{verificationCode}"
+	Parse.Cloud.httpRequest 
+		url: 'https://rest.nexmo.com/sms/json'
+		params:
+			api_key: '343ea2a4'
+			api_secret: 'a682ae14'
+			from: 'ShopOye'
+			to: "91#{phone}"
+			text: "Welcome to ShopOye. Your one time verification code is #{verificationCode}"
 
-	# .then (httpResponse)->
-	# 	console.log "SMS Sent: #{phone}"
-	# , (httpResponse)->
-	# 	console.log "SMS Error"
+	.then (httpResponse)->
+		console.log "SMS Sent: #{phone}"
+	, (httpResponse)->
+		console.log "SMS Error"
 
 
 Parse.Cloud.define "verifySMSCode", (request, response)->
