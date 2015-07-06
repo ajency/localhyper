@@ -4,7 +4,7 @@
 		{{view.title}}
     </ion-nav-title>
 
-	<ion-content>
+	<ion-content class="sub-categories">
 
 		<ion-refresher
 			on-refresh="view.onPullToRefresh()">
@@ -15,15 +15,15 @@
 				class="col col-50"
 				collection-repeat="product in view.products"
 				item-width="50%">
-
-				<ion-item class="item-image">
-					<img ng-src="{{product.images[0].src}}" class="aj-img">
-				</ion-item>
-
-				<ion-item>
-					{{product.name}}
+				    {{product.name}}
 					<p>Rs {{product.mrp}}<p>
-				</ion-item>
+				
+					<img ng-src="{{product.images[0].src}}" class="aj-img center-block">
+			
+
+			
+					
+		
 				
 			</div>
 		</ion-list>
