@@ -2,8 +2,17 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
   '$rootScope', 'App', 'Push', '$timeout', function($rootScope, App, Push, $timeout) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
+    $rootScope.product = {
+      offers: [],
+      globalNotification: false,
+      localNotification: false,
+      request: ''
+    };
     App.notification = {
       icon: false
+    };
+    App.logo = {
+      small: true
     };
     return $rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
       var bool, hideForStates;
@@ -12,9 +21,10 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       App.previousState = from.name;
       App.currentState = to.name;
       hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual'];
-      bool = _.contains(hideForStates, App.currentState);
-      App.menuEnabled.left = !bool;
-      return App.notification.icon = !bool;
+      bool = !_.contains(hideForStates, App.currentState);
+      App.menuEnabled.left = bool;
+      App.notification.icon = bool;
+      return App.logo.small = App.currentState !== 'categories';
     });
   }
 ]).config([
