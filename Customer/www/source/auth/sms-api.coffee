@@ -1,16 +1,16 @@
 angular.module 'LocalHyper.auth'
 
 
-.factory 'SmsAPI', ['$q', 'App', ($q, App)->
+.factory 'SmsAPI', ['$q', '$http', ($q, $http)->
 
 	SmsAPI = {}
 
 	SmsAPI.requestSMSCode = (phone)->
 		defer = $q.defer()
 
-		Parse.Cloud.run 'sendSMSCode', phone: phone
+		$http.post 'functions/sendSMSCode', phone: phone
 		.then (data)->
-			defer.resolve data
+			defer.resolve data.data.result
 		, (error)->
 			defer.reject error
 
@@ -19,9 +19,9 @@ angular.module 'LocalHyper.auth'
 	SmsAPI.verifySMSCode = (phone, code)->
 		defer = $q.defer()
 
-		Parse.Cloud.run 'verifySMSCode', {phone: phone, code: code}
+		$http.post 'functions/verifySMSCode', {phone: phone, code: code}
 		.then (data)->
-			defer.resolve data
+			defer.resolve data.data.result
 		, (error)->
 			defer.reject error
 

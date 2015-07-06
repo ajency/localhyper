@@ -8,6 +8,8 @@ angular.module('LocalHyper.common', []).factory('App', [
         left: false,
         right: false
       },
+      previousState: '',
+      currentState: '',
       isAndroid: function() {
         return ionic.Platform.isAndroid();
       },
@@ -74,17 +76,6 @@ angular.module('LocalHyper.common', []).factory('App', [
       },
       dragContent: function(bool) {
         return $ionicSideMenuDelegate.canDragContent(bool);
-      },
-      isLoggedIn: function() {
-        var loggedIn, user;
-        user = Parse.User.current();
-        loggedIn = _.isNull(user) ? false : true;
-        return loggedIn;
-      },
-      getSessionToken: function() {
-        var user;
-        user = Parse.User.current();
-        return user.getSessionToken();
       },
       getInstallationId: function() {
         var defer;

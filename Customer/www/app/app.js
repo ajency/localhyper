@@ -2,27 +2,19 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
   '$rootScope', 'App', 'Push', '$timeout', function($rootScope, App, Push, $timeout) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
-    $rootScope.product = {
-      offers: [],
-      globalNotification: false,
-      localNotification: false,
-      request: ''
+    App.notification = {
+      icon: false
     };
     return $rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
-      var hideMenuStates;
+      var bool, hideForStates;
       $rootScope.previousState = from.name;
       $rootScope.currentState = to.name;
-      hideMenuStates = ['verify-begin', 'verify-auto', 'verify-manual'];
-      if (_.contains(hideMenuStates, $rootScope.currentState)) {
-        App.menuEnabled.left = false;
-      } else {
-        App.menuEnabled.left = true;
-      }
-      if ($rootScope.currentState === 'requests') {
-        return $timeout(function() {
-          return $rootScope.product.localNotification = false;
-        }, 500);
-      }
+      App.previousState = from.name;
+      App.currentState = to.name;
+      hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual'];
+      bool = _.contains(hideForStates, App.currentState);
+      App.menuEnabled.left = !bool;
+      return App.notification.icon = !bool;
     });
   }
 ]).config([

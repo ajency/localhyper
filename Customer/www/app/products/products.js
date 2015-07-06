@@ -26,7 +26,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         return this.getProducts();
       },
       getProducts: function() {
-        return ProductsAPI.get({
+        return ProductsAPI.getAll({
           categoryID: $stateParams.categoryID,
           page: this.page
         }).then((function(_this) {

@@ -5,7 +5,7 @@ angular.module 'LocalHyper.products'
 
 	ProductsAPI = {}
 
-	ProductsAPI.get = (opts)->
+	ProductsAPI.getAll = (opts)->
 		defer = $q.defer()
 
 		params = 
@@ -16,7 +16,18 @@ angular.module 'LocalHyper.products'
 			"page": opts.page
 			"displayLimit": 6
 
-		$http.post 'getProducts', params
+		$http.post 'functions/getProducts', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
+	ProductsAPI.getSingleProduct = (productId)->
+		defer = $q.defer()
+
+		$http.post 'functions/getProduct', "productId": productId
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->

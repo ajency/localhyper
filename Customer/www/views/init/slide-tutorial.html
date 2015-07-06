@@ -1,41 +1,44 @@
-<ion-slide-box 
-	active-slide="slide.active"
-	on-slide-changed="onSlideChange($index)"
-	on-drag-right="onSlideRight()"
-	on-drag-left="onSlideLeft()"
-	aj-fit-to-screen>
+<ion-view hide-nav-bar="true">
 
-	<ion-slide>
-		<div class="aj-slide-img" style="background-image: url('img/slidebox/a.jpg');"></div>
-	</ion-slide>
+	<ion-slide-box 
+		active-slide="view.activeSlide"
+		on-slide-changed="view.onSlideChange($index)"
+		on-drag-right="view.onSlideRight()"
+		on-drag-left="view.onSlideLeft()"
+		aj-fit-to-screen>
 
-	<ion-slide>
-		<div class="aj-slide-img" style="background-image: url('img/slidebox/b.jpg');"></div>
-	</ion-slide>
+		<ion-slide>
+			<div class="aj-slide-img" style="background-image: url('img/slidebox/a.jpg');"></div>
+		</ion-slide>
 
-	<ion-slide>
-		<div class="aj-slide-img" style="background-image: url('img/slidebox/c.jpg');"></div>
-	</ion-slide>
+		<ion-slide>
+			<div class="aj-slide-img" style="background-image: url('img/slidebox/b.jpg');"></div>
+		</ion-slide>
 
-	<ion-slide>
-		<div class="aj-slide-img" style="background-image: url('img/slidebox/d.jpg');"></div>
-	</ion-slide>
+		<ion-slide>
+			<div class="aj-slide-img" style="background-image: url('img/slidebox/c.jpg');"></div>
+		</ion-slide>
 
-	<ion-slide>
-		<div class="aj-slide-img" style="background-image: url('img/slidebox/e.jpg');">
-			
-			<button 
-				class="button button-stable register"
-				ng-click="App.navigate('verify-begin')">
-				Register
-			</button>
-			
-			<button 
-				class="button button-stable started"
-				ng-click="onGetStarted()">
-				Get Started
-			</button>
-		</div>
-	</ion-slide>
+		<ion-slide>
+			<div class="aj-slide-img" style="background-image: url('img/slidebox/d.jpg');"></div>
+		</ion-slide>
 
-</ion-slide-box>
+		<ion-slide>
+			<div class="aj-slide-img" style="background-image: url('img/slidebox/e.jpg');">
+				
+				<button 
+					class="button button-stable register"
+					ng-click="App.navigate('verify-begin')">
+					Register
+				</button>
+				
+				<button 
+					class="button button-stable started"
+					ng-click="view.onGetStarted()">
+					Get Started
+				</button>
+			</div>
+		</ion-slide>
+
+	</ion-slide-box>
+</ion-view>

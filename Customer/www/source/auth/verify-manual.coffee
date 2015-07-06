@@ -1,73 +1,83 @@
 angular.module 'LocalHyper.auth'
 
 
-.controller 'VerifyManualCtrl', ['$scope', '$rootScope', 'CToast', 'App', 'SmsAPI', 'AuthAPI', 'CSpinner'
-	, ($scope, $rootScope, CToast, App, SmsAPI, AuthAPI, CSpinner)->
+.controller 'VerifyManualCtrl', ['$scope', 'CToast', 'App', 'SmsAPI', 'AuthAPI'
+	, 'CSpinner', 'User', '$ionicPlatform'
+	, ($scope, CToast, App, SmsAPI, AuthAPI, CSpinner, User, $ionicPlatform)->
 
 		$scope.view = 
 			display: 'noError'
-
-		$scope.sms = 
-			code: ''
+			smsCode: ''
 			errorAt: ''
+			errorType: ''
 
-		register = ->
-			AuthAPI.register $rootScope.user
-			.then (success)->
-				App.navigate 'categories', {}, {animate: false, back: false}
-			, (error)->
-				$scope.sms.errorAt = 'register'
-				$scope.view.display = 'error'
-			.finally ->
-				CSpinner.hide()
+			onError : (type, at)->
+				@display = 'error'
+				@errorType = type
+				@errorAt = at
 
-		verifySmsCode = ->
-			CSpinner.show '', 'Please wait...'
-			SmsAPI.verifySMSCode $rootScope.user.phone, $scope.sms.code
-			.then (data)->
-				if data.verified
-					register()
-				else 
+			requestSMSCode : ->
+				CSpinner.show '', 'Please wait...'
+				SmsAPI.requestSMSCode @user.phone
+				.then (data)=>
+					console.log data
+					@display = 'maxAttempts' if data.attemptsExceeded
+				, (error)=>
+					@onError error, 'requestSMSCode'
+				.finally ->
 					CSpinner.hide()
-					CToast.show 'Incorrect verification code'
-			, (error)->
-				CSpinner.hide()
-				$scope.sms.errorAt = 'verifySmsCode'
-				$scope.view.display = 'error'
 
-		requestSMSCode = ->
-			CSpinner.show '', 'Please wait...'
-			SmsAPI.requestSMSCode $rootScope.user.phone
-			.then (data)->
-				if data.attemptsExceeded
-					$scope.view.display = 'maxAttempts'
-			, (error)->
-				$scope.sms.errorAt = 'requestSMSCode'
-				$scope.view.display = 'error'
-			.finally ->
-				CSpinner.hide()
+			onNext : ->
+				if @smsCode is '' or _.isUndefined(@smsCode)
+					CToast.show 'Please enter 6 digit verification code'
+				else
+					@verifySmsCode()
 
-		$scope.onNext = ->
-			code  = $scope.sms.code
-			if code is '' or _.isUndefined(code)
-				CToast.show 'Please enter verification code'
-			else
-				if App.isOnline() then verifySmsCode()
-				else CToast.show 'No internet availability'
+			verifySmsCode : ->
+				CSpinner.show '', 'Please wait...'
+				SmsAPI.verifySMSCode @user.phone, @smsCode
+				.then (data)=>
+					if data.verified
+						@register()
+					else 
+						CSpinner.hide()
+						CToast.show 'Incorrect verification code'
+				, (error)=>
+					CSpinner.hide()
+					@onError error, 'verifySmsCode'
 
-		$scope.onResendCode = ->
-			requestSMSCode()
+			register : ->
+				AuthAPI.register @user
+				.then (success)->
+					App.navigate 'categories', {}, {animate: false, back: false}
+				, (error)=>
+					@onError error, 'register'
+				.finally ->
+					CSpinner.hide()
+
+			onTapToRetry : ->
+				@display = 'noError'
+				switch @errorAt
+					when 'requestSMSCode'
+						@requestSMSCode()
+					when 'verifySmsCode'
+						@verifySmsCode()
+					when 'register'
+						@register()
+
+		
+		onDeviceBack = ->
+			count = if App.isAndroid() then -2 else -1
+			App.goBack count
+
+		$scope.$on '$ionicView.beforeEnter', ->
+			$scope.view.user = User.info 'get'
 
 		$scope.$on '$ionicView.enter', ->
-			if App.isIOS() then requestSMSCode()
+			#Device hardware back button for android
+			$ionicPlatform.onHardwareBackButton onDeviceBack
+			$scope.view.requestSMSCode() if App.isIOS()
 
-		$scope.onTryAgain = ->
-			$scope.view.display = 'noError'
-			switch $scope.sms.errorAt
-				when 'requestSMSCode'
-					requestSMSCode()
-				when 'verifySmsCode'
-					verifySmsCode()
-				when 'register'
-					register()
+		$scope.$on '$ionicView.leave', ->
+			$ionicPlatform.offHardwareBackButton onDeviceBack
 ]

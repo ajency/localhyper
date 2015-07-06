@@ -9,10 +9,10 @@ angular.module 'LocalHyper.common', []
 		App = 
 
 			start: true
-
 			validateEmail: /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/
-
 			menuEnabled : left: false, right: false
+			previousState: ''
+			currentState: ''
 
 			isAndroid : ->
 				ionic.Platform.isAndroid()
@@ -63,15 +63,6 @@ angular.module 'LocalHyper.common', []
 
 			dragContent : (bool)->
 				$ionicSideMenuDelegate.canDragContent bool
-
-			isLoggedIn : ->
-				user = Parse.User.current()
-				loggedIn = if _.isNull(user) then false else true
-				loggedIn
-
-			getSessionToken : ->
-				user = Parse.User.current()
-				user.getSessionToken()
 
 			getInstallationId : ->
 				defer = $q.defer()

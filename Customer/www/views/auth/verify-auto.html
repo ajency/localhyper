@@ -9,9 +9,11 @@
 				<h3>Please Wait...</h3>
 
 				</br>
-				<h5 class="gray">We are trying to auto verify your number with the SMS sent to +91{{user.phone}}</h5>
+				<h5 class="gray">We are trying to auto verify your number with the SMS sent to +91{{view.user.phone}}</h5>
 
 				</br>
+				<ion-spinner icon="lines" class="aj-verify-spinner"> </ion-spinner>
+				</br></br>
 
 				<h4 ng-click="App.navigate('verify-manual')">Enter code manually</h4>
 			</div>
@@ -27,22 +29,11 @@
 				<h4 ng-click="App.navigate('verify-manual')">Enter code manually</h4>
 			</div>
 
-			<div ng-switch-when="error">
-				<h3>Error</h3>
-
-				</br>
-				<h5 class="gray">Please check your network connection and try again</h5>
-
-				<div class="padding">
-					<button 
-						class="button button-dark aj-btn"
-						ng-click="onTryAgain()">
-						Try again
-					</button>
-				</div>
-
-				</br>
-			</div>
+			<aj-error 
+				ng-switch-when="error"
+				error-type="view.errorType"
+				tap-to-retry="view.onTapToRetry()">
+			</aj-error>
 			
 		</div>
 

@@ -1,5 +1,6 @@
 <ion-side-menus
 	enable-menu-with-back-views="true"
+	ng-init="view.init()"
 	ng-controller="SideMenuCtrl">
 
 	<ion-side-menu-content>
@@ -8,20 +9,33 @@
 			no-tap-scroll="App.noTapScroll()">
 			
 			<!-- Notification icon  -->
-			<ion-nav-buttons side="secondary">
+			<!-- <ion-nav-buttons side="secondary">
 				<button 
 					class="button button-clear button-assertive" 
 					ng-if="product.globalNotification;"
 					ng-click="App.navigate('requests');">
 					New
 				</button>
+			</ion-nav-buttons> -->
+
+			<ion-nav-buttons side="right">
+				<div ng-if="App.notification.icon">
+					<span class="notification badge badge-assertive">2</span>
+					<button 
+						class="button button-icon ion-ios-person-outline"
+						ng-click="view.userPopover.show($event)">
+					</button>
+				</div>
 			</ion-nav-buttons>
 
-			<ion-nav-back-button> </ion-nav-back-button>
+			<ion-nav-back-button 
+				ng-click="view.onBackClick()"> 
+			</ion-nav-back-button>
 		</ion-nav-bar>
 
 		<ion-nav-view name="appContent"> </ion-nav-view>
 	</ion-side-menu-content>
+	
 	
 	<ion-side-menu 
 		side="left"

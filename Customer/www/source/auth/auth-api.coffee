@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.auth'
 
 
-.factory 'AuthAPI', ['$q', 'App', ($q, App)->
+.factory 'AuthAPI', ['$q', 'App', '$http', ($q, App, $http)->
 
 	UUID = App.deviceUUID()
 	AuthAPI = {}
@@ -20,76 +20,57 @@ angular.module 'LocalHyper.auth'
 		decrypted = CryptoJS.AES.decrypt passwordHash, key
 		decrypted.toString CryptoJS.enc.Utf8
 
-	AuthAPI.isExistingUser = (phone)->
-		defer = $q.defer()
-		userQuery = new Parse.Query Parse.User
-		userQuery.equalTo "username", phone
-
-		userQuery.find()
-		.then (userObj)->
-			existing = if _.isEmpty(userObj) then false else true
-			defer.resolve existing
-		, (error)->
-			defer.reject error
-
-		defer.promise
-
 	AuthAPI.register = (user)->
 		defer = $q.defer()
 		phone = user.phone.toString()
 		name  = user.name
 
-		onSuccess = (success)->
+		$http.get 'users', where: "username": phone
+		.then (data)=>
+			userObj = data.data.results
+			existingUser = if _.isEmpty(userObj) then false else true
+			if existingUser then @loginExistingUser(phone, name)
+			else @signUpNewUser(phone, name)
+		.then (success)->
 			defer.resolve success
-
-		onError = (error)->
+		, (error)->
 			defer.reject error
-
-		@isExistingUser phone
-		.then (exists)=>
-			if exists
-				@loginExistingUser(phone, name).then onSuccess, onError
-			else
-				@signUpNewUser(phone, name).then onSuccess, onError
-
-		, onError
 
 		defer.promise
 
 	AuthAPI.loginExistingUser = (phone, name)->
 		defer = $q.defer()
+		oldPassword = oldPasswordhash = ''
+		newPassword = newPasswordHash = ''
 
-		onError = (error)->
-			defer.reject error
-
-		updateUser = (user)=>
-			password = "#{phone}#{UUID}"
-			passwordHash = @encryptPassword password, phone
-
-			App.getInstallationId()
-			.then (installationId)->
+		$http.get 'users', where: "username": phone
+		.then (data)=>
+			userObj = data.data.results[0]
+			oldPasswordhash = userObj.passwordHash
+			oldPassword = @decryptPassword oldPasswordhash, phone
+			Parse.User.logOut()
+		.then ->
+			Parse.User.logIn phone, oldPassword
+		.then (user)=>
+			newPassword = "#{phone}#{UUID}"
+			newPasswordHash = @encryptPassword newPassword, phone
+			App.getInstallationId().then (installationId)->
 				user.save
 					"displayName": name
-					"password": password
-					"passwordHash": passwordHash
+					"password": newPassword
+					"passwordHash": newPasswordHash
 					"installationId": installationId
-			.then (success)->
-				defer.resolve success
-			, onError
-
-		userQuery = new Parse.Query Parse.User
-		userQuery.equalTo "username", phone
-
-		userQuery.find()
-		.then (userObj)=>
-			passwordHash = userObj[0].get 'passwordHash'
-			password = @decryptPassword passwordHash, phone
+		.then ->
 			Parse.User.logOut()
-			.then ->
-				Parse.User.logIn phone, password
-				.then updateUser, onError
-			, onError
-		, onError
+		.then ->
+			Parse.User.logIn phone, newPassword
+		.then (success)->
+			defer.resolve success
+		, (error)=>
+			if _.has(error, 'code')
+				@onParseJsError defer, error
+			else
+				defer.reject error
 
 		defer.promise
 
@@ -110,10 +91,21 @@ angular.module 'LocalHyper.auth'
 			user.signUp()
 		.then (success)->
 			defer.resolve success
-		, (error)->
-			defer.reject error
+		, (error)=>
+			@onParseJsError defer, error
 
 		defer.promise
+
+	AuthAPI.onParseJsError = (defer, error)->
+		#Handle Parse JS SDK Error
+		switch error.code
+			when Parse.Error.CONNECTION_FAILED
+				defer.reject 'server_error'
+			when Parse.Error.INVALID_SESSION_TOKEN
+				defer.reject 'session_expired'
+			else
+				console.log 'Error code: '+error.code
+				defer.reject 'unknown_error'
 
 	AuthAPI
 ]
