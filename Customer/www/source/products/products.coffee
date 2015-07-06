@@ -31,7 +31,7 @@ angular.module 'LocalHyper.products', []
 				@getProducts()
 
 			getProducts : ->
-				ProductsAPI.get
+				ProductsAPI.getAll
 					categoryID: $stateParams.categoryID
 					page: @page
 				.then (data)=>

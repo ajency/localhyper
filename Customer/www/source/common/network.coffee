@@ -41,7 +41,8 @@ angular.module 'LocalHyper.common'
 
 .config ['$httpProvider', ($httpProvider)->
 	
-	$httpProvider.defaults.headers.post['Content-Type'] = 'application/json'
+	$httpProvider.defaults.headers.post['Content-Type']   = 'application/json'
+	$httpProvider.defaults.headers.common['Content-Type'] = 'application/json'
 	$httpProvider.defaults.headers.common['X-Parse-Application-Id'] = APP_ID
 	$httpProvider.defaults.headers.common['X-Parse-REST-API-Key']   = REST_API_KEY
 
