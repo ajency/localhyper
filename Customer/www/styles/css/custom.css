@@ -145,3 +145,21 @@ sm {
   margin-bottom: -10px;
   background-position: -9px -367px;
 }
+/*Department List*/
+.department-list {
+  height: 199px;
+  background: #e8e8e8;
+  padding-left: 0px;
+}
+.department-list h2 {
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  margin: 30px;
+}
+.department-list img {
+  width: 100%;
+}
+.department-list:nth-child(2) {
+  background: #DBDBDB;
+}

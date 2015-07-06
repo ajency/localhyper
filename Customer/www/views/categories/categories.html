@@ -27,11 +27,13 @@
 
 		<ion-list ng-switch-when="noError">
 			<a 
-				class="item item-thumbnail-left"
+				class="item item-thumbnail-left department-list"
 				ng-repeat="category in view.parentCategories"
 				ng-click="App.navigate('sub-categories', {parentID: category.id})">
-					<img ng-src="{{category.image.src}}">
+					
 					<h2>{{category.name}}</h2>
+				<!-- 	<img ng-src="{{category.image.src}}"> -->
+				<img src="../img/home1.png"/>
 			</a>
 		</ion-list>
 
