@@ -39,6 +39,9 @@ h6 {
   margin: auto;
   margin-top: 50%;
 }
+.img-responsive {
+  width: 100%;
+}
 .margin-none {
   margin: 0px !important;
 }
@@ -54,11 +57,14 @@ sm {
 }
 .nav-bar-title {
   text-transform: uppercase;
-  font-size: 16px;
+  font-size: 14px;
 }
 .center-block {
   margin: auto;
   display: block;
+}
+.pull-left {
+  float: left;
 }
 /* HEADER */
 .has-header {
@@ -170,13 +176,13 @@ sm {
   width: 45%;
   position: absolute;
   top: 35px ;
-  right: 0px;
+  right: -10px;
 }
 .department-list:nth-child(2) {
   background: #ffffff;
 }
 .department-list:nth-child(2) img {
-  left: 0px;
+  left: -22px;
 }
 .department-list:nth-child(2) h3 {
   text-align: right;
@@ -195,19 +201,8 @@ sm {
   font-size: 14px;
   font-weight: 600;
 }
-.sub-categories .border-card .right-image {
-  height: 70px;
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-}
-.sub-categories .border-card .amount {
-  position: absolute;
-  bottom: 10px;
-}
-.product-list .border-card {
-  height: 100px !important;
-  min-height: 170px;
+.sub-categories .border-card .title {
+  height: 50px;
 }
 .product-list h4 {
   color: #f35a59;

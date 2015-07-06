@@ -17,19 +17,29 @@
 				item-width="50%"
 				ng-click="App.navigate('single-product', {productID: product.objectId})">
 
-					<h3 class="text-left">{{product.name}}</h3>
+					<h6 class="text-left title">{{product.name}}</h6>
 					
-					<div class="row">
-                        <div class="col col-50">
-                        	<div class="amount">
+				<!-- 	<div class="row">
+                        <div class="col col-67">
+                      
 								<span class="subdued">MRP</span>
-                        		<h4 class="margin-none" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
-                        		</div>
+                        		<h4 class="margin-none pull-left" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
+                        		
 
                     	</div>
-						 <div class="col col-50"><img ng-src="{{product.images[0].src}}" class="aj-img center-block right-image"></div>
+						 <div class="col "><img ng-src="{{product.images[0].src}}" class="aj-img center-block img-responsive"></div>
+					</div> -->
+					<img ng-src="{{product.images[0].src}}" class="aj-img center-block " style="height:100px;">
+						<div class="row">
+                        <div class="col col-67">
+                      
+								<span class="subdued">MRP</span>
+                        		<h4 class="margin-none pull-left" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
+                        		
+
+                    	</div>
+						
 					</div>
-					
 		
 				
 			</div>
