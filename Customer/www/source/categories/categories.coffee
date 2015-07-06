@@ -35,9 +35,9 @@ angular.module 'LocalHyper.categories', []
 			onTapToRetry : ->
 				@display = 'loader'
 				@getCategories()
-				
 
-		$scope.$on '$ionicView.enter', ->
+
+		$scope.$on '$ionicView.loaded', ->
 			$scope.view.loadPopOver()
 			$scope.view.getCategories()
 

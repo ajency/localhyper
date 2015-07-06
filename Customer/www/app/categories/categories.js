@@ -39,7 +39,7 @@ angular.module('LocalHyper.categories', []).controller('CategoriesCtrl', [
         return this.getCategories();
       }
     };
-    $scope.$on('$ionicView.enter', function() {
+    $scope.$on('$ionicView.loaded', function() {
       $scope.view.loadPopOver();
       return $scope.view.getCategories();
     });
