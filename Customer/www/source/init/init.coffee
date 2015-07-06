@@ -73,6 +73,7 @@ angular.module 'LocalHyper.init', []
 		
 		.state 'init',
 			url: '/init'
+			cache: false
 			controller: 'InitCtrl'
 			templateUrl: 'views/init/init.html'
 	
