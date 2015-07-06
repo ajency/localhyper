@@ -20,6 +20,8 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	$rootScope.$on '$stateChangeSuccess', (ev, to, toParams, from, fromParams)->
 		$rootScope.previousState = from.name
 		$rootScope.currentState = to.name
+		App.previousState = from.name
+		App.currentState  = to.name
 
 		#Enable/disable menu
 		hideMenuStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual']

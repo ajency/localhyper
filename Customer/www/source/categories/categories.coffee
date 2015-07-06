@@ -6,40 +6,43 @@ angular.module 'LocalHyper.categories', []
 
 		$scope.view = 
 			display: 'loader'
-			errorMsg: ''
+			errorType: ''
+			userPopover: null
 			parentCategories: []
-			onSuccess: (data)->
+
+			loadPopOver : ->
+				$ionicPopover.fromTemplateUrl 'views/right-popover.html',
+					scope: $scope
+				.then (popover)=>
+					@userPopover = popover
+
+			getCategories : ->
+				CategoriesAPI.getAll()
+				.then (data)=>
+					console.log data
+					@onSuccess data
+				, (error)=>
+					@onError error
+
+			onSuccess : (data)->
 				@display = 'noError'
 				@parentCategories = data
-			onError: (msg)->
+			
+			onError: (type)->
 				@display = 'error'
-				@errorMsg = msg
+				@errorType = type
 
-		$ionicPopover.fromTemplateUrl 'views/right-popover.html', scope: $scope
-		.then (popover)->
-			$scope.rightPopover = popover
+			onTapToRetry : ->
+				@display = 'loader'
+				@getCategories()
+				
+
+		$scope.$on '$ionicView.enter', ->
+			$scope.view.loadPopOver()
+			$scope.view.getCategories()
 
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
-
-		$scope.openRightPopover = ($event)->
-			$scope.rightPopover.show $event
-
-		getCategories = ->
-			CategoriesAPI.getAll()
-			.then (data)->
-				console.log data
-				$scope.view.onSuccess data
-			, (error)->
-				console.log error
-				$scope.view.onError 'Could not connect to server'
-				
-		$scope.onTryAgain = ->
-			$scope.view.display = 'loader'
-			getCategories()
-
-		if App.isOnline() then getCategories()
-		else $scope.view.onError 'No internet availability'
 ]
 
 

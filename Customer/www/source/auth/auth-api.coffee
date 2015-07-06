@@ -104,6 +104,7 @@ angular.module 'LocalHyper.auth'
 			when Parse.Error.INVALID_SESSION_TOKEN
 				defer.reject 'session_expired'
 			else
+				console.log 'Error code: '+error.code
 				defer.reject 'unknown_error'
 
 	AuthAPI

@@ -28,6 +28,8 @@ angular.module('LocalHyper.common').factory('Network', [
     };
     Network.responseError = function(rejection) {
       if (_.has(rejection, 'data')) {
+        console.log('In network.coffee');
+        console.log(rejection);
         if (_.isNull(rejection.data)) {
           rejection = 'server_error';
         } else if (rejection.data.code === Parse.Error.INVALID_SESSION_TOKEN) {

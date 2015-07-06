@@ -1,5 +1,6 @@
 angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
   '$scope', 'CToast', 'App', 'SmsAPI', 'AuthAPI', 'CSpinner', 'User', '$ionicPlatform', function($scope, CToast, App, SmsAPI, AuthAPI, CSpinner, User, $ionicPlatform) {
+    var onDeviceBack;
     $scope.view = {
       display: 'noError',
       smsCode: '',
@@ -76,24 +77,24 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
           case 'register':
             return this.register();
         }
-      },
-      onBack: function() {
-        var count;
-        count = App.isAndroid() ? -2 : -1;
-        return App.goBack(count);
       }
+    };
+    onDeviceBack = function() {
+      var count;
+      count = App.isAndroid() ? -2 : -1;
+      return App.goBack(count);
     };
     $scope.$on('$ionicView.beforeEnter', function() {
       return $scope.view.user = User.info('get');
     });
     $scope.$on('$ionicView.enter', function() {
-      $ionicPlatform.onHardwareBackButton($scope.view.onBack);
+      $ionicPlatform.onHardwareBackButton(onDeviceBack);
       if (App.isIOS()) {
         return $scope.view.requestSMSCode();
       }
     });
     return $scope.$on('$ionicView.leave', function() {
-      return $ionicPlatform.offHardwareBackButton($scope.view.onBack);
+      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
     });
   }
 ]);

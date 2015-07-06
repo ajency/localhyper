@@ -7,14 +7,15 @@
 	<ion-nav-buttons side="left">
 		<button 
 			menu-toggle="left" 
-			class="button button-icon icon ion-navicon"></button>
+			class="button button-icon icon ion-navicon">
+		</button>
 	</ion-nav-buttons>
 
 	<ion-nav-buttons side="right">
 		<span class="notification badge badge-assertive">2</span>
 		<button 
 			class="button button-icon ion-ios-person-outline"
-			ng-click="openRightPopover($event)">
+			ng-click="view.userPopover.show($event)">
 		</button>
 	</ion-nav-buttons>
 
@@ -30,27 +31,17 @@
 				class="item item-thumbnail-left"
 				ng-repeat="category in view.parentCategories"
 				ng-click="App.navigate('sub-categories', {parentID: category.id})">
+
 					<img ng-src="{{category.image.src}}">
 					<h2>{{category.name}}</h2>
 			</a>
 		</ion-list>
 
-		<div ng-switch-when="error">
-			<h3>Error</h3>
-
-			</br>
-			<h5 class="gray">{{view.errorMsg}}</h5>
-
-			<div class="padding">
-				<button 
-					class="button button-dark aj-btn"
-					ng-click="onTryAgain()">
-					Try again
-				</button>
-			</div>
-
-			</br>
-		</div>
+		<aj-error 
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry()">
+		</aj-error>
 
 	</ion-content>
 </ion-view>
