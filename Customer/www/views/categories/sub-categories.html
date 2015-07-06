@@ -4,7 +4,7 @@
 		{{view.title}}
     </ion-nav-title>
 
-	<ion-content>
+	<ion-content class="sub-categories">
 
 		<ion-list>
 
@@ -13,13 +13,13 @@
 				ng-repeat="category in view.subCategories"
 				ng-click="App.navigate('products', {categoryID: category.id})">
 
-				<ion-item class="item-image">
+				
 					<img ng-src="{{category.image.src}}" class="aj-img">
-				</ion-item>
+			
 
-				<ion-item>
+					<h3 class="text-center">
 					{{category.name}}
-				</ion-item>
+					</h3>
 				
 			</div>
 

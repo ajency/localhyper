@@ -172,3 +172,15 @@ sm {
 .department-list:nth-child(2) h3 {
   text-align: right;
 }
+/* Sub Categories*/
+.sub-categories {
+  background: #ffffff;
+}
+.sub-categories .col-50 {
+  border-right: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
+  min-height: 240px;
+}
+.sub-categories .col-50 h3 {
+  font-size: 14px;
+}
