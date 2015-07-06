@@ -23,10 +23,6 @@
       "locator": "https://github.com/asanka-x/Phonegap-SMS",
       "id": "info.asankan.phonegap.smsplugin"
     },
-    {
-      "locator": "https://github.com/phonegap-build/PushPlugin.git",
-      "id": "com.phonegap.plugins.PushPlugin"
-    },
     "cordova-plugin-network-information",
     {
       "locator": "https://github.com/Paldom/SpinnerDialog.git",
@@ -37,11 +33,15 @@
       "locator": "https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git",
       "id": "nl.x-services.plugins.toast"
     },
+    "org.apache.cordova.splashscreen",
+    {
+      "locator": "https://github.com/phonegap-build/PushPlugin.git",
+      "id": "com.phonegap.plugins.PushPlugin"
+    },
     {
       "locator": "/Users/deepak/Desktop/com.parse.cordova.core.pushplugin",
       "id": "com.parse.cordova.core.pushplugin"
-    },
-    "org.apache.cordova.splashscreen"
+    }
   ],
   "cordovaPlatforms": [
     "ios",
