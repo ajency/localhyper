@@ -17,5 +17,6 @@ angular.module 'LocalHyper.main', []
 		.state 'main',
 			url: '/main'
 			abstract: true
+			cache: false
 			templateUrl: 'views/main.html'
 ]

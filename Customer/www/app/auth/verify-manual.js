@@ -1,85 +1,99 @@
 angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
-  '$scope', '$rootScope', 'CToast', 'App', 'SmsAPI', 'AuthAPI', 'CSpinner', function($scope, $rootScope, CToast, App, SmsAPI, AuthAPI, CSpinner) {
-    var register, requestSMSCode, verifySmsCode;
+  '$scope', 'CToast', 'App', 'SmsAPI', 'AuthAPI', 'CSpinner', 'User', '$ionicPlatform', function($scope, CToast, App, SmsAPI, AuthAPI, CSpinner, User, $ionicPlatform) {
     $scope.view = {
-      display: 'noError'
-    };
-    $scope.sms = {
-      code: '',
-      errorAt: ''
-    };
-    register = function() {
-      return AuthAPI.register($rootScope.user).then(function(success) {
-        return App.navigate('categories', {}, {
-          animate: false,
-          back: false
+      display: 'noError',
+      smsCode: '',
+      errorAt: '',
+      errorType: '',
+      onError: function(type, at) {
+        this.display = 'error';
+        this.errorType = type;
+        return this.errorAt = at;
+      },
+      requestSMSCode: function() {
+        CSpinner.show('', 'Please wait...');
+        return SmsAPI.requestSMSCode(this.user.phone).then((function(_this) {
+          return function(data) {
+            console.log(data);
+            if (data.attemptsExceeded) {
+              return _this.display = 'maxAttempts';
+            }
+          };
+        })(this), (function(_this) {
+          return function(error) {
+            return _this.onError(error, 'requestSMSCode');
+          };
+        })(this))["finally"](function() {
+          return CSpinner.hide();
         });
-      }, function(error) {
-        $scope.sms.errorAt = 'register';
-        return $scope.view.display = 'error';
-      })["finally"](function() {
-        return CSpinner.hide();
-      });
-    };
-    verifySmsCode = function() {
-      CSpinner.show('', 'Please wait...');
-      return SmsAPI.verifySMSCode($rootScope.user.phone, $scope.sms.code).then(function(data) {
-        if (data.verified) {
-          return register();
+      },
+      onNext: function() {
+        if (this.smsCode === '' || _.isUndefined(this.smsCode)) {
+          return CToast.show('Please enter 6 digit verification code');
         } else {
-          CSpinner.hide();
-          return CToast.show('Incorrect verification code');
+          return this.verifySmsCode();
         }
-      }, function(error) {
-        CSpinner.hide();
-        $scope.sms.errorAt = 'verifySmsCode';
-        return $scope.view.display = 'error';
-      });
-    };
-    requestSMSCode = function() {
-      CSpinner.show('', 'Please wait...');
-      return SmsAPI.requestSMSCode($rootScope.user.phone).then(function(data) {
-        if (data.attemptsExceeded) {
-          return $scope.view.display = 'maxAttempts';
+      },
+      verifySmsCode: function() {
+        CSpinner.show('', 'Please wait...');
+        return SmsAPI.verifySMSCode(this.user.phone, this.smsCode).then((function(_this) {
+          return function(data) {
+            if (data.verified) {
+              return _this.register();
+            } else {
+              CSpinner.hide();
+              return CToast.show('Incorrect verification code');
+            }
+          };
+        })(this), (function(_this) {
+          return function(error) {
+            CSpinner.hide();
+            return _this.onError(error, 'verifySmsCode');
+          };
+        })(this));
+      },
+      register: function() {
+        return AuthAPI.register(this.user).then(function(success) {
+          return App.navigate('categories', {}, {
+            animate: false,
+            back: false
+          });
+        }, (function(_this) {
+          return function(error) {
+            return _this.onError(error, 'register');
+          };
+        })(this))["finally"](function() {
+          return CSpinner.hide();
+        });
+      },
+      onTapToRetry: function() {
+        this.display = 'noError';
+        switch (this.errorAt) {
+          case 'requestSMSCode':
+            return this.requestSMSCode();
+          case 'verifySmsCode':
+            return this.verifySmsCode();
+          case 'register':
+            return this.register();
         }
-      }, function(error) {
-        $scope.sms.errorAt = 'requestSMSCode';
-        return $scope.view.display = 'error';
-      })["finally"](function() {
-        return CSpinner.hide();
-      });
-    };
-    $scope.onNext = function() {
-      var code;
-      code = $scope.sms.code;
-      if (code === '' || _.isUndefined(code)) {
-        return CToast.show('Please enter verification code');
-      } else {
-        if (App.isOnline()) {
-          return verifySmsCode();
-        } else {
-          return CToast.show('No internet availability');
-        }
+      },
+      onBack: function() {
+        var count;
+        count = App.isAndroid() ? -2 : -1;
+        return App.goBack(count);
       }
     };
-    $scope.onResendCode = function() {
-      return requestSMSCode();
-    };
+    $scope.$on('$ionicView.beforeEnter', function() {
+      return $scope.view.user = User.info('get');
+    });
     $scope.$on('$ionicView.enter', function() {
+      $ionicPlatform.onHardwareBackButton($scope.view.onBack);
       if (App.isIOS()) {
-        return requestSMSCode();
+        return $scope.view.requestSMSCode();
       }
     });
-    return $scope.onTryAgain = function() {
-      $scope.view.display = 'noError';
-      switch ($scope.sms.errorAt) {
-        case 'requestSMSCode':
-          return requestSMSCode();
-        case 'verifySmsCode':
-          return verifySmsCode();
-        case 'register':
-          return register();
-      }
-    };
+    return $scope.$on('$ionicView.leave', function() {
+      return $ionicPlatform.offHardwareBackButton($scope.view.onBack);
+    });
   }
 ]);

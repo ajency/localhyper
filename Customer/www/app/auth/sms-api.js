@@ -1,14 +1,14 @@
 angular.module('LocalHyper.auth').factory('SmsAPI', [
-  '$q', 'App', function($q, App) {
+  '$q', '$http', function($q, $http) {
     var SmsAPI;
     SmsAPI = {};
     SmsAPI.requestSMSCode = function(phone) {
       var defer;
       defer = $q.defer();
-      Parse.Cloud.run('sendSMSCode', {
+      $http.post('functions/sendSMSCode', {
         phone: phone
       }).then(function(data) {
-        return defer.resolve(data);
+        return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);
       });
@@ -17,11 +17,11 @@ angular.module('LocalHyper.auth').factory('SmsAPI', [
     SmsAPI.verifySMSCode = function(phone, code) {
       var defer;
       defer = $q.defer();
-      Parse.Cloud.run('verifySMSCode', {
+      $http.post('functions/verifySMSCode', {
         phone: phone,
         code: code
       }).then(function(data) {
-        return defer.resolve(data);
+        return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);
       });

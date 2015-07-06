@@ -1,16 +1,17 @@
 angular.module('LocalHyper.categories').factory('CategoriesAPI', [
-  '$q', function($q) {
-    var CategoriesAPI, allCategories;
+  '$q', '$http', function($q, $http) {
+    var CategoriesAPI, allCategories, subCategories;
     CategoriesAPI = {};
     allCategories = [];
+    subCategories = [];
     CategoriesAPI.getAll = function() {
       var defer;
       defer = $q.defer();
       if (_.isEmpty(allCategories)) {
-        Parse.Cloud.run('getCategories', {
+        $http.post('functions/getCategories', {
           "sortBy": "sort_order"
         }).then(function(data) {
-          return defer.resolve(allCategories = data.data);
+          return defer.resolve(allCategories = data.data.result.data);
         }, function(error) {
           return defer.reject(error);
         });
@@ -18,6 +19,17 @@ angular.module('LocalHyper.categories').factory('CategoriesAPI', [
         defer.resolve(allCategories);
       }
       return defer.promise;
+    };
+    CategoriesAPI.subCategories = function(action, data) {
+      if (data == null) {
+        data = {};
+      }
+      switch (action) {
+        case 'set':
+          return subCategories = data;
+        case 'get':
+          return subCategories;
+      }
     };
     return CategoriesAPI;
   }

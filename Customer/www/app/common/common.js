@@ -75,12 +75,6 @@ angular.module('LocalHyper.common', []).factory('App', [
       dragContent: function(bool) {
         return $ionicSideMenuDelegate.canDragContent(bool);
       },
-      isLoggedIn: function() {
-        var loggedIn, user;
-        user = Parse.User.current();
-        loggedIn = _.isNull(user) ? false : true;
-        return loggedIn;
-      },
       getInstallationId: function() {
         var defer;
         defer = $q.defer();
