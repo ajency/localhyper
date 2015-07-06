@@ -131,96 +131,79 @@
     </div>
     <div class="clearfix"></div>
     <div class="content">  
-      <ul class="breadcrumb">
-        <li>
-          <p>List of Sellers</p>
-        </li>
-        <li><a href="#" class="active">Seller A</a></li>
-      </ul>
-      <div class="pull-right">
-        <button type="button" class="btn btn-default btn-cons" ><i class="fa fa-pencil"></i> Edit</button>
-      </div>
+       <button type="button" class="btn btn-default btn-cons pull-right"><i class="fa fa-download"></i> Download CSV</button>
 		<div class="page-title m-l-5">	
-			<h3><span class="semi-bold">Seller</span> Information</h3>	
+			<h3 class="inline"><span class="semi-bold">Offer</span> History</h3>
 		</div>
 		<div class="grid simple vertical purple">
-		
+      
+			<h4 class="grid-title">List of Successfull Offers</h4>
 			<div class="grid-body">
-       
-            <div class="user-description-box">
-                <div class="row">
-                  <div class="col-md-6">
-                  <h4 >Seller A</h4>
-                  </div>
-                  <div class="col-md-6 text-right">
-                  <h5 class="text-warning semi-bold">Credit Counts Left : 8765</h5>  
-                  </div>
-                </div>
-                <p>seller1@gmail.com</p>
-                 <div class="row">
-                  <div class="col-md-6">
-                    <p>9158156284</p>
-                  </div>
-                  <div class="col-md-6 text-right">
-                    <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#myModal"><i class="fa fa-dollar"></i> Add Credits</button>
-                  </div>
-                </div>
-            </div>
-            <h5><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold text-info">ADDRESS DETAILS</span></h5>
-               <div class="user-description-box">
-                <div class="row">
-                <div class="col-md-6">
-                <p>Flat no 721-A, Arpita Towers</p>
-                <p>Near GIP Building</p>
-                <p>Juhu Road,</p>
-                <p>Mumbai,</p>
-                <p>403 711</p>
-                <strong>Area : </strong><span> Juhu, Mumbai</span>
-              </div>
-              <div class="col-md-6">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3846.709505982124!2d73.8348259!3d15.392211!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bbfc78ca631ded1%3A0x5bda7c822baa0529!2sAirport+Rd%2C+Vasco+da+Gama%2C+Goa!5e0!3m2!1sen!2sin!4v1436169453580" width="100%" height="272" frameborder="0" style="border:0" allowfullscreen></iframe>
-              </div>
-            </div>
-            </div>
-            <h5><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold text-info">PRODUCT CATEGORIES</span></h5>
-            <div class="user-description-box">
-              <span class="label">MOBILE</span>
-              <span class="label">CAMERAS</span>
-              <span class="label">LAPTOPS</span>
-            </div>
-
-      </div>
+                           <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Request ID</th>
+              <th>Product ID</th>
+              <th>Seller Name</th>
+              <th>Area</th>
+              <th>Time</th>
+              <th>MRP</th>
+              <th>Online Price</th>
+              <th>Offer Price</th>
+               <th>Last Offer by Seller</th>
+                <th>Best Offer by Seller</th>
+                <th>Best Offer For Request</th>
+                 <th>Avg Offer</th>
+                 <th>Status Of Request</th>
+                 <th>Delivery Status</th>
+                 <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <td>5</td>
+                <td>8073</td>
+                <td>Seller A</td>
+                <td>Juhu Mumbai</td>
+                <td>23-09-2014 3.40</td>
+                <td>$234</td>
+                <td>$322</td>
+                <td>$300</td>
+                <td>$234</td>
+                <td>$322</td>
+                <td>$300</td>
+                <td>$300</td>
+                <td>Closed</td>
+                <td>Pending</td>
+                <td>Customer not picking phone</td>
+              </tr>
+                   <tr>
+                <td>6</td>
+                <td>8098</td>
+                <td>Seller B</td>
+                <td>Anderi Mumbai</td>
+                <td>23-09-2014 3.40</td>
+                <td>$234</td>
+                <td>$322</td>
+                <td>$300</td>
+                <td>$234</td>
+                <td>$322</td>
+                <td>$300</td>
+                <td>$300</td>
+                <td>Closed</td>
+                <td>Pending</td>
+                <td>Customer not picking phone</td>
+              </tr>
+          </tbody>
+         </table>
+                        </div>
 		</div>
     </div>
   </div>
 
 <!-- END CHAT --> 
  </div>
-
-
-
 <!-- END CONTAINER --> 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title text-left" id="myModalLabel">Add Credits</h4>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary">Save</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-        
-      </div>
-    </div>
-  </div>
-</div>
-
-
 
 <!-- END CONTAINER -->
 <!-- BEGIN CORE JS FRAMEWORK--> 
