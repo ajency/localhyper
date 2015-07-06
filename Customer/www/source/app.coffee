@@ -11,14 +11,17 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 
 	$rootScope.App = App
 	
-	# $rootScope.product = 
-	# 	offers: []
-	# 	globalNotification: false
-	# 	localNotification: false
-	# 	request: ''
+	$rootScope.product = 
+		offers: []
+		globalNotification: false
+		localNotification: false
+		request: ''
 
 	#User Notification Icon (Right popover)
 	App.notification = icon: false
+
+	#Hide small app logo on categories view
+	App.logo = small: true
 	
 	$rootScope.$on '$stateChangeSuccess', (ev, to, toParams, from, fromParams)->
 		$rootScope.previousState = from.name
@@ -28,10 +31,11 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 
 		#Enable/disable menu & show/hide notification icon
 		hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual']
-		bool = _.contains(hideForStates, App.currentState)
-		
-		App.menuEnabled.left  = !bool
-		App.notification.icon = !bool
+		bool = !_.contains(hideForStates, App.currentState)
+		App.menuEnabled.left  = bool
+		App.notification.icon = bool
+
+		App.logo.small = App.currentState isnt 'categories'
 
 		# if $rootScope.currentState is 'requests'
 		# 	$timeout ->
