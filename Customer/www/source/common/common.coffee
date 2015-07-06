@@ -9,10 +9,10 @@ angular.module 'LocalHyper.common', []
 		App = 
 
 			start: true
-
 			validateEmail: /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/
-
 			menuEnabled : left: false, right: false
+			previousState: ''
+			currentState: ''
 
 			isAndroid : ->
 				ionic.Platform.isAndroid()

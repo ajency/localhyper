@@ -34,7 +34,7 @@ angular.module 'LocalHyper.common'
 				errorMsg = 'Your session has expired'
 			else
 				errorMsg = 'Unknown error'
-
+		
 		scope.errorMsg = errorMsg
 
 		scope.onTryAgain = ->

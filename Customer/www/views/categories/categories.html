@@ -14,7 +14,7 @@
 		<span class="notification badge badge-assertive">2</span>
 		<button 
 			class="button button-icon ion-ios-person-outline"
-			ng-click="openRightPopover($event)">
+			ng-click="view.userPopover.show($event)">
 		</button>
 	</ion-nav-buttons>
 
@@ -33,26 +33,14 @@
 					
 					<h3>{{category.name}}</h3>
 					<img ng-src="{{category.image.src}}">
-				<!-- <img src="../img/home1.png"/> -->
 			</a>
 		</ion-list>
 
-		<div ng-switch-when="error">
-			<h3>Error</h3>
-
-			</br>
-			<h5 class="gray">{{view.errorMsg}}</h5>
-
-			<div class="padding">
-				<button 
-					class="button button-dark aj-btn"
-					ng-click="onTryAgain()">
-					Try again
-				</button>
-			</div>
-
-			</br>
-		</div>
+		<aj-error 
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry()">
+		</aj-error>
 
 	</ion-content>
 </ion-view>

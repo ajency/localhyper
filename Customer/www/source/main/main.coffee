@@ -1,12 +1,15 @@
 angular.module 'LocalHyper.main', []
 
 
-.controller 'SideMenuCtrl', ['$scope', ($scope)->
+.controller 'SideMenuCtrl', ['$scope', 'App', ($scope, App)->
 
+	$scope.view = 
 
-
-
-
+		onBackClick : ->
+			if App.currentState is 'verify-manual'
+				count = if App.isAndroid() then -2 else -1
+			else count = -1
+			App.goBack count
 ]
 
 

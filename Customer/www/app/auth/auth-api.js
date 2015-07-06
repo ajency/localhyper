@@ -129,6 +129,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
         case Parse.Error.INVALID_SESSION_TOKEN:
           return defer.reject('session_expired');
         default:
+          console.log('Error code: ' + error.code);
           return defer.reject('unknown_error');
       }
     };

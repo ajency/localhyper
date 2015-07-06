@@ -65,18 +65,19 @@ angular.module 'LocalHyper.auth'
 					when 'register'
 						@register()
 
-			onBack : ->
-				count = if App.isAndroid() then -2 else -1
-				App.goBack count
+		
+		onDeviceBack = ->
+			count = if App.isAndroid() then -2 else -1
+			App.goBack count
 
 		$scope.$on '$ionicView.beforeEnter', ->
 			$scope.view.user = User.info 'get'
 
 		$scope.$on '$ionicView.enter', ->
 			#Device hardware back button for android
-			$ionicPlatform.onHardwareBackButton $scope.view.onBack
+			$ionicPlatform.onHardwareBackButton onDeviceBack
 			$scope.view.requestSMSCode() if App.isIOS()
 
 		$scope.$on '$ionicView.leave', ->
-			$ionicPlatform.offHardwareBackButton $scope.view.onBack
+			$ionicPlatform.offHardwareBackButton onDeviceBack
 ]

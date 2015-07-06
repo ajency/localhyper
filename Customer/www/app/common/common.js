@@ -8,6 +8,8 @@ angular.module('LocalHyper.common', []).factory('App', [
         left: false,
         right: false
       },
+      previousState: '',
+      currentState: '',
       isAndroid: function() {
         return ionic.Platform.isAndroid();
       },
