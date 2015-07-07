@@ -8,8 +8,8 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
       params = {
         "categoryId": "" + opts.categoryID,
         "selectedFilters": "all",
-        "sortBy": "popularity",
-        "ascending": false,
+        "sortBy": opts.sortBy,
+        "ascending": opts.ascending,
         "page": opts.page,
         "displayLimit": 10
       };
