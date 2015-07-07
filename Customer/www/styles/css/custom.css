@@ -66,6 +66,12 @@ sm {
 .pull-left {
   float: left;
 }
+.pull-right {
+  float: right;
+}
+.upper-case {
+  text-transform: uppercase;
+}
 /* HEADER */
 .has-header {
   background: #e8e8e8;
@@ -194,7 +200,7 @@ sm {
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
-  min-height: 240px;
+  min-height: 250px;
   float: left;
 }
 .sub-categories .border-card h3 {
