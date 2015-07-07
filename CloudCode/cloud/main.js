@@ -305,6 +305,18 @@
     });
   });
 
+  Parse.Cloud.define('createRequest', function(request, response) {
+    var addressText, comments, customerId, deliveryStatus, latitude, location, longitude, productId;
+    customerId = request.params.customerId;
+    productId = request.params.productId;
+    location = request.params.location;
+    latitude = location.lat;
+    longitude = location.long;
+    addressText = location.text;
+    comments = request.params.comments;
+    return deliveryStatus = request.params.deliveryStatus;
+  });
+
   Parse.Cloud.useMasterKey();
 
   Parse.Cloud.define("sendSMSCode", function(request, response) {
