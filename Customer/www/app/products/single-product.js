@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', function($scope, $stateParams, ProductsAPI) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', function($scope, $stateParams, ProductsAPI, User, CToast, App) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -28,6 +28,13 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       onTapToRetry: function() {
         this.display = 'loader';
         return this.getSingleProductDetails();
+      },
+      onMakeRequest: function() {
+        if (User.isLoggedIn()) {
+          return CToast.show('User session active');
+        } else {
+          return App.navigate('verify-begin');
+        }
       }
     };
     return $scope.$on('$ionicView.loaded', function() {

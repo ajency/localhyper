@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.products'
 
 
-.controller 'SingleProductCtrl', ['$scope', '$stateParams', 'ProductsAPI'
-	, ($scope, $stateParams, ProductsAPI)->
+.controller 'SingleProductCtrl', ['$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App'
+	, ($scope, $stateParams, ProductsAPI, User, CToast, App)->
 
 		$scope.view = 
 			display: 'loader'
@@ -29,6 +29,12 @@ angular.module 'LocalHyper.products'
 			onTapToRetry : ->
 				@display = 'loader'
 				@getSingleProductDetails()
+
+			onMakeRequest : ->
+				if User.isLoggedIn()
+					CToast.show 'User session active'
+				else
+					App.navigate 'verify-begin'
 
 		
 		$scope.$on '$ionicView.loaded', ->
