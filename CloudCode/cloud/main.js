@@ -1,5 +1,5 @@
 (function() {
-  var _, treeify;
+  var _, getLocationBasedSellers, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -306,26 +306,20 @@
   });
 
   Parse.Cloud.define('createRequest', function(request, response) {
-    var Request, addressText, comments, customerId, customerObj, deliveryStatus, latitude, latlongPoint, location, longitude, point, productId, productObj, status;
+    var Request, addressText, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
     customerId = request.params.customerId;
     productId = request.params.productId;
     location = request.params.location;
-    latitude = location.lat;
-    longitude = location.long;
-    latlongPoint = {
-      latitude: latitude,
-      longitude: longitude
-    };
-    addressText = location.text;
+    addressText = request.params.addressText;
     comments = request.params.comments;
     status = request.params.status;
     deliveryStatus = request.params.deliveryStatus;
     Request = Parse.Object.extend('Request');
     request = new Request();
-    point = new Parse.GeoPoint(latlongPoint);
+    point = new Parse.GeoPoint(location);
     request.set("addressGeoPoint", point);
     request.set("addressText", addressText);
-    request.set("status", product.status);
+    request.set("status", status);
     request.set("deliveryStatus", deliveryStatus);
     customerObj = {
       "__type": "Pointer",
@@ -339,12 +333,17 @@
       "objectId": productId
     };
     request.set("productId", productObj);
-    return request.save().then(function(requestObject) {});
+    return request.save().then(function(requestObject) {
+      return response.success(requestObject);
+    }, function(error) {
+      return response.error("Failed to create request due to - " + error.message);
+    });
   });
 
-  response.success(requestObject, function(error) {
-    return response.error("Failed to add products due to - " + error.message);
-  });
+  getLocationBasedSellers = function(location, categoryId) {
+    var sellers;
+    return sellers = [];
+  };
 
   Parse.Cloud.useMasterKey();
 

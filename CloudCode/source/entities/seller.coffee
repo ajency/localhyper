@@ -1,0 +1,5 @@
+getLocationBasedSellers = (location,categoryId) ->
+	sellers = []
+	
+	
+

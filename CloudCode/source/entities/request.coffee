@@ -2,16 +2,16 @@ Parse.Cloud.define 'createRequest' , (request, response) ->
 
     customerId = request.params.customerId
     productId = request.params.productId
-    location = request.params.location	
+    location = request.params.location  
 
-    latitude = location.lat 
-    longitude = location.long 
+    # latitude = location.lat 
+    # longitude = location.long 
 
-    latlongPoint = 
-    	latitude: latitude
-    	longitude: longitude
+    # latlongPoint = 
+    #     latitude: latitude
+    #     longitude: longitude
 
-    addressText = location.text
+    addressText = request.params.addressText 
 
     comments = request.params.comments
     
@@ -23,11 +23,11 @@ Parse.Cloud.define 'createRequest' , (request, response) ->
     request = new Request()
 
     # set address geo point
-    point = new Parse.GeoPoint latlongPoint
+    point = new Parse.GeoPoint location
 
     request.set "addressGeoPoint", point
     request.set "addressText", addressText
-    request.set "status", product.status
+    request.set "status", status
     request.set "deliveryStatus", deliveryStatus
 
     # set request's customerId
@@ -47,8 +47,8 @@ Parse.Cloud.define 'createRequest' , (request, response) ->
     request.set "productId", productObj  
 
     request.save()
-   	.then (requestObject)->
-		response.success requestObject
-	, (error)->
-		response.error "Failed to add products due to - #{error.message}"
+        .then (requestObject)->
+            response.success requestObject
+        , (error)->
+            response.error "Failed to create request due to - #{error.message}"
 
