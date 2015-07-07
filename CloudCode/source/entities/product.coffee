@@ -29,7 +29,21 @@ Parse.Cloud.job 'productImport', (request, response) ->
             "className":"Brand",
             "objectId":product.brand                    
 
-        productItem.set "brand", brandObj   
+        productItem.set "brand", brandObj 
+
+
+        primaryAttributeValueArr = []
+        primaryAttributes = product.primaryAttributes 
+
+        _.each primaryAttributes, (primaryAttributeId) ->
+            attribObj = 
+                "__type" : "Pointer",
+                "className":"AttributeValues",
+                "objectId":primaryAttributeId
+
+            primaryAttributeValueArr.push(attribObj) 
+
+        productItem.set "primaryAttributes", primaryAttributeValueArr         
         
         attributeValueArr = []
         attributes = product.attrs

@@ -150,7 +150,7 @@
     productSavedArr = [];
     products = request.params.products;
     _.each(products, function(product) {
-      var attributeValueArr, attributes, brandObj, categoryObj, productItem;
+      var attributeValueArr, attributes, brandObj, categoryObj, primaryAttributeValueArr, primaryAttributes, productItem;
       productItem = new ProductItem();
       productItem.set("name", product.name);
       productItem.set("images", product.images);
@@ -170,6 +170,18 @@
         "objectId": product.brand
       };
       productItem.set("brand", brandObj);
+      primaryAttributeValueArr = [];
+      primaryAttributes = product.primaryAttributes;
+      _.each(primaryAttributes, function(primaryAttributeId) {
+        var attribObj;
+        attribObj = {
+          "__type": "Pointer",
+          "className": "AttributeValues",
+          "objectId": primaryAttributeId
+        };
+        return primaryAttributeValueArr.push(attribObj);
+      });
+      productItem.set("primaryAttributes", primaryAttributeValueArr);
       attributeValueArr = [];
       attributes = product.attrs;
       _.each(attributes, function(attributeId) {
