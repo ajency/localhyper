@@ -32,7 +32,6 @@ h6 {
 }
 .strike {
   text-decoration: line-through;
-  color: #666666 !important;
 }
 .text-danger {
   color: #f35a59;
@@ -75,6 +74,7 @@ sm {
 .center-block {
   margin: auto;
   display: block;
+  width: 100%;
 }
 .pull-left {
   float: left;
@@ -84,6 +84,13 @@ sm {
 }
 .upper-case {
   text-transform: uppercase;
+}
+.arrow-link {
+  float: right;
+  font-size: 23px;
+  -ms-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 /* HEADER */
 .has-header {
@@ -240,7 +247,7 @@ sm {
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
-  min-height: 250px;
+  min-height: 240px;
   float: left;
 }
 .sub-categories .border-card h3 {
