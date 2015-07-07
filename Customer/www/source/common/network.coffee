@@ -31,6 +31,7 @@ angular.module 'LocalHyper.common'
 				if _.isNull rejection.data
 					rejection = 'server_error'
 				else if rejection.data.code is Parse.Error.INVALID_SESSION_TOKEN
+					$rootScope.$broadcast 'on:session:expiry'
 					rejection = "session_expired"
 
 			$q.reject rejection

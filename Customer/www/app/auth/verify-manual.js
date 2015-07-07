@@ -55,10 +55,9 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
-          return App.navigate('categories', {}, {
-            animate: false,
-            back: false
-          });
+          var count;
+          count = App.isAndroid() ? -3 : -2;
+          return App.goBack(count);
         }, (function(_this) {
           return function(error) {
             return _this.onError(error, 'register');

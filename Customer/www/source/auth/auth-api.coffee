@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.auth'
 
 
-.factory 'AuthAPI', ['$q', 'App', '$http', ($q, App, $http)->
+.factory 'AuthAPI', ['$q', 'App', '$http', '$rootScope', ($q, App, $http, $rootScope)->
 
 	UUID = App.deviceUUID()
 	AuthAPI = {}
@@ -96,6 +96,7 @@ angular.module 'LocalHyper.auth'
 			when Parse.Error.CONNECTION_FAILED
 				defer.reject 'server_error'
 			when Parse.Error.INVALID_SESSION_TOKEN
+				$rootScope.$broadcast 'on:session:expiry'
 				defer.reject 'session_expired'
 			else
 				console.log 'Error code: '+error.code
