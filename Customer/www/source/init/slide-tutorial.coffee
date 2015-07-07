@@ -13,7 +13,7 @@ angular.module 'LocalHyper.init'
 			onGetStarted : ->
 				Storage.slideTutorial 'set'
 				.then ->
-					App.navigate "categories", {}, {animate: true, back: false}
+					App.navigate "categories", {}, {animate: false, back: false}
 
 			onSlideChange : (index)->
 				@activeSlide = index

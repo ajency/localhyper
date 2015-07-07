@@ -93,6 +93,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
             "displayName": name,
             "password": password,
             "installationId": installationId,
+            "userType": "customer",
             "passwordHash": _this.encryptPassword(password, phone)
           });
           return user.signUp();

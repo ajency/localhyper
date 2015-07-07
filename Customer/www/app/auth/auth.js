@@ -12,6 +12,7 @@ angular.module('LocalHyper.auth', []).config([
     }).state('verify-auto', {
       url: '/verify-auto',
       parent: 'main',
+      cache: false,
       views: {
         "appContent": {
           controller: 'VerifyAutoCtrl',

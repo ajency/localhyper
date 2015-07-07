@@ -8,7 +8,7 @@ angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
       onGetStarted: function() {
         return Storage.slideTutorial('set').then(function() {
           return App.navigate("categories", {}, {
-            animate: true,
+            animate: false,
             back: false
           });
         });

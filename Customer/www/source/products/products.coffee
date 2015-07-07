@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.products', []
 
 
-.controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal'
-	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal)->
+.controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout'
+	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout)->
 
 		$scope.view =
 			title: Product.subCategoryTitle
@@ -11,6 +11,8 @@ angular.module 'LocalHyper.products', []
 			canLoadMore: true
 			refresh: false
 			sortModal: null
+			sortBy: 'popularity'
+			ascending: true
 			
 			init: ->
 				@loadSortModal()
@@ -45,6 +47,8 @@ angular.module 'LocalHyper.products', []
 				ProductsAPI.getAll
 					categoryID: $stateParams.categoryID
 					page: @page
+					sortBy: @sortBy
+					ascending: @ascending
 				.then (data)=>
 					console.log data
 					@onSuccess data
@@ -68,6 +72,40 @@ angular.module 'LocalHyper.products', []
 				else
 					@canLoadMore = false
 
+			getPrimaryAttrs : (attrs)->
+				attrs = attrs[0]
+				value = s.humanize attrs.value
+				unit = ''
+				if _.has attrs.attribute, 'unit'
+					unit = s.humanize attrs.attribute.unit
+				"#{value} #{unit}"
+
+			onSort : (sortBy, ascending)->
+				@sortModal.hide()
+
+				reFetch = =>
+					@page = 0
+					@refresh = true
+					@products = []
+					@canLoadMore = true
+					@onScrollComplete()
+
+				switch sortBy
+					when 'popularity'
+						if @sortBy isnt 'popularity'
+							@sortBy = 'popularity'
+							@ascending = true
+							reFetch()
+					when 'mrp'
+						if @sortBy isnt 'mrp'
+							@sortBy = 'mrp'
+							@ascending = ascending
+							reFetch()
+						else if @ascending isnt ascending
+							@sortBy = 'mrp'
+							@ascending = ascending
+							reFetch()
+						
 ]
 
 
