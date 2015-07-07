@@ -1,6 +1,6 @@
 angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
-  '$scope', 'App', '$ionicPopover', function($scope, App, $ionicPopover) {
-    return $scope.view = {
+  '$scope', 'App', '$ionicPopover', '$rootScope', '$ionicSideMenuDelegate', function($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate) {
+    $scope.view = {
       userPopover: null,
       init: function() {
         return this.loadPopOver();
@@ -22,8 +22,15 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
           count = -1;
         }
         return App.goBack(count);
+      },
+      menuClose: function() {
+        return $ionicSideMenuDelegate.toggleLeft();
       }
     };
+    return $rootScope.$on('on:session:expiry', function() {
+      console.log('on:session:expiry');
+      return Parse.User.logOut();
+    });
   }
 ]).config([
   '$stateProvider', function($stateProvider) {
