@@ -80,6 +80,7 @@ angular.module 'LocalHyper.auth'
 				"displayName": name
 				"password": password
 				"installationId": installationId
+				"userType": "customer"
 				"passwordHash": @encryptPassword(password, phone)
 			
 			user.signUp()
