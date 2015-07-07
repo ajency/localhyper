@@ -49,7 +49,8 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
-					App.navigate 'categories', {}, {animate: false, back: false}
+					count = if App.isAndroid() then -3 else -2
+					App.goBack count
 				, (error)=>
 					@onError error, 'register'
 				.finally ->

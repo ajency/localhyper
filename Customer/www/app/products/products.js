@@ -1,11 +1,25 @@
 angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
-  '$scope', 'ProductsAPI', '$stateParams', 'Product', function($scope, ProductsAPI, $stateParams, Product) {
+  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', function($scope, ProductsAPI, $stateParams, Product, $ionicModal) {
     return $scope.view = {
       title: Product.subCategoryTitle,
       products: [],
       page: 0,
       canLoadMore: true,
       refresh: false,
+      sortModal: null,
+      init: function() {
+        return this.loadSortModal();
+      },
+      loadSortModal: function() {
+        return $ionicModal.fromTemplateUrl('views/products/sort.html', {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then((function(_this) {
+          return function(modal) {
+            return _this.sortModal = modal;
+          };
+        })(this));
+      },
       onScrollComplete: function() {
         return $scope.$broadcast('scroll.infiniteScrollComplete');
       },

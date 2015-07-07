@@ -39,25 +39,25 @@ angular.module 'LocalHyper.auth'
 					@cancelTimeout()
 
 			startSmsReception : ->
+				onSuccess = (smsContent)=>
+					content = smsContent.split '>'
+					content = content[1]
+					if s.contains content, 'Welcome to ShopOye'
+						@cancelTimeout()
+						content = content.replace '[Nexmo DEMO]', ''
+						code = s.words(content, 'code is')
+						code = s.trim code[1]
+						@smsCode = code
+						@verifySmsCode()
+
 				if App.isWebView()
 					smsplugin = cordova.require @smsPluginSrc
-					smsplugin.startReception @onSmsReceptionSuccess
+					smsplugin.startReception onSuccess
 
 			stopSmsReception : ->
 				if App.isWebView()
 					smsplugin = cordova.require @smsPluginSrc
 					smsplugin.stopReception()
-
-			onSmsReceptionSuccess : (smsContent)->
-				content = smsContent.split '>'
-				content = content[1]
-				if s.contains content, 'Welcome to ShopOye'
-					@cancelTimeout()
-					content = content.replace '[Nexmo DEMO]', ''
-					code = s.words(content, 'code is')
-					code = s.trim code[1]
-					@smsCode = code
-					@verifySmsCode()
 
 			verifySmsCode : ->
 				SmsAPI.verifySMSCode @user.phone, @smsCode
@@ -69,7 +69,7 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
-					App.navigate 'categories', {}, {animate: false, back: false}
+					App.goBack -2
 				, (error)=>
 					@onError error, 'register'
 

@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.auth'
 
 
-.factory 'AuthAPI', ['$q', 'App', '$http', ($q, App, $http)->
+.factory 'AuthAPI', ['$q', 'App', '$http', '$rootScope', ($q, App, $http, $rootScope)->
 
 	UUID = App.deviceUUID()
 	AuthAPI = {}
@@ -25,30 +25,27 @@ angular.module 'LocalHyper.auth'
 		phone = user.phone.toString()
 		name  = user.name
 
-		$http.get 'users', where: "username": phone
-		.then (data)=>
-			userObj = data.data.results
-			existingUser = if _.isEmpty(userObj) then false else true
-			if existingUser then @loginExistingUser(phone, name)
-			else @signUpNewUser(phone, name)
+		user = new Parse.Query Parse.User
+		user.equalTo "username", phone
+		user.find()
+		.then (userObj)=>
+			if _.isEmpty(userObj) then @signUpNewUser(phone, name)
+			else @loginExistingUser(phone, name, userObj)
 		.then (success)->
 			defer.resolve success
-		, (error)->
-			defer.reject error
+		, (error)=>
+			@onParseJsError defer, error
 
 		defer.promise
 
-	AuthAPI.loginExistingUser = (phone, name)->
+	AuthAPI.loginExistingUser = (phone, name, userObj)->
 		defer = $q.defer()
-		oldPassword = oldPasswordhash = ''
-		newPassword = newPasswordHash = ''
+		newPassword = ''
+		userObj = userObj[0]
+		oldPasswordhash = userObj.get 'passwordHash'
+		oldPassword = @decryptPassword oldPasswordhash, phone
 
-		$http.get 'users', where: "username": phone
-		.then (data)=>
-			userObj = data.data.results[0]
-			oldPasswordhash = userObj.passwordHash
-			oldPassword = @decryptPassword oldPasswordhash, phone
-			Parse.User.logOut()
+		Parse.User.logOut()
 		.then ->
 			Parse.User.logIn phone, oldPassword
 		.then (user)=>
@@ -67,10 +64,7 @@ angular.module 'LocalHyper.auth'
 		.then (success)->
 			defer.resolve success
 		, (error)=>
-			if _.has(error, 'code')
-				@onParseJsError defer, error
-			else
-				defer.reject error
+			@onParseJsError defer, error
 
 		defer.promise
 
@@ -102,6 +96,7 @@ angular.module 'LocalHyper.auth'
 			when Parse.Error.CONNECTION_FAILED
 				defer.reject 'server_error'
 			when Parse.Error.INVALID_SESSION_TOKEN
+				$rootScope.$broadcast 'on:session:expiry'
 				defer.reject 'session_expired'
 			else
 				console.log 'Error code: '+error.code

@@ -38,10 +38,25 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
         })(this));
       },
       startSmsReception: function() {
-        var smsplugin;
+        var onSuccess, smsplugin;
+        onSuccess = (function(_this) {
+          return function(smsContent) {
+            var code, content;
+            content = smsContent.split('>');
+            content = content[1];
+            if (s.contains(content, 'Welcome to ShopOye')) {
+              _this.cancelTimeout();
+              content = content.replace('[Nexmo DEMO]', '');
+              code = s.words(content, 'code is');
+              code = s.trim(code[1]);
+              _this.smsCode = code;
+              return _this.verifySmsCode();
+            }
+          };
+        })(this);
         if (App.isWebView()) {
           smsplugin = cordova.require(this.smsPluginSrc);
-          return smsplugin.startReception(this.onSmsReceptionSuccess);
+          return smsplugin.startReception(onSuccess);
         }
       },
       stopSmsReception: function() {
@@ -49,19 +64,6 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
         if (App.isWebView()) {
           smsplugin = cordova.require(this.smsPluginSrc);
           return smsplugin.stopReception();
-        }
-      },
-      onSmsReceptionSuccess: function(smsContent) {
-        var code, content;
-        content = smsContent.split('>');
-        content = content[1];
-        if (s.contains(content, 'Welcome to ShopOye')) {
-          this.cancelTimeout();
-          content = content.replace('[Nexmo DEMO]', '');
-          code = s.words(content, 'code is');
-          code = s.trim(code[1]);
-          this.smsCode = code;
-          return this.verifySmsCode();
         }
       },
       verifySmsCode: function() {
@@ -79,10 +81,7 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
-          return App.navigate('categories', {}, {
-            animate: false,
-            back: false
-          });
+          return App.goBack(-2);
         }, (function(_this) {
           return function(error) {
             return _this.onError(error, 'register');
