@@ -30,6 +30,12 @@ h5,
 h6 {
   font-weight: 800;
 }
+.text-light {
+  color: #ffffff;
+}
+.border-left {
+  border-left: 1px solid #999999;
+}
 .bottom-fixed {
   position: absolute;
   bottom: 0px;
