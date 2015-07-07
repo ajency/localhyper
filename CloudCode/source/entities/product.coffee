@@ -134,12 +134,12 @@ Parse.Cloud.define 'getProducts', (request, response) ->
 
 
         # restrict which fields are being returned
-        query.select("images,name,mrp,brand,attrs")
+        query.select("images,name,mrp,brand,primaryAttributes")
 
         query.include("brand")
         # query.include("category")
-        query.include("attrs")
-        query.include("attrs.attribute")
+        query.include("primaryAttributes")
+        query.include("primaryAttributes.attribute")
 
         # pagination
         query.limit(displayLimit)

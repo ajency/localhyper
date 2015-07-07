@@ -253,10 +253,10 @@
             });
           }
         }
-        query.select("images,name,mrp,brand,attrs");
+        query.select("images,name,mrp,brand,primaryAttributes");
         query.include("brand");
-        query.include("attrs");
-        query.include("attrs.attribute");
+        query.include("primaryAttributes");
+        query.include("primaryAttributes.attribute");
         query.limit(displayLimit);
         query.skip(page * displayLimit);
         if (ascending === true) {
