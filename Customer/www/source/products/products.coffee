@@ -72,6 +72,14 @@ angular.module 'LocalHyper.products', []
 				else
 					@canLoadMore = false
 
+			getPrimaryAttrs : (attrs)->
+				attrs = attrs[0]
+				value = s.humanize attrs.value
+				unit = ''
+				if _.has attrs.attribute, 'unit'
+					unit = s.humanize attrs.attribute.unit
+				"#{value} #{unit}"
+
 			onSort : (sortBy, ascending)->
 				@sortModal.hide()
 

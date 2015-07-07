@@ -85,6 +85,16 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           return this.canLoadMore = false;
         }
       },
+      getPrimaryAttrs: function(attrs) {
+        var unit, value;
+        attrs = attrs[0];
+        value = s.humanize(attrs.value);
+        unit = '';
+        if (_.has(attrs.attribute, 'unit')) {
+          unit = s.humanize(attrs.attribute.unit);
+        }
+        return value + " " + unit;
+      },
       onSort: function(sortBy, ascending) {
         var reFetch;
         this.sortModal.hide();
