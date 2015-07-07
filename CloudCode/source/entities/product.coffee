@@ -114,7 +114,6 @@ Parse.Cloud.define 'getProducts', (request, response) ->
                 query.lessThanOrEqualTo("mrp", endPrice)
 
             if _.contains(filterableProps, "other_filters")
-                console.log "has other_filters"
                 AttributeValues = Parse.Object.extend('AttributeValues')
                 otherFilters = selectedFilters['other_filters']
                 # otherFilters = [[attribValueId1, attribBalueId2], [attribBalueId3],[attribBalueId4,attribBalueId5]]

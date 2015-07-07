@@ -237,7 +237,6 @@
             query.lessThanOrEqualTo("mrp", endPrice);
           }
           if (_.contains(filterableProps, "other_filters")) {
-            console.log("has other_filters");
             AttributeValues = Parse.Object.extend('AttributeValues');
             otherFilters = selectedFilters['other_filters'];
             _.each(otherFilters, function(sameAttribFilters) {
