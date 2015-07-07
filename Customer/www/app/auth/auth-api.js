@@ -25,49 +25,37 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       defer = $q.defer();
       phone = user.phone.toString();
       name = user.name;
-      $http.get('users', {
-        where: {
-          "username": phone
-        }
-      }).then((function(_this) {
-        return function(data) {
-          var existingUser, userObj;
-          userObj = data.data.results;
-          existingUser = _.isEmpty(userObj) ? false : true;
-          if (existingUser) {
-            return _this.loginExistingUser(phone, name);
-          } else {
+      user = new Parse.Query(Parse.User);
+      user.equalTo("username", phone);
+      user.find().then((function(_this) {
+        return function(userObj) {
+          if (_.isEmpty(userObj)) {
             return _this.signUpNewUser(phone, name);
+          } else {
+            return _this.loginExistingUser(phone, name, userObj);
           }
         };
       })(this)).then(function(success) {
         return defer.resolve(success);
-      }, function(error) {
-        return defer.reject(error);
-      });
+      }, (function(_this) {
+        return function(error) {
+          return _this.onParseJsError(defer, error);
+        };
+      })(this));
       return defer.promise;
     };
-    AuthAPI.loginExistingUser = function(phone, name) {
-      var defer, newPassword, newPasswordHash, oldPassword, oldPasswordhash;
+    AuthAPI.loginExistingUser = function(phone, name, userObj) {
+      var defer, newPassword, oldPassword, oldPasswordhash;
       defer = $q.defer();
-      oldPassword = oldPasswordhash = '';
-      newPassword = newPasswordHash = '';
-      $http.get('users', {
-        where: {
-          "username": phone
-        }
-      }).then((function(_this) {
-        return function(data) {
-          var userObj;
-          userObj = data.data.results[0];
-          oldPasswordhash = userObj.passwordHash;
-          oldPassword = _this.decryptPassword(oldPasswordhash, phone);
-          return Parse.User.logOut();
-        };
-      })(this)).then(function() {
+      newPassword = '';
+      userObj = userObj[0];
+      oldPasswordhash = userObj.get('passwordHash');
+      oldPassword = this.decryptPassword(oldPasswordhash, phone);
+      Parse.User.logOut().then(function() {
         return Parse.User.logIn(phone, oldPassword);
       }).then((function(_this) {
         return function(user) {
+          var newPasswordHash;
           newPassword = "" + phone + UUID;
           newPasswordHash = _this.encryptPassword(newPassword, phone);
           return App.getInstallationId().then(function(installationId) {
@@ -87,11 +75,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
         return defer.resolve(success);
       }, (function(_this) {
         return function(error) {
-          if (_.has(error, 'code')) {
-            return _this.onParseJsError(defer, error);
-          } else {
-            return defer.reject(error);
-          }
+          return _this.onParseJsError(defer, error);
         };
       })(this));
       return defer.promise;
