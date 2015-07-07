@@ -12,6 +12,9 @@
 <link href="assets/plugins/pace/pace-theme-flash.css" rel="stylesheet" type="text/css" media="screen"/>
 <!-- END PLUGIN CSS -->
 <!-- BEGIN CORE CSS FRAMEWORK -->
+<link href="assets/plugins/data-tables/DT_bootstrap.min.css" rel="stylesheet" type="text/css"/>
+
+
 <link href="assets/plugins/boostrapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
 <link href="assets/plugins/boostrapv3/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css"/>
 <link href="assets/plugins/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
@@ -98,19 +101,25 @@
   <!-- END MINI-PROFILE -->
    
    <!-- BEGIN SIDEBAR MENU -->	
-	<p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="fa fa-refresh"></i></a></span></p>
-    <ul>	
-      <li class="start active "> <a href="index.html"> <i class="fa fa-sitemap"></i> <span class="title">Category Map</span> <span class="selected"></span></a> </li>
-	   
-	  <li class=""> <a href="javascript:;"> <i class="fa fa fa-adjust"></i> <span class="title">Themes</span> <span class="arrow "></span> </a>
-        <ul class="sub-menu">
+	<p class="menu-title" onclick="location.href='sellers-list.html'">List of Sellers <span class="pull-right"><a href="javascript:;"></a></span></p>
+    <ul>  
+      <li class="start "> <a href="index.html"><span class="title">Products</span> <span class="selected"></span></a> </li>
+     <li class="start "> <a href="index.html"><span class="title">Users</span> <span class="selected"></span></a> </li>
+ </ul>
+    <!--<li class=""> <a href="javascript:;"> <i class="fa fa fa-adjust"></i> <span class="title">Themes</span> <span class="arrow "></span> </a>
+       <ul class="sub-menu">
           <li > <a href="#">Coporate </a> </li>
           <li > <a href="#">Simple</a> </li>
           <li > <a href="#">Elegant</a> </li>
         </ul>
-	  </li>    
-	   
-    </ul>
+    </li>-->    
+     <p class="menu-title" onclick="location.href='all-offers-list.html'">List of Offers <span class="pull-right"><a href="javascript:;"><i class="fa fa-check text-success"></i></a></span></p>
+      <ul>  
+      <li class="start "> <a href="successful-offers-list.html"> <span class="title">Successfull Offers</span> <span class="selected"></span></a> </li>
+ </ul>
+      <p class="menu-title" onclick="location.href='requests-list.html'">List of Requests <span class="pull-right"><a href="javascript:;"></a></span></p>
+      <p class="menu-title" onclick="location.href='customers-list.html'">List of Customers <span class="pull-right"><a href="javascript:;"></a></span></p>
+       <p class="menu-title" onclick="location.href='ratings-list.html'">List of Ratings <span class="pull-right"><a href="javascript:;"></a></span></p>
 		
 	<div class="clearfix"></div>
     <!-- END SIDEBAR MENU --> 
@@ -210,6 +219,8 @@
 <script src="assets/plugins/jquery-scrollbar/jquery.scrollbar.min.js" type="text/javascript"></script>
 <!-- END CORE JS FRAMEWORK --> 
 <!-- BEGIN PAGE LEVEL JS --> 
+ <script src="assets/plugins/data-tables/DT_bootstrap.min.js" type="text/javascript"></script>
+  <script src="assets/plugins/data-tables/jquery.dataTables.min.js" type="text/javascript"></script>
  <script src="assets/plugins/select2/select2.min.js" type="text/javascript"></script>
 
 <script src="assets/plugins/pace/pace.min.js" type="text/javascript"></script>  
