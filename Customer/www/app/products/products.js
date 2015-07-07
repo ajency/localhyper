@@ -53,7 +53,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         var _products;
         _products = data.products;
         if (_.size(_products) > 0) {
-          if (_.size(_products) < 6) {
+          if (_.size(_products) < 10) {
             this.canLoadMore = false;
           } else {
             this.onScrollComplete();

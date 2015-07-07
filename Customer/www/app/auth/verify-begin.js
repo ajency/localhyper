@@ -1,8 +1,8 @@
 angular.module('LocalHyper.auth').controller('VerifyBeginCtrl', [
   '$scope', 'App', 'CToast', 'User', function($scope, App, CToast, User) {
     return $scope.user = {
-      name: 'Deepak',
-      phone: '9765436351',
+      name: '',
+      phone: '',
       onProceed: function() {
         if (_.contains([this.name, this.phone], '')) {
           return CToast.show('Fill up all fields');

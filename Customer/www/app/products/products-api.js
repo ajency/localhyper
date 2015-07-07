@@ -11,7 +11,7 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
         "sortBy": "popularity",
         "ascending": false,
         "page": opts.page,
-        "displayLimit": 6
+        "displayLimit": 10
       };
       $http.post('functions/getProducts', params).then(function(data) {
         return defer.resolve(data.data.result);

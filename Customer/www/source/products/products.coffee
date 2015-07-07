@@ -50,7 +50,7 @@ angular.module 'LocalHyper.products', []
 			onSuccess : (data)->
 				_products = data.products
 				if _.size(_products) > 0
-					if _.size(_products) < 6 then @canLoadMore = false
+					if _.size(_products) < 10 then @canLoadMore = false
 					else @onScrollComplete()
 					if @refresh then @products = _products
 					else @products = @products.concat _products

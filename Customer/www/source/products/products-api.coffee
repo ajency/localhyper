@@ -14,7 +14,7 @@ angular.module 'LocalHyper.products'
 			"sortBy": "popularity"
 			"ascending": false
 			"page": opts.page
-			"displayLimit": 6
+			"displayLimit": 10
 
 		$http.post 'functions/getProducts', params
 		.then (data)->

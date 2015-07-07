@@ -5,8 +5,8 @@ angular.module 'LocalHyper.auth'
 	, ($scope, App, CToast, User)->
 
 		$scope.user = 
-			name: 'Deepak'
-			phone: '9765436351'
+			name: ''
+			phone: ''
 
 			onProceed : ->
 				if _.contains [@name, @phone], ''
