@@ -75,6 +75,7 @@ angular.module('LocalHyper.init', []).controller('InitCtrl', [
   '$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     $stateProvider.state('init', {
       url: '/init',
+      cache: false,
       controller: 'InitCtrl',
       templateUrl: 'views/init/init.html'
     });

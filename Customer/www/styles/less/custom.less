@@ -22,7 +22,9 @@ h1, h2, h3, h4, h5, h6{
 	  margin: auto;
 	  margin-top: 50%;
 }
-
+.img-responsive{
+	  width: 100%;
+}
 .margin-none{
 	margin:0px !important;
 }
@@ -38,11 +40,20 @@ sm{
 }
 .nav-bar-title{
 	text-transform:uppercase;
-	font-size:16px;
+	font-size:14px;
 }
 .center-block{
 	margin:auto;
 	display:block;
+}
+.pull-left{
+	float:left;
+}
+.pull-right{
+	float:right;
+}
+.upper-case{
+	text-transform:uppercase;
 }
 /* HEADER */
 
@@ -132,7 +143,7 @@ sm{
 		  width: 45%;
 		  position: absolute;
 		  top: 35px ;
-		  right: 0px;
+		  right: -10px;
 
 	}
 
@@ -140,7 +151,7 @@ sm{
 .department-list:nth-child(2){
 	background: @white;
 	img{
-		  left: 0px;
+		    left: -22px;
 
 	}
 	h3{
@@ -151,15 +162,27 @@ sm{
 /* Sub Categories*/
 .sub-categories {
 	background:@white;
-	.col-50{
+	.border-card{
 			   border-right: 1px solid @gray-lighter;
 	           border-bottom: 1px solid @gray-lighter;
-	           min-height: 240px;
+	           min-height: 250px;
 	           float: left;
          h3{
          	   font-size: 14px;
          	   font-weight: 600;
 
          }
+         .title{
+         	  height: 50px;
+         }
+      
 	}
+}
+.product-list{
+		.border-card{
+			
+		}
+		h4{
+			color:@brand-primary;
+		}
 }

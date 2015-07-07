@@ -4,7 +4,7 @@
 		{{view.title}}
     </ion-nav-title>
 
-	<ion-content>
+	<ion-content class="sub-categories product-list">
 
 		<ion-refresher
 			on-refresh="view.onPullToRefresh()">
@@ -12,19 +12,35 @@
 
 		<ion-list>
 			<div 
-				class="col col-50"
+				class="col col-50 border-card"
 				collection-repeat="product in view.products"
 				item-width="50%"
 				ng-click="App.navigate('single-product', {productID: product.objectId})">
 
-				<ion-item class="item-image">
-					<img ng-src="{{product.images[0].src}}" class="aj-img">
-				</ion-item>
+					<h6 class="text-left title">{{product.name}}</h6>
+					
+				<!-- 	<div class="row">
+                        <div class="col col-67">
+                      
+								<span class="subdued">MRP</span>
+                        		<h4 class="margin-none pull-left" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
+                        		
 
-				<ion-item>
-					{{product.name}}
-					<p>Rs {{product.mrp}}<p>
-				</ion-item>
+                    	</div>
+						 <div class="col "><img ng-src="{{product.images[0].src}}" class="aj-img center-block img-responsive"></div>
+					</div> -->
+					<img ng-src="{{product.images[0].src}}" class="aj-img center-block " style="height:100px;">
+						<div class="row">
+                        <div class="col col-67">
+                      
+								<div class="subdued">MRP</div>
+                        		<h4 class="margin-none pull-left" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
+                        		
+
+                    	</div>
+						
+					</div>
+		
 				
 			</div>
 		</ion-list>
