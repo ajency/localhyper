@@ -51,7 +51,7 @@ angular.module('LocalHyper.common', []).factory('App', [
         }
       },
       noTapScroll: function() {
-        return "" + (!this.isIOS());
+        return !this.isIOS();
       },
       navigate: function(state, params, opts) {
         var animate, back;

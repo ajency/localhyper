@@ -46,7 +46,7 @@ angular.module 'LocalHyper.common', []
 
 			noTapScroll : ->
 				#Enable scroll to top on header click only for iOS
-				"#{!@isIOS()}"
+				!@isIOS()
 
 			navigate : (state, params={}, opts={})->
 				if !_.isEmpty(opts)

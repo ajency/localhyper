@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.products', []
 
 
-.controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product'
-	, ($scope, ProductsAPI, $stateParams, Product)->
+.controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal'
+	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal)->
 
 		$scope.view =
 			title: Product.subCategoryTitle
@@ -10,7 +10,18 @@ angular.module 'LocalHyper.products', []
 			page: 0
 			canLoadMore: true
 			refresh: false
+			sortModal: null
 			
+			init: ->
+				@loadSortModal()
+
+			loadSortModal : ->
+				$ionicModal.fromTemplateUrl 'views/products/sort.html', 
+					scope: $scope,
+					animation: 'slide-in-up'
+				.then (modal)=>
+					@sortModal = modal
+
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 			
@@ -56,6 +67,7 @@ angular.module 'LocalHyper.products', []
 					else @products = @products.concat _products
 				else
 					@canLoadMore = false
+
 ]
 
 
