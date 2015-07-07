@@ -13,6 +13,13 @@ h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, 
 h1, h2, h3, h4, h5, h6{
 	font-weight: 800;
 }
+.strike{
+	 text-decoration: line-through;
+	 color:@gray !important;
+}
+.text-danger{
+	color:@brand-primary;
+}
 .text-light{
 	color:@white;
 }
@@ -193,7 +200,17 @@ sm{
 
          }
          .title{
-         	  height: 50px;
+         	  height: 39px;
+         	  font-weight: 600;
+         	  line-height: 18px;
+         	  display: block;
+			  display: -webkit-box;
+			  max-width: 100%;
+			  -webkit-line-clamp: 2;
+			  -webkit-box-orient: vertical;
+			  overflow: hidden;
+			  text-overflow: ellipsis;
+         	
          }
       
 	}
@@ -203,8 +220,9 @@ sm{
 			
 		}
 		h4{
-			color:@brand-primary;
+			color:@brand-primary ;
 		}
+
 }
 
 /* Sort model */

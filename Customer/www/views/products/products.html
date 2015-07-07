@@ -16,14 +16,13 @@
 				collection-repeat="product in view.products"
 				item-width="50%"
 				ng-click="App.navigate('single-product', {productID: product.objectId})">
-
+				<h6 class=" subdued"> <span class="text-danger">In</span> 1.5 Tons</h6>
 				<h6 class="text-left title">{{product.name}}</h6>
 			
 				<img ng-src="{{product.images[0].src}}" class="aj-img center-block " style="height:100px;">
 				<div class="row">
                     <div class="col col-67">
-						<div class="subdued">MRP</div>
-                		<h4 class="margin-none pull-left" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
+                		<h4 class="margin-none pull-left strike" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
                 	</div>
 				</div>
 			</div>
