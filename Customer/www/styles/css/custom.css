@@ -248,9 +248,16 @@ sm {
   font-weight: 600;
 }
 .sub-categories .border-card .title {
-  height: 50px;
+  height: 39px;
   font-weight: 600;
   line-height: 18px;
+  display: block;
+  display: -webkit-box;
+  max-width: 100%;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .product-list h4 {
   color: #f35a59;
