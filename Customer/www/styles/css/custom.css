@@ -30,6 +30,13 @@ h5,
 h6 {
   font-weight: 800;
 }
+.strike {
+  text-decoration: line-through;
+  color: #666666 !important;
+}
+.text-danger {
+  color: #f35a59;
+}
 .text-light {
   color: #ffffff;
 }
@@ -242,6 +249,8 @@ sm {
 }
 .sub-categories .border-card .title {
   height: 50px;
+  font-weight: 600;
+  line-height: 18px;
 }
 .product-list h4 {
   color: #f35a59;
