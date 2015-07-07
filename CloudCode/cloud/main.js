@@ -306,15 +306,44 @@
   });
 
   Parse.Cloud.define('createRequest', function(request, response) {
-    var addressText, comments, customerId, deliveryStatus, latitude, location, longitude, productId;
+    var Request, addressText, comments, customerId, customerObj, deliveryStatus, latitude, latlongPoint, location, longitude, point, productId, productObj, status;
     customerId = request.params.customerId;
     productId = request.params.productId;
     location = request.params.location;
     latitude = location.lat;
     longitude = location.long;
+    latlongPoint = {
+      latitude: latitude,
+      longitude: longitude
+    };
     addressText = location.text;
     comments = request.params.comments;
-    return deliveryStatus = request.params.deliveryStatus;
+    status = request.params.status;
+    deliveryStatus = request.params.deliveryStatus;
+    Request = Parse.Object.extend('Request');
+    request = new Request();
+    point = new Parse.GeoPoint(latlongPoint);
+    request.set("addressGeoPoint", point);
+    request.set("addressText", addressText);
+    request.set("status", product.status);
+    request.set("deliveryStatus", deliveryStatus);
+    customerObj = {
+      "__type": "Pointer",
+      "className": "_User",
+      "objectId": customerId
+    };
+    request.set("customerId", customerObj);
+    productObj = {
+      "__type": "Pointer",
+      "className": "ProductItem",
+      "objectId": productId
+    };
+    request.set("productId", productObj);
+    return request.save().then(function(requestObject) {});
+  });
+
+  response.success(requestObject, function(error) {
+    return response.error("Failed to add products due to - " + error.message);
   });
 
   Parse.Cloud.useMasterKey();
