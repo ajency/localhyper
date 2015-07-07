@@ -20,6 +20,7 @@
 <link href="assets/plugins/jquery-scrollbar/jquery.scrollbar.css" rel="stylesheet" type="text/css"/>
 <!-- END CORE CSS FRAMEWORK -->
 <!-- BEGIN CSS TEMPLATE -->
+<link href="assets/plugins/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet" type="text/css" media="screen">
 <link href="assets/plugins/select2/select2_metro.min.css" rel="stylesheet" type="text/css" media="screen">
 <link href="assets/css/style.css" rel="stylesheet" type="text/css"/>
 <link href="assets/css/responsive.css" rel="stylesheet" type="text/css"/>
@@ -99,7 +100,7 @@
    
    <!-- BEGIN SIDEBAR MENU -->	
 	<p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="fa fa-refresh"></i></a></span></p>
-    <ul>	
+    <!--<ul>	
       <li class="start active "> <a href="index.html"> <i class="fa fa-sitemap"></i> <span class="title">Category Map</span> <span class="selected"></span></a> </li>
 	   
 	  <li class=""> <a href="javascript:;"> <i class="fa fa fa-adjust"></i> <span class="title">Themes</span> <span class="arrow "></span> </a>
@@ -110,7 +111,7 @@
         </ul>
 	  </li>    
 	   
-    </ul>
+    </ul>-->
 		
 	<div class="clearfix"></div>
     <!-- END SIDEBAR MENU --> 
@@ -140,32 +141,34 @@
       <div class="pull-right">
         <button type="button" class="btn btn-default btn-cons" ><i class="fa fa-pencil"></i> Edit</button>
       </div>
-		<div class="page-title m-l-5">	
-			<h3><span class="semi-bold">Seller</span> Information</h3>	
-		</div>
-		<div class="grid simple vertical purple">
-		
-			<div class="grid-body">
-       
-            <div class="user-description-box">
+
+
+      
+<ul class="nav nav-pills" id="tab-4">
+<li class="active"><a href="#tab4hellowWorld">View Seller Information</a></li>
+<li><a href="#tab4FollowUs">View Offer History</a></li>
+
+</ul>
+<div class="grid simple vertical purple">
+<div class="tab-content">
+<div class="tab-pane active" id="tab4hellowWorld">
+  <div class="user-description-box">
                 <div class="row">
-                  <div class="col-md-6">
-                  <h4 >Seller A</h4>
+                  <div class="col-md-4">
+                    <h4 >Seller A</h4>
+                     <p>seller1@gmail.com</p>
+                      <p>9158156284</p>
                   </div>
-                  <div class="col-md-6 text-right">
-                  <h5 class="text-warning semi-bold">Credit Counts Left : 8765</h5>  
+                  <div class="col-md-4 text-center">
+                     <h5 class="text-warning semi-bold m-b-30">Auto Bid</h5>  
+                     <input type="checkbox" checked data-toggle="toggle" data-size="mini">
                   </div>
-                </div>
-                <p>seller1@gmail.com</p>
-                 <div class="row">
-                  <div class="col-md-6">
-                    <p>9158156284</p>
-                  </div>
-                  <div class="col-md-6 text-right">
-                    <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#myModal"><i class="fa fa-dollar"></i> Add Credits</button>
+                  <div class="col-md-4 text-right">
+                    <h5 class="text-warning semi-bold">Credit Counts Left : 8765</h5>  
+                     <button type="button" class="btn btn-primary btn-info m-t-20" data-toggle="modal" data-target="#myModal"><i class="fa fa-dollar"></i> Add Credits</button>
                   </div>
                 </div>
-            </div>
+             </div>
             <h5><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold text-info">ADDRESS DETAILS</span></h5>
                <div class="user-description-box">
                 <div class="row">
@@ -182,15 +185,55 @@
               </div>
             </div>
             </div>
-            <h5><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold text-info">PRODUCT CATEGORIES</span></h5>
+             <h5><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold text-info">PRODUCT CATEGORIES</span></h5>
             <div class="user-description-box">
               <span class="label">MOBILE</span>
               <span class="label">CAMERAS</span>
               <span class="label">LAPTOPS</span>
             </div>
+</div>
+<div class="tab-pane" id="tab4FollowUs">
+<table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Offer Code</th>
+              <th>Date</th>
+              <th>Product Name</th>
+              <th>Category</th>
+              <th>Offer Amount</th>
+              <th>Offer Status</th>
+              <th>Credits Used</th>
+              <th>Auto Bid</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <td>3456</td>
+                <td>23-04-2014</td>
+                <td>Product A</td>
+                <td>Category A</td>
+                <td>$ 456</td>
+                <td><span class="label label-important">CLOSED</span></td>
+                <td>45</td>
+                <td class="text-center">Yes</td>
+              </tr>
+               <tr>
+                <td>3456</td>
+                <td>23-04-2014</td>
+                <td>Product A</td>
+                <td>Category A</td>
+                <td>$ 456</td>
+                <td><span class="label label-important">CLOSED</span></td>
+                <td>45</td>
+                <td class="text-center">No</td>
+              </tr>
+          </tbody>
+         </table>
+</div>
 
-      </div>
-		</div>
+</div>
+</div>
+
     </div>
   </div>
 
@@ -229,6 +272,7 @@
 <script src="assets/plugins/breakpoints.js" type="text/javascript"></script> 
 <script src="assets/plugins/jquery-unveil/jquery.unveil.min.js" type="text/javascript"></script> 
 <script src="assets/plugins/jquery-scrollbar/jquery.scrollbar.min.js" type="text/javascript"></script>
+<script src="assets/plugins/bootstrap-toggle/js/bootstrap-toggle.min.js" type="text/javascript"></script>
 <!-- END CORE JS FRAMEWORK --> 
 <!-- BEGIN PAGE LEVEL JS --> 
  <script src="assets/plugins/select2/select2.min.js" type="text/javascript"></script>
@@ -236,7 +280,7 @@
 <script src="assets/plugins/pace/pace.min.js" type="text/javascript"></script>  
 <script src="assets/plugins/jquery-numberAnimate/jquery.animateNumbers.js" type="text/javascript"></script>
 <!-- END PAGE LEVEL PLUGINS --> 	
-
+<script src="assets/js/tabs_accordian.js" type="text/javascript"></script>
 <!-- BEGIN CORE TEMPLATE JS --> 
 <script src="assets/js/core.js" type="text/javascript"></script> 
 <script src="assets/js/chat.js" type="text/javascript"></script> 
