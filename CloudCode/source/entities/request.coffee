@@ -1,16 +1,36 @@
+getCategoryBasedSellers = (geoPoint,categoryId) ->
+
+    # find all sellers from users class whose categories column contains categoryId 
+    sellerQuery = new Parse.Query(Parse.User) 
+
+    # where categoryId is present in supportedCategories array of sellers
+    Category = Parse.Object.extend("Category")
+    categoryPointer = new Category()
+    categoryPointer.id = categoryId
+
+    sellerQuery.equalTo("supportedCategories", categoryPointer)
+
+    promise = new Parse.Promise()
+
+    sellerQuery.find()
+    .then (sellers) ->
+        promise.resolve(sellers)
+    , (error) ->
+        promise.reject(error)
+
+    promise
+
+
+
+
+
 Parse.Cloud.define 'makeRequest' , (request, response) ->
 
     customerId = request.params.customerId
     productId = request.params.productId
+    categoryId = request.params.categoryId 
     location = request.params.location  
-
-    # latitude = location.lat 
-    # longitude = location.long 
-
-    # latlongPoint = 
-    #     latitude: latitude
-    #     longitude: longitude
-
+     
     addressText = request.params.addressText 
 
     comments = request.params.comments
@@ -48,20 +68,39 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
 
     request.save()
         .then (requestObject)->
-            # create entry in notification class
-            notificationData = 
-                hasSeen: false
-                recipientUser: customerObj
-                channel : 'push'
-                processed : false
-                type : "Request"
-                typeId : requestObject.id
 
-            Notification = Parse.Object.extend("Notification") 
-            notification = new Notification notificationData
-            notification.save() 
-            .then (notificationObj) ->
-                response.success notificationObj               
+            sellersArray = []
+
+            getCategoryBasedSellers = getCategoryBasedSellers(point,categoryId)
+
+
+            getCategoryBasedSellers
+            .then (categoryBasedSellers) ->
+                response.success categoryBasedSellers
+
+
+
+            # for each seller id create a notification in the background, i.e. saveAll
+
+            # sellerObj =
+            #     "__type" : "Pointer",
+            #     "className":"_User",
+            #     "objectId":sellerId  
+
+            # create entry in notification class
+            # notificationData = 
+            #     hasSeen: false
+            #     recipientUser: customerObj
+            #     channel : 'push'
+            #     processed : false
+            #     type : "Request"
+            #     typeId : requestObject.id
+
+            # Notification = Parse.Object.extend("Notification") 
+            # notification = new Notification notificationData
+            # notification.save() 
+            # .then (notificationObj) ->
+            #     response.success notificationObj               
             , (error)->
                 response.error "Failed to create request due to - #{error.message}"
 

@@ -1,5 +1,5 @@
 (function() {
-  var _, getLocationBasedSellers, treeify;
+  var _, getCategoryBasedSellers, getLocationBasedSellers, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -317,10 +317,27 @@
     });
   });
 
+  getCategoryBasedSellers = function(geoPoint, categoryId) {
+    var Category, categoryPointer, promise, sellerQuery;
+    sellerQuery = new Parse.Query(Parse.User);
+    Category = Parse.Object.extend("Category");
+    categoryPointer = new Category();
+    categoryPointer.id = categoryId;
+    sellerQuery.equalTo("supportedCategories", categoryPointer);
+    promise = new Parse.Promise();
+    sellerQuery.find().then(function(sellers) {
+      return promise.resolve(sellers);
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
+
   Parse.Cloud.define('makeRequest', function(request, response) {
-    var Request, addressText, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
+    var Request, addressText, categoryId, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
     customerId = request.params.customerId;
     productId = request.params.productId;
+    categoryId = request.params.categoryId;
     location = request.params.location;
     addressText = request.params.addressText;
     comments = request.params.comments;
@@ -346,19 +363,11 @@
     };
     request.set("productId", productObj);
     return request.save().then(function(requestObject) {
-      var Notification, notification, notificationData;
-      notificationData = {
-        hasSeen: false,
-        recipientUser: customerObj,
-        channel: 'push',
-        processed: false,
-        type: "Request",
-        typeId: requestObject.id
-      };
-      Notification = Parse.Object.extend("Notification");
-      notification = new Notification(notificationData);
-      return notification.save().then(function(notificationObj) {
-        return response.success(notificationObj);
+      var sellersArray;
+      sellersArray = [];
+      getCategoryBasedSellers = getCategoryBasedSellers(point, categoryId);
+      return getCategoryBasedSellers.then(function(categoryBasedSellers) {
+        return response.success(categoryBasedSellers);
       }, function(error) {
         return response.error("Failed to create request due to - " + error.message);
       });
