@@ -317,7 +317,7 @@
     });
   });
 
-  Parse.Cloud.define('createRequest', function(request, response) {
+  Parse.Cloud.define('makeRequest', function(request, response) {
     var Request, addressText, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
     customerId = request.params.customerId;
     productId = request.params.productId;
@@ -346,36 +346,22 @@
     };
     request.set("productId", productObj);
     return request.save().then(function(requestObject) {
-      return response.success(requestObject);
-    }, function(error) {
-      return response.error("Failed to create request due to - " + error.message);
-    });
-  });
-
-  Parse.Cloud.afterSave('Request', function(request, response) {
-    var Notification, notification, notificationData, requestObj, userPointer;
-    console.log("after save of request");
-    console.log(request);
-    requestObj = request.object;
-    Notification = Parse.Object.extend("Request");
-    userPointer = new Parse.User();
-    userPointer.id = requestObj.get("customerId").get("objectId");
-    notificationData = {
-      hasSeen: false,
-      recipientUser: userPointer,
-      channel: 'push',
-      processed: false
-    };
-    notification = new Notification();
-    notification.set("hasSeen", notificationData.hasSeen);
-    notification.set("recipientUser", notificationData.recipientUser);
-    notification.set("channel", notificationData.channel);
-    notification.set("channel", notificationData.channel);
-    notification.set("processed", notificationData.processed);
-    return notification.save().then(function(notification) {
-      return response.sucess(notification);
-    }, function(error) {
-      return response.error("Error occured in creating notification " + error.message);
+      var Notification, notification, notificationData;
+      notificationData = {
+        hasSeen: false,
+        recipientUser: customerObj,
+        channel: 'push',
+        processed: false,
+        type: "Request",
+        typeId: requestObject.id
+      };
+      Notification = Parse.Object.extend("Notification");
+      notification = new Notification(notificationData);
+      return notification.save().then(function(notificationObj) {
+        return response.success(notificationObj);
+      }, function(error) {
+        return response.error("Failed to create request due to - " + error.message);
+      });
     });
   });
 
