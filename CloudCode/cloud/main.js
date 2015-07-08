@@ -352,10 +352,57 @@
     });
   });
 
+  Parse.Cloud.afterSave('Request', function(request, response) {
+    var Notification, notification, notificationData, requestObj, userPointer;
+    console.log("after save of request");
+    console.log(request);
+    requestObj = request.object;
+    Notification = Parse.Object.extend("Request");
+    userPointer = new Parse.User();
+    userPointer.id = requestObj.get("customerId").get("objectId");
+    notificationData = {
+      hasSeen: false,
+      recipientUser: userPointer,
+      channel: 'push',
+      processed: false
+    };
+    notification = new Notification();
+    notification.set("hasSeen", notificationData.hasSeen);
+    notification.set("recipientUser", notificationData.recipientUser);
+    notification.set("channel", notificationData.channel);
+    notification.set("channel", notificationData.channel);
+    notification.set("processed", notificationData.processed);
+    return notification.save().then(function(notification) {
+      return response.sucess(notification);
+    }, function(error) {
+      return response.error("Error occured in creating notification " + error.message);
+    });
+  });
+
   getLocationBasedSellers = function(location, categoryId) {
     var sellers;
     return sellers = [];
   };
+
+  Parse.Cloud.define('createTestSeller', function(request, response) {
+    var user, userData;
+    userData = {
+      'username': request.params.username,
+      'password': request.params.password,
+      'email': request.params.email
+    };
+    user = new Parse.User(userData);
+    user.set("userType", "seller");
+    return user.signUp().done((function(_this) {
+      return function(user) {
+        return response.success(user);
+      };
+    })(this)).fail((function(_this) {
+      return function(error) {
+        return response.error("Failed to create user " + error.message);
+      };
+    })(this));
+  });
 
   Parse.Cloud.useMasterKey();
 
@@ -408,8 +455,8 @@
     return Parse.Cloud.httpRequest({
       url: 'https://rest.nexmo.com/sms/json',
       params: {
-        api_key: '343ea2a4',
-        api_secret: 'a682ae14',
+        api_key: 'e2f79907',
+        api_secret: '88907392',
         from: 'ShopOye',
         to: "91" + phone,
         text: "Welcome to ShopOye. Your one time verification code is " + verificationCode
