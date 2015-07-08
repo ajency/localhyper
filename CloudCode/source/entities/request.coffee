@@ -52,3 +52,34 @@ Parse.Cloud.define 'createRequest' , (request, response) ->
         , (error)->
             response.error "Failed to create request due to - #{error.message}"
 
+Parse.Cloud.afterSave 'Request', (request, response) ->
+    console.log "after save of request"
+    console.log request
+    # after an entry is made in Request class make an entry in notification class with recipient user id as the seller ids obtained from getLocationBasedSellers(location,categoryId)
+
+    requestObj = request.object 
+
+    # create a new notification class object 
+    Notification = Parse.Object.extend("Request")
+
+    userPointer = new Parse.User()
+    userPointer.id = requestObj.get("customerId").get "objectId"
+
+    notificationData = 
+        hasSeen: false
+        recipientUser: userPointer
+        channel : 'push'
+        processed : false
+
+    notification = new Notification()
+    notification.set "hasSeen" , notificationData.hasSeen
+    notification.set "recipientUser" , notificationData.recipientUser
+    notification.set "channel" , notificationData.channel
+    notification.set "channel" , notificationData.channel
+    notification.set "processed" , notificationData.processed
+
+    notification.save()
+        .then (notification) ->
+            response.sucess notification
+        ,(error) ->
+            response.error "Error occured in creating notification #{error.message}"
