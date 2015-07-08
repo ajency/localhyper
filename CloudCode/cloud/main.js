@@ -384,26 +384,6 @@
     return sellers = [];
   };
 
-  Parse.Cloud.define('createTestSeller', function(request, response) {
-    var user, userData;
-    userData = {
-      'username': request.params.username,
-      'password': request.params.password,
-      'email': request.params.email
-    };
-    user = new Parse.User(userData);
-    user.set("userType", "seller");
-    return user.signUp().done((function(_this) {
-      return function(user) {
-        return response.success(user);
-      };
-    })(this)).fail((function(_this) {
-      return function(error) {
-        return response.error("Failed to create user " + error.message);
-      };
-    })(this));
-  });
-
   Parse.Cloud.useMasterKey();
 
   Parse.Cloud.define("sendSMSCode", function(request, response) {
