@@ -1,0 +1,29 @@
+<ion-view>
+
+	<ion-nav-title>
+		{{view.title}}
+    </ion-nav-title>
+
+	<ion-content class="sub-categories">
+
+		<ion-list>
+
+			<div 
+				class="col col-50 border-card"
+				ng-repeat="category in view.subCategories"
+				ng-click="App.navigate('products', {categoryID: category.id})">
+
+				
+					<img ng-src="{{category.image.src}}" class="aj-img center-block img-responsive">
+			
+
+					<h3 class="text-center upper-case">
+					{{category.name}}
+					</h3>
+				
+			</div>
+
+		</ion-list>
+
+	</ion-content>
+</ion-view>
