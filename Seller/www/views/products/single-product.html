@@ -1,0 +1,44 @@
+<ion-view>
+
+	<ion-content ng-switch="view.display">
+
+		<ion-spinner
+			class="aj-spinner" 
+			ng-switch-when="loader">
+		</ion-spinner>
+
+		<ion-list ng-switch-when="noError">
+
+			<ion-item class="item-image">
+				<img
+					class="aj-sp-img" 
+					ng-src="{{view.product.images[0].src}}">
+			</ion-item>
+
+			<ion-item>
+				{{view.product.name}}
+			</ion-item>
+
+			<ion-item>
+				MRP: Rs {{view.product.mrp}}
+			</ion-item>
+			
+			<ion-item>
+				<button 
+					class="button button-block button-assertive"
+					ng-click="view.onMakeRequest()">
+					Make Request
+				</button>
+			</ion-item>
+			
+		</ion-list>
+
+		<aj-error 
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry()">
+		</aj-error>
+
+	</ion-content>
+
+</ion-view>
