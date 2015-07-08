@@ -1,6 +1,9 @@
 @import url(../../styles/fonts/open-sans/open-sans.css);
 /* External CSS */
 /**** Fonts ****/
+/************************************/
+/* Commen css */
+/************************************/
 h1,
 h2,
 h3,
@@ -30,6 +33,15 @@ h5,
 h6 {
   font-weight: 800;
 }
+.row-fluid {
+  padding: 0px;
+}
+.bg-white {
+  background: #ffffff !important;
+}
+.normal {
+  font-weight: 600;
+}
 .strike {
   text-decoration: line-through;
 }
@@ -40,7 +52,7 @@ h6 {
   color: #ffffff;
 }
 .border-left {
-  border-left: 1px solid #999999;
+  border-left: 1px solid #ccc;
 }
 .bottom-fixed {
   position: absolute;
@@ -92,7 +104,9 @@ sm {
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
 }
+/************************************/
 /* HEADER */
+/************************************/
 .has-header {
   background: #e8e8e8;
 }
@@ -122,7 +136,9 @@ sm {
 .aj-right-popover .item i {
   font-size: 22px;
 }
+/************************************/
 /* Menu */
+/************************************/
 .sprite-icon {
   background: url(../../img/sprite.png) no-repeat;
   width: 30px;
@@ -213,7 +229,9 @@ sm {
   margin-bottom: -10px;
   background-position: -61px -160px;
 }
+/************************************/
 /*Department List*/
+/************************************/
 .department-list {
   height: 199px;
   background: #e8e8e8;
@@ -240,7 +258,9 @@ sm {
 .department-list:nth-child(2) h3 {
   text-align: right;
 }
+/************************************/
 /* Sub Categories*/
+/************************************/
 .sub-categories {
   background: #ffffff;
 }
@@ -269,7 +289,9 @@ sm {
 .product-list h4 {
   color: #f35a59;
 }
+/************************************/
 /* Sort model */
+/************************************/
 .sort-model {
   width: 80%;
   height: 216px;
@@ -296,4 +318,40 @@ sm {
 }
 .item.active .i-popularity {
   background-position: -61px -200px;
+}
+/************************************/
+/* Single Product  */
+/************************************/
+.btn-specification {
+  font-size: 15px !important;
+  color: #000000 !important;
+}
+.btn-action {
+  font-weight: 600 !important;
+  width: 50%;
+}
+.sm-text {
+  font-size: 13px;
+  line-height: 15px;
+}
+.sm-text span {
+  font-size: 10px;
+  color: #4d4d4d;
+}
+.bar-custom-footer {
+  border-top: 1px solid rgba(204, 204, 204, 0.44);
+  HEIGHT: 50PX;
+}
+.aj-sp-img {
+  margin: 6% auto;
+}
+/* model Box*/
+.circle-image {
+  background: #fff;
+  border-radius: 100%;
+  border: 1px solid #ccc;
+  width: 50px;
+  height: 50px;
+  margin: auto;
+  display: block;
 }

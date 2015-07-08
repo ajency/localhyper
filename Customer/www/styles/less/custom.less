@@ -6,12 +6,25 @@
 /**** Fonts ****/
 @import url(../../styles/fonts/open-sans/open-sans.css);
 
+/************************************/
+/* Commen css */
+/************************************/
+
 h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider {
 	font-family: 'opensans' !important;
 	color: #424242;
 }
 h1, h2, h3, h4, h5, h6{
 	font-weight: 800;
+}
+.row-fluid{
+	padding: 0px;
+}
+.bg-white{
+	background: @white !important;
+}
+.normal{
+	  font-weight: 600;
 }
 .strike{
 	 text-decoration: line-through;
@@ -23,7 +36,7 @@ h1, h2, h3, h4, h5, h6{
 	color:@white;
 }
 .border-left{
-	border-left:1px solid @gray-light;
+	border-left:1px solid #ccc;
 }
 .bottom-fixed{
 	position:absolute;
@@ -76,7 +89,10 @@ sm{
 	  transform: rotate(90deg);
 
 }
+
+/************************************/
 /* HEADER */
+/************************************/
 
 .has-header{
 	background:@gray-transperent;
@@ -111,7 +127,10 @@ sm{
 	}
 }
 
+/************************************/
 /* Menu */
+/************************************/
+
 .sprite-icon{
 	  background: url(../../img/sprite.png)no-repeat;
 	  width: 30px;
@@ -163,7 +182,10 @@ sm{
 	 background-position: -61px -160px;
 }
 
+/************************************/
 /*Department List*/
+/************************************/
+
 .department-list{
 	height: 199px;
 	background: @gray-transperent;
@@ -194,7 +216,10 @@ sm{
 	}
 }
 
+/************************************/
 /* Sub Categories*/
+/************************************/
+
 .sub-categories {
 	background:@white;
 	.border-card{
@@ -233,7 +258,9 @@ sm{
 
 }
 
+/************************************/
 /* Sort model */
+/************************************/
 .sort-model{
 	  width:80%;
 	  height: 216px;
@@ -257,4 +284,42 @@ sm{
 	.i-popularity{
 		 background-position: -61px -200px;
 	}
+}
+
+/************************************/
+/* Single Product  */
+/************************************/
+.btn-specification{
+	font-size: 15px !important;
+	color:@black!important;
+}
+.btn-action{
+	font-weight: 600 !important;
+	width:50%;
+}
+.sm-text{
+	  font-size: 13px;
+      line-height: 15px;
+		span{
+			font-size: 10px;
+			color:@gray-dark;
+		}
+}
+.bar-custom-footer{
+	  border-top: 1px solid rgba(204, 204, 204, 0.44);
+     HEIGHT: 50PX;
+}
+.aj-sp-img{
+		margin:6% auto;
+}
+
+/* model Box*/
+.circle-image{
+	  background: #fff;
+	  border-radius: 100%;
+	  border: 1px solid #ccc;
+	  width: 50px;
+	  height: 50px;
+	  margin: auto;
+	  display: block;
 }
