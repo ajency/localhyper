@@ -66,9 +66,35 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
                 )
 
                 Parse.Promise.when(findQs).then ->
+                    locationBasedSellerIds = _.flatten(_.toArray(arguments))
+                    notificationSavedArr = []
+                    _.each locationBasedSellerIds , (locationBasedSellerId) ->
+                        if locationBasedSellerId
+                            sellerObj =
+                                "__type" : "Pointer",
+                                "className":"_User",
+                                "objectId":locationBasedSellerId  
 
-                    console.log "resolved promises"
-                    response.success(arguments)
+                            # create entry in notification class
+                            notificationData = 
+                                hasSeen: false
+                                recipientUser: customerObj
+                                channel : 'push'
+                                processed : false
+                                type : "Request"
+                                typeId : requestObject.id
+
+                            Notification = Parse.Object.extend("Notification") 
+                            notification = new Notification notificationData
+                            notificationSavedArr.push(notification)
+
+                    # save all the newly created objects
+                    Parse.Object.saveAll notificationSavedArr
+                    .then (objs) ->
+                        response.success objs
+                    , (error) ->
+                        response.error (error)                        
+                        
                 , (error) ->
                     response.error (error)
 

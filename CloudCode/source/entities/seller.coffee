@@ -40,12 +40,9 @@ getAreaBoundSellers = (sellerId,sellerGeoPoint,sellerRadius,createdRequestId,cus
     requestQuery.equalTo("customerId", customerObj)
     requestQuery.equalTo("status", "open")
     requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
-    
-    console.log "request query"
 
     promise = new Parse.Promise()
-
-
+    
     requestQuery.find()
     .then (requests) ->
         if requests.length is 0

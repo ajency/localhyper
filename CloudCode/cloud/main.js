@@ -377,8 +377,35 @@
           return getAreaBoundSellers(sellerId, sellerGeoPoint, sellerRadius, createdRequestId, customerObj);
         });
         return Parse.Promise.when(findQs).then(function() {
-          console.log("resolved promises");
-          return response.success(arguments);
+          var locationBasedSellerIds, notificationSavedArr;
+          locationBasedSellerIds = _.flatten(_.toArray(arguments));
+          notificationSavedArr = [];
+          _.each(locationBasedSellerIds, function(locationBasedSellerId) {
+            var Notification, notification, notificationData, sellerObj;
+            if (locationBasedSellerId) {
+              sellerObj = {
+                "__type": "Pointer",
+                "className": "_User",
+                "objectId": locationBasedSellerId
+              };
+              notificationData = {
+                hasSeen: false,
+                recipientUser: customerObj,
+                channel: 'push',
+                processed: false,
+                type: "Request",
+                typeId: requestObject.id
+              };
+              Notification = Parse.Object.extend("Notification");
+              notification = new Notification(notificationData);
+              return notificationSavedArr.push(notification);
+            }
+          });
+          return Parse.Object.saveAll(notificationSavedArr).then(function(objs) {
+            return response.success(objs);
+          }, function(error) {
+            return response.error(error);
+          });
         }, function(error) {
           return response.error(error);
         });
@@ -427,7 +454,6 @@
     requestQuery.equalTo("customerId", customerObj);
     requestQuery.equalTo("status", "open");
     requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
-    console.log("request query");
     promise = new Parse.Promise();
     requestQuery.find().then(function(requests) {
       if (requests.length === 0) {
