@@ -65,30 +65,18 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
                     getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId,customerObj)
                 )
 
-                # _.each categoryBasedSellers, (catBasedSeller) ->
-                #     sellerId = catBasedSeller.id
-                #     sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
-                #     sellerRadius = catBasedSeller.get "deliverRadius"
-
-                #     pr = getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId,customerObj)
-                #     findQs.push pr                   
-
-
-                console.log findQs
-
                 Parse.Promise.when(findQs).then ->
 
-                    individualFindResults = _.flatten(_.toArray(arguments))
-
-                    response.success individualFindResults
+                    console.log "resolved promises"
+                    response.success(arguments)
                 , (error) ->
-                    response.error "error3 - #{error.message}"
+                    response.error (error)
 
             , (error) ->
-                response.error "error2 - #{error.message} #{city}"
+                response.error (error)
 
         , (error)->
-            response.error "error1 - #{error.message}"    
+            response.error (error)  
 
 
 

@@ -376,19 +376,17 @@
           sellerRadius = catBasedSeller.get("deliverRadius");
           return getAreaBoundSellers(sellerId, sellerGeoPoint, sellerRadius, createdRequestId, customerObj);
         });
-        console.log(findQs);
         return Parse.Promise.when(findQs).then(function() {
-          var individualFindResults;
-          individualFindResults = _.flatten(_.toArray(arguments));
-          return response.success(individualFindResults);
+          console.log("resolved promises");
+          return response.success(arguments);
         }, function(error) {
-          return response.error("error3 - " + error.message);
+          return response.error(error);
         });
       }, function(error) {
-        return response.error("error2 - " + error.message + " " + city);
+        return response.error(error);
       });
     }, function(error) {
-      return response.error("error1 - " + error.message);
+      return response.error(error);
     });
   });
 
@@ -424,17 +422,16 @@
 
   getAreaBoundSellers = function(sellerId, sellerGeoPoint, sellerRadius, createdRequestId, customerObj) {
     var promise, requestQuery;
-    console.log("get area bound sellers");
     requestQuery = new Parse.Query("Request");
     requestQuery.equalTo("objectId", createdRequestId);
     requestQuery.equalTo("customerId", customerObj);
     requestQuery.equalTo("status", "open");
     requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
+    console.log("request query");
     promise = new Parse.Promise();
     requestQuery.find().then(function(requests) {
-      console.log(requests);
-      if (requests.length !== 0) {
-        return promise.resolve(sellerId);
+      if (requests.length === 0) {
+        return promise.resolve("nil");
       } else {
         return promise.resolve(sellerId);
       }

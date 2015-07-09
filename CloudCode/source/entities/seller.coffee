@@ -34,23 +34,27 @@ getCategoryBasedSellers = (geoPoint,categoryId,brandId,city) ->
     promise
 
 getAreaBoundSellers = (sellerId,sellerGeoPoint,sellerRadius,createdRequestId,customerObj) ->
-    console.log "get area bound sellers"
+    
     requestQuery = new Parse.Query("Request") 
     requestQuery.equalTo("objectId", createdRequestId)
     requestQuery.equalTo("customerId", customerObj)
     requestQuery.equalTo("status", "open")
     requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
     
+    console.log "request query"
+
     promise = new Parse.Promise()
+
+
     requestQuery.find()
     .then (requests) ->
-        console.log requests
-        if requests.length isnt 0
-            promise.resolve(sellerId)
+        if requests.length is 0
+            promise.resolve("nil")
         else
             promise.resolve(sellerId)
     , (error) ->
-        promise.reject(error)
+        promise.reject (error)
+
 
     promise    
 
