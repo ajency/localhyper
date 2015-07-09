@@ -10,9 +10,15 @@
 	background: #000!important;
 	background-image: none !important;
 }
+.modal .bar .title {
+  font-size: 18px !important;
+}
 .bar .title {
   font-size: 14px !important;
 }
+.item-note {
+  color: #F47979;
+ }
 
 /*.aj-img{
 	height: 250px;
