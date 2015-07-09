@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <!-- Ionic css -->
+    <link href="../www/lib/ionic/css/ionic.min.css" rel="stylesheet">
+
+     <!-- Browntape css -->
+    <link href="../www/styles/css/style.css" rel="stylesheet">
+	<link href="../www/styles/css/custom.css" rel="stylesheet">
+     <!-- Ionic-Angular js-->
+    <script src="../www/lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- Plugins-->
+    <script src="../www/lib/plugins/lodash.min.js"></script>
+    <script src="../www/lib/plugins/jquery-min.js"></script>
+
+    <!-- Angular Modules-->
+    <script src="../www/lib/modules/ng-cordova.min.js"></script>
+    <script src="../www/lib/modules/restangular.min.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- App -->
+    <script src="../www/app/app.js"></script>
+
+    <!-- Common -->
+    <script src="../www/app/common/network.js"></script>
+    <script src="../www/app/common/api.js"></script>
+
+    <!-- Browntape Modules -->
+    <script src="../www/app/home/home.js"></script>
+
+    <!-- Directives -->
+
+  </head>
+  <body ng-app="browntape" class="platform-android">
+  <ion-header-bar>
+			<div class="bar bar-header">
+		  			<h1 class="title">Make Request</h1>
+			</div>
+
+		</ion-header-bar>
+<br><br>
+<ion-view class="profile-view" ng-init="toggle=true">
+		
+	
+    <ion-content>
+		<div class="row">
+					  <div class="col"><img src="../www/img/truck-32.png" class="m-t-5"/></div>
+					  <div class="col col-80"> <h5 class="text-left">To make sellers close to you confirm your delivery address</h5></div>
+				</div>
+			<div class="list">
+
+			  <div class="item item-divider">
+			    Your Address
+			     <span class="item-note">
+			      <i class="ion ion-compose"></i> Edit
+			    </span>
+			  </div>
+	 			<div class="item subdued">
+				    <h3 class="normal-space grey">Sam Pinto, Flat A-3 Sanmon Towers, Near campal ground, Campal Panjim Goa</h3>
+				 </div>
+			    <div class="item item-divider">
+			  		Comments 
+			  		<span class="item-note">
+			      <i class="ion ion-compose"></i> Enter Comments
+			    </span>
+			 	 </div>
+			</div>
+	
+    </ion-content>
+</ion-view>
+
+  </body>
+</html>

@@ -1,0 +1,88 @@
+/*
+App Name:       Browntape Ionic App
+Theme URI:      http://ajency.in/
+Description:    Style Classes for the Ionic App
+Author:         Amit for Ajency.in
+Author URI:     http://ajency.in/
+Version:        0.1.0
+*/ 
+
+/**** Fonts 
+@import url(../../styles/fonts/open-sans/open-sans.css);****/
+
+/****Colors****/
+@brown: #a98b68;
+@light-grey: #f8f8f8;
+@grey: #B1B1B1;
+@dark-grey: #444444;
+@red: #ef4748;
+@white: #ffffff;
+
+/****Clearfix****/
+.clearfix {
+    *zoom: 1;
+	&:after, &:before {
+		clear: both;
+		content: "";
+		display: table;
+	}
+}
+
+/**** Body Styles ****/
+body {
+	h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider {
+		font-family: 'Regular', sans-serif;
+	}
+	.pane {
+		.has-header {
+			top: 50px;
+		}
+	}
+}
+.pull-right{
+	float:right;
+}
+hr{
+	border-color:@light-grey;
+	border-top:1px solid @light-grey;
+}
+/**** Login View *****/
+.login-view{
+   text-align: center;
+	#logo-cover {
+	width: 100%;
+	height: 25%;
+	margin: 3rem 0 2rem;
+		#logo {
+			width: 75%;
+			height: 'auto';
+		}
+	}
+	button{
+		i:before{
+			font-size:11px !important;
+			float:right;
+		}
+	}
+	.forgot-password{
+		color:@red;
+	}
+}
+
+
+/**** Overview ****/
+.overview{
+	background:@light-grey;
+	.bar-header{
+		background:@light-grey;
+	}
+}
+
+/**** Error ****/
+.error{
+	text-align:center;
+	.error-msg{
+		color:@red;
+		font-size:1.1rem;
+	}
+}

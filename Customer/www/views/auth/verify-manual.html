@@ -11,32 +11,44 @@
 	<ion-content class="aj-text">
 
 		</br></br>
+		 <img src="../img/verify2.png" class="center-img"/>
 		<div class="list" ng-switch="view.display">
-
+		
 			<div ng-switch-when="noError">
-				<h5 class="gray">To complete your phone number verification, please enter the 6 digit activation code sent to +91{{view.user.phone}}</h5>
+				<div class="row">
+					<div class="center sm-text col subdued">
+					To complete your phone number verification, please enter the 6 digit activation code sent to +91{{view.user.phone}}
+					</div>
+			</div>
+				
 
 				</br>
-				<label class="item item-input">
-					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode">
+				<label class=" item-input">
+					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode" class="input-border">
 				</label>
 
 				</br></br>
-				<h4 ng-click="view.requestSMSCode()">Resend the code?</h4>
+				<h4 ng-click="view.requestSMSCode()" class="button-border">Resend the code?</h4>
 
 			</div>
 
 			<div ng-switch-when="maxAttempts">
-				<h3>Sorry...</h3>
+				<br>
+				<h3 class="normal">Sorry...</h3>
 
 				</br>
-				<h5 class="gray">Exceeded maximum number of attempts. Please contact our support and enter code manually.</h5>
+				<div class="row">
+					<div class="center sm-text col subdued">
+					Exceeded maximum number of attempts. Please contact our support and enter code manually.
+					</div>
+			</div>
+				
 
 				</br>
 
 				</br>
-				<label class="item item-input">
-					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode">
+				<label class=" item-input">
+					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode" class="input-border">
 				</label>
 			</div>
 

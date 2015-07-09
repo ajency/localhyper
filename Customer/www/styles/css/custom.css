@@ -1,4 +1,4 @@
-@import url(../../styles/fonts/open-sans/open-sans.css);
+@import url(../../styles/fonts/source_sans/stylesheet.css);
 /* External CSS */
 /**** Fonts ****/
 /************************************/
@@ -22,7 +22,7 @@ textarea,
 .h5,
 .h6 .item,
 .item-divider {
-  font-family: 'opensans' !important;
+  font-family: 'source_sans' !important;
   color: #424242;
 }
 h1,
@@ -31,7 +31,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 800;
+  /*font-weight: 800;*/
 }
 .row-fluid {
   padding: 0px;
@@ -58,6 +58,10 @@ h6 {
   position: absolute;
   bottom: 0px;
 }
+.center-img {
+  display: block;
+  margin: auto;
+}
 .logo {
   display: block;
   margin: auto;
@@ -78,6 +82,10 @@ sm {
 }
 .subdued {
   color: #747474;
+}
+.normal-space {
+  overflow: visible !important;
+  white-space: normal !important;
 }
 .nav-bar-title {
   text-transform: uppercase;
@@ -103,6 +111,15 @@ sm {
   -ms-transform: rotate(90deg);
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
+}
+.input-border {
+  border-bottom: 1px solid #000000 !important;
+}
+.button-border {
+  text-decoration: underline;
+}
+.m-t-5 {
+  margin-top: 5px;
 }
 /************************************/
 /* HEADER */
@@ -233,30 +250,40 @@ sm {
 /*Department List*/
 /************************************/
 .department-list {
-  height: 199px;
+  /*height: 199px;*/
+  height: 150px;
   background: #e8e8e8;
   padding: 0px;
+  /*	h3{
+		 font-weight: 600;
+		 text-transform: uppercase;
+		 margin:80px 5px;
+		 text-align:left;
+	}
+	img{
+		  width: 45%;
+		  position: absolute;
+		  top: 35px ;
+		  right: -10px;
+
+	}*/
 }
-.department-list h3 {
-  font-weight: 600;
-  text-transform: uppercase;
-  margin: 80px 5px;
-  text-align: left;
-}
-.department-list img {
-  width: 45%;
-  position: absolute;
-  top: 35px ;
-  right: -10px;
+.department-list h2 {
+  text-overflow: inherit;
+  overflow: visible;
+  white-space: normal;
+  margin: 45px auto;
+  font-weight: 400;
 }
 .department-list:nth-child(2) {
   background: #ffffff;
-}
-.department-list:nth-child(2) img {
-  left: -22px;
-}
-.department-list:nth-child(2) h3 {
-  text-align: right;
+  /*	img{
+		    left: -22px;
+
+	}
+	h3{
+		text-align:right;
+	}*/
 }
 /************************************/
 /* Sub Categories*/
@@ -272,11 +299,11 @@ sm {
 }
 .sub-categories .border-card h3 {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 400;
 }
 .sub-categories .border-card .title {
   height: 39px;
-  font-weight: 600;
+  font-weight: 400;
   line-height: 18px;
   display: block;
   display: -webkit-box;
