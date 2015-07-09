@@ -1,5 +1,5 @@
 (function() {
-  var _, getCategoryBasedSellers, getLocationBasedSellers, treeify;
+  var _, getCategoryBasedSellers, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -317,35 +317,6 @@
     });
   });
 
-  getCategoryBasedSellers = function(geoPoint, categoryId, brandId) {
-    var Brand, Category, brandPointer, categoryPointer, promise, sellerQuery;
-    sellerQuery = new Parse.Query(Parse.User);
-    Category = Parse.Object.extend("Category");
-    categoryPointer = new Category();
-    categoryPointer.id = categoryId;
-    Brand = Parse.Object.extend("Brand");
-    brandPointer = new Brand();
-    brandPointer.id = brandId;
-    sellerQuery.equalTo("userType", "seller");
-    sellerQuery.equalTo("supportedCategories", categoryPointer);
-    sellerQuery.equalTo("supportedBrands", brandPointer);
-    promise = new Parse.Promise();
-    sellerQuery.find().then(function(sellers) {
-      var errorObj;
-      if (sellers.length === 0) {
-        errorObj = {
-          message: "No seller found"
-        };
-        return promise.reject(errorObj);
-      } else {
-        return promise.resolve(sellers);
-      }
-    }, function(error) {
-      return promise.reject(error);
-    });
-    return promise;
-  };
-
   Parse.Cloud.define('makeRequest', function(request, response) {
     var Request, addressText, brandId, categoryId, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
     customerId = request.params.customerId;
@@ -408,10 +379,54 @@
     });
   });
 
-  getLocationBasedSellers = function(location, categoryId) {
-    var sellers;
-    return sellers = [];
+  getCategoryBasedSellers = function(geoPoint, categoryId, brandId) {
+    var Brand, Category, brandPointer, categoryPointer, promise, sellerQuery;
+    sellerQuery = new Parse.Query(Parse.User);
+    Category = Parse.Object.extend("Category");
+    categoryPointer = new Category();
+    categoryPointer.id = categoryId;
+    Brand = Parse.Object.extend("Brand");
+    brandPointer = new Brand();
+    brandPointer.id = brandId;
+    sellerQuery.equalTo("userType", "seller");
+    sellerQuery.equalTo("supportedCategories", categoryPointer);
+    sellerQuery.equalTo("supportedBrands", brandPointer);
+    promise = new Parse.Promise();
+    sellerQuery.find().then(function(sellers) {
+      var errorObj;
+      if (sellers.length === 0) {
+        errorObj = {
+          message: "No seller found"
+        };
+        return promise.reject(errorObj);
+      } else {
+        return promise.resolve(sellers);
+      }
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
   };
+
+  Parse.Cloud.define('createTestSeller', function(request, response) {
+    var user, userData;
+    userData = {
+      'username': request.params.username,
+      'password': request.params.password,
+      'email': request.params.email
+    };
+    user = new Parse.User(userData);
+    user.set("userType", "seller");
+    return user.signUp().done((function(_this) {
+      return function(user) {
+        return response.success(user);
+      };
+    })(this)).fail((function(_this) {
+      return function(error) {
+        return response.error("Failed to create user " + error.message);
+      };
+    })(this));
+  });
 
   Parse.Cloud.useMasterKey();
 
