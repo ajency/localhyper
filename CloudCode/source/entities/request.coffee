@@ -7,7 +7,7 @@ getCategoryBasedSellers = (geoPoint,categoryId) ->
     Category = Parse.Object.extend("Category")
     categoryPointer = new Category()
     categoryPointer.id = categoryId
-
+    sellerQuery.equalTo("userType", "seller")
     sellerQuery.equalTo("supportedCategories", categoryPointer)
 
     promise = new Parse.Promise()
@@ -69,14 +69,33 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
     request.save()
         .then (requestObject)->
 
+            createdRequestId = requestObject.id
+
             sellersArray = []
 
-            getCategoryBasedSellers = getCategoryBasedSellers(point,categoryId)
-
-
-            getCategoryBasedSellers
+            getCategoryBasedSellers(point,categoryId)
             .then (categoryBasedSellers) ->
-                response.success categoryBasedSellers
+                _.each categoryBasedSellers , (catBasedSeller) ->
+                    sellerId = catBasedSeller.id
+                    sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
+                    sellerRadius = catBasedSeller.get "deliverRadius"
+
+                    requestQuery = new Parse.Query("Request") 
+                    requestQuery.equalTo("objectId", createdRequestId)
+                    requestQuery.equalTo("customerId", customerObj)
+                    requestQuery.equalTo("status", "open")
+                    requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
+
+                    requestQuery.find() 
+                    .then (requestObjects) ->
+                        if requestObjects.length is 1
+                            sellersArray.push sellerId
+                        response.success sellersArray
+
+                    , (error)->
+                        response.error "Failed due to - #{error.message}"
+
+
 
 
 
@@ -101,7 +120,6 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
             # notification.save() 
             # .then (notificationObj) ->
             #     response.success notificationObj               
-            , (error)->
-                response.error "Failed to create request due to - #{error.message}"
+
 
 

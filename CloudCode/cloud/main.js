@@ -323,6 +323,7 @@
     Category = Parse.Object.extend("Category");
     categoryPointer = new Category();
     categoryPointer.id = categoryId;
+    sellerQuery.equalTo("userType", "seller");
     sellerQuery.equalTo("supportedCategories", categoryPointer);
     promise = new Parse.Promise();
     sellerQuery.find().then(function(sellers) {
@@ -363,13 +364,29 @@
     };
     request.set("productId", productObj);
     return request.save().then(function(requestObject) {
-      var sellersArray;
+      var createdRequestId, sellersArray;
+      createdRequestId = requestObject.id;
       sellersArray = [];
-      getCategoryBasedSellers = getCategoryBasedSellers(point, categoryId);
-      return getCategoryBasedSellers.then(function(categoryBasedSellers) {
-        return response.success(categoryBasedSellers);
-      }, function(error) {
-        return response.error("Failed to create request due to - " + error.message);
+      return getCategoryBasedSellers(point, categoryId).then(function(categoryBasedSellers) {
+        return _.each(categoryBasedSellers, function(catBasedSeller) {
+          var requestQuery, sellerGeoPoint, sellerId, sellerRadius;
+          sellerId = catBasedSeller.id;
+          sellerGeoPoint = catBasedSeller.get("addressGeoPoint");
+          sellerRadius = catBasedSeller.get("deliverRadius");
+          requestQuery = new Parse.Query("Request");
+          requestQuery.equalTo("objectId", createdRequestId);
+          requestQuery.equalTo("customerId", customerObj);
+          requestQuery.equalTo("status", "open");
+          requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
+          return requestQuery.find().then(function(requestObjects) {
+            if (requestObjects.length === 1) {
+              sellersArray.push(sellerId);
+            }
+            return response.success(sellersArray);
+          }, function(error) {
+            return response.error("Failed due to - " + error.message);
+          });
+        });
       });
     });
   });
