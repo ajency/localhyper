@@ -6,9 +6,22 @@
 .aj-bg {
 	background-color: #f05868;
 }
-
-
-
+.bar-dark{
+	background: #000!important;
+	background-image: none !important;
+}
+.modal .bar .title {
+  font-size: 18px !important;
+}
+.bar .title {
+  font-size: 14px !important;
+}
+.item-note {
+  color: #F47979;
+ }
+.item-avatar img{
+	border: 1px solid #ccc;
+}
 /*.aj-img{
 	height: 250px;
 }*/
@@ -85,9 +98,12 @@
 }
 
 .aj-btn {
-	position: absolute;
-	width: 180px;
-	left: 90px;
+	  position: absolute;
+	  width: 180px;
+	  left: 0%;
+	  right: 0%;
+	  margin: auto;
+	  font-weight: 600;
 }
 
 .aj-text .list{
@@ -126,6 +142,9 @@
   width: 40px;
   height: 40px;
 }
+.pane, .view {
+  background-color: #E8E8E8;
+  }
 
 /* Single product css*/
 
