@@ -1,0 +1,19 @@
+<ion-view
+	view-title="Category Chains"
+	ng-init="view.init()">
+
+	<ion-content>
+
+		<h4>Your business categories are</h4>
+		</br>
+
+		<ion-list>
+
+			<ion-item ng-repeat="chains in view.categoryChains">
+				{{chains.category.name}} > {{chains.subCategory.name}} > {{view.getBrands(chains.brands)}}
+			</ion-item>
+
+		</ion-list>
+
+	</ion-content>
+</ion-view>

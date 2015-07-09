@@ -1,4 +1,4 @@
-angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.businessDetails', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.googleMaps']).run([
+angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.businessDetails', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.brands', 'LocalHyper.googleMaps']).run([
   '$rootScope', 'App', 'Push', '$timeout', function($rootScope, App, Push, $timeout) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
@@ -12,11 +12,10 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       var bool, hideForStates;
       App.previousState = from.name;
       App.currentState = to.name;
-      hideForStates = ['tutorial', 'business-details', 'verify-begin', 'verify-auto', 'verify-manual'];
+      hideForStates = ['tutorial', 'business-details', 'verify-begin', 'verify-auto', 'verify-manual', 'categories', 'sub-categories', 'brands'];
       bool = !_.contains(hideForStates, App.currentState);
       App.menuEnabled.left = bool;
-      App.notification.icon = bool;
-      return App.logo.small = App.currentState !== 'categories';
+      return App.notification.icon = bool;
     });
   }
 ]).config([
