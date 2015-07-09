@@ -51,28 +51,38 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
 
             getCategoryBasedSellers(point,categoryId,brandId,city)
             .then (categoryBasedSellers) ->
-                console.log categoryBasedSellers
-                response.success categoryBasedSellers
                 # findQs = []
                 # console.log getCategoryBasedSellers.length
+
+                findQs = []
+
+                findQs = _.map(categoryBasedSellers, (catBasedSeller) ->
+                    
+                    sellerId = catBasedSeller.id
+                    sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
+                    sellerRadius = catBasedSeller.get "deliverRadius"
+
+                    getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId,customerObj)
+                )
+
                 # _.each categoryBasedSellers, (catBasedSeller) ->
-                     
                 #     sellerId = catBasedSeller.id
                 #     sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
                 #     sellerRadius = catBasedSeller.get "deliverRadius"
 
-                #     requestQuery = new Parse.Query("Request") 
-                #     requestQuery.equalTo("objectId", createdRequestId)
-                #     requestQuery.equalTo("customerId", customerObj)
-                #     requestQuery.equalTo("status", "open")
-                #     requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
-                    
-                #     requestQuery.find()
+                #     pr = getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId,customerObj)
+                #     findQs.push pr                   
 
-                #     .then (request)  ->
-                #         sellersArray.push sellerId
-                #     , (error) ->
-                #         response.error "error3 - #{error.message}"
+
+                console.log findQs
+
+                Parse.Promise.when(findQs).then ->
+
+                    individualFindResults = _.flatten(_.toArray(arguments))
+
+                    response.success individualFindResults
+                , (error) ->
+                    response.error "error3 - #{error.message}"
 
             , (error) ->
                 response.error "error2 - #{error.message} #{city}"

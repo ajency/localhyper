@@ -1,5 +1,5 @@
 (function() {
-  var _, getCategoryBasedSellers, treeify;
+  var _, getAreaBoundSellers, getCategoryBasedSellers, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -353,8 +353,23 @@
       city = requestObject.get("address").city;
       sellersArray = [];
       return getCategoryBasedSellers(point, categoryId, brandId, city).then(function(categoryBasedSellers) {
-        console.log(categoryBasedSellers);
-        return response.success(categoryBasedSellers);
+        var findQs;
+        findQs = [];
+        findQs = _.map(categoryBasedSellers, function(catBasedSeller) {
+          var sellerGeoPoint, sellerId, sellerRadius;
+          sellerId = catBasedSeller.id;
+          sellerGeoPoint = catBasedSeller.get("addressGeoPoint");
+          sellerRadius = catBasedSeller.get("deliverRadius");
+          return getAreaBoundSellers(sellerId, sellerGeoPoint, sellerRadius, createdRequestId, customerObj);
+        });
+        console.log(findQs);
+        return Parse.Promise.when(findQs).then(function() {
+          var individualFindResults;
+          individualFindResults = _.flatten(_.toArray(arguments));
+          return response.success(individualFindResults);
+        }, function(error) {
+          return response.error("error3 - " + error.message);
+        });
       }, function(error) {
         return response.error("error2 - " + error.message + " " + city);
       });
@@ -386,6 +401,28 @@
         return promise.reject(errorObj);
       } else {
         return promise.resolve(sellers);
+      }
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
+
+  getAreaBoundSellers = function(sellerId, sellerGeoPoint, sellerRadius, createdRequestId, customerObj) {
+    var promise, requestQuery;
+    console.log("get area bound sellers");
+    requestQuery = new Parse.Query("Request");
+    requestQuery.equalTo("objectId", createdRequestId);
+    requestQuery.equalTo("customerId", customerObj);
+    requestQuery.equalTo("status", "open");
+    requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
+    promise = new Parse.Promise();
+    requestQuery.find().then(function(requests) {
+      console.log(requests);
+      if (requests.length !== 0) {
+        return promise.resolve(sellerId);
+      } else {
+        return promise.resolve(sellerId);
       }
     }, function(error) {
       return promise.reject(error);
