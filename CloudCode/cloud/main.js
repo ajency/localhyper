@@ -158,6 +158,29 @@
     })(this));
   });
 
+  Parse.Cloud.job('processNotifications', function(request, response) {
+    var notificationQuery;
+    notificationQuery = new Parse.Query("Notification");
+    notificationQuery.equalTo("processed", false);
+    notificationQuery.include("recipientUser");
+    return notificationQuery.find().then(function(pendingNotifications) {
+      _.each(pendingNotifications, function(pendingNotification) {
+        var channel;
+        channel = pendingNotification.get("channel");
+        console.log(pendingNotification);
+        switch (channel) {
+          case 'push':
+            return console.log("push notifications");
+          case 'sms':
+            return console.log("send sms");
+        }
+      });
+      return response.success("Processed pending notifications");
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   Parse.Cloud.job('productImport', function(request, response) {
     var ProductItem, productSavedArr, products;
     ProductItem = Parse.Object.extend('ProductItem');

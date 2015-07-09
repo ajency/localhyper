@@ -106,28 +106,3 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
 
 
 
-
-            # for each seller id create a notification in the background, i.e. saveAll
-
-            # sellerObj =
-            #     "__type" : "Pointer",
-            #     "className":"_User",
-            #     "objectId":sellerId  
-
-            # create entry in notification class
-            # notificationData = 
-            #     hasSeen: false
-            #     recipientUser: customerObj
-            #     channel : 'push'
-            #     processed : false
-            #     type : "Request"
-            #     typeId : requestObject.id
-
-            # Notification = Parse.Object.extend("Notification") 
-            # notification = new Notification notificationData
-            # notification.save() 
-            # .then (notificationObj) ->
-            #     response.success notificationObj               
-
-
-
