@@ -106,6 +106,18 @@ sm{
 .m-t-5{
 	margin-top: 5px;
 }
+.relative{
+	position: relative!important;
+}
+.right{
+	right: 0!important;
+}
+.left{
+		left: 0 !important;
+}
+.border-none{
+	border: 0px;
+}
 /************************************/
 /* HEADER */
 /************************************/
@@ -250,7 +262,7 @@ sm{
 	.border-card{
 			   border-right: 1px solid @gray-lighter;
 	           border-bottom: 1px solid @gray-lighter;
-	           min-height: 240px;
+	           height: 15rem;
 	           float: left;
          h3{
          	   font-size: 14px;
@@ -338,13 +350,37 @@ sm{
 		margin:6% auto;
 }
 
-/* model Box*/
-.circle-image{
-	  background: #fff;
-	  border-radius: 100%;
+
+/************************************/
+/* TABS  */
+/************************************/
+.tabs{
+	.tab-item{
+		font-size: 12px
+	}
+}
+.btn-danger{
+	color: @brand-primary
+}
+.label{
 	  border: 1px solid #ccc;
-	  width: 50px;
-	  height: 50px;
+	  padding: 0px 5px;
+	  font-size: 11px;
+	  color: @gray;
+	  display: inline-block;
+}
+.offer{
+	  width: 45px;
+	  height: 45px;
+	  border-radius: 100%;
+	  border: 1px dashed #000;
+	  text-align: center;
+	  font-size: 1.5rem;
+	  line-height: 39px;
 	  margin: auto;
-	  display: block;
+}
+.offertxt{
+	  background: @white;
+  	  margin-top: -11px;
+  	  text-align: center;
 }

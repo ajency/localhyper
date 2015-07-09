@@ -62,3 +62,16 @@
     font-style: normal;
 
 }
+
+@font-face {
+    font-family: 'source_sans';
+    src: url('sourcesanspro-semibold-webfont.eot');
+    src: url('sourcesanspro-semibold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('sourcesanspro-semibold-webfont.woff2') format('woff2'),
+         url('sourcesanspro-semibold-webfont.woff') format('woff'),
+         url('sourcesanspro-semibold-webfont.ttf') format('truetype'),
+         url('sourcesanspro-semibold-webfont.svg#source_sans_prosemibold') format('svg');
+    font-weight: 700;
+    font-style: normal;
+
+}

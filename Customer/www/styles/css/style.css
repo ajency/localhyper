@@ -19,7 +19,9 @@
 .item-note {
   color: #F47979;
  }
-
+.item-avatar img{
+	border: 1px solid #ccc;
+}
 /*.aj-img{
 	height: 250px;
 }*/
