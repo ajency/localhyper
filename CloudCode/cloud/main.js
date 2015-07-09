@@ -318,13 +318,13 @@
   });
 
   Parse.Cloud.define('makeRequest', function(request, response) {
-    var Request, addressText, brandId, categoryId, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
+    var Request, address, brandId, categoryId, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
     customerId = request.params.customerId;
     productId = request.params.productId;
     categoryId = request.params.categoryId;
     brandId = request.params.brandId;
     location = request.params.location;
-    addressText = request.params.addressText;
+    address = request.params.address;
     comments = request.params.comments;
     status = request.params.status;
     deliveryStatus = request.params.deliveryStatus;
@@ -332,7 +332,7 @@
     request = new Request();
     point = new Parse.GeoPoint(location);
     request.set("addressGeoPoint", point);
-    request.set("addressText", addressText);
+    request.set("address", address);
     request.set("status", status);
     request.set("deliveryStatus", deliveryStatus);
     customerObj = {
@@ -348,38 +348,22 @@
     };
     request.set("productId", productObj);
     return request.save().then(function(requestObject) {
-      var createdRequestId, sellersArray;
+      var city, createdRequestId, sellersArray;
       createdRequestId = requestObject.id;
+      city = requestObject.get("address").city;
       sellersArray = [];
-      return getCategoryBasedSellers(point, categoryId, brandId).then(function(categoryBasedSellers) {
-        return _.each(categoryBasedSellers, function(catBasedSeller) {
-          var requestQuery, sellerGeoPoint, sellerId, sellerRadius;
-          sellerId = catBasedSeller.id;
-          sellerGeoPoint = catBasedSeller.get("addressGeoPoint");
-          sellerRadius = catBasedSeller.get("deliverRadius");
-          requestQuery = new Parse.Query("Request");
-          requestQuery.equalTo("objectId", createdRequestId);
-          requestQuery.equalTo("customerId", customerObj);
-          requestQuery.equalTo("status", "open");
-          requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
-          return requestQuery.find().then(function(requestObjects) {
-            if (requestObjects.length === 1) {
-              sellersArray.push(sellerId);
-            }
-            return response.success(sellersArray);
-          }, function(error) {
-            return response.error("" + error.message);
-          });
-        });
+      return getCategoryBasedSellers(point, categoryId, brandId, city).then(function(categoryBasedSellers) {
+        console.log(categoryBasedSellers);
+        return response.success(categoryBasedSellers);
       }, function(error) {
-        return response.error("" + error.message);
+        return response.error("error2 - " + error.message + " " + city);
       });
     }, function(error) {
-      return response.error("" + error.message);
+      return response.error("error1 - " + error.message);
     });
   });
 
-  getCategoryBasedSellers = function(geoPoint, categoryId, brandId) {
+  getCategoryBasedSellers = function(geoPoint, categoryId, brandId, city) {
     var Brand, Category, brandPointer, categoryPointer, promise, sellerQuery;
     sellerQuery = new Parse.Query(Parse.User);
     Category = Parse.Object.extend("Category");
@@ -389,6 +373,7 @@
     brandPointer = new Brand();
     brandPointer.id = brandId;
     sellerQuery.equalTo("userType", "seller");
+    sellerQuery.equalTo("city", city);
     sellerQuery.equalTo("supportedCategories", categoryPointer);
     sellerQuery.equalTo("supportedBrands", brandPointer);
     promise = new Parse.Promise();
@@ -409,14 +394,43 @@
   };
 
   Parse.Cloud.define('createTestSeller', function(request, response) {
-    var user, userData;
+    var addressGeoPoint, supportedBrands, supportedBrandsArr, supportedCategories, supportedCategoriesArr, user, userData;
+    addressGeoPoint = new Parse.GeoPoint(request.params.addressLocation);
     userData = {
       'username': request.params.username,
       'password': request.params.password,
-      'email': request.params.email
+      'email': request.params.email,
+      'addressGeoPoint': addressGeoPoint,
+      'address': request.params.address,
+      'city': request.params.city,
+      'deliveryRadius': request.params.deliveryRadius
     };
+    supportedCategoriesArr = [];
+    supportedCategories = request.params.supportedCategories;
+    _.each(supportedCategories, function(catId) {
+      var catObj;
+      catObj = {
+        "__type": "Pointer",
+        "className": "Category",
+        "objectId": catId
+      };
+      return supportedCategoriesArr.push(catObj);
+    });
+    userData["supportedCategories"] = supportedCategoriesArr;
+    supportedBrandsArr = [];
+    supportedBrands = request.params.supportedBrands;
+    _.each(supportedBrands, function(brandId) {
+      var brandObj;
+      brandObj = {
+        "__type": "Pointer",
+        "className": "Brand",
+        "objectId": brandId
+      };
+      return supportedBrandsArr.push(brandObj);
+    });
+    userData["supportedBrands"] = supportedBrandsArr;
+    userData["userType"] = "seller";
     user = new Parse.User(userData);
-    user.set("userType", "seller");
     return user.signUp().done((function(_this) {
       return function(user) {
         return response.success(user);

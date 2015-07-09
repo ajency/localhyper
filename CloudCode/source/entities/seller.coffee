@@ -1,4 +1,4 @@
-getCategoryBasedSellers = (geoPoint,categoryId,brandId) ->
+getCategoryBasedSellers = (geoPoint,categoryId,brandId,city) ->
 
     # find all sellers from users class whose categories column contains categoryId 
     sellerQuery = new Parse.Query(Parse.User) 
@@ -13,6 +13,7 @@ getCategoryBasedSellers = (geoPoint,categoryId,brandId) ->
     brandPointer.id = brandId
 
     sellerQuery.equalTo("userType", "seller")
+    sellerQuery.equalTo("city", city)
     sellerQuery.equalTo("supportedCategories", categoryPointer)
     sellerQuery.equalTo("supportedBrands", brandPointer)
 
@@ -33,22 +34,53 @@ getCategoryBasedSellers = (geoPoint,categoryId,brandId) ->
     promise
 
 Parse.Cloud.define 'createTestSeller', (request, response) ->
-	userData =
-		'username': request.params.username
-		'password':request.params.password
-		'email': request.params.email
+    addressGeoPoint = new Parse.GeoPoint request.params.addressLocation
+    userData =
+        'username': request.params.username
+        'password':request.params.password
+        'email': request.params.email
+        'addressGeoPoint' : addressGeoPoint
+        'address' : request.params.address
+        'city' : request.params.city
+        'deliveryRadius' : request.params.deliveryRadius
 
-	user = new Parse.User userData
-	user.set "userType", "seller"
+    supportedCategoriesArr = []
+    supportedCategories = request.params.supportedCategories 
 
-	# create user with user.signUp method instead of save method
-	#  it also checks to make sure that both the username and email are unique
-	#  New Parse.Users should always be created using the signUp method. Subsequent updates to a user can be done by calling save
-	user.signUp()
-		.done (user)=>
-			response.success user
-		.fail (error) =>
-			response.error "Failed to create user #{error.message}"		
+    _.each supportedCategories, (catId) ->
+        catObj = 
+            "__type" : "Pointer",
+            "className":"Category",
+            "objectId":catId
+
+        supportedCategoriesArr.push(catObj) 
+
+    userData["supportedCategories"] = supportedCategoriesArr
+
+    supportedBrandsArr = []
+    supportedBrands = request.params.supportedBrands
+
+    _.each supportedBrands, (brandId) ->
+        brandObj = 
+            "__type" : "Pointer",
+            "className":"Brand",
+            "objectId":brandId
+
+        supportedBrandsArr.push(brandObj) 
+
+    userData["supportedBrands"] = supportedBrandsArr
+    userData["userType"] = "seller"    
+
+    user = new Parse.User userData
+
+    # create user with user.signUp method instead of save method
+    #  it also checks to make sure that both the username and email are unique
+    #  New Parse.Users should always be created using the signUp method. Subsequent updates to a user can be done by calling save
+    user.signUp()
+        .done (user)=>
+            response.success user
+        .fail (error) =>
+            response.error "Failed to create user #{error.message}"     
 
 
 

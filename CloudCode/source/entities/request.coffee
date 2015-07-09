@@ -6,7 +6,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
     brandId = request.params.brandId 
     location = request.params.location  
      
-    addressText = request.params.addressText 
+    address = request.params.address 
 
     comments = request.params.comments
     
@@ -21,7 +21,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
     point = new Parse.GeoPoint location
 
     request.set "addressGeoPoint", point
-    request.set "addressText", addressText
+    request.set "address", address
     request.set "status", status
     request.set "deliveryStatus", deliveryStatus
 
@@ -45,35 +45,40 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
         .then (requestObject)->
 
             createdRequestId = requestObject.id
+            city = requestObject.get("address").city
 
             sellersArray = []
 
-            getCategoryBasedSellers(point,categoryId,brandId)
+            getCategoryBasedSellers(point,categoryId,brandId,city)
             .then (categoryBasedSellers) ->
-                _.each categoryBasedSellers , (catBasedSeller) ->
-                    sellerId = catBasedSeller.id
-                    sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
-                    sellerRadius = catBasedSeller.get "deliverRadius"
+                console.log categoryBasedSellers
+                response.success categoryBasedSellers
+                # findQs = []
+                # console.log getCategoryBasedSellers.length
+                # _.each categoryBasedSellers, (catBasedSeller) ->
+                     
+                #     sellerId = catBasedSeller.id
+                #     sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
+                #     sellerRadius = catBasedSeller.get "deliverRadius"
 
-                    requestQuery = new Parse.Query("Request") 
-                    requestQuery.equalTo("objectId", createdRequestId)
-                    requestQuery.equalTo("customerId", customerObj)
-                    requestQuery.equalTo("status", "open")
-                    requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
+                #     requestQuery = new Parse.Query("Request") 
+                #     requestQuery.equalTo("objectId", createdRequestId)
+                #     requestQuery.equalTo("customerId", customerObj)
+                #     requestQuery.equalTo("status", "open")
+                #     requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
+                    
+                #     requestQuery.find()
 
-                    requestQuery.find() 
-                    .then (requestObjects) ->
-                        if requestObjects.length is 1
-                            sellersArray.push sellerId
-                        response.success sellersArray
+                #     .then (request)  ->
+                #         sellersArray.push sellerId
+                #     , (error) ->
+                #         response.error "error3 - #{error.message}"
 
-                    , (error)->
-                        response.error "#{error.message}"
             , (error) ->
-                response.error "#{error.message}"
+                response.error "error2 - #{error.message} #{city}"
 
         , (error)->
-            response.error "#{error.message}"    
+            response.error "error1 - #{error.message}"    
 
 
 
