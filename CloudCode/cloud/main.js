@@ -431,7 +431,7 @@
     promise = new Parse.Promise();
     requestQuery.find().then(function(requests) {
       if (requests.length === 0) {
-        return promise.resolve("nil");
+        return promise.resolve();
       } else {
         return promise.resolve(sellerId);
       }

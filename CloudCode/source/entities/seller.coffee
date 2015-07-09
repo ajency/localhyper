@@ -49,7 +49,7 @@ getAreaBoundSellers = (sellerId,sellerGeoPoint,sellerRadius,createdRequestId,cus
     requestQuery.find()
     .then (requests) ->
         if requests.length is 0
-            promise.resolve("nil")
+            promise.resolve()
         else
             promise.resolve(sellerId)
     , (error) ->
