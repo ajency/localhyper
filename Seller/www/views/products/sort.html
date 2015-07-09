@@ -1,0 +1,32 @@
+<ion-modal-view class="sort-model">
+	
+	<ion-header-bar>
+		<h4 class="text-center center-block">SORT BY</h4>
+	</ion-header-bar>
+
+	<ion-content>
+		<ul class="list">
+			<li class="item"
+				ng-class="(view.sortBy === 'mrp' && view.ascending === false) ? 'active' : ''"
+				ng-click="view.onSort('mrp', false)">
+
+				<i class="i-price-high"></i>Price - high to low
+			</li>
+
+			<li class="item" 
+				ng-class="(view.sortBy === 'mrp' && view.ascending === true) ? 'active' : ''"
+				ng-click="view.onSort('mrp', true)">
+
+				<i class="i-price-low"></i>Price - low to high
+			</li>
+
+			<li class="item"
+				ng-class="(view.sortBy === 'popularity') ? 'active' : ''"
+				ng-click="view.onSort('popularity')">
+
+				<i class="i-popularity"></i>Popularity
+			</li>
+		</ul>
+	</ion-content>
+
+</ion-modal-view>

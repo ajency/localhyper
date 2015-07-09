@@ -1,0 +1,260 @@
+/* External CSS */
+
+
+@import "variables";
+
+/**** Fonts ****/
+@import url(../../styles/fonts/open-sans/open-sans.css);
+
+h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider {
+	font-family: 'opensans' !important;
+	color: #424242;
+}
+h1, h2, h3, h4, h5, h6{
+	font-weight: 800;
+}
+.strike{
+	 text-decoration: line-through;
+}
+.text-danger{
+	color:@brand-primary;
+}
+.text-light{
+	color:@white;
+}
+.border-left{
+	border-left:1px solid @gray-light;
+}
+.bottom-fixed{
+	position:absolute;
+	bottom:0px;
+}
+.logo{
+	  display: block;
+	  margin: auto;
+	  margin-top: 50%;
+}
+.img-responsive{
+	  width: 100%;
+}
+.margin-none{
+	margin:0px !important;
+}
+sm{
+   font-size: 11px;
+}
+.platform-android .popover {
+	height: 170px;
+	width: 250px;
+}
+.subdued{
+	  color: #747474;
+}
+.nav-bar-title{
+	text-transform:uppercase;
+	font-size:14px;
+}
+.center-block{
+	margin:auto;
+	display:block;
+	width:100%;
+}
+.pull-left{
+	float:left;
+}
+.pull-right{
+	float:right;
+}
+.upper-case{
+	text-transform:uppercase;
+}
+.arrow-link{
+	float: right;
+	  font-size: 23px;
+	  -ms-transform: rotate(90deg);
+	  -webkit-transform: rotate(90deg);
+	  transform: rotate(90deg);
+
+}
+/* HEADER */
+
+.has-header{
+	background:@gray-transperent;
+}
+.bar-header{
+	border-bottom:1px solid @gray-lighter !important;
+	.notification{
+		  height: 20px;
+		  width: 20px;
+		  text-align: center;
+		  padding: 2px 6px;
+		  position: absolute;
+          margin-left: -4px !important;
+		  z-index: 9999;
+	}
+	
+}
+.number-count{
+	margin-bottom: -5px !important;
+}
+.aj-right-popover{
+	 hr{
+	    border: none;
+	    height: 3px;
+	    background-color: @gray-dark;
+	}
+	.item{
+		  padding: 11px 54px;
+		i{
+			font-size: 22px;
+		}
+	}
+}
+
+/* Menu */
+.sprite-icon{
+	  background: url(../../img/sprite.png)no-repeat;
+	  width: 30px;
+	  height: 30px;
+	  display: inline-block;
+	  margin-bottom: -10px;
+}
+.i-store{
+	.sprite-icon;
+	 background-position: -8px -8px;
+}
+.i-call{
+	.sprite-icon;
+	 background-position: -7px -60px;
+}
+.i-share{
+	.sprite-icon;
+	 background-position: -9px -120px;
+}
+.i-rate{
+	.sprite-icon;
+	 background-position: -9px -182px;
+}
+.i-help{
+	.sprite-icon;
+	 background-position: -9px -245px;
+}
+.i-suggest{
+	.sprite-icon;
+	 background-position: -9px -305px;
+}
+.i-about{
+	.sprite-icon;
+	 background-position: -9px -367px;
+}
+.i-price-high{
+	  width: 45px !important;
+	.sprite-icon;
+	 background-position: -61px -10px;
+}
+.i-price-low{
+	  width: 45px !important;
+	.sprite-icon;
+	 background-position: -61px -79px;
+}
+.i-popularity{
+	  width: 45px !important;
+	.sprite-icon;
+	 background-position: -61px -160px;
+}
+
+/*Department List*/
+.department-list{
+	height: 199px;
+	background: @gray-transperent;
+	padding:0px;
+	h3{
+		 font-weight: 600;
+		 text-transform: uppercase;
+		 margin:80px 5px;
+		 text-align:left;
+	}
+	img{
+		  width: 45%;
+		  position: absolute;
+		  top: 35px ;
+		  right: -10px;
+
+	}
+
+}
+.department-list:nth-child(2){
+	background: @white;
+	img{
+		    left: -22px;
+
+	}
+	h3{
+		text-align:right;
+	}
+}
+
+/* Sub Categories*/
+.sub-categories {
+	background:@white;
+	.border-card{
+			   border-right: 1px solid @gray-lighter;
+	           border-bottom: 1px solid @gray-lighter;
+	           min-height: 240px;
+	           float: left;
+         h3{
+         	   font-size: 14px;
+         	   font-weight: 600;
+
+         }
+         .title{
+         	  height: 39px;
+         	  font-weight: 600;
+         	  line-height: 18px;
+         	  display: block;
+			  display: -webkit-box;
+			  max-width: 100%;
+			  -webkit-line-clamp: 2;
+			  -webkit-box-orient: vertical;
+			  overflow: hidden;
+			  text-overflow: ellipsis;
+         	
+         }
+      
+	}
+}
+.product-list{
+		.border-card{
+			
+		}
+		h4{
+			color:@brand-primary ;
+		}
+
+}
+
+/* Sort model */
+.sort-model{
+	  width:80%;
+	  height: 216px;
+	  overflow: auto;
+	  margin: auto;
+	  position: absolute;
+	  top: 0; left: 0; bottom: 0; right: 0;
+      min-height: inherit;
+}
+ .modal-backdrop-bg {
+ 		 background: rgba(0, 0, 0, 0.34);
+}
+.item.active{
+		color:@brand-primary;
+		.i-price-high{
+		 background-position: -61px -42px;
+	}
+	.i-price-low{
+		 background-position: -61px -119px;
+	}
+	.i-popularity{
+		 background-position: -61px -200px;
+	}
+}

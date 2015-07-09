@@ -1,10 +1,24 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', function($scope, $stateParams, ProductsAPI, User, CToast, App) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal) {
     $scope.view = {
       display: 'loader',
       errorType: '',
       productID: $stateParams.productID,
       product: {},
+      specificationModal: null,
+      init: function() {
+        return this.loadSpecificationsModal();
+      },
+      loadSpecificationsModal: function() {
+        return $ionicModal.fromTemplateUrl('views/products/specification.html', {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then((function(_this) {
+          return function(modal) {
+            return _this.specificationModal = modal;
+          };
+        })(this));
+      },
       getSingleProductDetails: function() {
         return ProductsAPI.getSingleProduct(this.productID).then((function(_this) {
           return function(data) {

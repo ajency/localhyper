@@ -1,0 +1,43 @@
+<ion-view view-title="Business Details">
+
+	<ion-content>
+		
+		<div class="list list-inset">
+			
+			<h5>Business details</h5>
+			<label class="item item-input">
+				<input 
+					type="text"
+					placeholder="Enter business name"
+					ng-model="view.businessName">
+			</label>
+
+			<label class="item item-input">
+				<input 
+					type="password"
+					placeholder="Enter your full name"
+					ng-model="view.fullName">
+			</label>
+
+			<label class="item item-input">
+				<input 
+					type="tel"
+					placeholder="Enter your business phone number"
+					ng-model="view.businessPhoneNumber">
+			</label>
+
+			</br>
+
+			<h5>Location details</h5>
+
+			<aj-google-maps> </aj-google-maps>
+
+			<button class="button button-block button-dark">Confirm Location</button>
+
+		</div>
+
+  </body>
+
+	</ion-content>
+
+</ion-view>

@@ -10,17 +10,16 @@
 
 			<div 
 				class="col col-50 border-card"
-				ng-repeat="category in view.subCategories"
+				ng-repeat="category in view.subCategories | orderBy:'sort_order'"
 				ng-click="App.navigate('products', {categoryID: category.id})">
-
 				
-					<img ng-src="{{category.image.src}}" class="aj-img center-block img-responsive">
-			
+					<img 
+						ng-src="{{category.image.src}}" 
+						class="aj-img center-block img-responsive">
 
-					<h3 class="text-center uppercase">
-					{{category.name}}
+					<h3 class="text-center upper-case">
+						{{category.name}}
 					</h3>
-				
 			</div>
 
 		</ion-list>
