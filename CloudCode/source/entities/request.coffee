@@ -1,4 +1,4 @@
-getCategoryBasedSellers = (geoPoint,categoryId) ->
+getCategoryBasedSellers = (geoPoint,categoryId,brandId) ->
 
     # find all sellers from users class whose categories column contains categoryId 
     sellerQuery = new Parse.Query(Parse.User) 
@@ -7,14 +7,26 @@ getCategoryBasedSellers = (geoPoint,categoryId) ->
     Category = Parse.Object.extend("Category")
     categoryPointer = new Category()
     categoryPointer.id = categoryId
+
+    Brand = Parse.Object.extend("Brand")
+    brandPointer = new Brand()
+    brandPointer.id = brandId
+
     sellerQuery.equalTo("userType", "seller")
     sellerQuery.equalTo("supportedCategories", categoryPointer)
+    sellerQuery.equalTo("supportedBrands", brandPointer)
 
     promise = new Parse.Promise()
 
     sellerQuery.find()
+   
     .then (sellers) ->
-        promise.resolve(sellers)
+        if sellers.length is 0
+            errorObj =
+                message: "No seller found"
+            promise.reject(errorObj)
+        else
+            promise.resolve(sellers)
     , (error) ->
         promise.reject(error)
 
@@ -29,6 +41,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
     customerId = request.params.customerId
     productId = request.params.productId
     categoryId = request.params.categoryId 
+    brandId = request.params.brandId 
     location = request.params.location  
      
     addressText = request.params.addressText 
@@ -73,7 +86,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
 
             sellersArray = []
 
-            getCategoryBasedSellers(point,categoryId)
+            getCategoryBasedSellers(point,categoryId,brandId)
             .then (categoryBasedSellers) ->
                 _.each categoryBasedSellers , (catBasedSeller) ->
                     sellerId = catBasedSeller.id
@@ -93,8 +106,12 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
                         response.success sellersArray
 
                     , (error)->
-                        response.error "Failed due to - #{error.message}"
+                        response.error "#{error.message}"
+            , (error) ->
+                response.error "#{error.message}"
 
+        , (error)->
+            response.error "#{error.message}"    
 
 
 

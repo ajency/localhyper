@@ -317,17 +317,29 @@
     });
   });
 
-  getCategoryBasedSellers = function(geoPoint, categoryId) {
-    var Category, categoryPointer, promise, sellerQuery;
+  getCategoryBasedSellers = function(geoPoint, categoryId, brandId) {
+    var Brand, Category, brandPointer, categoryPointer, promise, sellerQuery;
     sellerQuery = new Parse.Query(Parse.User);
     Category = Parse.Object.extend("Category");
     categoryPointer = new Category();
     categoryPointer.id = categoryId;
+    Brand = Parse.Object.extend("Brand");
+    brandPointer = new Brand();
+    brandPointer.id = brandId;
     sellerQuery.equalTo("userType", "seller");
     sellerQuery.equalTo("supportedCategories", categoryPointer);
+    sellerQuery.equalTo("supportedBrands", brandPointer);
     promise = new Parse.Promise();
     sellerQuery.find().then(function(sellers) {
-      return promise.resolve(sellers);
+      var errorObj;
+      if (sellers.length === 0) {
+        errorObj = {
+          message: "No seller found"
+        };
+        return promise.reject(errorObj);
+      } else {
+        return promise.resolve(sellers);
+      }
     }, function(error) {
       return promise.reject(error);
     });
@@ -335,10 +347,11 @@
   };
 
   Parse.Cloud.define('makeRequest', function(request, response) {
-    var Request, addressText, categoryId, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
+    var Request, addressText, brandId, categoryId, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
     customerId = request.params.customerId;
     productId = request.params.productId;
     categoryId = request.params.categoryId;
+    brandId = request.params.brandId;
     location = request.params.location;
     addressText = request.params.addressText;
     comments = request.params.comments;
@@ -367,7 +380,7 @@
       var createdRequestId, sellersArray;
       createdRequestId = requestObject.id;
       sellersArray = [];
-      return getCategoryBasedSellers(point, categoryId).then(function(categoryBasedSellers) {
+      return getCategoryBasedSellers(point, categoryId, brandId).then(function(categoryBasedSellers) {
         return _.each(categoryBasedSellers, function(catBasedSeller) {
           var requestQuery, sellerGeoPoint, sellerId, sellerRadius;
           sellerId = catBasedSeller.id;
@@ -384,10 +397,14 @@
             }
             return response.success(sellersArray);
           }, function(error) {
-            return response.error("Failed due to - " + error.message);
+            return response.error("" + error.message);
           });
         });
+      }, function(error) {
+        return response.error("" + error.message);
       });
+    }, function(error) {
+      return response.error("" + error.message);
     });
   });
 
