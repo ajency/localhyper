@@ -121,6 +121,18 @@ sm {
 .m-t-5 {
   margin-top: 5px;
 }
+.relative {
+  position: relative!important;
+}
+.right {
+  right: 0!important;
+}
+.left {
+  left: 0 !important;
+}
+.border-none {
+  border: 0px;
+}
 /************************************/
 /* HEADER */
 /************************************/
@@ -294,7 +306,7 @@ sm {
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
-  min-height: 240px;
+  height: 15rem;
   float: left;
 }
 .sub-categories .border-card h3 {
@@ -372,13 +384,34 @@ sm {
 .aj-sp-img {
   margin: 6% auto;
 }
-/* model Box*/
-.circle-image {
-  background: #fff;
-  border-radius: 100%;
+/************************************/
+/* TABS  */
+/************************************/
+.tabs .tab-item {
+  font-size: 12px;
+}
+.btn-danger {
+  color: #f35a59;
+}
+.label {
   border: 1px solid #ccc;
-  width: 50px;
-  height: 50px;
+  padding: 0px 5px;
+  font-size: 11px;
+  color: #666666;
+  display: inline-block;
+}
+.offer {
+  width: 45px;
+  height: 45px;
+  border-radius: 100%;
+  border: 1px dashed #000;
+  text-align: center;
+  font-size: 1.5rem;
+  line-height: 39px;
   margin: auto;
-  display: block;
+}
+.offertxt {
+  background: #ffffff;
+  margin-top: -11px;
+  text-align: center;
 }

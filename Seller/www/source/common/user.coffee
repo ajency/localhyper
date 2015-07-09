@@ -18,9 +18,8 @@ angular.module 'LocalHyper.common'
 	User.info = (action, data={})->
 		switch action
 			when 'set'
-				userInfo = 
-					name: data.name
-					phone: data.phone
+				_.each data, (val, index)->
+					userInfo[index] = val
 			when 'get'
 				userInfo
 
