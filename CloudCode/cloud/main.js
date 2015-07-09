@@ -65,6 +65,20 @@
     })(this));
   });
 
+  Parse.Cloud.define('getCategoryBasedBrands', function(request, response) {
+    var categoryId, queryCategory;
+    categoryId = request.params.categoryId;
+    queryCategory = new Parse.Query("Category");
+    queryCategory.equalTo("objectId", categoryId);
+    queryCategory.include("supported_brands");
+    queryCategory.select("supported_brands");
+    return queryCategory.first().then(function(category) {
+      return response.success(category);
+    }, function(error) {
+      return response.error("Error - " + error.message);
+    });
+  });
+
   _ = require('underscore.js');
 
   treeify = function(list, idAttr, parentAttr, childrenAttr) {
