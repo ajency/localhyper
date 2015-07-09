@@ -58,6 +58,10 @@ h6 {
   position: absolute;
   bottom: 0px;
 }
+.center-img {
+  display: block;
+  margin: auto;
+}
 .logo {
   display: block;
   margin: auto;
@@ -69,7 +73,7 @@ h6 {
 .margin-none {
   margin: 0px !important;
 }
-sm {
+.sm {
   font-size: 11px;
 }
 .platform-android .popover {
@@ -103,6 +107,12 @@ sm {
   -ms-transform: rotate(90deg);
   -webkit-transform: rotate(90deg);
   transform: rotate(90deg);
+}
+.input-border {
+  border-bottom: 1px solid #000000 !important;
+}
+.button-border {
+  text-decoration: underline;
 }
 /************************************/
 /* HEADER */
@@ -233,30 +243,41 @@ sm {
 /*Department List*/
 /************************************/
 .department-list {
-  height: 199px;
+  /*height: 199px;*/
+  height: 150px;
   background: #e8e8e8;
   padding: 0px;
+  /*	h3{
+		 font-weight: 600;
+		 text-transform: uppercase;
+		 margin:80px 5px;
+		 text-align:left;
+	}
+	img{
+		  width: 45%;
+		  position: absolute;
+		  top: 35px ;
+		  right: -10px;
+
+	}*/
 }
 .department-list h3 {
-  font-weight: 600;
   text-transform: uppercase;
-  margin: 80px 5px;
-  text-align: left;
-}
-.department-list img {
-  width: 45%;
-  position: absolute;
-  top: 35px ;
-  right: -10px;
+  text-overflow: inherit;
+  overflow: visible;
+  white-space: normal;
+  margin: 45px auto;
+  font-weight: 600;
 }
 .department-list:nth-child(2) {
   background: #ffffff;
-}
-.department-list:nth-child(2) img {
-  left: -22px;
-}
-.department-list:nth-child(2) h3 {
-  text-align: right;
+  /*	img{
+		    left: -22px;
+
+	}
+	h3{
+		text-align:right;
+	}*/
 }
 /************************************/
 /* Sub Categories*/

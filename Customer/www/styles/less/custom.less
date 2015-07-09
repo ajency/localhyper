@@ -42,6 +42,10 @@ h1, h2, h3, h4, h5, h6{
 	position:absolute;
 	bottom:0px;
 }
+.center-img{
+	display: block;
+	margin: auto;
+}
 .logo{
 	  display: block;
 	  margin: auto;
@@ -53,7 +57,7 @@ h1, h2, h3, h4, h5, h6{
 .margin-none{
 	margin:0px !important;
 }
-sm{
+.sm{
    font-size: 11px;
 }
 .platform-android .popover {
@@ -89,7 +93,12 @@ sm{
 	  transform: rotate(90deg);
 
 }
-
+.input-border{
+	  border-bottom: 1px solid @black !important;
+	}
+.button-border{
+	text-decoration: underline;
+}
 /************************************/
 /* HEADER */
 /************************************/
@@ -187,10 +196,20 @@ sm{
 /************************************/
 
 .department-list{
-	height: 199px;
+	/*height: 199px;*/
+	height: 150px;
 	background: @gray-transperent;
 	padding:0px;
 	h3{
+		 text-transform: uppercase;
+		 text-overflow: inherit;
+		  overflow: visible;
+		  white-space: normal;
+		  margin: 45px auto;
+		  font-weight: 600;
+
+	}
+/*	h3{
 		 font-weight: 600;
 		 text-transform: uppercase;
 		 margin:80px 5px;
@@ -202,18 +221,18 @@ sm{
 		  top: 35px ;
 		  right: -10px;
 
-	}
+	}*/
 
 }
 .department-list:nth-child(2){
 	background: @white;
-	img{
+/*	img{
 		    left: -22px;
 
 	}
 	h3{
 		text-align:right;
-	}
+	}*/
 }
 
 /************************************/
