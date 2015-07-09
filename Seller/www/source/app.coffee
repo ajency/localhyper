@@ -3,7 +3,7 @@
 angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage'
 	, 'LocalHyper.auth', 'LocalHyper.businessDetails', 'LocalHyper.main'
-	, 'LocalHyper.categories', 'LocalHyper.products']
+	, 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.googleMaps']
 
 
 .run ['$rootScope', 'App', 'Push', '$timeout', ($rootScope, App, Push, $timeout)->

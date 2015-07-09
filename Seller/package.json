@@ -40,7 +40,9 @@
     {
       "locator": "https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git",
       "id": "nl.x-services.plugins.toast"
-    }
+    },
+    "cordova-plugin-geolocation",
+    "cordova-plugin-dialogs"
   ],
   "cordovaPlatforms": [
     "ios",

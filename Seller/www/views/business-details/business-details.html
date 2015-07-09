@@ -14,29 +14,72 @@
 
 			<label class="item item-input">
 				<input 
-					type="password"
+					type="text"
 					placeholder="Enter your full name"
-					ng-model="view.fullName">
+					ng-model="view.userName">
 			</label>
 
 			<label class="item item-input">
 				<input 
 					type="tel"
+					minlength="10" 
+					maxlength="10"
 					placeholder="Enter your business phone number"
-					ng-model="view.businessPhoneNumber">
+					ng-pattern="App.onlyNumbers"
+					ng-model="view.phone">
 			</label>
 
 			</br>
 
 			<h5>Location details</h5>
+			<button 
+				class="button button-block button-dark"
+				ng-click="view.getCurrentLocation()">
+				Get current location
+			</button>
 
-			<aj-google-maps> </aj-google-maps>
+			<input 
+				size="50"
+				type="text" 
+				placeholder="Search your location" 
+				ng-model="view.fullAddress">
 
-			<button class="button button-block button-dark">Confirm Location</button>
+			<google-map on-create="view.onMapCreated(map)"> </google-map>
+
+			<button 
+				class="button button-block button-dark"
+				ng-click="view.onConfirmLocation()">
+				Confirm Location
+			</button>
+
+			</br>
+			<h5>From your selected location, you provide delivery within {{view.deliveryRadius}} Kms</h5>
+			<div class="item range range-positive">
+				<input 
+					type="range" 
+					min="0" 
+					max="20" 
+					ng-model="view.deliveryRadius">
+			</div>
+
+			</br>
+			<li class="item item-checkbox">
+				<label class="checkbox">
+					<input type="checkbox" ng-model="view.terms">
+				</label>
+				I accept the terms & conditions
+			</li>
+
+			<button 
+				class="button button-block button-dark"
+				ng-disabled="!view.terms"
+				ng-click="view.onNext()">
+				Next
+			</button>
 
 		</div>
 
-  </body>
+  	</body>
 
 	</ion-content>
 
