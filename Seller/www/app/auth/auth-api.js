@@ -166,7 +166,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           user = new Parse.User();
           user.set({
             "userType": "seller",
-            "username": info.phone,
+            "username": phone,
             "displayName": info.displayName,
             "password": password,
             "passwordHash": _this.encryptPassword(password, phone),

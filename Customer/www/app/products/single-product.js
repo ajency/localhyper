@@ -6,8 +6,10 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       productID: $stateParams.productID,
       product: {},
       specificationModal: null,
+      makeRequestModal: null,
       init: function() {
-        return this.loadSpecificationsModal();
+        this.loadSpecificationsModal();
+        return this.loadMakeRequestModal();
       },
       loadSpecificationsModal: function() {
         return $ionicModal.fromTemplateUrl('views/products/specification.html', {
@@ -16,6 +18,16 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         }).then((function(_this) {
           return function(modal) {
             return _this.specificationModal = modal;
+          };
+        })(this));
+      },
+      loadMakeRequestModal: function() {
+        return $ionicModal.fromTemplateUrl('views/products/make-request.html', {
+          scope: $scope,
+          animation: 'slide-in-up'
+        }).then((function(_this) {
+          return function(modal) {
+            return _this.makeRequestModal = modal;
           };
         })(this));
       },
@@ -45,7 +57,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       },
       onMakeRequest: function() {
         if (User.isLoggedIn()) {
-          return CToast.show('User session active');
+          return this.makeRequestModal.show();
         } else {
           return App.navigate('verify-begin');
         }
