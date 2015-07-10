@@ -21,7 +21,6 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
         return $timeout.cancel(this.timeout);
       },
       isExistingUser: function() {
-        AuthAPI.getUserDetails();
         return AuthAPI.isExistingUser(this.user).then((function(_this) {
           return function(data) {
             if (data.existing) {
@@ -102,7 +101,10 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
-          return App.goBack(-2);
+          return App.navigate('requests', {}, {
+            animate: true,
+            back: false
+          });
         }, (function(_this) {
           return function(error) {
             return _this.onError(error, 'register');

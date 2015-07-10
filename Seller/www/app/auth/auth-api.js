@@ -1,5 +1,5 @@
 angular.module('LocalHyper.auth').factory('AuthAPI', [
-  '$q', 'App', '$http', '$rootScope', 'User', function($q, App, $http, $rootScope, User) {
+  '$q', 'App', '$http', '$rootScope', 'User', 'CategoriesAPI', function($q, App, $http, $rootScope, User, CategoriesAPI) {
     var AuthAPI, UUID;
     UUID = App.deviceUUID();
     AuthAPI = {};
@@ -21,10 +21,9 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       return decrypted.toString(CryptoJS.enc.Utf8);
     };
     AuthAPI.isExistingUser = function(user) {
-      var defer, name, phone;
+      var defer, phone;
       defer = $q.defer();
       phone = user.phone.toString();
-      name = user.name;
       user = new Parse.Query(Parse.User);
       user.equalTo("username", phone);
       user.find().then((function(_this) {
@@ -47,17 +46,17 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       return defer.promise;
     };
     AuthAPI.register = function(user) {
-      var defer, name, phone;
+      var defer;
       defer = $q.defer();
-      phone = user.phone.toString();
-      name = user.name;
-      this.isExistingUser().then(function(data) {
-        if (!data.existing) {
-          return this.signUpNewUser(phone, name);
-        } else {
-          return this.loginExistingUser(phone, name, data.userObj);
-        }
-      }).then(function(success) {
+      this.isExistingUser(user).then((function(_this) {
+        return function(data) {
+          if (!data.existing) {
+            return _this.signUpNewUser();
+          } else {
+            return _this.loginExistingUser(data.userObj);
+          }
+        };
+      })(this)).then(function(success) {
         return defer.resolve(success);
       }, (function(_this) {
         return function(error) {
@@ -67,26 +66,53 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       return defer.promise;
     };
     AuthAPI.getUserDetails = function() {
-      var addressGeoPoint, data, user;
+      var addressGeoPoint, categoryChains, data, supportedBrands, supportedCategories, user;
       user = User.info('get');
-      console.log(user);
       addressGeoPoint = new Parse.GeoPoint({
         latitude: user.geoCode.latitude,
         longitude: user.geoCode.longitude
       });
-      return data = {
+      categoryChains = CategoriesAPI.categoryChains('get');
+      supportedCategories = [];
+      supportedBrands = [];
+      _.each(categoryChains, function(chains) {
+        supportedCategories.push({
+          "__type": "Pointer",
+          "className": "Category",
+          "objectId": chains.subCategory.id
+        });
+        return _.each(chains.brands, function(brand) {
+          return supportedBrands.push({
+            "__type": "Pointer",
+            "className": "Brand",
+            "objectId": brand.objectId
+          });
+        });
+      });
+      supportedBrands = _.map(_.groupBy(supportedBrands, function(brand) {
+        return brand.objectId;
+      }), function(grouped) {
+        return grouped[0];
+      });
+      data = {
+        phone: user.phone,
+        businessName: user.businessName,
         addressGeoPoint: addressGeoPoint,
         address: user.address,
         city: user.address.city,
         area: user.address.city,
-        deliveryRadius: user.deliveryRadius,
-        businessName: user.businessName,
-        displayName: user.name
+        deliveryRadius: parseInt(user.deliveryRadius),
+        displayName: user.name,
+        supportedCategories: supportedCategories,
+        supportedBrands: supportedBrands
       };
+      return data;
     };
-    AuthAPI.loginExistingUser = function(phone, name, userObj) {
-      var defer, newPassword, oldPassword, oldPasswordhash;
+    AuthAPI.loginExistingUser = function(userObj) {
+      var defer, info, newPassword, oldPassword, oldPasswordhash, phone;
       defer = $q.defer();
+      info = this.getUserDetails();
+      phone = info.phone;
       newPassword = '';
       userObj = userObj[0];
       oldPasswordhash = userObj.get('passwordHash');
@@ -100,10 +126,18 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           newPasswordHash = _this.encryptPassword(newPassword, phone);
           return App.getInstallationId().then(function(installationId) {
             return user.save({
-              "displayName": name,
+              "displayName": info.displayName,
               "password": newPassword,
               "passwordHash": newPasswordHash,
-              "installationId": installationId
+              "installationId": installationId,
+              "businessName": info.businessName,
+              "addressGeoPoint": info.addressGeoPoint,
+              "address": info.address,
+              "city": info.city,
+              "area": info.city,
+              "deliveryRadius": info.deliveryRadius,
+              "supportedCategories": info.supportedCategories,
+              "supportedBrands": info.supportedBrands
             });
           });
         };
@@ -120,21 +154,31 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       })(this));
       return defer.promise;
     };
-    AuthAPI.signUpNewUser = function(phone, name) {
-      var defer, password;
+    AuthAPI.signUpNewUser = function() {
+      var defer, info, password, phone;
       defer = $q.defer();
+      info = this.getUserDetails();
+      phone = info.phone;
       password = "" + phone + UUID;
       App.getInstallationId().then((function(_this) {
         return function(installationId) {
           var user;
           user = new Parse.User();
           user.set({
-            "username": phone,
-            "displayName": name,
-            "password": password,
-            "installationId": installationId,
             "userType": "seller",
-            "passwordHash": _this.encryptPassword(password, phone)
+            "username": info.phone,
+            "displayName": info.displayName,
+            "password": password,
+            "passwordHash": _this.encryptPassword(password, phone),
+            "installationId": installationId,
+            "businessName": info.businessName,
+            "addressGeoPoint": info.addressGeoPoint,
+            "address": info.address,
+            "city": info.city,
+            "area": info.city,
+            "deliveryRadius": info.deliveryRadius,
+            "supportedCategories": info.supportedCategories,
+            "supportedBrands": info.supportedBrands
           });
           return user.signUp();
         };

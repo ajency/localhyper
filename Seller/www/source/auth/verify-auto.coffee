@@ -27,7 +27,6 @@ angular.module 'LocalHyper.auth'
 				$timeout.cancel @timeout
 
 			isExistingUser : ->
-				AuthAPI.getUserDetails()
 				AuthAPI.isExistingUser @user
 				.then (data)=>
 					if data.existing
@@ -82,7 +81,7 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
-					App.goBack -2
+					App.navigate 'requests', {}, {animate: true, back: false}
 				, (error)=>
 					@onError error, 'register'
 
