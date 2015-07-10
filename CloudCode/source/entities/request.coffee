@@ -96,10 +96,10 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
                                 "className":"_User",
                                 "objectId":locationBasedSellerId  
 
-                            # create entry in notification class
+                            # create entry in notification class with recipient as the seller
                             notificationData = 
                                 hasSeen: false
-                                recipientUser: customerObj
+                                recipientUser: sellerObj
                                 channel : 'push'
                                 processed : false
                                 type : "Request"
@@ -171,7 +171,7 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
         time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
         queryDate.setTime(time24HoursAgo)
 
-        requestQuery.lessThanOrEqualTo( "createdAt", queryDate )
+        # requestQuery.lessThanOrEqualTo( "createdAt", queryDate )
 
         requestQuery.find()
         .then (requests) ->

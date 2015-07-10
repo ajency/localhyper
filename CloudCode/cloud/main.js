@@ -430,7 +430,7 @@
               };
               notificationData = {
                 hasSeen: false,
-                recipientUser: customerObj,
+                recipientUser: sellerObj,
                 channel: 'push',
                 processed: false,
                 type: "Request",
@@ -483,7 +483,6 @@
       queryDate = new Date();
       time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
       queryDate.setTime(time24HoursAgo);
-      requestQuery.lessThanOrEqualTo("createdAt", queryDate);
       return requestQuery.find().then(function(requests) {
         return response.success(requests);
       }, function(error) {
