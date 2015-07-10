@@ -92,9 +92,12 @@
 }
 
 .aj-btn {
-	position: absolute;
-	width: 180px;
-	left: 90px;
+	 position: absolute;
+	  width: 180px;
+	  left: 0%;
+	  right: 0%;
+	  margin: auto;
+	  font-weight: 600;
 }
 
 .aj-text .list{
