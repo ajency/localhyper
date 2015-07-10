@@ -4,14 +4,27 @@
 @import "variables";
 
 /**** Fonts ****/
-@import url(../../styles/fonts/open-sans/open-sans.css);
+@import url(../../styles/fonts/source_sans/stylesheet.css);
+
+/************************************/
+/* Commen css */
+/************************************/
 
 h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider {
-	font-family: 'opensans' !important;
+	font-family: 'source_sans' !important;
 	color: #424242;
 }
 h1, h2, h3, h4, h5, h6{
-	font-weight: 800;
+	/*font-weight: 800;*/
+}
+.row-fluid{
+	padding: 0px;
+}
+.bg-white{
+	background: @white !important;
+}
+.normal{
+	  font-weight: 600;
 }
 .strike{
 	 text-decoration: line-through;
@@ -23,11 +36,15 @@ h1, h2, h3, h4, h5, h6{
 	color:@white;
 }
 .border-left{
-	border-left:1px solid @gray-light;
+	border-left:1px solid #ccc;
 }
 .bottom-fixed{
 	position:absolute;
 	bottom:0px;
+}
+.center-img{
+	display: block;
+	margin: auto;
 }
 .logo{
 	  display: block;
@@ -49,6 +66,10 @@ sm{
 }
 .subdued{
 	  color: #747474;
+}
+.normal-space{
+	  overflow: visible !important;;
+      white-space: normal !important;;
 }
 .nav-bar-title{
 	text-transform:uppercase;
@@ -76,7 +97,36 @@ sm{
 	  transform: rotate(90deg);
 
 }
+.input-border{
+	  border-bottom: 1px solid @black !important;
+	}
+.button-border{
+	text-decoration: underline;
+}
+.m-t-5{
+	margin-top: 5px!important;
+}
+.m-t-10{
+	margin-top: 10px!important;
+}
+.relative{
+	position: relative!important;
+}
+.right{
+	right: 0!important;
+}
+.left{
+		left: 0 !important;
+}
+.padding-none{
+	padding:0px;
+}
+.border-none{
+	border: 0px;
+}
+/************************************/
 /* HEADER */
+/************************************/
 
 .has-header{
 	background:@gray-transperent;
@@ -111,7 +161,10 @@ sm{
 	}
 }
 
+/************************************/
 /* Menu */
+/************************************/
+
 .sprite-icon{
 	  background: url(../../img/sprite.png)no-repeat;
 	  width: 30px;
@@ -163,12 +216,24 @@ sm{
 	 background-position: -61px -160px;
 }
 
+/************************************/
 /*Department List*/
+/************************************/
+
 .department-list{
-	height: 199px;
+	/*height: 199px;*/
+	height: 150px;
 	background: @gray-transperent;
 	padding:0px;
-	h3{
+	h2{
+		 text-overflow: inherit;
+		  overflow: visible;
+		  white-space: normal;
+		  margin: 45px auto;
+		  font-weight: 400;
+
+	}
+/*	h3{
 		 font-weight: 600;
 		 text-transform: uppercase;
 		 margin:80px 5px;
@@ -180,36 +245,39 @@ sm{
 		  top: 35px ;
 		  right: -10px;
 
-	}
+	}*/
 
 }
 .department-list:nth-child(2){
 	background: @white;
-	img{
+/*	img{
 		    left: -22px;
 
 	}
 	h3{
 		text-align:right;
-	}
+	}*/
 }
 
+/************************************/
 /* Sub Categories*/
+/************************************/
+
 .sub-categories {
 	background:@white;
 	.border-card{
 			   border-right: 1px solid @gray-lighter;
 	           border-bottom: 1px solid @gray-lighter;
-	           min-height: 240px;
+	           height: 15rem;
 	           float: left;
          h3{
          	   font-size: 14px;
-         	   font-weight: 600;
+         	   font-weight: 400;
 
          }
          .title{
          	  height: 39px;
-         	  font-weight: 600;
+         	  font-weight: 400;
          	  line-height: 18px;
          	  display: block;
 			  display: -webkit-box;
@@ -233,7 +301,9 @@ sm{
 
 }
 
+/************************************/
 /* Sort model */
+/************************************/
 .sort-model{
 	  width:80%;
 	  height: 216px;
@@ -257,4 +327,66 @@ sm{
 	.i-popularity{
 		 background-position: -61px -200px;
 	}
+}
+
+/************************************/
+/* Single Product  */
+/************************************/
+.btn-specification{
+	font-size: 15px !important;
+	color:@black!important;
+}
+.btn-action{
+	font-weight: 600 !important;
+	width:50%;
+}
+.sm-text{
+	  font-size: 13px;
+      line-height: 15px;
+		span{
+			font-size: 10px;
+			color:@gray-dark;
+		}
+}
+.bar-custom-footer{
+	  border-top: 1px solid rgba(204, 204, 204, 0.44);
+     HEIGHT: 50PX;
+}
+.aj-sp-img{
+		margin:6% auto;
+}
+
+
+/************************************/
+/* TABS  */
+/************************************/
+.tabs{
+	.tab-item{
+		font-size: 12px
+	}
+}
+.btn-danger{
+	color: @brand-primary
+}
+.label{
+	  border: 1px solid #ccc;
+	  padding: 0px 5px;
+	  font-size: 11px;
+	  color: @gray;
+	  display: inline-block;
+}
+.offer{
+	  width: 45px;
+	  height: 45px;
+	  border-radius: 100%;
+	  border: 1px dashed #000;
+	  text-align: center;
+	  font-size: 1.5rem;
+	  line-height: 39px;
+	  margin: auto;
+}
+.offertxt{
+	  background: @white;
+  	  margin-top: -11px;
+  	  text-align: center;
 }
