@@ -1,7 +1,6 @@
-
-<ion-view
-	view-title="CATEGORY CHAINS"
-	ng-init="view.init()">
+<ion-view 
+	view-title="Category Chains"
+	ng-init="view.setCategoryChains()">
 
 	<ion-nav-buttons side="right">
 		<button 
@@ -10,13 +9,11 @@
 			Next
 		</button>
 	</ion-nav-buttons>
-	<ion-header>
-<div class="bar bar-subheader bar-dark">
-  <h2 class="title m-title">Your business categories are</h2>
-</div>
-</ion-header>
+
 	<ion-content>
-		<br><br><br>
+
+		<h4>Your business categories are</h4>
+		</br>
 
 		<ion-list>
 
@@ -24,7 +21,10 @@
 				class="item-text-wrap item-icon-right"
 				ng-repeat="chains in view.categoryChains">
 
-				<i class="icon ion-close-circled"></i>
+				<i 
+					class="icon ion-close-circled"
+					ng-click="view.removeItemFromChains(chains.subCategory.id)">
+				</i>
 
 				{{chains.category.name}} > {{chains.subCategory.name}} > {{view.getBrands(chains.brands)}}
 			</ion-item>
@@ -32,15 +32,12 @@
 		</ion-list>
 		
 		</br>
-		<h5>There should always be atleast one category chain selected</h5>
-		<!-- <button 
+		<h4>There should always be atleast one category chain selected</h4>
+		<button 
 			class="button button-block button-dark"
-			ng-click="App.navigate('categories')">
+			ng-click="App.goBack(-3)">
 			Add more
-		</button> -->
+		</button>
 
 	</ion-content>
-	<ion-footer class="bar bar-footer bar-assertive" ng-click="App.navigate('categories')">
-	 <div class="title">Add More</div>
-	</ion-footer>
 </ion-view>

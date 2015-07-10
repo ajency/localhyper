@@ -1,0 +1,17 @@
+{
+  "global": {
+    "parseVersion": "1.4.2"
+  },
+  "applications": {
+    "CloudCode": {
+      "link": "shopoye"
+    },
+    "_default": {
+      "link": "shopoye"
+    },
+    "shopoye": {
+      "applicationId": "837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7",
+      "masterKey": "aoyAfAqjov2pk7sDlKpMss8pE0EFFyjJyRKfUEJC"
+    }
+  }
+}
