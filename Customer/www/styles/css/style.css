@@ -129,7 +129,8 @@
 	border: none;
 }
 
-.aj-spinner svg{
+
+.aj-refresher .spinner, .aj-spinner svg{
    display: block;
   margin: 50% auto;
   stroke: #F8585C;
@@ -141,7 +142,9 @@
   padding: 5px;
   box-shadow: 0px 2px 6px #B6B6B6;
 }
-
+.aj-refresher .spinner svg circle{
+	stroke: #F8585C;
+}
 .aj-verify-spinner svg{
   display: block;
   margin: 0% auto;
