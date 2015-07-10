@@ -14,7 +14,7 @@ angular.module 'LocalHyper.init', []
 			Storage.slideTutorial 'get'
 			.then (value)->
 				if _.isNull value then goto = "tutorial" 
-				else if User.isLoggedIn() then goto = "categories" 
+				else if User.isLoggedIn() then goto = "requests" 
 				else goto = 'business-details'
 				App.navigate goto, {}, {animate: false, back: false}
 

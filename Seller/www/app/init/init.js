@@ -11,7 +11,7 @@ angular.module('LocalHyper.init', []).controller('InitCtrl', [
         if (_.isNull(value)) {
           goto = "tutorial";
         } else if (User.isLoggedIn()) {
-          goto = "categories";
+          goto = "requests";
         } else {
           goto = 'business-details';
         }

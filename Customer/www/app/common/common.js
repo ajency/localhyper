@@ -4,6 +4,7 @@ angular.module('LocalHyper.common', []).factory('App', [
     return App = {
       start: true,
       validateEmail: /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/,
+      onlyNumbers: /^\d+$/,
       menuEnabled: {
         left: false,
         right: false

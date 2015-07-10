@@ -16,6 +16,19 @@ angular.module 'LocalHyper.auth'
 				@errorType = type
 				@errorAt = at
 
+			isExistingUser : ->
+				AuthAPI.isExistingUser @user
+				.then (data)=>
+					if data.existing
+						if data.userObj[0].get('userType') is 'seller'
+							count = if App.isAndroid() then -2 else -1
+							App.goBack count
+							CToast.show 'Sorry, you are already a registered seller'
+						else @requestSMSCode()
+					else @requestSMSCode()
+				, (error)=>
+					@onError error, 'isExistingUser'
+
 			requestSMSCode : ->
 				CSpinner.show '', 'Please wait...'
 				SmsAPI.requestSMSCode @user.phone
@@ -59,6 +72,8 @@ angular.module 'LocalHyper.auth'
 			onTapToRetry : ->
 				@display = 'noError'
 				switch @errorAt
+					when 'isExistingUser'
+						@isExistingUser()
 					when 'requestSMSCode'
 						@requestSMSCode()
 					when 'verifySmsCode'
@@ -77,7 +92,7 @@ angular.module 'LocalHyper.auth'
 		$scope.$on '$ionicView.enter', ->
 			#Device hardware back button for android
 			$ionicPlatform.onHardwareBackButton onDeviceBack
-			$scope.view.requestSMSCode() if App.isIOS()
+			$scope.view.isExistingUser() if App.isIOS()
 
 		$scope.$on '$ionicView.leave', ->
 			$ionicPlatform.offHardwareBackButton onDeviceBack

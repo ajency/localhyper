@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.auth'
 
 
-.factory 'AuthAPI', ['$q', 'App', '$http', '$rootScope', ($q, App, $http, $rootScope)->
+.factory 'AuthAPI', ['$q', 'App', '$http', '$rootScope', 'User', ($q, App, $http, $rootScope, User)->
 
 	UUID = App.deviceUUID()
 	AuthAPI = {}
@@ -20,17 +20,34 @@ angular.module 'LocalHyper.auth'
 		decrypted = CryptoJS.AES.decrypt passwordHash, key
 		decrypted.toString CryptoJS.enc.Utf8
 
-	AuthAPI.register = (user)->
+	AuthAPI.isExistingUser = (user)->
 		defer = $q.defer()
 		phone = user.phone.toString()
-		name  = user.name
 
 		user = new Parse.Query Parse.User
 		user.equalTo "username", phone
 		user.find()
 		.then (userObj)=>
-			if _.isEmpty(userObj) then @signUpNewUser(phone, name)
-			else @loginExistingUser(phone, name, userObj)
+			data = {}
+			if _.isEmpty userObj
+				data.existing = false
+			else
+				data.existing = true
+				data.userObj = userObj
+			defer.resolve data
+
+		, (error)=>
+			@onParseJsError defer, error
+
+		defer.promise
+
+	AuthAPI.register = (user)->
+		defer = $q.defer()
+
+		@isExistingUser user
+		.then (data)=>
+			if !data.existing then @signUpNewUser()
+			else @loginExistingUser(data.userObj)
 		.then (success)->
 			defer.resolve success
 		, (error)=>
@@ -38,8 +55,19 @@ angular.module 'LocalHyper.auth'
 
 		defer.promise
 
-	AuthAPI.loginExistingUser = (phone, name, userObj)->
+	AuthAPI.getUserDetails = ->
+		user = User.info 'get'
+
+		data = 
+			phone: user.phone
+			displayName: user.name
+
+		data
+
+	AuthAPI.loginExistingUser = (userObj)->
 		defer = $q.defer()
+		info = @getUserDetails()
+		phone = info.phone
 		newPassword = ''
 		userObj = userObj[0]
 		oldPasswordhash = userObj.get 'passwordHash'
@@ -53,7 +81,7 @@ angular.module 'LocalHyper.auth'
 			newPasswordHash = @encryptPassword newPassword, phone
 			App.getInstallationId().then (installationId)->
 				user.save
-					"displayName": name
+					"displayName": info.displayName
 					"password": newPassword
 					"passwordHash": newPasswordHash
 					"installationId": installationId
@@ -70,18 +98,20 @@ angular.module 'LocalHyper.auth'
 
 	AuthAPI.signUpNewUser = (phone, name)->
 		defer = $q.defer()
+		info = @getUserDetails()
+		phone = info.phone
 		password = "#{phone}#{UUID}"
 
 		App.getInstallationId()
 		.then (installationId)=>
 			user = new Parse.User()
 			user.set 
-				"username": phone
-				"displayName": name
-				"password": password
-				"installationId": installationId
 				"userType": "customer"
+				"username": phone
+				"displayName": info.displayName
+				"password": password
 				"passwordHash": @encryptPassword(password, phone)
+				"installationId": installationId
 			
 			user.signUp()
 		.then (success)->

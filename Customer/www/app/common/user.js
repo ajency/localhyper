@@ -20,10 +20,9 @@ angular.module('LocalHyper.common').factory('User', [
       }
       switch (action) {
         case 'set':
-          return userInfo = {
-            name: data.name,
-            phone: data.phone
-          };
+          return _.each(data, function(val, index) {
+            return userInfo[index] = val;
+          });
         case 'get':
           return userInfo;
       }

@@ -17,6 +17,15 @@ h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, 
 h1, h2, h3, h4, h5, h6{
 	/*font-weight: 800;*/
 }
+.bar-assertive{
+	background:@brand-primary !important;
+}
+.bar-dark{
+	background-color:@black!important;
+}
+.m-title{
+	font-size: 16px !important;
+}
 .row-fluid{
 	padding: 0px;
 }
@@ -108,6 +117,9 @@ sm{
 }
 .m-t-10{
 	margin-top: 10px!important;
+}
+.m-t-20{
+	margin-top: 20px!important;
 }
 .relative{
 	position: relative!important;
@@ -389,4 +401,44 @@ sm{
 	  background: @white;
   	  margin-top: -11px;
   	  text-align: center;
+}
+
+/************************************/
+/* Brands  */
+/************************************/
+
+.brands{
+	.list{
+		margin-top: 5px;
+	}
+	.border-card{
+		height: 9rem;
+		position: relative;
+		img{
+			-webkit-filter: grayscale(100%);
+			filter: grayscale(100%);
+			filter: url(desaturate.svg#greyscale);
+			opacity: 0.6;
+		}
+	}
+	.item-check{
+		  position: absolute;
+		  width: 100%;
+		  height: 9rem;
+		  top: 0px;
+		  background: rgba(255, 255, 255, 0);
+		  text-align: center;
+		  border: 0px;
+		  .checkbox{
+		  	top:20px;
+		  	right: 0px;
+		  	left:inherit;
+		  }
+	}
+}
+
+.chain{
+	.item{
+		font-size: 14px;
+	}
 }

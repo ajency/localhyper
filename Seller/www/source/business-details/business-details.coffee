@@ -6,7 +6,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 		$scope.view = 
 			businessName: 'Ajency'
-			userName: 'Deepak'
+			name: 'Deepak'
 			phone: '9765436351'
 			map: null
 			marker: null
@@ -73,7 +73,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					CToast.show 'Please wait...'
 
 			onNext : ->
-				if _.contains [@businessName, @userName, @phone], ''
+				if _.contains [@businessName, @name, @phone], ''
 					CToast.show 'Fill up all fields'
 				else if _.isUndefined @phone
 					CToast.show 'Please enter valid phone number'

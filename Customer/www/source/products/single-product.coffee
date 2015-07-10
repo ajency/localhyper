@@ -11,9 +11,11 @@ angular.module 'LocalHyper.products'
 			productID: $stateParams.productID
 			product: {}
 			specificationModal: null
+			makeRequestModal: null
 
 			init: ->
 				@loadSpecificationsModal()
+				@loadMakeRequestModal()
 
 			loadSpecificationsModal : ->
 				$ionicModal.fromTemplateUrl 'views/products/specification.html', 
@@ -21,6 +23,13 @@ angular.module 'LocalHyper.products'
 					animation: 'slide-in-up'
 				.then (modal)=>
 					@specificationModal = modal
+
+			loadMakeRequestModal : ->
+				$ionicModal.fromTemplateUrl 'views/products/make-request.html', 
+					scope: $scope,
+					animation: 'slide-in-up'
+				.then (modal)=>
+					@makeRequestModal = modal
 
 			getSingleProductDetails : ->
 				ProductsAPI.getSingleProduct @productID
@@ -44,7 +53,7 @@ angular.module 'LocalHyper.products'
 
 			onMakeRequest : ->
 				if User.isLoggedIn()
-					CToast.show 'User session active'
+					@makeRequestModal.show()
 				else
 					App.navigate 'verify-begin'
 
