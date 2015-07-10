@@ -1,4 +1,4 @@
-getCategoryBasedSellers = (geoPoint,categoryId,brandId,city) ->
+getCategoryBasedSellers = (geoPoint,categoryId,brandId,city,area) ->
 
     # find all sellers from users class whose categories column contains categoryId 
     sellerQuery = new Parse.Query(Parse.User) 
@@ -14,6 +14,7 @@ getCategoryBasedSellers = (geoPoint,categoryId,brandId,city) ->
 
     sellerQuery.equalTo("userType", "seller")
     sellerQuery.equalTo("city", city)
+    sellerQuery.equalTo("area", area)
     sellerQuery.equalTo("supportedCategories", categoryPointer)
     sellerQuery.equalTo("supportedBrands", brandPointer)
 

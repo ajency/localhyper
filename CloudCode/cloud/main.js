@@ -355,13 +355,15 @@
   });
 
   Parse.Cloud.define('makeRequest', function(request, response) {
-    var Request, address, brandId, categoryId, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
+    var Request, address, area, brandId, categoryId, city, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
     customerId = request.params.customerId;
     productId = request.params.productId;
     categoryId = request.params.categoryId;
     brandId = request.params.brandId;
     location = request.params.location;
     address = request.params.address;
+    city = request.params.city;
+    area = request.params.area;
     comments = request.params.comments;
     status = request.params.status;
     deliveryStatus = request.params.deliveryStatus;
@@ -372,6 +374,8 @@
     request.set("address", address);
     request.set("status", status);
     request.set("deliveryStatus", deliveryStatus);
+    request.set("city", city);
+    request.set("area", area);
     customerObj = {
       "__type": "Pointer",
       "className": "_User",
@@ -385,18 +389,19 @@
     };
     request.set("productId", productObj);
     return request.save().then(function(requestObject) {
-      var city, createdRequestId, sellersArray;
+      var createdRequestId, sellersArray;
       createdRequestId = requestObject.id;
-      city = requestObject.get("address").city;
+      city = requestObject.get("city");
+      area = requestObject.get("area");
       sellersArray = [];
-      return getCategoryBasedSellers(point, categoryId, brandId, city).then(function(categoryBasedSellers) {
+      return getCategoryBasedSellers(point, categoryId, brandId, city, area).then(function(categoryBasedSellers) {
         var findQs;
         findQs = [];
         findQs = _.map(categoryBasedSellers, function(catBasedSeller) {
           var sellerGeoPoint, sellerId, sellerRadius;
           sellerId = catBasedSeller.id;
           sellerGeoPoint = catBasedSeller.get("addressGeoPoint");
-          sellerRadius = catBasedSeller.get("deliverRadius");
+          sellerRadius = catBasedSeller.get("deliveryRadius");
           return getAreaBoundSellers(sellerId, sellerGeoPoint, sellerRadius, createdRequestId, customerObj);
         });
         return Parse.Promise.when(findQs).then(function() {
@@ -440,7 +445,20 @@
     });
   });
 
-  getCategoryBasedSellers = function(geoPoint, categoryId, brandId, city) {
+  Parse.Cloud.define('getNewRequests', function(request, reponse) {
+    var brandId, categoryId, city, currentTimeStamp, requestQuery, sellerId, sellerLocation, sellerRadius, status;
+    sellerId = request.params.sellerId;
+    categoryId = request.params.categoryId;
+    brandId = request.params.brandId;
+    city = request.params.city;
+    sellerLocation = request.params.sellerLocation;
+    sellerRadius = request.params.sellerRadius;
+    currentTimeStamp = request.params.currentTimeStamp;
+    status = "open";
+    return requestQuery = new Parse.Query("Request");
+  });
+
+  getCategoryBasedSellers = function(geoPoint, categoryId, brandId, city, area) {
     var Brand, Category, brandPointer, categoryPointer, promise, sellerQuery;
     sellerQuery = new Parse.Query(Parse.User);
     Category = Parse.Object.extend("Category");
@@ -451,6 +469,7 @@
     brandPointer.id = brandId;
     sellerQuery.equalTo("userType", "seller");
     sellerQuery.equalTo("city", city);
+    sellerQuery.equalTo("area", area);
     sellerQuery.equalTo("supportedCategories", categoryPointer);
     sellerQuery.equalTo("supportedBrands", brandPointer);
     promise = new Parse.Promise();

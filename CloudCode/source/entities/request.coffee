@@ -7,6 +7,8 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
     location = request.params.location  
      
     address = request.params.address 
+    city = request.params.city
+    area = request.params.area
 
     comments = request.params.comments
     
@@ -24,6 +26,8 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
     request.set "address", address
     request.set "status", status
     request.set "deliveryStatus", deliveryStatus
+    request.set "city", city
+    request.set "area", area
 
     # set request's customerId
     customerObj = 
@@ -45,11 +49,12 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
         .then (requestObject)->
 
             createdRequestId = requestObject.id
-            city = requestObject.get("address").city
+            city = requestObject.get("city")
+            area = requestObject.get("area")
 
             sellersArray = []
 
-            getCategoryBasedSellers(point,categoryId,brandId,city)
+            getCategoryBasedSellers(point,categoryId,brandId,city,area)
             .then (categoryBasedSellers) ->
                 # findQs = []
                 # console.log getCategoryBasedSellers.length
@@ -60,7 +65,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
                     
                     sellerId = catBasedSeller.id
                     sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
-                    sellerRadius = catBasedSeller.get "deliverRadius"
+                    sellerRadius = catBasedSeller.get "deliveryRadius"
 
                     getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId,customerObj)
                 )
@@ -103,6 +108,32 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
 
         , (error)->
             response.error (error)  
+
+
+Parse.Cloud.define 'getNewRequests' ,(request, reponse) ->
+    # get all requests that have following criteria satisfied for a seller:
+        # category sold by that seller 
+        # brand sold by that seller 
+        # within the catchement area of the seller 
+        # have not expired 
+        # have status open
+        # offer has not been made by the seller for the request
+
+    sellerId = request.params.sellerId
+    categoryId = request.params.categoryId 
+    brandId = request.params.brandId
+    city = request.params.city
+    sellerLocation = request.params.sellerLocation  
+    sellerRadius = request.params.sellerRadius
+    currentTimeStamp = request.params.currentTimeStamp
+    status = "open"
+
+    requestQuery = new Parse.Query("Request")
+
+
+
+
+
 
 
 
