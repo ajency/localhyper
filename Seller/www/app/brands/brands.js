@@ -1,5 +1,5 @@
 angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
-  '$scope', 'BrandsAPI', '$stateParams', 'SubCategory', 'CToast', 'CategoriesAPI', 'App', function($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App) {
+  '$scope', 'BrandsAPI', '$stateParams', 'SubCategory', 'CToast', 'CategoriesAPI', 'App', 'CDialog', function($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog) {
     return $scope.view = {
       title: SubCategory.name,
       brands: [],
@@ -33,26 +33,15 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
         this.display = 'loader';
         return this.getBrands();
       },
-      onDone: function() {
-        var atleastOneSelected;
-        atleastOneSelected = false;
-        _.each(this.brands, function(brand) {
-          if (brand.selected) {
-            return atleastOneSelected = true;
-          }
-        });
+      isCategoryChainsEmpty: function() {
+        var empty;
         this.categoryChains = CategoriesAPI.categoryChains('get');
-        if (_.isEmpty(this.categoryChains)) {
-          if (!atleastOneSelected) {
-            return CToast.show('Please select atleast one brand');
-          } else {
-            return this.setCategoryChains(true);
-          }
-        } else {
-          return this.setCategoryChains(false);
-        }
+        empty = _.isEmpty(this.categoryChains);
+        return empty;
       },
-      setCategoryChains: function(empty) {
+      setCategoryChains: function() {
+        var empty;
+        empty = this.isCategoryChainsEmpty();
         return CategoriesAPI.getAll().then((function(_this) {
           return function(allCategories) {
             var chain, data, existingChain, parentCategory, selectedBrands;
@@ -70,7 +59,7 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
             };
             data.push(chain);
             if (empty) {
-              CategoriesAPI.categoryChains('set', data);
+              return CategoriesAPI.categoryChains('set', data);
             } else {
               existingChain = false;
               _.each(_this.categoryChains, function(chains, index) {
@@ -78,17 +67,38 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
                   existingChain = true;
                   if (_.size(selectedBrands) > 0) {
                     return _this.categoryChains[index].brands = selectedBrands;
+                  } else {
+                    return _this.categoryChains.splice(index, 1);
                   }
                 }
               });
               if (!existingChain && _.size(chain.brands) > 0) {
                 _this.categoryChains.push(chain);
               }
-              CategoriesAPI.categoryChains('set', _this.categoryChains);
+              return CategoriesAPI.categoryChains('set', _this.categoryChains);
             }
-            return App.navigate('category-chains');
           };
         })(this));
+      },
+      onDone: function() {
+        var empty, minOneBrandSelected;
+        minOneBrandSelected = !_.isUndefined(_.find(this.brands, function(brand) {
+          return brand.selected === true;
+        }));
+        empty = this.isCategoryChainsEmpty();
+        if (empty && !minOneBrandSelected) {
+          return CToast.show('Please select atleast one brand');
+        } else if (!empty && !minOneBrandSelected) {
+          return CDialog.confirm('Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']).then((function(_this) {
+            return function(btnIndex) {
+              if (btnIndex === 1) {
+                return App.navigate('category-chains');
+              }
+            };
+          })(this));
+        } else {
+          return App.navigate('category-chains');
+        }
       }
     };
   }

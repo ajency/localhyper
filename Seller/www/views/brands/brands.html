@@ -35,7 +35,11 @@
 						{{brand.name}}
 					</h3>
 
-					<ion-checkbox ng-model="brand.selected">Select</ion-checkbox>
+					<ion-checkbox 
+						ng-model="brand.selected"
+						ng-change="view.setCategoryChains()">
+						Select
+					</ion-checkbox>
 			</div>
 		</ion-list>
 

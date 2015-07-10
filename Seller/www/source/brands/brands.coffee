@@ -2,8 +2,8 @@ angular.module 'LocalHyper.brands', []
 
 
 .controller 'BrandsCtrl', ['$scope', 'BrandsAPI', '$stateParams', 'SubCategory'
-	, 'CToast', 'CategoriesAPI', 'App'
-	, ($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App)->
+	, 'CToast', 'CategoriesAPI', 'App', 'CDialog'
+	, ($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog)->
 
 		$scope.view =
 			title: SubCategory.name
@@ -35,28 +35,17 @@ angular.module 'LocalHyper.brands', []
 				@display = 'loader'
 				@getBrands()
 
-			onDone : ->
-				atleastOneSelected = false
-				_.each @brands, (brand)->
-					if brand.selected then atleastOneSelected = true
-
+			isCategoryChainsEmpty : ->
 				@categoryChains = CategoriesAPI.categoryChains 'get'
-				if _.isEmpty @categoryChains
-					if !atleastOneSelected
-						CToast.show 'Please select atleast one brand'
-					else
-						@setCategoryChains true
-				else @setCategoryChains false
+				empty = _.isEmpty @categoryChains
+				empty
 
-			setCategoryChains : (empty)->
+			setCategoryChains : ->
+				empty = @isCategoryChainsEmpty()
 				CategoriesAPI.getAll()
 				.then (allCategories)=>
-					parentCategory = _.filter allCategories, (category)->
-						category.id is SubCategory.parent
-
-					selectedBrands = _.filter @brands, (brand)->
-						brand.selected is true
-
+					parentCategory = _.filter allCategories, (category)-> category.id is SubCategory.parent
+					selectedBrands = _.filter @brands, (brand)-> brand.selected is true
 					data = []
 					chain = 
 						category: parentCategory[0]
@@ -73,12 +62,24 @@ angular.module 'LocalHyper.brands', []
 								existingChain = true
 								if _.size(selectedBrands) > 0
 									@categoryChains[index].brands = selectedBrands
+								else
+									@categoryChains.splice index, 1
 						
 						if !existingChain and _.size(chain.brands) > 0
 							@categoryChains.push chain
 							
 						CategoriesAPI.categoryChains 'set', @categoryChains
 
+			onDone : ->
+				minOneBrandSelected = !_.isUndefined _.find @brands, (brand)-> brand.selected is true
+				empty = @isCategoryChainsEmpty()
+				if empty and !minOneBrandSelected
+					CToast.show 'Please select atleast one brand'
+				else if !empty and !minOneBrandSelected
+					CDialog.confirm 'Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']
+					.then (btnIndex)=>
+						if btnIndex is 1 then App.navigate 'category-chains'
+				else
 					App.navigate 'category-chains'
 ]
 

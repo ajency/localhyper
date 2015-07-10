@@ -5,9 +5,9 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User)->
 
 		$scope.view = 
-			businessName: ''#'Ajency'
-			userName: ''#'Deepak'
-			phone: ''#'9765436351'
+			businessName: 'Ajency'
+			userName: 'Deepak'
+			phone: '9765436351'
 			map: null
 			marker: null
 			latLng: null

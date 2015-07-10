@@ -5,7 +5,6 @@ angular.module 'LocalHyper.categories'
 	, ($scope, App, CategoriesAPI)->
 
 		$scope.view = 
-
 			categoryChains : CategoriesAPI.categoryChains('get')
 
 			init : ->
@@ -14,7 +13,6 @@ angular.module 'LocalHyper.categories'
 			getBrands : (brands)->
 				brandNames = _.pluck brands, 'name'
 				brandNames.join ', '
-
 ]
 
 

@@ -33,8 +33,6 @@ angular.module 'LocalHyper.categories'
 		switch action
 			when 'set'
 				categoryChains = data
-			when 'unset'
-				categoryChains = data
 			when 'get'
 				categoryChains
 
