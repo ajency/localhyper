@@ -1,5 +1,5 @@
 (function() {
-  var _, getAreaBoundSellers, getCategoryBasedSellers, treeify;
+  var _, getAreaBoundSellers, getCategoryBasedSellers, getFilteredRequests, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -457,21 +457,44 @@
     });
   });
 
-  Parse.Cloud.define('getNewRequests', function(request, reponse) {
-    var brandId, categoryId, city, currentTimeStamp, innerCategoryQuery, requestQuery, sellerId, sellerLocation, sellerRadius, status;
+  Parse.Cloud.define('getNewRequests', function(request, response) {
+    var city, currentTimeStamp, sellerId, sellerLocation, sellerQuery, sellerRadius, status;
     sellerId = request.params.sellerId;
-    categoryId = request.params.categoryId;
-    brandId = request.params.brandId;
     city = request.params.city;
     sellerLocation = request.params.sellerLocation;
     sellerRadius = request.params.sellerRadius;
     currentTimeStamp = request.params.currentTimeStamp;
     status = "open";
-    innerCategoryQuery = new Parse.Query("Category");
-    innerCategoryQuery.equalTo("objectId", categoryId);
-    requestQuery = new Parse.Query("Request");
-    return requestQuery.matchesQuery("category", innerQuery);
+    sellerQuery = new Parse.Query(Parse.User);
+    sellerQuery.equalTo("objectId", sellerId);
+    sellerQuery.include("supportedCategories");
+    sellerQuery.include("supportedBrands");
+    return sellerQuery.first().then(function(sellerObject) {
+      var requestQuery, sellerBrands, sellerCategories;
+      sellerCategories = sellerObject.get("supportedCategories");
+      sellerBrands = sellerObject.get("supportedBrands");
+      requestQuery = new Parse.Query("Request");
+      requestQuery.containedIn("category", sellerCategories);
+      requestQuery.containedIn("brand", sellerBrands);
+      return requestQuery.find().then(function(requests) {
+        return response.success(requests);
+      }, function(error) {
+        return response.error(error);
+      });
+    }, function(error) {
+      return response.error(error);
+    });
   });
+
+  getFilteredRequests = function(filters, className) {
+    var filterKeys, query;
+    query = new Parse.Query(className);
+    filterKeys = _.allKeys(filters);
+    _.each(filterKeys, function(filterKey) {
+      return query.equalTo(filterKey, filters[filterKey]);
+    });
+    return query.find();
+  };
 
   getCategoryBasedSellers = function(geoPoint, categoryId, brandId, city, area) {
     var Brand, Category, brandPointer, categoryPointer, promise, sellerQuery;
@@ -489,12 +512,8 @@
     sellerQuery.equalTo("supportedBrands", brandPointer);
     promise = new Parse.Promise();
     sellerQuery.find().then(function(sellers) {
-      var errorObj;
       if (sellers.length === 0) {
-        errorObj = {
-          message: "No seller found"
-        };
-        return promise.reject(errorObj);
+        return promise.resolve();
       } else {
         return promise.resolve(sellers);
       }

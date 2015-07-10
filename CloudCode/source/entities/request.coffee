@@ -126,31 +126,80 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
             response.error (error)  
 
 
-Parse.Cloud.define 'getNewRequests' ,(request, reponse) ->
+Parse.Cloud.define 'getNewRequests' ,(request, response) ->
     # get all requests that have following criteria satisfied for a seller:
-        # category sold by that seller 
-        # brand sold by that seller 
+        # categories sold by that seller 
+        # brands sold by that seller 
         # within the catchement area of the seller 
         # have not expired 
         # have status open
         # offer has not been made by the seller for the request
 
     sellerId = request.params.sellerId
-    categoryId = request.params.categoryId 
-    brandId = request.params.brandId
+    # categories = request.params.categoryId 
+    # brands = request.params.brandId
     city = request.params.city
     sellerLocation = request.params.sellerLocation  
     sellerRadius = request.params.sellerRadius
     currentTimeStamp = request.params.currentTimeStamp
     status = "open"
 
-    # query to get specific category
-    innerCategoryQuery = new Parse.Query("Category")
-    innerCategoryQuery.equalTo("objectId",categoryId)
+    # find categories and brands supported by the seller
+    sellerQuery = new Parse.Query(Parse.User)
+    sellerQuery.equalTo("objectId", sellerId)
+    sellerQuery.include("supportedCategories")
+    sellerQuery.include("supportedBrands")
 
-    # query to get products matching the child category
-    requestQuery = new Parse.Query("Request")
-    requestQuery.matchesQuery("category", innerQuery)    
+    sellerQuery.first()
+    .then (sellerObject) ->
+        sellerCategories = sellerObject.get("supportedCategories")
+        sellerBrands = sellerObject.get("supportedBrands")
+
+        requestQuery = new Parse.Query("Request")
+        requestQuery.containedIn("category",sellerCategories)
+        requestQuery.containedIn("brand",sellerBrands)
+
+        # get all requests having any of the above categories and brands
+        # requestQuery = new Parse.Query("Request")
+        # findCategoryQs = []
+
+        # findCategoryQs = _.map(sellerCategories, (sellerCategory) ->
+            
+        #     catId = sellerCategory.id
+        #     Category = Parse.object.extend("Category")
+        #     categoryObj = new Category()
+        #     categoryObj.id = catId
+
+        #     filters = 
+        #         category : categoryObj
+
+        #     getFilteredRequests(filters,"Request")
+        # ) 
+
+        # Parse.Promise.when(findCategoryQs).then ->       
+        #     response.success(arguments)
+        
+        # , (error) ->
+        #     response.error (error)
+        requestQuery.find()
+        .then (requests) ->
+            response.success (requests)
+        , (error) ->
+            response.error (error)
+    , (error) ->
+        response.error (error)
+
+
+getFilteredRequests = (filters,className)->
+    query = new Parse.Query(className)
+
+    # get filter keys and append constraints on the query accordingly
+    filterKeys = _.allKeys(filters)
+
+    _.each filterKeys , (filterKey) ->
+        query.equalTo(filterKey,filters[filterKey])
+
+    query.find()
 
 
 
