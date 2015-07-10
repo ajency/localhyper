@@ -457,3 +457,6 @@ sm {
   right: 0px;
   left: inherit;
 }
+.chain .item {
+  font-size: 14px;
+}
