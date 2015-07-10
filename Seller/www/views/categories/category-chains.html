@@ -1,5 +1,6 @@
+
 <ion-view
-	view-title="Category Chains"
+	view-title="CATEGORY CHAINS"
 	ng-init="view.init()">
 
 	<ion-nav-buttons side="right">
@@ -9,11 +10,13 @@
 			Next
 		</button>
 	</ion-nav-buttons>
-
+	<ion-header>
+<div class="bar bar-subheader bar-dark">
+  <h2 class="title m-title">Your business categories are</h2>
+</div>
+</ion-header>
 	<ion-content>
-
-		<h4>Your business categories are</h4>
-		</br>
+		<br><br><br>
 
 		<ion-list>
 
@@ -29,12 +32,15 @@
 		</ion-list>
 		
 		</br>
-		<h4>There should always be atleast one category chain selected</h4>
-		<button 
+		<h5>There should always be atleast one category chain selected</h5>
+		<!-- <button 
 			class="button button-block button-dark"
 			ng-click="App.navigate('categories')">
 			Add more
-		</button>
+		</button> -->
 
 	</ion-content>
+	<ion-footer class="bar bar-footer bar-assertive" ng-click="App.navigate('categories')">
+	 <div class="title">Add More</div>
+	</ion-footer>
 </ion-view>
