@@ -128,11 +128,16 @@
 }
 
 .aj-spinner svg{
-  display: block;
+   display: block;
   margin: 50% auto;
-  stroke: #8B8989;
-  width: 50px;
-  height: 50px;
+  stroke: #F8585C;
+  width: 40px;
+  height: 40px;
+  fill: #ffffff;
+  background: #fff;
+  border-radius: 100%;
+  padding: 5px;
+  box-shadow: 0px 2px 6px #B6B6B6;
 }
 
 .aj-verify-spinner svg{

@@ -13,7 +13,7 @@
 	</ion-nav-buttons>
 
 	<ion-content 
-		class="sub-categories"
+		class="brands sub-categories"
 		ng-switch="view.display">
 
 		<ion-spinner
@@ -29,7 +29,7 @@
 				
 					<img 
 						ng-src="{{brand.image.src}}" 
-						class="aj-img center-block img-responsive">
+						class="aj-img center-block img-responsive m-t-20">
 
 					<h3 class="text-center upper-case">
 						{{brand.name}}
@@ -37,8 +37,8 @@
 
 					<ion-checkbox 
 						ng-model="brand.selected"
-						ng-change="view.setCategoryChains()">
-						Select
+						ng-change="view.setCategoryChains()" class="item-check">
+						
 					</ion-checkbox>
 			</div>
 		</ion-list>
