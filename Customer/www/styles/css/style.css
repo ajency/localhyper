@@ -11,7 +11,9 @@
 	background-image: none !important;
 }
 .modal .bar .title {
-  font-size: 18px !important;
+  font-size: 16px !important;
+  left: 0% !important;
+  right: 0% !important;
 }
 .bar .title {
   font-size: 14px !important;
