@@ -2,8 +2,8 @@ angular.module 'LocalHyper.products'
 
 
 .controller 'SingleProductCtrl', ['$scope', '$stateParams', 'ProductsAPI', 'User'
-	, 'CToast', 'App', '$ionicModal'
-	, ($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal)->
+	, 'CToast', 'App', '$ionicModal', 'GPS'
+	, ($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GPS)->
 
 		$scope.view = 
 			display: 'loader'
@@ -57,6 +57,14 @@ angular.module 'LocalHyper.products'
 				else
 					App.navigate 'verify-begin'
 
+			getCurrentLocation : ->
+				CToast.show 'Getting current location'
+				GPS.getCurrentLocation()
+				.then (loc)=>
+					latLng = new google.maps.LatLng loc.lat, loc.long
+				, (err)->
+					CToast.show 'Error locating your position'
+
 		
 		$scope.$on '$ionicView.loaded', ->
 			$scope.view.getSingleProductDetails()
@@ -74,5 +82,9 @@ angular.module 'LocalHyper.products'
 				"appContent":
 					templateUrl: 'views/products/single-product.html'
 					controller: 'SingleProductCtrl'
+					resolve:
+						Maps : (GoogleMaps)->
+							if typeof google is "undefined"
+								GoogleMaps.loadScript()
 ]
 

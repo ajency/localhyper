@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GPS', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GPS) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -61,6 +61,17 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         } else {
           return App.navigate('verify-begin');
         }
+      },
+      getCurrentLocation: function() {
+        CToast.show('Getting current location');
+        return GPS.getCurrentLocation().then((function(_this) {
+          return function(loc) {
+            var latLng;
+            return latLng = new google.maps.LatLng(loc.lat, loc.long);
+          };
+        })(this), function(err) {
+          return CToast.show('Error locating your position');
+        });
       }
     };
     return $scope.$on('$ionicView.loaded', function() {
@@ -75,7 +86,14 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       views: {
         "appContent": {
           templateUrl: 'views/products/single-product.html',
-          controller: 'SingleProductCtrl'
+          controller: 'SingleProductCtrl',
+          resolve: {
+            Maps: function(GoogleMaps) {
+              if (typeof google === "undefined") {
+                return GoogleMaps.loadScript();
+              }
+            }
+          }
         }
       }
     });

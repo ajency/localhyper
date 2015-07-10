@@ -35,5 +35,16 @@ angular.module 'LocalHyper.products'
 
 		defer.promise
 
+	ProductsAPI.makeRequest = (productId)->
+		defer = $q.defer()
+
+		$http.post 'functions/makeRequest', "productId": productId
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
 	ProductsAPI
 ]
