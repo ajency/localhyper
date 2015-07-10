@@ -79,6 +79,10 @@
     height: 2px;
     background-color: #000;
 }
+.checkbox input:checked+.checkbox-icon:before, .checkbox input:checked:before {
+   background: #f35a59 !important;
+  border-color: #f35a59!important;
+}
 
 /*Ionic popover*/
 
