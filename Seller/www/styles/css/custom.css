@@ -119,7 +119,10 @@ sm {
   text-decoration: underline;
 }
 .m-t-5 {
-  margin-top: 5px;
+  margin-top: 5px!important;
+}
+.m-t-10 {
+  margin-top: 10px!important;
 }
 .relative {
   position: relative!important;
@@ -129,6 +132,9 @@ sm {
 }
 .left {
   left: 0 !important;
+}
+.padding-none {
+  padding: 0px;
 }
 .border-none {
   border: 0px;
