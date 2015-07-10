@@ -14,6 +14,9 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
       deliveryRadius: 2,
       terms: false,
       addressConfirmed: false,
+      init: function() {
+        return this.getCurrentLocation();
+      },
       onMapCreated: function(map) {
         this.map = map;
         return google.maps.event.addListener(this.map, 'click', (function(_this) {
@@ -95,13 +98,13 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
             latitude: this.latLng.lat(),
             longitude: this.latLng.lng()
           };
-          return User.info('set', $scope.view);
+          User.info('set', $scope.view);
+          return App.navigate('categories');
         }
       }
     };
     return $scope.$on('$ionicView.enter', function() {
-      App.hideSplashScreen();
-      return $scope.view.getCurrentLocation();
+      return App.hideSplashScreen();
     });
   }
 ]).config([
@@ -109,14 +112,15 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
     return $stateProvider.state('business-details', {
       url: '/business-details',
       parent: 'main',
-      cache: false,
       views: {
         "appContent": {
           controller: 'BusinessDetailsCtrl',
           templateUrl: 'views/business-details/business-details.html',
           resolve: {
             Maps: function(GoogleMaps) {
-              return GoogleMaps.loadScript();
+              if (typeof google === "undefined") {
+                return GoogleMaps.loadScript();
+              }
             }
           }
         }

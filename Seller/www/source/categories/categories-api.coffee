@@ -6,6 +6,7 @@ angular.module 'LocalHyper.categories'
 	CategoriesAPI = {}
 	allCategories = []
 	subCategories = []
+	categoryChains = []
 
 	CategoriesAPI.getAll = ->
 		defer = $q.defer()
@@ -27,6 +28,15 @@ angular.module 'LocalHyper.categories'
 				subCategories = data
 			when 'get'
 				subCategories
+
+	CategoriesAPI.categoryChains = (action, data={})->
+		switch action
+			when 'set'
+				categoryChains = data
+			when 'unset'
+				categoryChains = data
+			when 'get'
+				categoryChains
 
 	CategoriesAPI
 ]
