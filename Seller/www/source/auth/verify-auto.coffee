@@ -32,7 +32,7 @@ angular.module 'LocalHyper.auth'
 				.then (data)=>
 					if data.existing
 						if data.userObj[0].get('userType') is 'customer'
-							@display = 'noError'
+							App.goBack -1
 							CToast.show 'Sorry, you are already a registered customer'
 						else @requestSMSCode()
 					else @requestSMSCode()

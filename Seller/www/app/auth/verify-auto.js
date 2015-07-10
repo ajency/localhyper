@@ -26,7 +26,7 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
           return function(data) {
             if (data.existing) {
               if (data.userObj[0].get('userType') === 'customer') {
-                _this.display = 'noError';
+                App.goBack(-1);
                 return CToast.show('Sorry, you are already a registered customer');
               } else {
                 return _this.requestSMSCode();
