@@ -130,25 +130,25 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
     # get all requests that have following criteria satisfied for a seller:
         # categories sold by that seller 
         # brands sold by that seller 
-        # within the catchement area of the seller 
-        # have not expired 
+        # city and area
         # have status open
+        # have not expired i.e created date of request is less than 
+        # within the catchement area of the seller 
         # offer has not been made by the seller for the request
 
     sellerId = request.params.sellerId
     # categories = request.params.categoryId 
     # brands = request.params.brandId
     city = request.params.city
+    area = request.params.area
     sellerLocation = request.params.sellerLocation  
     sellerRadius = request.params.sellerRadius
-    currentTimeStamp = request.params.currentTimeStamp
+        
     status = "open"
 
     # find categories and brands supported by the seller
     sellerQuery = new Parse.Query(Parse.User)
     sellerQuery.equalTo("objectId", sellerId)
-    sellerQuery.include("supportedCategories")
-    sellerQuery.include("supportedBrands")
 
     sellerQuery.first()
     .then (sellerObject) ->
@@ -158,29 +158,21 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
         requestQuery = new Parse.Query("Request")
         requestQuery.containedIn("category",sellerCategories)
         requestQuery.containedIn("brand",sellerBrands)
+        requestQuery.equalTo("city",city)
+        requestQuery.equalTo("area",area)
+        requestQuery.equalTo("status",status)
 
-        # get all requests having any of the above categories and brands
-        # requestQuery = new Parse.Query("Request")
-        # findCategoryQs = []
 
-        # findCategoryQs = _.map(sellerCategories, (sellerCategory) ->
-            
-        #     catId = sellerCategory.id
-        #     Category = Parse.object.extend("Category")
-        #     categoryObj = new Category()
-        #     categoryObj.id = catId
+        # get only non expired requests
+        currentDate = new Date()
+        currentTimeStamp = currentDate.getTime()
+        expiryValueInHrs = 24
+        queryDate = new Date()
+        time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
+        queryDate.setTime(time24HoursAgo)
 
-        #     filters = 
-        #         category : categoryObj
+        requestQuery.lessThanOrEqualTo( "createdAt", queryDate )
 
-        #     getFilteredRequests(filters,"Request")
-        # ) 
-
-        # Parse.Promise.when(findCategoryQs).then ->       
-        #     response.success(arguments)
-        
-        # , (error) ->
-        #     response.error (error)
         requestQuery.find()
         .then (requests) ->
             response.success (requests)

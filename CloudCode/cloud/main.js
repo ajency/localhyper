@@ -458,24 +458,32 @@
   });
 
   Parse.Cloud.define('getNewRequests', function(request, response) {
-    var city, currentTimeStamp, sellerId, sellerLocation, sellerQuery, sellerRadius, status;
+    var area, city, sellerId, sellerLocation, sellerQuery, sellerRadius, status;
     sellerId = request.params.sellerId;
     city = request.params.city;
+    area = request.params.area;
     sellerLocation = request.params.sellerLocation;
     sellerRadius = request.params.sellerRadius;
-    currentTimeStamp = request.params.currentTimeStamp;
     status = "open";
     sellerQuery = new Parse.Query(Parse.User);
     sellerQuery.equalTo("objectId", sellerId);
-    sellerQuery.include("supportedCategories");
-    sellerQuery.include("supportedBrands");
     return sellerQuery.first().then(function(sellerObject) {
-      var requestQuery, sellerBrands, sellerCategories;
+      var currentDate, currentTimeStamp, expiryValueInHrs, queryDate, requestQuery, sellerBrands, sellerCategories, time24HoursAgo;
       sellerCategories = sellerObject.get("supportedCategories");
       sellerBrands = sellerObject.get("supportedBrands");
       requestQuery = new Parse.Query("Request");
       requestQuery.containedIn("category", sellerCategories);
       requestQuery.containedIn("brand", sellerBrands);
+      requestQuery.equalTo("city", city);
+      requestQuery.equalTo("area", area);
+      requestQuery.equalTo("status", status);
+      currentDate = new Date();
+      currentTimeStamp = currentDate.getTime();
+      expiryValueInHrs = 24;
+      queryDate = new Date();
+      time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
+      queryDate.setTime(time24HoursAgo);
+      requestQuery.lessThanOrEqualTo("createdAt", queryDate);
       return requestQuery.find().then(function(requests) {
         return response.success(requests);
       }, function(error) {
