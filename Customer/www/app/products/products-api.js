@@ -32,12 +32,10 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
       });
       return defer.promise;
     };
-    ProductsAPI.makeRequest = function(productId) {
+    ProductsAPI.makeRequest = function(params) {
       var defer;
       defer = $q.defer();
-      $http.post('functions/makeRequest', {
-        "productId": productId
-      }).then(function(data) {
+      $http.post('functions/makeRequest', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);
