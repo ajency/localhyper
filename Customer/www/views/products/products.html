@@ -7,7 +7,7 @@
 	<ion-content class="sub-categories product-list">
 
 		<ion-refresher
-			on-refresh="view.onPullToRefresh()">
+			on-refresh="view.onPullToRefresh()" class="aj-refresher">
 		</ion-refresher>
 
 		<ion-list>
@@ -37,8 +37,8 @@
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
 			ng-if="view.canLoadMore"
-			distance="1%">
-		</ion-infinite-scroll>
+			distance="1%" class="aj-refresher">
+		</ion-infinite-scroll >
 
 	</ion-content>
 
