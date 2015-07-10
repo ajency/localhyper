@@ -77,7 +77,7 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
-          return App.navigate('requests', {}, {
+          return App.navigate('new-requests', {}, {
             animate: true,
             back: false
           });
