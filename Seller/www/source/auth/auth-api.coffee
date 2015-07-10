@@ -148,7 +148,7 @@ angular.module 'LocalHyper.auth'
 				user = new Parse.User()
 				user.set 
 					"userType": "seller"
-					"username": info.phone
+					"username": phone
 					"displayName": info.displayName
 					"password": password
 					"passwordHash": @encryptPassword(password, phone)

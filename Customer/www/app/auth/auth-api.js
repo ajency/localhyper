@@ -1,5 +1,5 @@
 angular.module('LocalHyper.auth').factory('AuthAPI', [
-  '$q', 'App', '$http', '$rootScope', function($q, App, $http, $rootScope) {
+  '$q', 'App', '$http', '$rootScope', 'User', function($q, App, $http, $rootScope, User) {
     var AuthAPI, UUID;
     UUID = App.deviceUUID();
     AuthAPI = {};
@@ -20,19 +20,40 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       decrypted = CryptoJS.AES.decrypt(passwordHash, key);
       return decrypted.toString(CryptoJS.enc.Utf8);
     };
-    AuthAPI.register = function(user) {
-      var defer, name, phone;
+    AuthAPI.isExistingUser = function(user) {
+      var defer, phone;
       defer = $q.defer();
       phone = user.phone.toString();
-      name = user.name;
       user = new Parse.Query(Parse.User);
       user.equalTo("username", phone);
       user.find().then((function(_this) {
         return function(userObj) {
+          var data;
+          data = {};
           if (_.isEmpty(userObj)) {
-            return _this.signUpNewUser(phone, name);
+            data.existing = false;
           } else {
-            return _this.loginExistingUser(phone, name, userObj);
+            data.existing = true;
+            data.userObj = userObj;
+          }
+          return defer.resolve(data);
+        };
+      })(this), (function(_this) {
+        return function(error) {
+          return _this.onParseJsError(defer, error);
+        };
+      })(this));
+      return defer.promise;
+    };
+    AuthAPI.register = function(user) {
+      var defer;
+      defer = $q.defer();
+      this.isExistingUser(user).then((function(_this) {
+        return function(data) {
+          if (!data.existing) {
+            return _this.signUpNewUser();
+          } else {
+            return _this.loginExistingUser(data.userObj);
           }
         };
       })(this)).then(function(success) {
@@ -44,9 +65,20 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       })(this));
       return defer.promise;
     };
-    AuthAPI.loginExistingUser = function(phone, name, userObj) {
-      var defer, newPassword, oldPassword, oldPasswordhash;
+    AuthAPI.getUserDetails = function() {
+      var data, user;
+      user = User.info('get');
+      data = {
+        phone: user.phone,
+        displayName: user.name
+      };
+      return data;
+    };
+    AuthAPI.loginExistingUser = function(userObj) {
+      var defer, info, newPassword, oldPassword, oldPasswordhash, phone;
       defer = $q.defer();
+      info = this.getUserDetails();
+      phone = info.phone;
       newPassword = '';
       userObj = userObj[0];
       oldPasswordhash = userObj.get('passwordHash');
@@ -60,7 +92,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           newPasswordHash = _this.encryptPassword(newPassword, phone);
           return App.getInstallationId().then(function(installationId) {
             return user.save({
-              "displayName": name,
+              "displayName": info.displayName,
               "password": newPassword,
               "passwordHash": newPasswordHash,
               "installationId": installationId
@@ -81,20 +113,22 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       return defer.promise;
     };
     AuthAPI.signUpNewUser = function(phone, name) {
-      var defer, password;
+      var defer, info, password;
       defer = $q.defer();
+      info = this.getUserDetails();
+      phone = info.phone;
       password = "" + phone + UUID;
       App.getInstallationId().then((function(_this) {
         return function(installationId) {
           var user;
           user = new Parse.User();
           user.set({
-            "username": phone,
-            "displayName": name,
-            "password": password,
-            "installationId": installationId,
             "userType": "customer",
-            "passwordHash": _this.encryptPassword(password, phone)
+            "username": phone,
+            "displayName": info.displayName,
+            "password": password,
+            "passwordHash": _this.encryptPassword(password, phone),
+            "installationId": installationId
           });
           return user.signUp();
         };
