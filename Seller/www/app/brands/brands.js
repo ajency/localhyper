@@ -76,10 +76,12 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
               _.each(_this.categoryChains, function(chains, index) {
                 if (chains.subCategory.id === SubCategory.id) {
                   existingChain = true;
-                  return _this.categoryChains[index].brands = selectedBrands;
+                  if (_.size(selectedBrands) > 0) {
+                    return _this.categoryChains[index].brands = selectedBrands;
+                  }
                 }
               });
-              if (!existingChain) {
+              if (!existingChain && _.size(chain.brands) > 0) {
                 _this.categoryChains.push(chain);
               }
               CategoriesAPI.categoryChains('set', _this.categoryChains);

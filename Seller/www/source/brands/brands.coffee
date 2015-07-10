@@ -71,9 +71,10 @@ angular.module 'LocalHyper.brands', []
 						_.each @categoryChains, (chains, index)=>
 							if chains.subCategory.id is SubCategory.id
 								existingChain = true
-								@categoryChains[index].brands = selectedBrands
+								if _.size(selectedBrands) > 0
+									@categoryChains[index].brands = selectedBrands
 						
-						if !existingChain
+						if !existingChain and _.size(chain.brands) > 0
 							@categoryChains.push chain
 							
 						CategoriesAPI.categoryChains 'set', @categoryChains
