@@ -45,6 +45,22 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
 
     request.set "productId", productObj  
 
+    # set category
+    categoryObj =
+        "__type" : "Pointer",
+        "className":"Category",
+        "objectId":categoryId                    
+
+    request.set "category", categoryObj    
+
+    # set brand
+    brandObj =
+        "__type" : "Pointer",
+        "className":"Brand",
+        "objectId":brandId                    
+
+    request.set "brand", brandObj       
+
     request.save()
         .then (requestObject)->
 
@@ -128,8 +144,13 @@ Parse.Cloud.define 'getNewRequests' ,(request, reponse) ->
     currentTimeStamp = request.params.currentTimeStamp
     status = "open"
 
-    requestQuery = new Parse.Query("Request")
+    # query to get specific category
+    innerCategoryQuery = new Parse.Query("Category")
+    innerCategoryQuery.equalTo("objectId",categoryId)
 
+    # query to get products matching the child category
+    requestQuery = new Parse.Query("Request")
+    requestQuery.matchesQuery("category", innerQuery)    
 
 
 

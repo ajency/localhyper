@@ -355,7 +355,7 @@
   });
 
   Parse.Cloud.define('makeRequest', function(request, response) {
-    var Request, address, area, brandId, categoryId, city, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
+    var Request, address, area, brandId, brandObj, categoryId, categoryObj, city, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
     customerId = request.params.customerId;
     productId = request.params.productId;
     categoryId = request.params.categoryId;
@@ -388,6 +388,18 @@
       "objectId": productId
     };
     request.set("productId", productObj);
+    categoryObj = {
+      "__type": "Pointer",
+      "className": "Category",
+      "objectId": categoryId
+    };
+    request.set("category", categoryObj);
+    brandObj = {
+      "__type": "Pointer",
+      "className": "Brand",
+      "objectId": brandId
+    };
+    request.set("brand", brandObj);
     return request.save().then(function(requestObject) {
       var createdRequestId, sellersArray;
       createdRequestId = requestObject.id;
@@ -446,7 +458,7 @@
   });
 
   Parse.Cloud.define('getNewRequests', function(request, reponse) {
-    var brandId, categoryId, city, currentTimeStamp, requestQuery, sellerId, sellerLocation, sellerRadius, status;
+    var brandId, categoryId, city, currentTimeStamp, innerCategoryQuery, requestQuery, sellerId, sellerLocation, sellerRadius, status;
     sellerId = request.params.sellerId;
     categoryId = request.params.categoryId;
     brandId = request.params.brandId;
@@ -455,7 +467,10 @@
     sellerRadius = request.params.sellerRadius;
     currentTimeStamp = request.params.currentTimeStamp;
     status = "open";
-    return requestQuery = new Parse.Query("Request");
+    innerCategoryQuery = new Parse.Query("Category");
+    innerCategoryQuery.equalTo("objectId", categoryId);
+    requestQuery = new Parse.Query("Request");
+    return requestQuery.matchesQuery("category", innerQuery);
   });
 
   getCategoryBasedSellers = function(geoPoint, categoryId, brandId, city, area) {
