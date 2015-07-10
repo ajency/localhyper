@@ -7,7 +7,10 @@
 	background-color: #f05868;
 }
 
-
+.platform-android .bar .title {
+  font-size: 14px;
+  line-height: 44px;
+}
 
 /*.aj-img{
 	height: 250px;
@@ -75,6 +78,10 @@
     border: none;
     height: 2px;
     background-color: #000;
+}
+.checkbox input:checked+.checkbox-icon:before, .checkbox input:checked:before {
+   background: #f35a59 !important;
+  border-color: #f35a59!important;
 }
 
 /*Ionic popover*/

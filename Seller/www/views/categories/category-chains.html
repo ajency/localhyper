@@ -1,0 +1,40 @@
+<ion-view
+	view-title="Category Chains"
+	ng-init="view.init()">
+
+	<ion-nav-buttons side="right">
+		<button 
+			class="button"
+			ng-click="App.navigate('verify-begin')">
+			Next
+		</button>
+	</ion-nav-buttons>
+
+	<ion-content>
+
+		<h4>Your business categories are</h4>
+		</br>
+
+		<ion-list>
+
+			<ion-item 
+				class="item-text-wrap item-icon-right"
+				ng-repeat="chains in view.categoryChains">
+
+				<i class="icon ion-close-circled"></i>
+
+				{{chains.category.name}} > {{chains.subCategory.name}} > {{view.getBrands(chains.brands)}}
+			</ion-item>
+
+		</ion-list>
+		
+		</br>
+		<h4>There should always be atleast one category chain selected</h4>
+		<button 
+			class="button button-block button-dark"
+			ng-click="App.navigate('categories')">
+			Add more
+		</button>
+
+	</ion-content>
+</ion-view>

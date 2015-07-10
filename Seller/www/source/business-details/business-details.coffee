@@ -5,9 +5,9 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User)->
 
 		$scope.view = 
-			businessName: ''
-			userName: ''
-			phone: ''
+			businessName: 'Ajency'
+			userName: 'Deepak'
+			phone: '9765436351'
 			map: null
 			marker: null
 			latLng: null
@@ -18,6 +18,9 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 			deliveryRadius: 2
 			terms: false
 			addressConfirmed: false
+
+			init : ->
+				@getCurrentLocation()
 
 			onMapCreated : (map)->
 				@map = map
@@ -81,11 +84,11 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 						latitude: @latLng.lat()
 						longitude: @latLng.lng()
 					User.info 'set', $scope.view
+					App.navigate 'categories'
 		
 		
 		$scope.$on '$ionicView.enter', ->
 			App.hideSplashScreen()
-			$scope.view.getCurrentLocation()
 ]
 
 
@@ -96,12 +99,12 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 		.state 'business-details',
 			url: '/business-details'
 			parent: 'main'
-			cache: false
 			views: 
 				"appContent":
 					controller: 'BusinessDetailsCtrl'
 					templateUrl: 'views/business-details/business-details.html'
 					resolve:
 						Maps : (GoogleMaps)->
-							GoogleMaps.loadScript()
+							if typeof google is "undefined"
+								GoogleMaps.loadScript()
 ]

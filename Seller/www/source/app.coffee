@@ -3,7 +3,7 @@
 angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage'
 	, 'LocalHyper.auth', 'LocalHyper.businessDetails', 'LocalHyper.main'
-	, 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.googleMaps']
+	, 'LocalHyper.categories', 'LocalHyper.brands', 'LocalHyper.googleMaps']
 
 
 .run ['$rootScope', 'App', 'Push', '$timeout', ($rootScope, App, Push, $timeout)->
@@ -23,12 +23,13 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		App.currentState  = to.name
 
 		#Enable/disable menu & show/hide notification icon
-		hideForStates = ['tutorial', 'business-details', 'verify-begin', 'verify-auto', 'verify-manual']
+		hideForStates = ['tutorial', 'business-details', 'verify-begin', 'verify-auto'
+						, 'verify-manual', 'categories', 'sub-categories', 'brands']
 		bool = !_.contains(hideForStates, App.currentState)
 		App.menuEnabled.left  = bool
 		App.notification.icon = bool
 
-		App.logo.small = App.currentState isnt 'categories'
+		# App.logo.small = App.currentState isnt 'categories'
 ]
 
 
