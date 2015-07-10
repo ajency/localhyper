@@ -468,7 +468,7 @@
     sellerQuery = new Parse.Query(Parse.User);
     sellerQuery.equalTo("objectId", sellerId);
     return sellerQuery.first().then(function(sellerObject) {
-      var currentDate, currentTimeStamp, expiryValueInHrs, queryDate, requestQuery, sellerBrands, sellerCategories, time24HoursAgo;
+      var currentDate, currentTimeStamp, expiryValueInHrs, queryDate, requestQuery, sellerBrands, sellerCategories, sellerGeoPoint, time24HoursAgo;
       sellerCategories = sellerObject.get("supportedCategories");
       sellerBrands = sellerObject.get("supportedBrands");
       requestQuery = new Parse.Query("Request");
@@ -484,8 +484,10 @@
       time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
       queryDate.setTime(time24HoursAgo);
       requestQuery.greaterThanOrEqualTo("createdAt", queryDate);
-      return requestQuery.find().then(function(requests) {
-        return response.success(requests);
+      sellerGeoPoint = new Parse.GeoPoint(sellerLocation);
+      requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
+      return requestQuery.find().then(function(filteredRequests) {
+        return response.success(filteredRequests);
       }, function(error) {
         return response.error(error);
       });

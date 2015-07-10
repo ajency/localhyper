@@ -173,9 +173,13 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
 
         requestQuery.greaterThanOrEqualTo( "createdAt", queryDate )
 
+        # requests within catchment area
+        sellerGeoPoint = new Parse.GeoPoint sellerLocation
+        requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
+
         requestQuery.find()
-        .then (requests) ->
-            response.success (requests)
+        .then (filteredRequests) ->
+            response.success filteredRequests   
         , (error) ->
             response.error (error)
     , (error) ->
