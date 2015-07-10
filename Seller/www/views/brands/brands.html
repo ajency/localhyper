@@ -1,7 +1,7 @@
 <ion-view ng-init="view.init()">
 
 	<ion-nav-title>
-		{{view.title}}
+		SELECT BRANDS
     </ion-nav-title>
 
     <ion-nav-buttons side="right">
@@ -11,7 +11,11 @@
 			Done
 		</button>
 	</ion-nav-buttons>
-
+<ion-header>
+<div class="bar bar-subheader bar-dark">
+  <h2 class="title m-title">{{view.title}}</h2>
+</div>
+</ion-header>
 	<ion-content 
 		class="brands sub-categories"
 		ng-switch="view.display">
@@ -21,6 +25,7 @@
 			ng-switch-when="loader">
 		</ion-spinner>
 
+<br><br>
 		<ion-list ng-switch-when="noError">
 			<div 
 				class="col col-50 border-card"
