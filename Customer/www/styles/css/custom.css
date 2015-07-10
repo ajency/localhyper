@@ -39,8 +39,11 @@ h6 {
 .bg-white {
   background: #ffffff !important;
 }
+.m-title {
+  font-size: 16px !important;
+}
 .normal {
-  font-weight: 600;
+  font-weight: 600 !important;
 }
 .strike {
   text-decoration: line-through;
@@ -383,6 +386,14 @@ sm {
 }
 .aj-sp-img {
   margin: 6% auto;
+}
+.model-view {
+  min-height: 22rem;
+  bottom: 0px;
+  top: inherit;
+}
+.model-view .has-header {
+  background: #ffffff;
 }
 /************************************/
 /* TABS  */
