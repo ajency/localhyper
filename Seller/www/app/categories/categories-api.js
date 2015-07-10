@@ -39,8 +39,6 @@ angular.module('LocalHyper.categories').factory('CategoriesAPI', [
       switch (action) {
         case 'set':
           return categoryChains = data;
-        case 'unset':
-          return categoryChains = data;
         case 'get':
           return categoryChains;
       }
