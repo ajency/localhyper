@@ -35,8 +35,8 @@ angular.module 'LocalHyper.common'
 	
 	CDialog = {}
 
-	CDialog.prompt = (message)->
+	CDialog.confirm = (title, message, buttons)->
+		$cordovaDialogs.confirm message, title, buttons
 
 	CDialog
 ]
-
