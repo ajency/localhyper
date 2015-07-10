@@ -171,7 +171,7 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
         time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
         queryDate.setTime(time24HoursAgo)
 
-        # requestQuery.lessThanOrEqualTo( "createdAt", queryDate )
+        requestQuery.greaterThanOrEqualTo( "createdAt", queryDate )
 
         requestQuery.find()
         .then (requests) ->

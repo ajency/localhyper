@@ -483,6 +483,7 @@
       queryDate = new Date();
       time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
       queryDate.setTime(time24HoursAgo);
+      requestQuery.greaterThanOrEqualTo("createdAt", queryDate);
       return requestQuery.find().then(function(requests) {
         return response.success(requests);
       }, function(error) {
