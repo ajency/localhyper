@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.auth'
 
 
-.controller 'VerifyAutoCtrl', ['$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout'
-	, ($scope, App, SmsAPI, AuthAPI, User, $timeout)->
+.controller 'VerifyAutoCtrl', ['$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout', 'CToast'
+	, ($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast)->
 
 		$scope.view =
 			display: 'noError'
@@ -25,6 +25,19 @@ angular.module 'LocalHyper.auth'
 
 			cancelTimeout : ->
 				$timeout.cancel @timeout
+
+			isExistingUser : ->
+				AuthAPI.getUserDetails()
+				AuthAPI.isExistingUser @user
+				.then (data)=>
+					if data.existing
+						if data.userObj[0].get('userType') is 'customer'
+							@display = 'noError'
+							CToast.show 'Sorry, you are already a registered customer'
+						else @requestSMSCode()
+					else @requestSMSCode()
+				, (error)=>
+					@onError error, 'isExistingUser'
 
 			requestSMSCode : ->
 				@startTimeout()
@@ -76,6 +89,8 @@ angular.module 'LocalHyper.auth'
 			onTapToRetry : ->
 				@display = 'noError'
 				switch @errorAt
+					when 'isExistingUser'
+						@isExistingUser()
 					when 'requestSMSCode'
 						@requestSMSCode()
 					when 'verifySmsCode'
@@ -88,7 +103,7 @@ angular.module 'LocalHyper.auth'
 
 		$scope.$on '$ionicView.enter', ->
 			$scope.view.startSmsReception()
-			$scope.view.requestSMSCode()
+			$scope.view.isExistingUser()
 
 		$scope.$on '$ionicView.leave', ->
 			$scope.view.stopSmsReception()

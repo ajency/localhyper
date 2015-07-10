@@ -1,5 +1,5 @@
 angular.module('LocalHyper.auth').factory('AuthAPI', [
-  '$q', 'App', '$http', '$rootScope', function($q, App, $http, $rootScope) {
+  '$q', 'App', '$http', '$rootScope', 'User', function($q, App, $http, $rootScope, User) {
     var AuthAPI, UUID;
     UUID = App.deviceUUID();
     AuthAPI = {};
@@ -20,7 +20,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       decrypted = CryptoJS.AES.decrypt(passwordHash, key);
       return decrypted.toString(CryptoJS.enc.Utf8);
     };
-    AuthAPI.register = function(user) {
+    AuthAPI.isExistingUser = function(user) {
       var defer, name, phone;
       defer = $q.defer();
       phone = user.phone.toString();
@@ -29,13 +29,35 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       user.equalTo("username", phone);
       user.find().then((function(_this) {
         return function(userObj) {
+          var data;
+          data = {};
           if (_.isEmpty(userObj)) {
-            return _this.signUpNewUser(phone, name);
+            data.existing = false;
           } else {
-            return _this.loginExistingUser(phone, name, userObj);
+            data.existing = true;
+            data.userObj = userObj;
           }
+          return defer.resolve(data);
         };
-      })(this)).then(function(success) {
+      })(this), (function(_this) {
+        return function(error) {
+          return _this.onParseJsError(defer, error);
+        };
+      })(this));
+      return defer.promise;
+    };
+    AuthAPI.register = function(user) {
+      var defer, name, phone;
+      defer = $q.defer();
+      phone = user.phone.toString();
+      name = user.name;
+      this.isExistingUser().then(function(data) {
+        if (!data.existing) {
+          return this.signUpNewUser(phone, name);
+        } else {
+          return this.loginExistingUser(phone, name, data.userObj);
+        }
+      }).then(function(success) {
         return defer.resolve(success);
       }, (function(_this) {
         return function(error) {
@@ -43,6 +65,24 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
         };
       })(this));
       return defer.promise;
+    };
+    AuthAPI.getUserDetails = function() {
+      var addressGeoPoint, data, user;
+      user = User.info('get');
+      console.log(user);
+      addressGeoPoint = new Parse.GeoPoint({
+        latitude: user.geoCode.latitude,
+        longitude: user.geoCode.longitude
+      });
+      return data = {
+        addressGeoPoint: addressGeoPoint,
+        address: user.address,
+        city: user.address.city,
+        area: user.address.city,
+        deliveryRadius: user.deliveryRadius,
+        businessName: user.businessName,
+        displayName: user.name
+      };
     };
     AuthAPI.loginExistingUser = function(phone, name, userObj) {
       var defer, newPassword, oldPassword, oldPasswordhash;

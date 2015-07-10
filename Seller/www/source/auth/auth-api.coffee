@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.auth'
 
 
-.factory 'AuthAPI', ['$q', 'App', '$http', '$rootScope', ($q, App, $http, $rootScope)->
+.factory 'AuthAPI', ['$q', 'App', '$http', '$rootScope', 'User', ($q, App, $http, $rootScope, User)->
 
 	UUID = App.deviceUUID()
 	AuthAPI = {}
@@ -20,7 +20,7 @@ angular.module 'LocalHyper.auth'
 		decrypted = CryptoJS.AES.decrypt passwordHash, key
 		decrypted.toString CryptoJS.enc.Utf8
 
-	AuthAPI.register = (user)->
+	AuthAPI.isExistingUser = (user)->
 		defer = $q.defer()
 		phone = user.phone.toString()
 		name  = user.name
@@ -29,14 +29,50 @@ angular.module 'LocalHyper.auth'
 		user.equalTo "username", phone
 		user.find()
 		.then (userObj)=>
-			if _.isEmpty(userObj) then @signUpNewUser(phone, name)
-			else @loginExistingUser(phone, name, userObj)
+			data = {}
+			if _.isEmpty userObj
+				data.existing = false
+			else
+				data.existing = true
+				data.userObj = userObj
+			defer.resolve data
+
+		, (error)=>
+			@onParseJsError defer, error
+
+		defer.promise
+
+	AuthAPI.register = (user)->
+		defer = $q.defer()
+		phone = user.phone.toString()
+		name  = user.name
+
+		@isExistingUser()
+		.then (data)->
+			if !data.existing then @signUpNewUser(phone, name)
+			else @loginExistingUser(phone, name, data.userObj)
 		.then (success)->
 			defer.resolve success
 		, (error)=>
 			@onParseJsError defer, error
 
 		defer.promise
+
+	AuthAPI.getUserDetails = ->
+		user = User.info 'get'
+		console.log user
+		addressGeoPoint = new Parse.GeoPoint 
+			latitude: user.geoCode.latitude, longitude: user.geoCode.longitude
+		
+		data = 
+			addressGeoPoint: addressGeoPoint
+			address: user.address
+			city: user.address.city
+			area: user.address.city
+			deliveryRadius: user.deliveryRadius
+			businessName: user.businessName
+			displayName: user.name
+
 
 	AuthAPI.loginExistingUser = (phone, name, userObj)->
 		defer = $q.defer()

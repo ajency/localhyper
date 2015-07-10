@@ -1,6 +1,6 @@
-<ion-view
+<ion-view 
 	view-title="Category Chains"
-	ng-init="view.init()">
+	ng-init="view.setCategoryChains()">
 
 	<ion-nav-buttons side="right">
 		<button 
@@ -21,7 +21,10 @@
 				class="item-text-wrap item-icon-right"
 				ng-repeat="chains in view.categoryChains">
 
-				<i class="icon ion-close-circled"></i>
+				<i 
+					class="icon ion-close-circled"
+					ng-click="view.removeItemFromChains(chains.subCategory.id)">
+				</i>
 
 				{{chains.category.name}} > {{chains.subCategory.name}} > {{view.getBrands(chains.brands)}}
 			</ion-item>
@@ -32,7 +35,7 @@
 		<h4>There should always be atleast one category chain selected</h4>
 		<button 
 			class="button button-block button-dark"
-			ng-click="App.navigate('categories')">
+			ng-click="App.goBack(-3)">
 			Add more
 		</button>
 

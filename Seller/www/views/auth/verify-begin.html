@@ -1,4 +1,6 @@
-<ion-view view-title="Verify your phone number">
+<ion-view 
+	view-title="Verify your phone number"
+	ng-init="user.setDetails()">
 
 	<ion-content class="aj-text">
 
@@ -24,7 +26,8 @@
 					<input 
 						type="tel" 
 						minlength="10" 
-						maxlength="10" 
+						maxlength="10"
+						ng-pattern="App.onlyNumbers"
 						ng-model="user.phone">
 				</label>
 			</div>

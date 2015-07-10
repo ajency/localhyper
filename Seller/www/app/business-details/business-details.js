@@ -2,7 +2,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
   '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User) {
     $scope.view = {
       businessName: 'Ajency',
-      userName: 'Deepak',
+      name: 'Deepak',
       phone: '9765436351',
       map: null,
       marker: null,
@@ -87,7 +87,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
         }
       },
       onNext: function() {
-        if (_.contains([this.businessName, this.userName, this.phone], '')) {
+        if (_.contains([this.businessName, this.name, this.phone], '')) {
           return CToast.show('Fill up all fields');
         } else if (_.isUndefined(this.phone)) {
           return CToast.show('Please enter valid phone number');

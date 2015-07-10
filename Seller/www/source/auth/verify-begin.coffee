@@ -8,6 +8,11 @@ angular.module 'LocalHyper.auth'
 			name: ''
 			phone: ''
 
+			setDetails : ->
+				userInfo = User.info 'get'
+				@name = userInfo.name
+				@phone = userInfo.phone
+
 			onProceed : ->
 				if _.contains [@name, @phone], ''
 					CToast.show 'Fill up all fields'

@@ -5,14 +5,25 @@ angular.module 'LocalHyper.categories'
 	, ($scope, App, CategoriesAPI)->
 
 		$scope.view = 
-			categoryChains : CategoriesAPI.categoryChains('get')
+			categoryChains : null
 
-			init : ->
-				console.log CategoriesAPI.categoryChains('get')
+			setCategoryChains : ->
+				@categoryChains = CategoriesAPI.categoryChains('get')
 
 			getBrands : (brands)->
 				brandNames = _.pluck brands, 'name'
 				brandNames.join ', '
+
+			removeItemFromChains : (subCategoryId)->
+				@setCategoryChains()
+				_.each @categoryChains, (chains, index)=>
+					if chains.subCategory.id is subCategoryId
+						@categoryChains.splice index, 1
+
+				if _.isEmpty(@categoryChains)
+					App.goBack -3
+				else
+					CategoriesAPI.categoryChains 'set', @categoryChains
 ]
 
 
