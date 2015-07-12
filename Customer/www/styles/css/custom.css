@@ -108,13 +108,6 @@ sm {
 .upper-case {
   text-transform: uppercase;
 }
-.arrow-link {
-  float: right;
-  font-size: 23px;
-  -ms-transform: rotate(90deg);
-  -webkit-transform: rotate(90deg);
-  transform: rotate(90deg);
-}
 .input-border {
   border-bottom: 1px solid #000000 !important;
 }
@@ -311,10 +304,6 @@ sm {
   border-bottom: 1px solid #cccccc;
   height: 15rem;
   float: left;
-}
-.sub-categories .border-card h3 {
-  font-size: 14px;
-  font-weight: 400;
 }
 .sub-categories .border-card .title {
   height: 39px;
