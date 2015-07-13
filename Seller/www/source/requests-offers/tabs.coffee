@@ -7,6 +7,7 @@ angular.module 'LocalHyper.requestsOffers', []
 
 		.state 'tabs',
 			url: "/tab"
+			abstract: true
 			parent: 'main'
 			views: 
 				"appContent":
