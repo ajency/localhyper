@@ -653,7 +653,8 @@
             radius: radiusDiffInKm,
             product: product,
             category: category,
-            brand: brand
+            brand: brand,
+            createdAt: filteredRequest.createdAt
           };
           return requests.push(requestObj);
         });

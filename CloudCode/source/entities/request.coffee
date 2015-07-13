@@ -206,6 +206,8 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
         requestQuery.include("category.parent_category")
         requestQuery.include("brand")
 
+        # @todo exclude requests if offer is already made
+
         requestQuery.find()
         .then (filteredRequests) ->
 
@@ -244,6 +246,7 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
                     product: product
                     category: category
                     brand: brand
+                    createdAt: filteredRequest.createdAt
 
                 requests.push requestObj
 
