@@ -96,7 +96,7 @@
 
 
 .platform-ios .popover {
-	height: 120px;
+   height: 180px !important;
 }
 
 .aj-btn {
