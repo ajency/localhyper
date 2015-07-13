@@ -470,6 +470,9 @@ sm {
 .tabs .tab-item {
   font-size: 12px;
 }
+.tab-item-active {
+  border-bottom: 1px solid #000000;
+}
 .card-list .card {
   padding: 0px;
 }
