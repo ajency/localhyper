@@ -199,20 +199,58 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
         sellerGeoPoint = new Parse.GeoPoint sellerLocation
         requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
 
-        requestQuery.select("address,addressGeoPoint,area,product,city,customerId")
+        requestQuery.select("address,addressGeoPoint,category,brand,product,customerId")
 
         requestQuery.include("product")
-        requestQuery.include("product.brand")
-        requestQuery.include("product.category")
+        requestQuery.include("category")
+        requestQuery.include("category.parent_category")
+        requestQuery.include("brand")
 
         requestQuery.find()
         .then (filteredRequests) ->
+
+            # Product name
+            # mrp
+            # parent category name
+            # sub category name
+            # brand name
+
+            requests = []
+            _.each filteredRequests , (filteredRequest) ->
+                prodObj = filteredRequest.get("product")
+                product =
+                    "id": prodObj.id
+                    "name":prodObj.get("name")
+                    "mrp":prodObj.get("mrp")
+
+                categoryObj = filteredRequest.get("category")
+                category =
+                    "id" : categoryObj.id
+                    "name": categoryObj.get("name")
+                    "parent": (categoryObj.get("parent_category")).get("name")
+
+                brandObj = filteredRequest.get("brand")
+                brand =
+                    "id" : brandObj.id
+                    "name": brandObj.get("name")                    
+
+                requestObj = 
+                    id : filteredRequest.id
+                    product: product
+                    category: category
+                    brand: brand
+
+                requests.push requestObj
+
+
+            
             requestsResult = 
                 "city" : city
                 "area" : area
                 "radius" : sellerRadius
                 "location" : sellerLocation
-                "requests" : filteredRequests
+                "requests" : requests
+
             response.success requestsResult   
         , (error) ->
             response.error (error)
