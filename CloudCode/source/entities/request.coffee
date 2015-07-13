@@ -96,6 +96,11 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
                                 "className":"_User",
                                 "objectId":locationBasedSellerId  
 
+                            requestObject = 
+                                "__type" : "Pointer",
+                                "className":"Request",
+                                "objectId":requestObject.id                                 
+
                             # create entry in notification class with recipient as the seller
                             notificationData = 
                                 hasSeen: false
@@ -103,7 +108,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
                                 channel : 'push'
                                 processed : false
                                 type : "Request"
-                                typeId : requestObject.id
+                                requestObject : requestObject
 
                             Notification = Parse.Object.extend("Notification") 
                             notification = new Notification notificationData
@@ -142,7 +147,7 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
     city = request.params.city
     area = request.params.area
     sellerLocation =  request.params.sellerLocation
-    sellerRadius = parseInt request.params.sellerRadius
+    sellerRadius = request.params.sellerRadius
         
     status = "open"
 
@@ -154,6 +159,23 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
     .then (sellerObject) ->
         sellerCategories = sellerObject.get("supportedCategories")
         sellerBrands = sellerObject.get("supportedBrands")
+
+        if city is 'default'
+            city = sellerObject.get("city")
+
+        if area is 'default'
+            area = sellerObject.get("area")
+
+        if  sellerLocation is 'default'
+            sellerLocation =  sellerObject.get("addressGeoPoint")
+        else
+            sellerLocation =  request.params.sellerLocation
+
+        if sellerRadius is 'default'
+            sellerRadius = sellerObject.get("deliveryRadius")
+        else
+            sellerRadius = parseInt request.params.sellerRadius
+        
 
         requestQuery = new Parse.Query("Request")
         requestQuery.containedIn("category",sellerCategories)
@@ -179,23 +201,20 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
 
         requestQuery.find()
         .then (filteredRequests) ->
-            response.success filteredRequests   
+            requests = 
+                "city" : city
+                "area" : area
+                "radius" : sellerRadius
+                "location" : sellerLocation
+                "requests" : filteredRequests
+            response.success requests   
         , (error) ->
             response.error (error)
     , (error) ->
         response.error (error)
 
 
-getFilteredRequests = (filters,className)->
-    query = new Parse.Query(className)
 
-    # get filter keys and append constraints on the query accordingly
-    filterKeys = _.allKeys(filters)
-
-    _.each filterKeys , (filterKey) ->
-        query.equalTo(filterKey,filters[filterKey])
-
-    query.find()
 
 
 

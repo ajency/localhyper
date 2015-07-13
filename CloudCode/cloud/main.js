@@ -1,5 +1,5 @@
 (function() {
-  var _, getAreaBoundSellers, getCategoryBasedSellers, getFilteredRequests, getPushData, treeify;
+  var _, getAreaBoundSellers, getCategoryBasedSellers, getPushData, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -174,16 +174,14 @@
         pushData = {
           header: pushOptions.title,
           message: pushOptions.alert,
-          request: pushOptions.request,
-          otherData: pushOptions.otherData
+          notificationData: pushOptions.notificationData
         };
       } else {
         pushData = {
           title: pushOptions.title,
           alert: pushOptions.alert,
-          request: pushOptions.request,
-          badge: 'Increment',
-          otherData: pushOptions.otherData
+          notificationData: pushOptions.notificationData,
+          badge: 'Increment'
         };
       }
       return promise.resolve(pushData);
@@ -198,14 +196,46 @@
     notificationQuery = new Parse.Query("Notification");
     notificationQuery.equalTo("processed", false);
     notificationQuery.include("recipientUser");
+    notificationQuery.include("requestObject");
+    notificationQuery.include("offerObject");
     return notificationQuery.find().then(function(pendingNotifications) {
+      var notificationQs;
+      notificationQs = [];
       _.each(pendingNotifications, function(pendingNotification) {
-        var channel, recipientUser;
+        var channel, obj, otherPushData, pushOptions, pushQuery, recipientUser, type, userInstallationId;
         channel = pendingNotification.get("channel");
-        recipientUser = (pendingNotification.get("recipientUser")).id;
+        recipientUser = pendingNotification.get("recipientUser");
+        userInstallationId = recipientUser.get("installationId");
+        type = pendingNotification.get("type");
+        if (type === "Request") {
+          obj = pendingNotification.get("requestObject");
+          otherPushData = {
+            "id": obj.id,
+            "type": "newRequest"
+          };
+        } else if (type === "Offer") {
+          obj = pendingNotification.get("offerObject");
+          otherPushData = {
+            "id": obj.id,
+            "type": "newOffer"
+          };
+        }
+        console.log(userInstallationId);
         switch (channel) {
           case 'push':
-            return console.log("push");
+            pushQuery = new Parse.Query(Parse.Installation);
+            pushQuery.equalTo("installationId", userInstallationId);
+            pushOptions = {
+              title: 'Shop Oye',
+              alert: 'New request for product',
+              notificationData: otherPushData
+            };
+            return getPushData(userInstallationId, pushOptions).then(function(pushData) {
+              return Parse.Push.send({
+                where: pushQuery,
+                data: pushData
+              });
+            });
           case 'sms':
             return console.log("send sms");
         }
@@ -463,13 +493,18 @@
                 "className": "_User",
                 "objectId": locationBasedSellerId
               };
+              requestObject = {
+                "__type": "Pointer",
+                "className": "Request",
+                "objectId": requestObject.id
+              };
               notificationData = {
                 hasSeen: false,
                 recipientUser: sellerObj,
                 channel: 'push',
                 processed: false,
                 type: "Request",
-                typeId: requestObject.id
+                requestObject: requestObject
               };
               Notification = Parse.Object.extend("Notification");
               notification = new Notification(notificationData);
@@ -498,7 +533,7 @@
     city = request.params.city;
     area = request.params.area;
     sellerLocation = request.params.sellerLocation;
-    sellerRadius = parseInt(request.params.sellerRadius);
+    sellerRadius = request.params.sellerRadius;
     status = "open";
     sellerQuery = new Parse.Query(Parse.User);
     sellerQuery.equalTo("objectId", sellerId);
@@ -506,6 +541,22 @@
       var currentDate, currentTimeStamp, expiryValueInHrs, queryDate, requestQuery, sellerBrands, sellerCategories, sellerGeoPoint, time24HoursAgo;
       sellerCategories = sellerObject.get("supportedCategories");
       sellerBrands = sellerObject.get("supportedBrands");
+      if (city === 'default') {
+        city = sellerObject.get("city");
+      }
+      if (area === 'default') {
+        area = sellerObject.get("area");
+      }
+      if (sellerLocation === 'default') {
+        sellerLocation = sellerObject.get("addressGeoPoint");
+      } else {
+        sellerLocation = request.params.sellerLocation;
+      }
+      if (sellerRadius === 'default') {
+        sellerRadius = sellerObject.get("deliveryRadius");
+      } else {
+        sellerRadius = parseInt(request.params.sellerRadius);
+      }
       requestQuery = new Parse.Query("Request");
       requestQuery.containedIn("category", sellerCategories);
       requestQuery.containedIn("brand", sellerBrands);
@@ -522,7 +573,15 @@
       sellerGeoPoint = new Parse.GeoPoint(sellerLocation);
       requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
       return requestQuery.find().then(function(filteredRequests) {
-        return response.success(filteredRequests);
+        var requests;
+        requests = {
+          "city": city,
+          "area": area,
+          "radius": sellerRadius,
+          "location": sellerLocation,
+          "requests": filteredRequests
+        };
+        return response.success(requests);
       }, function(error) {
         return response.error(error);
       });
@@ -530,16 +589,6 @@
       return response.error(error);
     });
   });
-
-  getFilteredRequests = function(filters, className) {
-    var filterKeys, query;
-    query = new Parse.Query(className);
-    filterKeys = _.allKeys(filters);
-    _.each(filterKeys, function(filterKey) {
-      return query.equalTo(filterKey, filters[filterKey]);
-    });
-    return query.find();
-  };
 
   getCategoryBasedSellers = function(geoPoint, categoryId, brandId, city, area) {
     var Brand, Category, brandPointer, categoryPointer, promise, sellerQuery;
@@ -574,7 +623,7 @@
     requestQuery.equalTo("objectId", createdRequestId);
     requestQuery.equalTo("customerId", customerObj);
     requestQuery.equalTo("status", "open");
-    requestQuery.near("addressGeoPoint", sellerGeoPoint);
+    requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
     promise = new Parse.Promise();
     requestQuery.find().then(function(requests) {
       if (requests.length === 0) {
