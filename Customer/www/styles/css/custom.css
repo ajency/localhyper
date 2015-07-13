@@ -108,13 +108,6 @@ sm {
 .upper-case {
   text-transform: uppercase;
 }
-.arrow-link {
-  float: right;
-  font-size: 23px;
-  -ms-transform: rotate(90deg);
-  -webkit-transform: rotate(90deg);
-  transform: rotate(90deg);
-}
 .input-border {
   border-bottom: 1px solid #000000 !important;
 }
@@ -171,6 +164,9 @@ sm {
 /************************************/
 /* Menu */
 /************************************/
+.aj-menu-bg .item {
+  font-size: 14px;
+}
 .sprite-icon {
   background: url(../../img/sprite.png) no-repeat;
   width: 30px;
@@ -306,15 +302,14 @@ sm {
 .sub-categories {
   background: #ffffff;
 }
+.sub-categories .border-card2 {
+  height: 14.6rem !important;
+}
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
-  height: 15rem;
+  height: 10rem;
   float: left;
-}
-.sub-categories .border-card h3 {
-  font-size: 14px;
-  font-weight: 400;
 }
 .sub-categories .border-card .title {
   height: 39px;

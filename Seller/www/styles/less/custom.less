@@ -17,6 +17,9 @@ h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, 
 h1, h2, h3, h4, h5, h6{
 	/*font-weight: 800;*/
 }
+.list{
+	  border-top: 1px solid #ccc
+}
 .bar-assertive{
 	background:@brand-primary !important;
 }
@@ -134,7 +137,7 @@ sm{
 	padding:0px;
 }
 .border-none{
-	border: 0px;
+	border: 0px !important;
 }
 /************************************/
 /* HEADER */
@@ -144,7 +147,7 @@ sm{
 	background:@gray-transperent;
 }
 .bar-header{
-	border-bottom:1px solid @gray-lighter !important;
+	border-bottom:1px solid @gray-lighter ;
 	.notification{
 		  height: 20px;
 		  width: 20px;
@@ -166,7 +169,7 @@ sm{
 	    background-color: @gray-dark;
 	}
 	.item{
-		  padding: 11px 54px;
+		    padding: 10px 49px;
 		i{
 			font-size: 22px;
 		}
@@ -176,7 +179,17 @@ sm{
 /************************************/
 /* Menu */
 /************************************/
-
+.aj-menu-bg {
+	sm{
+		  padding: 0px 1px 0px 19px;
+		  display: block;
+		  margin-top: -19px;
+		  color: #ccc;
+	}
+	.item{
+		font-size: 14px;
+	}
+}
 .sprite-icon{
 	  background: url(../../img/sprite.png)no-repeat;
 	  width: 30px;
@@ -223,11 +236,26 @@ sm{
 	 background-position: -61px -79px;
 }
 .i-popularity{
-	  width: 45px !important;
+     width: 45px !important;
 	.sprite-icon;
 	 background-position: -61px -160px;
 }
-
+.i-location{
+	.sprite-icon;
+	background-position: -9px -456px;
+}
+.i-category{
+	.sprite-icon;
+	background-position: -9px -502px;
+}
+.i-auto{
+	.sprite-icon;
+	background-position: -9px -408px;
+}
+.i-history{
+	.sprite-icon;
+	background-position: -9px -553px;
+}
 /************************************/
 /*Department List*/
 /************************************/
@@ -277,10 +305,13 @@ sm{
 
 .sub-categories {
 	background:@white;
+			.border-card2{
+ 		   height: 14.6rem !important;
+	}
 	.border-card{
 			   border-right: 1px solid @gray-lighter;
 	           border-bottom: 1px solid @gray-lighter;
-	           height: 15rem;
+	           height: 11rem;
 	           float: left;
          h3{
          	   font-size: 14px;

@@ -92,14 +92,6 @@ sm{
 .upper-case{
 	text-transform:uppercase;
 }
-.arrow-link{
-	float: right;
-	  font-size: 23px;
-	  -ms-transform: rotate(90deg);
-	  -webkit-transform: rotate(90deg);
-	  transform: rotate(90deg);
-
-}
 .input-border{
 	  border-bottom: 1px solid @black !important;
 	}
@@ -161,7 +153,11 @@ sm{
 /************************************/
 /* Menu */
 /************************************/
-
+.aj-menu-bg {
+	.item{
+		font-size: 14px;
+	}
+}
 .sprite-icon{
 	  background: url(../../img/sprite.png)no-repeat;
 	  width: 30px;
@@ -262,16 +258,14 @@ sm{
 
 .sub-categories {
 	background:@white;
+		.border-card2{
+ 		   height: 14.6rem !important;
+	}
 	.border-card{
 			   border-right: 1px solid @gray-lighter;
 	           border-bottom: 1px solid @gray-lighter;
-	           height: 15rem;
+	           height: 10rem;
 	           float: left;
-         h3{
-         	   font-size: 14px;
-         	   font-weight: 400;
-
-         }
          .title{
          	  height: 39px;
          	  font-weight: 400;
