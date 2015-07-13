@@ -97,7 +97,6 @@ sm {
 .center-block {
   margin: auto;
   display: block;
-  width: 100%;
 }
 .pull-left {
   float: left;
@@ -128,6 +127,9 @@ sm {
 }
 .border-none {
   border: 0px;
+}
+.aj-img {
+  height: 90px;
 }
 /************************************/
 /* HEADER */
@@ -305,13 +307,24 @@ sm {
   background: #ffffff;
 }
 .sub-categories .border-card2 {
-  height: 14.6rem !important;
+  height: 14rem !important;
+  background: url(../../img/gray-bg.png) 0px 70px no-repeat !important;
 }
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
-  height: 10rem;
+  height: 8rem;
   float: left;
+  background: url(../../img/gray-bg.png) no-repeat;
+  background-size: 100%;
+}
+.sub-categories .border-card .aj-title {
+  text-align: center;
+  position: absolute;
+  bottom: 0px;
+  margin: 10px auto;
+  left: 0%;
+  right: 0%;
 }
 .sub-categories .border-card .title {
   height: 39px;

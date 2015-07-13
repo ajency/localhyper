@@ -28,7 +28,7 @@
 <br><br>
 		<ion-list ng-switch-when="noError">
 			<div 
-				class="col col-50 border-card"
+				class="col col-50 border-card relative"
 				ng-repeat="brand in view.brands"
 				ng-init="brand.selected=false">
 				
@@ -36,7 +36,7 @@
 						ng-src="{{brand.image.src}}" 
 						class="aj-img center-block img-responsive m-t-20">
 
-					<h3 class="text-center ">
+					<h3 class="text-center aj-title">
 						{{brand.name}}
 					</h3>
 
