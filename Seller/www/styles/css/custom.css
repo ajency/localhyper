@@ -470,30 +470,43 @@ sm {
 .tabs .tab-item {
   font-size: 12px;
 }
-.btn-danger {
+.tab-item-active {
+  border-bottom: 1px solid #000000;
+}
+.card-list .card {
+  padding: 0px;
+}
+.card-list .card .big-txt {
+  font-size: 1.4rem;
+}
+.card-list .btn-danger {
   color: #f35a59;
 }
-.label {
+.card-list .label {
   border: 1px solid #ccc;
   padding: 0px 5px;
   font-size: 11px;
   color: #666666;
   display: inline-block;
 }
-.offer {
-  width: 45px;
-  height: 45px;
+.card-list .offer {
+  width: 42px;
+  height: 44px;
   border-radius: 100%;
-  border: 1px dashed #000;
+  border: 1px dashed #f35a59;
   text-align: center;
   font-size: 1.5rem;
   line-height: 39px;
-  margin: auto;
+  color: #f35a59;
+  margin: 5px auto;
 }
-.offertxt {
+.card-list .offertxt {
   background: #ffffff;
-  margin-top: -11px;
+  margin-top: -18px;
   text-align: center;
+}
+.item-avatar img {
+  border: 1px solid #ccc;
 }
 /************************************/
 /* Brands  */

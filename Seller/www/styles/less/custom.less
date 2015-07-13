@@ -425,32 +425,48 @@ sm{
 		font-size: 12px
 	}
 }
-.btn-danger{
-	color: @brand-primary
+.tab-item-active {
+	border-bottom: 1px solid @black;
 }
-.label{
-	  border: 1px solid #ccc;
-	  padding: 0px 5px;
-	  font-size: 11px;
-	  color: @gray;
-	  display: inline-block;
+.card-list{
+		.card{
+			padding: 0px;
+			.big-txt{
+				font-size: 1.4rem;
+			}
+		}
+	.btn-danger{
+		color: @brand-primary
+	}
+	.label{
+		  border: 1px solid #ccc;
+		  padding: 0px 5px;
+		  font-size: 11px;
+		  color: @gray;
+		  display: inline-block;
+	}
+	.offer{
+		  width: 42px;
+		  height: 44px;
+		  border-radius: 100%;
+		  border: 1px dashed @brand-primary;
+		  text-align: center;
+		  font-size: 1.5rem;
+		  line-height: 39px;
+		  color: @brand-primary;
+		  margin: 5px auto;
+	}
+	.offertxt{
+		  background: @white;
+	  	  margin-top: -18px;
+         text-align: center;
+	}
 }
-.offer{
-	  width: 45px;
-	  height: 45px;
-	  border-radius: 100%;
-	  border: 1px dashed #000;
-	  text-align: center;
-	  font-size: 1.5rem;
-	  line-height: 39px;
-	  margin: auto;
+.item-avatar {
+	img{
+		border: 1px solid #ccc;
+	}
 }
-.offertxt{
-	  background: @white;
-  	  margin-top: -11px;
-  	  text-align: center;
-}
-
 /************************************/
 /* Brands  */
 /************************************/
