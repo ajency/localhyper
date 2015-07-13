@@ -240,7 +240,11 @@
             return console.log("send sms");
         }
       });
-      return Parse.Promise.when(notificationQs).then(function() {});
+      return Parse.Promise.when(notificationQs).then(function() {
+        return response.success(arguments);
+      }, function(error) {
+        return response.error(error);
+      });
     }, function(error) {
       return response.error(error);
     });
@@ -581,12 +585,13 @@
         var requests, requestsResult;
         requests = [];
         _.each(filteredRequests, function(filteredRequest) {
-          var brand, brandObj, category, categoryObj, prodObj, product, requestObj;
+          var brand, brandObj, category, categoryObj, prodObj, product, radiusDiffInKm, requestObj, reuqestGeoPoint;
           prodObj = filteredRequest.get("product");
           product = {
             "id": prodObj.id,
             "name": prodObj.get("name"),
-            "mrp": prodObj.get("mrp")
+            "mrp": prodObj.get("mrp"),
+            "image": prodObj.get("images")
           };
           categoryObj = filteredRequest.get("category");
           category = {
@@ -599,8 +604,11 @@
             "id": brandObj.id,
             "name": brandObj.get("name")
           };
+          reuqestGeoPoint = filteredRequest.get("addressGeoPoint");
+          radiusDiffInKm = reuqestGeoPoint.kilometersTo(sellerGeoPoint);
           requestObj = {
             id: filteredRequest.id,
+            radius: radiusDiffInKm,
             product: product,
             category: category,
             brand: brand

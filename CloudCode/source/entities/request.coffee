@@ -222,6 +222,7 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
                     "id": prodObj.id
                     "name":prodObj.get("name")
                     "mrp":prodObj.get("mrp")
+                    "image":prodObj.get("images")
 
                 categoryObj = filteredRequest.get("category")
                 category =
@@ -232,10 +233,14 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
                 brandObj = filteredRequest.get("brand")
                 brand =
                     "id" : brandObj.id
-                    "name": brandObj.get("name")                    
+                    "name": brandObj.get("name")  
+
+                reuqestGeoPoint =  filteredRequest.get("addressGeoPoint")  
+                radiusDiffInKm =   reuqestGeoPoint.kilometersTo(sellerGeoPoint)            
 
                 requestObj = 
                     id : filteredRequest.id
+                    radius : radiusDiffInKm
                     product: product
                     category: category
                     brand: brand
