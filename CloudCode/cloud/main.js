@@ -1,5 +1,5 @@
 (function() {
-  var _, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, treeify;
+  var _, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, processPushNotifications, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -158,7 +158,7 @@
     })(this));
   });
 
-  getNotificationData = function(installationId, pushOptions) {
+  getNotificationData = function(notificationId, installationId, pushOptions) {
     var installationQuery, promise;
     promise = new Parse.Promise();
     installationQuery = new Parse.Query(Parse.Installation);
@@ -186,9 +186,39 @@
       }
       notificationObj = {
         pushData: pushData,
-        installationId: installationId
+        installationId: installationId,
+        notificationId: notificationId
       };
       return promise.resolve(notificationObj);
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
+
+  processPushNotifications = function(installationId, pushData, notificationId) {
+    var promise, pushQuery;
+    promise = new Parse.Promise();
+    pushQuery = new Parse.Query(Parse.Installation);
+    pushQuery.equalTo("installationId", installationId);
+    Parse.Push.send({
+      where: pushQuery,
+      data: pushData
+    }).then(function() {
+      var Notification, query;
+      Notification = Parse.Object.extend('Notification');
+      query = new Parse.Query(Notification);
+      query.equalTo("objectId", notificationId);
+      return query.first().then(function(notification) {
+        notification.set("processed", true);
+        return notification.save().then(function(notifobj) {
+          return promise.resolve(notifobj);
+        }, function(error) {
+          return promise.reject(error);
+        });
+      }, function(error) {
+        return promise.reject(error);
+      });
     }, function(error) {
       return promise.reject(error);
     });
@@ -206,9 +236,10 @@
       var notificationQs;
       notificationQs = [];
       _.each(pendingNotifications, function(pendingNotification) {
-        var channel, notificationPromise, obj, otherPushData, pushOptions, pushQuery, recipientUser, type, userInstallationId;
+        var channel, notificationId, notificationPromise, obj, otherPushData, pushOptions, recipientUser, type, userInstallationId;
         channel = pendingNotification.get("channel");
         recipientUser = pendingNotification.get("recipientUser");
+        notificationId = pendingNotification.id;
         userInstallationId = recipientUser.get("installationId");
         type = pendingNotification.get("type");
         if (type === "Request") {
@@ -224,26 +255,37 @@
             "type": "newOffer"
           };
         }
-        console.log(userInstallationId);
         switch (channel) {
           case 'push':
-            pushQuery = new Parse.Query(Parse.Installation);
-            pushQuery.equalTo("installationId", userInstallationId);
             pushOptions = {
               title: 'Shop Oye',
               alert: 'New request for product',
               notificationData: otherPushData
             };
-            notificationPromise = getPushData(userInstallationId, pushOptions);
+            notificationPromise = getNotificationData(notificationId, userInstallationId, pushOptions);
             return notificationQs.push(notificationPromise);
           case 'sms':
             return console.log("send sms");
         }
       });
       return Parse.Promise.when(notificationQs).then(function() {
-        return response.success(arguments);
+        var individualPushResults, pushQs;
+        individualPushResults = _.flatten(_.toArray(arguments));
+        pushQs = [];
+        _.each(individualPushResults, function(pushResult) {
+          var installationId, notificationId, pushNotifPromise;
+          installationId = pushResult.installationId;
+          notificationId = pushResult.notificationId;
+          pushNotifPromise = processPushNotifications(installationId, pushResult.pushData, notificationId);
+          return pushQs.push(pushNotifPromise);
+        });
+        return Parse.Promise.when(pushQs).then(function() {
+          return response.success("Processed");
+        }, function(error) {
+          return response.error(error);
+        });
       }, function(error) {
-        return response.error(error);
+        return response.error("Error");
       });
     }, function(error) {
       return response.error(error);

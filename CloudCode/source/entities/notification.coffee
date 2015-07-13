@@ -1,69 +1,136 @@
-getPushData = (installationId, pushOptions)->
-	promise = new Parse.Promise()
-	installationQuery = new Parse.Query Parse.Installation
-	installationQuery.equalTo "installationId", installationId
+getNotificationData = (notificationId, installationId, pushOptions)->
+    promise = new Parse.Promise()
+    installationQuery = new Parse.Query Parse.Installation
+    installationQuery.equalTo "installationId", installationId
 
-	installationQuery.find()
-	.then (installationObject)->
-		if _.isEmpty(installationObject) then deviceType = 'unknown'
-		else deviceType = installationObject[0].get 'deviceType'
+    installationQuery.find()
+    .then (installationObject)->
+        if _.isEmpty(installationObject) then deviceType = 'unknown'
+        else deviceType = installationObject[0].get 'deviceType'
 
-		if deviceType.toLowerCase() is 'android'
-			pushData = 
-				header: pushOptions.title
-				message: pushOptions.alert
-				request: pushOptions.request
-				otherData: pushOptions.otherData
-		else
-			pushData = 
-				title: pushOptions.title
-				alert: pushOptions.alert
-				request: pushOptions.request
-				badge: 'Increment'
-				otherData: pushOptions.otherData
+        if deviceType.toLowerCase() is 'android'
+            pushData = 
+                header: pushOptions.title
+                message: pushOptions.alert
+                data: pushOptions.notificationData
 
-		promise.resolve pushData
+        else
+            pushData = 
+                title: pushOptions.title
+                alert: pushOptions.alert
+                data: pushOptions.notificationData
+                badge: 'Increment'
 
-	, (error)->
-		promise.reject error
-	
-	promise
+        notificationObj = 
+            pushData: pushData
+            installationId : installationId
+            notificationId : notificationId
+        
+        promise.resolve notificationObj
 
-	
+    , (error)->
+        promise.reject error
+    
+    promise
+
+processPushNotifications = (installationId,pushData,notificationId) ->
+    promise = new Parse.Promise()
+    
+    pushQuery = new Parse.Query Parse.Installation
+    pushQuery.equalTo "installationId", installationId  
+    
+    Parse.Push.send({where: pushQuery, data: pushData})
+    .then ->
+        # get notification and mark it as processed and update status
+        Notification = Parse.Object.extend('Notification')
+        query = new Parse.Query(Notification)
+        query.equalTo("objectId",notificationId)
+        query.first()
+        .then (notification) ->
+            notification.set "processed", true
+            
+            notification.save()
+            .then (notifobj) ->
+                promise.resolve notifobj
+            , (error) ->
+                promise.reject error
+        , (error) ->
+            promise.reject error
+
+    , (error) ->
+        promise.reject error
+
+    promise
+
 
 Parse.Cloud.job 'processNotifications', (request, response) ->
-	notificationQuery = new Parse.Query("Notification") 
+    notificationQuery = new Parse.Query("Notification") 
 
-	# get all unporcessed notiifactions
-	notificationQuery.equalTo("processed",false)
-	notificationQuery.include("recipientUser")
-	notificationQuery.find()
-	.then (pendingNotifications) ->
-		# for each pending notifications send get channel of notifications and send take action accordingly
-		_.each pendingNotifications, (pendingNotification) ->
-			channel = pendingNotification.get "channel"
-			
-			
-			recipientUser = (pendingNotification.get "recipientUser").id
+    # get all unporcessed notiifactions
+    notificationQuery.equalTo("processed",false)
+    notificationQuery.include("recipientUser")
+    notificationQuery.include("requestObject")
+    notificationQuery.include("offerObject")
+    notificationQuery.find()
+    .then (pendingNotifications) ->
+        notificationQs = []
+        # for each pending notifications send get channel of notifications and send take action accordingly
+        _.each pendingNotifications, (pendingNotification) ->
+            channel = pendingNotification.get "channel"
+            
+            
+            recipientUser = (pendingNotification.get "recipientUser")
+            notificationId = pendingNotification.id
+            userInstallationId = recipientUser.get("installationId")
+            
+            type = pendingNotification.get("type")
 
-			switch channel
-				when 'push'
-					# add code to push notifcation to the user
-					
-					# get all unprocessed notifications i.e processed = false
+            if type is "Request"
+                obj = pendingNotification.get("requestObject")
+                otherPushData = 
+                    "id": obj.id
+                    "type": "newRequest"
 
-					# for each of the notifications
-						# get recipient user 
-						# get installationId for the recipient user 
-						# based on installationId query installations table and get device type 
-							# based on device type generate push data
-							# push data should contain message and requestId
+            else if type is "Offer"
+                obj = pendingNotification.get("offerObject")
+                otherPushData = 
+                    "id":obj.id
+                    "type": "newOffer"
 
-				when 'sms'
-					# add code to send sms to the user
-					console.log "send sms"
+            switch channel
+                when 'push'
+                    # add code to push notifcation to the user
+                    pushOptions = 
+                        title: 'Shop Oye'
+                        alert: 'New request for product'
+                        notificationData: otherPushData 
+                                        
+                    notificationPromise = getNotificationData notificationId, userInstallationId, pushOptions
+                    notificationQs.push notificationPromise
 
-		response.success("Processed pending notifications")
+                when 'sms'
+                    # add code to send sms to the user
+                    console.log "send sms"
 
-	, (error) ->
-		response.error (error)	
+        Parse.Promise.when(notificationQs).then ->
+            individualPushResults = _.flatten(_.toArray(arguments))
+            pushQs = []
+            
+            _.each individualPushResults , (pushResult) ->
+                installationId = pushResult.installationId
+                notificationId = pushResult.notificationId
+                pushNotifPromise = processPushNotifications(installationId, pushResult.pushData,notificationId)
+                pushQs.push pushNotifPromise
+
+            Parse.Promise.when(pushQs).then ->
+                response.success("Processed")
+            , (error) ->
+                response.error (error)
+
+        , (error) ->
+            response.error "Error"
+
+        
+
+    , (error) ->
+        response.error (error)  
