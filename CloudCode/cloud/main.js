@@ -246,13 +246,13 @@
           obj = pendingNotification.get("requestObject");
           otherPushData = {
             "id": obj.id,
-            "type": "newRequest"
+            "type": "new_request"
           };
         } else if (type === "Offer") {
           obj = pendingNotification.get("offerObject");
           otherPushData = {
             "id": obj.id,
-            "type": "newOffer"
+            "type": "new_offer"
           };
         }
         switch (channel) {
@@ -310,6 +310,30 @@
         return requestId = notificationObj.get("requestObject").id;
       });
       return response.success(unseenNotifications);
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
+  Parse.Cloud.define('updateNotificationStatus', function(request, response) {
+    var hasSeen, innerQuery, notificationQuery, notificationType, notificationTypeId;
+    notificationType = request.params.notificationType;
+    notificationTypeId = request.params.notificationTypeId;
+    hasSeen = request.params.hasSeen;
+    notificationQuery = new Parse.Query("Notification");
+    notificationQuery.equalTo("type", notificationType);
+    if (notificationType === "Request") {
+      innerQuery = new Parse.Query("Request");
+      innerQuery.equalTo("objectId", notificationTypeId);
+      notificationQuery.matchesQuery("requestObject", innerQuery);
+    }
+    return notificationQuery.first().then(function(notificationObj) {
+      notificationObj.set("hasSeen", hasSeen);
+      return notificationObj.save().then(function(notif) {
+        return response.success(notif);
+      }, function(error) {
+        return response.error(error);
+      });
     }, function(error) {
       return response.error(error);
     });
