@@ -1,5 +1,5 @@
 (function() {
-  var _, getAreaBoundSellers, getCategoryBasedSellers, getFilteredRequests, treeify;
+  var _, getAreaBoundSellers, getCategoryBasedSellers, getFilteredRequests, getPushData, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -158,6 +158,41 @@
     })(this));
   });
 
+  getPushData = function(installationId, pushOptions) {
+    var installationQuery, promise;
+    promise = new Parse.Promise();
+    installationQuery = new Parse.Query(Parse.Installation);
+    installationQuery.equalTo("installationId", installationId);
+    installationQuery.find().then(function(installationObject) {
+      var deviceType, pushData;
+      if (_.isEmpty(installationObject)) {
+        deviceType = 'unknown';
+      } else {
+        deviceType = installationObject[0].get('deviceType');
+      }
+      if (deviceType.toLowerCase() === 'android') {
+        pushData = {
+          header: pushOptions.title,
+          message: pushOptions.alert,
+          request: pushOptions.request,
+          otherData: pushOptions.otherData
+        };
+      } else {
+        pushData = {
+          title: pushOptions.title,
+          alert: pushOptions.alert,
+          request: pushOptions.request,
+          badge: 'Increment',
+          otherData: pushOptions.otherData
+        };
+      }
+      return promise.resolve(pushData);
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
+
   Parse.Cloud.job('processNotifications', function(request, response) {
     var notificationQuery;
     notificationQuery = new Parse.Query("Notification");
@@ -165,12 +200,12 @@
     notificationQuery.include("recipientUser");
     return notificationQuery.find().then(function(pendingNotifications) {
       _.each(pendingNotifications, function(pendingNotification) {
-        var channel;
+        var channel, recipientUser;
         channel = pendingNotification.get("channel");
-        console.log(pendingNotification);
+        recipientUser = (pendingNotification.get("recipientUser")).id;
         switch (channel) {
           case 'push':
-            return console.log("push notifications");
+            return console.log("push");
           case 'sms':
             return console.log("send sms");
         }
@@ -463,7 +498,7 @@
     city = request.params.city;
     area = request.params.area;
     sellerLocation = request.params.sellerLocation;
-    sellerRadius = request.params.sellerRadius;
+    sellerRadius = parseInt(request.params.sellerRadius);
     status = "open";
     sellerQuery = new Parse.Query(Parse.User);
     sellerQuery.equalTo("objectId", sellerId);
@@ -539,7 +574,7 @@
     requestQuery.equalTo("objectId", createdRequestId);
     requestQuery.equalTo("customerId", customerObj);
     requestQuery.equalTo("status", "open");
-    requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
+    requestQuery.near("addressGeoPoint", sellerGeoPoint);
     promise = new Parse.Promise();
     requestQuery.find().then(function(requests) {
       if (requests.length === 0) {

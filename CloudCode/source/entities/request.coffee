@@ -141,8 +141,8 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
     # brands = request.params.brandId
     city = request.params.city
     area = request.params.area
-    sellerLocation = request.params.sellerLocation  
-    sellerRadius = request.params.sellerRadius
+    sellerLocation =  request.params.sellerLocation
+    sellerRadius = parseInt request.params.sellerRadius
         
     status = "open"
 
