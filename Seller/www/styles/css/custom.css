@@ -190,6 +190,10 @@ sm {
   left: 0px;
   top: 9px;
 }
+.Categories {
+  background: url(../../img/gray-bg.png) no-repeat;
+  background-size: 100%;
+}
 /************************************/
 /* Menu */
 /************************************/
