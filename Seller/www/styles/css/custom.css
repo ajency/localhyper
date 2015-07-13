@@ -106,7 +106,6 @@ sm {
 .center-block {
   margin: auto;
   display: block;
-  width: 100%;
 }
 .pull-left {
   float: left;
@@ -153,6 +152,9 @@ sm {
 }
 .border-none {
   border: 0px !important;
+}
+.aj-img {
+  height: 90px ;
 }
 /************************************/
 /* HEADER */
@@ -367,14 +369,21 @@ sm {
 .sub-categories {
   background: #ffffff;
 }
-.sub-categories .border-card2 {
-  height: 14.6rem !important;
-}
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
-  height: 11rem;
+  height: 8rem;
   float: left;
+  background: url(../../img/gray-bg.png) no-repeat;
+  background-size: 100%;
+}
+.sub-categories .border-card .aj-title {
+  text-align: center;
+  position: absolute;
+  bottom: 0px;
+  margin: 10px auto;
+  left: 0%;
+  right: 0%;
 }
 .sub-categories .border-card h3 {
   font-size: 14px;
@@ -491,6 +500,7 @@ sm {
 .brands .border-card {
   height: 9rem;
   position: relative;
+  background: none !important;
 }
 .brands .border-card img {
   -webkit-filter: grayscale(100%);

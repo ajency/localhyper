@@ -90,7 +90,6 @@ sm{
 .center-block{
 	margin:auto;
 	display:block;
-	width:100%;
 }
 .pull-left{
 	float:left;
@@ -138,6 +137,9 @@ sm{
 }
 .border-none{
 	border: 0px !important;
+}
+.aj-img{
+	height: 90px ;
 }
 /************************************/
 /* HEADER */
@@ -307,19 +309,27 @@ sm{
 
 .sub-categories {
 	background:@white;
-			.border-card2{
- 		   height: 14.6rem !important;
-	}
 	.border-card{
 			   border-right: 1px solid @gray-lighter;
 	           border-bottom: 1px solid @gray-lighter;
-	           height: 11rem;
+	  	       height: 8rem;
 	           float: left;
+	            background: url(../../img/gray-bg.png)no-repeat;
+	            background-size: 100%;
+	 .aj-title{
+	 	  text-align: center;
+		  position: absolute;
+		  bottom: 0px;
+		  margin: 10px auto;
+		  left: 0%;
+		  right: 0%;
+	 }
          h3{
          	   font-size: 14px;
          	   font-weight: 400;
 
          }
+
          .title{
          	  height: 39px;
          	  font-weight: 400;
@@ -447,6 +457,7 @@ sm{
 	.border-card{
 		height: 9rem;
 		position: relative;
+		background: none !important;
 		img{
 			-webkit-filter: grayscale(100%);
 			filter: grayscale(100%);
