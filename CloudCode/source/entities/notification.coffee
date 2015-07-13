@@ -134,3 +134,31 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
 
     , (error) ->
         response.error (error)  
+
+Parse.Cloud.define 'getUnseenNotifications', (request, response) ->
+    userId = request.params.userId
+    notificationType = request.params.notificationType
+
+    notificationQuery = new Parse.Query("Notification")
+
+    notificationQuery.equalTo("hasSeen",false)
+
+    innerQueryUser = new Parse.Query Parse.User
+    innerQueryUser.equalTo("objectId",userId)
+    innerQueryUser.equalTo("type",notificationType)
+    
+    notificationQuery.matchesQuery("recipientUser", innerQueryUser)
+
+    notificationQuery.select("requestObject")
+
+    notificationQuery.find()
+    .then (notificationResults) ->
+        unseenNotifications = _.map(notificationResults, (notificationObj) ->
+           requestId = notificationObj.get("requestObject").id     
+        )
+        response.success(unseenNotifications)
+    , (error) ->
+        response.error(error)
+
+
+

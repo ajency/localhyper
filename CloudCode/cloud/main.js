@@ -292,6 +292,31 @@
     });
   });
 
+  Parse.Cloud.define('getUnseenNotifications', function(request, response) {
+    var innerQueryUser, notificationQuery, notificationType, userId;
+    userId = request.params.userId;
+    notificationType = request.params.notificationType;
+    notificationQuery = new Parse.Query("Notification");
+    notificationQuery.equalTo("hasSeen", false);
+    innerQueryUser = new Parse.Query(Parse.User);
+    innerQueryUser.equalTo("objectId", userId);
+    innerQueryUser.equalTo("type", notificationType);
+    notificationQuery.matchesQuery("recipientUser", innerQueryUser);
+    notificationQuery.select("requestObject");
+    return notificationQuery.find().then(function(notificationResults) {
+      var unseenNotifications;
+      unseenNotifications = _.map(notificationResults, function(notificationObj) {
+        var requestId;
+        return requestId = notificationObj.get("requestObject").id;
+      });
+      return response.success(unseenNotifications);
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
+  Parse.Cloud.define('getNewOffers', function(request, response) {});
+
   Parse.Cloud.job('productImport', function(request, response) {
     var ProductItem, productSavedArr, products;
     ProductItem = Parse.Object.extend('ProductItem');
