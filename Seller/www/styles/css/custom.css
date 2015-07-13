@@ -33,6 +33,9 @@ h5,
 h6 {
   /*font-weight: 800;*/
 }
+.list {
+  border-top: 1px solid #cccccc;
+}
 .bar-assertive {
   background: #f35a59 !important;
 }
@@ -149,7 +152,7 @@ sm {
   padding: 0px;
 }
 .border-none {
-  border: 0px;
+  border: 0px !important;
 }
 /************************************/
 /* HEADER */
@@ -158,7 +161,7 @@ sm {
   background: #e8e8e8;
 }
 .bar-header {
-  border-bottom: 1px solid #cccccc !important;
+  border-bottom: 1px solid #cccccc;
 }
 .bar-header .notification {
   height: 20px;
@@ -178,7 +181,7 @@ sm {
   background-color: #4d4d4d;
 }
 .aj-right-popover .item {
-  padding: 11px 54px;
+  padding: 10px 49px;
 }
 .aj-right-popover .item i {
   font-size: 22px;
@@ -186,6 +189,15 @@ sm {
 /************************************/
 /* Menu */
 /************************************/
+.aj-menu-bg sm {
+  padding: 0px 1px 0px 19px;
+  display: block;
+  margin-top: -19px;
+  color: #ccc;
+}
+.aj-menu-bg .item {
+  font-size: 14px;
+}
 .sprite-icon {
   background: url(../../img/sprite.png) no-repeat;
   width: 30px;
@@ -277,40 +289,36 @@ sm {
   background-position: -61px -160px;
 }
 .i-location {
-  width: 45px !important;
   background: url(../../img/sprite.png) no-repeat;
   width: 30px;
   height: 30px;
   display: inline-block;
   margin-bottom: -10px;
-  background-position: -8px -456px;
+  background-position: -9px -456px;
 }
 .i-category {
-  width: 45px !important;
   background: url(../../img/sprite.png) no-repeat;
   width: 30px;
   height: 30px;
   display: inline-block;
   margin-bottom: -10px;
-  background-position: -8px -502px;
+  background-position: -9px -502px;
 }
 .i-auto {
-  width: 45px !important;
   background: url(../../img/sprite.png) no-repeat;
   width: 30px;
   height: 30px;
   display: inline-block;
   margin-bottom: -10px;
-  background-position: -8px -408px;
+  background-position: -9px -408px;
 }
 .i-history {
-  width: 45px !important;
   background: url(../../img/sprite.png) no-repeat;
   width: 30px;
   height: 30px;
   display: inline-block;
   margin-bottom: -10px;
-  background-position: -8px -553px;
+  background-position: -9px -553px;
 }
 /************************************/
 /*Department List*/
@@ -363,7 +371,7 @@ sm {
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
-  height: 10rem;
+  height: 11rem;
   float: left;
 }
 .sub-categories .border-card h3 {
