@@ -27,8 +27,8 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         return $ionicSideMenuDelegate.toggleLeft();
       }
     };
+    $rootScope.$on('on:new:request', function() {});
     return $rootScope.$on('on:session:expiry', function() {
-      console.log('on:session:expiry');
       return Parse.User.logOut();
     });
   }

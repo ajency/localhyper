@@ -3,7 +3,9 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
     App.notification = {
-      icon: false
+      icon: false,
+      badge: false,
+      count: 0
     };
     App.logo = {
       small: true

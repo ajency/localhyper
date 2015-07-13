@@ -21,7 +21,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 		onSuccess : (data)->
 			@display = 'noError'
-			@requests = data.requests
+			@requests = @requests.concat data.requests
 		
 		onError: (type)->
 			@display = 'error'

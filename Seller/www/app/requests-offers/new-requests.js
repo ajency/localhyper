@@ -21,7 +21,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       },
       onSuccess: function(data) {
         this.display = 'noError';
-        return this.requests = data.requests;
+        return this.requests = this.requests.concat(data.requests);
       },
       onError: function(type) {
         this.display = 'error';

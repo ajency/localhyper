@@ -14,7 +14,10 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	$rootScope.App = App
 
 	#User Notification Icon (Right popover)
-	App.notification = icon: false
+	App.notification = 
+		icon: false
+		badge: false
+		count: 0
 
 	#Hide small app logo on categories view
 	App.logo = small: true
