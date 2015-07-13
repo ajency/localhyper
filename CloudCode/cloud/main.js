@@ -1,5 +1,5 @@
 (function() {
-  var _, getAreaBoundSellers, getCategoryBasedSellers, getPushData, treeify;
+  var _, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -158,13 +158,13 @@
     })(this));
   });
 
-  getPushData = function(installationId, pushOptions) {
+  getNotificationData = function(installationId, pushOptions) {
     var installationQuery, promise;
     promise = new Parse.Promise();
     installationQuery = new Parse.Query(Parse.Installation);
     installationQuery.equalTo("installationId", installationId);
     installationQuery.find().then(function(installationObject) {
-      var deviceType, pushData;
+      var deviceType, notificationObj, pushData;
       if (_.isEmpty(installationObject)) {
         deviceType = 'unknown';
       } else {
@@ -174,17 +174,21 @@
         pushData = {
           header: pushOptions.title,
           message: pushOptions.alert,
-          notificationData: pushOptions.notificationData
+          data: pushOptions.notificationData
         };
       } else {
         pushData = {
           title: pushOptions.title,
           alert: pushOptions.alert,
-          notificationData: pushOptions.notificationData,
+          data: pushOptions.notificationData,
           badge: 'Increment'
         };
       }
-      return promise.resolve(pushData);
+      notificationObj = {
+        pushData: pushData,
+        installationId: installationId
+      };
+      return promise.resolve(notificationObj);
     }, function(error) {
       return promise.reject(error);
     });
@@ -202,7 +206,7 @@
       var notificationQs;
       notificationQs = [];
       _.each(pendingNotifications, function(pendingNotification) {
-        var channel, obj, otherPushData, pushOptions, pushQuery, recipientUser, type, userInstallationId;
+        var channel, notificationPromise, obj, otherPushData, pushOptions, pushQuery, recipientUser, type, userInstallationId;
         channel = pendingNotification.get("channel");
         recipientUser = pendingNotification.get("recipientUser");
         userInstallationId = recipientUser.get("installationId");
@@ -230,17 +234,13 @@
               alert: 'New request for product',
               notificationData: otherPushData
             };
-            return getPushData(userInstallationId, pushOptions).then(function(pushData) {
-              return Parse.Push.send({
-                where: pushQuery,
-                data: pushData
-              });
-            });
+            notificationPromise = getPushData(userInstallationId, pushOptions);
+            return notificationQs.push(notificationPromise);
           case 'sms':
             return console.log("send sms");
         }
       });
-      return response.success("Processed pending notifications");
+      return Parse.Promise.when(notificationQs).then(function() {});
     }, function(error) {
       return response.error(error);
     });
@@ -452,7 +452,7 @@
       "className": "ProductItem",
       "objectId": productId
     };
-    request.set("productId", productObj);
+    request.set("product", productObj);
     categoryObj = {
       "__type": "Pointer",
       "className": "Category",
@@ -572,16 +572,20 @@
       requestQuery.greaterThanOrEqualTo("createdAt", queryDate);
       sellerGeoPoint = new Parse.GeoPoint(sellerLocation);
       requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
+      requestQuery.select("address,addressGeoPoint,area,product,city,customerId");
+      requestQuery.include("product");
+      requestQuery.include("product.brand");
+      requestQuery.include("product.category");
       return requestQuery.find().then(function(filteredRequests) {
-        var requests;
-        requests = {
+        var requestsResult;
+        requestsResult = {
           "city": city,
           "area": area,
           "radius": sellerRadius,
           "location": sellerLocation,
           "requests": filteredRequests
         };
-        return response.success(requests);
+        return response.success(requestsResult);
       }, function(error) {
         return response.error(error);
       });

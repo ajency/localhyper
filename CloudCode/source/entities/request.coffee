@@ -43,7 +43,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
         "className":"ProductItem",
         "objectId":productId                    
 
-    request.set "productId", productObj  
+    request.set "product", productObj  
 
     # set category
     categoryObj =
@@ -199,15 +199,21 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
         sellerGeoPoint = new Parse.GeoPoint sellerLocation
         requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
 
+        requestQuery.select("address,addressGeoPoint,area,product,city,customerId")
+
+        requestQuery.include("product")
+        requestQuery.include("product.brand")
+        requestQuery.include("product.category")
+
         requestQuery.find()
         .then (filteredRequests) ->
-            requests = 
+            requestsResult = 
                 "city" : city
                 "area" : area
                 "radius" : sellerRadius
                 "location" : sellerLocation
                 "requests" : filteredRequests
-            response.success requests   
+            response.success requestsResult   
         , (error) ->
             response.error (error)
     , (error) ->
