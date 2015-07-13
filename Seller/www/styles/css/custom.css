@@ -33,6 +33,9 @@ h5,
 h6 {
   /*font-weight: 800;*/
 }
+.list {
+  border-top: 1px solid #cccccc;
+}
 .bar-assertive {
   background: #f35a59 !important;
 }
@@ -103,7 +106,6 @@ sm {
 .center-block {
   margin: auto;
   display: block;
-  width: 100%;
 }
 .pull-left {
   float: left;
@@ -149,7 +151,10 @@ sm {
   padding: 0px;
 }
 .border-none {
-  border: 0px;
+  border: 0px !important;
+}
+.aj-img {
+  height: 90px ;
 }
 /************************************/
 /* HEADER */
@@ -158,7 +163,7 @@ sm {
   background: #e8e8e8;
 }
 .bar-header {
-  border-bottom: 1px solid #cccccc !important;
+  border-bottom: 1px solid #cccccc;
 }
 .bar-header .notification {
   height: 20px;
@@ -178,14 +183,29 @@ sm {
   background-color: #4d4d4d;
 }
 .aj-right-popover .item {
-  padding: 11px 54px;
+  padding: 20px 0px 0px 49px;
 }
 .aj-right-popover .item i {
   font-size: 22px;
+  left: 0px;
+  top: 9px;
+}
+.Categories {
+  background: url(../../img/gray-bg.png) no-repeat;
+  background-size: 100%;
 }
 /************************************/
 /* Menu */
 /************************************/
+.aj-menu-bg sm {
+  padding: 0px 1px 0px 19px;
+  display: block;
+  margin-top: -19px;
+  color: #ccc;
+}
+.aj-menu-bg .item {
+  font-size: 14px;
+}
 .sprite-icon {
   background: url(../../img/sprite.png) no-repeat;
   width: 30px;
@@ -276,6 +296,38 @@ sm {
   margin-bottom: -10px;
   background-position: -61px -160px;
 }
+.i-location {
+  background: url(../../img/sprite.png) no-repeat;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin-bottom: -10px;
+  background-position: -9px -456px;
+}
+.i-category {
+  background: url(../../img/sprite.png) no-repeat;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin-bottom: -10px;
+  background-position: -9px -502px;
+}
+.i-auto {
+  background: url(../../img/sprite.png) no-repeat;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin-bottom: -10px;
+  background-position: -9px -408px;
+}
+.i-history {
+  background: url(../../img/sprite.png) no-repeat;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin-bottom: -10px;
+  background-position: -9px -553px;
+}
 /************************************/
 /*Department List*/
 /************************************/
@@ -324,8 +376,18 @@ sm {
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
-  height: 15rem;
+  height: 8rem;
   float: left;
+  background: url(../../img/gray-bg.png) no-repeat;
+  background-size: 100%;
+}
+.sub-categories .border-card .aj-title {
+  text-align: center;
+  position: absolute;
+  bottom: 0px;
+  margin: 10px auto;
+  left: 0%;
+  right: 0%;
 }
 .sub-categories .border-card h3 {
   font-size: 14px;
@@ -442,6 +504,7 @@ sm {
 .brands .border-card {
   height: 9rem;
   position: relative;
+  background: none !important;
 }
 .brands .border-card img {
   -webkit-filter: grayscale(100%);

@@ -96,7 +96,7 @@
 
 
 .platform-ios .popover {
-	height: 120px;
+   height: 180px !important;
 }
 
 .aj-btn {
@@ -129,9 +129,10 @@
 	border: none;
 }
 
-.aj-spinner svg{
-   display: block;
-  margin: 50% auto;
+
+.aj-refresher .spinner, .aj-spinner svg{
+  display: block;
+  margin: 65% auto;
   stroke: #F8585C;
   width: 40px;
   height: 40px;
@@ -141,11 +142,18 @@
   padding: 5px;
   box-shadow: 0px 2px 6px #B6B6B6;
 }
+.aj-refresher .spinner svg circle{
+	stroke: #F8585C;
+}
+
+.aj-refresher .spinner{
+	margin: 0% auto !important;
+}
 
 .aj-verify-spinner svg{
   display: block;
   margin: 0% auto;
-   stroke: #F8585C;
+  stroke: #F8585C;
   width: 40px;
   height: 40px;
   fill: #ffffff;

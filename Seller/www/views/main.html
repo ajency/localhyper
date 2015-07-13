@@ -25,7 +25,7 @@
 					style="height: 30px; width: 32px"/>
 			</ion-nav-buttons>
 
-			<!-- <ion-nav-buttons side="right">
+		 <ion-nav-buttons side="right">
 				<div ng-if="App.notification.icon">
 					<span class="notification badge badge-assertive">2</span>
 					<button 
@@ -33,7 +33,7 @@
 						ng-click="view.userPopover.show($event)">
 					</button>
 				</div>
-			</ion-nav-buttons> -->
+			</ion-nav-buttons> 
 
 			<ion-nav-back-button 
 				ng-click="view.onBackClick()"> 
@@ -53,9 +53,37 @@
 			<ion-list class="aj-menutext">
 
 				<ion-item ng-click="view.menuClose()">
-					<i class="i-store"></i> <b>Store</b>
+					My Settings
 				</ion-item>
 
+				<hr>
+
+				<ion-item ng-click="view.menuClose()">
+					<i class="i-location"></i> Change Location
+				</ion-item>
+
+				<ion-item ng-click="view.menuClose()">
+					<i class="i-category"></i> Change  Category
+				</ion-item>
+
+				<ion-item>
+					<i class="i-auto"></i> Auto Offer
+					<label class="toggle toggle-assertive pull-right">
+						<input type="checkbox" value="on">
+						<div class="track">
+							<div class="handle"></div>
+						</div>
+					</label>
+				</ion-item>
+
+				<sm class="light">
+					If no offer is made for a request within 10 minutes, your last made offer for requested product will be auto sent
+				</sm>
+
+				<ion-item ng-click="view.menuClose()">
+					<i class="i-history"></i> My credit history
+				</ion-item>
+				
 				<hr>
 
 				<ion-item ng-click="view.menuClose()">

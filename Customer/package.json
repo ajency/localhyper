@@ -41,7 +41,8 @@
     {
       "locator": "/Users/deepak/Desktop/com.parse.cordova.core.pushplugin",
       "id": "com.parse.cordova.core.pushplugin"
-    }
+    },
+    "cordova-plugin-geolocation"
   ],
   "cordovaPlatforms": [
     "ios",

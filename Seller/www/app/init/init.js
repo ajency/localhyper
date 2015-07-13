@@ -6,12 +6,13 @@ angular.module('LocalHyper.init', []).controller('InitCtrl', [
     return $ionicPlatform.ready(function() {
       App.hideKeyboardAccessoryBar();
       App.setStatusBarStyle();
-      Storage.slideTutorial('get').then(function(value) {
+      Push.register();
+      return Storage.slideTutorial('get').then(function(value) {
         var goto;
         if (_.isNull(value)) {
           goto = "tutorial";
         } else if (User.isLoggedIn()) {
-          goto = "requests";
+          goto = "new-requests";
         } else {
           goto = 'business-details';
         }
@@ -20,14 +21,12 @@ angular.module('LocalHyper.init', []).controller('InitCtrl', [
           back: false
         });
       });
-      return Push.register();
     });
   }
 ]).config([
   '$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
     $stateProvider.state('init', {
       url: '/init',
-      cache: false,
       controller: 'InitCtrl',
       templateUrl: 'views/init/init.html'
     });

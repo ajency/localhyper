@@ -65,6 +65,10 @@ angular.module 'LocalHyper.common', []
 			dragContent : (bool)->
 				$ionicSideMenuDelegate.canDragContent bool
 
+			toINR : (number)->
+				number = number.toString()
+				number.replace /(\d)(?=(\d\d)+\d$)/g, "$1,"
+
 			getInstallationId : ->
 				defer = $q.defer()
 				if @isWebView()

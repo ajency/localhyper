@@ -78,6 +78,10 @@ angular.module('LocalHyper.common', []).factory('App', [
       dragContent: function(bool) {
         return $ionicSideMenuDelegate.canDragContent(bool);
       },
+      toINR: function(number) {
+        number = number.toString();
+        return number.replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+      },
       getInstallationId: function() {
         var defer;
         defer = $q.defer();

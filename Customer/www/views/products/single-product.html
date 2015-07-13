@@ -12,13 +12,13 @@
 			<img
 				class="aj-sp-img img-responsive" 
 				ng-src="{{view.product.images[0].src}}">
-			
+			<div>
 			<div class="row">
 				<div class="col col-100">
-					<h6 class="subdued"> 
+					<h4 class="subdued text-left"> 
 						<span class="text-danger">In</span> 2.5 tonnes
-					</h6>
-					<h4 class="text-left normal margin-none">{{view.product.name}}</h4>
+					</h4>
+					<h3 class="text-left normal margin-none">{{view.product.name}}</h3>
 				</div>
 			</div>
 
@@ -51,7 +51,7 @@
 				</div>
 			</div>
 				
-				<!-- MRP: Rs {{view.product.mrp}} -->
+			</div>	<!-- MRP: Rs {{view.product.mrp}} -->
 				
 		<aj-error 
 			ng-switch-when="error"
@@ -65,12 +65,12 @@
 		<button 
 			class="button button-clear btn-specification"
 			ng-click="view.specificationModal.show()"> 
-			<i class="ion ion-ios-plus-outline"></i> Specification
+			<b> <i class="ion ion-ios-plus-outline"></i> Specification</b>
 		</button>
 
 		<button 
 			class="button button-assertive btn-action" 
-			ng-click="view.onMakeRequest()">
+			ng-click="view.checkUserLogin()">
 			Make Request
 		</button>
 	</ion-footer-bar>

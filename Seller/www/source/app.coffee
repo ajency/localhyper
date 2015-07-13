@@ -3,7 +3,8 @@
 angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage'
 	, 'LocalHyper.auth', 'LocalHyper.businessDetails', 'LocalHyper.main'
-	, 'LocalHyper.categories', 'LocalHyper.brands', 'LocalHyper.googleMaps', 'LocalHyper.requests']
+	, 'LocalHyper.categories', 'LocalHyper.brands', 'LocalHyper.googleMaps'
+	, 'LocalHyper.requestsOffers']
 
 
 .run ['$rootScope', 'App', 'Push', '$timeout', ($rootScope, App, Push, $timeout)->
@@ -38,5 +39,6 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	$ionicConfigProvider.views.forwardCache true
 	$ionicConfigProvider.backButton.previousTitleText(false).text ''
 	$ionicConfigProvider.navBar.alignTitle 'center'
+	$ionicConfigProvider.tabs.position 'top'
 ]
 

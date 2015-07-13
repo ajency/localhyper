@@ -97,7 +97,6 @@ sm {
 .center-block {
   margin: auto;
   display: block;
-  width: 100%;
 }
 .pull-left {
   float: left;
@@ -107,13 +106,6 @@ sm {
 }
 .upper-case {
   text-transform: uppercase;
-}
-.arrow-link {
-  float: right;
-  font-size: 23px;
-  -ms-transform: rotate(90deg);
-  -webkit-transform: rotate(90deg);
-  transform: rotate(90deg);
 }
 .input-border {
   border-bottom: 1px solid #000000 !important;
@@ -135,6 +127,13 @@ sm {
 }
 .border-none {
   border: 0px;
+}
+.aj-img {
+  height: 90px;
+}
+.Categories {
+  background: url(../../img/gray-bg.png) no-repeat;
+  background-size: 100%;
 }
 /************************************/
 /* HEADER */
@@ -163,14 +162,19 @@ sm {
   background-color: #4d4d4d;
 }
 .aj-right-popover .item {
-  padding: 11px 54px;
+  padding: 20px 0px 0px 49px;
 }
 .aj-right-popover .item i {
   font-size: 22px;
+  left: 0px;
+  top: 9px;
 }
 /************************************/
 /* Menu */
 /************************************/
+.aj-menu-bg .item {
+  font-size: 14px;
+}
 .sprite-icon {
   background: url(../../img/sprite.png) no-repeat;
   width: 30px;
@@ -306,15 +310,25 @@ sm {
 .sub-categories {
   background: #ffffff;
 }
+.sub-categories .border-card2 {
+  height: 225px !important;
+  background: url(../../img/gray-bg.png) 0px 70px no-repeat !important;
+}
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
-  height: 15rem;
+  height: 8rem;
   float: left;
+  background: url(../../img/gray-bg.png) no-repeat;
+  background-size: 100%;
 }
-.sub-categories .border-card h3 {
-  font-size: 14px;
-  font-weight: 400;
+.sub-categories .border-card .aj-title {
+  text-align: center;
+  position: absolute;
+  bottom: 0px;
+  margin: 10px auto;
+  left: 0%;
+  right: 0%;
 }
 .sub-categories .border-card .title {
   height: 39px;
