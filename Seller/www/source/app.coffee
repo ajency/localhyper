@@ -39,5 +39,6 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	$ionicConfigProvider.views.forwardCache true
 	$ionicConfigProvider.backButton.previousTitleText(false).text ''
 	$ionicConfigProvider.navBar.alignTitle 'center'
+	$ionicConfigProvider.tabs.position 'top'
 ]
 
