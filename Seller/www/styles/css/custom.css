@@ -276,6 +276,42 @@ sm {
   margin-bottom: -10px;
   background-position: -61px -160px;
 }
+.i-location {
+  width: 45px !important;
+  background: url(../../img/sprite.png) no-repeat;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin-bottom: -10px;
+  background-position: -8px -456px;
+}
+.i-category {
+  width: 45px !important;
+  background: url(../../img/sprite.png) no-repeat;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin-bottom: -10px;
+  background-position: -8px -502px;
+}
+.i-auto {
+  width: 45px !important;
+  background: url(../../img/sprite.png) no-repeat;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin-bottom: -10px;
+  background-position: -8px -408px;
+}
+.i-history {
+  width: 45px !important;
+  background: url(../../img/sprite.png) no-repeat;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  margin-bottom: -10px;
+  background-position: -8px -553px;
+}
 /************************************/
 /*Department List*/
 /************************************/
@@ -321,10 +357,13 @@ sm {
 .sub-categories {
   background: #ffffff;
 }
+.sub-categories .border-card2 {
+  height: 14.6rem !important;
+}
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
-  height: 15rem;
+  height: 10rem;
   float: left;
 }
 .sub-categories .border-card h3 {
