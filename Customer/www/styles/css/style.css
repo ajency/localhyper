@@ -131,8 +131,8 @@
 
 
 .aj-refresher .spinner, .aj-spinner svg{
-   display: block;
-  margin: 50% auto;
+  display: block;
+  margin: 65% auto;
   stroke: #F8585C;
   width: 40px;
   height: 40px;
@@ -145,10 +145,15 @@
 .aj-refresher .spinner svg circle{
 	stroke: #F8585C;
 }
+
+.aj-refresher .spinner{
+	margin: 0% auto !important;
+}
+
 .aj-verify-spinner svg{
   display: block;
   margin: 0% auto;
-   stroke: #F8585C;
+  stroke: #F8585C;
   width: 40px;
   height: 40px;
   fill: #ffffff;

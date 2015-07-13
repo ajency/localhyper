@@ -2,6 +2,7 @@ angular.module('LocalHyper.requestsOffers', []).config([
   '$stateProvider', function($stateProvider) {
     return $stateProvider.state('tabs', {
       url: "/tab",
+      abstract: true,
       parent: 'main',
       views: {
         "appContent": {

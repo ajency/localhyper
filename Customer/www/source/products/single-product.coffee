@@ -25,6 +25,7 @@ angular.module 'LocalHyper.products'
 				$ionicModal.fromTemplateUrl 'views/products/specification.html', 
 					scope: $scope,
 					animation: 'slide-in-up'
+					hardwareBackButtonClose: true
 				.then (modal)=>
 					@specificationModal = modal
 
@@ -32,6 +33,7 @@ angular.module 'LocalHyper.products'
 				$ionicModal.fromTemplateUrl 'views/products/make-request.html', 
 					scope: $scope,
 					animation: 'slide-in-up'
+					hardwareBackButtonClose: true
 				.then (modal)=>
 					@makeRequestModal = modal
 
