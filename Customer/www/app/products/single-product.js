@@ -18,7 +18,8 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       loadSpecificationsModal: function() {
         return $ionicModal.fromTemplateUrl('views/products/specification.html', {
           scope: $scope,
-          animation: 'slide-in-up'
+          animation: 'slide-in-up',
+          hardwareBackButtonClose: true
         }).then((function(_this) {
           return function(modal) {
             return _this.specificationModal = modal;
@@ -28,7 +29,8 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       loadMakeRequestModal: function() {
         return $ionicModal.fromTemplateUrl('views/products/make-request.html', {
           scope: $scope,
-          animation: 'slide-in-up'
+          animation: 'slide-in-up',
+          hardwareBackButtonClose: true
         }).then((function(_this) {
           return function(modal) {
             return _this.makeRequestModal = modal;
