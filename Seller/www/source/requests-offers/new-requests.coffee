@@ -31,6 +31,15 @@ angular.module 'LocalHyper.requestsOffers'
 			@display = 'loader'
 			@getRequests()
 
+		createdAt : (at)->
+			format = 'DD/MM/YYYY hh:mm'
+			now = moment().format format
+			at = moment(at).format format
+			diff = moment(at, format).diff(moment(now, format))
+			duration = moment.duration diff
+			parseInt duration.asHours()
+
+
 	
 	$scope.$on '$ionicView.afterEnter', ->
 		App.hideSplashScreen()

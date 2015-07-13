@@ -30,6 +30,15 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       onTapToRetry: function() {
         this.display = 'loader';
         return this.getRequests();
+      },
+      createdAt: function(at) {
+        var diff, duration, format, now;
+        format = 'DD/MM/YYYY hh:mm';
+        now = moment().format(format);
+        at = moment(at).format(format);
+        diff = moment(at, format).diff(moment(now, format));
+        duration = moment.duration(diff);
+        return parseInt(duration.asHours());
       }
     };
     return $scope.$on('$ionicView.afterEnter', function() {
