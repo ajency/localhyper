@@ -10,6 +10,7 @@ angular.module 'LocalHyper.common', []
 
 			start: true
 			validateEmail: /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/
+			onlyNumbers: /^\d+$/
 			menuEnabled : left: false, right: false
 			previousState: ''
 			currentState: ''

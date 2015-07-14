@@ -21,6 +21,7 @@ angular.module 'LocalHyper.products', []
 				$ionicModal.fromTemplateUrl 'views/products/sort.html', 
 					scope: $scope,
 					animation: 'slide-in-up'
+					hardwareBackButtonClose: true
 				.then (modal)=>
 					@sortModal = modal
 

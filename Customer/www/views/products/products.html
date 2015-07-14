@@ -7,12 +7,12 @@
 	<ion-content class="sub-categories product-list">
 
 		<ion-refresher
-			on-refresh="view.onPullToRefresh()">
+			on-refresh="view.onPullToRefresh()" class="aj-refresher">
 		</ion-refresher>
 
 		<ion-list>
 			<div 
-				class="col col-50 border-card"
+				class="col col-50 border-card border-card2"
 				collection-repeat="product in view.products"
 				item-width="50%"
 				ng-click="App.navigate('single-product', {productID: product.objectId})">
@@ -22,13 +22,13 @@
 				</h6>
 				<h5 class="text-left title">{{product.name}}</h5>
 			
-				<img ng-src="{{product.images[0].src}}" class="aj-img center-block " style="height:100px;">
+				<img ng-src="{{product.images[0].src}}" class=" center-block aj-img" >
 				<div class="row">
                     <div class="col col-67">
                 		<h4 class="margin-none pull-left strike" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
                 	</div>
                 	<div class="col">
-                		<i class="ion-ios-upload-outline arrow-link"></i>
+                		<h3 class="pull-right subdued"> <i class="ion-log-out"></i></h3>
                 	</div>
 				</div>
 			</div>
@@ -37,18 +37,18 @@
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
 			ng-if="view.canLoadMore"
-			distance="1%">
-		</ion-infinite-scroll>
+			distance="1%" class="aj-refresher">
+		</ion-infinite-scroll >
 
 	</ion-content>
 
 	<ion-footer-bar class="bar-dark">
 		<div class="row">
 			<div class="col col-50 text-center" ng-click="view.sortModal.show()">
-				<h5 class="margin-none text-light"><i class="ion ion-arrow-swap"></i> SORT</h5>
+				<h5 class="margin-none text-light normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
 			</div>
 			<div class="col col-50 text-center border-left">
-				<h5 class="margin-none text-light"><i class="ion ion-funnel"></i> FILTER</h5>
+				<h5 class="margin-none text-light normal"><i class="ion ion-funnel"></i> FILTER</h5>
 			</div>
 		</div>
 	</ion-footer-bar>

@@ -4,6 +4,7 @@ angular.module('LocalHyper.common', []).factory('App', [
     return App = {
       start: true,
       validateEmail: /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/,
+      onlyNumbers: /^\d+$/,
       menuEnabled: {
         left: false,
         right: false
@@ -76,6 +77,10 @@ angular.module('LocalHyper.common', []).factory('App', [
       },
       dragContent: function(bool) {
         return $ionicSideMenuDelegate.canDragContent(bool);
+      },
+      toINR: function(number) {
+        number = number.toString();
+        return number.replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
       },
       getInstallationId: function() {
         var defer;

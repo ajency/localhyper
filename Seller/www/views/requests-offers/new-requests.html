@@ -1,0 +1,94 @@
+<ion-view ng-init="view.init()">
+
+	<ion-nav-title>
+		<img src="img/logo.png"/>
+    </ion-nav-title>
+
+	<ion-nav-buttons side="left">
+		<button 
+			menu-toggle="left" 
+			class="button button-icon icon ion-navicon">
+		</button>
+	</ion-nav-buttons>
+
+	<ion-content ng-switch="view.display">
+
+		<ion-spinner
+			class="aj-spinner spinner-android" 
+			ng-switch-when="loader">
+		</ion-spinner>
+
+		<ion-list ng-switch-when="noError" class="card-list">
+
+	       	<ion-item 
+	       		class="card"
+	       		ng-repeat="request in view.requests">
+
+			    <div class="item item-avatar border-none">
+			        <img ng-src="{{request.product.image[0].src}}">
+			        <h2>{{request.product.name}}</h2>
+			        <p>{{request.radius}} kms radius</p>
+			    </div>
+
+			    <div class="row">
+			        <div class="col ">
+			            <sm class="subdued"> Local Price</sm>
+			            <h3 class=" item-text-wrap margin-none big-txt">
+			            	<span class="WebRupee subdued">&#x20B9;</span> 19,000
+			            </h3>
+			        </div>
+			        <div class="col">
+			            <sm class="subdued"> &nbsp;</sm>
+			            <h4 class="text-left margin-none"> 
+			            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.product.mrp)}} MRP
+			            </h4>
+			            <h4 class="text-left margin-none"> 
+			            	<span class="WebRupee subdued">&#x20B9;</span> 19,000 Online
+			            </h4>
+			        </div>
+			        <div class="col">
+			            <div class="offer"> 2 </div>
+			            <h4 class="offertxt"> No of offers</h4>
+			        </div>
+			    </div>
+
+			    <div class="row">
+			        <div class="col col-100">
+			            <span class="label"> {{request.category.parent}}</span> 
+			            <span class="label"> {{request.category.name}}</span> 
+			            <span class="label"> {{request.brand.name}}</span>
+			        </div>
+			    </div>
+
+			    <div class="item item-divider">
+			        <div class="pull-left ">
+			            <h2 class="margin-none"> Make an offer &nbsp;<i class="ion ion-chevron-right btn-danger"></i></h2>
+			        </div>
+
+			        <div class="pull-right ">
+			            <sm class="subdued"> 5 min ago on 16/04/2015</sm>
+			        </div>
+			    </div>
+			</ion-item>
+		</ion-list>
+
+		<aj-error 
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry()">
+		</aj-error>
+
+	</ion-content>
+
+	<ion-footer-bar class="bar-dark">
+		<div class="row">
+			<div class="col col-50 text-center" >
+				<h5 class="margin-none text-light normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
+			</div>
+			<div class="col col-50 text-center border-left">
+				<h5 class="margin-none text-light normal"><i class="ion ion-funnel"></i> FILTER</h5>
+			</div>
+		</div>
+	</ion-footer-bar>
+	
+</ion-view>

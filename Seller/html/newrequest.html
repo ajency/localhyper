@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <!-- Ionic css -->
+    <link href="../www/lib/ionic/css/ionic.min.css" rel="stylesheet">
+
+     <!-- Browntape css -->
+    <link href="../../Customer/www/styles/css/style.css" rel="stylesheet">
+	<link href="../../Customer/www/styles/css/custom.css" rel="stylesheet">
+     <!-- Ionic-Angular js-->
+    <script src="../www/lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- Plugins-->
+    <script src="../www/lib/plugins/lodash.min.js"></script>
+    <script src="../www/lib/plugins/jquery-min.js"></script>
+
+    <!-- Angular Modules-->
+    <script src="../www/lib/modules/ng-cordova.min.js"></script>
+    <script src="../www/lib/modules/restangular.min.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- App -->
+    <script src="../www/app/app.js"></script>
+
+    <!-- Common -->
+    <script src="../www/app/common/network.js"></script>
+    <script src="../www/app/common/api.js"></script>
+
+    <!-- Browntape Modules -->
+    <script src="../www/app/home/home.js"></script>
+
+    <!-- Directives -->
+
+  </head>
+  <body ng-app="browntape" class="platform-android">
+  <ion-header-bar class="bar ">
+			  <button class="button button-clear icon ion-navicon"></button>
+        <h1 class="title"><img src="../www/img/logo.png"/></h1>
+        <button class="button button-clear">
+          <button 
+            class="button button-icon ion-ios-person-outline"
+            ng-click="view.userPopover.show($event)">
+          </button></button>
+  </ion-header-bar>
+<div class="tabs-striped tabs-top  tabs-color-dark">
+        <div class="tabs">
+          <a class="tab-item active " href="#">
+           New requests       <span class="notification badge badge-assertive relative right">2</span>
+          </a>
+          <a class="tab-item" href="#">
+           
+            Offer History
+          </a>
+          <a class="tab-item" href="#">
+           
+            Successful offers
+          </a>
+        </div>
+  </div>
+  <br>  <br>  <br>  <br>  <br>
+<ion-view class="profile-view" ng-init="toggle=true">
+		<ion-content>
+        <div class="card">
+           <div class="item item-avatar border-none">
+              <img src="http://ajency.in/team/images/fridge2.jpg">
+              <h2>Kelvinator REF KW203EGT-FDA 190 L Single Door Refrigerator</h2>
+              <p>0.4 kms radius</p>
+           </div>
+          <div class="row">
+            <div class="col ">
+              <sm class="subdued"> Local Price</sm>
+              <h3 class="text-left margin-none"><span class="WebRupee subdued">&#x20B9;</span> 19,000</h3>
+            </div>
+            <div class="col">
+              <sm class="subdued"> &nbsp;</sm>
+              <h6 class="text-left margin-none"> <span class="WebRupee subdued">&#x20B9;</span> 19,000 MRP</h6>
+              <h6 class="text-left margin-none"> <span class="WebRupee subdued">&#x20B9;</span> 19,000 Online</h6>
+            </div>
+             <div class="col">
+                <div class="offer"> 2 </div>
+                <h6 class="offertxt"> No of offers</h6>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-100">
+              <span class="label"> Fridge</span> <span class="label"> Home Appliances</span> <span class="label"> Gray</span>
+            </div>
+          
+          </div>
+          <div class="item item-divider">
+                  <div class="pull-left ">
+                    <h2 class="margin-none"> Make an offer &nbsp;<i class="ion ion-chevron-right btn-danger"></i></h2>
+                  </div>
+             
+                   <div class="pull-right ">
+                    <sm class="subdued"> 5 min ago on 16/04/2015</sm>
+                  </div>
+              
+          </div>
+        </div>
+                <div class="card">
+           <div class="item item-avatar border-none">
+              <img src="http://ajency.in/team/images/fridge2.jpg">
+              <h2>Kelvinator REF KW203EGT-FDA 190 L Single Door Refrigerator</h2>
+              <p>0.4 kms radius</p>
+           </div>
+          <div class="row">
+            <div class="col ">
+              <sm class="subdued"> Local Price</sm>
+              <h3 class="text-left margin-none"><span class="WebRupee subdued">&#x20B9;</span> 19,000</h3>
+            </div>
+            <div class="col">
+              <sm class="subdued"> &nbsp;</sm>
+              <h6 class="text-left margin-none"> <span class="WebRupee subdued">&#x20B9;</span> 19,000 MRP</h6>
+              <h6 class="text-left margin-none"> <span class="WebRupee subdued">&#x20B9;</span> 19,000 Online</h6>
+            </div>
+             <div class="col">
+                <div class="offer"> 2 </div>
+                <h6 class="offertxt"> No of offers</h6>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col col-100">
+              <span class="label"> Fridge</span> <span class="label"> Home Appliances</span> <span class="label"> Gray</span>
+            </div>
+          
+          </div>
+          <div class="item item-divider">
+                  <div class="pull-left ">
+                    <h2 class="margin-none"> Make an offer &nbsp;<i class="ion ion-chevron-right btn-danger"></i></h2>
+                  </div>
+             
+                   <div class="pull-right ">
+                    <sm class="subdued"> 5 min ago on 16/04/2015</sm>
+                  </div>
+              
+          </div>
+        </div>
+	 </ion-content>
+</ion-view>
+
+  </body>
+</html>

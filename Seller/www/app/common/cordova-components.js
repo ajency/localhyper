@@ -37,7 +37,9 @@ angular.module('LocalHyper.common').factory('CToast', [
   '$cordovaDialogs', 'App', function($cordovaDialogs, App) {
     var CDialog;
     CDialog = {};
-    CDialog.prompt = function(message) {};
+    CDialog.confirm = function(title, message, buttons) {
+      return $cordovaDialogs.confirm(message, title, buttons);
+    };
     return CDialog;
   }
 ]);

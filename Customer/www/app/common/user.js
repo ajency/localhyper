@@ -14,16 +14,20 @@ angular.module('LocalHyper.common').factory('User', [
       user = Parse.User.current();
       return user.getSessionToken();
     };
+    User.getId = function() {
+      var user;
+      user = Parse.User.current();
+      return user.id;
+    };
     User.info = function(action, data) {
       if (data == null) {
         data = {};
       }
       switch (action) {
         case 'set':
-          return userInfo = {
-            name: data.name,
-            phone: data.phone
-          };
+          return _.each(data, function(val, index) {
+            return userInfo[index] = val;
+          });
         case 'get':
           return userInfo;
       }

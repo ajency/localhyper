@@ -15,7 +15,8 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       loadSortModal: function() {
         return $ionicModal.fromTemplateUrl('views/products/sort.html', {
           scope: $scope,
-          animation: 'slide-in-up'
+          animation: 'slide-in-up',
+          hardwareBackButtonClose: true
         }).then((function(_this) {
           return function(modal) {
             return _this.sortModal = modal;
