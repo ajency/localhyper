@@ -29,4 +29,8 @@ Route::controllers( [
 Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get( '/', 'Admin\AdminController@index' );
     Route::resource( 'category', 'Admin\category\CategoryController' );
+     
+    Route::get( 'attribute/exportattributes', 'Admin\AttributeController@exportAttributes' );
+    Route::get( 'attribute/importattributes', 'Admin\AttributeController@importAttributes' );
+    Route::get( 'attribute/exportattributevalues', 'Admin\AttributeController@exportAttributeValues' );
 });    
