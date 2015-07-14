@@ -68,7 +68,7 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
         , (error)->
             response.error error
 
-Parse.Cloud.job 'attributeImport', (request, response) ->
+Parse.Cloud.define 'attributeImport', (request, response) ->
 
     Attributes = Parse.Object.extend('Attributes')
 
@@ -120,3 +120,40 @@ Parse.Cloud.job 'attributeImport', (request, response) ->
 
       error: (error) ->
         response.error "Failed to add/update attributes due to - #{error.message}"    
+
+Parse.Cloud.define 'attributeValueImport', (request, response) ->
+
+    AttributeValues = Parse.Object.extend('AttributeValues')
+    
+    attributeValSavedArr = []
+
+    attributeValues =  request.params.attributeValues
+    categoryId =  request.params.categoryId
+
+    _.each attributeValues, (attributeValObj) ->
+        attributeValue = new AttributeValues()
+
+        if attributeValObj.objectId isnt ""
+            attributeValue.id = attributeValObj.objectId
+
+
+        attributeValue.set "value", attributeValObj.value
+
+        attributePointer = 
+            "__type" : "Pointer",
+            "className":"Attributes",
+            "objectId":attributeValObj.attributeId            
+        
+        attributeValue.set "attribute", attributePointer
+
+        attributeValSavedArr.push(attributeValue)
+        
+
+    # save all the newly created objects
+    Parse.Object.saveAll attributeValSavedArr,
+      success: (objs) ->
+        response.success "Successfully added/updated the attributes"
+
+      error: (error) ->
+        response.error "Failed to add/update attributes due to - #{error.message}"      
+

@@ -65,7 +65,7 @@
     })(this));
   });
 
-  Parse.Cloud.job('attributeImport', function(request, response) {
+  Parse.Cloud.define('attributeImport', function(request, response) {
     var Attributes, attributeSavedArr, attributes, categoryId, isFilterable;
     Attributes = Parse.Object.extend('Attributes');
     attributeSavedArr = [];
@@ -102,6 +102,37 @@
         }, function(error) {
           return response.error(error);
         });
+      },
+      error: function(error) {
+        return response.error("Failed to add/update attributes due to - " + error.message);
+      }
+    });
+  });
+
+  Parse.Cloud.define('attributeValueImport', function(request, response) {
+    var AttributeValues, attributeValSavedArr, attributeValues, categoryId;
+    AttributeValues = Parse.Object.extend('AttributeValues');
+    attributeValSavedArr = [];
+    attributeValues = request.params.attributeValues;
+    categoryId = request.params.categoryId;
+    _.each(attributeValues, function(attributeValObj) {
+      var attributePointer, attributeValue;
+      attributeValue = new AttributeValues();
+      if (attributeValObj.objectId !== "") {
+        attributeValue.id = attributeValObj.objectId;
+      }
+      attributeValue.set("value", attributeValObj.value);
+      attributePointer = {
+        "__type": "Pointer",
+        "className": "Attributes",
+        "objectId": attributeValObj.attributeId
+      };
+      attributeValue.set("attribute", attributePointer);
+      return attributeValSavedArr.push(attributeValue);
+    });
+    return Parse.Object.saveAll(attributeValSavedArr, {
+      success: function(objs) {
+        return response.success("Successfully added/updated the attributes");
       },
       error: function(error) {
         return response.error("Failed to add/update attributes due to - " + error.message);
