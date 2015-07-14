@@ -9,22 +9,11 @@ angular.module 'LocalHyper.requestsOffers'
 			errorType: ''
 			requests: []
 			requestIds: []
+			currentRequest: null
 
 			requestDetails:
 				modal: null
-				display: 'loader'
-				errorType: ''
 				details: {}
-
-				get : ->
-					@display = 'loader'
-					RequestsAPI.getDetails()
-					.then (data)=>
-						@display = 'noError'
-						@details = data
-					, (type)=>
-						@display = 'error'
-						@errorType = type
 
 			init : ->
 				Push.register()
@@ -62,13 +51,16 @@ angular.module 'LocalHyper.requestsOffers'
 				@display = 'error'
 				@errorType = type
 
+			isNew : (requestId)->
+				_.contains @requestIds, requestId
+
 			onTapToRetry : ->
 				@display = 'loader'
 				@getRequests()
 
-			showRequestDetails : ->
+			showRequestDetails : (request)->
+				console.log @currentRequest = request
 				@requestDetails.modal.show()
-				@requestDetails.get()
 
 
 		$rootScope.$on 'on:new:request', ->
@@ -80,10 +72,6 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'EachRequestCtrl', ['$scope', ($scope)->
-
-	if _.contains $scope.view.requestIds, $scope.request.id
-		$scope.request.newAlert = 
-			"background-color": "#F3766D"
 
 	#Request time
 	iso = $scope.request.createdAt.iso

@@ -35,12 +35,19 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       });
       return defer.promise;
     };
-    RequestsAPI.getDetails = function() {
-      var defer;
+    RequestsAPI.updateStatus = function(requestId) {
+      var defer, params;
       defer = $q.defer();
-      $timeout(function() {
-        return defer.resolve();
-      }, 3000);
+      params = {
+        "notificationTypeId": "" + requestId,
+        "notificationType": "Request",
+        "hasSeen": true
+      };
+      $http.post('functions/updateNotificationStatus', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
       return defer.promise;
     };
     return RequestsAPI;

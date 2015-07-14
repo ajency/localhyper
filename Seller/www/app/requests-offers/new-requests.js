@@ -5,25 +5,10 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       errorType: '',
       requests: [],
       requestIds: [],
+      currentRequest: null,
       requestDetails: {
         modal: null,
-        display: 'loader',
-        errorType: '',
-        details: {},
-        get: function() {
-          this.display = 'loader';
-          return RequestsAPI.getDetails().then((function(_this) {
-            return function(data) {
-              _this.display = 'noError';
-              return _this.details = data;
-            };
-          })(this), (function(_this) {
-            return function(type) {
-              _this.display = 'error';
-              return _this.errorType = type;
-            };
-          })(this));
-        }
+        details: {}
       },
       init: function() {
         Push.register();
@@ -72,13 +57,16 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         this.display = 'error';
         return this.errorType = type;
       },
+      isNew: function(requestId) {
+        return _.contains(this.requestIds, requestId);
+      },
       onTapToRetry: function() {
         this.display = 'loader';
         return this.getRequests();
       },
-      showRequestDetails: function() {
-        this.requestDetails.modal.show();
-        return this.requestDetails.get();
+      showRequestDetails: function(request) {
+        console.log(this.currentRequest = request);
+        return this.requestDetails.modal.show();
       }
     };
     $rootScope.$on('on:new:request', function() {
@@ -91,11 +79,6 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
 ]).controller('EachRequestCtrl', [
   '$scope', function($scope) {
     var at, diff, duration, format, hours, hr, iso, min, minutes, now, timeStr;
-    if (_.contains($scope.view.requestIds, $scope.request.id)) {
-      $scope.request.newAlert = {
-        "background-color": "#F3766D"
-      };
-    }
     iso = $scope.request.createdAt.iso;
     format = 'DD/MM/YYYY HH:mm:ss';
     now = moment().format(format);
