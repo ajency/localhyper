@@ -113,50 +113,84 @@ class AttributeController extends Controller
         //
     }
 
-    public static function attributeImport($unitId){
+    public static function attributeImport($data){
 
-      $app_id = config('constants.parse_sdk.app_id');
-      $rest_api_key = config('constants.parse_sdk.rest_api_key');
-      $base_url = "https://api.parse.com/1";
+        $data = array (
+                  'attributes' => 
+                  array (
+                    0 => 
+                    array (
+                      'objectId' => 'vsX3NY2syg',
+                      'name' => 'reen size',
+                      'group' => 'general',
+                      'unit' => 'inches',
+                      'display_type' => 'checkbox',
+                    ),
+                    1 => 
+                    array (
+                      'objectId' => '',
+                      'name' => 'tv color',
+                      'group' => 'general',
+                      'unit' => '',
+                      'display_type' => 'checkbox',
+                    ),
+                  ),
+                  'categoryId' => 'UPieAJ73Vk',
+                  'isFilterable' => false,
+                );
 
-      $parseFunctType = "functions";
+        $app_id = config('constants.parse_sdk.app_id');
+        $rest_api_key = config('constants.parse_sdk.rest_api_key');
+        $base_url = "https://api.parse.com/1";
 
-      $functionName = "attributeImport";
+        $parseFunctType = "functions";
 
-      $post_url = $base_url."/".$parseFunctType."/".$functionName;
+        $functionName = "attributeImport";
 
-      // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
-      // -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
-      // -H "Content-Type: application/json" \
-      // -d '{}' \
-      // https://api.parse.com/1/functions/hello 
+        $post_url = $base_url."/".$parseFunctType."/".$functionName;
 
-       $c = curl_init();
-       curl_setopt($c, CURLOPT_URL, $sender_url);
+        $data_string = json_encode($data); 
 
-       curl_setopt($ch,CURLOPT_HTTPHEADER,$headersArr);       
+        $header_array = array(                                                                          
+        'X-Parse-Application-Id:' .$app_id ,                                                                                
+        'X-Parse-REST-API-Key:' .$rest_api_key ,                                                                                
+        'Content-Type: application/json',                                                                                
+        'Content-Length: ' . strlen($data_string),
+        );
 
-       curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
-       curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
-       curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0);
-       curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
-       $o = curl_exec($c); 
+          // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
+          // -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
+          // -H "Content-Type: application/json" \
+          // -d '{}' \
+          // https://api.parse.com/1/functions/hello 
 
-       if (curl_errno($c)) {
-        //$result_json  = NULL;
-           $result_json  = 0;
-       }
-       else{
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$post_url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header_array)                                                                       
+        );                                                                                                                   
 
-           $result_json  = (json_decode($o)!='')?json_decode($o):0;
+        $result = curl_exec($ch);
 
-       }
 
-       /* Check HTTP Code */
-       $status = curl_getinfo($c, CURLINFO_HTTP_CODE);
+        if (curl_errno($ch)) {
 
-       curl_close($c); 
+            $result_json  = 0;
+        }
+        else{
 
-       return $result_json;      
-   }      
+            $result_json  = (json_decode($result)!='')?json_decode($result):0;
+
+        }
+
+        /* Check HTTP Code */
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch); 
+
+        return $result_json;      
+    
+    }      
 }
