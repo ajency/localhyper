@@ -38,15 +38,6 @@ angular.module 'LocalHyper.requestsOffers'
 
 		defer.promise
 
-	RequestsAPI.getDetails = ->
-		defer = $q.defer()
-
-		$timeout ->
-			defer.resolve()
-		, 3000
-
-		defer.promise
-
 	RequestsAPI.updateStatus = (requestId)->
 		defer = $q.defer()
 

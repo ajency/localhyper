@@ -35,14 +35,6 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       });
       return defer.promise;
     };
-    RequestsAPI.getDetails = function() {
-      var defer;
-      defer = $q.defer();
-      $timeout(function() {
-        return defer.resolve();
-      }, 3000);
-      return defer.promise;
-    };
     RequestsAPI.updateStatus = function(requestId) {
       var defer, params;
       defer = $q.defer();
