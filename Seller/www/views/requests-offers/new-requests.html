@@ -25,12 +25,12 @@
 	       	<ion-item 
 	       		class="card"
 	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
-	       		ng-click="view.showRequestDetails()"
+	       		ng-init="request.new=view.isNew(request.id)"
+	       		ng-click="view.showRequestDetails(request.new)"
 	       		ng-controller="EachRequestCtrl">
 
 			    <div 
-			    	class="item item-avatar border-none" 
-			    	ng-style="request.newAlert">
+			    	class="item item-avatar border-none">
 
 			        <img ng-src="{{request.product.image[0].src}}">
 			        <h2>{{request.product.name}}</h2>

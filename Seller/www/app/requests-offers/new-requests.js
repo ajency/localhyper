@@ -72,13 +72,15 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         this.display = 'error';
         return this.errorType = type;
       },
+      isNew: function(requestId) {
+        return _.contains(this.requestIds, requestId);
+      },
       onTapToRetry: function() {
         this.display = 'loader';
         return this.getRequests();
       },
-      showRequestDetails: function() {
-        this.requestDetails.modal.show();
-        return this.requestDetails.get();
+      showRequestDetails: function(newR) {
+        return console.log(newR);
       }
     };
     $rootScope.$on('on:new:request', function() {
@@ -91,11 +93,6 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
 ]).controller('EachRequestCtrl', [
   '$scope', function($scope) {
     var at, diff, duration, format, hours, hr, iso, min, minutes, now, timeStr;
-    if (_.contains($scope.view.requestIds, $scope.request.id)) {
-      $scope.request.newAlert = {
-        "background-color": "#F3766D"
-      };
-    }
     iso = $scope.request.createdAt.iso;
     format = 'DD/MM/YYYY HH:mm:ss';
     now = moment().format(format);
