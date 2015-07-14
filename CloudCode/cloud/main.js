@@ -65,6 +65,33 @@
     })(this));
   });
 
+  Parse.Cloud.job('attributeImport', function(request, response) {
+    var Attributes, attributeSavedArr, attributes;
+    Attributes = Parse.Object.extend('Attributes');
+    attributeSavedArr = [];
+    attributes = request.params.attributes;
+    _.each(attributes, function(attributeObj) {
+      var attribute;
+      attribute = new Attributes();
+      if (attribute.hasOwnProperty("objectId")) {
+        attribute.id = attributeObj.objectId;
+      }
+      attribute.set("name", attributeObj.name);
+      attribute.set("group", attributeObj.group);
+      attribute.set("unit", attributeObj.unit);
+      attribute.set("display_type", attributeObj.display_type);
+      return attributeSavedArr.push(attribute);
+    });
+    return Parse.Object.saveAll(attributeSavedArr, {
+      success: function(objs) {
+        response.success("Successfully added/updated the attributes");
+      },
+      error: function(error) {
+        return response.error("Failed to add/update attributes due to - " + error.message);
+      }
+    });
+  });
+
   Parse.Cloud.define('getCategoryBasedBrands', function(request, response) {
     var categoryId, queryCategory;
     categoryId = request.params.categoryId;
@@ -340,6 +367,8 @@
   });
 
   Parse.Cloud.define('getNewOffers', function(request, response) {});
+
+  Parse.Cloud.define('makeOffer', function(request, response) {});
 
   Parse.Cloud.job('productImport', function(request, response) {
     var ProductItem, productSavedArr, products;
