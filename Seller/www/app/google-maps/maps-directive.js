@@ -3,8 +3,9 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
     return {
       restrict: 'E',
       replace: true,
-      template: '<div data-tap-disabled="true" class="aj-maps">',
+      template: '<div data-tap-disabled="{{mapTapDisabled}}">',
       scope: {
+        mapTapDisabled: '=',
         onCreate: '&'
       },
       link: function(scope, el, attr) {
@@ -25,7 +26,7 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
             streetViewControl: false
           };
           map = new google.maps.Map(el[0], mapOptions);
-          google.maps.event.addListenerOnce(map, 'idle', function() {
+          google.maps.event.addListenerOnce(map, 'load', function() {
             return hideAnchorTags(map);
           });
           return scope.onCreate({
