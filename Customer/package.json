@@ -41,6 +41,23 @@
     {
       "locator": "/Users/deepak/Desktop/com.parse.cordova.core.pushplugin",
       "id": "com.parse.cordova.core.pushplugin"
+    },
+    "cordova-plugin-splashscreen",
+    {
+      "locator": "https://github.com/pushandplay/cordova-plugin-apprate.git",
+      "id": "org.pushandplay.cordova.apprate"
+    },
+    {
+      "locator": "https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git",
+      "id": "nl.x-services.plugins.socialsharing"
+    },
+    {
+      "locator": "https://github.com/apache/cordova-plugin-globalization.git",
+      "id": "cordova-plugin-globalization"
+    },
+    {
+      "locator": "https://github.com/apache/cordova-plugin-inappbrowser.git",
+      "id": "cordova-plugin-inappbrowser"
     }
   ],
   "cordovaPlatforms": [

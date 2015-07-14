@@ -12,3 +12,18 @@ List of cordova plugins used:
 10) ionic plugin add https://github.com/Paldom/SpinnerDialog.git
 11) ionic plugin add cordova-plugin-dialogs
 12) ionic plugin add https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git
+
+
+ionic plugin add https://github.com/pushandplay/cordova-plugin-apprate.git
+
+cordova plugin add https://github.com/phonegap-build/PushPlugin.git
+ionic plugin remove org.pushandplay.cordova.apprate
+
+
+ionic plugin add https://github.com/pushandplay/cordova-plugin-apprate.git
+
+ionic plugin add https://github.com/apache/cordova-plugin-globalization.git 
+
+ionic plugin add https://github.com/apache/cordova-plugin-inappbrowser.git
+
+ionic plugin add https://github.com/apache/cordova-plugin-dialogs.git 
