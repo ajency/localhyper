@@ -23,14 +23,13 @@
 		<ion-list ng-switch-when="noError" class="card-list">
 
 	       	<ion-item 
-	       		class="card "
+	       		class="card"
 	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
 	       		ng-init="request.new=view.isNew(request.id)"
-	       		ng-click="view.showRequestDetails(request.new)"
+	       		ng-click="view.showRequestDetails(request)"
 	       		ng-controller="EachRequestCtrl">
-				<div 
-			    	class="item item-avatar border-none margin-none" >
-
+				
+				<div class="item item-avatar border-none margin-none">
 			        <img ng-src="{{request.product.image[0].src}}">
 			        <h2>{{request.product.name}}</h2>
 			        <p>{{request.radius.toFixed(1)}} kms radius</p>

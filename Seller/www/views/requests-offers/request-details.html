@@ -12,22 +12,11 @@
 		</div>
 	</ion-header-bar>
 
-	<ion-content ng-switch="view.requestDetails.display">
+	<ion-content>
 
-		<ion-spinner
-			class="aj-spinner spinner-android" 
-			ng-switch-when="loader">
-		</ion-spinner>
-
-		<ion-list ng-switch-when="noError">
+		<ion-list>
 
 		</ion-list>
-
-		<aj-error 
-			ng-switch-when="error"
-			error-type="view.requestDetails.errorType"
-			tap-to-retry="view.requestDetails.get()">
-		</aj-error>
 	
 	</ion-content>
 </ion-modal-view>

@@ -5,25 +5,10 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       errorType: '',
       requests: [],
       requestIds: [],
+      currentRequest: null,
       requestDetails: {
         modal: null,
-        display: 'loader',
-        errorType: '',
-        details: {},
-        get: function() {
-          this.display = 'loader';
-          return RequestsAPI.getDetails().then((function(_this) {
-            return function(data) {
-              _this.display = 'noError';
-              return _this.details = data;
-            };
-          })(this), (function(_this) {
-            return function(type) {
-              _this.display = 'error';
-              return _this.errorType = type;
-            };
-          })(this));
-        }
+        details: {}
       },
       init: function() {
         Push.register();
@@ -79,8 +64,9 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         this.display = 'loader';
         return this.getRequests();
       },
-      showRequestDetails: function(newR) {
-        return console.log(newR);
+      showRequestDetails: function(request) {
+        console.log(this.currentRequest = request);
+        return this.requestDetails.modal.show();
       }
     };
     $rootScope.$on('on:new:request', function() {
