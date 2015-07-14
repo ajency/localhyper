@@ -75,12 +75,12 @@
     _.each(attributes, function(attributeObj) {
       var attribute;
       attribute = new Attributes();
-      if (attributeObj.hasOwnProperty("objectId")) {
+      if (attributeObj.objectId !== "") {
         attribute.id = attributeObj.objectId;
       }
       attribute.set("name", attributeObj.name);
       attribute.set("group", attributeObj.group);
-      if (attributeObj.hasOwnProperty("unit")) {
+      if (attributeObj.unit !== "") {
         attribute.set("unit", attributeObj.unit);
       }
       attribute.set("display_type", attributeObj.display_type);

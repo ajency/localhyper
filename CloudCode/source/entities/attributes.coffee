@@ -81,7 +81,8 @@ Parse.Cloud.job 'attributeImport', (request, response) ->
     _.each attributes, (attributeObj) ->
         attribute = new Attributes()
 
-        if(attributeObj.hasOwnProperty("objectId"))
+        # if(attributeObj.hasOwnProperty("objectId"))
+        if attributeObj.objectId isnt ""
             attribute.id = attributeObj.objectId
 
 
@@ -89,7 +90,7 @@ Parse.Cloud.job 'attributeImport', (request, response) ->
 
         attribute.set "group", attributeObj.group
         
-        if(attributeObj.hasOwnProperty("unit"))        
+        if attributeObj.unit isnt ""       
             attribute.set "unit", attributeObj.unit
 
         attribute.set "display_type", attributeObj.display_type
@@ -100,12 +101,6 @@ Parse.Cloud.job 'attributeImport', (request, response) ->
     # save all the newly created objects
     Parse.Object.saveAll attributeSavedArr,
       success: (objs) ->
-        # if attributes are filterable then, pluck out attribute id and update category table with filterable attributes
-        # attributesArr = _.map(objs, (obj) ->
-        #     attrib = new Attributes()
-        #     attrib.id = objs.id
-        #     attrib
-        # )
 
         # get category and update its filterable column
         Category = Parse.Object.extend('Category')
