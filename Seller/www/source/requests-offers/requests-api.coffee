@@ -23,5 +23,20 @@ angular.module 'LocalHyper.requestsOffers'
 
 		defer.promise
 
+	RequestsAPI.getNotifications = ->
+		defer = $q.defer()
+		user = User.getCurrent()
+		params = 
+			"userId": user.id
+			"type": "Request"
+
+		$http.post 'functions/getUnseenNotifications', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
 	RequestsAPI
 ]

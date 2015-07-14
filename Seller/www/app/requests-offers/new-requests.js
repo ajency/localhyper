@@ -1,14 +1,26 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', function($scope, App, RequestsAPI) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', function($scope, App, RequestsAPI, $rootScope) {
     $scope.view = {
       display: 'loader',
       errorType: '',
       requests: [],
+      requestIds: [],
       init: function() {
         return this.getRequests();
       },
       getRequests: function() {
-        return RequestsAPI.getAll().then((function(_this) {
+        return RequestsAPI.getNotifications().then((function(_this) {
+          return function(requestIds) {
+            var notifications;
+            _this.requestIds = requestIds;
+            notifications = _.size(requestIds);
+            if (notifications > 0) {
+              App.notification.badge = true;
+              App.notification.count = notifications;
+            }
+            return RequestsAPI.getAll();
+          };
+        })(this)).then((function(_this) {
           return function(data) {
             console.log(data);
             return _this.onSuccess(data);
@@ -32,8 +44,39 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         return this.getRequests();
       }
     };
+    $rootScope.$on('on:new:request', function() {
+      return $scope.view.getRequests();
+    });
     return $scope.$on('$ionicView.afterEnter', function() {
       return App.hideSplashScreen();
     });
+  }
+]).controller('EachRequestCtrl', [
+  '$scope', function($scope) {
+    var at, diff, duration, format, hours, hr, iso, min, minutes, now, timeStr;
+    console.log($scope.view.requestIds);
+    if (_.contains($scope.view.requestIds, $scope.request.id)) {
+      $scope.request.newAlert = {
+        "background-color": "#F3766D"
+      };
+    }
+    iso = $scope.request.createdAt.iso;
+    format = 'DD/MM/YYYY HH:mm:ss';
+    now = moment().format(format);
+    at = moment(iso).format(format);
+    diff = moment(now, format).diff(moment(at, format));
+    duration = moment.duration(diff);
+    minutes = parseInt(duration.asMinutes().toFixed(0));
+    hours = parseInt(duration.asHours().toFixed(0));
+    if (minutes === 0) {
+      timeStr = 'Just now';
+    } else if (minutes < 60) {
+      min = minutes === 1 ? 'min' : 'mins';
+      timeStr = minutes + " " + min + " ago";
+    } else {
+      hr = hours === 1 ? 'hr' : 'hrs';
+      timeStr = hours + " " + hr + " ago";
+    }
+    return $scope.request.timeStr = timeStr;
   }
 ]);

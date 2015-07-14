@@ -6,7 +6,8 @@ angular.module 'LocalHyper.init', []
 		
 		#Push notification handler
 		$rootScope.$on '$cordovaPush:notificationReceived', (e, p)->
-			console.log p
+			payload = Push.getPayload p
+			Push.handlePayload(payload) if !_.isEmpty(payload)
 
 		$ionicPlatform.ready ->
 			App.hideKeyboardAccessoryBar()
