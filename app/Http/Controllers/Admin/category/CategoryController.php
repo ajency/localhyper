@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Parse\ParseObject;
 use Parse\ParseQuery;
 use \Session;
+use \Input;
 
 class CategoryController extends Controller
 {
@@ -181,7 +182,7 @@ class CategoryController extends Controller
         $categoryQuery->doesNotExist("parent_category");
         
         $results = $categoryQuery->find();
-       
+
         foreach ($results as $catObject) {
           $parentCategories[] = array(
                 'cat_id' =>$catObject->getObjectId(),
@@ -193,8 +194,31 @@ class CategoryController extends Controller
 
     }
 
-    public function getChildCategory($catId){
-        return 1;
+    public function getChildCategory(){
+
+        $getVar = Input::get(); 
+
+        $categoryId = $getVar['categoryId'];
+
+        $categoryQuery = new ParseQuery("Category");
+
+        $categoryQuery->exists("parent_category");
+
+        $innerQuery = new ParseQuery("Category");
+        $innerQuery->equalTo("objectId",$categoryId);
+        $categoryQuery->matchesQuery("parent_category", $innerQuery);
+        
+        
+        $results = $categoryQuery->find();
+       
+        foreach ($results as $catObject) {
+          $parentCategories[] = array(
+                'cat_id' =>$catObject->getObjectId(),
+                'cat_name' => $catObject->get('name')
+                );
+          }
+
+          return $parentCategories;
     }
 
     public function getAttributes($catId){
