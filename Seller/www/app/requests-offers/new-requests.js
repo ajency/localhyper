@@ -5,10 +5,33 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       errorType: '',
       requests: [],
       requestIds: [],
-      currentRequest: null,
       requestDetails: {
         modal: null,
-        details: {}
+        data: {},
+        display: 'noError',
+        errorType: '',
+        requestId: null,
+        showModal: function(requestId) {
+          this.requestId = requestId;
+          this.modal.show();
+          return this.get();
+        },
+        get: function() {
+          this.display = 'loader';
+          return RequestsAPI.getById(this.requestId).then((function(_this) {
+            return function(request) {
+              console.log(request);
+              _this.display = 'noError';
+              _this.data = request;
+              return $scope.view.markNotificationAsSeen(request.objectId);
+            };
+          })(this), (function(_this) {
+            return function(type) {
+              _this.display = 'error';
+              return _this.errorType = type;
+            };
+          })(this));
+        }
       },
       init: function() {
         Push.register();
@@ -65,13 +88,34 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         return this.getRequests();
       },
       showRequestDetails: function(request) {
-        console.log(this.currentRequest = request);
-        console.log(request.id);
-        return this.requestDetails.modal.show();
+        this.requestDetails.display = 'noError';
+        this.requestDetails.data = request;
+        this.requestDetails.modal.show();
+        return this.markNotificationAsSeen(request.id);
+      },
+      markNotificationAsSeen: function(requestId) {
+        var index, newRequest;
+        index = _.findIndex(this.requests, function(val) {
+          return val.id === requestId;
+        });
+        if (index !== -1) {
+          newRequest = this.requests[index]["new"];
+          if (newRequest) {
+            return RequestsAPI.updateStatus(requestId).then((function(_this) {
+              return function(data) {
+                App.notification.decrement();
+                return _this.requests[index]["new"] = false;
+              };
+            })(this));
+          }
+        }
       }
     };
     $rootScope.$on('on:new:request', function() {
       return $scope.view.getRequests();
+    });
+    $rootScope.$on('on:notification:click', function(e, obj) {
+      return $scope.view.requestDetails.showModal(obj.payload.id);
     });
     return $scope.$on('$ionicView.afterEnter', function() {
       return App.hideSplashScreen();

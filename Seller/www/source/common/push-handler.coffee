@@ -35,16 +35,24 @@ angular.module 'LocalHyper.common'
 		payload
 
 	Push.handlePayload = (payload)->
+
+		inAppNotification = ->
+			$rootScope.$broadcast 'on:new:request', {payload: payload}
+
+		notificationClick = ->
+			App.navigate 'new-requests'
+			$rootScope.$broadcast 'on:notification:click', {payload: payload}
+
 		switch payload.type
 			when 'new_request'
 				if payload.coldstart
-					console.log 'Take to request details'
+					notificationClick()
 				else if !payload.foreground and !_.isUndefined(payload.coldstart) and !payload.coldstart
-					console.log 'Take to request details'
+					notificationClick()
 				else if payload.foreground
-					$rootScope.$broadcast 'on:new:request', {payload: payload}
+					inAppNotification()
 				else if !payload.foreground
-					$rootScope.$broadcast 'on:new:request', {payload: payload}
+					inAppNotification()
 
 	Push
 ]

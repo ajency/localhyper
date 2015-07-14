@@ -9,11 +9,30 @@ angular.module 'LocalHyper.requestsOffers'
 			errorType: ''
 			requests: []
 			requestIds: []
-			currentRequest: null
 
 			requestDetails:
 				modal: null
-				details: {}
+				data: {}
+				display: 'noError'
+				errorType: ''
+				requestId: null
+
+				showModal : (requestId)->
+					@requestId = requestId
+					@modal.show()
+					@get()
+
+				get : ->
+					@display = 'loader'
+					RequestsAPI.getById @requestId
+					.then (request)=>
+						console.log request
+						@display = 'noError'
+						@data = request
+						$scope.view.markNotificationAsSeen request.objectId
+					, (type)=>
+						@display = 'error'
+						@errorType = type
 
 			init : ->
 				Push.register()
@@ -59,13 +78,27 @@ angular.module 'LocalHyper.requestsOffers'
 				@getRequests()
 
 			showRequestDetails : (request)->
-				console.log @currentRequest = request
-				console.log request.id
+				@requestDetails.display = 'noError'
+				@requestDetails.data = request
 				@requestDetails.modal.show()
+				@markNotificationAsSeen request.id
+
+			markNotificationAsSeen : (requestId)->
+				index = _.findIndex @requests, (val)-> val.id is requestId
+				if index isnt -1
+					newRequest = @requests[index].new 
+					if newRequest
+						RequestsAPI.updateStatus requestId
+						.then (data)=>
+							App.notification.decrement()
+							@requests[index].new = false
 
 
 		$rootScope.$on 'on:new:request', ->
 			$scope.view.getRequests()
+
+		$rootScope.$on 'on:notification:click', (e, obj)->
+			$scope.view.requestDetails.showModal obj.payload.id
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()

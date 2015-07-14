@@ -42,20 +42,28 @@ angular.module('LocalHyper.common').factory('Push', [
       return payload;
     };
     Push.handlePayload = function(payload) {
+      var inAppNotification, notificationClick;
+      inAppNotification = function() {
+        return $rootScope.$broadcast('on:new:request', {
+          payload: payload
+        });
+      };
+      notificationClick = function() {
+        App.navigate('new-requests');
+        return $rootScope.$broadcast('on:notification:click', {
+          payload: payload
+        });
+      };
       switch (payload.type) {
         case 'new_request':
           if (payload.coldstart) {
-            return console.log('Take to request details');
+            return notificationClick();
           } else if (!payload.foreground && !_.isUndefined(payload.coldstart) && !payload.coldstart) {
-            return console.log('Take to request details');
+            return notificationClick();
           } else if (payload.foreground) {
-            return $rootScope.$broadcast('on:new:request', {
-              payload: payload
-            });
+            return inAppNotification();
           } else if (!payload.foreground) {
-            return $rootScope.$broadcast('on:new:request', {
-              payload: payload
-            });
+            return inAppNotification();
           }
       }
     };

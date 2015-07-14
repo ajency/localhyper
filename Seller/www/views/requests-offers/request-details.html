@@ -1,12 +1,15 @@
 <ion-modal-view>
 
-	<ion-header-bar style="height:65px;">
+	<ion-header-bar 
+		style="height:65px;"
+		no-tap-scroll="true">
+
 		<div class="row row-fluid">
 			<div class="col col-20 item-avatar">   
-				<img class="" src="http://ajency.in/team/images/fridge2.jpg" >
+				<img class="" ng-src="{{view.requestDetails.data.product.image[0].src}}" >
 			</div>
 			<div class="col col-67 sm-text"> 
-				<h5 class="text-left">Samsung RR19H1104SE/TL 192 L Single Door Refrigerator</h5> 
+				<h5 class="text-left">{{view.requestDetails.data.product.name}}</h5> 
 			</div>
 			<div class="col">
 				<h2 
@@ -18,11 +21,17 @@
 		</div>
 	</ion-header-bar>
 
-	<ion-content>
+	<ion-content ng-switch="view.requestDetails.display">
 
-		<ion-list>
+		<ion-spinner
+			class="aj-spinner spinner-android" 
+			ng-switch-when="loader">
+		</ion-spinner>
+
+		<ion-list ng-switch-when="noError">
 			<br><br>
-			<div class="row">
+			<h4>Request details view is pending</h4>
+			<!-- <div class="row">
 		        <div class="col">
 				 <label class="item item-radio aj-radio">
 				    <input type="radio" name="group">
@@ -50,8 +59,14 @@
 					    <i class="radio-icon ion-checkmark"></i>
 				 </label>
 		        </div>
-		    </div>
+		    </div> -->
 		</ion-list>
+
+		<aj-error 
+			ng-switch-when="error"
+			error-type="view.requestDetails.errorType"
+			tap-to-retry="view.requestDetails.get()">
+		</aj-error>
 	
 	</ion-content>
 	
