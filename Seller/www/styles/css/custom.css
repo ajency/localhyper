@@ -532,17 +532,17 @@ sm {
   margin-top: -15px;
   text-align: center;
 }
-.notfiy-alert {
+.notify-alert {
   border: 2px solid #f35a59;
 }
-.notfiy-alert .item {
-  background: #FFE9E9;
+.notify-alert .item {
+  background: #FFE9E9 !important;
+}
+.notify-alert .offertxt {
+  background: #FFE9E9!important;
 }
 .item-avatar img {
   border: 1px solid #ccc;
-}
-.item-avatar .offertxt {
-  background: #FFE9E9;
 }
 .item-avatar .item {
   background: #FFE9E9;
