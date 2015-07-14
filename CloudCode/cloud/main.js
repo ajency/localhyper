@@ -73,7 +73,7 @@
     _.each(attributes, function(attributeObj) {
       var attribute;
       attribute = new Attributes();
-      if (attribute.hasOwnProperty("objectId")) {
+      if (attributeObj.hasOwnProperty("objectId")) {
         attribute.id = attributeObj.objectId;
       }
       attribute.set("name", attributeObj.name);

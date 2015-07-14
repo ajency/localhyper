@@ -79,7 +79,7 @@ Parse.Cloud.job 'attributeImport', (request, response) ->
     _.each attributes, (attributeObj) ->
         attribute = new Attributes()
 
-        if(attribute.hasOwnProperty("objectId"))
+        if(attributeObj.hasOwnProperty("objectId"))
             attribute.id = attributeObj.objectId
 
 
