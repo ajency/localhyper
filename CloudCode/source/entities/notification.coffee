@@ -164,11 +164,19 @@ Parse.Cloud.define 'getUnseenNotifications', (request, response) ->
 Parse.Cloud.define 'updateNotificationStatus', (request, response) ->
     notificationType = request.params.notificationType
     notificationTypeId = request.params.notificationTypeId
+    recipientId = request.params.recipientId
     hasSeen = request.params.hasSeen
     
     notificationQuery = new Parse.Query("Notification")
 
     notificationQuery.equalTo("type",notificationType)
+
+    recipientUserObj = 
+        "__type" : "Pointer",
+        "className":"_User",
+        "objectId":recipientId  
+        
+    notificationQuery.equalTo("recipientUser", recipientUserObj)
     
     if notificationType is "Request"
         innerQuery = new Parse.Query("Request")

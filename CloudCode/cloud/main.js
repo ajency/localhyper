@@ -391,12 +391,19 @@
   });
 
   Parse.Cloud.define('updateNotificationStatus', function(request, response) {
-    var hasSeen, innerQuery, notificationQuery, notificationType, notificationTypeId;
+    var hasSeen, innerQuery, notificationQuery, notificationType, notificationTypeId, recipientId, recipientUserObj;
     notificationType = request.params.notificationType;
     notificationTypeId = request.params.notificationTypeId;
+    recipientId = request.params.recipientId;
     hasSeen = request.params.hasSeen;
     notificationQuery = new Parse.Query("Notification");
     notificationQuery.equalTo("type", notificationType);
+    recipientUserObj = {
+      "__type": "Pointer",
+      "className": "_User",
+      "objectId": recipientId
+    };
+    notificationQuery.equalTo("recipientUser", recipientUserObj);
     if (notificationType === "Request") {
       innerQuery = new Parse.Query("Request");
       innerQuery.equalTo("objectId", notificationTypeId);
