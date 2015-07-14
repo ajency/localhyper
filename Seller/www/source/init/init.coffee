@@ -13,8 +13,6 @@ angular.module 'LocalHyper.init', []
 			App.hideKeyboardAccessoryBar()
 			App.setStatusBarStyle()
 
-			Push.register()
-
 			Storage.slideTutorial 'get'
 			.then (value)->
 				if _.isNull value then goto = "tutorial" 

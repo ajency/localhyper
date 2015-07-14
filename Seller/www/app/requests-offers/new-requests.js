@@ -1,12 +1,32 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', function($scope, App, RequestsAPI, $rootScope, $ionicModal) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'Push', function($scope, App, RequestsAPI, $rootScope, $ionicModal, Push) {
     $scope.view = {
       display: 'loader',
       errorType: '',
       requests: [],
       requestIds: [],
-      requestDetailsModal: null,
+      requestDetails: {
+        modal: null,
+        display: 'loader',
+        errorType: '',
+        details: {},
+        get: function() {
+          this.display = 'loader';
+          return RequestsAPI.getDetails().then((function(_this) {
+            return function(data) {
+              _this.display = 'noError';
+              return _this.details = data;
+            };
+          })(this), (function(_this) {
+            return function(type) {
+              _this.display = 'error';
+              return _this.errorType = type;
+            };
+          })(this));
+        }
+      },
       init: function() {
+        Push.register();
         this.getRequests();
         return this.loadRequestDetails();
       },
@@ -17,7 +37,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           hardwareBackButtonClose: true
         }).then((function(_this) {
           return function(modal) {
-            return _this.requestDetailsModal = modal;
+            return _this.requestDetails.modal = modal;
           };
         })(this));
       },
@@ -55,6 +75,10 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       onTapToRetry: function() {
         this.display = 'loader';
         return this.getRequests();
+      },
+      showRequestDetails: function() {
+        this.requestDetails.modal.show();
+        return this.requestDetails.get();
       }
     };
     $rootScope.$on('on:new:request', function() {

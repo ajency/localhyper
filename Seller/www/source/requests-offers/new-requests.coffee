@@ -1,17 +1,33 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal'
-	, ($scope, App, RequestsAPI, $rootScope, $ionicModal)->
+.controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'Push'
+	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, Push)->
 
 		$scope.view = 
 			display: 'loader'
 			errorType: ''
 			requests: []
 			requestIds: []
-			requestDetailsModal: null
+
+			requestDetails:
+				modal: null
+				display: 'loader'
+				errorType: ''
+				details: {}
+
+				get : ->
+					@display = 'loader'
+					RequestsAPI.getDetails()
+					.then (data)=>
+						@display = 'noError'
+						@details = data
+					, (type)=>
+						@display = 'error'
+						@errorType = type
 
 			init : ->
+				Push.register()
 				@getRequests()
 				@loadRequestDetails()
 
@@ -21,7 +37,7 @@ angular.module 'LocalHyper.requestsOffers'
 					animation: 'slide-in-up'
 					hardwareBackButtonClose: true
 				.then (modal)=>
-					@requestDetailsModal = modal
+					@requestDetails.modal = modal
 
 			getRequests : ->
 				RequestsAPI.getNotifications()
@@ -49,6 +65,10 @@ angular.module 'LocalHyper.requestsOffers'
 			onTapToRetry : ->
 				@display = 'loader'
 				@getRequests()
+
+			showRequestDetails : ->
+				@requestDetails.modal.show()
+				@requestDetails.get()
 
 
 		$rootScope.$on 'on:new:request', ->

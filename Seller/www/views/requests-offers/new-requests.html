@@ -25,7 +25,7 @@
 	       	<ion-item 
 	       		class="card"
 	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
-	       		ng-click="view.requestDetailsModal.show()"
+	       		ng-click="view.showRequestDetails()"
 	       		ng-controller="EachRequestCtrl">
 
 			    <div 

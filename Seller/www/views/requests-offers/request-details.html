@@ -1,45 +1,33 @@
 <ion-modal-view>
+
 	<ion-header-bar  style="height:65px;">
 		<div class="row row-fluid">
-			<div class="col col-20 item-avatar">   <img class="" ng-src="{{view.product.images[0].src}}" ></div>
-			<div class="col col-67 sm-text"> <h5 class="text-left">{{view.product.name}}</h5> </div>
-			<div class="col "><h2 ng-click="view.requestDetailsModal.hide()" class="text-right"><i class="ion ion-ios-close-outline"></i> </h2></div>
+			<div class="col ">
+				<h2 
+					ng-click="view.requestDetails.modal.hide()" 
+					class="text-right">
+					<i class="ion ion-ios-close-outline"></i> 
+				</h2>
+			</div>
 		</div>
-
 	</ion-header-bar>
-	<ion-content>
-	<BR>
-		<ul class="list">
-		    <li class="item">
-		        <div class="row row-fluid">
-				  <div class="col col-50"><h3 class="text-left"><b>In the box</b></h3></div>
-				  <div class="col col-50 sm-text"> Charger, Stabelizer </div>
-				</div>
-		    </li>
-		     <li class="item">
-		        <div class="row row-fluid">
-				  <div class="col col-50"><h3 class="text-left"><b>General</b></h3></div>
-				  <div class="col col-50 sm-text">  </div>
-				</div>
-		     </li>
-		        <li class="item">
-		        <div class="row row-fluid">
-				  <div class="col col-50"><h3 class="text-left"><b>Power Specification</b></h3></div>
-				  <div class="col col-50 sm-text">  </div>
-				</div>
-		     </li>
-		        <li class="item">
-		        <div class="row row-fluid">
-				  <div class="col col-50"><h3 class="text-left"><b>Features</b></h3></div>
-				  <div class="col col-50 sm-text">  </div>
-				</div>
-		     </li>
-		        <li class="item">
-		        <div class="row row-fluid">
-				  <div class="col col-50"><h3 class="text-left"><b>Warrenty</b></h3></div>
-				  <div class="col col-50 sm-text">  </div>
-				</div>
-		     </li>
-		</ul>
+
+	<ion-content ng-switch="view.requestDetails.display">
+
+		<ion-spinner
+			class="aj-spinner spinner-android" 
+			ng-switch-when="loader">
+		</ion-spinner>
+
+		<ion-list ng-switch-when="noError">
+
+		</ion-list>
+
+		<aj-error 
+			ng-switch-when="error"
+			error-type="view.requestDetails.errorType"
+			tap-to-retry="view.requestDetails.get()">
+		</aj-error>
+	
 	</ion-content>
 </ion-modal-view>
