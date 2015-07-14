@@ -1,0 +1,54 @@
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+function getChildCategory(obj) {
+    $.ajax({
+        url: "/admin/project/validateprojecttitle",
+        type: "POST",
+        data: {
+            catId: obj.value,
+        },
+        dataType: "JSON",
+        success: function (response) {
+            alert(response.data);
+ 
+        }
+    });
+}
+
+function showAttibuteExport()
+{
+    var department = $("select[name='department']").val(); 
+    var category = $("select[name='category']").val();
+    var filterable = $("select[name='filterable']").val();
+    var error = false;
+    if(department =='')
+    {
+        alert('Please Select Department');
+        error = true;
+    }
+    
+    if(category=='')
+    {
+        alert('Please Select Category');
+        error = true;
+    }
+    
+    if(filterable =='')
+    {
+        alert('Please Select Filterable');
+        error = true;
+    }
+    
+    if(!error){
+        var url = URL +'/admin/attribute/exportattributes/'+category+'/'+filterable;
+        $(".export_attributes").attr('href',url);
+    
+    }
+    else
+        $(".export_attributes").attr('href','#');
+    
+}
