@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use \PHPExcel;
+use Parse\ParseObject;
+use Parse\ParseQuery;
+use \Session;
 
 class AttributeController extends Controller
 {
@@ -327,4 +330,85 @@ class AttributeController extends Controller
     {
         //
     }
+
+    public static function parseAttributeImport($data){
+
+        $data = array (
+                  'attributes' => 
+                  array (
+                    0 => 
+                    array (
+                      'objectId' => 'vsX3NY2syg',
+                      'name' => 'reen size',
+                      'group' => 'general',
+                      'unit' => 'inches',
+                      'display_type' => 'checkbox',
+                    ),
+                    1 => 
+                    array (
+                      'objectId' => '',
+                      'name' => 'tv color',
+                      'group' => 'general',
+                      'unit' => '',
+                      'display_type' => 'checkbox',
+                    ),
+                  ),
+                  'categoryId' => 'UPieAJ73Vk',
+                  'isFilterable' => false,
+                );
+
+        $app_id = config('constants.parse_sdk.app_id');
+        $rest_api_key = config('constants.parse_sdk.rest_api_key');
+        $base_url = "https://api.parse.com/1";
+
+        $parseFunctType = "functions";
+
+        $functionName = "attributeImport";
+
+        $post_url = $base_url."/".$parseFunctType."/".$functionName;
+
+        $data_string = json_encode($data); 
+
+        $header_array = array(                                                                          
+        'X-Parse-Application-Id:' .$app_id ,                                                                                
+        'X-Parse-REST-API-Key:' .$rest_api_key ,                                                                                
+        'Content-Type: application/json',                                                                                
+        'Content-Length: ' . strlen($data_string),
+        );
+
+          // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
+          // -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
+          // -H "Content-Type: application/json" \
+          // -d '{}' \
+          // https://api.parse.com/1/functions/hello 
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL,$post_url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header_array)                                                                       
+        );                                                                                                                   
+
+        $result = curl_exec($ch);
+
+
+        if (curl_errno($ch)) {
+
+            $result_json  = 0;
+        }
+        else{
+
+            $result_json  = (json_decode($result)!='')?json_decode($result):0;
+
+        }
+
+        /* Check HTTP Code */
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        curl_close($ch); 
+
+        return $result_json;      
+    
+    }        
 }
