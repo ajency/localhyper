@@ -490,18 +490,19 @@ sm {
   display: inline-block;
 }
 .card-list .offer {
-  width: 45px;
-  height: 45px;
+  width: 42px;
+  height: 44px;
   border-radius: 100%;
-  border: 1px dashed #000;
+  border: 1px dashed #f35a59;
   text-align: center;
   font-size: 1.5rem;
   line-height: 39px;
-  margin: auto;
+  color: #f35a59;
+  margin: 5px auto;
 }
 .card-list .offertxt {
   background: #ffffff;
-  margin-top: -11px;
+  margin-top: -18px;
   text-align: center;
 }
 .item-avatar img {
