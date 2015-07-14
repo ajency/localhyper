@@ -60,6 +60,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 			showRequestDetails : (request)->
 				console.log @currentRequest = request
+				console.log request.id
 				@requestDetails.modal.show()
 
 

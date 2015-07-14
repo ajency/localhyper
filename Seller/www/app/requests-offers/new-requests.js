@@ -66,6 +66,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       },
       showRequestDetails: function(request) {
         console.log(this.currentRequest = request);
+        console.log(request.id);
         return this.requestDetails.modal.show();
       }
     };

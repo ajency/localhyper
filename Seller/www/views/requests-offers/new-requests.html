@@ -27,6 +27,7 @@
 	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
 	       		ng-init="request.new=view.isNew(request.id)"
 	       		ng-click="view.showRequestDetails(request)"
+	       		ng-class="(request.new) ? 'notify-alert' : ''"
 	       		ng-controller="EachRequestCtrl">
 				
 				<div class="item item-avatar border-none margin-none">
