@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<meta charset="utf-8" />
+<title>Webarch - Responsive Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta content="" name="description" />
+<meta content="" name="author" />
+    
+<!-- BEGIN PLUGIN CSS -->
+<link href="assets/plugins/pace/pace-theme-flash.css" rel="stylesheet" type="text/css" media="screen"/>
+<!-- END PLUGIN CSS -->
+<!-- BEGIN CORE CSS FRAMEWORK -->
+<link href="assets/plugins/data-tables/DT_bootstrap.min.css" rel="stylesheet" type="text/css"/>
+
+
+<link href="assets/plugins/boostrapv3/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<link href="assets/plugins/boostrapv3/css/bootstrap-theme.min.css" rel="stylesheet" type="text/css"/>
+<link href="assets/plugins/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+<link href="assets/css/animate.min.css" rel="stylesheet" type="text/css"/>
+
+<link href="assets/plugins/jquery-scrollbar/jquery.scrollbar.css" rel="stylesheet" type="text/css"/>
+<!-- END CORE CSS FRAMEWORK -->
+<!-- BEGIN CSS TEMPLATE -->
+<link href="assets/plugins/select2/select2_metro.min.css" rel="stylesheet" type="text/css" media="screen">
+<link href="assets/css/style.css" rel="stylesheet" type="text/css"/>
+<link href="assets/css/responsive.css" rel="stylesheet" type="text/css"/>
+<link href="assets/css/custom-icon-set.css" rel="stylesheet" type="text/css"/>
+
+<!-- END CSS TEMPLATE -->
+
+</head>
+<!-- END HEAD -->
+
+<!-- BEGIN BODY -->
+<body class="">
+<!-- BEGIN HEADER -->
+<div class="header navbar navbar-inverse "> 
+  <!-- BEGIN TOP NAVIGATION BAR -->
+  <div class="navbar-inner">
+	<div class="header-seperation"> 
+		<ul class="nav pull-left notifcation-center" id="main-menu-toggle-wrapper" style="display:none">	
+		 <li class="dropdown"> <a id="main-menu-toggle" href="#main-menu"  class="" > <div class="iconset top-menu-toggle-white"></div> </a> </li>		 
+		</ul>
+      <!-- BEGIN LOGO -->	
+      <a href="index.html"><img src="assets/img/logo.png" class="logo" alt=""  data-src="assets/img/logo.png" data-src-retina="assets/img/logo2x.png" width="106" height="21"/></a>
+      
+      </div>
+      <!-- END RESPONSIVE MENU TOGGLER --> 
+      <div class="header-quick-nav" > 
+      <!-- BEGIN TOP NAVIGATION MENU -->
+	  <div class="pull-left"> 
+        <ul class="nav quick-section">
+          <li class="quicklinks"> <a href="#" class="" id="layout-condensed-toggle" >
+            <div class="iconset top-menu-toggle-dark"></div>
+            </a> </li>
+        </ul>
+       
+	  </div>
+	 <!-- END TOP NAVIGATION MENU -->
+	 <!-- BEGIN CHAT TOGGLER -->
+      <div class="pull-right"> 
+		
+		 <ul class="nav quick-section ">
+			<li class="quicklinks"> 
+				<a data-toggle="dropdown" class="dropdown-toggle  pull-right " href="#" id="user-options">						
+					<div class="iconset top-settings-dark "></div> 	
+				</a>
+				<ul class="dropdown-menu  pull-right" role="menu" aria-labelledby="user-options">
+                  <li><a href="user-profile.html"><i class="fa fa-user"></i> My Account</a>
+                  </li>
+                  <li class="divider"></li>                
+                  <li><a href="login.html"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Log Out</a></li>
+               </ul>
+			</li> 
+			
+		</ul>
+      </div>
+	   <!-- END CHAT TOGGLER -->
+      </div> 
+      <!-- END TOP NAVIGATION MENU --> 
+   
+  </div>
+  <!-- END TOP NAVIGATION BAR --> 
+</div>
+<!-- END HEADER -->
+<!-- BEGIN CONTAINER -->
+<div class="page-container row-fluid">
+  <!-- BEGIN SIDEBAR -->
+  <div class="page-sidebar" id="main-menu"> 
+  <!-- BEGIN MINI-PROFILE -->
+   <div class="page-sidebar-wrapper scrollbar-dynamic" id="main-menu-wrapper"> 
+   <div class="user-info-wrapper">	
+	
+    <div class="user-info">
+      <div class="greeting">Welcome</div>
+      <div class="username">John <span class="semi-bold">Smith</span></div>
+    </div>
+   </div>
+  <!-- END MINI-PROFILE -->
+   
+   <!-- BEGIN SIDEBAR MENU -->	
+	<p class="menu-title" onclick="location.href='sellers-list.html'">List of Sellers <span class="pull-right"><a href="javascript:;"></a></span></p>
+    <ul>  
+      <li class="start "> <a href="index.html"><span class="title">Products</span> <span class="selected"></span></a> </li>
+     <li class="start "> <a href="index.html"><span class="title">Users</span> <span class="selected"></span></a> </li>
+ </ul>
+    <!--<li class=""> <a href="javascript:;"> <i class="fa fa fa-adjust"></i> <span class="title">Themes</span> <span class="arrow "></span> </a>
+       <ul class="sub-menu">
+          <li > <a href="#">Coporate </a> </li>
+          <li > <a href="#">Simple</a> </li>
+          <li > <a href="#">Elegant</a> </li>
+        </ul>
+    </li>-->    
+     <p class="menu-title" onclick="location.href='all-offers-list.html'">List of Offers <span class="pull-right"><a href="javascript:;"><i class="fa fa-check text-success"></i></a></span></p>
+      <ul>  
+      <li class="start "> <a href="successful-offers-list.html"> <span class="title">Successfull Offers</span> <span class="selected"></span></a> </li>
+ </ul>
+      <p class="menu-title" onclick="location.href='requests-list.html'">List of Requests <span class="pull-right"><a href="javascript:;"></a></span></p>
+      <p class="menu-title" onclick="location.href='customers-list.html'">List of Customers <span class="pull-right"><a href="javascript:;"></a></span></p>
+       <p class="menu-title" onclick="location.href='ratings-list.html'">List of Ratings <span class="pull-right"><a href="javascript:;"></a></span></p>
+		
+	<div class="clearfix"></div>
+    <!-- END SIDEBAR MENU --> 
+  </div>
+  </div>
+  <a href="#" class="scrollup">Scroll</a>
+  
+  <!-- END SIDEBAR --> 
+  <!-- BEGIN PAGE CONTAINER-->
+  <div class="page-content"> 
+    <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
+    <div id="portlet-config" class="modal hide">
+      <div class="modal-header">
+        <button data-dismiss="modal" class="close" type="button"></button>
+        <h3>Widget Settings</h3>
+      </div>
+      <div class="modal-body"> Widget settings form goes here </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="content">  
+       <button type="button" class="btn btn-default btn-cons pull-right"><i class="fa fa-download"></i> Download CSV</button>
+		<div class="page-title m-l-5">	
+			<h3 class="inline"><span class="semi-bold">Offer</span> History</h3>
+		</div>
+		<div class="grid simple vertical purple">
+      
+			<h4 class="grid-title">All Offers</h4>
+			<div class="grid-body">
+                           <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Request ID</th>
+              <th>Product ID</th>
+              <th>Seller Name</th>
+              <th>Area</th>
+              <th>Time</th>
+              <th>MRP</th>
+              <th>Online Price</th>
+              <th>Offer Price</th>
+               <th>Last Offer by Seller</th>
+                <th>Best Offer by Seller</th>
+                <th>Best Offer For Request</th>
+                 <th>Avg Offer</th>
+                 <th>Status Of Offer</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <td>5</td>
+                <td>8073</td>
+                <td>Seller A</td>
+                <td>Juhu Mumbai</td>
+                <td>23-09-2014 3.40</td>
+                <td>$234</td>
+                <td>$322</td>
+                <td>$300</td>
+                <td>$234</td>
+                <td>$322</td>
+                <td>$300</td>
+                <td>$300</td>
+               
+                <td>Open</td>
+              </tr>
+                <tr>
+                <td>6</td>
+                <td>8073</td>
+                <td>Seller A</td>
+                <td>Juhu Mumbai</td>
+                <td>23-09-2014 3.40</td>
+                <td>$234</td>
+                <td>$322</td>
+                <td>$300</td>
+                <td>$234</td>
+                <td>$322</td>
+                <td>$300</td>
+                <td>$300</td>
+                
+                <td>Pending Delivery</td>
+              </tr>
+          </tbody>
+         </table>
+                        </div>
+		</div>
+    </div>
+  </div>
+
+<!-- END CHAT --> 
+ </div>
+<!-- END CONTAINER --> 
+
+<!-- END CONTAINER -->
+<!-- BEGIN CORE JS FRAMEWORK--> 
+<script src="assets/plugins/jquery-1.8.3.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/boostrapv3/js/bootstrap.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/breakpoints.js" type="text/javascript"></script> 
+<script src="assets/plugins/jquery-unveil/jquery.unveil.min.js" type="text/javascript"></script> 
+<script src="assets/plugins/jquery-scrollbar/jquery.scrollbar.min.js" type="text/javascript"></script>
+<!-- END CORE JS FRAMEWORK --> 
+<!-- BEGIN PAGE LEVEL JS --> 
+ <script src="assets/plugins/data-tables/DT_bootstrap.min.js" type="text/javascript"></script>
+  <script src="assets/plugins/data-tables/jquery.dataTables.min.js" type="text/javascript"></script>
+ <script src="assets/plugins/select2/select2.min.js" type="text/javascript"></script>
+
+<script src="assets/plugins/pace/pace.min.js" type="text/javascript"></script>  
+<script src="assets/plugins/jquery-numberAnimate/jquery.animateNumbers.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS --> 	
+
+<!-- BEGIN CORE TEMPLATE JS --> 
+<script src="assets/js/core.js" type="text/javascript"></script> 
+<script src="assets/js/chat.js" type="text/javascript"></script> 
+<!-- END CORE TEMPLATE JS --> 
+
+  <script type="text/javascript">
+            $("#unit_types").val(["Apartments"]).select2();
+            $("#Department").select2();
+            $("#categories").select2();
+           
+             $(".tags").tagsinput("");
+        </script>   
+</body>
+</html>
