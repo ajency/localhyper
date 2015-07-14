@@ -1,12 +1,25 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', '$rootScope', function($scope, App, RequestsAPI, $rootScope) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', function($scope, App, RequestsAPI, $rootScope, $ionicModal) {
     $scope.view = {
       display: 'loader',
       errorType: '',
       requests: [],
       requestIds: [],
+      requestDetailsModal: null,
       init: function() {
-        return this.getRequests();
+        this.getRequests();
+        return this.loadRequestDetails();
+      },
+      loadRequestDetails: function() {
+        return $ionicModal.fromTemplateUrl('views/requests-offers/request-details.html', {
+          scope: $scope,
+          animation: 'slide-in-up',
+          hardwareBackButtonClose: true
+        }).then((function(_this) {
+          return function(modal) {
+            return _this.requestDetailsModal = modal;
+          };
+        })(this));
       },
       getRequests: function() {
         return RequestsAPI.getNotifications().then((function(_this) {
@@ -54,7 +67,6 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
 ]).controller('EachRequestCtrl', [
   '$scope', function($scope) {
     var at, diff, duration, format, hours, hr, iso, min, minutes, now, timeStr;
-    console.log($scope.view.requestIds);
     if (_.contains($scope.view.requestIds, $scope.request.id)) {
       $scope.request.newAlert = {
         "background-color": "#F3766D"

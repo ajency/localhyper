@@ -1,17 +1,27 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope'
-	, ($scope, App, RequestsAPI, $rootScope)->
+.controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal'
+	, ($scope, App, RequestsAPI, $rootScope, $ionicModal)->
 
 		$scope.view = 
 			display: 'loader'
 			errorType: ''
 			requests: []
 			requestIds: []
+			requestDetailsModal: null
 
 			init : ->
 				@getRequests()
+				@loadRequestDetails()
+
+			loadRequestDetails : ->
+				$ionicModal.fromTemplateUrl 'views/requests-offers/request-details.html', 
+					scope: $scope,
+					animation: 'slide-in-up'
+					hardwareBackButtonClose: true
+				.then (modal)=>
+					@requestDetailsModal = modal
 
 			getRequests : ->
 				RequestsAPI.getNotifications()
@@ -51,7 +61,6 @@ angular.module 'LocalHyper.requestsOffers'
 
 .controller 'EachRequestCtrl', ['$scope', ($scope)->
 
-	console.log $scope.view.requestIds
 	if _.contains $scope.view.requestIds, $scope.request.id
 		$scope.request.newAlert = 
 			"background-color": "#F3766D"
@@ -77,3 +86,4 @@ angular.module 'LocalHyper.requestsOffers'
 
 	$scope.request.timeStr = timeStr
 ]
+

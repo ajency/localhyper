@@ -1,4 +1,6 @@
-<ion-view ng-init="view.init()">
+<ion-view 
+	aj-remove-box-shadow
+	ng-init="view.init()">
 
 	<ion-nav-title>
 		<img src="img/logo.png"/>
@@ -23,6 +25,7 @@
 	       	<ion-item 
 	       		class="card"
 	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
+	       		ng-click="view.requestDetailsModal.show()"
 	       		ng-controller="EachRequestCtrl">
 
 			    <div 
