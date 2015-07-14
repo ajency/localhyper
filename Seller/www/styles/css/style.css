@@ -8,8 +8,9 @@
 }
 
 .platform-android .bar .title {
-  font-size: 14px;
-  line-height: 44px;
+      font-size: 16px;
+	  line-height: 44px;
+	  font-weight: 600;
 }
 
 /*.aj-img{

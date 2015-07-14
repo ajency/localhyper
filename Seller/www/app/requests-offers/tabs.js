@@ -1,4 +1,26 @@
-angular.module('LocalHyper.requestsOffers', []).config([
+angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
+  '$timeout', function($timeout) {
+    return {
+      restrict: 'A',
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          return $('.bar-header').removeClass('bar-light');
+        });
+      }
+    };
+  }
+]).directive('ajAddBoxShadow', [
+  '$timeout', function($timeout) {
+    return {
+      restrict: 'A',
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          return $('.bar-header').addClass('bar-light');
+        });
+      }
+    };
+  }
+]).config([
   '$stateProvider', function($stateProvider) {
     return $stateProvider.state('tabs', {
       url: "/tab",

@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.init'
 
 
-.controller 'SlideTutorialCtrl', ['$scope', 'App', 'Storage', '$ionicSlideBoxDelegate', 'User'
-	, ($scope, App, Storage, $ionicSlideBoxDelegate, User)->
+.controller 'SlideTutorialCtrl', ['$scope', 'App', 'Storage', '$ionicSlideBoxDelegate', 'User', 'CToast'
+	, ($scope, App, Storage, $ionicSlideBoxDelegate, User, CToast)->
 
 		$scope.view = 
 			activeSlide: 0
@@ -13,7 +13,7 @@ angular.module 'LocalHyper.init'
 			onGetStarted : ->
 				Storage.slideTutorial 'set'
 				.then ->
-					goto = if User.isLoggedIn() then "categories" else 'business-details'
+					goto = if User.isLoggedIn() then "new-requests" else 'business-details'
 					App.navigate goto, {}, {animate: false, back: false}
 
 			onSlideChange : (index)->

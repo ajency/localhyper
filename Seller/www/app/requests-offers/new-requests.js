@@ -1,14 +1,39 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', function($scope, App, RequestsAPI) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', function($scope, App, RequestsAPI, $rootScope, $ionicModal) {
     $scope.view = {
       display: 'loader',
       errorType: '',
       requests: [],
+      requestIds: [],
+      requestDetailsModal: null,
       init: function() {
-        return this.getRequests();
+        this.getRequests();
+        return this.loadRequestDetails();
+      },
+      loadRequestDetails: function() {
+        return $ionicModal.fromTemplateUrl('views/requests-offers/request-details.html', {
+          scope: $scope,
+          animation: 'slide-in-up',
+          hardwareBackButtonClose: true
+        }).then((function(_this) {
+          return function(modal) {
+            return _this.requestDetailsModal = modal;
+          };
+        })(this));
       },
       getRequests: function() {
-        return RequestsAPI.getAll().then((function(_this) {
+        return RequestsAPI.getNotifications().then((function(_this) {
+          return function(requestIds) {
+            var notifications;
+            _this.requestIds = requestIds;
+            notifications = _.size(requestIds);
+            if (notifications > 0) {
+              App.notification.badge = true;
+              App.notification.count = notifications;
+            }
+            return RequestsAPI.getAll();
+          };
+        })(this)).then((function(_this) {
           return function(data) {
             console.log(data);
             return _this.onSuccess(data);
@@ -32,8 +57,38 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         return this.getRequests();
       }
     };
+    $rootScope.$on('on:new:request', function() {
+      return $scope.view.getRequests();
+    });
     return $scope.$on('$ionicView.afterEnter', function() {
       return App.hideSplashScreen();
     });
+  }
+]).controller('EachRequestCtrl', [
+  '$scope', function($scope) {
+    var at, diff, duration, format, hours, hr, iso, min, minutes, now, timeStr;
+    if (_.contains($scope.view.requestIds, $scope.request.id)) {
+      $scope.request.newAlert = {
+        "background-color": "#F3766D"
+      };
+    }
+    iso = $scope.request.createdAt.iso;
+    format = 'DD/MM/YYYY HH:mm:ss';
+    now = moment().format(format);
+    at = moment(iso).format(format);
+    diff = moment(now, format).diff(moment(at, format));
+    duration = moment.duration(diff);
+    minutes = parseInt(duration.asMinutes().toFixed(0));
+    hours = parseInt(duration.asHours().toFixed(0));
+    if (minutes === 0) {
+      timeStr = 'Just now';
+    } else if (minutes < 60) {
+      min = minutes === 1 ? 'min' : 'mins';
+      timeStr = minutes + " " + min + " ago";
+    } else {
+      hr = hours === 1 ? 'hr' : 'hrs';
+      timeStr = hours + " " + hr + " ago";
+    }
+    return $scope.request.timeStr = timeStr;
   }
 ]);

@@ -1,4 +1,4 @@
-@import url(../../styles/fonts/source_sans/stylesheet.css);
+@import url(../../styles/fonts/open-sans/open-sans.css);
 /* External CSS */
 /**** Fonts ****/
 /************************************/
@@ -35,6 +35,9 @@ h6 {
 }
 .row-fluid {
   padding: 0px;
+}
+.text-primary {
+  color: #f35a59;
 }
 .bg-white {
   background: #ffffff !important;
@@ -131,9 +134,15 @@ sm {
 .aj-img {
   height: 90px;
 }
+.bg-white {
+  background: #ffffff;
+}
 .Categories {
   background: url(../../img/gray-bg.png) no-repeat;
   background-size: 100%;
+}
+.bar-light {
+  box-shadow: 1px -3px 12px #000000;
 }
 /************************************/
 /* HEADER */

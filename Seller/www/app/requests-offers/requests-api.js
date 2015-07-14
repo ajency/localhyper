@@ -20,6 +20,21 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       });
       return defer.promise;
     };
+    RequestsAPI.getNotifications = function() {
+      var defer, params, user;
+      defer = $q.defer();
+      user = User.getCurrent();
+      params = {
+        "userId": user.id,
+        "type": "Request"
+      };
+      $http.post('functions/getUnseenNotifications', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
     return RequestsAPI;
   }
 ]);

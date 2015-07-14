@@ -33,8 +33,20 @@ h5,
 h6 {
   /*font-weight: 800;*/
 }
-.list {
-  border-top: 1px solid #cccccc;
+/*.list{
+	  border-top: 1px solid #ccc
+}*/
+.text-primary {
+  color: #f35a59;
+}
+.h5 {
+  font-weight: 600;
+}
+.bar-light {
+  box-shadow: 1px -1px 18px #c3c3c3;
+}
+.has-header {
+  background: #fff!important;
 }
 .bar-assertive {
   background: #f35a59 !important;
@@ -98,10 +110,6 @@ sm {
 .normal-space {
   overflow: visible !important;
   white-space: normal !important;
-}
-.nav-bar-title {
-  text-transform: uppercase;
-  font-size: 14px;
 }
 .center-block {
   margin: auto;
@@ -467,6 +475,9 @@ sm {
 /************************************/
 /* TABS  */
 /************************************/
+.tabs {
+  border-bottom: 1px solid #ccc;
+}
 .tabs .tab-item {
   font-size: 12px;
 }
@@ -541,4 +552,22 @@ sm {
 }
 .chain .item {
   font-size: 14px;
+}
+/************************************/
+/* Forms  */
+/************************************/
+.form-field .input-label {
+  color: #c5c5c5;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+.form-field input {
+  font-weight: 500;
+  font-size: 18px;
+  height: 26px;
+}
+.form-field .item {
+  border-color: #F4F4F4;
+  background-color: #fff;
+  color: #000;
 }
