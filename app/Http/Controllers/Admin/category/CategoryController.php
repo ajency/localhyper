@@ -63,6 +63,8 @@ class CategoryController extends Controller
 
         $catList = array();
 
+        CategoryController::getParentCategories();
+
         foreach ($allCategories as $catObject) {
               $catList[] = array(
                             'cat_id' =>$catObject->getObjectId(),
@@ -170,6 +172,21 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public static function getParentCategories(){
+
+        $allCategories = CategoryController::getParseCategories();
+
+        dd($allCategories);
+    }
+
+    public function getChildCategory($catId){
+        return 1;
+    }
+
+    public function getAttributes($catId){
+        return 1;
     }
 
     public static function createParseCategory($categoryData){
