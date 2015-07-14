@@ -1,17 +1,22 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal'
-	, ($scope, App, RequestsAPI, $rootScope, $ionicModal)->
+.controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'Push'
+	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, Push)->
 
 		$scope.view = 
 			display: 'loader'
 			errorType: ''
 			requests: []
 			requestIds: []
-			requestDetailsModal: null
+			currentRequest: null
+
+			requestDetails:
+				modal: null
+				details: {}
 
 			init : ->
+				Push.register()
 				@getRequests()
 				@loadRequestDetails()
 
@@ -21,7 +26,7 @@ angular.module 'LocalHyper.requestsOffers'
 					animation: 'slide-in-up'
 					hardwareBackButtonClose: true
 				.then (modal)=>
-					@requestDetailsModal = modal
+					@requestDetails.modal = modal
 
 			getRequests : ->
 				RequestsAPI.getNotifications()
@@ -46,9 +51,16 @@ angular.module 'LocalHyper.requestsOffers'
 				@display = 'error'
 				@errorType = type
 
+			isNew : (requestId)->
+				_.contains @requestIds, requestId
+
 			onTapToRetry : ->
 				@display = 'loader'
 				@getRequests()
+
+			showRequestDetails : (request)->
+				console.log @currentRequest = request
+				@requestDetails.modal.show()
 
 
 		$rootScope.$on 'on:new:request', ->
@@ -60,10 +72,6 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'EachRequestCtrl', ['$scope', ($scope)->
-
-	if _.contains $scope.view.requestIds, $scope.request.id
-		$scope.request.newAlert = 
-			"background-color": "#F3766D"
 
 	#Request time
 	iso = $scope.request.createdAt.iso

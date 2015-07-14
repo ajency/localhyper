@@ -1,45 +1,58 @@
 <ion-modal-view>
-	<ion-header-bar  style="height:65px;">
-		<div class="row row-fluid">
-			<div class="col col-20 item-avatar">   <img class="" ng-src="{{view.product.images[0].src}}" ></div>
-			<div class="col col-67 sm-text"> <h5 class="text-left">{{view.product.name}}</h5> </div>
-			<div class="col "><h2 ng-click="view.requestDetailsModal.hide()" class="text-right"><i class="ion ion-ios-close-outline"></i> </h2></div>
-		</div>
 
+	<ion-header-bar style="height:65px;">
+		<div class="row row-fluid">
+			<div class="col col-20 item-avatar">   
+				<img class="" src="http://ajency.in/team/images/fridge2.jpg" >
+			</div>
+			<div class="col col-67 sm-text"> 
+				<h5 class="text-left">Samsung RR19H1104SE/TL 192 L Single Door Refrigerator</h5> 
+			</div>
+			<div class="col">
+				<h2 
+					ng-click="view.requestDetails.modal.hide()"  
+					class="text-right">
+					<i class="ion ion-ios-close-outline"></i> 
+				</h2>
+			</div>
+		</div>
 	</ion-header-bar>
+
 	<ion-content>
-	<BR>
-		<ul class="list">
-		    <li class="item">
-		        <div class="row row-fluid">
-				  <div class="col col-50"><h3 class="text-left"><b>In the box</b></h3></div>
-				  <div class="col col-50 sm-text"> Charger, Stabelizer </div>
-				</div>
-		    </li>
-		     <li class="item">
-		        <div class="row row-fluid">
-				  <div class="col col-50"><h3 class="text-left"><b>General</b></h3></div>
-				  <div class="col col-50 sm-text">  </div>
-				</div>
-		     </li>
-		        <li class="item">
-		        <div class="row row-fluid">
-				  <div class="col col-50"><h3 class="text-left"><b>Power Specification</b></h3></div>
-				  <div class="col col-50 sm-text">  </div>
-				</div>
-		     </li>
-		        <li class="item">
-		        <div class="row row-fluid">
-				  <div class="col col-50"><h3 class="text-left"><b>Features</b></h3></div>
-				  <div class="col col-50 sm-text">  </div>
-				</div>
-		     </li>
-		        <li class="item">
-		        <div class="row row-fluid">
-				  <div class="col col-50"><h3 class="text-left"><b>Warrenty</b></h3></div>
-				  <div class="col col-50 sm-text">  </div>
-				</div>
-		     </li>
-		</ul>
+
+		<ion-list>
+			<br><br>
+			<div class="row">
+		        <div class="col">
+				 <label class="item item-radio aj-radio">
+				    <input type="radio" name="group">
+				       <div class="item-content item-text-wrap">
+				        <sm> Local Price </sm>
+					    </div>
+					    <i class="radio-icon ion-checkmark"></i>
+				 </label>
+		        </div>
+		        <div class="col">
+		         <label class="item item-radio">
+				    <input type="radio" name="group">
+				       <div class="item-content">
+				           <sm>  Online Price </sm>
+					    </div>
+					    <i class="radio-icon ion-checkmark"></i>
+				 </label>
+		        </div>
+		        <div class="col">
+		        	 <label class="item item-radio">
+				    <input type="radio" name="group">
+				       <div class="item-content">
+				           <sm>  Your Price </sm>
+					    </div>
+					    <i class="radio-icon ion-checkmark"></i>
+				 </label>
+		        </div>
+		    </div>
+		</ion-list>
+	
 	</ion-content>
+	
 </ion-modal-view>

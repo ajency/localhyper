@@ -1,12 +1,17 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', function($scope, App, RequestsAPI, $rootScope, $ionicModal) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'Push', function($scope, App, RequestsAPI, $rootScope, $ionicModal, Push) {
     $scope.view = {
       display: 'loader',
       errorType: '',
       requests: [],
       requestIds: [],
-      requestDetailsModal: null,
+      currentRequest: null,
+      requestDetails: {
+        modal: null,
+        details: {}
+      },
       init: function() {
+        Push.register();
         this.getRequests();
         return this.loadRequestDetails();
       },
@@ -17,7 +22,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           hardwareBackButtonClose: true
         }).then((function(_this) {
           return function(modal) {
-            return _this.requestDetailsModal = modal;
+            return _this.requestDetails.modal = modal;
           };
         })(this));
       },
@@ -52,9 +57,16 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         this.display = 'error';
         return this.errorType = type;
       },
+      isNew: function(requestId) {
+        return _.contains(this.requestIds, requestId);
+      },
       onTapToRetry: function() {
         this.display = 'loader';
         return this.getRequests();
+      },
+      showRequestDetails: function(request) {
+        console.log(this.currentRequest = request);
+        return this.requestDetails.modal.show();
       }
     };
     $rootScope.$on('on:new:request', function() {
@@ -67,11 +79,6 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
 ]).controller('EachRequestCtrl', [
   '$scope', function($scope) {
     var at, diff, duration, format, hours, hr, iso, min, minutes, now, timeStr;
-    if (_.contains($scope.view.requestIds, $scope.request.id)) {
-      $scope.request.newAlert = {
-        "background-color": "#F3766D"
-      };
-    }
     iso = $scope.request.createdAt.iso;
     format = 'DD/MM/YYYY HH:mm:ss';
     now = moment().format(format);

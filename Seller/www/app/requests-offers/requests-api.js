@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
-  '$q', '$http', 'User', function($q, $http, User) {
+  '$q', '$http', 'User', '$timeout', function($q, $http, User, $timeout) {
     var RequestsAPI;
     RequestsAPI = {};
     RequestsAPI.getAll = function() {
@@ -29,6 +29,21 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
         "type": "Request"
       };
       $http.post('functions/getUnseenNotifications', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
+    RequestsAPI.updateStatus = function(requestId) {
+      var defer, params;
+      defer = $q.defer();
+      params = {
+        "notificationTypeId": "" + requestId,
+        "notificationType": "Request",
+        "hasSeen": true
+      };
+      $http.post('functions/updateNotificationStatus', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);

@@ -23,7 +23,7 @@ textarea,
 .h6 .item,
 .item-divider {
   font-family: 'source_sans' !important;
-  color: #424242;
+  color: #000000;
 }
 h1,
 h2,
@@ -484,11 +484,27 @@ sm {
 .tab-item-active {
   border-bottom: 1px solid #000000;
 }
+.light-gray {
+  color: #a1a1a1;
+}
 .card-list .card {
   padding: 0px;
 }
+.card-list .card .item {
+  padding-bottom: 0px;
+  min-height: 32px !important;
+  background: #fff;
+}
+.card-list .card .item-divider {
+  border-top: 1px dashed #ccc;
+}
 .card-list .card .big-txt {
-  font-size: 1.4rem;
+  font-size: 1.8rem;
+  float: left;
+  font-weight: 600;
+}
+.card-list .card .big-txt span {
+  font-size: 20px;
 }
 .card-list .btn-danger {
   color: #f35a59;
@@ -504,20 +520,32 @@ sm {
   width: 42px;
   height: 44px;
   border-radius: 100%;
-  border: 1px dashed #f35a59;
+  border: 1px dashed #000000;
   text-align: center;
   font-size: 1.5rem;
   line-height: 39px;
-  color: #f35a59;
   margin: 5px auto;
+  font-weight: 500;
 }
 .card-list .offertxt {
   background: #ffffff;
-  margin-top: -18px;
+  margin-top: -15px;
   text-align: center;
+}
+.notify-alert {
+  border: 2px solid #f35a59;
+}
+.notify-alert .item {
+  background: #FFE9E9 !important;
+}
+.notify-alert .offertxt {
+  background: #FFE9E9!important;
 }
 .item-avatar img {
   border: 1px solid #ccc;
+}
+.item-avatar .item {
+  background: #FFE9E9;
 }
 /************************************/
 /* Brands  */
@@ -570,4 +598,10 @@ sm {
   border-color: #F4F4F4;
   background-color: #fff;
   color: #000;
+}
+/************************************/
+/* Radio  */
+/************************************/
+.aj-radio {
+  padding: 10px !important;
 }

@@ -12,7 +12,7 @@
 
 h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider {
 	font-family: 'source_sans' !important;
-	color: #424242;
+	color: @black;
 }
 h1, h2, h3, h4, h5, h6{
 	/*font-weight: 800;*/
@@ -438,11 +438,28 @@ sm{
 .tab-item-active {
 	border-bottom: 1px solid @black;
 }
+.light-gray{
+	color: #a1a1a1;
+}
 .card-list{
 		.card{
 			padding: 0px;
+			.item{
+				padding-bottom: 0px;
+				min-height: 32px !important;
+			    background: #fff;
+  				
+			}
+			.item-divider{
+				border-top: 1px dashed #ccc;
+			}
 			.big-txt{
-				font-size: 1.4rem;
+				font-size: 1.8rem;
+				float: left;
+				font-weight: 600;
+				span{
+					font-size: 20px;
+				}
 			}
 		}
 	.btn-danger{
@@ -459,22 +476,36 @@ sm{
 		  width: 42px;
 		  height: 44px;
 		  border-radius: 100%;
-		  border: 1px dashed @brand-primary;
+		  border: 1px dashed @black;
 		  text-align: center;
 		  font-size: 1.5rem;
 		  line-height: 39px;
-		  color: @brand-primary;
 		  margin: 5px auto;
+		  font-weight: 500;
 	}
 	.offertxt{
 		  background: @white;
-	  	  margin-top: -18px;
+	  	  margin-top: -15px;
          text-align: center;
+	}
+}
+.notify-alert{
+	border: 2px solid @brand-primary;
+	.item{
+			  background: #FFE9E9 !important;
+
+	}
+	.offertxt {
+	  background: #FFE9E9!important;
 	}
 }
 .item-avatar {
 	img{
 		border: 1px solid #ccc;
+	}
+	
+	.item{
+		 background: #FFE9E9;
 	}
 }
 /************************************/
@@ -537,4 +568,12 @@ sm{
 		  background-color: #fff;
 		  color: #000;
 		}
+}
+
+/************************************/
+/* Radio  */
+/************************************/
+
+.aj-radio{
+	  padding: 10px !important;
 }

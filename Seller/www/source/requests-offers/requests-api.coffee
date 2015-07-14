@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.factory 'RequestsAPI', ['$q', '$http', 'User', ($q, $http, User)->
+.factory 'RequestsAPI', ['$q', '$http', 'User', '$timeout', ($q, $http, User, $timeout)->
 
 	RequestsAPI = {}
 
@@ -38,5 +38,22 @@ angular.module 'LocalHyper.requestsOffers'
 
 		defer.promise
 
+	RequestsAPI.updateStatus = (requestId)->
+		defer = $q.defer()
+
+		params = 
+			"notificationTypeId": "#{requestId}"
+			"notificationType" : "Request"
+			"hasSeen": true
+
+		$http.post 'functions/updateNotificationStatus', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
 	RequestsAPI
 ]
+
