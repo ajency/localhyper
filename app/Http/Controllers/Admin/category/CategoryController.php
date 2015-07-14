@@ -63,6 +63,8 @@ class CategoryController extends Controller
 
         $catList = array();
 
+        CategoryController::getParentCategories();
+
         foreach ($allCategories as $catObject) {
               $catList[] = array(
                             'cat_id' =>$catObject->getObjectId(),
@@ -170,6 +172,33 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public static function getParentCategories(){
+
+        $categoryQuery = new ParseQuery("Category");
+
+        $categoryQuery->doesNotExist("parent_category");
+        
+        $results = $categoryQuery->find();
+       
+        foreach ($results as $catObject) {
+          $parentCategories[] = array(
+                'cat_id' =>$catObject->getObjectId(),
+                'cat_name' => $catObject->get('name')
+                );
+          }
+
+          return $parentCategories;
+
+    }
+
+    public function getChildCategory($catId){
+        return 1;
+    }
+
+    public function getAttributes($catId){
+        return 1;
     }
 
     public static function createParseCategory($categoryData){
