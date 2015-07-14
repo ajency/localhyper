@@ -75,6 +75,8 @@ Parse.Cloud.job 'attributeImport', (request, response) ->
     attributeSavedArr = []
 
     attributes =  request.params.attributes
+    categoryId =  request.params.categoryId
+    isFilterable =  request.params.isFilterable
 
     _.each attributes, (attributeObj) ->
         attribute = new Attributes()
@@ -84,8 +86,12 @@ Parse.Cloud.job 'attributeImport', (request, response) ->
 
 
         attribute.set "name", attributeObj.name
+
         attribute.set "group", attributeObj.group
-        attribute.set "unit", attributeObj.unit
+        
+        if(attributeObj.hasOwnProperty("unit"))        
+            attribute.set "unit", attributeObj.unit
+
         attribute.set "display_type", attributeObj.display_type
 
         attributeSavedArr.push(attribute)
@@ -94,7 +100,28 @@ Parse.Cloud.job 'attributeImport', (request, response) ->
     # save all the newly created objects
     Parse.Object.saveAll attributeSavedArr,
       success: (objs) ->
-        response.success "Successfully added/updated the attributes"
-        return
+        # if attributes are filterable then, pluck out attribute id and update category table with filterable attributes
+        # attributesArr = _.map(objs, (obj) ->
+        #     attrib = new Attributes()
+        #     attrib.id = objs.id
+        #     attrib
+        # )
+
+        # get category and update its filterable column
+        Category = Parse.Object.extend('Category')
+        category = new Category()
+        category.id = categoryId
+
+        if isFilterable is true
+            category.set "filterable_attributes" , objs
+        else
+            category.set "secondary_attributes" , objs    
+        
+        category.save()
+        .then ()->
+            response.success "Successfully added/updated the attributes"
+        , (error) ->
+            response.error error
+
       error: (error) ->
         response.error "Failed to add/update attributes due to - #{error.message}"    

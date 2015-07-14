@@ -66,10 +66,12 @@
   });
 
   Parse.Cloud.job('attributeImport', function(request, response) {
-    var Attributes, attributeSavedArr, attributes;
+    var Attributes, attributeSavedArr, attributes, categoryId, isFilterable;
     Attributes = Parse.Object.extend('Attributes');
     attributeSavedArr = [];
     attributes = request.params.attributes;
+    categoryId = request.params.categoryId;
+    isFilterable = request.params.isFilterable;
     _.each(attributes, function(attributeObj) {
       var attribute;
       attribute = new Attributes();
@@ -78,13 +80,28 @@
       }
       attribute.set("name", attributeObj.name);
       attribute.set("group", attributeObj.group);
-      attribute.set("unit", attributeObj.unit);
+      if (attributeObj.hasOwnProperty("unit")) {
+        attribute.set("unit", attributeObj.unit);
+      }
       attribute.set("display_type", attributeObj.display_type);
       return attributeSavedArr.push(attribute);
     });
     return Parse.Object.saveAll(attributeSavedArr, {
       success: function(objs) {
-        response.success("Successfully added/updated the attributes");
+        var Category, category;
+        Category = Parse.Object.extend('Category');
+        category = new Category();
+        category.id = categoryId;
+        if (isFilterable === true) {
+          category.set("filterable_attributes", objs);
+        } else {
+          category.set("secondary_attributes", objs);
+        }
+        return category.save().then(function() {
+          return response.success("Successfully added/updated the attributes");
+        }, function(error) {
+          return response.error(error);
+        });
       },
       error: function(error) {
         return response.error("Failed to add/update attributes due to - " + error.message);
