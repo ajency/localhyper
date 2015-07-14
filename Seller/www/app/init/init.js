@@ -10,7 +10,6 @@ angular.module('LocalHyper.init', []).controller('InitCtrl', [
     return $ionicPlatform.ready(function() {
       App.hideKeyboardAccessoryBar();
       App.setStatusBarStyle();
-      Push.register();
       return Storage.slideTutorial('get').then(function(value) {
         var goto;
         if (_.isNull(value)) {

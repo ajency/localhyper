@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
-  '$q', '$http', 'User', function($q, $http, User) {
+  '$q', '$http', 'User', '$timeout', function($q, $http, User, $timeout) {
     var RequestsAPI;
     RequestsAPI = {};
     RequestsAPI.getAll = function() {
@@ -33,6 +33,14 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       }, function(error) {
         return defer.reject(error);
       });
+      return defer.promise;
+    };
+    RequestsAPI.getDetails = function() {
+      var defer;
+      defer = $q.defer();
+      $timeout(function() {
+        return defer.resolve();
+      }, 3000);
       return defer.promise;
     };
     return RequestsAPI;

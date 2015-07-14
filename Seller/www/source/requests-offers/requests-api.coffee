@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.factory 'RequestsAPI', ['$q', '$http', 'User', ($q, $http, User)->
+.factory 'RequestsAPI', ['$q', '$http', 'User', '$timeout', ($q, $http, User, $timeout)->
 
 	RequestsAPI = {}
 
@@ -35,6 +35,15 @@ angular.module 'LocalHyper.requestsOffers'
 			defer.resolve data.data.result
 		, (error)->
 			defer.reject error
+
+		defer.promise
+
+	RequestsAPI.getDetails = ->
+		defer = $q.defer()
+
+		$timeout ->
+			defer.resolve()
+		, 3000
 
 		defer.promise
 
