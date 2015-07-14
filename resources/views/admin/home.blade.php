@@ -8,7 +8,14 @@
 				<div class="panel-heading">Home</div>
 
 				<div class="panel-body">
-					<a class="btn btn-primary pull-right" href="admin/category/create"><i class="fa fa-plus"></i> Add Category</a>
+					<div class="row">
+						<a class="btn btn-primary pull-right" href="admin/category/create"><i class="fa fa-plus"></i> Add Category</a>
+					</div>
+					<br/>
+					<br/>
+					<div class="row">
+						<a class="btn btn-primary pull-right" href="admin/attribute/create"><i class="fa fa-plus"></i> Add Attributes</a>
+					</div>
 				</div>
 			</div>
 		</div>
