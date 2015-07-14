@@ -176,9 +176,21 @@ class CategoryController extends Controller
 
     public static function getParentCategories(){
 
-        $allCategories = CategoryController::getParseCategories();
+        $categoryQuery = new ParseQuery("Category");
 
-        dd($allCategories);
+        $categoryQuery->doesNotExist("parent_category");
+        
+        $results = $categoryQuery->find();
+       
+        foreach ($results as $catObject) {
+          $parentCategories[] = array(
+                'cat_id' =>$catObject->getObjectId(),
+                'cat_name' => $catObject->get('name')
+                );
+          }
+
+          return $parentCategories;
+
     }
 
     public function getChildCategory($catId){
