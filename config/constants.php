@@ -2,8 +2,8 @@
 
 return [
     'parse_sdk' => [
-        'app_id' => 'QN2IxFFiHCTm0oKSgI6KafqJJQ3nAxwQD8QiqrYZ',
-        'rest_api_key' => 'JGo5nsMzMHzODoKX70rpKh1SLQuFcTBVGnxcQp3v',
-        'master_key' => 'tu7L2mISoZxJkaerbn468OZ7ZZKc5HwpqtbxuHMI'
+        'app_id' => '837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7',
+        'rest_api_key' => 'zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy',
+        'master_key' => 'aoyAfAqjov2pk7sDlKpMss8pE0EFFyjJyRKfUEJC'
     ]
 ];

@@ -112,4 +112,51 @@ class AttributeController extends Controller
     {
         //
     }
+
+    public static function attributeImport($unitId){
+
+      $app_id = config('constants.parse_sdk.app_id');
+      $rest_api_key = config('constants.parse_sdk.rest_api_key');
+      $base_url = "https://api.parse.com/1";
+
+      $parseFunctType = "functions";
+
+      $functionName = "attributeImport";
+
+      $post_url = $base_url."/".$parseFunctType."/".$functionName;
+
+      // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
+      // -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
+      // -H "Content-Type: application/json" \
+      // -d '{}' \
+      // https://api.parse.com/1/functions/hello 
+
+       $c = curl_init();
+       curl_setopt($c, CURLOPT_URL, $sender_url);
+
+       curl_setopt($ch,CURLOPT_HTTPHEADER,$headersArr);       
+
+       curl_setopt($c, CURLOPT_CONNECTTIMEOUT, 30);
+       curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+       curl_setopt($c, CURLOPT_SSL_VERIFYHOST, 0);
+       curl_setopt($c, CURLOPT_SSL_VERIFYPEER, 0);
+       $o = curl_exec($c); 
+
+       if (curl_errno($c)) {
+        //$result_json  = NULL;
+           $result_json  = 0;
+       }
+       else{
+
+           $result_json  = (json_decode($o)!='')?json_decode($o):0;
+
+       }
+
+       /* Check HTTP Code */
+       $status = curl_getinfo($c, CURLINFO_HTTP_CODE);
+
+       curl_close($c); 
+
+       return $result_json;      
+   }      
 }
