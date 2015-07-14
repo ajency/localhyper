@@ -668,7 +668,7 @@
               requestObject = {
                 "__type": "Pointer",
                 "className": "Request",
-                "objectId": requestObject.id
+                "objectId": createdRequestId
               };
               notificationData = {
                 hasSeen: false,

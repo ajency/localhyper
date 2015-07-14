@@ -99,7 +99,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
                             requestObject = 
                                 "__type" : "Pointer",
                                 "className":"Request",
-                                "objectId":requestObject.id                                 
+                                "objectId":createdRequestId                                
 
                             # create entry in notification class with recipient as the seller
                             notificationData = 
