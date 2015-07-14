@@ -27,7 +27,12 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         return $ionicSideMenuDelegate.toggleLeft();
       }
     };
-    $rootScope.$on('on:new:request', function() {});
+    $rootScope.$on('on:new:request', function() {
+      var count;
+      App.notification.badge = true;
+      count = App.notification.count;
+      return App.notification.count = count + 1;
+    });
     return $rootScope.$on('on:session:expiry', function() {
       return Parse.User.logOut();
     });

@@ -5,16 +5,20 @@ angular.module('LocalHyper.googleMaps', []).factory('GoogleMaps', [
     GoogleMaps.loadScript = function() {
       var defer, script;
       defer = $q.defer();
-      script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.src = "https://maps.googleapis.com/maps/api/js?libraries=places" + ("&key=" + GOOGLE_MAPS_API_KEY + "&callback=onGMapScriptLoad");
-      document.body.appendChild(script);
-      window.onGMapScriptLoad = function() {
-        return defer.resolve();
-      };
-      script.onerror = function() {
-        return defer.reject();
-      };
+      if (_.isUndefined(window.google)) {
+        script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = "https://maps.googleapis.com/maps/api/js?libraries=places" + ("&key=" + GOOGLE_MAPS_API_KEY + "&callback=onGMapScriptLoad");
+        window.onGMapScriptLoad = function() {
+          return defer.resolve();
+        };
+        script.onerror = function() {
+          return defer.reject();
+        };
+        document.body.appendChild(script);
+      } else {
+        defer.resolve();
+      }
       return defer.promise;
     };
     GoogleMaps.getAddress = function(latLng) {

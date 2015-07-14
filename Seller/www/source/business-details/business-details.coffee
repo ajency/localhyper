@@ -105,6 +105,5 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					templateUrl: 'views/business-details/business-details.html'
 					resolve:
 						Maps : (GoogleMaps)->
-							if typeof google is "undefined"
-								GoogleMaps.loadScript()
+							GoogleMaps.loadScript()
 ]

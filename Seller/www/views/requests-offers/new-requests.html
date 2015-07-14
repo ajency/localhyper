@@ -22,9 +22,13 @@
 
 	       	<ion-item 
 	       		class="card"
-	       		ng-repeat="request in view.requests">
+	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
+	       		ng-controller="EachRequestCtrl">
 
-			    <div class="item item-avatar border-none">
+			    <div 
+			    	class="item item-avatar border-none" 
+			    	ng-style="request.newAlert">
+
 			        <img ng-src="{{request.product.image[0].src}}">
 			        <h2>{{request.product.name}}</h2>
 			        <p>{{request.radius.toFixed(1)}} kms radius</p>
@@ -66,7 +70,7 @@
 			        </div>
 
 			        <div class="pull-right ">
-			            <sm class="subdued">{{view.createdAt(request.createdAt)}}</sm>
+			            <sm class="subdued">{{request.timeStr}}</sm>
 			        </div>
 			    </div>
 			</ion-item>

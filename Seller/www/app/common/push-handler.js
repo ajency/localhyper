@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common').factory('Push', [
-  'App', '$cordovaPush', function(App, $cordovaPush) {
+  'App', '$cordovaPush', '$rootScope', function(App, $cordovaPush, $rootScope) {
     var Push;
     Push = {};
     Push.register = function() {
@@ -23,10 +23,11 @@ angular.module('LocalHyper.common').factory('Push', [
     };
     Push.getPayload = function(p) {
       var foreground, payload;
+      console.log(p);
       payload = {};
       if (App.isAndroid()) {
         if (p.event === 'message') {
-          payload = p.payload.data;
+          payload = p.payload.data.data;
           payload.foreground = p.foreground;
           if (_.has(p, 'coldstart')) {
             payload.coldstart = p.coldstart;
@@ -40,9 +41,23 @@ angular.module('LocalHyper.common').factory('Push', [
       }
       return payload;
     };
-    Push.handlePayload = function(event, payload) {
-      console.log('Notification received');
-      return console.log(payload);
+    Push.handlePayload = function(payload) {
+      switch (payload.type) {
+        case 'new_request':
+          if (payload.coldstart) {
+            return console.log('Take to request details');
+          } else if (!payload.foreground && !_.isUndefined(payload.coldstart) && !payload.coldstart) {
+            return console.log('Take to request details');
+          } else if (payload.foreground) {
+            return $rootScope.$broadcast('on:new:request', {
+              payload: payload
+            });
+          } else if (!payload.foreground) {
+            return $rootScope.$broadcast('on:new:request', {
+              payload: payload
+            });
+          }
+      }
     };
     return Push;
   }
