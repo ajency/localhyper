@@ -91,11 +91,11 @@ class AttributeController extends Controller
         $ews->setTitle('Attributes');
         
         $headers []= 'Filterable' ;
-        $headers []= 'ObjectId' ;
-        $headers []= 'Name' ;
-        $headers []= 'Group' ;
-        $headers []= 'Unit' ;
-        $headers []= 'Display-Type' ;
+        $headers []= 'objectId' ;
+        $headers []= 'name' ;
+        $headers []= 'group' ;
+        $headers []= 'unit' ;
+        $headers []= 'display_type';
  
         $ews->fromArray($headers, ' ', 'A1');
         $ews->fromArray(['YES'], ' ', 'A2');
