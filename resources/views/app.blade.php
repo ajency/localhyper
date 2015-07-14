@@ -59,5 +59,6 @@
     <script src="{{ url('bower_components/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ url('bower_components/bootstrap/dist/js/bootstrap.min.js' ) }}"></script>
     <script src="{{ asset('bower_components/parsleyjs/dist/parsley.js' ) }}" type="text/javascript"></script>
+    <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
 </body>
 </html>

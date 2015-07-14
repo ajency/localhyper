@@ -76,6 +76,13 @@ class AttributeController extends Controller
         //
     }
     
+    public function bulkImport()
+    {
+        $parentCategories=[];
+        return view('admin.attributeimport')->with('parentCategories', $parentCategories);
+
+    }
+    
     public function exportAttributes()
     {  
         $attributeData = $this->exportAttributeData(0);  //dd($attributeData);
