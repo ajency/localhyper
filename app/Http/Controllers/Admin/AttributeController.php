@@ -102,7 +102,6 @@ class AttributeController extends Controller
         $ea->getActiveSheet()->getColumnDimension('A')->setVisible(false);
  
         $ews->fromArray($attributeData, ' ','B2');
-         
  
         $lastColumn = $ews->getHighestColumn();
         $header = 'a1:'.$lastColumn.'1';
