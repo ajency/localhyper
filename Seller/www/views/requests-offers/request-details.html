@@ -1,15 +1,23 @@
 <ion-modal-view>
 
 	<ion-header-bar  style="height:65px;">
-		<div class="row row-fluid">
+	<!-- 	<div class="row ">
 			<div class="col ">
 				<h2 
 					ng-click="view.requestDetails.modal.hide()" 
-					class="text-right">
-					<i class="ion ion-ios-close-outline"></i> 
+					class="text-center">
+					Make an offer
+					<i class="ion ion-ios-close-outline pull-right"></i> 
 				</h2>
 			</div>
+		</div> -->
+			<div class="row row-fluid">
+			<div class="col col-20 item-avatar">   <img class="" src="http://ajency.in/team/images/fridge2.jpg" ></div>
+			<div class="col col-67 sm-text"> <h5 class="text-left">Samsung RR19H1104SE/TL 192 L Single Door Refrigerator</h5> </div>
+			<div class="col "><h2 ng-click="view.requestDetails.modal.hide()"  class="text-right"><i class="ion ion-ios-close-outline"></i> </h2></div>
+			
 		</div>
+
 	</ion-header-bar>
 
 	<ion-content ng-switch="view.requestDetails.display">
@@ -20,7 +28,36 @@
 		</ion-spinner>
 
 		<ion-list ng-switch-when="noError">
-
+		<br>	<br>
+				<div class="row">
+			        <div class="col">
+					 <label class="item item-radio aj-radio">
+					    <input type="radio" name="group">
+					       <div class="item-content item-text-wrap">
+					        <sm> Local Price </sm>
+						    </div>
+						    <i class="radio-icon ion-checkmark"></i>
+					 </label>
+			        </div>
+			        <div class="col">
+			         <label class="item item-radio">
+					    <input type="radio" name="group">
+					       <div class="item-content">
+					           <sm>  Online Price </sm>
+						    </div>
+						    <i class="radio-icon ion-checkmark"></i>
+					 </label>
+			        </div>
+			        <div class="col">
+			        	 <label class="item item-radio">
+					    <input type="radio" name="group">
+					       <div class="item-content">
+					           <sm>  Your Price </sm>
+						    </div>
+						    <i class="radio-icon ion-checkmark"></i>
+					 </label>
+			        </div>
+			    </div>
 		</ion-list>
 
 		<aj-error 

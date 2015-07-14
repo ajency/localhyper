@@ -494,6 +494,8 @@ sm {
   padding-bottom: 0px;
   min-height: 32px !important;
   background: #fff;
+}
+.card-list .card .item-divider {
   border-top: 1px dashed #ccc;
 }
 .card-list .card .big-txt {
@@ -530,8 +532,20 @@ sm {
   margin-top: -15px;
   text-align: center;
 }
+.notfiy-alert {
+  border: 2px solid #f35a59;
+}
+.notfiy-alert .item {
+  background: #FFE9E9;
+}
 .item-avatar img {
   border: 1px solid #ccc;
+}
+.item-avatar .offertxt {
+  background: #FFE9E9;
+}
+.item-avatar .item {
+  background: #FFE9E9;
 }
 /************************************/
 /* Brands  */
@@ -584,4 +598,10 @@ sm {
   border-color: #F4F4F4;
   background-color: #fff;
   color: #000;
+}
+/************************************/
+/* Radio  */
+/************************************/
+.aj-radio {
+  padding: 10px !important;
 }
