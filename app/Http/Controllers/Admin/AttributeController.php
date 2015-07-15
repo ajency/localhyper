@@ -440,7 +440,7 @@ class AttributeController extends Controller
         //
     }
 
-    public static function parseAttributeImport($data){
+    public function parseAttributeImport($data){
 
         $data = array (
                   'attributes' => 
@@ -462,66 +462,22 @@ class AttributeController extends Controller
                       'display_type' => 'checkbox',
                     ),
                   ),
-                  'categoryId' => 'UPieAJ73Vk',
+                  'categoryId' => 'NTraUMINob',
                   'isFilterable' => false,
                 );
 
-        $app_id = config('constants.parse_sdk.app_id');
-        $rest_api_key = config('constants.parse_sdk.rest_api_key');
-        $base_url = "https://api.parse.com/1";
-
-        $parseFunctType = "functions";
-
+       
         $functionName = "attributeImport";
 
-        $post_url = $base_url."/".$parseFunctType."/".$functionName;
+        $result = AttributeController::makeParseCurlRequest($functionName,$data); 
 
-        $data_string = json_encode($data); 
+        return $result;
 
-        $header_array = array(                                                                          
-        'X-Parse-Application-Id:' .$app_id ,                                                                                
-        'X-Parse-REST-API-Key:' .$rest_api_key ,                                                                                
-        'Content-Type: application/json',                                                                                
-        'Content-Length: ' . strlen($data_string),
-        );
-
-          // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
-          // -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
-          // -H "Content-Type: application/json" \
-          // -d '{}' \
-          // https://api.parse.com/1/functions/hello 
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL,$post_url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $header_array);                                                                       
-                                                                                                                          
-
-        $result = curl_exec($ch);
-
-
-        if (curl_errno($ch)) {
-
-            $result_json  = 0;
-        }
-        else{
-
-            $result_json  = (json_decode($result)!='')?json_decode($result):0;
-
-        }
-
-        /* Check HTTP Code */
-        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-        curl_close($ch); 
-
-        return $result_json;      
+   
     
     } 
 
-    public function getCategoryAttributes($categoryId){
+    public function getCategoryAttributes($categoryId){ 
 
       $categoryQuery = new ParseQuery("Category");
       $categoryQuery->equalTo("objectId",$categoryId);
@@ -596,5 +552,59 @@ class AttributeController extends Controller
       return $brands;
 
 
-    }   
+    } 
+
+    public static function makeParseCurlRequest($functionName,$data,$parseFunctType="functions"){
+      
+      $app_id = config('constants.parse_sdk.app_id');
+      $rest_api_key = config('constants.parse_sdk.rest_api_key');
+      $base_url = "https://api.parse.com/1";
+
+      $post_url = $base_url."/".$parseFunctType."/".$functionName;
+
+      $data_string = json_encode($data); 
+
+      // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
+      // -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
+      // -H "Content-Type: application/json" \
+      // -d '{}' \
+      // https://api.parse.com/1/functions/hello       
+
+      $header_array = array(                                                                          
+        'X-Parse-Application-Id:' .$app_id ,                                                                                
+        'X-Parse-REST-API-Key:' .$rest_api_key ,                                                                                
+        'Content-Type: application/json'
+        );
+
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+      curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+      curl_setopt($ch, CURLOPT_URL,$post_url);
+      curl_setopt($ch, CURLOPT_POST, 1);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $header_array);                                                                       
+
+
+      $curl_output = curl_exec($ch);
+
+
+      if (curl_errno($ch)) {
+        $result = array(
+                  'success' => false, 
+                  'message'=>curl_error($ch) , 
+                  'status_code' => curl_getinfo($ch, CURLINFO_HTTP_CODE)
+                  );
+        
+      }
+      else{
+      
+        $result  = json_decode($curl_output);
+
+      }
+
+      curl_close($ch); 
+
+      return $result;         
+    }  
 }
