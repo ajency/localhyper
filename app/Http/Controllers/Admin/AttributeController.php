@@ -367,7 +367,7 @@ class AttributeController extends Controller
         //
     }
 
-    public static function parseAttributeImport($data){
+    public function parseAttributeImport($data){
 
         $data = array (
                   'attributes' => 
@@ -398,16 +398,13 @@ class AttributeController extends Controller
 
         $result = AttributeController::makeParseCurlRequest($functionName,$data); 
 
-        dd($result);
+        return $result;
 
    
     
     } 
 
-    public function getCategoryAttributes($categoryId=0){
-
-       AttributeController::parseAttributeImport("sdf");
-       
+    public function getCategoryAttributes($categoryId){ 
 
       $categoryQuery = new ParseQuery("Category");
       $categoryQuery->equalTo("objectId",$categoryId);
