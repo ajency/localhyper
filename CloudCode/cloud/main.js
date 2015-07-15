@@ -325,7 +325,7 @@
       var notificationQs;
       notificationQs = [];
       _.each(pendingNotifications, function(pendingNotification) {
-        var channel, notificationId, notificationPromise, obj, otherPushData, pushOptions, recipientUser, type, userInstallationId;
+        var channel, msg, notificationId, notificationPromise, obj, otherPushData, pushOptions, recipientUser, type, userInstallationId;
         channel = pendingNotification.get("channel");
         recipientUser = pendingNotification.get("recipientUser");
         notificationId = pendingNotification.id;
@@ -333,12 +333,14 @@
         type = pendingNotification.get("type");
         if (type === "Request") {
           obj = pendingNotification.get("requestObject");
+          msg = "New request for a product";
           otherPushData = {
             "id": obj.id,
             "type": "new_request"
           };
         } else if (type === "Offer") {
           obj = pendingNotification.get("offerObject");
+          msg = "New offer for a product";
           otherPushData = {
             "id": obj.id,
             "type": "new_offer"
@@ -348,7 +350,7 @@
           case 'push':
             pushOptions = {
               title: 'Shop Oye',
-              alert: 'New request for product',
+              alert: msg,
               notificationData: otherPushData
             };
             notificationPromise = getNotificationData(notificationId, userInstallationId, pushOptions);

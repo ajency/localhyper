@@ -87,12 +87,14 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
 
             if type is "Request"
                 obj = pendingNotification.get("requestObject")
+                msg = "New request for a product"
                 otherPushData = 
                     "id": obj.id
                     "type": "new_request"
 
             else if type is "Offer"
                 obj = pendingNotification.get("offerObject")
+                msg = "New offer for a product"
                 otherPushData = 
                     "id":obj.id
                     "type": "new_offer"
@@ -102,7 +104,7 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
                     # add code to push notifcation to the user
                     pushOptions = 
                         title: 'Shop Oye'
-                        alert: 'New request for product'
+                        alert: msg
                         notificationData: otherPushData 
                                         
                     notificationPromise = getNotificationData notificationId, userInstallationId, pushOptions
