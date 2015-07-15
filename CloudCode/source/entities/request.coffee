@@ -28,6 +28,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
     request.set "deliveryStatus", deliveryStatus
     request.set "city", city
     request.set "area", area
+    request.set "comments", comments
 
     # set request's customerId
     customerObj = 

@@ -19,58 +19,77 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
 
 	requestId = request.params.requestId
 	sellerId = request.params.sellerId
-	price = parseInt request.params.price
-	deliveryTime = request.params.deliveryTime
-	comment = request.params.comment
-
-	# make an entry in price class
-	# Price = {
-	# 	'objectId' : '',
-	# 	'productId' : 'm5mj8bmOOp',
-	# 	'src' : seller / snapdeal/flipkart 
-	# 	'seller' : sellerObject // (if src is seller)
-	# 	'price' : '69.99',
-	# 	‘type’ : ‘offer’,  //accepted_offer/external_market_price
-	# }
-
-	# # entry in offer class 
-	# Offer = {
-	# 	'objectId': 'offerId1',
-	# 	request: 'requestObject',
-	# 	price: priceObject
-	# }
+	priceValue = parseInt request.params.priceValue
+	deliveryTime = parseInt request.params.deliveryTime
+	comments = request.params.comments
+	status = request.params.status
 
 	# make an entry in price class
 	Price = Parse.Object.extend("Price")
 	Offer = Parse.Object.extend("Offer")
 	Request = Parse.Object.extend("Request")
+	Notification = Parse.Object.extend("Notification") 
 
-	price = new Price()
+	# get request and get the product id associated to it
+	requestQuery = new Parse.Query("Request")
+	requestQuery.equalTo("objectId",requestId )
 
-	price.set "src" , "seller"
-	price.set "type" , "offer"
+	requestQuery.first()
+	.then (requestObj) ->
+		requestingCustomer = requestObj.get("customerId")
 
-	sellerObj = new Parse.User()
-	sellerObj.id = sellerId
+		price = new Price()
 
-	price.set "seller" , sellerObj
-	
-	price.set "value" , price
+		price.set "source" , "seller"
+		
+		sellerObj = new Parse.User()
+		sellerObj.id = sellerId
 
-	price.save()
-	.then(priceObj)->
-		# make an entry in offer class
-		offer = new Offer()
+		price.set "seller" , sellerObj
 
-		requestObj = new Request()
-		requestObj.id = requestId
+		price.set "type" , "open_offer"
+		
+		price.set "value" , priceValue
 
-		offer.set "request", requestObj 
-		offer.set "price", priceObj 
+		product = requestObj.get("product")
+		price.set "product" , product
 
-		offer.save()
-		.then (offerObj) ->
-			response.success(offerObj)
+		price.save()
+		.then (priceObj) ->
+			# make an entry in offer class
+			offer = new Offer()
+
+			requestObj = new Request()
+			requestObj.id = requestId
+
+			offer.set "request", requestObj 
+			offer.set "price", priceObj 
+			offer.set "status" , status
+			offer.set "deliveryTime" , deliveryTime
+			offer.set "comments" , comments
+
+			offer.save()
+			.then (offerObj) ->
+
+				notification = new Notification()
+
+				notification.set "hasSeen" , false
+				notification.set "recipientUser" , requestingCustomer
+				notification.set "channel" , "push"
+				notification.set "processed" , false
+				notification.set "type" , "Offer"
+				notification.set "offerObject" , offerObj
+				
+				notification.save()
+				.then (notificationObj) ->
+					response.success(notificationObj)
+				
+				, (error) ->
+					response.error error
+
+			, (error) ->
+				response.error error
+
 		, (error) ->
 			response.error error
 

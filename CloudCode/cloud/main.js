@@ -438,16 +438,64 @@
   Parse.Cloud.define('getNewOffers', function(request, response) {});
 
   Parse.Cloud.define('makeOffer', function(request, response) {
-    var Price, comment, deliveryTime, price, requestId, sellerId;
+    var Notification, Offer, Price, Request, comments, deliveryTime, priceValue, requestId, requestQuery, sellerId, status;
     requestId = request.params.requestId;
     sellerId = request.params.sellerId;
-    price = request.params.price;
-    deliveryTime = request.params.deliveryTime;
-    comment = request.params.comment;
+    priceValue = parseInt(request.params.priceValue);
+    deliveryTime = parseInt(request.params.deliveryTime);
+    comments = request.params.comments;
+    status = request.params.status;
     Price = Parse.Object.extend("Price");
-    price = new Price();
-    price.set("src", "seller");
-    return price.set("src", "seller");
+    Offer = Parse.Object.extend("Offer");
+    Request = Parse.Object.extend("Request");
+    Notification = Parse.Object.extend("Notification");
+    requestQuery = new Parse.Query("Request");
+    requestQuery.equalTo("objectId", requestId);
+    return requestQuery.first().then(function(requestObj) {
+      var price, product, requestingCustomer, sellerObj;
+      requestingCustomer = requestObj.get("customerId");
+      price = new Price();
+      price.set("source", "seller");
+      sellerObj = new Parse.User();
+      sellerObj.id = sellerId;
+      price.set("seller", sellerObj);
+      price.set("type", "open_offer");
+      price.set("value", priceValue);
+      product = requestObj.get("product");
+      price.set("product", product);
+      return price.save().then(function(priceObj) {
+        var offer;
+        offer = new Offer();
+        requestObj = new Request();
+        requestObj.id = requestId;
+        offer.set("request", requestObj);
+        offer.set("price", priceObj);
+        offer.set("status", status);
+        offer.set("deliveryTime", deliveryTime);
+        offer.set("comments", comments);
+        return offer.save().then(function(offerObj) {
+          var notification;
+          notification = new Notification();
+          notification.set("hasSeen", false);
+          notification.set("recipientUser", requestingCustomer);
+          notification.set("channel", "push");
+          notification.set("processed", false);
+          notification.set("type", "Offer");
+          notification.set("offerObject", offerObj);
+          return notification.save().then(function(notificationObj) {
+            return response.success(notificationObj);
+          }, function(error) {
+            return response.error(error);
+          });
+        }, function(error) {
+          return response.error(error);
+        });
+      }, function(error) {
+        return response.error(error);
+      });
+    }, function(error) {
+      return response.error(error);
+    });
   });
 
   Parse.Cloud.job('productImport', function(request, response) {
@@ -645,6 +693,7 @@
     request.set("deliveryStatus", deliveryStatus);
     request.set("city", city);
     request.set("area", area);
+    request.set("comments", comments);
     customerObj = {
       "__type": "Pointer",
       "className": "_User",
