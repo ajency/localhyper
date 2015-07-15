@@ -5,8 +5,9 @@ angular.module 'LocalHyper.googleMaps'
 
 	restrict: 'E'
 	replace: true
-	template: '<div data-tap-disabled="true" class="aj-maps">'
+	template: '<div data-tap-disabled="{{mapTapDisabled}}">'
 	scope:
+		mapTapDisabled: '='
 		onCreate: '&'
 
 	link:(scope, el, attr)->
@@ -25,7 +26,7 @@ angular.module 'LocalHyper.googleMaps'
 				streetViewControl: false
 			
 			map = new google.maps.Map el[0], mapOptions
-			google.maps.event.addListenerOnce map, 'idle', ->
+			google.maps.event.addListenerOnce map, 'load', ->
 				hideAnchorTags map
 			scope.onCreate map: map
 

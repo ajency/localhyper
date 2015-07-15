@@ -8,8 +8,9 @@
 }
 
 .platform-android .bar .title {
-  font-size: 14px;
-  line-height: 44px;
+      font-size: 16px;
+	  line-height: 44px;
+	  font-weight: 600;
 }
 
 /*.aj-img{
@@ -154,7 +155,7 @@
 }
 
 /* maps */
-.aj-maps {
+.aj-small-map {
 	height: 250px;
 	margin: 0; 
 	padding: 0;

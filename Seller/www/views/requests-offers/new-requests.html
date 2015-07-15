@@ -1,4 +1,6 @@
-<ion-view ng-init="view.init()">
+<ion-view 
+	aj-remove-box-shadow
+	ng-init="view.init()">
 
 	<ion-nav-title>
 		<img src="img/logo.png"/>
@@ -22,12 +24,48 @@
 
 	       	<ion-item 
 	       		class="card"
-	       		ng-repeat="request in view.requests">
-
-			    <div class="item item-avatar border-none">
+	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
+	       		ng-init="request.new=view.isNew(request.id)"
+	       		ng-click="view.showRequestDetails(request)"
+	       		ng-class="(request.new) ? 'notify-alert' : ''"
+	       		ng-controller="EachRequestCtrl">
+				
+				<div class="item item-avatar border-none margin-none">
 			        <img ng-src="{{request.product.image[0].src}}">
 			        <h2>{{request.product.name}}</h2>
-			        <p>{{request.radius}} kms radius</p>
+			        <p>{{request.radius.toFixed(1)}} kms radius</p>
+			    </div>
+				
+				<div class="row item border-none" >
+			        <div class="col ">
+			            <sm class="light-gray"> Local Price</sm><br>
+			            <h3 class=" item-text-wrap margin-none big-txt ">
+			            	<span class="WebRupee subdued">&#x20B9;</span> 19,000
+			            </h3>
+			        </div>
+			        <div class="col">
+			        	<div class="pull-right">
+			            <div class="offer"> 2 </div>
+			            <h4 class="offertxt light-gray"> No of offers</h4>
+			           	</div>
+			        </div>
+			    </div>
+			      <div class="item item-divider">
+			        <div class="pull-right ">
+			            <h3 class="margin-none "> Make an offer &nbsp;<i class="ion ion-log-out btn-danger"></i></h3>
+			        </div>
+
+			        <div class="pull-left ">
+			            <sm class="subdued">{{request.timeStr}}</sm>
+			        </div>
+			    </div>
+<!-- 
+			    <div 
+			    	class="item item-avatar border-none">
+
+			        <img ng-src="{{request.product.image[0].src}}">
+			        <h2>{{request.product.name}}</h2>
+			        <p>{{request.radius.toFixed(1)}} kms radius</p>
 			    </div>
 
 			    <div class="row">
@@ -66,9 +104,9 @@
 			        </div>
 
 			        <div class="pull-right ">
-			            <sm class="subdued"> 5 min ago on 16/04/2015</sm>
+			            <sm class="subdued">{{request.timeStr}}</sm>
 			        </div>
-			    </div>
+			    </div> -->
 			</ion-item>
 		</ion-list>
 

@@ -1,12 +1,12 @@
 <ion-view 
-	view-title="CATEGORY CHAINS"
+	view-title="Category Chains"
 	ng-init="view.setCategoryChains()" class="chain">
 
 	<ion-nav-buttons side="right">
 		<button 
-			class="button"
-			ng-click="App.navigate('verify-begin')">
-			Next
+			class="button button-outline button-assertive"
+			ng-click="App.goBack(-3)">
+			Add More
 		</button>
 	</ion-nav-buttons>
 <div class="bar bar-subheader bar-dark">
@@ -42,7 +42,7 @@
 		</button> -->
 
 	</ion-content>
-		<ion-footer class="bar bar-footer bar-assertive" ng-click="App.goBack(-3)">
-	 <div class="title">Add More</div>
+		<ion-footer class="bar bar-footer bar-assertive" ng-click="App.navigate('verify-begin')" >
+	 <div class="title">Next</div>
 	</ion-footer>
 </ion-view>

@@ -1,6 +1,24 @@
 angular.module 'LocalHyper.requestsOffers', []
 
 
+.directive 'ajRemoveBoxShadow', ['$timeout', ($timeout)->
+
+	restrict: 'A'
+	link: (scope, el, attrs)->
+		$timeout ->
+			$('.bar-header').removeClass 'bar-light'
+]
+
+
+.directive 'ajAddBoxShadow', ['$timeout', ($timeout)->
+
+	restrict: 'A'
+	link: (scope, el, attrs)->
+		$timeout ->
+			$('.bar-header').addClass 'bar-light'
+]
+
+
 .config ['$stateProvider', ($stateProvider)->
 
 	$stateProvider

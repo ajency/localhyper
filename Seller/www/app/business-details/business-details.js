@@ -118,9 +118,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
           templateUrl: 'views/business-details/business-details.html',
           resolve: {
             Maps: function(GoogleMaps) {
-              if (typeof google === "undefined") {
-                return GoogleMaps.loadScript();
-              }
+              return GoogleMaps.loadScript();
             }
           }
         }

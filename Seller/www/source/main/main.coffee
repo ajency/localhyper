@@ -26,8 +26,10 @@ angular.module 'LocalHyper.main', []
 				$ionicSideMenuDelegate.toggleLeft()
 
 
+		$rootScope.$on 'on:new:request', ->
+			App.notification.increment()
+
 		$rootScope.$on 'on:session:expiry', ->
-			console.log 'on:session:expiry'
 			Parse.User.logOut()
 ]
 

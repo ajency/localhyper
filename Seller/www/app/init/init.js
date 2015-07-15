@@ -1,12 +1,15 @@
 angular.module('LocalHyper.init', []).controller('InitCtrl', [
   '$ionicPlatform', '$scope', 'App', 'Push', '$rootScope', 'Storage', 'User', function($ionicPlatform, $scope, App, Push, $rootScope, Storage, User) {
     $rootScope.$on('$cordovaPush:notificationReceived', function(e, p) {
-      return console.log(p);
+      var payload;
+      payload = Push.getPayload(p);
+      if (!_.isEmpty(payload)) {
+        return Push.handlePayload(payload);
+      }
     });
     return $ionicPlatform.ready(function() {
       App.hideKeyboardAccessoryBar();
       App.setStatusBarStyle();
-      Push.register();
       return Storage.slideTutorial('get').then(function(value) {
         var goto;
         if (_.isNull(value)) {
