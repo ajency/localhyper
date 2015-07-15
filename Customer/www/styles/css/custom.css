@@ -440,3 +440,46 @@ sm {
   margin-top: -11px;
   text-align: center;
 }
+
+/*****************************/
+/*category image */
+/*****************************/
+
+.itemImage {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-color: #ddd;
+  background-color: #fff;
+  color: #444;
+  position: relative;
+  z-index: 2;
+  display: block;
+  margin: -1px;
+  padding: 16px;
+  border-width: 1px;
+  border-style: solid;
+  font-size: 16px;
+}
+.bg-none {
+    background-color: inherit;
+    max-width: 49px;
+  max-height: 47px;
+}
+.itemImage-avatar {
+  padding-left: 77px;
+  min-height: 72px;
+}
+
+.itemImage-avatar>img:first-child {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  max-width: 40px;
+  max-height: 40px;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+
