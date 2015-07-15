@@ -128,6 +128,40 @@ class AttributeController extends Controller
             );
         $ews->getStyle($header)->applyFromArray($style);
         
+        //*** SHEET 2 BRANDS
+        $brands = $this->getCategoryBrands($catId);
+        foreach($brands as $key=> $brand)
+        {
+            $brand["image"] = $brand["image"]["src"];
+            $brands[$key] = $brand;
+            
+        }
+
+        $headers = [];
+        
+        $ews2 = new \PHPExcel_Worksheet($ea, 'Brand');
+        $ea->addSheet($ews2, 0);
+        $ews2->setTitle('Brand');
+        
+        $headers []= 'Id' ;
+        $headers []= 'Name' ;
+        $headers []= 'Image' ;
+
+ 
+        $ews2->fromArray($headers, ' ', 'A1');
+        $ews2->fromArray($brands, ' ','A2');
+ 
+        $lastColumn = $ews2->getHighestColumn();
+        $header = 'a1:'.$lastColumn.'1';
+        $ews2->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
+        $style = array(
+            'font' => array('bold' => true,),
+            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
+            );
+        $ews2->getStyle($header)->applyFromArray($style);
+        
+        
+        
          
         
         header('Content-Type: application/vnd.ms-excel');
@@ -144,7 +178,7 @@ class AttributeController extends Controller
         $objWriter->save('php://output'); 
     }
     
-    public function importAttributes(Request $request)
+    public function importMasterData(Request $request)
     {
         $data = [];
         $attribute_file = $request->file('attribute_file')->getRealPath();
@@ -153,58 +187,97 @@ class AttributeController extends Controller
             $inputFileType = \PHPExcel_IOFactory::identify($attribute_file);
             $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
             $objPHPExcel = $objReader->load($attribute_file);
-
+            $sheetNames = $objPHPExcel->getSheetNames();
             //  Get worksheet dimensions
-            $sheet = $objPHPExcel->getSheet(0); 
-            $highestRow = $sheet->getHighestRow(); 
-            $highestColumn = $sheet->getHighestColumn();
-
-            $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
-            $headingsArray = $headingsArray[1];
-
-            $r = -1;
-            $namedDataArray = $config =array();
-            for ($row = 2; $row <= $highestRow; ++$row) {
-                $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
-
-                    ++$r;
-                    foreach($headingsArray as $columnKey => $columnHeading) {
-                        if($columnHeading!='Config')
-                            $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
-                        else
-                            $config[]=$dataRow[$row][$columnKey];
-                     }
+            for($i=0; $i<$objPHPExcel->getSheetCount() ;$i++)
+            {
+                $sheet = $objPHPExcel->getSheet($i);
+                $sheetTitle = $sheetNames[$i];
+                if($sheetTitle=='Brands')
+                    $this->importBrands($sheet);
+                elseif($sheetTitle=='Attributes')
+                    $this->importAttributes($sheet);
             }
-             
-            $filterableAttribute= $nonFilterableAttribute= [];
-            foreach($namedDataArray as $attributeData)
-            {  
-                $is_filterable = $attributeData['is_filterable']; 
-                unset($attributeData['is_filterable']);
-                if($is_filterable == 'yes')
-                  $filterableAttribute[]= $attributeData;
-                else
-                   $nonFilterableAttribute[]= $attributeData; 
-            }
+ 
             
-            $filterableData =['attributes' => $filterableAttribute,
-                             'categoryId' => $config[0],
-                              'isFilterable' => true,
-                            ]; 
-            $this->parseAttributeImport($filterableData);
-            
-            $nonFilterableAttribute =['attributes' => $nonFilterableAttribute,
-                             'categoryId' => $config[0],
-                              'isFilterable' => false,
-                            ]; 
-        ;
-            $this->parseAttributeImport($nonFilterableAttribute);
-          
         }
-       
-        return 1;
+        return redirect("/admin/attribute/bulkimport");
+        
        
         
+    }
+    
+    public function importBrand($sheet){
+        /*$highestRow = $sheet->getHighestRow(); 
+        $highestColumn = $sheet->getHighestColumn();
+
+        $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
+        $headingsArray = $headingsArray[1];
+
+        $r = -1;
+        $namedDataArray =array();
+        for ($row = 2; $row <= $highestRow; ++$row) {
+            $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
+
+                ++$r;
+                foreach($headingsArray as $columnKey => $columnHeading) {
+                        $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+                  }
+        }
+
+        $this->parseBrandImport($nonFilterableAttribute);*/
+        
+        return true;
+    }
+    
+    public function importAttributes($sheet)
+    {
+        $highestRow = $sheet->getHighestRow(); 
+        $highestColumn = $sheet->getHighestColumn();
+
+        $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
+        $headingsArray = $headingsArray[1];
+
+        $r = -1;
+        $namedDataArray = $config =array();
+        for ($row = 2; $row <= $highestRow; ++$row) {
+            $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
+
+                ++$r;
+                foreach($headingsArray as $columnKey => $columnHeading) {
+                    if($columnHeading!='Config')
+                        $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+                    else
+                        $config[]=$dataRow[$row][$columnKey];
+                 }
+        }
+        
+        $filterableAttribute= $nonFilterableAttribute= [];
+        foreach($namedDataArray as $attributeData)
+        {  
+            $is_filterable = $attributeData['is_filterable']; 
+            unset($attributeData['is_filterable']);
+            if($is_filterable == 'yes')
+              $filterableAttribute[]= $attributeData;
+            else
+               $nonFilterableAttribute[]= $attributeData; 
+        }
+
+        $filterableData =['attributes' => $filterableAttribute,
+                         'categoryId' => $config[0],
+                          'isFilterable' => true,
+                        ]; 
+        $this->parseAttributeImport($filterableData);
+
+        $nonFilterableAttribute =['attributes' => $nonFilterableAttribute,
+                         'categoryId' => $config[0],
+                          'isFilterable' => false,
+                        ]; 
+        
+        $this->parseAttributeImport($nonFilterableAttribute);
+        
+        return true;
+    
     }
     
     public function exportAttributeValues()
@@ -503,7 +576,7 @@ class AttributeController extends Controller
       
       $categoryQuery = new ParseQuery("Category");
       $categoryQuery->equalTo("objectId",$categoryId);
-      $categoryQuery->include("supported_brands",$categoryId);
+      $categoryQuery->includeKey("supported_brands",$categoryId);
 
       $categoryObject = $categoryQuery->first();
 

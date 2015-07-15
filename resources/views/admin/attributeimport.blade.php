@@ -1,13 +1,6 @@
-@extends('app') 
+@extends('layouts.master') 
 @section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-            <div class="panel panel-default">
-                <div class="panel-heading">Home</div>
-
-                <div class="panel-body">
-                    <div class="content">
+<div class="content">
                         <div class="page-title m-l-5">
                             <h3 class="inline"><span class="semi-bold">Category</span> Map</h3> <i class="fa fa-sitemap"></i>
                         </div>
@@ -46,7 +39,7 @@
                                 </div>
 
                                 <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Import</span></h4>
-                                <form action="{{ url( 'admin/attribute/importattributes') }}"  method="POST" enctype="multipart/form-data" >          
+                                <form action="{{ url( 'admin/attribute/importmasterdata') }}"  method="POST" enctype="multipart/form-data" >          
                                 <div class="row">
                                     <div class="col-sm-4">
                                         <div class="form-group">
@@ -63,13 +56,5 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<script>
-    var URL = '{{ url() }}';
-</script>
 
 @endsection

@@ -51,7 +51,7 @@ function showAttibuteExport()
  
     
     if(!error){
-        var url = URL +'/admin/attribute/exportattributes/'+category;
+        var url = BASEURL +'/admin/attribute/exportattributes/'+category;
         $(".export_attributes").attr('href',url);
         $(".export_block").removeClass('hidden');
     
