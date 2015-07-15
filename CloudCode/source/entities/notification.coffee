@@ -137,7 +137,7 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
 
 Parse.Cloud.define 'getUnseenNotifications', (request, response) ->
     userId = request.params.userId
-    notificationType = request.params.notificationType
+    type = request.params.type
 
     notificationQuery = new Parse.Query("Notification")
 
@@ -145,9 +145,10 @@ Parse.Cloud.define 'getUnseenNotifications', (request, response) ->
 
     innerQueryUser = new Parse.Query Parse.User
     innerQueryUser.equalTo("objectId",userId)
-    innerQueryUser.equalTo("type",notificationType)
     
     notificationQuery.matchesQuery("recipientUser", innerQueryUser)
+
+    notificationQuery.equalTo("type",type)
 
     notificationQuery.select("requestObject")
 
@@ -175,7 +176,7 @@ Parse.Cloud.define 'updateNotificationStatus', (request, response) ->
         "__type" : "Pointer",
         "className":"_User",
         "objectId":recipientId  
-        
+
     notificationQuery.equalTo("recipientUser", recipientUserObj)
     
     if notificationType is "Request"

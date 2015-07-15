@@ -368,15 +368,15 @@
   });
 
   Parse.Cloud.define('getUnseenNotifications', function(request, response) {
-    var innerQueryUser, notificationQuery, notificationType, userId;
+    var innerQueryUser, notificationQuery, type, userId;
     userId = request.params.userId;
-    notificationType = request.params.notificationType;
+    type = request.params.type;
     notificationQuery = new Parse.Query("Notification");
     notificationQuery.equalTo("hasSeen", false);
     innerQueryUser = new Parse.Query(Parse.User);
     innerQueryUser.equalTo("objectId", userId);
-    innerQueryUser.equalTo("type", notificationType);
     notificationQuery.matchesQuery("recipientUser", innerQueryUser);
+    notificationQuery.equalTo("type", type);
     notificationQuery.select("requestObject");
     return notificationQuery.find().then(function(notificationResults) {
       var unseenNotifications;
