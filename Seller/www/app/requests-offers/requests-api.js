@@ -20,6 +20,16 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       });
       return defer.promise;
     };
+    RequestsAPI.getById = function(id) {
+      var defer;
+      defer = $q.defer();
+      $http.get("classes/Request/" + id + "?include=product,brand").then(function(data) {
+        return defer.resolve(data.data);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
     RequestsAPI.getNotifications = function() {
       var defer, params, user;
       defer = $q.defer();
@@ -36,10 +46,12 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       return defer.promise;
     };
     RequestsAPI.updateStatus = function(requestId) {
-      var defer, params;
+      var defer, params, user;
       defer = $q.defer();
+      user = User.getCurrent();
       params = {
         "notificationTypeId": "" + requestId,
+        "recipientId": "" + user.id,
         "notificationType": "Request",
         "hasSeen": true
       };

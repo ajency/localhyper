@@ -27,9 +27,7 @@ angular.module 'LocalHyper.main', []
 
 
 		$rootScope.$on 'on:new:request', ->
-			App.notification.badge = true
-			count = App.notification.count
-			App.notification.count = count + 1
+			App.notification.increment()
 
 		$rootScope.$on 'on:session:expiry', ->
 			Parse.User.logOut()

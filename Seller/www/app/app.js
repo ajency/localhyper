@@ -6,7 +6,17 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
     App.notification = {
       icon: false,
       badge: false,
-      count: 0
+      count: 0,
+      increment: function() {
+        this.badge = true;
+        return this.count = this.count + 1;
+      },
+      decrement: function() {
+        this.count = this.count - 1;
+        if (this.count === 0) {
+          return this.badge = false;
+        }
+      }
     };
     App.logo = {
       small: true

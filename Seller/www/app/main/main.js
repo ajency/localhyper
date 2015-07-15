@@ -28,10 +28,7 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
       }
     };
     $rootScope.$on('on:new:request', function() {
-      var count;
-      App.notification.badge = true;
-      count = App.notification.count;
-      return App.notification.count = count + 1;
+      return App.notification.increment();
     });
     return $rootScope.$on('on:session:expiry', function() {
       return Parse.User.logOut();

@@ -23,6 +23,17 @@ angular.module 'LocalHyper.requestsOffers'
 
 		defer.promise
 
+	RequestsAPI.getById = (id)->
+		defer = $q.defer()
+
+		$http.get "classes/Request/#{id}?include=product,brand"#, params
+		.then (data)->
+			defer.resolve data.data
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
 	RequestsAPI.getNotifications = ->
 		defer = $q.defer()
 		user = User.getCurrent()
@@ -40,9 +51,11 @@ angular.module 'LocalHyper.requestsOffers'
 
 	RequestsAPI.updateStatus = (requestId)->
 		defer = $q.defer()
+		user = User.getCurrent()
 
 		params = 
 			"notificationTypeId": "#{requestId}"
+			"recipientId": "#{user.id}"
 			"notificationType" : "Request"
 			"hasSeen": true
 
