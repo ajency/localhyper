@@ -432,11 +432,13 @@ class AttributeController extends Controller
 
       $categoryQuery->includeKey("filterable_attributes");
       $categoryQuery->includeKey("secondary_attributes");
+      $categoryQuery->includeKey("primary_attributes");
 
       $categoryObject = $categoryQuery->first();
 
       $filterable_attributes = (is_null($categoryObject->get("filterable_attributes"))) ? array() : $categoryObject->get("filterable_attributes");
       $secondary_attributes =  (is_null($categoryObject->get("secondary_attributes"))) ? array() : $categoryObject->get("secondary_attributes");
+      $primary_attributes = (is_null($categoryObject->get("primary_attributes"))) ? array() : $categoryObject->get("primary_attributes");
 
       $attributes = array();
       foreach ($filterable_attributes as $filterable_attribute) {
@@ -458,6 +460,17 @@ class AttributeController extends Controller
                 'unit' => $secondary_attribute->get('unit'),
                 'display_type' => $secondary_attribute->get('display_type'),
                 );
+
+      }
+
+      foreach ($primary_attributes as $primary_attribute) {
+        $attributes["primary"][] = array(
+          'id' =>$primary_attribute->getObjectId(),
+          'name' => $primary_attribute->get('name'),
+          'display_type' => $primary_attribute->get('display_type'),
+          'group' => $primary_attribute->get('group'),
+          'unit' => $primary_attribute->get('unit'),
+          );
 
       }
 
