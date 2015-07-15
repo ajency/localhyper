@@ -26,11 +26,16 @@ function getChildCategory(obj) {
     });
 }
 
+$("select[name='category']").change(function(){
+    $(".export_block").addClass('hidden');
+});
+    
+
 function showAttibuteExport()
 {
     var department = $("select[name='department']").val(); 
     var category = $("select[name='category']").val();
-    var filterable = $("select[name='filterable']").val();
+ 
     var error = false;
     if(department =='')
     {
@@ -43,15 +48,10 @@ function showAttibuteExport()
         alert('Please Select Category');
         error = true;
     }
-    
-    if(filterable =='')
-    {
-        alert('Please Select Filterable');
-        error = true;
-    }
+ 
     
     if(!error){
-        var url = URL +'/admin/attribute/exportattributes/'+category+'/'+filterable;
+        var url = URL +'/admin/attribute/exportattributes/'+category;
         $(".export_attributes").attr('href',url);
         $(".export_block").removeClass('hidden');
     

@@ -85,10 +85,12 @@ class AttributeController extends Controller
 
     }
     
-    public function exportAttributes()
+
+    public function exportAttributes($catId)
     {  
-        $attributeData = $this->exportAttributeData(0);  //dd($attributeData);
-    
+        $attributes = $this->getCategoryAttributes($catId); 
+
+
         $ea = new PHPExcel(); // ea is short for Excel Application
         $ea->getProperties()
                            ->setCreator('Prajay Verenkar')
@@ -102,18 +104,20 @@ class AttributeController extends Controller
         $ews = $ea->getSheet(0);
         $ews->setTitle('Attributes');
         
-        $headers []= 'Filterable' ;
+        $headers []= 'Config' ;
         $headers []= 'objectId' ;
         $headers []= 'name' ;
         $headers []= 'group' ;
         $headers []= 'unit' ;
-        $headers []= 'display_type';
+        $headers []= 'is_filterable';
+        $headers []= 'is_primary';
  
         $ews->fromArray($headers, ' ', 'A1');
-        $ews->fromArray(['YES'], ' ', 'A2');
+        $ews->fromArray([$catId], ' ', 'A2');
+
         $ea->getActiveSheet()->getColumnDimension('A')->setVisible(false);
  
-        $ews->fromArray($attributeData, ' ','B2');
+        $ews->fromArray($attributes, ' ','B2');
  
         $lastColumn = $ews->getHighestColumn();
         $header = 'a1:'.$lastColumn.'1';
@@ -140,42 +144,65 @@ class AttributeController extends Controller
         $objWriter->save('php://output'); 
     }
     
-    public function importAttributes()
+    public function importAttributes(Request $request)
     {
-        $categoryId = '';
-        $inputFileName = 'C:\Users\admin\Desktop\attributes-export.xls';
-        $inputFileType = \PHPExcel_IOFactory::identify($inputFileName);
-        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
-        $objPHPExcel = $objReader->load($inputFileName);
-        
-        //  Get worksheet dimensions
-        $sheet = $objPHPExcel->getSheet(0); 
-        $highestRow = $sheet->getHighestRow(); 
-        $highestColumn = $sheet->getHighestColumn();
-        
-        $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
-        $headingsArray = $headingsArray[1];
-        
-        $r = -1;
-        $namedDataArray = $filterable =array();
-        for ($row = 2; $row <= $highestRow; ++$row) {
-            $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
+        $data = [];
+        $attribute_file = $request->file('attribute_file')->getRealPath();
+        if ($request->hasFile('attribute_file'))
+        {
+            $inputFileType = \PHPExcel_IOFactory::identify($attribute_file);
+            $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+            $objPHPExcel = $objReader->load($attribute_file);
+
+            //  Get worksheet dimensions
+            $sheet = $objPHPExcel->getSheet(0); 
+            $highestRow = $sheet->getHighestRow(); 
+            $highestColumn = $sheet->getHighestColumn();
+
+            $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
+            $headingsArray = $headingsArray[1];
+
+            $r = -1;
+            $namedDataArray = $config =array();
+            for ($row = 2; $row <= $highestRow; ++$row) {
+                $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
+
+                    ++$r;
+                    foreach($headingsArray as $columnKey => $columnHeading) {
+                        if($columnHeading!='Config')
+                            $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+                        else
+                            $config[]=$dataRow[$row][$columnKey];
+                     }
+            }
              
-                ++$r;
-                foreach($headingsArray as $columnKey => $columnHeading) {
-                    if($columnHeading!='Filterable')
-                        $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
-                    else
-                        $filterable[]=$dataRow[$row][$columnKey];
-                 }
+            $filterableAttribute= $nonFilterableAttribute= [];
+            foreach($namedDataArray as $attributeData)
+            {  
+                $is_filterable = $attributeData['is_filterable']; 
+                unset($attributeData['is_filterable']);
+                if($is_filterable == 'yes')
+                  $filterableAttribute[]= $attributeData;
+                else
+                   $nonFilterableAttribute[]= $attributeData; 
+            }
+            
+            $filterableData =['attributes' => $filterableAttribute,
+                             'categoryId' => $config[0],
+                              'isFilterable' => true,
+                            ]; 
+            $this->parseAttributeImport($filterableData);
+            
+            $nonFilterableAttribute =['attributes' => $nonFilterableAttribute,
+                             'categoryId' => $config[0],
+                              'isFilterable' => false,
+                            ]; 
+        ;
+            $this->parseAttributeImport($nonFilterableAttribute);
+          
         }
-        $data = ['attributes' => $namedDataArray,
-                 'categoryId' => $categoryId,
-                 'isFilterable' => $filterable[0],
-                ];
-        
        
-        return $data;
+        return 1;
        
         
     }
@@ -437,39 +464,38 @@ class AttributeController extends Controller
       $secondary_attributes =  (is_null($categoryObject->get("secondary_attributes"))) ? array() : $categoryObject->get("secondary_attributes");
       $primary_attributes = (is_null($categoryObject->get("primary_attributes"))) ? array() : $categoryObject->get("primary_attributes");
 
-      $attributes = array();
+      $attributes = $primaryattributes = array();
+      
+      foreach ($primary_attributes as $primary_attribute) {
+        $primaryattributes[] = $primary_attribute->getObjectId();
+
+      }    
+        
+        
       foreach ($filterable_attributes as $filterable_attribute) {
-        $attributes["filterable"][] = array(
+        $attributes[] = array(
                 'id' =>$filterable_attribute->getObjectId(),
-                'name' => $filterable_attribute->get('name'),
-                'display_type' => $filterable_attribute->get('display_type'),
+                'name' => $filterable_attribute->get('name'),  
                 'group' => $filterable_attribute->get('group'),
                 'unit' => $filterable_attribute->get('unit'),
+                'filterable' => 'yes',
+                'primary' => (in_array($filterable_attribute->getObjectId(),$primaryattributes))?'yes':'no',
                 );
 
       }
 
       foreach ($secondary_attributes as $secondary_attribute) {
-        $attributes["secondary"][] = array(
+        $attributes[] = array(
                 'id' =>$secondary_attribute->getObjectId(),
                 'name' => $secondary_attribute->get('name'),
-                'display_type' => $secondary_attribute->get('display_type'),
                 'group' => $secondary_attribute->get('group'),
                 'unit' => $secondary_attribute->get('unit'),
+                'filterable' => 'no',
+                'primary' => (in_array($filterable_attribute->getObjectId(),$primaryattributes))?'yes':'no',
                 );
 
       }
 
-      foreach ($primary_attributes as $primary_attribute) {
-        $attributes["primary"][] = array(
-          'id' =>$primary_attribute->getObjectId(),
-          'name' => $primary_attribute->get('name'),
-          'display_type' => $primary_attribute->get('display_type'),
-          'group' => $primary_attribute->get('group'),
-          'unit' => $primary_attribute->get('unit'),
-          );
-
-      }
 
       return $attributes;
     }   
