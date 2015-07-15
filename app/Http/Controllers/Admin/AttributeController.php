@@ -85,9 +85,9 @@ class AttributeController extends Controller
 
     }
     
-    public function exportAttributes($catId,$filterable)
+    public function exportAttributes($catId)
     {  
-        $attributeData = $this->getCategoryAttributes($catId);
+        $attributes = $this->getCategoryAttributes($catId); 
         $ea = new PHPExcel(); // ea is short for Excel Application
         $ea->getProperties()
                            ->setCreator('Prajay Verenkar')
@@ -142,14 +142,13 @@ class AttributeController extends Controller
     
     public function importAttributes(Request $request)
     {
-        $categoryId = $request->input('categoryid');
         $data = [];
         $attribute_file = $request->file('attribute_file')->getRealPath();
         if ($request->hasFile('attribute_file'))
         {
             $inputFileType = \PHPExcel_IOFactory::identify($attribute_file);
             $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
-            $objPHPExcel = $objReader->load($inputFileName);
+            $objPHPExcel = $objReader->load($attribute_file);
 
             //  Get worksheet dimensions
             $sheet = $objPHPExcel->getSheet(0); 
@@ -166,19 +165,18 @@ class AttributeController extends Controller
 
                     ++$r;
                     foreach($headingsArray as $columnKey => $columnHeading) {
-                        if($columnHeading!='Filterable')
+                        if($columnHeading!='Config')
                             $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
                         else
                             $config[]=$dataRow[$row][$columnKey];
                      }
             }
             $data = ['attributes' => $namedDataArray,
-                     'categoryId' => $config[1],
-                     'isFilterable' => $config[0],
+                     'categoryId' => $config[0],
                     ];
         
         }
-        dd($data);
+       
         return $data;
        
         
@@ -440,39 +438,38 @@ class AttributeController extends Controller
       $secondary_attributes =  (is_null($categoryObject->get("secondary_attributes"))) ? array() : $categoryObject->get("secondary_attributes");
       $primary_attributes = (is_null($categoryObject->get("primary_attributes"))) ? array() : $categoryObject->get("primary_attributes");
 
-      $attributes = array();
+      $attributes = $primaryattributes = array();
+      
+      foreach ($primary_attributes as $primary_attribute) {
+        $primaryattributes[] = $primary_attribute->getObjectId();
+
+      }    
+        
+        
       foreach ($filterable_attributes as $filterable_attribute) {
-        $attributes["filterable"][] = array(
+        $attributes[] = array(
                 'id' =>$filterable_attribute->getObjectId(),
                 'name' => $filterable_attribute->get('name'),  
                 'group' => $filterable_attribute->get('group'),
                 'unit' => $filterable_attribute->get('unit'),
-                'display_type' => $filterable_attribute->get('display_type'),
+                'filterable' => 'yes',
+                'primary' => (in_array($filterable_attribute->getObjectId(),$primaryattributes))?'yes':'no',
                 );
 
       }
 
       foreach ($secondary_attributes as $secondary_attribute) {
-        $attributes["secondary"][] = array(
+        $attributes[] = array(
                 'id' =>$secondary_attribute->getObjectId(),
                 'name' => $secondary_attribute->get('name'),
                 'group' => $secondary_attribute->get('group'),
                 'unit' => $secondary_attribute->get('unit'),
-                'display_type' => $secondary_attribute->get('display_type'),
+                'filterable' => 'no',
+                'primary' => (in_array($filterable_attribute->getObjectId(),$primaryattributes))?'yes':'no',
                 );
 
       }
 
-      foreach ($primary_attributes as $primary_attribute) {
-        $attributes["primary"][] = array(
-          'id' =>$primary_attribute->getObjectId(),
-          'name' => $primary_attribute->get('name'),
-          'display_type' => $primary_attribute->get('display_type'),
-          'group' => $primary_attribute->get('group'),
-          'unit' => $primary_attribute->get('unit'),
-          );
-
-      }
 
       return $attributes;
     }       

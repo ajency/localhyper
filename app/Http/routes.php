@@ -35,7 +35,7 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     // Route::resource( 'category', 'Admin\category\CategoryController' );
     Route::get( 'category/getparentcategories', 'Admin\category\CategoryController@getParentCategories' );
     Route::post( 'category/getchildcategories/{categoryid}', 'Admin\category\CategoryController@getChildCategory' );
-    Route::get( 'attribute/importattributes', 'Admin\AttributeController@importAttributes' );
+    Route::post( 'attribute/importattributes', 'Admin\AttributeController@importAttributes' );
     Route::get( 'attribute/exportattributevalues', 'Admin\AttributeController@exportAttributeValues' );
 
 });    
