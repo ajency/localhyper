@@ -221,10 +221,6 @@ class CategoryController extends Controller
           return $parentCategories;
     }
 
-    public function getAttributes($catId){
-        return 1;
-    }
-
     public static function createParseCategory($categoryData){
        
         $category = new ParseObject("Category");
