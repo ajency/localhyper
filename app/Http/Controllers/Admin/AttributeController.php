@@ -113,11 +113,8 @@ class AttributeController extends Controller
         $headers []= 'Is Primary';
  
         $ews->fromArray($headers, ' ', 'A1');
-<<<<<<< HEAD
         $ews->fromArray([$catId], ' ', 'A2');
-=======
-        $ews->fromArray(['YES'], ' ', 'A2');
->>>>>>> 85f955782b932cbc4ced9f22d104d32a09d04dca
+
         $ea->getActiveSheet()->getColumnDimension('A')->setVisible(false);
  
         $ews->fromArray($attributes, ' ','B2');
