@@ -26,23 +26,26 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
       menuClose: function() {
         return $ionicSideMenuDelegate.toggleLeft();
       },
-      call: function() {
-        var call;
-        call = "tel:9049678054";
-        return document.location.href = call;
+      onCallUs: function() {
+        var telURI;
+        this.menuClose();
+        telURI = "tel:" + SUPPORT_NUMBER;
+        return document.location.href = telURI;
       },
-      shareAnywhere: function() {
-        var image, link, msg, sub;
-        sub = "Hey, have you tried Shopoye.";
-        msg = " You can get the best offers from your local sellers just on one click. I am sure you will like it.";
-        link = "https://play.google.com/store/apps/details?id=com.facebook.katana&hl=en";
-        image = "";
-        return $cordovaSocialSharing.share(msg, sub, "", link);
+      onShare: function() {
+        var link, msg, subject;
+        subject = "Hey, have you tried " + APP_NAME;
+        msg = "Now get the best offers from your local sellers. Visit";
+        link = "https://play.google.com/store/apps/details?id=" + PACKAGE_NAME;
+        if (App.isWebView()) {
+          return $cordovaSocialSharing.share(msg, subject, "", link);
+        }
       },
-      rateUs: function() {
-        return document.addEventListener("deviceready", function() {
-          return $cordovaAppRate.promptForRating(true).then(function(result) {});
-        });
+      onRateUs: function() {
+        this.menuClose();
+        if (App.isWebView()) {
+          return $cordovaAppRate.promptForRating(true);
+        }
       }
     };
     return $rootScope.$on('on:session:expiry', function() {
@@ -52,21 +55,26 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
   }
 ]).config([
   '$stateProvider', '$cordovaAppRateProvider', function($stateProvider, $cordovaAppRateProvider) {
-    document.addEventListener("deviceready", function() {
-      var popupInfo;
-      AppRate.preferences.useLanguage = 'en';
-      popupInfo = {};
-      popupInfo.title = "Rate Us";
-      popupInfo.message = "In Love with the app ? Give us five star!";
-      popupInfo.cancelButtonLabel = "No, thanks";
-      popupInfo.laterButtonLabel = "Remind Me Later";
-      popupInfo.rateButtonLabel = "Rate Now";
-      AppRate.preferences.customLocale = popupInfo;
-      AppRate.preferences.usesUntilPrompt = 1;
-      AppRate.preferences.openStoreInApp = false;
-      AppRate.preferences.storeAppURL.ios = '849930087';
-      return AppRate.preferences.storeAppURL.android = 'market://details?id=com.jabong.android';
-    });
+    if (ionic.Platform.isWebView()) {
+      document.addEventListener("deviceready", function() {
+        var customLocale, preferences;
+        customLocale = {
+          title: "Rate Us",
+          message: ("If you enjoy using " + APP_NAME + ",") + " please take a moment to rate us." + " It won’t take more than a minute. Thanks for your support!",
+          cancelButtonLabel: "No, Thanks",
+          laterButtonLabel: "Remind Me Later",
+          rateButtonLabel: "Rate Now"
+        };
+        preferences = {
+          language: 'en',
+          appName: APP_NAME,
+          iosURL: PACKAGE_NAME,
+          androidURL: "market://details?id=" + PACKAGE_NAME
+        };
+        $cordovaAppRateProvider.setCustomLocale(customLocale);
+        return $cordovaAppRateProvider.setPreferences(preferences);
+      });
+    }
     return $stateProvider.state('main', {
       url: '/main',
       abstract: true,
