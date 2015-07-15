@@ -18,6 +18,15 @@ angular.module 'LocalHyper.products', []
 			init: ->
 				@loadSortModal()
 
+			reset : ->
+				@products = []
+				@page = 0
+				@canLoadMore = true
+				@refresh = false
+				@sortBy = 'popularity'
+				@ascending = true
+				@onScrollComplete()
+
 			loadSortModal : ->
 				$ionicModal.fromTemplateUrl 'views/products/sort.html', 
 					scope: $scope,
@@ -111,7 +120,11 @@ angular.module 'LocalHyper.products', []
 							@sortBy = 'mrp'
 							@ascending = ascending
 							reFetch()
-						
+
+
+		$scope.$on '$ionicView.beforeEnter', ->
+			if App.previousState is 'sub-categories'
+				$scope.view.reset()
 ]
 
 
@@ -122,7 +135,6 @@ angular.module 'LocalHyper.products', []
 		.state 'products',
 			url: '/products:categoryID'
 			parent: 'main'
-			cache: false
 			views: 
 				"appContent":
 					templateUrl: 'views/products/products.html'

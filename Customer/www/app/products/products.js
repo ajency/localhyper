@@ -1,6 +1,6 @@
 angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
   '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast) {
-    return $scope.view = {
+    $scope.view = {
       title: Product.subCategoryTitle,
       products: [],
       page: 0,
@@ -11,6 +11,15 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       ascending: true,
       init: function() {
         return this.loadSortModal();
+      },
+      reset: function() {
+        this.products = [];
+        this.page = 0;
+        this.canLoadMore = true;
+        this.refresh = false;
+        this.sortBy = 'popularity';
+        this.ascending = true;
+        return this.onScrollComplete();
       },
       loadSortModal: function() {
         return $ionicModal.fromTemplateUrl('views/products/sort.html', {
@@ -134,13 +143,17 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         }
       }
     };
+    return $scope.$on('$ionicView.beforeEnter', function() {
+      if (App.previousState === 'sub-categories') {
+        return $scope.view.reset();
+      }
+    });
   }
 ]).config([
   '$stateProvider', function($stateProvider) {
     return $stateProvider.state('products', {
       url: '/products:categoryID',
       parent: 'main',
-      cache: false,
       views: {
         "appContent": {
           templateUrl: 'views/products/products.html',
