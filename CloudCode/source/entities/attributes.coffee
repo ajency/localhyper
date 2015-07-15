@@ -120,8 +120,11 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
             category.set "secondary_attributes" , objs  
 
         category.save()
-        .then ()->
-            response.success "Successfully added/updated the attributes"
+        .then (categoryObj)->
+            successObj = 
+                success: true
+                message: "Successfully added/updated the attributes"
+            response.success successObj
         , (error) ->
             response.error error
 

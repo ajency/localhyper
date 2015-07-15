@@ -106,8 +106,13 @@
         } else {
           category.set("secondary_attributes", objs);
         }
-        return category.save().then(function() {
-          return response.success("Successfully added/updated the attributes");
+        return category.save().then(function(categoryObj) {
+          var successObj;
+          successObj = {
+            success: true,
+            message: "Successfully added/updated the attributes"
+          };
+          return response.success(successObj);
         }, function(error) {
           return response.error(error);
         });
