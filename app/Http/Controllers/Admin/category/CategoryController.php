@@ -194,11 +194,11 @@ class CategoryController extends Controller
 
     }
 
-    public function getChildCategory(){
+    public function getChildCategory($categoryId){
 
-        $getVar = Input::get(); 
+        ///$getVar = Input::get(); 
 
-        $categoryId = $getVar['categoryId'];
+        //$categoryId = $getVar['categoryId'];
 
         $categoryQuery = new ParseQuery("Category");
 
@@ -210,15 +210,20 @@ class CategoryController extends Controller
         
         
         $results = $categoryQuery->find();
-       
+        $str ='<option value="">Select Category</option>';
         foreach ($results as $catObject) {
-          $parentCategories[] = array(
-                'cat_id' =>$catObject->getObjectId(),
-                'cat_name' => $catObject->get('name')
-                );
+          $str .= '<option value="'.$catObject->getObjectId().'">'.$catObject->get('name').'</option>';    
+          
           }
-
-          return $parentCategories;
+          
+        return response()->json( [
+                    'code' => 'categories',
+                    'message' => 'Category Sucessfully ' ,
+                    'data' => [
+                        'html' => $str 
+                    ]
+            ], 201 );
+          
     }
 
     public function getAttributes($catId){

@@ -19,7 +19,8 @@ function getChildCategory(obj) {
         },
         dataType: "JSON",
         success: function (response) {
-            alert(response.data);
+            $("select[name='category']").html(response.data.html);
+            $(".export_block").addClass('hidden');
  
         }
     });
@@ -52,6 +53,7 @@ function showAttibuteExport()
     if(!error){
         var url = URL +'/admin/attribute/exportattributes/'+category+'/'+filterable;
         $(".export_attributes").attr('href',url);
+        $(".export_block").removeClass('hidden');
     
     }
     else
