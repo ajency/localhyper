@@ -85,9 +85,9 @@ class AttributeController extends Controller
 
     }
     
-    public function exportAttributes()
+    public function exportAttributes($catId,$filterable)
     {  
-        $attributeData = $this->exportAttributeData(0);  //dd($attributeData);
+        $attributeData = $this->exportAttributeData($catId);  //dd($attributeData);
     
         $ea = new PHPExcel(); // ea is short for Excel Application
         $ea->getProperties()
@@ -110,7 +110,7 @@ class AttributeController extends Controller
         $headers []= 'display_type';
  
         $ews->fromArray($headers, ' ', 'A1');
-        $ews->fromArray(['YES'], ' ', 'A2');
+        $ews->fromArray([$filterable], ' ', 'A2');
         $ea->getActiveSheet()->getColumnDimension('A')->setVisible(false);
  
         $ews->fromArray($attributeData, ' ','B2');
