@@ -21,7 +21,7 @@
                                             <select id="department" name="department" class="select2-container select2 form-control select2-container-active" onchange="getChildCategory(this);" >
                                                 <option value="">Select Department</option>
                                                  @foreach($parentCategories as $parentCategory)
-                                                    <option value=""></option>
+                                                    <option value="{{ $parentCategory['cat_id']}}">{{ $parentCategory['cat_name']}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
