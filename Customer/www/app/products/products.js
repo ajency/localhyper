@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
-  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout) {
+  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast) {
     return $scope.view = {
       title: Product.subCategoryTitle,
       products: [],
@@ -33,10 +33,15 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         return this.page = this.page + 1;
       },
       onPullToRefresh: function() {
-        this.canLoadMore = true;
-        this.page = 0;
-        this.refresh = true;
-        return this.getProducts();
+        if (App.isOnline()) {
+          this.canLoadMore = true;
+          this.page = 0;
+          this.refresh = true;
+          return this.getProducts();
+        } else {
+          this.onRefreshComplete();
+          return CToast.show('No internet available. Please check your network settings');
+        }
       },
       onInfiniteScroll: function() {
         this.refresh = false;
@@ -94,7 +99,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         if (_.has(attrs.attribute, 'unit')) {
           unit = s.humanize(attrs.attribute.unit);
         }
-        return "" + value + " " + unit;
+        return value + " " + unit;
       },
       onSort: function(sortBy, ascending) {
         var reFetch;
