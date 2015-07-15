@@ -5,8 +5,14 @@ $.ajaxSetup({
 });
 
 function getChildCategory(obj) {
+    var catId =obj.value;
+    if(catId=='')
+    {
+        alert('Please Select Department');
+        return;
+    }
     $.ajax({
-        url: "/admin/project/validateprojecttitle",
+        url: "/admin/category/getchildcategories/"+catId,
         type: "POST",
         data: {
             catId: obj.value,

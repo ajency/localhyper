@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\category\CategoryController;
 use \PHPExcel;
 use Parse\ParseObject;
 use Parse\ParseQuery;
@@ -79,7 +80,7 @@ class AttributeController extends Controller
     
     public function bulkImport()
     {
-        $parentCategories=[];
+        $parentCategories= CategoryController::getParentCategories();  
         return view('admin.attributeimport')->with('parentCategories', $parentCategories);
 
     }
