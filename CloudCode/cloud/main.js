@@ -437,7 +437,18 @@
 
   Parse.Cloud.define('getNewOffers', function(request, response) {});
 
-  Parse.Cloud.define('makeOffer', function(request, response) {});
+  Parse.Cloud.define('makeOffer', function(request, response) {
+    var Price, comment, deliveryTime, price, requestId, sellerId;
+    requestId = request.params.requestId;
+    sellerId = request.params.sellerId;
+    price = request.params.price;
+    deliveryTime = request.params.deliveryTime;
+    comment = request.params.comment;
+    Price = Parse.Object.extend("Price");
+    price = new Price();
+    price.set("src", "seller");
+    return price.set("src", "seller");
+  });
 
   Parse.Cloud.job('productImport', function(request, response) {
     var ProductItem, productSavedArr, products;
