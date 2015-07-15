@@ -2,8 +2,8 @@ angular.module 'LocalHyper.products', []
 
 
 .controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal'
-	, '$timeout', 'App', 'CToast'
-	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast)->
+	, '$timeout', 'App', 'CToast', 'UIMsg'
+	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg)->
 
 		$scope.view =
 			title: Product.subCategoryTitle
@@ -52,7 +52,7 @@ angular.module 'LocalHyper.products', []
 					@getProducts()
 				else
 					@onRefreshComplete()
-					CToast.show 'No internet available. Please check your network settings'
+					CToast.show UIMsg.noInternet
 
 			onInfiniteScroll : ->
 				@refresh = false

@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
-  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast) {
+  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', 'UIMsg', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg) {
     $scope.view = {
       title: Product.subCategoryTitle,
       products: [],
@@ -49,7 +49,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           return this.getProducts();
         } else {
           this.onRefreshComplete();
-          return CToast.show('No internet available. Please check your network settings');
+          return CToast.show(UIMsg.noInternet);
         }
       },
       onInfiniteScroll: function() {

@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GPS', 'GoogleMaps', 'CSpinner', 'CDialog', '$timeout', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GPS, GoogleMaps, CSpinner, CDialog, $timeout) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GPS', 'GoogleMaps', 'CSpinner', 'CDialog', '$timeout', 'UIMsg', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GPS, GoogleMaps, CSpinner, CDialog, $timeout, UIMsg) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -224,52 +224,56 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       },
       makeRequest: function() {
         var geoPoint, params, user;
-        CSpinner.show('', 'Please wait...');
-        user = User.getCurrent();
-        params = {
-          "customerId": user.id,
-          "productId": this.productID,
-          "categoryId": this.product.category.objectId,
-          "brandId": this.product.brand.objectId,
-          "comments": this.comments.text,
-          "status": "open",
-          "deliveryStatus": ""
-        };
-        if (!_.isNull(this.location.latLng)) {
-          params["location"] = {
-            latitude: this.location.latLng.lat(),
-            longitude: this.location.latLng.lng()
-          };
-          params["address"] = this.location.address;
-          params["city"] = this.location.address.city;
-          params["area"] = this.location.address.city;
+        if (!App.isOnline()) {
+          return CToast.show(UIMsg.noInternet);
         } else {
-          geoPoint = user.get('addressGeoPoint');
-          params["location"] = {
-            latitude: geoPoint.latitude,
-            longitude: geoPoint.longitude
+          CSpinner.show('', 'Please wait...');
+          user = User.getCurrent();
+          params = {
+            "customerId": user.id,
+            "productId": this.productID,
+            "categoryId": this.product.category.objectId,
+            "brandId": this.product.brand.objectId,
+            "comments": this.comments.text,
+            "status": "open",
+            "deliveryStatus": ""
           };
-          params["address"] = user.get('address');
-          params["city"] = user.get('city');
-          params["area"] = user.get('area');
+          if (!_.isNull(this.location.latLng)) {
+            params["location"] = {
+              latitude: this.location.latLng.lat(),
+              longitude: this.location.latLng.lng()
+            };
+            params["address"] = this.location.address;
+            params["city"] = this.location.address.city;
+            params["area"] = this.location.address.city;
+          } else {
+            geoPoint = user.get('addressGeoPoint');
+            params["location"] = {
+              latitude: geoPoint.latitude,
+              longitude: geoPoint.longitude
+            };
+            params["address"] = user.get('address');
+            params["city"] = user.get('city');
+            params["area"] = user.get('area');
+          }
+          return User.update({
+            "address": params.address,
+            "addressGeoPoint": new Parse.GeoPoint(params.location),
+            "area": params.area,
+            "city": params.city
+          }).then(function() {
+            return ProductsAPI.makeRequest(params);
+          }).then((function(_this) {
+            return function() {
+              _this.makeRequestModal.hide();
+              return CToast.show('Your request has been made');
+            };
+          })(this), function(error) {
+            return CToast.show('Request failed, please try again');
+          })["finally"](function() {
+            return CSpinner.hide();
+          });
         }
-        return User.update({
-          "address": params.address,
-          "addressGeoPoint": new Parse.GeoPoint(params.location),
-          "area": params.area,
-          "city": params.city
-        }).then(function() {
-          return ProductsAPI.makeRequest(params);
-        }).then((function(_this) {
-          return function() {
-            _this.makeRequestModal.hide();
-            return CToast.show('Your request has been made');
-          };
-        })(this), function(error) {
-          return CToast.show('Request failed, please try again');
-        })["finally"](function() {
-          return CSpinner.hide();
-        });
       }
     };
     return $scope.$on('$destroy', function() {

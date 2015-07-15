@@ -2,9 +2,9 @@ angular.module 'LocalHyper.products'
 
 
 .controller 'SingleProductCtrl', ['$scope', '$stateParams', 'ProductsAPI', 'User'
-	, 'CToast', 'App', '$ionicModal', 'GPS', 'GoogleMaps', 'CSpinner', 'CDialog', '$timeout'
+	, 'CToast', 'App', '$ionicModal', 'GPS', 'GoogleMaps', 'CSpinner', 'CDialog', '$timeout', 'UIMsg'
 	, ($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GPS, GoogleMaps
-	, CSpinner, CDialog, $timeout)->
+	, CSpinner, CDialog, $timeout, UIMsg)->
 
 		$scope.view = 
 			display: 'loader'
@@ -179,47 +179,50 @@ angular.module 'LocalHyper.products'
 					@makeRequest()
 
 			makeRequest : ->
-				CSpinner.show '', 'Please wait...'
-				user = User.getCurrent()
-				params = 
-					"customerId": user.id
-					"productId": @productID
-					"categoryId": @product.category.objectId
-					"brandId": @product.brand.objectId
-					"comments": @comments.text
-					"status": "open"
-					"deliveryStatus": ""
-
-				if !_.isNull @location.latLng
-					params["location"] = 
-						latitude: @location.latLng.lat()
-						longitude: @location.latLng.lng()
-					params["address"] = @location.address
-					params["city"] = @location.address.city
-					params["area"] = @location.address.city
+				if !App.isOnline()
+					CToast.show UIMsg.noInternet
 				else
-					geoPoint = user.get('addressGeoPoint')
-					params["location"] = 
-						latitude: geoPoint.latitude
-						longitude: geoPoint.longitude
-					params["address"] = user.get 'address'
-					params["city"] = user.get 'city'
-					params["area"] = user.get 'area'
+					CSpinner.show '', 'Please wait...'
+					user = User.getCurrent()
+					params = 
+						"customerId": user.id
+						"productId": @productID
+						"categoryId": @product.category.objectId
+						"brandId": @product.brand.objectId
+						"comments": @comments.text
+						"status": "open"
+						"deliveryStatus": ""
 
-				User.update 
-					"address": params.address
-					"addressGeoPoint": new Parse.GeoPoint params.location
-					"area": params.area
-					"city": params.city
-				.then ->
-					ProductsAPI.makeRequest params
-				.then =>
-					@makeRequestModal.hide()
-					CToast.show 'Your request has been made'
-				, (error)->
-					CToast.show 'Request failed, please try again'
-				.finally ->
-					CSpinner.hide()
+					if !_.isNull @location.latLng
+						params["location"] = 
+							latitude: @location.latLng.lat()
+							longitude: @location.latLng.lng()
+						params["address"] = @location.address
+						params["city"] = @location.address.city
+						params["area"] = @location.address.city
+					else
+						geoPoint = user.get('addressGeoPoint')
+						params["location"] = 
+							latitude: geoPoint.latitude
+							longitude: geoPoint.longitude
+						params["address"] = user.get 'address'
+						params["city"] = user.get 'city'
+						params["area"] = user.get 'area'
+
+					User.update 
+						"address": params.address
+						"addressGeoPoint": new Parse.GeoPoint params.location
+						"area": params.area
+						"city": params.city
+					.then ->
+						ProductsAPI.makeRequest params
+					.then =>
+						@makeRequestModal.hide()
+						CToast.show 'Your request has been made'
+					, (error)->
+						CToast.show 'Request failed, please try again'
+					.finally ->
+						CSpinner.hide()
 
 		
 		$scope.$on '$destroy', ->
