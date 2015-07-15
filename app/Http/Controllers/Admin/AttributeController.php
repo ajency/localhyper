@@ -85,9 +85,9 @@ class AttributeController extends Controller
 
     }
     
-    public function exportAttributes($catId,$filterable)
+    public function exportAttributes()
     {  
-        $attributeData = $this->exportAttributeData($catId);  //dd($attributeData);
+        $attributeData = $this->exportAttributeData(0);  //dd($attributeData);
     
         $ea = new PHPExcel(); // ea is short for Excel Application
         $ea->getProperties()
@@ -110,7 +110,7 @@ class AttributeController extends Controller
         $headers []= 'display_type';
  
         $ews->fromArray($headers, ' ', 'A1');
-        $ews->fromArray([$filterable], ' ', 'A2');
+        $ews->fromArray(['YES'], ' ', 'A2');
         $ea->getActiveSheet()->getColumnDimension('A')->setVisible(false);
  
         $ews->fromArray($attributeData, ' ','B2');
@@ -471,5 +471,31 @@ class AttributeController extends Controller
       }
 
       return $attributes;
-    }       
+    }   
+
+    public function getCategoryBrands($categoryId){
+      
+      $categoryQuery = new ParseQuery("Category");
+      $categoryQuery->equalTo("objectId",$categoryId);
+      $categoryQuery->include("supported_brands",$categoryId);
+
+      $categoryObject = $categoryQuery->first();
+
+      $supported_brands = $categoryObject->get("supported_brands");
+
+      $brands = array();
+      
+      foreach ($supported_brands as $supported_brand) {
+        $brands[] = array(
+                'id' =>$supported_brand->getObjectId(),
+                'name' => $supported_brand->get('name'),
+                'image' => $supported_brand->get('image'),
+                );
+
+      }
+
+      return $brands;
+
+
+    }   
 }
