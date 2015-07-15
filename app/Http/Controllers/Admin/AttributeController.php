@@ -421,10 +421,7 @@ class AttributeController extends Controller
     
     } 
 
-    public function getCategoryAttributes($categoryId=0,$filterable = true){
-      $getVar = Input::get(); 
-
-      $categoryId = $getVar['categoryId'];
+    public function getCategoryAttributes($categoryId){
 
       $categoryQuery = new ParseQuery("Category");
       $categoryQuery->equalTo("objectId",$categoryId);
