@@ -140,6 +140,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
     return $stateProvider.state('products', {
       url: '/products:categoryID',
       parent: 'main',
+      cache: false,
       views: {
         "appContent": {
           templateUrl: 'views/products/products.html',
