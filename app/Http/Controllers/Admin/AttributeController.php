@@ -109,8 +109,8 @@ class AttributeController extends Controller
         $headers []= 'name' ;
         $headers []= 'group' ;
         $headers []= 'unit' ;
-        $headers []= 'Is Filterable';
-        $headers []= 'Is Primary';
+        $headers []= 'is_filterable';
+        $headers []= 'is_primary';
  
         $ews->fromArray($headers, ' ', 'A1');
         $ews->fromArray([$catId], ' ', 'A2');
@@ -175,13 +175,34 @@ class AttributeController extends Controller
                             $config[]=$dataRow[$row][$columnKey];
                      }
             }
-            $data = ['attributes' => $namedDataArray,
-                     'categoryId' => $config[0],
-                    ];
-        
+             
+            $filterableAttribute= $nonFilterableAttribute= [];
+            foreach($namedDataArray as $attributeData)
+            {  
+                $is_filterable = $attributeData['is_filterable']; 
+                unset($attributeData['is_filterable']);
+                if($is_filterable == 'yes')
+                  $filterableAttribute[]= $attributeData;
+                else
+                   $nonFilterableAttribute[]= $attributeData; 
+            }
+            
+            $filterableData =['attributes' => $filterableAttribute,
+                             'categoryId' => $config[0],
+                              'isFilterable' => true,
+                            ]; 
+            $this->parseAttributeImport($filterableData);
+            
+            $nonFilterableAttribute =['attributes' => $nonFilterableAttribute,
+                             'categoryId' => $config[0],
+                              'isFilterable' => false,
+                            ]; 
+        ;
+            $this->parseAttributeImport($nonFilterableAttribute);
+          
         }
        
-        return $data;
+        return 1;
        
         
     }

@@ -30,7 +30,7 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get( '/', 'Admin\AdminController@index' );
 
     Route::get( 'attribute/bulkimport', 'Admin\AttributeController@bulkImport' );
-    Route::get( 'attribute/exportattributes/{categoryid}/{filterable}', 'Admin\AttributeController@exportAttributes' );
+    Route::get( 'attribute/exportattributes/{categoryid}', 'Admin\AttributeController@exportAttributes' );
 
     // Route::resource( 'category', 'Admin\category\CategoryController' );
     Route::get( 'category/getparentcategories', 'Admin\category\CategoryController@getParentCategories' );
