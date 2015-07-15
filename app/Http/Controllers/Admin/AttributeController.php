@@ -362,7 +362,7 @@ class AttributeController extends Controller
                       'display_type' => 'checkbox',
                     ),
                   ),
-                  'categoryId' => 'UPieAJ73Vk',
+                  'categoryId' => 'NTraUMINob',
                   'isFilterable' => false,
                 );
 
@@ -381,8 +381,7 @@ class AttributeController extends Controller
         $header_array = array(                                                                          
         'X-Parse-Application-Id:' .$app_id ,                                                                                
         'X-Parse-REST-API-Key:' .$rest_api_key ,                                                                                
-        'Content-Type: application/json',                                                                                
-        'Content-Length: ' . strlen($data_string),
+        'Content-Type: application/json'
         );
 
           // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
@@ -392,6 +391,8 @@ class AttributeController extends Controller
           // https://api.parse.com/1/functions/hello 
 
         $ch = curl_init();
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_URL,$post_url);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);                                                                  
@@ -401,13 +402,13 @@ class AttributeController extends Controller
 
         $result = curl_exec($ch);
 
-
+        
         if (curl_errno($ch)) {
-
+            dd(curl_error($ch));
             $result_json  = 0;
         }
         else{
-
+            dd($result);
             $result_json  = (json_decode($result)!='')?json_decode($result):0;
 
         }
