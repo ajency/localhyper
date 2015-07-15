@@ -83,7 +83,11 @@
       if (attributeObj.unit !== "") {
         attribute.set("unit", attributeObj.unit);
       }
-      attribute.set("display_type", attributeObj.display_type);
+      if (attributeObj.hasOwnProperty("display_type")) {
+        attribute.set("display_type", attributeObj.display_type);
+      } else {
+        attribute.set("display_type", "checkbox");
+      }
       return attributeSavedArr.push(attribute);
     });
     return Parse.Object.saveAll(attributeSavedArr, {

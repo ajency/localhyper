@@ -93,7 +93,10 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
         if attributeObj.unit isnt ""       
             attribute.set "unit", attributeObj.unit
 
-        attribute.set "display_type", attributeObj.display_type
+        if(attributeObj.hasOwnProperty("display_type"))
+            attribute.set "display_type", attributeObj.display_type
+        else
+            attribute.set "display_type", "checkbox" 
 
         attributeSavedArr.push(attribute)
         
