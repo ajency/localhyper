@@ -1,0 +1,59 @@
+<ion-view ng-init="view.init()">
+
+	<ion-nav-title>
+		Select Brands
+    </ion-nav-title>
+
+    <ion-nav-buttons side="right">
+		<button 
+			class="button button-outline button-assertive"
+			ng-click="view.onDone()">
+			Done
+		</button>
+	</ion-nav-buttons>
+<ion-header>
+<div class="bar bar-subheader bar-dark">
+  <h2 class="title m-title">{{view.title}}</h2>
+</div>
+</ion-header>
+	<ion-content 
+		class="brands sub-categories"
+		ng-switch="view.display">
+
+		<ion-spinner
+			class="aj-spinner" 
+			ng-switch-when="loader">
+		</ion-spinner>
+
+<br><br>
+		<ion-list ng-switch-when="noError">
+			<div 
+				class="col col-50 border-card relative"
+				ng-repeat="brand in view.brands"
+				ng-init="brand.selected=false">
+				
+					<img 
+						ng-src="{{brand.image.src}}" 
+						class="aj-img center-block img-responsive m-t-20">
+
+					<h3 class="text-center aj-title">
+						{{brand.name}}
+					</h3>
+
+					<ion-checkbox 
+						ng-model="brand.selected"
+						ng-change="view.setCategoryChains()" class="item-check">
+						
+					</ion-checkbox>
+			</div>
+		</ion-list>
+
+		<aj-error 
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry()">
+		</aj-error>
+
+	</ion-content>
+</ion-view>
+

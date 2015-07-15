@@ -4,7 +4,7 @@
 @import "variables";
 
 /**** Fonts ****/
-@import url(../../styles/fonts/source_sans/stylesheet.css);
+@import url(../../styles/fonts/open-sans/open-sans.css);
 
 /************************************/
 /* Commen css */
@@ -20,11 +20,17 @@ h1, h2, h3, h4, h5, h6{
 .row-fluid{
 	padding: 0px;
 }
+.text-primary{
+	color: @brand-primary;
+}
 .bg-white{
 	background: @white !important;
 }
+.m-title{
+	font-size: 16px !important;
+}
 .normal{
-	  font-weight: 600;
+	  font-weight: 600 !important;
 }
 .strike{
 	 text-decoration: line-through;
@@ -78,7 +84,6 @@ sm{
 .center-block{
 	margin:auto;
 	display:block;
-	width:100%;
 }
 .pull-left{
 	float:left;
@@ -89,14 +94,6 @@ sm{
 .upper-case{
 	text-transform:uppercase;
 }
-.arrow-link{
-	float: right;
-	  font-size: 23px;
-	  -ms-transform: rotate(90deg);
-	  -webkit-transform: rotate(90deg);
-	  transform: rotate(90deg);
-
-}
 .input-border{
 	  border-bottom: 1px solid @black !important;
 	}
@@ -105,6 +102,31 @@ sm{
 }
 .m-t-5{
 	margin-top: 5px;
+}
+.relative{
+	position: relative!important;
+}
+.right{
+	right: 0!important;
+}
+.left{
+		left: 0 !important;
+}
+.border-none{
+	border: 0px;
+}
+.aj-img{
+	height: 90px;
+}
+.bg-white{
+	background: @white;
+}
+.Categories{
+	 		    background: url(../../img/gray-bg.png)no-repeat;
+	            background-size: 100%;
+}
+.bar-light{
+	  box-shadow: 1px -3px 12px #000;
 }
 /************************************/
 /* HEADER */
@@ -136,9 +158,11 @@ sm{
 	    background-color: @gray-dark;
 	}
 	.item{
-		  padding: 11px 54px;
+		      padding: 20px 0px 0px 49px;
 		i{
 			font-size: 22px;
+			left: 0px;
+  			top: 9px;
 		}
 	}
 }
@@ -146,7 +170,11 @@ sm{
 /************************************/
 /* Menu */
 /************************************/
-
+.aj-menu-bg {
+	.item{
+		font-size: 14px;
+	}
+}
 .sprite-icon{
 	  background: url(../../img/sprite.png)no-repeat;
 	  width: 30px;
@@ -247,16 +275,25 @@ sm{
 
 .sub-categories {
 	background:@white;
+		.border-card2{
+ 		   height: 225px !important;
+ 		     background: url(../../img/gray-bg.png) 0px 70px no-repeat !important;
+	}
 	.border-card{
 			   border-right: 1px solid @gray-lighter;
 	           border-bottom: 1px solid @gray-lighter;
-	           min-height: 240px;
+	           height: 8rem;
 	           float: left;
-         h3{
-         	   font-size: 14px;
-         	   font-weight: 400;
-
-         }
+	            background: url(../../img/gray-bg.png)no-repeat;
+	            background-size: 100%;
+	 .aj-title{
+	 	  text-align: center;
+		  position: absolute;
+		  bottom: 0px;
+		  margin: 10px auto;
+		  left: 0%;
+		  right: 0%;
+	 }
          .title{
          	  height: 39px;
          	  font-weight: 400;
@@ -270,6 +307,7 @@ sm{
 			  text-overflow: ellipsis;
          	
          }
+     
       
 	}
 }
@@ -337,14 +375,45 @@ sm{
 .aj-sp-img{
 		margin:6% auto;
 }
+.model-view{
+	  min-height: 22rem;
+	  bottom: 0px;
+	  top: inherit;
+	  .has-header{
+	  	background:@white;
+	  }
+}
 
-/* model Box*/
-.circle-image{
-	  background: #fff;
-	  border-radius: 100%;
+/************************************/
+/* TABS  */
+/************************************/
+.tabs{
+	.tab-item{
+		font-size: 12px
+	}
+}
+.btn-danger{
+	color: @brand-primary
+}
+.label{
 	  border: 1px solid #ccc;
-	  width: 50px;
-	  height: 50px;
+	  padding: 0px 5px;
+	  font-size: 11px;
+	  color: @gray;
+	  display: inline-block;
+}
+.offer{
+	  width: 45px;
+	  height: 45px;
+	  border-radius: 100%;
+	  border: 1px dashed #000;
+	  text-align: center;
+	  font-size: 1.5rem;
+	  line-height: 39px;
 	  margin: auto;
-	  display: block;
+}
+.offertxt{
+	  background: @white;
+  	  margin-top: -11px;
+  	  text-align: center;
 }

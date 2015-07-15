@@ -1,9 +1,10 @@
 angular.module('LocalHyper.categories').factory('CategoriesAPI', [
   '$q', '$http', function($q, $http) {
-    var CategoriesAPI, allCategories, subCategories;
+    var CategoriesAPI, allCategories, categoryChains, subCategories;
     CategoriesAPI = {};
     allCategories = [];
     subCategories = [];
+    categoryChains = [];
     CategoriesAPI.getAll = function() {
       var defer;
       defer = $q.defer();
@@ -29,6 +30,17 @@ angular.module('LocalHyper.categories').factory('CategoriesAPI', [
           return subCategories = data;
         case 'get':
           return subCategories;
+      }
+    };
+    CategoriesAPI.categoryChains = function(action, data) {
+      if (data == null) {
+        data = {};
+      }
+      switch (action) {
+        case 'set':
+          return categoryChains = data;
+        case 'get':
+          return categoryChains;
       }
     };
     return CategoriesAPI;

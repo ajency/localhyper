@@ -4,8 +4,10 @@ angular.module 'LocalHyper.init', []
 .controller 'InitCtrl', ['$ionicPlatform', '$scope', 'App', 'Push', '$rootScope', 'Storage', 'User'
 	, ($ionicPlatform, $scope, App, Push, $rootScope, Storage, User)->
 		
+		#Push notification handler
 		$rootScope.$on '$cordovaPush:notificationReceived', (e, p)->
-			console.log p
+			payload = Push.getPayload p
+			Push.handlePayload(payload) if !_.isEmpty(payload)
 
 		$ionicPlatform.ready ->
 			App.hideKeyboardAccessoryBar()
@@ -14,11 +16,9 @@ angular.module 'LocalHyper.init', []
 			Storage.slideTutorial 'get'
 			.then (value)->
 				if _.isNull value then goto = "tutorial" 
-				else if User.isLoggedIn() then goto = "categories" 
+				else if User.isLoggedIn() then goto = "new-requests" 
 				else goto = 'business-details'
 				App.navigate goto, {}, {animate: false, back: false}
-
-			Push.register()
 ]
 
 
@@ -28,7 +28,6 @@ angular.module 'LocalHyper.init', []
 		
 		.state 'init',
 			url: '/init'
-			cache: false
 			controller: 'InitCtrl'
 			templateUrl: 'views/init/init.html'
 	

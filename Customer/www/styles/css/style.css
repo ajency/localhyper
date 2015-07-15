@@ -11,7 +11,9 @@
 	background-image: none !important;
 }
 .modal .bar .title {
-  font-size: 18px !important;
+  font-size: 16px !important;
+  left: 0% !important;
+  right: 0% !important;
 }
 .bar .title {
   font-size: 14px !important;
@@ -19,7 +21,9 @@
 .item-note {
   color: #F47979;
  }
-
+.item-avatar img{
+	border: 1px solid #ccc;
+}
 /*.aj-img{
 	height: 250px;
 }*/
@@ -92,7 +96,7 @@
 
 
 .platform-ios .popover {
-	height: 120px;
+   height: 180px !important;
 }
 
 .aj-btn {
@@ -125,20 +129,38 @@
 	border: none;
 }
 
-.aj-spinner svg{
+
+.aj-refresher .spinner, .aj-spinner svg{
   display: block;
-  margin: 50% auto;
-  stroke: #8B8989;
-  width: 50px;
-  height: 50px;
+  margin: 65% auto;
+  stroke: #F8585C;
+  width: 40px;
+  height: 40px;
+  fill: #ffffff;
+  background: #fff;
+  border-radius: 100%;
+  padding: 5px;
+  box-shadow: 0px 2px 6px #B6B6B6;
+}
+.aj-refresher .spinner svg circle{
+	stroke: #F8585C;
+}
+
+.aj-refresher .spinner{
+	margin: 0% auto !important;
 }
 
 .aj-verify-spinner svg{
   display: block;
   margin: 0% auto;
-  stroke: #8B8989;
+  stroke: #F8585C;
   width: 40px;
   height: 40px;
+  fill: #ffffff;
+  background: #fff;
+  border-radius: 100%;
+  padding: 5px;
+  box-shadow: 0px 2px 6px #B6B6B6;
 }
 .pane, .view {
   background-color: #E8E8E8;

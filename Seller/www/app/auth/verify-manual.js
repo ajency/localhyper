@@ -11,6 +11,28 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
         this.errorType = type;
         return this.errorAt = at;
       },
+      isExistingUser: function() {
+        return AuthAPI.isExistingUser(this.user).then((function(_this) {
+          return function(data) {
+            var count;
+            if (data.existing) {
+              if (data.userObj[0].get('userType') === 'customer') {
+                count = App.isAndroid() ? -2 : -1;
+                App.goBack(count);
+                return CToast.show('Sorry, you are already a registered customer');
+              } else {
+                return _this.requestSMSCode();
+              }
+            } else {
+              return _this.requestSMSCode();
+            }
+          };
+        })(this), (function(_this) {
+          return function(error) {
+            return _this.onError(error, 'isExistingUser');
+          };
+        })(this));
+      },
       requestSMSCode: function() {
         CSpinner.show('', 'Please wait...');
         return SmsAPI.requestSMSCode(this.user.phone).then((function(_this) {
@@ -55,9 +77,10 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
-          var count;
-          count = App.isAndroid() ? -3 : -2;
-          return App.goBack(count);
+          return App.navigate('new-requests', {}, {
+            animate: true,
+            back: false
+          });
         }, (function(_this) {
           return function(error) {
             return _this.onError(error, 'register');
@@ -69,6 +92,8 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
       onTapToRetry: function() {
         this.display = 'noError';
         switch (this.errorAt) {
+          case 'isExistingUser':
+            return this.isExistingUser();
           case 'requestSMSCode':
             return this.requestSMSCode();
           case 'verifySmsCode':
@@ -89,7 +114,7 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
     $scope.$on('$ionicView.enter', function() {
       $ionicPlatform.onHardwareBackButton(onDeviceBack);
       if (App.isIOS()) {
-        return $scope.view.requestSMSCode();
+        return $scope.view.isExistingUser();
       }
     });
     return $scope.$on('$ionicView.leave', function() {

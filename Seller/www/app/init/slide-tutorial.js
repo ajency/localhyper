@@ -1,5 +1,5 @@
 angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
-  '$scope', 'App', 'Storage', '$ionicSlideBoxDelegate', 'User', function($scope, App, Storage, $ionicSlideBoxDelegate, User) {
+  '$scope', 'App', 'Storage', '$ionicSlideBoxDelegate', 'User', 'CToast', function($scope, App, Storage, $ionicSlideBoxDelegate, User, CToast) {
     $scope.view = {
       activeSlide: 0,
       slide: function(bool) {
@@ -8,7 +8,7 @@ angular.module('LocalHyper.init').controller('SlideTutorialCtrl', [
       onGetStarted: function() {
         return Storage.slideTutorial('set').then(function() {
           var goto;
-          goto = User.isLoggedIn() ? "categories" : 'business-details';
+          goto = User.isLoggedIn() ? "new-requests" : 'business-details';
           return App.navigate(goto, {}, {
             animate: false,
             back: false

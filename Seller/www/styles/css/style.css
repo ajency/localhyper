@@ -7,7 +7,11 @@
 	background-color: #f05868;
 }
 
-
+.platform-android .bar .title {
+      font-size: 16px;
+	  line-height: 44px;
+	  font-weight: 600;
+}
 
 /*.aj-img{
 	height: 250px;
@@ -76,6 +80,10 @@
     height: 2px;
     background-color: #000;
 }
+.checkbox input:checked+.checkbox-icon:before, .checkbox input:checked:before {
+   background: #f35a59 !important;
+  border-color: #f35a59!important;
+}
 
 /*Ionic popover*/
 
@@ -85,9 +93,12 @@
 }
 
 .aj-btn {
-	position: absolute;
-	width: 180px;
-	left: 90px;
+	 position: absolute;
+	  width: 180px;
+	  left: 0%;
+	  right: 0%;
+	  margin: auto;
+	  font-weight: 600;
 }
 
 .aj-text .list{
@@ -113,18 +124,28 @@
 
 .aj-spinner svg{
   display: block;
-  margin: 50% auto;
-  stroke: #8B8989;
-  width: 50px;
-  height: 50px;
+  margin: 65% auto;
+  stroke: #F8585C;
+  width: 40px;
+  height: 40px;
+  fill: #ffffff;
+  background: #fff;
+  border-radius: 100%;
+  padding: 5px;
+  box-shadow: 0px 2px 6px #B6B6B6;
 }
 
 .aj-verify-spinner svg{
   display: block;
   margin: 0% auto;
-  stroke: #8B8989;
+  stroke: #F8585C;
   width: 40px;
   height: 40px;
+  fill: #ffffff;
+  background: #fff;
+  border-radius: 100%;
+  padding: 5px;
+  box-shadow: 0px 2px 6px #B6B6B6;
 }
 
 /* Single product css*/
@@ -134,10 +155,14 @@
 }
 
 /* maps */
-.aj-maps {
+.aj-small-map {
 	height: 250px;
 	margin: 0; 
 	padding: 0;
+}
+
+.pac-container {
+	width: 340px !important;
 }
 
 

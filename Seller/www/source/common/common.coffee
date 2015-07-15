@@ -10,6 +10,7 @@ angular.module 'LocalHyper.common', []
 
 			start: true
 			validateEmail: /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/
+			onlyNumbers: /^\d+$/
 			menuEnabled : left: false, right: false
 			previousState: ''
 			currentState: ''
@@ -63,6 +64,10 @@ angular.module 'LocalHyper.common', []
 
 			dragContent : (bool)->
 				$ionicSideMenuDelegate.canDragContent bool
+
+			toINR : (number)->
+				number = number.toString()
+				number.replace /(\d)(?=(\d\d)+\d$)/g, "$1,"
 
 			getInstallationId : ->
 				defer = $q.defer()

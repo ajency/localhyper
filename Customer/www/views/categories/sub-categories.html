@@ -9,17 +9,17 @@
 		<ion-list>
 
 			<div 
-				class="col col-50 border-card"
+				class="col col-50 border-card relative"
 				ng-repeat="category in view.subCategories | orderBy:'sort_order'"
 				ng-click="App.navigate('products', {categoryID: category.id})">
 				
 					<img 
 						ng-src="{{category.image.src}}" 
-						class="aj-img center-block img-responsive">
+						class="aj-img center-block ">
 
-					<h3 class="text-center upper-case">
-						{{category.name}}
-					</h3>
+					<h5 class="text-center aj-title">
+						{{category.name}}  
+					</h5>
 			</div>
 
 		</ion-list>

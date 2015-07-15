@@ -1,20 +1,9 @@
-<ion-view>
-
-	<ion-nav-title>
-		<img src="img/logo.png"/>
-    </ion-nav-title>
-
-	<ion-nav-buttons side="left">
-		<button 
-			menu-toggle="left" 
-			class="button button-icon icon ion-navicon">
-		</button>
-	</ion-nav-buttons>
+<ion-view view-title="Select Category">
 
 	<ion-content ng-switch="view.display">
 
 		<ion-spinner
-			class="aj-spinner" 
+			class="aj-spinner spinner-android" 
 			ng-switch-when="loader">
 		</ion-spinner>
 
@@ -23,9 +12,11 @@
 				class="item item-thumbnail-left department-list"
 				ng-repeat="category in view.parentCategories"
 				ng-click="App.navigate('sub-categories', {parentID: category.id})">
-					
-					<h3>{{category.name}}</h3>
-					<img ng-src="{{category.image.src}}">
+	
+					<div class="row">
+					  <div class="col col-50"><h2>{{category.name}}</h2></div>
+					  <div class="col col-50"><img ng-src="{{category.image.src}}" class="img-responsive"></div>
+					</div>
 			</a>
 		</ion-list>
 

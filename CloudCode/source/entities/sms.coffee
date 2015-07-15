@@ -43,8 +43,8 @@ Parse.Cloud.afterSave "SMSVerify", (request)->
 	Parse.Cloud.httpRequest 
 		url: 'https://rest.nexmo.com/sms/json'
 		params:
-			api_key: '343ea2a4'
-			api_secret: 'a682ae14'
+			api_key: 'e2f79907'
+			api_secret: '88907392'
 			from: 'ShopOye'
 			to: "91#{phone}"
 			text: "Welcome to ShopOye. Your one time verification code is #{verificationCode}"

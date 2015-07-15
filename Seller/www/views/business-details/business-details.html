@@ -1,43 +1,120 @@
-<ion-view view-title="Business Details">
+<ion-view 
+	view-title="Details"
+	ng-init="view.init()">
 
 	<ion-content>
-		
-		<div class="list list-inset">
-			
-			<h5>Business details</h5>
-			<label class="item item-input">
+		<br>
+		<div class="row row-fluid">
+			<div class="col col-100">
+				<h5 class="text-left margin-none text-primary upper-case h5"> 
+					<i class="ion ion-briefcase"></i>  Business details
+				</h5>
+			</div>
+		</div>
+
+		<div class="list bg-white form-field">
+			<label class="item item-input item-stacked-label">
+				<span class="input-label">Business Name</span>
 				<input 
 					type="text"
 					placeholder="Enter business name"
 					ng-model="view.businessName">
 			</label>
 
-			<label class="item item-input">
+			<label class="item item-input item-stacked-label">
+				<span class="input-label">Full Name</span>
 				<input 
-					type="password"
+					type="text"
 					placeholder="Enter your full name"
-					ng-model="view.fullName">
+					ng-model="view.name">
 			</label>
 
-			<label class="item item-input">
+			<label class="item item-input item-stacked-label">
+				<span class="input-label">Phone Number</span>
 				<input 
 					type="tel"
-					placeholder="Enter your business phone number"
-					ng-model="view.businessPhoneNumber">
+					minlength="10" 
+					maxlength="10"
+					placeholder="Enter your phone number"
+					ng-pattern="App.onlyNumbers"
+					ng-model="view.phone">
 			</label>
+		</div>
+
+		<div class="list">
+
+			<div class="row row-fluid">
+				<div class="col col-100"> 
+					<h5 class="text-left margin-none text-primary upper-case h5">
+						<i class="ion ion-ios-location"> </i> Location details
+					</h5>
+				</div>
+			</div>
+
+			<div class="list margin-none">
+				<div class="item item-input-inset">
+					<label class="item-input-wrapper">
+						<input type="text" size="100"
+							placeholder="Search your location" 
+							ng-model="view.fullAddress">
+					</label>
+					<button 
+						class="Submitbutton button-small button-dark button" 
+						ng-click="view.getCurrentLocation()">
+						<i class="ion ion-android-locate"></i>
+					</button>
+				</div>
+			</div>
+			
+			<div>
+				<google-map 
+					class="aj-small-map"
+					on-create="view.onMapCreated(map)"
+					map-tap-disabled="true"> 
+				</google-map>
+			</div>
+
+			<div class="row">
+				<button 
+					class="button button-block  button button-dark"
+					ng-click="view.onConfirmLocation()">
+					Confirm Location
+				</button>
+			</div>
+
+			<div class="row">
+				<div class="col"><h3 class="m-t-10"> <i class=" ion ion-android-car"></i></h3></div>
+				<div class="col col-80">
+					<h5 class="text-left"> 
+						From your selected location, you provide delivery within <b>{{view.deliveryRadius}} Kms</b>
+					</h5>
+				</div>
+			</div>
+			  
+			<div class="item range range-assertive">
+				<input 
+					type="range" 
+					min="0" 
+					max="20" 
+					ng-model="view.deliveryRadius">
+			</div>
 
 			</br>
 
-			<h5>Location details</h5>
+			<li class="item item-checkbox">
+				<label class="checkbox">
+					<input type="checkbox" ng-model="view.terms">
+				</label>
+				I accept the terms & conditions
+			</li>
 
-			<aj-google-maps> </aj-google-maps>
-
-			<button class="button button-block button-dark">Confirm Location</button>
-
+			<button 
+				class="button button-block button-assertive"
+				ng-disabled="!view.terms"
+				ng-click="view.onNext()">
+				Next
+			</button>
 		</div>
 
-  </body>
-
-	</ion-content>
-
+   </ion-content>
 </ion-view>
