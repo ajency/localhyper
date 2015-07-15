@@ -98,8 +98,12 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
         else
             attribute.set "display_type", "checkbox" 
 
+        if(attributeObj.hasOwnProperty("type"))
+            attribute.set "type", attributeObj.type
+        else
+            attribute.set "type", "select"         
+
         attributeSavedArr.push(attribute)
-        
 
     # save all the newly created objects
     Parse.Object.saveAll attributeSavedArr,
@@ -113,8 +117,8 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
         if isFilterable is true
             category.set "filterable_attributes" , objs
         else
-            category.set "secondary_attributes" , objs    
-        
+            category.set "secondary_attributes" , objs  
+
         category.save()
         .then ()->
             response.success "Successfully added/updated the attributes"

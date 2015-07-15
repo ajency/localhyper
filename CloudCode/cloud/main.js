@@ -88,6 +88,11 @@
       } else {
         attribute.set("display_type", "checkbox");
       }
+      if (attributeObj.hasOwnProperty("type")) {
+        attribute.set("type", attributeObj.type);
+      } else {
+        attribute.set("type", "select");
+      }
       return attributeSavedArr.push(attribute);
     });
     return Parse.Object.saveAll(attributeSavedArr, {
