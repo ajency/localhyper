@@ -1,21 +1,25 @@
 <ion-modal-view>
 
-	<ion-header-bar 
-		style="height:65px;"
-		no-tap-scroll="true">
+	<ion-header-bar
+		style="height:54px;"
+		no-tap-scroll="true" class="modal-offer-header">
 
 		<div class="row row-fluid">
-			<div class="col col-20 item-avatar">   
+			<!-- <div class="col col-20 item-avatar">
 				<img class="" ng-src="{{view.requestDetails.data.product.image[0].src}}" >
 			</div>
-			<div class="col col-67 sm-text"> 
-				<h5 class="text-left">{{view.requestDetails.data.product.name}}</h5> 
+			<div class="col col-67 sm-text">
+				<h5 class="text-left">{{view.requestDetails.data.product.name}}</h5>
+			</div> -->
+			<div class="col col-20"></div>
+			<div class="col col-60">
+				<h4>Make an Offer</h4>
 			</div>
-			<div class="col">
-				<h2 
-					ng-click="view.requestDetails.modal.hide()"  
+			<div class="col col-20">
+				<h2
+					ng-click="view.requestDetails.modal.hide()"
 					class="text-right">
-					<i class="ion ion-ios-close-outline"></i> 
+					<i class="ion ion-ios-close-outline"></i>
 				</h2>
 			</div>
 		</div>
@@ -24,50 +28,86 @@
 	<ion-content ng-switch="view.requestDetails.display">
 
 		<ion-spinner
-			class="aj-spinner spinner-android" 
+			class="aj-spinner spinner-android"
 			ng-switch-when="loader">
 		</ion-spinner>
 
 		<ion-list ng-switch-when="noError">
-			<br><br>
-			<h4>Request details view is pending</h4>
-			<!-- <div class="row">
+			<!-- <h4>Request details view is pending</h4> -->
+			<div class="row make-an-offer">
 		        <div class="col">
-				 <label class="item item-radio aj-radio">
+				 <label class="item item-radio">
 				    <input type="radio" name="group">
 				       <div class="item-content item-text-wrap">
 				        <sm> Local Price </sm>
 					    </div>
-					    <i class="radio-icon ion-checkmark"></i>
+					    <i class="radio-icon-hide rad-ico ion-android-radio-button-on"></i>
+					    <i class="radio-icon-show rad-ico ion-android-radio-button-off"></i>
 				 </label>
 		        </div>
 		        <div class="col">
 		         <label class="item item-radio">
 				    <input type="radio" name="group">
 				       <div class="item-content">
-				           <sm>  Online Price </sm>
+				           <sm> Online Price </sm>
 					    </div>
-					    <i class="radio-icon ion-checkmark"></i>
+					    <i class="radio-icon-hide rad-ico ion-android-radio-button-on"></i>
+					    <i class="radio-icon-show rad-ico ion-android-radio-button-off"></i>
 				 </label>
 		        </div>
 		        <div class="col">
 		        	 <label class="item item-radio">
 				    <input type="radio" name="group">
 				       <div class="item-content">
-				           <sm>  Your Price </sm>
+				           <sm> Your Price </sm>
 					    </div>
-					    <i class="radio-icon ion-checkmark"></i>
+					    <i class="radio-icon-hide rad-ico ion-android-radio-button-on"></i>
+					    <i class="radio-icon-show rad-ico ion-android-radio-button-off"></i>
 				 </label>
 		        </div>
-		    </div> -->
+		    </div>
+		    <div class="row">
+		    	<div class="col">
+		    		<div class="deli-tim">
+		    			<i class="icon-img icon-cust-cal bigger">
+		    				<img src="../../img/cal.png" alt="">
+		    			</i>
+		    			<p>
+		    				<span class="ti">Delivery Time</span>
+		    				<span class="ac-ti">
+		    					<span class="big">1 hour</span>
+		    					<span class="change">(Change)</span>
+		    				</span>
+		    			</p>
+					</div>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col">
+		    		<h5 class="with-sep"><span>Comments</span></h5>
+		    	</div>
+		    </div>
+		    <div class="row">
+		    	<div class="col col-20">
+		    		<a href="#" class="userava">
+		    			C
+		    		</a>
+		    	</div>
+		    	<div class="col col-80 user-comment">
+		    		<p>Will the products I order be delivered to my doorstep?</p>
+		    		<button class="button button-small button-black">
+		    			Reply
+		    		</button>
+		    	</div>
+		    </div>
 		</ion-list>
 
-		<aj-error 
+		<aj-error
 			ng-switch-when="error"
 			error-type="view.requestDetails.errorType"
 			tap-to-retry="view.requestDetails.get()">
 		</aj-error>
-	
+
 	</ion-content>
-	
+
 </ion-modal-view>
