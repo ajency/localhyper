@@ -38,5 +38,4 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get( 'attribute/importattributes', 'Admin\AttributeController@importAttributes' );
     Route::get( 'attribute/exportattributevalues', 'Admin\AttributeController@exportAttributeValues' );
 
-
 });    

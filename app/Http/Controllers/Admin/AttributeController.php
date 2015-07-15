@@ -11,6 +11,7 @@ use \PHPExcel;
 use Parse\ParseObject;
 use Parse\ParseQuery;
 use \Session;
+use \Input;
 
 class AttributeController extends Controller
 {
@@ -418,5 +419,44 @@ class AttributeController extends Controller
 
         return $result_json;      
     
-    }        
+    } 
+
+    public function getCategoryAttributes($categoryId){
+
+      $categoryQuery = new ParseQuery("Category");
+      $categoryQuery->equalTo("objectId",$categoryId);
+
+      $categoryQuery->includeKey("filterable_attributes");
+      $categoryQuery->includeKey("secondary_attributes");
+
+      $categoryObject = $categoryQuery->first();
+
+      $filterable_attributes = (is_null($categoryObject->get("filterable_attributes"))) ? array() : $categoryObject->get("filterable_attributes");
+      $secondary_attributes =  (is_null($categoryObject->get("secondary_attributes"))) ? array() : $categoryObject->get("secondary_attributes");
+
+      $attributes = array();
+      foreach ($filterable_attributes as $filterable_attribute) {
+        $attributes["filterable"][] = array(
+                'id' =>$filterable_attribute->getObjectId(),
+                'name' => $filterable_attribute->get('name'),
+                'display_type' => $filterable_attribute->get('display_type'),
+                'group' => $filterable_attribute->get('group'),
+                'unit' => $filterable_attribute->get('unit'),
+                );
+
+      }
+
+      foreach ($secondary_attributes as $secondary_attribute) {
+        $attributes["secondary"][] = array(
+                'id' =>$secondary_attribute->getObjectId(),
+                'name' => $secondary_attribute->get('name'),
+                'display_type' => $secondary_attribute->get('display_type'),
+                'group' => $secondary_attribute->get('group'),
+                'unit' => $secondary_attribute->get('unit'),
+                );
+
+      }
+
+      return $attributes;
+    }       
 }
