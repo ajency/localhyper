@@ -168,7 +168,7 @@ sm{
           margin-left: -4px !important;
 		  z-index: 9999;
 	}
-	
+
 }
 .number-count{
 	margin-bottom: -5px !important;
@@ -355,14 +355,14 @@ sm{
 			  -webkit-box-orient: vertical;
 			  overflow: hidden;
 			  text-overflow: ellipsis;
-         	
+
          }
-      
+
 	}
 }
 .product-list{
 		.border-card{
-			
+
 		}
 		h4{
 			color:@brand-primary ;
@@ -448,7 +448,7 @@ sm{
 				padding-bottom: 0px;
 				min-height: 32px !important;
 			    background: #fff;
-  				
+
 			}
 			.item-divider{
 				border-top: 1px dashed #ccc;
@@ -503,7 +503,7 @@ sm{
 	img{
 		border: 1px solid #ccc;
 	}
-	
+
 	.item{
 		 background: #FFE9E9;
 	}
@@ -576,4 +576,161 @@ sm{
 
 .aj-radio{
 	  padding: 10px !important;
+}
+
+
+/************************************/
+/* by Ren - Enter Details  */
+/************************************/
+.aj-small-map {
+	height: 157px;
+}
+.title-with-icon {
+	i {
+		margin-right: 5px;
+		margin-left: 10px;
+	}
+}
+.item-input-inset {
+	.item-input-wrapper {
+		padding: 2px 8px;
+	}
+	.button.button-dark {
+		margin-left: 0;
+	}
+}
+.range.range-with-incdec {
+	padding: 2px 0;
+	margin-bottom: 1px;
+	.icon {
+		padding: 15px 0;
+		display: block;
+		min-width: 46px;
+		font-size: 18px;
+		color:@brand-primary;
+	}
+}
+.button.button-dark.btn-confirm {
+	margin-top: 0;
+}
+.header-item {
+	.button.button-assertive {
+		padding: 0 10px;
+	}
+}
+
+.make-an-offer {
+	margin-top: 2px;
+	.item-radio {
+		border-radius: 2px;
+		border-right: 1px solid #ddd;
+		border-left: 1px solid #ddd;
+		input~.rad-ico {
+			position: absolute;
+			left:50%;
+			bottom: 8px;
+			margin-left: -5px;
+			z-index: 5;
+			color: @brand-primary;
+		}
+		input~.radio-icon-show {
+			visibility: visible;
+		}
+		input~.radio-icon-hide {
+			visibility: hidden;
+		}
+		input:checked~.radio-icon-show {
+			visibility: hidden;
+		}
+		input:checked~.radio-icon-hide {
+			visibility: visible;
+		}
+	}
+	.item-content {
+		padding: 5px 8px;
+		padding-bottom: 35px;
+		text-align: center;
+	}
+	.radio-icon-hide {
+		visibility: hidden;
+	}
+}
+.deli-tim {
+	max-width: 250px;
+	margin: 30px auto;
+	margin-bottom: 2px;
+	text-align: center;
+	.icon-img {
+		display: inline-block;
+		margin-top: 0px;
+		img {
+			height: 40px;
+			width: auto;
+		}
+	}
+	p {
+		display: inline-block;
+		vertical-align: top;
+		margin-top: -3px;
+		text-align: left;
+		.ti {
+			display: block;
+		}
+		.ac-ti {
+			color: @brand-primary;
+			font-size: 22px;
+		}
+		.change {
+			color: #919191;
+			font-size: 11px;
+		}
+	}
+}
+
+.modal-offer-header {
+	border-bottom-color: transparent;
+}
+h5.with-sep {
+	text-align: center;
+	border-bottom: 1px solid #acacac;
+	height: 7px;
+	span {
+		display: inline-block;
+		background: #fff;
+		padding: 0 20px;
+	}
+}
+.userava {
+	display: block;
+	color: #b1b1b1;
+	text-decoration: none;
+	font-size: 18px;
+	width: 35px;
+	height: 35px;
+	line-height: 35px;
+	padding: 0;
+	text-align: center;
+	border: 1px solid #b1b1b1;
+	border-radius: 50%;
+	margin: 0 auto;
+}
+.user-comment {
+	p {
+		font-size: 14px;
+		padding-right: 25px;
+	}
+	.button {
+		padding: 0 21px;
+		text-transform: uppercase;
+	}
+}
+.button-black {
+	background: #0a0a0a;
+	color: #fff;
+	border-radius: 3px;
+	&.button.activated, &.button.active {
+		background: #eee;
+		border-color: #000;
+		color: #000;
+	}
 }
