@@ -180,22 +180,33 @@ angular.module 'LocalHyper.products'
 
 			makeRequest : ->
 				CSpinner.show '', 'Please wait...'
+				user = User.getCurrent()
 				params = 
-					"customerId": User.getId()
+					"customerId": user.id
 					"productId": @productID
-					"location": 
-						latitude: @location.latLng.lat()
-						longitude: @location.latLng.lng()
 					"categoryId": @product.category.objectId
 					"brandId": @product.brand.objectId
-					"address": @location.address
-					"city": @location.address.city
-					"area": @location.address.city
-					"comments": ""
+					"comments": @comments.text
 					"status": "open"
 					"deliveryStatus": ""
 
-				User.update
+				if !_.isNull @location.latLng
+					params["location"] = 
+						latitude: @location.latLng.lat()
+						longitude: @location.latLng.lng()
+					params["address"] = @location.address
+					params["city"] = @location.address.city
+					params["area"] = @location.address.city
+				else
+					geoPoint = user.get('addressGeoPoint')
+					params["location"] = 
+						latitude: geoPoint.latitude
+						longitude: geoPoint.longitude
+					params["address"] = user.get 'address'
+					params["city"] = user.get 'city'
+					params["area"] = user.get 'area'
+
+				User.update 
 					"address": params.address
 					"addressGeoPoint": new Parse.GeoPoint params.location
 					"area": params.area
@@ -210,6 +221,7 @@ angular.module 'LocalHyper.products'
 				.finally ->
 					CSpinner.hide()
 
+		
 		$scope.$on '$destroy', ->
 			$scope.view.specificationModal.remove()
 			$scope.view.makeRequestModal.remove()

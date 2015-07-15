@@ -223,24 +223,36 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         }
       },
       makeRequest: function() {
-        var params;
+        var geoPoint, params, user;
         CSpinner.show('', 'Please wait...');
+        user = User.getCurrent();
         params = {
-          "customerId": User.getId(),
+          "customerId": user.id,
           "productId": this.productID,
-          "location": {
-            latitude: this.location.latLng.lat(),
-            longitude: this.location.latLng.lng()
-          },
           "categoryId": this.product.category.objectId,
           "brandId": this.product.brand.objectId,
-          "address": this.location.address,
-          "city": this.location.address.city,
-          "area": this.location.address.city,
-          "comments": "",
+          "comments": this.comments.text,
           "status": "open",
           "deliveryStatus": ""
         };
+        if (!_.isNull(this.location.latLng)) {
+          params["location"] = {
+            latitude: this.location.latLng.lat(),
+            longitude: this.location.latLng.lng()
+          };
+          params["address"] = this.location.address;
+          params["city"] = this.location.address.city;
+          params["area"] = this.location.address.city;
+        } else {
+          geoPoint = user.get('addressGeoPoint');
+          params["location"] = {
+            latitude: geoPoint.latitude,
+            longitude: geoPoint.longitude
+          };
+          params["address"] = user.get('address');
+          params["city"] = user.get('city');
+          params["area"] = user.get('area');
+        }
         return User.update({
           "address": params.address,
           "addressGeoPoint": new Parse.GeoPoint(params.location),

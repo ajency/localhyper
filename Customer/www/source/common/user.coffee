@@ -24,7 +24,7 @@ angular.module 'LocalHyper.common'
 
 	User.update = (params)->
 		defer = $q.defer()
-		
+
 		@getCurrent().save params
 		.then ->
 			defer.resolve()
