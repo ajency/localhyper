@@ -605,3 +605,33 @@ sm {
 .aj-radio {
   padding: 10px !important;
 }
+/************************************/
+/* by Ren - Enter Details  */
+/************************************/
+.aj-small-map {
+  height: 157px;
+}
+.title-with-icon i {
+  margin-right: 5px;
+  margin-left: 10px;
+}
+.item-input-inset .item-input-wrapper {
+  padding: 2px 8px;
+}
+.item-input-inset .button.button-dark {
+  margin-left: 0;
+}
+.range.range-with-incdec {
+  padding: 2px 0;
+  margin-bottom: 1px;
+}
+.range.range-with-incdec .icon {
+  padding: 15px 0;
+  display: block;
+  min-width: 46px;
+  font-size: 18px;
+  color: #f35a59;
+}
+.button.button-dark.btn-confirm {
+  margin-top: 0;
+}
