@@ -635,3 +635,119 @@ sm {
 .button.button-dark.btn-confirm {
   margin-top: 0;
 }
+.header-item .button.button-assertive {
+  padding: 0 10px;
+}
+.make-an-offer {
+  margin-top: 2px;
+}
+.make-an-offer .item-radio {
+  border-radius: 2px;
+  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+.make-an-offer .item-radio input ~ .rad-ico {
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  margin-left: -5px;
+  z-index: 5;
+  color: #f35a59;
+}
+.make-an-offer .item-radio input ~ .radio-icon-show {
+  visibility: visible;
+}
+.make-an-offer .item-radio input ~ .radio-icon-hide {
+  visibility: hidden;
+}
+.make-an-offer .item-radio input:checked ~ .radio-icon-show {
+  visibility: hidden;
+}
+.make-an-offer .item-radio input:checked ~ .radio-icon-hide {
+  visibility: visible;
+}
+.make-an-offer .item-content {
+  padding: 5px 8px;
+  padding-bottom: 35px;
+  text-align: center;
+}
+.make-an-offer .radio-icon-hide {
+  visibility: hidden;
+}
+.deli-tim {
+  max-width: 250px;
+  margin: 30px auto;
+  margin-bottom: 2px;
+  text-align: center;
+}
+.deli-tim .icon-img {
+  display: inline-block;
+  margin-top: 0px;
+}
+.deli-tim .icon-img img {
+  height: 40px;
+  width: auto;
+}
+.deli-tim p {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: -3px;
+  text-align: left;
+}
+.deli-tim p .ti {
+  display: block;
+}
+.deli-tim p .ac-ti {
+  color: #f35a59;
+  font-size: 22px;
+}
+.deli-tim p .change {
+  color: #919191;
+  font-size: 11px;
+}
+.modal-offer-header {
+  border-bottom-color: transparent;
+}
+h5.with-sep {
+  text-align: center;
+  border-bottom: 1px solid #acacac;
+  height: 7px;
+}
+h5.with-sep span {
+  display: inline-block;
+  background: #fff;
+  padding: 0 20px;
+}
+.userava {
+  display: block;
+  color: #b1b1b1;
+  text-decoration: none;
+  font-size: 18px;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  padding: 0;
+  text-align: center;
+  border: 1px solid #b1b1b1;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+.user-comment p {
+  font-size: 14px;
+  padding-right: 25px;
+}
+.user-comment .button {
+  padding: 0 21px;
+  text-transform: uppercase;
+}
+.button-black {
+  background: #0a0a0a;
+  color: #fff;
+  border-radius: 3px;
+}
+.button-black.button.activated,
+.button-black.button.active {
+  background: #eee;
+  border-color: #000;
+  color: #000;
+}
