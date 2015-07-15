@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common').factory('User', [
-  function() {
+  '$q', function($q) {
     var User, userInfo;
     User = {};
     userInfo = {};
@@ -14,10 +14,23 @@ angular.module('LocalHyper.common').factory('User', [
       user = Parse.User.current();
       return user.getSessionToken();
     };
-    User.getId = function() {
+    User.getCurrent = function() {
       var user;
       user = Parse.User.current();
-      return user.id;
+      return user;
+    };
+    User.getId = function() {
+      return this.getCurrent().id;
+    };
+    User.update = function(params) {
+      var defer;
+      defer = $q.defer();
+      this.getCurrent().save(params).then(function() {
+        return defer.resolve();
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
     };
     User.info = function(action, data) {
       if (data == null) {

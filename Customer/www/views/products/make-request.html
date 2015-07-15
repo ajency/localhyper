@@ -16,18 +16,21 @@
 		<div class="list">
 			<div class="item item-divider">
 				Your Address
-				<span class="item-note">
+				<span class="item-note" ng-click="view.onEditLocation()">
 					<i class="ion ion-compose"></i> Edit
 				</span>
 			</div>
 			<div class="item subdued">
-				<h3 class="normal-space grey">{{view.fullAddress}}</h3>
+				<h3 class="normal-space grey">{{view.confirmedAddress}}</h3>
 			</div>
 			<div class="item item-divider">
 				Comments 
-				<span class="item-note">
+				<span class="item-note" ng-click="view.comments.modal.show()">
 					<i class="ion ion-compose"></i> Enter Comments
 				</span>
+			</div>
+			<div class="item subdued">
+				<h3 class="normal-space grey">{{view.comments.text}}</h3>
 			</div>
 		</div>
     </ion-content>

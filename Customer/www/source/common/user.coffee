@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.common'
 
 
-.factory 'User', [->
+.factory 'User', ['$q', ($q)->
 
 	User = {}
 	userInfo = {}
@@ -15,9 +15,23 @@ angular.module 'LocalHyper.common'
 		user = Parse.User.current()
 		user.getSessionToken()
 
-	User.getId = ->
+	User.getCurrent = ->
 		user = Parse.User.current()
-		user.id
+		user
+
+	User.getId = ->
+		@getCurrent().id
+
+	User.update = (params)->
+		defer = $q.defer()
+		
+		@getCurrent().save params
+		.then ->
+			defer.resolve()
+		, (error)->
+			defer.reject error
+
+		defer.promise
 
 	User.info = (action, data={})->
 		switch action

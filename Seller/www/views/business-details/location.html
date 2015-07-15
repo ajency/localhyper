@@ -1,0 +1,29 @@
+<ion-modal-view>
+
+	<ion-header-bar 
+		style="height:65px;"
+		no-tap-scroll="true">
+
+		<div class="row row-fluid">
+			<div class="col col-67 sm-text"> 
+				<h5 class="text-left">Select your location</h5> 
+			</div>
+			<div class="col">
+				<h2 
+					ng-click="view.location.modal.hide()"  
+					class="text-right">
+					<i class="ion ion-ios-close-outline"></i> 
+				</h2>
+			</div>
+		</div>
+	</ion-header-bar>
+
+	<ion-content>
+		<google-map 
+			class="aj-big-map"
+			on-create="view.onMapCreated(map)"> 
+		</google-map>
+	
+	</ion-content>
+	
+</ion-modal-view>

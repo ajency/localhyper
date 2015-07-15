@@ -7,14 +7,18 @@ angular.module 'LocalHyper.googleMaps', []
 
 	GoogleMaps.loadScript = ->
 		defer = $q.defer()
-		script = document.createElement 'script'
-		script.type = 'text/javascript'
-		script.src  = "https://maps.googleapis.com/maps/api/js?libraries=places"+
-					  "&key=#{GOOGLE_MAPS_API_KEY}&callback=onGMapScriptLoad"
-		
-		document.body.appendChild script
-		window.onGMapScriptLoad = -> defer.resolve()
-		script.onerror = -> defer.reject()
+
+		if _.isUndefined window.google
+			script = document.createElement 'script'
+			script.type = 'text/javascript'
+			script.src  = "https://maps.googleapis.com/maps/api/js?libraries=places"+
+						  "&key=#{GOOGLE_MAPS_API_KEY}&callback=onGMapScriptLoad"
+
+			window.onGMapScriptLoad = -> defer.resolve()
+			script.onerror = -> defer.reject()
+			document.body.appendChild script
+
+		else defer.resolve()
 
 		defer.promise
 

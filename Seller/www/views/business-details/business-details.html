@@ -51,6 +51,15 @@
 				</div>
 			</div>
 
+			<!-- <label>Select address</label>
+			<div class="row">
+				<button 
+					class="button button-block  button button-dark"
+					ng-click="view.location.modal.show()">
+					Edit Location
+				</button>
+			</div> -->
+
 			<div class="list margin-none">
 				<div class="item item-input-inset">
 					<label class="item-input-wrapper">
@@ -66,13 +75,11 @@
 				</div>
 			</div>
 			
-			<div>
-				<google-map 
-					class="aj-small-map"
-					on-create="view.onMapCreated(map)"
-					map-tap-disabled="true"> 
-				</google-map>
-			</div>
+			<google-map 
+				class="aj-small-map"
+				on-create="view.onMapCreated(map)"
+				map-tap-disabled="true"> 
+			</google-map>
 
 			<div class="row">
 				<button 
