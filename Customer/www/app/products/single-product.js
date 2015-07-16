@@ -171,13 +171,17 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       },
       getPrimaryAttrs: function() {
         var attrs, unit, value;
-        attrs = this.product.primaryAttributes[0];
-        value = s.humanize(attrs.value);
-        unit = '';
-        if (_.has(attrs.attribute, 'unit')) {
-          unit = s.humanize(attrs.attribute.unit);
+        if (!_.isUndefined(this.product.primaryAttributes)) {
+          attrs = this.product.primaryAttributes[0];
+          value = s.humanize(attrs.value);
+          unit = '';
+          if (_.has(attrs.attribute, 'unit')) {
+            unit = s.humanize(attrs.attribute.unit);
+          }
+          return value + " " + unit;
+        } else {
+          return '';
         }
-        return value + " " + unit;
       },
       onEditLocation: function() {
         var mapHeight;
