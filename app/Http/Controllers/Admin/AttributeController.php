@@ -128,7 +128,12 @@ class AttributeController extends Controller
         $attributeSheet->protectCells($header, 'PHP');
         
         //*** SHEET 2 ATTRIUTEVALUES
-        $attributeValueData = $this->getCategoryAttributeValues($catId);
+        $categoryData = [
+         'categoryId' => $catId,
+         'filterableAttributes' => true,
+         'secondaryAttributes' => true,
+         ];
+        $attributeValueData = $this->getCategoryAttributeValues($categoryData);
         $headers = $data = $attributeValues= $headerFlag = [];
 
         foreach($attributeValueData['ATTRIBUTES'] as $attributeValue)
@@ -267,14 +272,12 @@ class AttributeController extends Controller
 
                 ++$r;
                 foreach($headingsArray as $columnKey => $columnHeading) {
-                    if($columnHeading!='Config')
-                        $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
-                    else
-                        $config[]=$dataRow[$row][$columnKey];
+                     $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+                   
                  }
         }
 
-        //$this->parseBrandImport($nonFilterableAttribute);*/
+        //$this->parseBrandImport($namedDataArray);*/
         
         return true;
     }
@@ -510,45 +513,6 @@ class AttributeController extends Controller
 
       return $brands;
 
-
-    } 
-    
-    public function getCategoryAttributeValues($categoryId){
-
-      $data =[];
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
-                                'ATTRIBUTE_NAME'=> 'Type',
-                                'ATTRIBUTE_VALUE'=> 'Single Door',  
-                                'ATTRIBUTE_VALUE_ID' => '1'];
-                                
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
-                                'ATTRIBUTE_NAME'=> 'Type',
-                                'ATTRIBUTE_VALUE'=> 'Double Door',  
-                                'ATTRIBUTE_VALUE_ID' => '2'];
-        
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Red',  
-                                'ATTRIBUTE_VALUE_ID' => '1'];
-                                
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Gray',  
-                                'ATTRIBUTE_VALUE_ID' => '2'];
-        
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Black',  
-                                'ATTRIBUTE_VALUE_ID' => '3'];
-                                
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Blue',  
-                                'ATTRIBUTE_VALUE_ID' => '4'];
-        
-  
-        return $data;
-     
 
     } 
 
