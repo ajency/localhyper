@@ -191,17 +191,21 @@ class AttributeController extends Controller
 
         $headers = [];
         
-        $brandSheet = new \PHPExcel_Worksheet($excel, 'Brand');
+        $brandSheet = new \PHPExcel_Worksheet($excel, 'Brands');
         $excel->addSheet($brandSheet, 0);
-        $brandSheet->setTitle('Brand');
+        $brandSheet->setTitle('Brands');
         
+        $headers []= 'Config' ;
         $headers []= 'objectId' ;
         $headers []= 'name' ;
         $headers []= 'imageUrl' ;
 
  
         $brandSheet->fromArray($headers, ' ', 'A1');
-        $brandSheet->fromArray($brands, ' ','A2');
+        $brandSheet->fromArray([$catId], ' ', 'A2');
+        $brandSheet->getColumnDimension('A')->setVisible(false);
+        
+        $brandSheet->fromArray($brands, ' ','B2');
  
         $lastColumn = $brandSheet->getHighestColumn();
         $header = 'a1:'.$lastColumn.'1';
@@ -244,10 +248,10 @@ class AttributeController extends Controller
                 $sheetTitle = $sheetNames[$i];
                 if($sheetTitle=='Brands')
                     $this->importBrands($sheet);
-                elseif($sheetTitle=='Attributes')
+               /* elseif($sheetTitle=='Attributes')
                     $this->importAttributes($sheet);
                 elseif($sheetTitle=='AttributeValues')
-                        $this->importAttributeValues($sheet);
+                        $this->importAttributeValues($sheet);*/
             }
  
             
@@ -258,11 +262,11 @@ class AttributeController extends Controller
         
     }
     
-    public function importBrand($sheet){
+    public function importBrands($sheet){
         $highestRow = $sheet->getHighestRow(); 
         $highestColumn = $sheet->getHighestColumn();
 
-        $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
+        $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true); 
         $headingsArray = $headingsArray[1];
 
         $r = -1;
@@ -272,12 +276,15 @@ class AttributeController extends Controller
 
                 ++$r;
                 foreach($headingsArray as $columnKey => $columnHeading) {
-                     $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+                     if($columnHeading!='Config')
+                        $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+                    else
+                        $config[]=$dataRow[$row][$columnKey];
                    
                  }
         }
-
-        $this->parseBrandImport($namedDataArray);*/
+        $brands =['brands' => $namedDataArray,'categoryId' => $config[0]]; 
+        $this->parseBrandImport($brands);
         
         return true;
     }

@@ -95,7 +95,7 @@
 	
     <div class="user-info">
       <div class="greeting">Welcome</div>
-      <div class="username">John <span class="semi-bold">Smith</span></div>
+      <div class="username">{{ Auth::user()->name }}</div>
     </div>
    </div>
   <!-- END MINI-PROFILE -->
