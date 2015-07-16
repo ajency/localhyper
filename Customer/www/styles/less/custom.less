@@ -4,7 +4,7 @@
 @import "variables";
 
 /**** Fonts ****/
-@import url(../../styles/fonts/open-sans/open-sans.css);
+@import url(../../styles/fonts/source_sans/stylesheet.css);
 
 /************************************/
 /* Commen css */
@@ -78,8 +78,9 @@ sm{
       white-space: normal !important;;
 }
 .nav-bar-title{
-	text-transform:uppercase;
-	font-size:14px;
+	// text-transform:uppercase;
+	font-size:16px;
+	font-weight: bold;
 }
 .center-block{
 	margin:auto;
@@ -126,7 +127,7 @@ sm{
 	            background-size: 100%;
 }
 .bar-light{
-	  box-shadow: 1px -3px 12px #000;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
 /************************************/
 /* HEADER */
@@ -268,7 +269,7 @@ sm{
 	}*/
 
 }
-.department-list:nth-child(2){
+.department-list:nth-child(2n){
 	background: @white;
 /*	img{
 		    left: -22px;
@@ -306,7 +307,7 @@ sm{
 	 }
          .title{
          	  height: 39px;
-         	  font-weight: 400;
+         	  font-weight: 800;
          	  line-height: 18px;
          	  display: block;
 			  display: -webkit-box;
@@ -476,5 +477,20 @@ sm{
 			text-transform: uppercase;
 			letter-spacing: 1px;
 		}
+	}
+}
+
+.full-cont {padding: 0}
+.button.button-full.button-view-all-cat {
+	background-color: #0f0f0f;
+	background-image: url(../../img/browse-all-bg.png);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	margin: 0;
+	i.icon {
+		margin-right: 25px;
+		margin-top: -1px;
+		display: inline-block;
 	}
 }
