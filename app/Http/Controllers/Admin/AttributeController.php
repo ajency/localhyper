@@ -136,17 +136,17 @@ class AttributeController extends Controller
         $attributeValueData = $this->getCategoryAttributeValues($categoryData);
         $headers = $data = $attributeValues= $headerFlag = [];
 
-        foreach($attributeValueData['ATTRIBUTES'] as $attributeValue)
+        foreach($attributeValueData['result'] as $attributeValue)
         {
-            $attributeId =$attributeValue['ATTRIBUTE_ID'];
+            $attributeId =$attributeValue['attributeId'];
             if(!isset($headerFlag[$attributeId]))
             {   
-                $headers[]=$attributeValue['ATTRIBUTE_NAME']."(".$attributeId.")";
-                $headers[]=$attributeValue['ATTRIBUTE_NAME'].' Id';
+                $headers[]=$attributeValue['attributeName']."(".$attributeId.")";
+                $headers[]=$attributeValue['attributeName'].' Id';
                 $headerFlag[$attributeId]=$attributeId;
             }
 
-            $attributeValues[$attributeId][] = [$attributeValue['ATTRIBUTE_VALUE'],$attributeValue['ATTRIBUTE_VALUE_ID']];  
+            $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
         }
        // dd($attributeValues);
         $attributeValueSheet = new \PHPExcel_Worksheet($excel, 'AttributeValues');
@@ -314,20 +314,19 @@ class AttributeController extends Controller
                     $dataKey = explode("(",$key);
                     $dataattributeId = explode(")",$dataKey[1]); 
                     $attributeId = $dataattributeId[0];
-                    $attributeValues['attributeValues'][] = ['objectId'=>'',
-                                          'attributeId'=>$attributeId,
-                                          'value'=>$value];
+                    $attributeValues['attributeValues'][] = [ 'objectId'=>'',
+                                                              'attributeId'=>$attributeId,
+                                                              'value'=>$value];
                 }
                 else
                 {
-                    $value = intval($value);
                     $attributeValueKey = count($attributeValues['attributeValues']);
                     $attributeValues['attributeValues'][($attributeValueKey-1)]['objectId']=$value;
                 }
  
                $i++; 
             }
-        }
+        } 
          $this->parseAttributeValueImport($attributeValues);
         
         return true;
@@ -488,6 +487,7 @@ class AttributeController extends Controller
       $resultjson = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
 
       $response =  json_encode($resultjson);
+      $response =  json_decode($response,true);    
       
       return $response;
     } 
