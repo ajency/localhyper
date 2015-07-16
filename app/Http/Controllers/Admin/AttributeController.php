@@ -567,12 +567,14 @@ class AttributeController extends Controller
       //   'filterableAttributes' => true,
       //   'secondaryAttributes' => true,
       //   );
-      
+
       $functionName = "getAttribValueMapping";
 
-      $result = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
+      $resultjson = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
 
-      return $result;
+      $response =  json_encode($resultjson);
+      
+      return $response;
     } 
 
     public function getCategoryBrands($categoryId){
@@ -601,49 +603,49 @@ class AttributeController extends Controller
 
     } 
     
-    public function getCategoryAttributeValues($categoryId){
+    // public function getCategoryAttributeValues($categoryId){
 
-      $data =[];
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
-                                'ATTRIBUTE_NAME'=> 'Type',
-                                'ATTRIBUTE_VALUE'=> 'Single Door',  
-                                'ATTRIBUTE_VALUE_ID' => '1'];
+    //   $data =[];
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
+    //                             'ATTRIBUTE_NAME'=> 'Type',
+    //                             'ATTRIBUTE_VALUE'=> 'Single Door',  
+    //                             'ATTRIBUTE_VALUE_ID' => '1'];
                                 
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
-                                'ATTRIBUTE_NAME'=> 'Type',
-                                'ATTRIBUTE_VALUE'=> 'Double Door',  
-                                'ATTRIBUTE_VALUE_ID' => '2'];
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
+    //                             'ATTRIBUTE_NAME'=> 'Type',
+    //                             'ATTRIBUTE_VALUE'=> 'Double Door',  
+    //                             'ATTRIBUTE_VALUE_ID' => '2'];
         
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Red',  
-                                'ATTRIBUTE_VALUE_ID' => '1'];
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+    //                             'ATTRIBUTE_NAME'=> 'Color',
+    //                             'ATTRIBUTE_VALUE'=> 'Red',  
+    //                             'ATTRIBUTE_VALUE_ID' => '1'];
                                 
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Gray',  
-                                'ATTRIBUTE_VALUE_ID' => '2'];
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+    //                             'ATTRIBUTE_NAME'=> 'Color',
+    //                             'ATTRIBUTE_VALUE'=> 'Gray',  
+    //                             'ATTRIBUTE_VALUE_ID' => '2'];
         
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Black',  
-                                'ATTRIBUTE_VALUE_ID' => '3'];
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+    //                             'ATTRIBUTE_NAME'=> 'Color',
+    //                             'ATTRIBUTE_VALUE'=> 'Black',  
+    //                             'ATTRIBUTE_VALUE_ID' => '3'];
                                 
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Blue',  
-                                'ATTRIBUTE_VALUE_ID' => '4'];
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+    //                             'ATTRIBUTE_NAME'=> 'Color',
+    //                             'ATTRIBUTE_VALUE'=> 'Blue',  
+    //                             'ATTRIBUTE_VALUE_ID' => '4'];
         
-        $data ['BRAND'][] =['NAME' =>'Samsung','ID'  => '1'];
-        $data ['BRAND'][] =['NAME' =>'Lg','ID'  => '2'];
+    //     $data ['BRAND'][] =['NAME' =>'Samsung','ID'  => '1'];
+    //     $data ['BRAND'][] =['NAME' =>'Lg','ID'  => '2'];
         
-        $data ['TEST'][] =['NAME' =>'test1','ID'  => '1'];
-        $data ['TEST'][] =['NAME' =>'test2','ID'  => '2'];
+    //     $data ['TEST'][] =['NAME' =>'test1','ID'  => '1'];
+    //     $data ['TEST'][] =['NAME' =>'test2','ID'  => '2'];
    
-        return $data;
+    //     return $data;
      
 
-    } 
+    // } 
 
     public static function makeParseCurlRequest($functionName,$data,$parseFunctType="functions"){
       
