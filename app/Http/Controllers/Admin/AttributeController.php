@@ -559,7 +559,21 @@ class AttributeController extends Controller
 
 
       return $attributes;
-    }   
+    }  
+
+    public function getCategoryAttributeValues($categoryData){
+      // $categoryData = array (
+      //   'categoryId' => 'bOEz9mBh5Q',
+      //   'filterableAttributes' => true,
+      //   'secondaryAttributes' => true,
+      //   );
+      
+      $functionName = "getAttribValueMapping";
+
+      $result = AttributeController::makeParseCurlRequest($functionName,$data); 
+
+      return $result;
+    } 
 
     public function getCategoryBrands($categoryId){
       
