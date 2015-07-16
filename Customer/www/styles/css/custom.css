@@ -1,4 +1,4 @@
-@import url(../../styles/fonts/source_sans/stylesheet.css);
+@import url(../../styles/fonts/open-sans/open-sans.css);
 /* External CSS */
 /**** Fonts ****/
 /************************************/
@@ -279,7 +279,7 @@ sm {
 /************************************/
 .department-list {
   /*height: 199px;*/
-  height: 150px;
+  height: 175px;
   background: #e8e8e8;
   padding: 0px;
   /*	h3{
@@ -298,15 +298,21 @@ sm {
 }
 .department-list h2 {
   text-overflow: inherit;
+  text-transform: uppercase;
   overflow: visible;
   white-space: normal;
   margin: 5px auto;
-  font-weight: 400;
+  margin-bottom: 10px !important;
+  font-weight: 700;
   font-family: 'Open Sans', 'Source Sans' !important;
+  color: #515151;
 }
 .department-list h4 {
   font-family: 'Open Sans', 'Source Sans' !important;
-  margin-top: 15px;
+  text-transform: uppercase;
+  margin-top: 30px;
+  color: #5d5d5d;
+  font-weight: 400;
 }
 .department-list:nth-child(2) {
   background: #ffffff;
@@ -483,9 +489,34 @@ sm {
   max-width: none;
   max-height: none;
   border: 0;
+  border-radius: 0;
   position: relative;
   left: 0;
   top: 0;
   display: inline-block;
   vertical-align: middle;
+}
+.item-avatar.more-link,
+.item-avatar .item-content.more-link,
+.item-avatar-left.more-link,
+.item-avatar-left .item-content.more-link {
+  line-height: 55px;
+}
+.item-avatar.more-link i,
+.item-avatar .item-content.more-link i,
+.item-avatar-left.more-link i,
+.item-avatar-left .item-content.more-link i {
+  display: block;
+  text-align: center;
+  font-size: 32px;
+}
+.item-avatar.more-link span,
+.item-avatar .item-content.more-link span,
+.item-avatar-left.more-link span,
+.item-avatar-left .item-content.more-link span {
+  display: none;
+  text-align: center;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }

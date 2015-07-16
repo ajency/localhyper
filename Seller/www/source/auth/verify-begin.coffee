@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.auth'
 
 
-.controller 'VerifyBeginCtrl', ['$scope', 'App', 'CToast', 'User'
-	, ($scope, App, CToast, User)->
+.controller 'VerifyBeginCtrl', ['$scope', 'App', 'CToast', 'User', 'UIMsg'
+	, ($scope, App, CToast, User, UIMsg)->
 
 		$scope.user = 
 			name: ''
@@ -27,5 +27,5 @@ angular.module 'LocalHyper.auth'
 					state = if App.isAndroid() then 'verify-auto' else 'verify-manual'
 					App.navigate state
 				else
-					CToast.show 'No internet availability'
+					CToast.show UIMsg.noInternet
 ]
