@@ -502,6 +502,14 @@ class AttributeController extends Controller
     
     } 
 
+    public function parseAttributeValueImport($data){
+      $functionName = "attributeValueImport";
+
+      $result = AttributeController::makeParseCurlRequest($functionName,$data); 
+
+      return $result;
+    }
+
     public function getCategoryAttributes($categoryId){ 
 
       $categoryQuery = new ParseQuery("Category");
