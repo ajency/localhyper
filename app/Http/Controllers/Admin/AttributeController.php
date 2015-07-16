@@ -89,8 +89,8 @@ class AttributeController extends Controller
     public function exportAttributes($catId)
     {  
         $attributes = $this->getCategoryAttributes($catId); 
-        $ea = new PHPExcel(); // ea is short for Excel Application
-        $ea->getProperties()
+        $excel = new PHPExcel(); // ea is short for Excel Application
+        $excel->getProperties()
                            ->setCreator('Prajay Verenkar')
                            ->setTitle('PHPExcel Attributes')
                            ->setLastModifiedBy('Prajay Verenkar')
@@ -99,8 +99,8 @@ class AttributeController extends Controller
                            ->setKeywords('excel php office phpexcel lakers')
                            ->setCategory('programming');
         
-        $ews = $ea->getSheet(0);
-        $ews->setTitle('Attributes');
+        $attributeSheet = $excel->getSheet(0);
+        $attributeSheet->setTitle('Attributes');
         
         $headers []= 'Config' ;
         $headers []= 'objectId' ;
@@ -110,57 +110,24 @@ class AttributeController extends Controller
         $headers []= 'is_filterable';
         $headers []= 'is_primary';
  
-        $ews->fromArray($headers, ' ', 'A1');
-        $ews->fromArray([$catId], ' ', 'A2');
+        $attributeSheet->fromArray($headers, ' ', 'A1');
+        $attributeSheet->fromArray([$catId], ' ', 'A2');
 
-        $ea->getActiveSheet()->getColumnDimension('A')->setVisible(false);
+        $attributeSheet->getColumnDimension('A')->setVisible(false);
  
-        $ews->fromArray($attributes, ' ','B2');
+        $attributeSheet->fromArray($attributes, ' ','B2');
  
-        $lastColumn = $ews->getHighestColumn();
+        $lastColumn = $attributeSheet->getHighestColumn();
         $header = 'a1:'.$lastColumn.'1';
-        $ews->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
+        $attributeSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
         $style = array(
             'font' => array('bold' => true,),
             'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
             );
-        $ews->getStyle($header)->applyFromArray($style);
-        
-        //*** SHEET 2 BRANDS
-        $brands = $this->getCategoryBrands($catId);
-        foreach($brands as $key=> $brand)
-        {
-            $brand["image"] = $brand["image"]["src"];
-            $brands[$key] = $brand;
-            
-        }
-
-        $headers = [];
-        
-        $ews2 = new \PHPExcel_Worksheet($ea, 'Brand');
-        $ea->addSheet($ews2, 0);
-        $ews2->setTitle('Brand');
-        
-        $headers []= 'Id' ;
-        $headers []= 'Name' ;
-        $headers []= 'Image' ;
-
+        $attributeSheet->getStyle($header)->applyFromArray($style);
  
-        $ews2->fromArray($headers, ' ', 'A1');
-        $ews2->fromArray($brands, ' ','A2');
- 
-        $lastColumn = $ews2->getHighestColumn();
-        $header = 'a1:'.$lastColumn.'1';
-        $ews2->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
-        $style = array(
-            'font' => array('bold' => true,),
-            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
-            );
-        $ews2->getStyle($header)->applyFromArray($style);
         
-        
-        
-        //*** SHEET 3 ATTRIUTEVALUES
+        //*** SHEET 2 ATTRIUTEVALUES
         $attributeValueData = $this->getCategoryAttributeValues($catId);
         $headers = $data = $attributeValues= $headerFlag = [];
 
@@ -177,35 +144,68 @@ class AttributeController extends Controller
             $attributeValues[$attributeId][] = [$attributeValue['ATTRIBUTE_VALUE'],$attributeValue['ATTRIBUTE_VALUE_ID']];  
         }
        // dd($attributeValues);
-        $ews3 = new \PHPExcel_Worksheet($ea, 'AttributeValues');
-        $ea->addSheet($ews3, 0);
-        $ews3->setTitle('AttributeValues');
+        $attributeValueSheet = new \PHPExcel_Worksheet($excel, 'AttributeValues');
+        $excel->addSheet($attributeValueSheet, 0);
+        $attributeValueSheet->setTitle('AttributeValues');
  
  
-        $ews3->fromArray($headers, ' ', 'A1');
+        $attributeValueSheet->fromArray($headers, ' ', 'A1');
  
         $column = 'A';
         foreach($attributeValues as $attributeValue)
         {
-            $ews3->fromArray($attributeValue, ' ', $column.'2');
+            $attributeValueSheet->fromArray($attributeValue, ' ', $column.'2');
             
             //hide column
             $hidecolumn = $this->getNextCell($column,'1');
-            $ea->getActiveSheet()->getColumnDimension($hidecolumn)->setVisible(false);
+            $attributeValueSheet->getColumnDimension($hidecolumn)->setVisible(false);
             
             $column = $this->getNextCell($column,'2');
             
     
         }
  
-        $lastColumn = $ews3->getHighestColumn();
+        $lastColumn = $attributeValueSheet->getHighestColumn();
         $header = 'a1:'.$lastColumn.'1';
-        $ews3->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
+        $attributeValueSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
         $style = array(
             'font' => array('bold' => true,),
             'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
             );
-        $ews3->getStyle($header)->applyFromArray($style);
+        $attributeValueSheet->getStyle($header)->applyFromArray($style);
+        
+        
+        //*** SHEET 3 BRANDS
+        $brands = $this->getCategoryBrands($catId);
+        foreach($brands as $key=> $brand)
+        {
+            $brand["image"] = $brand["image"]["src"];
+            $brands[$key] = $brand;
+            
+        }
+
+        $headers = [];
+        
+        $brandSheet = new \PHPExcel_Worksheet($excel, 'Brand');
+        $excel->addSheet($brandSheet, 0);
+        $brandSheet->setTitle('Brand');
+        
+        $headers []= 'Id' ;
+        $headers []= 'Name' ;
+        $headers []= 'Image' ;
+
+ 
+        $brandSheet->fromArray($headers, ' ', 'A1');
+        $brandSheet->fromArray($brands, ' ','A2');
+ 
+        $lastColumn = $brandSheet->getHighestColumn();
+        $header = 'a1:'.$lastColumn.'1';
+        $brandSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
+        $style = array(
+            'font' => array('bold' => true,),
+            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
+            );
+        $brandSheet->getStyle($header)->applyFromArray($style);
  
         
         header('Content-Type: application/vnd.ms-excel');
@@ -218,7 +218,7 @@ class AttributeController extends Controller
         header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
         header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
         header ('Pragma: public'); // HTTP/1.0
-        $objWriter = \PHPExcel_IOFactory::createWriter($ea, 'Excel5');
+        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
         $objWriter->save('php://output'); 
     }
     
