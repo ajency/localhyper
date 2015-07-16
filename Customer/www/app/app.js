@@ -1,14 +1,7 @@
-angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.test', 'LocalHyper.aboutUs', 'LocalHyper.googleMaps']).run([
-  '$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps', function($rootScope, App, Push, $timeout, GoogleMaps) {
+angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.aboutUs', 'LocalHyper.googleMaps']).run([
+  '$rootScope', 'App', 'GoogleMaps', function($rootScope, App, GoogleMaps) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
-    GoogleMaps.loadScript();
-    $rootScope.product = {
-      offers: [],
-      globalNotification: false,
-      localNotification: false,
-      request: ''
-    };
     App.notification = {
       icon: false
     };
@@ -17,8 +10,6 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
     };
     return $rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
       var bool, hideForStates;
-      $rootScope.previousState = from.name;
-      $rootScope.currentState = to.name;
       App.previousState = from.name;
       App.currentState = to.name;
       hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual'];

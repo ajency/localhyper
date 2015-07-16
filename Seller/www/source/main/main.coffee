@@ -9,6 +9,7 @@ angular.module 'LocalHyper.main', []
 
 			init : ->
 				@loadPopOver()
+				$ionicSideMenuDelegate.edgeDragThreshold true
 
 			loadPopOver : ->
 				$ionicPopover.fromTemplateUrl 'views/right-popover.html',

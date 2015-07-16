@@ -32,35 +32,31 @@
 			</a>
 		</ion-list-->
 
-		<ion-list ng-switch-when="noError" >
-			<div class="item item-thumbnail-left department-list " ng-repeat="category in view.parentCategories" >
-				<center>
-					<h4 class="cat-sub">Lorem ipsum dolor set</h4>
-				</center>
-				<center>
-		    		<h2 class="cat-title">{{category.name}}</h2>
-	    		</center>
-	    		<div class="row row-center" >
-					  <div class="col "ng-repeat="subCategory in category.children |limitTo:4" >
-					  		<div
-								class="item item-avatar border-none bg-none"
-								ng-click="view.onSubcategoryClick(category.children, subCategory.id)">
-								<img ng-src="{{subCategory.image.src}}" >
-							</div>
+		<ion-list ng-switch-when="noError">
+			<div
+				class="item item-thumbnail-left department-list"
+				ng-repeat="category in view.parentCategories">
 
-					  </div>
-					  <div class="col ">
-						  <div
-						  	class="item item-avatar border-none bg-none"
-						  	ng-click="App.navigate('sub-categories', {parentID: category.id})">
-						  	<img ng-src="{{category.image.src}}" >
-						  </div>
+				<center>
+					<h2>{{category.name}}</h2>
+				</center>
+
+				<div class="row row-center">
+					<div class="col "ng-repeat="subCategory in category.children | orderBy:'sort_order' | limitTo:4" >
+						<div
+							class="item item-avatar border-none bg-none"
+							ng-click="view.onSubcategoryClick(category.children, subCategory.id)">
+							<img ng-src="{{subCategory.image.src}}">
 						</div>
+					</div>
+					<div
+						class="item item-avatar border-none bg-none"
+						ng-click="App.navigate('sub-categories', {parentID: category.id})">
+						<img ng-src="{{category.image.src}}">
+					</div>
 				</div>
 			</div>
 		</ion-list>
-
-
 
 		<aj-error
 			ng-switch-when="error"

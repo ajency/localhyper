@@ -3,7 +3,7 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
     return {
       restrict: 'E',
       replace: true,
-      template: '<div data-tap-disabled="true" class="aj-maps">',
+      template: '<div data-tap-disabled="true">',
       scope: {
         onCreate: '&'
       },
@@ -17,7 +17,7 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
         initialize = function() {
           var map, mapOptions;
           mapOptions = {
-            center: new google.maps.LatLng(20.593684, 78.962880),
+            center: new google.maps.LatLng(GEO_DEFAULT.lat, GEO_DEFAULT.lng),
             zoom: 5,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             zoomControl: false,

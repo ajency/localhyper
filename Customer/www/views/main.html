@@ -7,16 +7,6 @@
 		<ion-nav-bar 
 			class="bar-light"
 			no-tap-scroll="{{App.noTapScroll()}}">
-			
-			<!-- Notification icon  -->
-			<!-- <ion-nav-buttons side="secondary">
-				<button 
-					class="button button-clear button-assertive" 
-					ng-if="product.globalNotification;"
-					ng-click="App.navigate('requests');">
-					New
-				</button>
-			</ion-nav-buttons> -->
 
 			<ion-nav-buttons side="left">
 				<img 
@@ -58,15 +48,15 @@
 
 				<hr>
 
-				<ion-item ng-click="view.call()" >
+				<ion-item ng-click="view.onCallUs()" >
 					<i class="i-call"></i> Call us
 				</ion-item>
 				
-				<ion-item ng-click="view.shareAnywhere();view.menuClose()">
+				<ion-item ng-click="view.onShare()">
 					<i class="i-share"></i> Share
 				</ion-item>
 
-				<ion-item ng-click="view.menuClose();view.rateUs()">
+				<ion-item ng-click="view.onRateUs()">
 					<i class="i-rate"></i> Rate us
 				</ion-item>
 

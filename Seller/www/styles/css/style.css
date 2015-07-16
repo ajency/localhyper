@@ -161,6 +161,12 @@
 	padding: 0;
 }
 
+.aj-big-map {
+	height: 400px;
+	margin: 0; 
+	padding: 0;
+}
+
 .pac-container {
 	width: 340px !important;
 }

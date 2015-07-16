@@ -1,8 +1,9 @@
 angular.module 'LocalHyper.products', []
 
 
-.controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout'
-	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout)->
+.controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal'
+	, '$timeout', 'App', 'CToast', 'UIMsg'
+	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg)->
 
 		$scope.view =
 			title: Product.subCategoryTitle
@@ -16,6 +17,15 @@ angular.module 'LocalHyper.products', []
 			
 			init: ->
 				@loadSortModal()
+
+			reset : ->
+				@products = []
+				@page = 0
+				@canLoadMore = true
+				@refresh = false
+				@sortBy = 'popularity'
+				@ascending = true
+				@onScrollComplete()
 
 			loadSortModal : ->
 				$ionicModal.fromTemplateUrl 'views/products/sort.html', 
@@ -35,10 +45,14 @@ angular.module 'LocalHyper.products', []
 				@page = @page + 1
 			
 			onPullToRefresh : ->
-				@canLoadMore = true
-				@page = 0
-				@refresh = true
-				@getProducts()
+				if App.isOnline()
+					@canLoadMore = true
+					@page = 0
+					@refresh = true
+					@getProducts()
+				else
+					@onRefreshComplete()
+					CToast.show UIMsg.noInternet
 
 			onInfiniteScroll : ->
 				@refresh = false
@@ -106,7 +120,11 @@ angular.module 'LocalHyper.products', []
 							@sortBy = 'mrp'
 							@ascending = ascending
 							reFetch()
-						
+
+
+		$scope.$on '$ionicView.beforeEnter', ->
+			if _.contains ['categories', 'sub-categories'], App.previousState
+				$scope.view.reset()
 ]
 
 

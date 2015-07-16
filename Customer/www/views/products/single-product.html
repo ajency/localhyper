@@ -12,46 +12,47 @@
 			<img
 				class="aj-sp-img img-responsive" 
 				ng-src="{{view.product.images[0].src}}">
+
 			<div>
-			<div class="row">
-				<div class="col col-100">
-					<h4 class="subdued text-left"> 
-						<span class="text-danger">In</span> 2.5 tonnes
-					</h4>
-					<h3 class="text-left normal margin-none">{{view.product.name}}</h3>
-				</div>
-			</div>
-
-			<br>
-
-			<div class="row">
-				<div class="col col-33">
-					MRP 
-					<h3 class="text-left normal margin-none strike">
-						<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
-					</h3>
-				</div>
-
-				<div class="col border-left">
-					<h4 class="text-left margin-none">
-						<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
-					</h4>
-					<div class="sm-text">local  <br>
-						<span>as on 16/06/2015</span>
+				<div class="row">
+					<div class="col col-100">
+						<h4 class="subdued text-left"> 
+							<span class="text-danger">In</span> {{view.getPrimaryAttrs()}}
+						</h4>
+						<h3 class="text-left normal margin-none">{{view.product.name}}</h3>
 					</div>
 				</div>
 
-				<div class="col border-left">
-					<h4 class="text-left margin-none">
-						<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
-					</h4>
-					<div class="sm-text">Online <img src="./img/flipkart-icon.jpg"/><br>
-						<span>as on 16/06/2015</span>
+				<br>
+
+				<div class="row">
+					<div class="col col-33">
+						MRP 
+						<h3 class="text-left normal margin-none strike">
+							<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
+						</h3>
+					</div>
+
+					<div class="col border-left">
+						<h4 class="text-left margin-none">
+							<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
+						</h4>
+						<div class="sm-text">local  <br>
+							<span>as on 16/06/2015</span>
+						</div>
+					</div>
+
+					<div class="col border-left">
+						<h4 class="text-left margin-none">
+							<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
+						</h4>
+						<div class="sm-text">Online <img src="./img/flipkart-icon.jpg"/><br>
+							<span>as on 16/06/2015</span>
+						</div>
 					</div>
 				</div>
-			</div>
 				
-			</div>	<!-- MRP: Rs {{view.product.mrp}} -->
+			</div>
 				
 		<aj-error 
 			ng-switch-when="error"
