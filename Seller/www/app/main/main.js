@@ -1,5 +1,5 @@
 angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
-  '$scope', 'App', '$ionicPopover', '$rootScope', '$ionicSideMenuDelegate', function($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate) {
+  '$scope', 'App', '$ionicPopover', '$rootScope', '$ionicSideMenuDelegate', 'CSpinner', '$timeout', function($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, CSpinner, $timeout) {
     $scope.view = {
       userPopover: null,
       init: function() {
@@ -32,7 +32,15 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
       return App.notification.increment();
     });
     return $rootScope.$on('on:session:expiry', function() {
-      return Parse.User.logOut();
+      CSpinner.show('', 'Your session has expired, please wait...');
+      return $timeout(function() {
+        Parse.User.logOut();
+        App.navigate('business-details', {}, {
+          animate: true,
+          back: false
+        });
+        return CSpinner.hide();
+      }, 2000);
     });
   }
 ]).config([
