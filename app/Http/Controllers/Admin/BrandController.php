@@ -84,4 +84,31 @@ class BrandController extends Controller
     {
         //
     }
+
+    public function parseBrandImport($data){
+
+        // $data =array (
+        //   'brands' => 
+        //   array (
+        //     0 => 
+        //     array (
+        //       'objectId' => '',
+        //       'imageUrl' => 'http://ajency.in/team/images/Electrolux-logo-2015.png',
+        //       'name' => 'Airtel',
+        //       ),
+        //     1 => 
+        //     array (
+        //       'objectId' => 'ATjq0fGF0H',
+        //       'imageUrl' => 'http://ajency.in/team/images/micromax-logo.png',
+        //       'name' => 'Microoo',
+        //       ),
+        //     ),
+        //   'categoryId' => 'wGA1ota1bd',
+        //   );
+      $functionName = "brandImport";
+
+      $result = AttributeController::makeParseCurlRequest($functionName,$data); 
+
+      return $result;
+    }
 }

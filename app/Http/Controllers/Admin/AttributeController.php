@@ -128,25 +128,20 @@ class AttributeController extends Controller
         $attributeSheet->protectCells($header, 'PHP');
         
         //*** SHEET 2 ATTRIUTEVALUES
-        $categoryData = [
-         'categoryId' => $catId,
-         'filterableAttributes' => true,
-         'secondaryAttributes' => true,
-         ];
-        $attributeValueData = $this->getCategoryAttributeValues($categoryData);
+        $attributeValueData = $this->getCategoryAttributeValues($catId);
         $headers = $data = $attributeValues= $headerFlag = [];
 
-        foreach($attributeValueData['result'] as $attributeValue)
+        foreach($attributeValueData['ATTRIBUTES'] as $attributeValue)
         {
-            $attributeId =$attributeValue['attributeId'];
+            $attributeId =$attributeValue['ATTRIBUTE_ID'];
             if(!isset($headerFlag[$attributeId]))
             {   
-                $headers[]=$attributeValue['attributeName']."(".$attributeId.")";
-                $headers[]=$attributeValue['attributeName'].' Id';
+                $headers[]=$attributeValue['ATTRIBUTE_NAME']."(".$attributeId.")";
+                $headers[]=$attributeValue['ATTRIBUTE_NAME'].' Id';
                 $headerFlag[$attributeId]=$attributeId;
             }
 
-            $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
+            $attributeValues[$attributeId][] = [$attributeValue['ATTRIBUTE_VALUE'],$attributeValue['ATTRIBUTE_VALUE_ID']];  
         }
        // dd($attributeValues);
         $attributeValueSheet = new \PHPExcel_Worksheet($excel, 'AttributeValues');
@@ -195,10 +190,12 @@ class AttributeController extends Controller
         $excel->addSheet($brandSheet, 0);
         $brandSheet->setTitle('Brands');
         
+
         $headers []= 'Config' ;
         $headers []= 'objectId' ;
         $headers []= 'name' ;
         $headers []= 'imageUrl' ;
+ 
 
  
         $brandSheet->fromArray($headers, ' ', 'A1');
@@ -276,6 +273,7 @@ class AttributeController extends Controller
 
                 ++$r;
                 foreach($headingsArray as $columnKey => $columnHeading) {
+
                      if($columnHeading!='Config')
                         $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
                     else
@@ -321,19 +319,20 @@ class AttributeController extends Controller
                     $dataKey = explode("(",$key);
                     $dataattributeId = explode(")",$dataKey[1]); 
                     $attributeId = $dataattributeId[0];
-                    $attributeValues['attributeValues'][] = [ 'objectId'=>'',
-                                                              'attributeId'=>$attributeId,
-                                                              'value'=>$value];
+                    $attributeValues['attributeValues'][] = ['objectId'=>'',
+                                          'attributeId'=>$attributeId,
+                                          'value'=>$value];
                 }
                 else
                 {
+                    $value = intval($value);
                     $attributeValueKey = count($attributeValues['attributeValues']);
                     $attributeValues['attributeValues'][($attributeValueKey-1)]['objectId']=$value;
                 }
  
                $i++; 
             }
-        } 
+        }
          $this->parseAttributeValueImport($attributeValues);
         
         return true;
@@ -478,8 +477,13 @@ class AttributeController extends Controller
 
       }
 
-
-      return $attributes;
+      $result = array(
+                'categoryId' =>  $categoryId, 
+                'categoryName' =>  $categoryObject->get("name"), 
+                'attributes' =>  $attributes, 
+                );
+      
+      return $result;
     }  
 
     public function getCategoryAttributeValues($categoryData){
@@ -494,7 +498,6 @@ class AttributeController extends Controller
       $resultjson = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
 
       $response =  json_encode($resultjson);
-      $response =  json_decode($response,true);    
       
       return $response;
     } 
@@ -524,7 +527,50 @@ class AttributeController extends Controller
 
 
     } 
- 
+    
+    // public function getCategoryAttributeValues($categoryId){
+
+    //   $data =[];
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
+    //                             'ATTRIBUTE_NAME'=> 'Type',
+    //                             'ATTRIBUTE_VALUE'=> 'Single Door',  
+    //                             'ATTRIBUTE_VALUE_ID' => '1'];
+                                
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
+    //                             'ATTRIBUTE_NAME'=> 'Type',
+    //                             'ATTRIBUTE_VALUE'=> 'Double Door',  
+    //                             'ATTRIBUTE_VALUE_ID' => '2'];
+        
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+    //                             'ATTRIBUTE_NAME'=> 'Color',
+    //                             'ATTRIBUTE_VALUE'=> 'Red',  
+    //                             'ATTRIBUTE_VALUE_ID' => '1'];
+                                
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+    //                             'ATTRIBUTE_NAME'=> 'Color',
+    //                             'ATTRIBUTE_VALUE'=> 'Gray',  
+    //                             'ATTRIBUTE_VALUE_ID' => '2'];
+        
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+    //                             'ATTRIBUTE_NAME'=> 'Color',
+    //                             'ATTRIBUTE_VALUE'=> 'Black',  
+    //                             'ATTRIBUTE_VALUE_ID' => '3'];
+                                
+    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+    //                             'ATTRIBUTE_NAME'=> 'Color',
+    //                             'ATTRIBUTE_VALUE'=> 'Blue',  
+    //                             'ATTRIBUTE_VALUE_ID' => '4'];
+        
+
+    //     $data ['BRAND'][] =['NAME' =>'Samsung','ID'  => '1'];
+    //     $data ['BRAND'][] =['NAME' =>'Lg','ID'  => '2'];
+        
+    //     $data ['TEST'][] =['NAME' =>'test1','ID'  => '1'];
+    //     $data ['TEST'][] =['NAME' =>'test2','ID'  => '2'];
+   
+    //     return $data;
+
+    // } 
 
     public static function makeParseCurlRequest($functionName,$data,$parseFunctType="functions"){
       
@@ -534,7 +580,7 @@ class AttributeController extends Controller
 
       $post_url = $base_url."/".$parseFunctType."/".$functionName;
 
-      $data_string = json_encode($data);  
+      $data_string = json_encode($data); 
 
       // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
       // -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
