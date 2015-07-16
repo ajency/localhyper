@@ -85,7 +85,7 @@ class BrandController extends Controller
         //
     }
 
-    public function parseBrandImport($data){
+    public static function parseBrandImport($data){
 
         // $data =array (
         //   'brands' => 

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\category\CategoryController;
+use App\Http\Controllers\Admin\BrandController;
 use \PHPExcel;
 use Parse\ParseObject;
 use Parse\ParseQuery;
@@ -138,7 +139,7 @@ class AttributeController extends Controller
           'filterableAttributes' => true,
           'secondaryAttributes' => true,
           ];
-        $attributeValueData = $this->getCategoryAttributeValues($categoryData);dd($attributeValueData);
+        $attributeValueData = $this->getCategoryAttributeValues($categoryData);//dd($attributeValueData);
         $headers = $data = $attributeValues= $headerFlag = [];
 
         foreach($attributeValueData['result'] as $attributeValue)
@@ -206,7 +207,6 @@ class AttributeController extends Controller
         $headers []= 'name' ;
         $headers []= 'imageUrl' ;
  
-
  
         $brandSheet->fromArray($headers, ' ', 'A1');
         $brandSheet->fromArray([$catId], ' ', 'A2');
@@ -255,10 +255,10 @@ class AttributeController extends Controller
                 $sheetTitle = $sheetNames[$i];
                 if($sheetTitle=='Brands')
                     $this->importBrands($sheet);
-               /* elseif($sheetTitle=='Attributes')
+                elseif($sheetTitle=='Attributes')
                     $this->importAttributes($sheet);
                 elseif($sheetTitle=='AttributeValues')
-                        $this->importAttributeValues($sheet);*/
+                        $this->importAttributeValues($sheet);
             }
  
             
@@ -291,8 +291,8 @@ class AttributeController extends Controller
                    
                  }
         }
-        $brands =['brands' => $namedDataArray,'categoryId' => $config[0]]; 
-        $this->parseBrandImport($brands);
+        $brands =['brands' => $namedDataArray,'categoryId' => $config[0]];  
+        BrandController::parseBrandImport($brands);
         
         return true;
     }
