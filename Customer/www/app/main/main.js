@@ -35,6 +35,7 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
       },
       onShare: function() {
         var link, msg, subject;
+        this.menuClose();
         subject = "Hey, have you tried " + APP_NAME;
         msg = "Now get the best offers from your local sellers. Visit";
         link = "https://play.google.com/store/apps/details?id=" + PACKAGE_NAME;
