@@ -123,7 +123,7 @@ angular.module 'LocalHyper.products', []
 
 
 		$scope.$on '$ionicView.beforeEnter', ->
-			if App.previousState is 'sub-categories'
+			if _.contains ['categories', 'sub-categories'], App.previousState
 				$scope.view.reset()
 ]
 
