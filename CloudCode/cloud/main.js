@@ -130,12 +130,13 @@
     attributeValues = request.params.attributeValues;
     categoryId = request.params.categoryId;
     _.each(attributeValues, function(attributeValObj) {
-      var attributePointer, attributeValue;
+      var attributePointer, attributeValue, value;
       attributeValue = new AttributeValues();
       if (attributeValObj.objectId !== "") {
         attributeValue.id = attributeValObj.objectId;
       }
-      attributeValue.set("value", attributeValObj.value);
+      value = String(attributeValObj.value);
+      attributeValue.set("value", value);
       attributePointer = {
         "__type": "Pointer",
         "className": "Attributes",
@@ -170,6 +171,40 @@
       return response.success(category);
     }, function(error) {
       return response.error("Error - " + error.message);
+    });
+  });
+
+  Parse.Cloud.define('brandImport', function(request, response) {
+    var Brand, brands, brandsSavedArr, categoryId;
+    Brand = Parse.Object.extend('Brand');
+    brandsSavedArr = [];
+    brands = request.params.brands;
+    categoryId = request.params.categoryId;
+    _.each(brands, function(brandObj) {
+      var brand, image;
+      brand = new Brand();
+      if (brandObj.objectId !== "") {
+        brand.id = brandObj.objectId;
+      }
+      brand.set("name", brandObj.name);
+      image = {
+        "src": brandObj.imageUrl
+      };
+      brand.set("image", image);
+      return brandsSavedArr.push(brand);
+    });
+    return Parse.Object.saveAll(brandsSavedArr, {
+      success: function(objs) {
+        var successObj;
+        successObj = {
+          success: true,
+          message: "Successfully added/updated the brand values"
+        };
+        return response.success(successObj);
+      },
+      error: function(error) {
+        return response.error("Failed to add/update attributes due to - " + error.message);
+      }
     });
   });
 

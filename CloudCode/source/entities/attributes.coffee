@@ -143,11 +143,11 @@ Parse.Cloud.define 'attributeValueImport', (request, response) ->
     _.each attributeValues, (attributeValObj) ->
         attributeValue = new AttributeValues()
 
-        if attributeValObj.objectId isnt ""
+        if (attributeValObj.objectId isnt "") 
             attributeValue.id = attributeValObj.objectId
 
-
-        attributeValue.set "value", attributeValObj.value
+        value = String attributeValObj.value
+        attributeValue.set "value", value
 
         attributePointer = 
             "__type" : "Pointer",
