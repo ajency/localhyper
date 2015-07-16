@@ -195,9 +195,9 @@ class AttributeController extends Controller
         $excel->addSheet($brandSheet, 0);
         $brandSheet->setTitle('Brand');
         
-        $headers []= 'Id' ;
-        $headers []= 'Name' ;
-        $headers []= 'Image' ;
+        $headers []= 'objectId' ;
+        $headers []= 'name' ;
+        $headers []= 'imageUrl' ;
 
  
         $brandSheet->fromArray($headers, ' ', 'A1');
@@ -277,7 +277,7 @@ class AttributeController extends Controller
                  }
         }
 
-        //$this->parseBrandImport($namedDataArray);*/
+        $this->parseBrandImport($namedDataArray);*/
         
         return true;
     }
@@ -527,7 +527,7 @@ class AttributeController extends Controller
 
       $post_url = $base_url."/".$parseFunctType."/".$functionName;
 
-      $data_string = json_encode($data); 
+      $data_string = json_encode($data);  
 
       // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
       // -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
