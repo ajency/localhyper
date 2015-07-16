@@ -237,12 +237,11 @@ class AttributeController extends Controller
             {
                 $sheet = $objPHPExcel->getSheet($i);
                 $sheetTitle = $sheetNames[$i];
-               /* if($sheetTitle=='Brands')
+                if($sheetTitle=='Brands')
                     $this->importBrands($sheet);
                 elseif($sheetTitle=='Attributes')
                     $this->importAttributes($sheet);
-                else*/
-                    if($sheetTitle=='AttributeValues')
+                elseif($sheetTitle=='AttributeValues')
                         $this->importAttributeValues($sheet);
             }
  
@@ -255,7 +254,7 @@ class AttributeController extends Controller
     }
     
     public function importBrand($sheet){
-        /*$highestRow = $sheet->getHighestRow(); 
+        $highestRow = $sheet->getHighestRow(); 
         $highestColumn = $sheet->getHighestColumn();
 
         $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
@@ -275,7 +274,7 @@ class AttributeController extends Controller
                  }
         }
 
-        $this->parseBrandImport($nonFilterableAttribute);*/
+        //$this->parseBrandImport($nonFilterableAttribute);*/
         
         return true;
     }
