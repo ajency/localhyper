@@ -232,20 +232,26 @@ sm{
 
 .department-list{
 	/*height: 199px;*/
-	height: 150px;
+	height: 175px;
 	background: @gray-transperent;
 	padding:0px;
 	h2{
 		text-overflow: inherit;
+		text-transform: uppercase;
 		overflow: visible;
 		white-space: normal;
 		margin: 5px auto;
-		font-weight: 400;
+		margin-bottom: 10px !important;
+		font-weight: 700;
 		.fontopen;
+		color: #515151;
 	}
 	h4 {
 		.fontopen;
-		margin-top: 15px;
+		text-transform: uppercase;
+		margin-top: 30px;
+		color: #5d5d5d;
+		font-weight: 400;
 	}
 /*	h3{
 		 font-weight: 600;
@@ -442,10 +448,39 @@ sm{
 		max-width: none;
 		max-height: none;
 		border: 0;
+		border-radius: 0;
 		position: relative;
 		left: 0;
 		top: 0;
 		display: inline-block;
 		vertical-align: middle;
+	}
+	&.activated {
+		background: #ddd;
+		border-color: #888;
+		img {
+			opacity: 0.5;
+		}
+	}
+	&.more-link {
+		background: @brand-primary;
+		border-color: darken(@brand-primary, 25%);
+		color: #fff;
+		// line-height: 6px;
+		i {
+			display: block;
+			text-align: center;
+			font-size: 22px;
+		}
+		span {
+			display: none;
+			text-align: center;
+			font-size: 12px;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+		&.activated, &:active {
+			background: darken(@brand-primary, 25%);
+		}
 	}
 }

@@ -38,7 +38,10 @@
 				ng-repeat="category in view.parentCategories">
 
 				<center>
-					<h2>{{category.name}}</h2>
+					<h4 class="cat-sub">Lorem ipsum dolor set amet</h4>
+				</center>
+				<center>
+					<h2 class="cat-title">{{category.name}}</h2>
 				</center>
 
 				<div class="row row-center">
@@ -49,10 +52,18 @@
 							<img ng-src="{{subCategory.image.src}}">
 						</div>
 					</div>
-					<div
-						class="item item-avatar border-none bg-none"
-						ng-click="App.navigate('sub-categories', {parentID: category.id})">
-						<img ng-src="{{category.image.src}}">
+					<div class="col">
+						<div
+							class="item item-avatar border-none bg-none"
+							ng-click="App.navigate('sub-categories', {parentID: category.id})">
+							<img ng-src="{{category.image.src}}">
+						</div>
+					</div>
+					<div class="col">
+						<div class="item item-avatar more-link">
+							<i class="icon ion-more"></i>
+							<span class="ico-text">More</span>
+						</div>
 					</div>
 				</div>
 			</div>
