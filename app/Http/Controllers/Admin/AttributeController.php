@@ -125,7 +125,7 @@ class AttributeController extends Controller
             'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
             );
         $attributeSheet->getStyle($header)->applyFromArray($style);
- 
+        $attributeSheet->protectCells($header, 'PHP');
         
         //*** SHEET 2 ATTRIUTEVALUES
         $attributeValueData = $this->getCategoryAttributeValues($catId);
@@ -173,7 +173,7 @@ class AttributeController extends Controller
             'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
             );
         $attributeValueSheet->getStyle($header)->applyFromArray($style);
-        
+        $attributeValueSheet->protectCells($header, 'PHP');
         
         //*** SHEET 3 BRANDS
         $brands = $this->getCategoryBrands($catId);
@@ -206,7 +206,7 @@ class AttributeController extends Controller
             'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
             );
         $brandSheet->getStyle($header)->applyFromArray($style);
- 
+        $brandSheet->protectCells($header, 'PHP');
         
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="attributes-export.xls"');
@@ -311,21 +311,21 @@ class AttributeController extends Controller
                     $dataKey = explode("(",$key);
                     $dataattributeId = explode(")",$dataKey[1]); 
                     $attributeId = $dataattributeId[0];
-                    $attributeValues[] = ['objectId'=>'',
+                    $attributeValues['attributeValues'][] = ['objectId'=>'',
                                           'attributeId'=>$attributeId,
                                           'value'=>$value];
                 }
                 else
                 {
                     $value = intval($value);
-                    $attributeValueKey = count($attributeValues);
-                    $attributeValues[($attributeValueKey-1)]['objectId']=$value;
+                    $attributeValueKey = count($attributeValues['attributeValues']);
+                    $attributeValues['attributeValues'][($attributeValueKey-1)]['objectId']=$value;
                 }
  
                $i++; 
             }
         }
-        $this->parseAttributeValueImport($attributeValues);
+         $this->parseAttributeValueImport($attributeValues);
         
         return true;
     }
@@ -380,93 +380,6 @@ class AttributeController extends Controller
     
     }
     
-    public function exportAttributeValues()
-    {
-         $attributeData = $this->exportAttributeValueData(0);  
-    
-        $ea = new PHPExcel(); // ea is short for Excel Application
-        $ea->getProperties()
-                           ->setCreator('Prajay Verenkar')
-                           ->setTitle('PHPExcel Demo')
-                           ->setLastModifiedBy('Prajay Verenkar')
-                           ->setDescription('A demo to show how to use PHPExcel to manipulate an Excel file')
-                           ->setSubject('PHP Excel manipulation')
-                           ->setKeywords('excel php office phpexcel lakers')
-                           ->setCategory('programming');
-        
-        $ews = $ea->getSheet(0);
-        $ews->setTitle('Index');
-               
-        $headers = $data = $headerBlock= $headerFlag = [];
-
-        foreach($attributeData['ATTRIBUTES'] as $attributeValues)
-        {
-            $attributeId =$attributeValues['ATTRIBUTE_ID'];
-            if(!isset($headerFlag[$attributeId]))
-            {   
-                $headers[]=$attributeValues['ATTRIBUTE_NAME'];
-                $headers[]='Attribute Id';
-                $headerFlag[$attributeId]=$attributeId;
-            }
-
-            $headerBlock[$attributeId][] = [$attributeValues['ATTRIBUTE_VALUE'],$attributeValues['ATTRIBUTE_VALUE_ID']];  
-        }
-       
-       $headers[]='Brand';
-       $headers[]='Brand Id';
-        
-       $headers[]='Test';
-       $headers[]='Test Id';     
-        /*
-           generate header
-        */
-       $ews->fromArray($headers, ' ', 'A1');
-      
- 
-        $column = 'A';
-        foreach($headerBlock as $headerBlockData)
-        {
-            $ews->fromArray($headerBlockData, ' ', $column.'2');
-            
-            //hide column
-            $hidecolumn = $this->getNextCell($column,'1');
-            $ea->getActiveSheet()->getColumnDimension($hidecolumn)->setVisible(false);
-            
-            $column = $this->getNextCell($column,'2');
-            
-    
-        }
- 
-        $ews->fromArray($attributeData['BRAND'], ' ', $column.'2');
-        $hidecolumn = $this->getNextCell($column,'1');
-        $ea->getActiveSheet()->getColumnDimension($hidecolumn)->setVisible(false);
-    
- 
-        $lastColumn = $ews->getHighestColumn();
-        $header = 'a1:'.$lastColumn.'1';
-        $ews->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
-        $style = array(
-            'font' => array('bold' => true,),
-            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
-            );
-        $ews->getStyle($header)->applyFromArray($style);
-        
-         
-        
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="01simple.xls"');
-        header('Cache-Control: max-age=0');
-        // If you're serving to IE 9, then the following may be needed
-        header('Cache-Control: max-age=1');
-        // If you're serving to IE over SSL, then the following may be needed
-        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-        header ('Pragma: public'); // HTTP/1.0
-        $objWriter = \PHPExcel_IOFactory::createWriter($ea, 'Excel5');
-        $objWriter->save('php://output');
-    
-    }
     
     public function getNextCell($currentColumn,$adjustment)
     {
@@ -498,7 +411,6 @@ class AttributeController extends Controller
 
         return $result;
 
-   
     
     } 
 
@@ -612,12 +524,7 @@ class AttributeController extends Controller
                                 'ATTRIBUTE_VALUE'=> 'Blue',  
                                 'ATTRIBUTE_VALUE_ID' => '4'];
         
-        $data ['BRAND'][] =['NAME' =>'Samsung','ID'  => '1'];
-        $data ['BRAND'][] =['NAME' =>'Lg','ID'  => '2'];
-        
-        $data ['TEST'][] =['NAME' =>'test1','ID'  => '1'];
-        $data ['TEST'][] =['NAME' =>'test2','ID'  => '2'];
-   
+  
         return $data;
      
 
