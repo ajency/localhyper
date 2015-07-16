@@ -551,3 +551,11 @@ sm {
   width: 23px;
   text-align: center;
 }
+.aboutus {
+  margin-top: 35px;
+}
+.aboutus p {
+  text-align: center;
+  padding-left: 25px;
+  padding-right: 25px;
+}
