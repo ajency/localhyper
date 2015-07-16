@@ -169,6 +169,16 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         this.display = 'loader';
         return this.getSingleProductDetails();
       },
+      getPrimaryAttrs: function() {
+        var attrs, unit, value;
+        attrs = this.product.primaryAttributes[0];
+        value = s.humanize(attrs.value);
+        unit = '';
+        if (_.has(attrs.attribute, 'unit')) {
+          unit = s.humanize(attrs.attribute.unit);
+        }
+        return value + " " + unit;
+      },
       onEditLocation: function() {
         var mapHeight;
         this.location.modal.show();
