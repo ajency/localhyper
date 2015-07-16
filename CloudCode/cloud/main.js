@@ -146,7 +146,12 @@
     });
     return Parse.Object.saveAll(attributeValSavedArr, {
       success: function(objs) {
-        return response.success("Successfully added/updated the attributes");
+        var successObj;
+        successObj = {
+          success: true,
+          message: "Successfully added/updated the attribute values"
+        };
+        return response.success(successObj);
       },
       error: function(error) {
         return response.error("Failed to add/update attributes due to - " + error.message);

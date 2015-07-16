@@ -162,7 +162,10 @@ Parse.Cloud.define 'attributeValueImport', (request, response) ->
     # save all the newly created objects
     Parse.Object.saveAll attributeValSavedArr,
       success: (objs) ->
-        response.success "Successfully added/updated the attributes"
+        successObj = 
+            success: true
+            message: "Successfully added/updated the attribute values"
+        response.success successObj
 
       error: (error) ->
         response.error "Failed to add/update attributes due to - #{error.message}"      
