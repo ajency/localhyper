@@ -42,7 +42,7 @@
 				</center>
 
 				<div class="row row-center">
-					<div class="col "ng-repeat="subCategory in category.children |limitTo:4" > 
+					<div class="col "ng-repeat="subCategory in category.children | orderBy:'sort_order' | limitTo:4" > 
 						<div 
 							class="item item-avatar border-none bg-none"  
 							ng-click="view.onSubcategoryClick(category.children, subCategory.id)">
