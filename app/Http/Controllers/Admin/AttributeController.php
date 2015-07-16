@@ -89,8 +89,6 @@ class AttributeController extends Controller
     public function exportAttributes($catId)
     {  
         $attributes = $this->getCategoryAttributes($catId); 
-
-
         $ea = new PHPExcel(); // ea is short for Excel Application
         $ea->getProperties()
                            ->setCreator('Prajay Verenkar')
@@ -162,7 +160,53 @@ class AttributeController extends Controller
         
         
         
-         
+        //*** SHEET 3 ATTRIUTEVALUES
+        $attributeValueData = $this->getCategoryAttributeValues($catId);
+        $headers = $data = $attributeValues= $headerFlag = [];
+
+        foreach($attributeValueData['ATTRIBUTES'] as $attributeValue)
+        {
+            $attributeId =$attributeValue['ATTRIBUTE_ID'];
+            if(!isset($headerFlag[$attributeId]))
+            {   
+                $headers[]=$attributeValue['ATTRIBUTE_NAME']."(".$attributeId.")";
+                $headers[]=$attributeValue['ATTRIBUTE_NAME'].' Id';
+                $headerFlag[$attributeId]=$attributeId;
+            }
+
+            $attributeValues[$attributeId][] = [$attributeValue['ATTRIBUTE_VALUE'],$attributeValue['ATTRIBUTE_VALUE_ID']];  
+        }
+       // dd($attributeValues);
+        $ews3 = new \PHPExcel_Worksheet($ea, 'AttributeValues');
+        $ea->addSheet($ews3, 0);
+        $ews3->setTitle('AttributeValues');
+ 
+ 
+        $ews3->fromArray($headers, ' ', 'A1');
+ 
+        $column = 'A';
+        foreach($attributeValues as $attributeValue)
+        {
+            $ews3->fromArray($attributeValue, ' ', $column.'2');
+            
+            //hide column
+            $hidecolumn = $this->getNextCell($column,'1');
+            $ea->getActiveSheet()->getColumnDimension($hidecolumn)->setVisible(false);
+            
+            $column = $this->getNextCell($column,'2');
+            
+    
+        }
+ 
+        $lastColumn = $ews3->getHighestColumn();
+        $header = 'a1:'.$lastColumn.'1';
+        $ews3->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
+        $style = array(
+            'font' => array('bold' => true,),
+            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
+            );
+        $ews3->getStyle($header)->applyFromArray($style);
+ 
         
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="attributes-export.xls"');
@@ -193,10 +237,13 @@ class AttributeController extends Controller
             {
                 $sheet = $objPHPExcel->getSheet($i);
                 $sheetTitle = $sheetNames[$i];
-                if($sheetTitle=='Brands')
+               /* if($sheetTitle=='Brands')
                     $this->importBrands($sheet);
                 elseif($sheetTitle=='Attributes')
                     $this->importAttributes($sheet);
+                else*/
+                    if($sheetTitle=='AttributeValues')
+                        $this->importAttributeValues($sheet);
             }
  
             
@@ -215,17 +262,71 @@ class AttributeController extends Controller
         $headingsArray = $headingsArray[1];
 
         $r = -1;
-        $namedDataArray =array();
+        $namedDataArray = $config =array();
         for ($row = 2; $row <= $highestRow; ++$row) {
             $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
 
                 ++$r;
                 foreach($headingsArray as $columnKey => $columnHeading) {
+                    if($columnHeading!='Config')
                         $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
-                  }
+                    else
+                        $config[]=$dataRow[$row][$columnKey];
+                 }
         }
 
         $this->parseBrandImport($nonFilterableAttribute);*/
+        
+        return true;
+    }
+    
+    public function importAttributeValues($sheet){
+        $highestRow = $sheet->getHighestRow(); 
+        $highestColumn = $sheet->getHighestColumn();
+
+        $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
+        $headingsArray = $headingsArray[1];
+
+        $r = -1;
+        $namedDataArray = array();
+        for ($row = 2; $row <= $highestRow; ++$row) {
+            $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
+
+                ++$r;
+                foreach($headingsArray as $columnKey => $columnHeading) {
+                     $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+                 }
+        }
+        $attributeValues=$arr=[]; 
+        foreach($namedDataArray as $namedData)
+        {
+            $i=1; 
+            foreach($namedData as $key=>$value)
+            { 
+ 
+                if($i%2)
+                {
+                    if($value=='')
+                        continue;
+                    
+                    $dataKey = explode("(",$key);
+                    $dataattributeId = explode(")",$dataKey[1]); 
+                    $attributeId = $dataattributeId[0];
+                    $attributeValues[] = ['objectId'=>'',
+                                          'attributeId'=>$attributeId,
+                                          'value'=>$value];
+                }
+                else
+                {
+                    $value = intval($value);
+                    $attributeValueKey = count($attributeValues);
+                    $attributeValues[($attributeValueKey-1)]['objectId']=$value;
+                }
+ 
+               $i++; 
+            }
+        }
+        $this->parseAttributeValueImport($attributeValues);
         
         return true;
     }
@@ -376,58 +477,7 @@ class AttributeController extends Controller
         
         return $adjustedColumn;
     }
-    
-    public function exportAttributeData()
-    {
-        $data []=['ObjectId' => '1','Name'=> 'Type' ,'Group'=> 'A' ,'Unit'=> '1' ,'Display-Type'=> 'X1'];
-        $data []=['ObjectId' => '2','Name'=> 'Color' ,'Group'=> 'B' ,'Unit'=> '2' ,'Display-Type'=> 'X2'];
-
-        return $data;
-
-    }
-    
-    public function exportAttributeValueData($categoryId)
-    {
-        $data =[];
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
-                                'ATTRIBUTE_NAME'=> 'Type',
-                                'ATTRIBUTE_VALUE'=> 'Single Door',  
-                                'ATTRIBUTE_VALUE_ID' => '1'];
-                                
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
-                                'ATTRIBUTE_NAME'=> 'Type',
-                                'ATTRIBUTE_VALUE'=> 'Double Door',  
-                                'ATTRIBUTE_VALUE_ID' => '2'];
-        
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Red',  
-                                'ATTRIBUTE_VALUE_ID' => '1'];
-                                
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Gray',  
-                                'ATTRIBUTE_VALUE_ID' => '2'];
-        
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Black',  
-                                'ATTRIBUTE_VALUE_ID' => '3'];
-                                
-        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-                                'ATTRIBUTE_NAME'=> 'Color',
-                                'ATTRIBUTE_VALUE'=> 'Blue',  
-                                'ATTRIBUTE_VALUE_ID' => '4'];
-        
-        $data ['BRAND'][] =['NAME' =>'Samsung','ID'  => '1'];
-        $data ['BRAND'][] =['NAME' =>'Lg','ID'  => '2'];
-        
-        $data ['TEST'][] =['NAME' =>'test1','ID'  => '1'];
-        $data ['TEST'][] =['NAME' =>'test2','ID'  => '2'];
-   
-        return $data;
-
-    }
+ 
 
     /**
      * Remove the specified resource from storage.
@@ -442,31 +492,7 @@ class AttributeController extends Controller
 
     public function parseAttributeImport($data){
 
-        $data = array (
-                  'attributes' => 
-                  array (
-                    0 => 
-                    array (
-                      'objectId' => 'vsX3NY2syg',
-                      'name' => 'reen size',
-                      'group' => 'general',
-                      'unit' => 'inches',
-                      'display_type' => 'checkbox',
-                    ),
-                    1 => 
-                    array (
-                      'objectId' => '',
-                      'name' => 'tv color',
-                      'group' => 'general',
-                      'unit' => '',
-                      'display_type' => 'checkbox',
-                    ),
-                  ),
-                  'categoryId' => 'NTraUMINob',
-                  'isFilterable' => false,
-                );
-
-       
+   
         $functionName = "attributeImport";
 
         $result = AttributeController::makeParseCurlRequest($functionName,$data); 
@@ -511,7 +537,7 @@ class AttributeController extends Controller
                 );
 
       }
-
+ 
       foreach ($secondary_attributes as $secondary_attribute) {
         $attributes[] = array(
                 'id' =>$secondary_attribute->getObjectId(),
@@ -551,6 +577,50 @@ class AttributeController extends Controller
 
       return $brands;
 
+
+    } 
+    
+    public function getCategoryAttributeValues($categoryId){
+
+      $data =[];
+        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
+                                'ATTRIBUTE_NAME'=> 'Type',
+                                'ATTRIBUTE_VALUE'=> 'Single Door',  
+                                'ATTRIBUTE_VALUE_ID' => '1'];
+                                
+        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
+                                'ATTRIBUTE_NAME'=> 'Type',
+                                'ATTRIBUTE_VALUE'=> 'Double Door',  
+                                'ATTRIBUTE_VALUE_ID' => '2'];
+        
+        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+                                'ATTRIBUTE_NAME'=> 'Color',
+                                'ATTRIBUTE_VALUE'=> 'Red',  
+                                'ATTRIBUTE_VALUE_ID' => '1'];
+                                
+        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+                                'ATTRIBUTE_NAME'=> 'Color',
+                                'ATTRIBUTE_VALUE'=> 'Gray',  
+                                'ATTRIBUTE_VALUE_ID' => '2'];
+        
+        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+                                'ATTRIBUTE_NAME'=> 'Color',
+                                'ATTRIBUTE_VALUE'=> 'Black',  
+                                'ATTRIBUTE_VALUE_ID' => '3'];
+                                
+        $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
+                                'ATTRIBUTE_NAME'=> 'Color',
+                                'ATTRIBUTE_VALUE'=> 'Blue',  
+                                'ATTRIBUTE_VALUE_ID' => '4'];
+        
+        $data ['BRAND'][] =['NAME' =>'Samsung','ID'  => '1'];
+        $data ['BRAND'][] =['NAME' =>'Lg','ID'  => '2'];
+        
+        $data ['TEST'][] =['NAME' =>'test1','ID'  => '1'];
+        $data ['TEST'][] =['NAME' =>'test2','ID'  => '2'];
+   
+        return $data;
+     
 
     } 
 
