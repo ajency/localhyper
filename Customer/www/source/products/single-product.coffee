@@ -142,6 +142,14 @@ angular.module 'LocalHyper.products'
 				@display = 'loader'
 				@getSingleProductDetails()
 
+			getPrimaryAttrs : ->
+				attrs = @product.primaryAttributes[0]
+				value = s.humanize attrs.value
+				unit = ''
+				if _.has attrs.attribute, 'unit'
+					unit = s.humanize attrs.attribute.unit
+				"#{value} #{unit}"
+
 			onEditLocation : ->
 				@location.modal.show()
 				mapHeight = $('.map-content').height()
