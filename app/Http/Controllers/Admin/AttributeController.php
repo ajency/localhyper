@@ -482,12 +482,14 @@ class AttributeController extends Controller
       //   'filterableAttributes' => true,
       //   'secondaryAttributes' => true,
       //   );
-      
+
       $functionName = "getAttribValueMapping";
 
-      $result = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
+      $resultjson = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
 
-      return $result;
+      $response =  json_encode($resultjson);
+      
+      return $response;
     } 
 
     public function getCategoryBrands($categoryId){
@@ -515,6 +517,7 @@ class AttributeController extends Controller
 
 
     } 
+ 
 
     public static function makeParseCurlRequest($functionName,$data,$parseFunctType="functions"){
       
