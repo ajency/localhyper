@@ -666,6 +666,7 @@
     queryProductItem.include("brand");
     queryProductItem.include("attrs.attribute");
     queryProductItem.include("category");
+    queryProductItem.include("primaryAttributes");
     return queryProductItem.first().then(function(ProductData) {
       return response.success(ProductData);
     }, function(error) {

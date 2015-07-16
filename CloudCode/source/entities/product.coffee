@@ -197,6 +197,7 @@ Parse.Cloud.define 'getProduct', (request, response) ->
     queryProductItem.include("brand")
     queryProductItem.include("attrs.attribute")
     queryProductItem.include("category")
+    queryProductItem.include("primaryAttributes")
 
     queryProductItem.first()
     .then (ProductData)->
