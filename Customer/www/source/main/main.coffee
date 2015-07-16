@@ -34,6 +34,7 @@ angular.module 'LocalHyper.main', []
 				document.location.href = telURI
 
 			onShare : ->
+				@menuClose()
 				subject  = "Hey, have you tried #{APP_NAME}"
 				msg  = "Now get the best offers from your local sellers. Visit"
 				link = "https://play.google.com/store/apps/details?id=#{PACKAGE_NAME}"

@@ -144,7 +144,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function() {
-      if (App.previousState === 'sub-categories') {
+      if (_.contains(['categories', 'sub-categories'], App.previousState)) {
         return $scope.view.reset();
       }
     });

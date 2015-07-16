@@ -5,8 +5,8 @@
     </ion-nav-title>
 
 	<ion-nav-buttons side="left">
-		<button 
-			menu-toggle="left" 
+		<button
+			menu-toggle="left"
 			class="button button-icon icon ion-navicon">
 		</button>
 	</ion-nav-buttons>
@@ -14,12 +14,12 @@
 	<ion-content ng-switch="view.display">
 
 		<ion-spinner
-			class="aj-spinner" 
+			class="aj-spinner"
 			ng-switch-when="loader">
 		</ion-spinner>
 
 		<!--ion-list ng-switch-when="noError">
-			<a 
+			<a
 				class="item item-thumbnail-left department-list"
 				ng-repeat="category in view.parentCategories"
 				ng-click="App.navigate('sub-categories', {parentID: category.id})">
@@ -27,38 +27,44 @@
 					  <div class="col col-50"><h2>{{category.name}}</h2></div>
 					  <div class="col col-50 "><img ng-src="{{category.image.src}}" class="img-responsive"></div>
 					</div>
-					
-					
-			</a> 
+
+
+			</a>
 		</ion-list-->
 
 		<ion-list ng-switch-when="noError">
-			<div 
-				class="item item-thumbnail-left department-list" 
+			<div
+				class="item item-thumbnail-left department-list"
 				ng-repeat="category in view.parentCategories">
 
 				<center>
-					<h2>{{category.name}}</h2>
+					<h4 class="cat-sub">Lorem ipsum dolor set amet</h4>
+				</center>
+				<center>
+					<h2 class="cat-title">{{category.name}}</h2>
 				</center>
 
 				<div class="row row-center">
-					<div class="col "ng-repeat="subCategory in category.children |limitTo:4" > 
-						<div 
-							class="item item-avatar border-none bg-none"  
+					<div class="col "ng-repeat="subCategory in category.children | orderBy:'sort_order' | limitTo:4" >
+						<div
+							class="item item-avatar border-none bg-none"
 							ng-click="view.onSubcategoryClick(category.children, subCategory.id)">
 							<img ng-src="{{subCategory.image.src}}">
 						</div>
 					</div>
-					<div 
-						class="item item-avatar border-none bg-none" 
-						ng-click="App.navigate('sub-categories', {parentID: category.id})">
-						<img ng-src="{{category.image.src}}">
+					<div class="col">
+						<div 
+							class="item item-avatar more-link"
+							ng-click="App.navigate('sub-categories', {parentID: category.id})">
+							<i class="icon ion-ios-more-outline"></i>
+							<span class="ico-text">More</span>
+						</div>
 					</div>
 				</div>
 			</div>
 		</ion-list>
 
-		<aj-error 
+		<aj-error
 			ng-switch-when="error"
 			error-type="view.errorType"
 			tap-to-retry="view.onTapToRetry()">

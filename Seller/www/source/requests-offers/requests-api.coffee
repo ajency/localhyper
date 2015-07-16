@@ -26,7 +26,7 @@ angular.module 'LocalHyper.requestsOffers'
 	RequestsAPI.getById = (id)->
 		defer = $q.defer()
 
-		$http.get "classes/Request/#{id}?include=product,brand"#, params
+		$http.get "classes/Request/#{id}?include=product,brand"
 		.then (data)->
 			defer.resolve data.data
 		, (error)->

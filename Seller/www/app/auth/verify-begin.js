@@ -1,5 +1,5 @@
 angular.module('LocalHyper.auth').controller('VerifyBeginCtrl', [
-  '$scope', 'App', 'CToast', 'User', function($scope, App, CToast, User) {
+  '$scope', 'App', 'CToast', 'User', 'UIMsg', function($scope, App, CToast, User, UIMsg) {
     return $scope.user = {
       name: '',
       phone: '',
@@ -25,7 +25,7 @@ angular.module('LocalHyper.auth').controller('VerifyBeginCtrl', [
           state = App.isAndroid() ? 'verify-auto' : 'verify-manual';
           return App.navigate(state);
         } else {
-          return CToast.show('No internet availability');
+          return CToast.show(UIMsg.noInternet);
         }
       }
     };
