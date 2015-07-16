@@ -195,15 +195,24 @@
     });
     return Parse.Object.saveAll(brandsSavedArr, {
       success: function(objs) {
-        var successObj;
-        successObj = {
-          success: true,
-          message: "Successfully added/updated the brand values"
-        };
-        return response.success(successObj);
+        var Category, category;
+        Category = Parse.Object.extend('Category');
+        category = new Category();
+        category.id = categoryId;
+        category.set("supported_brands", objs);
+        return category.save().then(function(categoryObj) {
+          var successObj;
+          successObj = {
+            success: true,
+            message: "Successfully added/updated the brands"
+          };
+          return response.success(successObj);
+        }, function(error) {
+          return response.error(error);
+        });
       },
       error: function(error) {
-        return response.error("Failed to add/update attributes due to - " + error.message);
+        return response.error(error);
       }
     });
   });

@@ -43,10 +43,22 @@ Parse.Cloud.define 'brandImport', (request, response) ->
     # save all the newly created objects
     Parse.Object.saveAll brandsSavedArr,
       success: (objs) ->
-        successObj = 
-            success: true
-            message: "Successfully added/updated the brand values"
-        response.success successObj
+        # get category and update its filterable column
+        Category = Parse.Object.extend('Category')
+        category = new Category()
+        category.id = categoryId
+
+        
+        category.set "supported_brands" , objs  
+
+        category.save()
+        .then (categoryObj)->
+            successObj = 
+                success: true
+                message: "Successfully added/updated the brands"
+            response.success successObj
+        , (error) ->
+            response.error error
 
       error: (error) ->
-        response.error "Failed to add/update attributes due to - #{error.message}"    	
+        response.error error	
