@@ -1,6 +1,6 @@
 angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
-  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout) {
-    return $scope.view = {
+  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', 'UIMsg', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg) {
+    $scope.view = {
       title: Product.subCategoryTitle,
       products: [],
       page: 0,
@@ -11,6 +11,15 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       ascending: true,
       init: function() {
         return this.loadSortModal();
+      },
+      reset: function() {
+        this.products = [];
+        this.page = 0;
+        this.canLoadMore = true;
+        this.refresh = false;
+        this.sortBy = 'popularity';
+        this.ascending = true;
+        return this.onScrollComplete();
       },
       loadSortModal: function() {
         return $ionicModal.fromTemplateUrl('views/products/sort.html', {
@@ -33,10 +42,15 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         return this.page = this.page + 1;
       },
       onPullToRefresh: function() {
-        this.canLoadMore = true;
-        this.page = 0;
-        this.refresh = true;
-        return this.getProducts();
+        if (App.isOnline()) {
+          this.canLoadMore = true;
+          this.page = 0;
+          this.refresh = true;
+          return this.getProducts();
+        } else {
+          this.onRefreshComplete();
+          return CToast.show(UIMsg.noInternet);
+        }
       },
       onInfiniteScroll: function() {
         this.refresh = false;
@@ -129,6 +143,11 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         }
       }
     };
+    return $scope.$on('$ionicView.beforeEnter', function() {
+      if (App.previousState === 'sub-categories') {
+        return $scope.view.reset();
+      }
+    });
   }
 ]).config([
   '$stateProvider', function($stateProvider) {

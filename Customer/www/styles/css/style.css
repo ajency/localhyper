@@ -164,8 +164,20 @@
 }
 .pane, .view {
   background-color: #E8E8E8;
-  }
+}
 
-/* Single product css*/
+/* map css */
+.aj-big-map {
+	height: 200px;
+	margin: 0; 
+	padding: 0;
+}
+
+.aj-textarea {
+	width: 100%;
+  	height: 200px;
+}
+}
+
 
 

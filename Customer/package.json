@@ -42,7 +42,19 @@
       "locator": "/Users/deepak/Desktop/com.parse.cordova.core.pushplugin",
       "id": "com.parse.cordova.core.pushplugin"
     },
-    "cordova-plugin-geolocation"
+    "cordova-plugin-geolocation",
+    {
+      "locator": "https://github.com/dpa99c/cordova-diagnostic-plugin",
+      "id": "cordova.plugins.diagnostic"
+    },
+    {
+      "locator": "https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git",
+      "id": "nl.x-services.plugins.socialsharing"
+    },
+    {
+      "locator": "https://github.com/pushandplay/cordova-plugin-apprate.git",
+      "id": "org.pushandplay.cordova.apprate"
+    }
   ],
   "cordovaPlatforms": [
     "ios",

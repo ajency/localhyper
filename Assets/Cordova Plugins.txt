@@ -14,3 +14,5 @@ List of cordova plugins used:
 12) ionic plugin add https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git
 13) ionic plugin add cordova-plugin-geolocation
 14) ionic plugin add https://github.com/dpa99c/cordova-diagnostic-plugin
+15) ionic plugin add https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git
+16) ionic plugin add https://github.com/pushandplay/cordova-plugin-apprate.git

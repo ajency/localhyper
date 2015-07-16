@@ -27,6 +27,12 @@ angular.module('LocalHyper.categories', []).controller('CategoriesCtrl', [
       onTapToRetry: function() {
         this.display = 'loader';
         return this.getCategories();
+      },
+      onSubcategoryClick: function(children, categoryID) {
+        CategoriesAPI.subCategories('set', children);
+        return App.navigate('products', {
+          categoryID: categoryID
+        });
       }
     };
     $scope.$on('$ionicView.loaded', function() {

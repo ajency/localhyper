@@ -3,9 +3,8 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
     return {
       restrict: 'E',
       replace: true,
-      template: '<div data-tap-disabled="{{mapTapDisabled}}">',
+      template: '<div data-tap-disabled="true">',
       scope: {
-        mapTapDisabled: '=',
         onCreate: '&'
       },
       link: function(scope, el, attr) {

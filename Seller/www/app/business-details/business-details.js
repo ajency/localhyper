@@ -1,5 +1,5 @@
 angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal) {
     $scope.view = {
       businessName: 'Ajency',
       name: 'Deepak',
@@ -14,8 +14,22 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
       deliveryRadius: 2,
       terms: false,
       addressConfirmed: false,
+      location: {
+        modal: null
+      },
       init: function() {
         return this.getCurrentLocation();
+      },
+      loadLocationModal: function() {
+        return $ionicModal.fromTemplateUrl('views/business-details/location.html', {
+          scope: $scope,
+          animation: 'slide-in-up',
+          hardwareBackButtonClose: true
+        }).then((function(_this) {
+          return function(modal) {
+            return _this.location.modal = modal;
+          };
+        })(this));
       },
       onMapCreated: function(map) {
         this.map = map;

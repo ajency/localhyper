@@ -18,7 +18,7 @@
 			ng-switch-when="loader">
 		</ion-spinner>
 
-		<ion-list ng-switch-when="noError">
+		<!--ion-list ng-switch-when="noError">
 			<a 
 				class="item item-thumbnail-left department-list"
 				ng-repeat="category in view.parentCategories"
@@ -29,7 +29,33 @@
 					</div>
 					
 					
-			</a>
+			</a> 
+		</ion-list-->
+
+		<ion-list ng-switch-when="noError">
+			<div 
+				class="item item-thumbnail-left department-list" 
+				ng-repeat="category in view.parentCategories">
+
+				<center>
+					<h2>{{category.name}}</h2>
+				</center>
+
+				<div class="row row-center">
+					<div class="col "ng-repeat="subCategory in category.children |limitTo:4" > 
+						<div 
+							class="item item-avatar border-none bg-none"  
+							ng-click="view.onSubcategoryClick(category.children, subCategory.id)">
+							<img ng-src="{{subCategory.image.src}}">
+						</div>
+					</div>
+					<div 
+						class="item item-avatar border-none bg-none" 
+						ng-click="App.navigate('sub-categories', {parentID: category.id})">
+						<img ng-src="{{category.image.src}}">
+					</div>
+				</div>
+			</div>
 		</ion-list>
 
 		<aj-error 

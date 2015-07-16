@@ -5,9 +5,8 @@ angular.module 'LocalHyper.googleMaps'
 
 	restrict: 'E'
 	replace: true
-	template: '<div data-tap-disabled="{{mapTapDisabled}}">'
+	template: '<div data-tap-disabled="true">'
 	scope:
-		mapTapDisabled: '='
 		onCreate: '&'
 
 	link:(scope, el, attr)->

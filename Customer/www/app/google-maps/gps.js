@@ -1,7 +1,26 @@
 angular.module('LocalHyper.googleMaps').factory('GPS', [
-  '$q', '$cordovaGeolocation', function($q, $cordovaGeolocation) {
+  '$q', '$cordovaGeolocation', 'App', function($q, $cordovaGeolocation, App) {
     var GPS;
     GPS = {};
+    GPS.isLocationEnabled = function() {
+      var defer;
+      defer = $q.defer();
+      if (App.isWebView()) {
+        cordova.plugins.diagnostic.isLocationEnabledSetting(function(enabled) {
+          return defer.resolve(enabled);
+        }, function(error) {
+          return defer.reject(error);
+        });
+      } else {
+        defer.resolve(true);
+      }
+      return defer.promise;
+    };
+    GPS.switchToLocationSettings = function() {
+      if (App.isWebView() && App.isAndroid()) {
+        return cordova.plugins.diagnostic.switchToLocationSettings();
+      }
+    };
     GPS.getCurrentLocation = function() {
       var defer, posOptions;
       defer = $q.defer();

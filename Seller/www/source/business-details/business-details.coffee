@@ -1,8 +1,9 @@
 angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 
-.controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User'
-	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User)->
+.controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
+	, 'CDialog', 'User', '$ionicModal'
+	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal)->
 
 		$scope.view = 
 			businessName: 'Ajency'
@@ -19,8 +20,20 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 			terms: false
 			addressConfirmed: false
 
+			location:
+				modal: null
+
 			init : ->
+				# @loadLocationModal()
 				@getCurrentLocation()
+
+			loadLocationModal : ->
+				$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
+					scope: $scope,
+					animation: 'slide-in-up'
+					hardwareBackButtonClose: true
+				.then (modal)=>
+					@location.modal = modal
 
 			onMapCreated : (map)->
 				@map = map
