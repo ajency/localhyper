@@ -570,7 +570,7 @@ class AttributeController extends Controller
       
       $functionName = "getAttribValueMapping";
 
-      $result = AttributeController::makeParseCurlRequest($functionName,$data); 
+      $result = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
 
       return $result;
     } 
