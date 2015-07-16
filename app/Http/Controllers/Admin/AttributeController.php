@@ -88,7 +88,7 @@ class AttributeController extends Controller
 
     public function exportAttributes($catId)
     {  
-        $attributes = $this->getCategoryAttributes($catId); 
+        
         $excel = new PHPExcel(); // ea is short for Excel Application
         $excel->getProperties()
                            ->setCreator('Prajay Verenkar')
@@ -101,6 +101,9 @@ class AttributeController extends Controller
         
         $attributeSheet = $excel->getSheet(0);
         $attributeSheet->setTitle('Attributes');
+        $attributes = $this->getCategoryAttributes($catId);
+        $categoryName = $attributes['categoryName'];
+        
         
         $headers []= 'Config' ;
         $headers []= 'objectId' ;
@@ -115,7 +118,7 @@ class AttributeController extends Controller
 
         $attributeSheet->getColumnDimension('A')->setVisible(false);
  
-        $attributeSheet->fromArray($attributes, ' ','B2');
+        $attributeSheet->fromArray($attributes['attributes'], ' ','B2');
  
         $lastColumn = $attributeSheet->getHighestColumn();
         $header = 'a1:'.$lastColumn.'1';
@@ -127,21 +130,28 @@ class AttributeController extends Controller
         $attributeSheet->getStyle($header)->applyFromArray($style);
         $attributeSheet->protectCells($header, 'PHP');
         
+        
+        
         //*** SHEET 2 ATTRIUTEVALUES
-        $attributeValueData = $this->getCategoryAttributeValues($catId);
+        $categoryData = [
+          'categoryId' => $catId,
+          'filterableAttributes' => true,
+          'secondaryAttributes' => true,
+          ];
+        $attributeValueData = $this->getCategoryAttributeValues($categoryData);dd($attributeValueData);
         $headers = $data = $attributeValues= $headerFlag = [];
 
-        foreach($attributeValueData['ATTRIBUTES'] as $attributeValue)
+        foreach($attributeValueData['result'] as $attributeValue)
         {
-            $attributeId =$attributeValue['ATTRIBUTE_ID'];
+            $attributeId =$attributeValue['attributeId'];
             if(!isset($headerFlag[$attributeId]))
             {   
-                $headers[]=$attributeValue['ATTRIBUTE_NAME']."(".$attributeId.")";
-                $headers[]=$attributeValue['ATTRIBUTE_NAME'].' Id';
+                $headers[]=$attributeValue['attributeName']."(".$attributeId.")";
+                $headers[]=$attributeValue['attributeName'].' Id';
                 $headerFlag[$attributeId]=$attributeId;
             }
 
-            $attributeValues[$attributeId][] = [$attributeValue['ATTRIBUTE_VALUE'],$attributeValue['ATTRIBUTE_VALUE_ID']];  
+            $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
         }
        // dd($attributeValues);
         $attributeValueSheet = new \PHPExcel_Worksheet($excel, 'AttributeValues');
@@ -215,7 +225,7 @@ class AttributeController extends Controller
         $brandSheet->protectCells($header, 'PHP');
         
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="attributes-export.xls"');
+        header('Content-Disposition: attachment;filename="'.$categoryName.'-export.xls"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');
@@ -498,6 +508,7 @@ class AttributeController extends Controller
       $resultjson = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
 
       $response =  json_encode($resultjson);
+       $response = json_decode($response,true);    
       
       return $response;
     } 
