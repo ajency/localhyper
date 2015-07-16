@@ -500,7 +500,7 @@ sm {
 .item-avatar .item-content.more-link,
 .item-avatar-left.more-link,
 .item-avatar-left .item-content.more-link {
-  line-height: 52px;
+  line-height: 55px;
 }
 .item-avatar.more-link i,
 .item-avatar .item-content.more-link i,
@@ -508,7 +508,7 @@ sm {
 .item-avatar-left .item-content.more-link i {
   display: block;
   text-align: center;
-  font-size: 22px;
+  font-size: 32px;
 }
 .item-avatar.more-link span,
 .item-avatar .item-content.more-link span,
