@@ -534,3 +534,20 @@ sm {
   margin-top: -1px;
   display: inline-block;
 }
+.suggest-btn .row,
+.suggest-btn .col {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.suggest-btn .button.button-assertive {
+  margin: 0;
+}
+.input-label i.icon {
+  font-size: 24px;
+  margin-right: 5px;
+  padding: 0;
+  line-height: 0;
+  color: #989898;
+  width: 23px;
+  text-align: center;
+}
