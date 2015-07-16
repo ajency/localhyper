@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'Push', function($scope, App, RequestsAPI, $rootScope, $ionicModal, Push) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'Push', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', function($scope, App, RequestsAPI, $rootScope, $ionicModal, Push, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -11,6 +11,48 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         display: 'noError',
         errorType: '',
         requestId: null,
+        offerPrice: '',
+        reply: {
+          button: true,
+          text: ''
+        },
+        deliveryTime: {
+          display: false,
+          value: 1,
+          unit: 'hr',
+          unitText: 'Hour',
+          setDuration: function() {
+            if (!_.isNull(this.value)) {
+              switch (this.unit) {
+                case 'hr':
+                  return this.unitText = this.value === 1 ? 'Hour' : 'Hours';
+                case 'day':
+                  return this.unitText = this.value === 1 ? 'Day' : 'Days';
+              }
+            }
+          },
+          done: function() {
+            if (_.isNull(this.value)) {
+              this.value = 1;
+              this.unit = 'hr';
+              this.unitText = 'Hour';
+            }
+            this.display = false;
+            return App.resize();
+          }
+        },
+        resetModal: function() {
+          this.display = 'noError';
+          this.price = null;
+          this.offerPrice = '';
+          this.deliveryTime.display = false;
+          this.deliveryTime.value = 1;
+          this.deliveryTime.unit = 'hr';
+          this.deliveryTime.unitText = 'Hour';
+          this.reply.button = true;
+          this.reply.text = '';
+          return $ionicScrollDelegate.$getByHandle('request-details').scrollTop();
+        },
         showModal: function(requestId) {
           this.requestId = requestId;
           this.modal.show();
@@ -31,6 +73,51 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
               return _this.errorType = type;
             };
           })(this));
+        },
+        makeOffer: function() {
+          var params, priceValue, user;
+          user = User.getCurrent();
+          priceValue = '';
+          switch (this.price) {
+            case 'localPrice':
+              priceValue = '9000';
+              break;
+            case 'onlinePrice':
+              priceValue = '9000';
+              break;
+            case 'yourPrice':
+              priceValue = this.offerPrice;
+          }
+          params = {
+            "sellerId": user.id,
+            "requestId": this.data.id,
+            "priceValue": priceValue,
+            "deliveryTime": {
+              "value": this.deliveryTime.value,
+              "unit": this.deliveryTime.unit
+            },
+            "comments": this.reply.text,
+            "status": "open"
+          };
+          if (_.isNull(this.price)) {
+            return CToast.show('Please select price');
+          } else if (_.isNull(priceValue) || priceValue === '') {
+            return CToast.show('Please enter your offer price');
+          } else {
+            CSpinner.show('', 'Please wait...');
+            return OffersAPI.makeOffer(params).then((function(_this) {
+              return function(data) {
+                _this.modal.hide();
+                return CToast.show('Your offer has been made');
+              };
+            })(this), (function(_this) {
+              return function(type) {
+                return CToast.show('Failed to make offer, please try again');
+              };
+            })(this))["finally"](function() {
+              return CSpinner.hide();
+            });
+          }
         }
       },
       init: function() {
@@ -88,8 +175,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         return this.getRequests();
       },
       showRequestDetails: function(request) {
-        this.requestDetails.display = 'noError';
         this.requestDetails.data = request;
+        this.requestDetails.resetModal();
         this.requestDetails.modal.show();
         return this.markNotificationAsSeen(request.id);
       },
@@ -132,7 +219,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
     duration = moment.duration(diff);
     minutes = parseInt(duration.asMinutes().toFixed(0));
     hours = parseInt(duration.asHours().toFixed(0));
-    if (minutes === 0) {
+    if (minutes <= 5) {
       timeStr = 'Just now';
     } else if (minutes < 60) {
       min = minutes === 1 ? 'min' : 'mins';

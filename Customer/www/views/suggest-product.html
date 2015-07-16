@@ -1,0 +1,29 @@
+<ion-view view-title="Suggest a product">
+
+	<ion-content>
+
+	<div class="card">
+		<label class="item item-input">
+		<input type="text" placeholder="Product Name" ng-model="suggest.productName" >
+		</label>
+		<label class="item item-input">
+		<input type="text" placeholder="Category" ng-model="suggest.category">
+		</label>
+		<label class="item item-input">
+		<input type="text" placeholder="Brand" ng-model="suggest.brand" >
+		</label>
+		<label class="item item-input">
+		<input type="text" placeholder="product Description" ng-model="suggest.productDescription">
+		</label>
+		<label class="item item-input">
+		<textarea placeholder="Your comments" ng-model="suggest.yourComments" ></textarea>
+		</label>
+	</div>
+	<div class="list">
+		<button class="button button-block bar-stable" ng-Click="suggest.onSuggest();App.navigate('categories')">
+			Suggest this product
+		</button>
+	</div>
+	</ion-content>
+
+</ion-view>
