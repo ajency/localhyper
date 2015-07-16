@@ -1,10 +1,10 @@
-<ion-view 
+<ion-view
 	view-title="Category Chains"
 	ng-init="view.setCategoryChains()" class="chain">
 
 	<ion-nav-buttons side="right">
-		<button 
-			class="button button-outline button-assertive"
+		<button
+			class="button button-assertive"
 			ng-click="App.goBack(-3)">
 			Add More
 		</button>
@@ -14,16 +14,16 @@
 </div>
 	<ion-content>
 
-		
+
 		</br></br>
 
 		<ion-list >
 
-			<ion-item 
+			<ion-item
 				class="item-text-wrap item-icon-right"
 				ng-repeat="chains in view.categoryChains">
 
-				<i 
+				<i
 					class="icon ion-close-circled"
 					ng-click="view.removeItemFromChains(chains.subCategory.id)">
 				</i>
@@ -32,10 +32,10 @@
 			</ion-item>
 
 		</ion-list>
-		
+
 		</br>
 		<h5 class="subdued">There should always be atleast one category chain selected</h5>
-	<!-- 	<button 
+	<!-- 	<button
 			class="button button-block button-dark"
 			ng-click="App.goBack(-3)">
 			Add more

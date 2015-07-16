@@ -4,6 +4,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       title: Product.subCategoryTitle,
       products: [],
       page: 0,
+      footer: false,
       canLoadMore: true,
       refresh: false,
       sortModal: null,
@@ -15,6 +16,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       reset: function() {
         this.products = [];
         this.page = 0;
+        this.footer = false;
         this.canLoadMore = true;
         this.refresh = false;
         this.sortBy = 'popularity';
@@ -73,6 +75,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           };
         })(this))["finally"]((function(_this) {
           return function() {
+            _this.footer = true;
             _this.incrementPage();
             return _this.onRefreshComplete();
           };
@@ -102,13 +105,17 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       },
       getPrimaryAttrs: function(attrs) {
         var unit, value;
-        attrs = attrs[0];
-        value = s.humanize(attrs.value);
-        unit = '';
-        if (_.has(attrs.attribute, 'unit')) {
-          unit = s.humanize(attrs.attribute.unit);
+        if (!_.isUndefined(attrs)) {
+          attrs = attrs[0];
+          value = s.humanize(attrs.value);
+          unit = '';
+          if (_.has(attrs.attribute, 'unit')) {
+            unit = s.humanize(attrs.attribute.unit);
+          }
+          return value + " " + unit;
+        } else {
+          return '';
         }
-        return value + " " + unit;
       },
       onSort: function(sortBy, ascending) {
         var reFetch;

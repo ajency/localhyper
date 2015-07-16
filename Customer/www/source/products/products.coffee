@@ -9,6 +9,7 @@ angular.module 'LocalHyper.products', []
 			title: Product.subCategoryTitle
 			products: []
 			page: 0
+			footer: false
 			canLoadMore: true
 			refresh: false
 			sortModal: null
@@ -21,6 +22,7 @@ angular.module 'LocalHyper.products', []
 			reset : ->
 				@products = []
 				@page = 0
+				@footer = false
 				@canLoadMore = true
 				@refresh = false
 				@sortBy = 'popularity'
@@ -70,6 +72,7 @@ angular.module 'LocalHyper.products', []
 				, (error)=>
 					@onError error
 				.finally =>
+					@footer = true
 					@incrementPage()
 					@onRefreshComplete()
 
@@ -88,12 +91,14 @@ angular.module 'LocalHyper.products', []
 					@canLoadMore = false
 
 			getPrimaryAttrs : (attrs)->
-				attrs = attrs[0]
-				value = s.humanize attrs.value
-				unit = ''
-				if _.has attrs.attribute, 'unit'
-					unit = s.humanize attrs.attribute.unit
-				"#{value} #{unit}"
+				if !_.isUndefined attrs
+					attrs = attrs[0]
+					value = s.humanize attrs.value
+					unit = ''
+					if _.has attrs.attribute, 'unit'
+						unit = s.humanize attrs.attribute.unit
+					"#{value} #{unit}"
+				else ''
 
 			onSort : (sortBy, ascending)->
 				@sortModal.hide()
