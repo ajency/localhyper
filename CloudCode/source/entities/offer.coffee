@@ -1,13 +1,11 @@
 # get new offers for a customer for a product
 Parse.Cloud.define 'getNewOffers', (request, response) ->
     
- #    # return requests made and all offers for a given customerId and productId
+    productId = request.params.productId
+    customerId  = request.params.customerId
 
- #    customerId = request.params.customerId
- #    productId = request.params.productId
-
- #    # get request made by customer for a productId
-	# queryRequest = new Parse.Query("Request")
+    # get expired requests for this customer and product
+	queryRequest = new Parse.Query("Request")
         
  #    # query to get specific product
  #    innerQueryProduct = new Parse.Query("ProductItem")

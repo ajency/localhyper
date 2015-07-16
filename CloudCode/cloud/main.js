@@ -1,5 +1,5 @@
 (function() {
-  var _, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, processPushNotifications, treeify;
+  var _, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, processPushNotifications, queryRequest, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -437,7 +437,13 @@
     });
   });
 
-  Parse.Cloud.define('getNewOffers', function(request, response) {});
+  Parse.Cloud.define('getNewOffers', function(request, response) {
+    var customerId, productId;
+    productId = request.params.productId;
+    return customerId = request.params.customerId;
+  });
+
+  queryRequest = new Parse.Query("Request");
 
   Parse.Cloud.define('makeOffer', function(request, response) {
     var Notification, Offer, Price, Request, comments, deliveryTime, priceValue, requestId, requestQuery, sellerId, status;
