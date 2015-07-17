@@ -5,92 +5,123 @@ Parse.Cloud.define 'getNewOffers', (request, response) ->
     customerId  = request.params.customerId
 
     # get expired requests for this customer and product
-	queryRequest = new Parse.Query("Request")
+    queryRequest = new Parse.Query("Request")
+
+    innerProductQuery = new Parse.Query("ProductItem")
+    innerProductQuery.equalTo("objectId",productId)
+
+    innerCustomerQuery = new Parse.Query(Parse.User)
+    innerCustomerQuery.equalTo("objectId",customerId)    
+
+    # get requests based on customerId and productId 
+    queryRequest.matchesQuery("product", innerProductQuery)
+    queryRequest.matchesQuery("customerId", innerCustomerQuery)
+
+    # get only non expired requests
+    currentDate = new Date()
+    currentTimeStamp = currentDate.getTime()
+    expiryValueInHrs = 24
+    queryDate = new Date()
+    time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
+    queryDate.setTime(time24HoursAgo)
+
+    queryRequest.greaterThanOrEqualTo( "createdAt", queryDate )    
+
+    # get the most recent non expired request, i.e sort with new ones first
+    queryRequest.descending("createdAt")
+
+    
+    queryRequest.first()
+    .then (mostRecentRequest) ->
+        if _.isEmpty(mostRecentRequest) 
+            response.success "No recent non expired request found"
+        else
+            response.success mostRecentRequest
+    , (error) ->
+        response.error error 
+
         
- #    # query to get specific product
- #    innerQueryProduct = new Parse.Query("ProductItem")
- #    innerQueryProduct.equalTo("objectId",productId)
- #    queryRequest.matchesQuery("product", innerQuery)
 
- # make offer for a seller
-Parse.Cloud.define 'makeOffer', (request, response) ->	
 
-	requestId = request.params.requestId
-	sellerId = request.params.sellerId
-	priceValue = parseInt request.params.priceValue
-	deliveryTime = request.params.deliveryTime
-	comments = request.params.comments
-	status = request.params.status
+# make offer for a seller
+Parse.Cloud.define 'makeOffer', (request, response) ->  
 
-	# make an entry in price class
-	Price = Parse.Object.extend("Price")
-	Offer = Parse.Object.extend("Offer")
-	Request = Parse.Object.extend("Request")
-	Notification = Parse.Object.extend("Notification") 
+    requestId = request.params.requestId
+    sellerId = request.params.sellerId
+    priceValue = parseInt request.params.priceValue
+    deliveryTime = request.params.deliveryTime
+    comments = request.params.comments
+    status = request.params.status
 
-	# get request and get the product id associated to it
-	requestQuery = new Parse.Query("Request")
-	requestQuery.equalTo("objectId",requestId )
+    # make an entry in price class
+    Price = Parse.Object.extend("Price")
+    Offer = Parse.Object.extend("Offer")
+    Request = Parse.Object.extend("Request")
+    Notification = Parse.Object.extend("Notification") 
 
-	requestQuery.first()
-	.then (requestObj) ->
-		requestingCustomer = requestObj.get("customerId")
+    # get request and get the product id associated to it
+    requestQuery = new Parse.Query("Request")
+    requestQuery.equalTo("objectId",requestId )
 
-		price = new Price()
+    requestQuery.first()
+    .then (requestObj) ->
+        requestingCustomer = requestObj.get("customerId")
 
-		price.set "source" , "seller"
-		
-		sellerObj = new Parse.User()
-		sellerObj.id = sellerId
+        price = new Price()
 
-		price.set "seller" , sellerObj
+        price.set "source" , "seller"
+        
+        sellerObj = new Parse.User()
+        sellerObj.id = sellerId
 
-		price.set "type" , "open_offer"
-		
-		price.set "value" , priceValue
+        price.set "seller" , sellerObj
 
-		product = requestObj.get("product")
-		price.set "product" , product
+        price.set "type" , "open_offer"
+        
+        price.set "value" , priceValue
 
-		price.save()
-		.then (priceObj) ->
-			# make an entry in offer class
-			offer = new Offer()
+        product = requestObj.get("product")
+        price.set "product" , product
 
-			requestObj = new Request()
-			requestObj.id = requestId
+        price.save()
+        .then (priceObj) ->
+            # make an entry in offer class
+            offer = new Offer()
 
-			offer.set "request", requestObj 
-			offer.set "price", priceObj 
-			offer.set "status" , status
-			offer.set "deliveryTime" , deliveryTime
-			offer.set "comments" , comments
+            requestObj = new Request()
+            requestObj.id = requestId
 
-			offer.save()
-			.then (offerObj) ->
+            offer.set "request", requestObj 
+            offer.set "price", priceObj 
+            offer.set "status" , status
+            offer.set "deliveryTime" , deliveryTime
+            offer.set "comments" , comments
 
-				notification = new Notification()
+            offer.save()
+            .then (offerObj) ->
 
-				notification.set "hasSeen" , false
-				notification.set "recipientUser" , requestingCustomer
-				notification.set "channel" , "push"
-				notification.set "processed" , false
-				notification.set "type" , "Offer"
-				notification.set "offerObject" , offerObj
-				
-				notification.save()
-				.then (notificationObj) ->
-					response.success(notificationObj)
-				
-				, (error) ->
-					response.error error
+                notification = new Notification()
 
-			, (error) ->
-				response.error error
+                notification.set "hasSeen" , false
+                notification.set "recipientUser" , requestingCustomer
+                notification.set "channel" , "push"
+                notification.set "processed" , false
+                notification.set "type" , "Offer"
+                notification.set "offerObject" , offerObj
+                
+                notification.save()
+                .then (notificationObj) ->
+                    response.success(notificationObj)
+                
+                , (error) ->
+                    response.error error
 
-		, (error) ->
-			response.error error
+            , (error) ->
+                response.error error
 
-	, (error) ->
-		response.error error
+        , (error) ->
+            response.error error
+
+    , (error) ->
+        response.error error
 

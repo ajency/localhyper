@@ -105,7 +105,7 @@ Parse.Cloud.define 'getProducts', (request, response) ->
         innerQuery.equalTo("objectId",categoryId)
 
         # query to get products matching the child category
-        query = new Parse.Query("ProductItem");
+        query = new Parse.Query("ProductItem")
         query.matchesQuery("category", innerQuery)
 
         if (selectedFilters isnt "all") and (_.isObject(selectedFilters))

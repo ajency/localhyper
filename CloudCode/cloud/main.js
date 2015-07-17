@@ -1,5 +1,5 @@
 (function() {
-  var _, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, processPushNotifications, queryRequest, treeify;
+  var _, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, processPushNotifications, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -487,12 +487,34 @@
   });
 
   Parse.Cloud.define('getNewOffers', function(request, response) {
-    var customerId, productId;
+    var currentDate, currentTimeStamp, customerId, expiryValueInHrs, innerCustomerQuery, innerProductQuery, productId, queryDate, queryRequest, time24HoursAgo;
     productId = request.params.productId;
-    return customerId = request.params.customerId;
+    customerId = request.params.customerId;
+    queryRequest = new Parse.Query("Request");
+    innerProductQuery = new Parse.Query("ProductItem");
+    innerProductQuery.equalTo("objectId", productId);
+    innerCustomerQuery = new Parse.Query(Parse.User);
+    innerCustomerQuery.equalTo("objectId", customerId);
+    queryRequest.matchesQuery("product", innerProductQuery);
+    queryRequest.matchesQuery("customerId", innerCustomerQuery);
+    currentDate = new Date();
+    currentTimeStamp = currentDate.getTime();
+    expiryValueInHrs = 24;
+    queryDate = new Date();
+    time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
+    queryDate.setTime(time24HoursAgo);
+    queryRequest.greaterThanOrEqualTo("createdAt", queryDate);
+    queryRequest.descending("createdAt");
+    return queryRequest.first().then(function(mostRecentRequest) {
+      if (_.isEmpty(mostRecentRequest)) {
+        return response.success("No recent non expired request found");
+      } else {
+        return response.success(mostRecentRequest);
+      }
+    }, function(error) {
+      return response.error(error);
+    });
   });
-
-  queryRequest = new Parse.Query("Request");
 
   Parse.Cloud.define('makeOffer', function(request, response) {
     var Notification, Offer, Price, Request, comments, deliveryTime, priceValue, requestId, requestQuery, sellerId, status;
