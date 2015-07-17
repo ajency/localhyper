@@ -13,7 +13,17 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	# GoogleMaps.loadScript()
 
 	#User Notification Icon (Right popover)
-	App.notification = icon: false
+	App.notification = 
+		icon: false
+		badge: false
+		count: 0
+		increment : ->
+			@badge = true
+			@count = @count + 1
+		decrement : ->
+			@count = @count - 1
+			if @count is 0
+				@badge = false
 
 	#Hide small app logo on categories view
 	App.logo = small: true
@@ -27,8 +37,6 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		bool = !_.contains(hideForStates, App.currentState)
 		App.menuEnabled.left  = bool
 		App.notification.icon = bool
-
-		App.logo.small = App.currentState isnt 'categories'
 ]
 
 
