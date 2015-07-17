@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Parse\ParseObject;
 use Parse\ParseQuery;
 use \Session;
+use \Input;
 
 class CategoryController extends Controller
 {
@@ -62,6 +63,8 @@ class CategoryController extends Controller
         $allCategories = CategoryController::getParseCategories();
 
         $catList = array();
+
+        CategoryController::getParentCategories();
 
         foreach ($allCategories as $catObject) {
               $catList[] = array(
@@ -170,6 +173,57 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public static function getParentCategories(){
+
+        $categoryQuery = new ParseQuery("Category");
+
+        $categoryQuery->doesNotExist("parent_category");
+        
+        $results = $categoryQuery->find();
+
+        foreach ($results as $catObject) {
+          $parentCategories[] = array(
+                'cat_id' =>$catObject->getObjectId(),
+                'cat_name' => $catObject->get('name')
+                );
+          }
+
+          return $parentCategories;
+
+    }
+
+    public function getChildCategory($categoryId){
+
+        ///$getVar = Input::get(); 
+
+        //$categoryId = $getVar['categoryId'];
+
+        $categoryQuery = new ParseQuery("Category");
+
+        $categoryQuery->exists("parent_category");
+
+        $innerQuery = new ParseQuery("Category");
+        $innerQuery->equalTo("objectId",$categoryId);
+        $categoryQuery->matchesQuery("parent_category", $innerQuery);
+        
+        
+        $results = $categoryQuery->find();
+        $str ='<option value="">Select Category</option>';
+        foreach ($results as $catObject) {
+          $str .= '<option value="'.$catObject->getObjectId().'">'.$catObject->get('name').'</option>';    
+          
+          }
+          
+        return response()->json( [
+                    'code' => 'categories',
+                    'message' => 'Category Sucessfully ' ,
+                    'data' => [
+                        'html' => $str 
+                    ]
+            ], 201 );
+          
     }
 
     public static function createParseCategory($categoryData){
