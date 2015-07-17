@@ -565,3 +565,12 @@ sm {
   padding-left: 25px;
   padding-right: 25px;
 }
+.sing-pro h5 {
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+.sing-pro h6.subdued {
+  margin: 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
