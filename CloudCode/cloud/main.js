@@ -296,6 +296,43 @@
     })(this));
   });
 
+  Parse.Cloud.define("sendMail", function(request, status) {
+    var Mandrill, brand, category, comments, description, productName, text;
+    productName = request.params.productName;
+    category = request.params.category;
+    brand = request.params.brand;
+    description = request.params.description;
+    comments = request.params.comments;
+    text = '<p>Product Name:' + productName + '<br> Category:' + category + '<br> Brand: ' + brand + '<br> Categories: ' + description + '<br> Comments:' + comments + '<p>';
+    Mandrill = require('mandrill');
+    Mandrill.initialize('JGQ1FMECVDSJLnOFvxDzaQ');
+    return Mandrill.sendEmail({
+      message: {
+        html: "<p>" + text + "</p>",
+        text: text,
+        subject: "Product suggestions",
+        from_email: "parse@cloudcode.com",
+        from_name: "Cloud Code",
+        to: [
+          {
+            email: "namrata@ajency.in",
+            name: "Your Name"
+          }
+        ]
+      },
+      async: true
+    }, {
+      success: function(httpResponse) {
+        console.log(httpResponse);
+        return status.success('Mail Sent');
+      },
+      error: function(httpResponse) {
+        console.error(httpResponse);
+        return status.error('err');
+      }
+    });
+  });
+
   getNotificationData = function(notificationId, installationId, pushOptions) {
     var installationQuery, promise;
     promise = new Parse.Promise();
