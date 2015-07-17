@@ -1,8 +1,8 @@
 <ion-view view-title="Verify your phone number">
-	
+
 	<ion-nav-buttons side="right">
-		<button 
-			class="button"
+		<button
+			class="button button-assertive"
 			ng-click="view.onNext()">
 			Next
 		</button>
@@ -39,7 +39,7 @@
 					Exceeded maximum number of attempts. Please contact our support and enter code manually.
 					</div>
 			</div>
-				
+
 
 				</br>
 
@@ -49,7 +49,7 @@
 				</label>
 			</div>
 
-			<aj-error 
+			<aj-error
 				ng-switch-when="error"
 				error-type="view.errorType"
 				tap-to-retry="view.onTapToRetry()">

@@ -2,38 +2,35 @@ angular.module 'LocalHyper.products', []
 
 
 .controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal'
-	, '$timeout', 'App', 'CToast', 'UIMsg'
-	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg)->
+	, '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform'
+	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg
+	, $ionicLoading, $ionicPlatform)->
 
 		$scope.view =
 			title: Product.subCategoryTitle
 			products: []
 			page: 0
+			footer: false
 			canLoadMore: true
 			refresh: false
-			sortModal: null
 			sortBy: 'popularity'
 			ascending: true
-			
-			init: ->
-				@loadSortModal()
 
 			reset : ->
 				@products = []
 				@page = 0
+				@footer = false
 				@canLoadMore = true
 				@refresh = false
 				@sortBy = 'popularity'
 				@ascending = true
 				@onScrollComplete()
 
-			loadSortModal : ->
-				$ionicModal.fromTemplateUrl 'views/products/sort.html', 
-					scope: $scope,
-					animation: 'slide-in-up'
-					hardwareBackButtonClose: true
-				.then (modal)=>
-					@sortModal = modal
+			showSortOptions : ->
+				$ionicLoading.show
+					scope: $scope
+					templateUrl: 'views/products/sort.html'
+					hideOnStateChange: true
 
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
@@ -70,6 +67,7 @@ angular.module 'LocalHyper.products', []
 				, (error)=>
 					@onError error
 				.finally =>
+					@footer = true
 					@incrementPage()
 					@onRefreshComplete()
 
@@ -88,15 +86,17 @@ angular.module 'LocalHyper.products', []
 					@canLoadMore = false
 
 			getPrimaryAttrs : (attrs)->
-				attrs = attrs[0]
-				value = s.humanize attrs.value
-				unit = ''
-				if _.has attrs.attribute, 'unit'
-					unit = s.humanize attrs.attribute.unit
-				"#{value} #{unit}"
+				if !_.isUndefined attrs
+					attrs = attrs[0]
+					value = s.humanize attrs.value
+					unit = ''
+					if _.has attrs.attribute, 'unit'
+						unit = s.humanize attrs.attribute.unit
+					"#{value} #{unit}"
+				else ''
 
 			onSort : (sortBy, ascending)->
-				@sortModal.hide()
+				$ionicLoading.hide()
 
 				reFetch = =>
 					@page = 0
@@ -121,10 +121,22 @@ angular.module 'LocalHyper.products', []
 							@ascending = ascending
 							reFetch()
 
+		
+		onDeviceBack = ->
+			if $('.loading-container').hasClass 'visible'
+				$ionicLoading.hide()
+			else
+				App.goBack -1
 
 		$scope.$on '$ionicView.beforeEnter', ->
 			if _.contains ['categories', 'sub-categories'], App.previousState
 				$scope.view.reset()
+
+		$scope.$on '$ionicView.enter', ->
+			$ionicPlatform.onHardwareBackButton onDeviceBack
+
+		$scope.$on '$ionicView.leave', ->
+			$ionicPlatform.offHardwareBackButton onDeviceBack
 ]
 
 

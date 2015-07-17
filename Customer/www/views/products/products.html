@@ -1,4 +1,4 @@
-<ion-view ng-init="view.init()">
+<ion-view>
 
 	<ion-nav-title>
 		{{view.title}}
@@ -10,18 +10,27 @@
 			on-refresh="view.onPullToRefresh()" class="aj-refresher">
 		</ion-refresher>
 
+		<div class="row full-cont">
+			<div class="col full-cont">
+				<button class="button button-dark button-full button-view-all-cat">
+					<i class="icon ion-grid"></i>
+					Browse all Departments
+				</button>
+			</div>
+		</div>
+
 		<ion-list>
-			<div 
+			<div
 				class="col col-50 border-card border-card2"
 				collection-repeat="product in view.products"
 				item-width="50%"
 				ng-click="App.navigate('single-product', {productID: product.objectId})">
 
-				<h6 class="subdued"> 
+				<h6 class="subdued">
 					<span class="text-danger">In</span> {{view.getPrimaryAttrs(product.primaryAttributes)}}
 				</h6>
 				<h5 class="text-left title">{{product.name}}</h5>
-			
+
 				<img ng-src="{{product.images[0].src}}" class=" center-block aj-img" >
 				<div class="row">
                     <div class="col col-67">
@@ -42,9 +51,9 @@
 
 	</ion-content>
 
-	<ion-footer-bar class="bar-dark">
+	<ion-footer-bar ng-show="view.footer" class="bar-dark">
 		<div class="row">
-			<div class="col col-50 text-center" ng-click="view.sortModal.show()">
+			<div class="col col-50 text-center" ng-click="view.showSortOptions()">
 				<h5 class="margin-none text-light normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
 			</div>
 			<div class="col col-50 text-center border-left">

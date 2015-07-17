@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common', []).factory('App', [
-  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q) {
+  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', '$ionicScrollDelegate', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate) {
     var App;
     return App = {
       start: true,
@@ -78,9 +78,16 @@ angular.module('LocalHyper.common', []).factory('App', [
       dragContent: function(bool) {
         return $ionicSideMenuDelegate.canDragContent(bool);
       },
+      resize: function() {
+        return $ionicScrollDelegate.resize();
+      },
       toINR: function(number) {
-        number = number.toString();
-        return number.replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        if (!_.isUndefined(number)) {
+          number = number.toString();
+          return number.replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        } else {
+          return '';
+        }
       },
       getInstallationId: function() {
         var defer;

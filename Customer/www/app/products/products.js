@@ -1,36 +1,31 @@
 angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
-  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', 'UIMsg', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg) {
+  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg, $ionicLoading, $ionicPlatform) {
+    var onDeviceBack;
     $scope.view = {
       title: Product.subCategoryTitle,
       products: [],
       page: 0,
+      footer: false,
       canLoadMore: true,
       refresh: false,
-      sortModal: null,
       sortBy: 'popularity',
       ascending: true,
-      init: function() {
-        return this.loadSortModal();
-      },
       reset: function() {
         this.products = [];
         this.page = 0;
+        this.footer = false;
         this.canLoadMore = true;
         this.refresh = false;
         this.sortBy = 'popularity';
         this.ascending = true;
         return this.onScrollComplete();
       },
-      loadSortModal: function() {
-        return $ionicModal.fromTemplateUrl('views/products/sort.html', {
+      showSortOptions: function() {
+        return $ionicLoading.show({
           scope: $scope,
-          animation: 'slide-in-up',
-          hardwareBackButtonClose: true
-        }).then((function(_this) {
-          return function(modal) {
-            return _this.sortModal = modal;
-          };
-        })(this));
+          templateUrl: 'views/products/sort.html',
+          hideOnStateChange: true
+        });
       },
       onScrollComplete: function() {
         return $scope.$broadcast('scroll.infiniteScrollComplete');
@@ -73,6 +68,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           };
         })(this))["finally"]((function(_this) {
           return function() {
+            _this.footer = true;
             _this.incrementPage();
             return _this.onRefreshComplete();
           };
@@ -102,17 +98,21 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       },
       getPrimaryAttrs: function(attrs) {
         var unit, value;
-        attrs = attrs[0];
-        value = s.humanize(attrs.value);
-        unit = '';
-        if (_.has(attrs.attribute, 'unit')) {
-          unit = s.humanize(attrs.attribute.unit);
+        if (!_.isUndefined(attrs)) {
+          attrs = attrs[0];
+          value = s.humanize(attrs.value);
+          unit = '';
+          if (_.has(attrs.attribute, 'unit')) {
+            unit = s.humanize(attrs.attribute.unit);
+          }
+          return "" + value + " " + unit;
+        } else {
+          return '';
         }
-        return value + " " + unit;
       },
       onSort: function(sortBy, ascending) {
         var reFetch;
-        this.sortModal.hide();
+        $ionicLoading.hide();
         reFetch = (function(_this) {
           return function() {
             _this.page = 0;
@@ -143,10 +143,23 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         }
       }
     };
-    return $scope.$on('$ionicView.beforeEnter', function() {
+    onDeviceBack = function() {
+      if ($('.loading-container').hasClass('visible')) {
+        return $ionicLoading.hide();
+      } else {
+        return App.goBack(-1);
+      }
+    };
+    $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['categories', 'sub-categories'], App.previousState)) {
         return $scope.view.reset();
       }
+    });
+    $scope.$on('$ionicView.enter', function() {
+      return $ionicPlatform.onHardwareBackButton(onDeviceBack);
+    });
+    return $scope.$on('$ionicView.leave', function() {
+      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
     });
   }
 ]).config([

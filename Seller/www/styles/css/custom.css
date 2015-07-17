@@ -43,7 +43,7 @@ h6 {
   font-weight: 600;
 }
 .bar-light {
-  box-shadow: 1px -1px 18px #c3c3c3;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
 .has-header {
   background: #fff!important;
