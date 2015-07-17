@@ -67,6 +67,16 @@ angular.module('LocalHyper.googleMaps', []).factory('GoogleMaps', [
       });
       return address;
     };
+    GoogleMaps.fullAddress = function(address) {
+      var string;
+      string = '';
+      _.each(address, function(val, key) {
+        if (key !== 'full') {
+          return string += key === 'postal_code' ? "" + val : val + ", ";
+        }
+      });
+      return string;
+    };
     return GoogleMaps;
   }
 ]);

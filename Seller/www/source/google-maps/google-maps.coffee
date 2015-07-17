@@ -60,5 +60,12 @@ angular.module 'LocalHyper.googleMaps', []
 					
 		address
 
+	GoogleMaps.fullAddress = (address)->
+		string = ''
+		_.each address, (val, key)->
+			if key isnt 'full'
+				string += if key is 'postal_code' then "#{val}" else "#{val}, "
+		string
+
 	GoogleMaps
 ]

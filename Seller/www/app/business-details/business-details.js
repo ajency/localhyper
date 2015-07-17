@@ -5,7 +5,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
       name: 'Deepak',
       phone: '9765436351',
       confirmedAddress: '',
-      deliveryRadius: 2,
+      deliveryRadius: 10,
       terms: false,
       location: {
         modal: null,
@@ -130,6 +130,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
           return CDialog.confirm('Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']).then((function(_this) {
             return function(btnIndex) {
               if (btnIndex === 1) {
+                _this.location.address.full = GoogleMaps.fullAddress(_this.location.address);
                 _this.confirmedAddress = _this.location.address.full;
                 return _this.location.modal.hide();
               }
