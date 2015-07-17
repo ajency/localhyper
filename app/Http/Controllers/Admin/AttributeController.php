@@ -100,6 +100,11 @@ class AttributeController extends Controller
                            ->setKeywords('excel php office phpexcel lakers')
                            ->setCategory('programming');
         
+        /***
+        *
+        * SHEET 1 ATTRIBUTE 
+        *
+        */
         $attributeSheet = $excel->getSheet(0);
         $attributeSheet->setTitle('Attributes');
         $attributes = $this->getCategoryAttributes($catId);
@@ -134,14 +139,19 @@ class AttributeController extends Controller
         
         
         
-        //*** SHEET 2 ATTRIUTEVALUES
+        /***
+        *
+        * SHEET 2 ATTRIUTEVALUES 
+        *
+        */
+        
         $categoryData = [
           'categoryId' => $catId,
           'filterableAttributes' => true,
           'secondaryAttributes' => true,
           ];
         $attributeValueData = $this->getCategoryAttributeValues($categoryData);//dd($attributeValueData);
-        $headers = $data = $attributeValues= $headerFlag = [];
+        $headers = $data = $attributeValues= $headerFlag = $attributeValueIndexHeader= [];
 
         foreach($attributeValueData['result'] as $attributeValue)
         {
@@ -150,6 +160,10 @@ class AttributeController extends Controller
             {   
                 $headers[]=$attributeValue['attributeName']."(".$attributeId.")";
                 $headers[]=$attributeValue['attributeName'].' Id';
+ 
+                $attributeValueIndexHeader[]=$attributeValue['attributeName'];
+                $attributeValueIndexHeader[]=$attributeValue['attributeName'].' Id';    
+                    
                 $headerFlag[$attributeId]=$attributeId;
             }
 
@@ -159,7 +173,6 @@ class AttributeController extends Controller
         $attributeValueSheet = new \PHPExcel_Worksheet($excel, 'AttributeValues');
         $excel->addSheet($attributeValueSheet, 0);
         $attributeValueSheet->setTitle('AttributeValues');
- 
  
         $attributeValueSheet->fromArray($headers, ' ', 'A1');
  
@@ -187,12 +200,19 @@ class AttributeController extends Controller
         $attributeValueSheet->getStyle($header)->applyFromArray($style);
         $attributeValueSheet->protectCells($header, 'PHP');
         
-        //*** SHEET 3 BRANDS
+        
+        /***
+        *
+        * SHEET 3 BRANDS 
+        *
+        */
+        $brandIndexData =[];
         $brands = $this->getCategoryBrands($catId);
         foreach($brands as $key=> $brand)
         {
             $brand["image"] = $brand["image"]["src"];
             $brands[$key] = $brand;
+            $brandIndexData[] = ['name'=>$brand["name"],'id'=>$brand["id"]]; 
             
         }
 
@@ -224,6 +244,53 @@ class AttributeController extends Controller
             );
         $brandSheet->getStyle($header)->applyFromArray($style);
         $brandSheet->protectCells($header, 'PHP');
+        
+        /***
+        *
+        * SHEET 4 INDEX (Brands,Attribute values)
+        *
+        */
+        
+        $indexSheet = new \PHPExcel_Worksheet($excel, 'Index');
+        $excel->addSheet($indexSheet, 0);
+        $indexSheet->setTitle('Index');
+ 
+        $headers = [];
+        $headers []= 'Config' ;
+        $headers []= 'Brand' ;
+        $headers []= 'Brand id' ;
+        $headers = array_merge($headers,$attributeValueIndexHeader);   //merge brand and attribute headers
+        
+        $indexSheet->fromArray($headers, ' ', 'A1');
+        $indexSheet->fromArray([$catId], ' ', 'A2');
+        $indexSheet->getColumnDimension('A')->setVisible(false);
+        $indexSheet->getColumnDimension('C')->setVisible(false);
+        $indexSheet->fromArray($brandIndexData, ' ','B2');
+        
+        $column = 'D';
+        foreach($attributeValues as $attributeValue)
+        {
+            $indexSheet->fromArray($attributeValue, ' ', $column.'2');
+            
+            //hide column
+            $hidecolumn = $this->getNextCell($column,'1');
+            $indexSheet->getColumnDimension($hidecolumn)->setVisible(false);
+            
+            $column = $this->getNextCell($column,'2');
+            
+    
+        }
+ 
+        $lastColumn = $indexSheet->getHighestColumn();
+        $header = 'a1:'.$lastColumn.'1';
+        $indexSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
+        $style = array(
+            'font' => array('bold' => true,),
+            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
+            );
+        $indexSheet->getStyle($header)->applyFromArray($style);
+        $indexSheet->protectCells($header, 'PHP');
+        
         
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="'.$categoryName.'-export.xls"');
