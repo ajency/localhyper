@@ -96,13 +96,13 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       });
       data = {
         phone: user.phone,
+        displayName: user.name,
         businessName: user.businessName,
         addressGeoPoint: addressGeoPoint,
         address: user.address,
         city: user.address.city,
         area: user.address.city,
         deliveryRadius: parseInt(user.deliveryRadius),
-        displayName: user.name,
         supportedCategories: supportedCategories,
         supportedBrands: supportedBrands
       };
