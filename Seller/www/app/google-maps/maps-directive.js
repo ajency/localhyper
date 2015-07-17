@@ -17,7 +17,7 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
         initialize = function() {
           var map, mapOptions;
           mapOptions = {
-            center: new google.maps.LatLng(20.593684, 78.962880),
+            center: new google.maps.LatLng(GEO_DEFAULT.lat, GEO_DEFAULT.lng),
             zoom: 5,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             zoomControl: false,
@@ -25,7 +25,7 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
             streetViewControl: false
           };
           map = new google.maps.Map(el[0], mapOptions);
-          google.maps.event.addListenerOnce(map, 'load', function() {
+          google.maps.event.addListenerOnce(map, 'idle', function() {
             return hideAnchorTags(map);
           });
           return scope.onCreate({

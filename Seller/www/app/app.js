@@ -2,7 +2,6 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
   '$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps', function($rootScope, App, Push, $timeout, GoogleMaps) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
-    GoogleMaps.loadScript();
     App.notification = {
       icon: false,
       badge: false,

@@ -45,9 +45,6 @@ h6 {
 .bar-light {
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
-.has-header {
-  background: #fff!important;
-}
 .bar-assertive {
   background: #f35a59 !important;
 }
@@ -584,20 +581,18 @@ sm {
 /************************************/
 /* Forms  */
 /************************************/
-.form-field .input-label {
-  color: #c5c5c5;
-  font-size: 11px;
-  text-transform: uppercase;
+.form-field .input-label i.icon {
+  font-size: 24px;
+  margin-right: 5px;
+  padding: 0;
+  line-height: 0;
+  color: #989898;
+  width: 23px;
+  text-align: center;
+  vertical-align: bottom;
 }
 .form-field input {
-  font-weight: 500;
-  font-size: 18px;
-  height: 26px;
-}
-.form-field .item {
-  border-color: #F4F4F4;
-  background-color: #fff;
-  color: #000;
+  font-size: 16px;
 }
 /************************************/
 /* Radio  */
@@ -608,8 +603,90 @@ sm {
 /************************************/
 /* by Ren - Enter Details  */
 /************************************/
+.p-b-0 {
+  padding-bottom: 0;
+}
+.business-details .card.m-red {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+.business-details .card .platop.row {
+  box-shadow: 0 -2px 1px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+.business-details .card .view-rad {
+  text-align: center;
+  padding-right: 20px;
+  margin-right: 20px;
+  border-right: 1px solid #ddd;
+  float: left;
+  width: 77px;
+}
+.business-details .card .view-rad b {
+  font-weight: bolder;
+}
+.business-details .card .view-rad i {
+  font-size: 36px;
+  display: block;
+  color: #909090;
+}
+.business-details .card.full-btn button.button-block {
+  margin: 0;
+}
+.the-loation {
+  background-image: url(../../img/mapbg.jpg);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  min-height: 58px;
+}
+.the-loation .ico-loc.icon {
+  font-size: 22px;
+  color: #f35a59;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 35px;
+  height: 36px;
+  line-height: 35px;
+  text-align: center;
+  border: 1px solid #f35a59;
+  border-radius: 50%;
+}
+.the-loation h4 {
+  padding-left: 52px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.the-loation p {
+  padding-right: 5px;
+  padding-left: 52px;
+  text-align: left;
+  margin-top: 8px;
+  font-size: 16px;
+  line-height: 22px;
+}
+.the-loation .button {
+  bottom: 10px;
+  right: 10px;
+  line-height: 35px;
+  min-height: 0;
+  position: absolute;
+}
+.the-loation .button .icon {
+  margin-right: 5px;
+}
+.the-loation .button .icon:before {
+  font-size: 16px;
+  line-height: 32px;
+}
 .aj-small-map {
   height: 157px;
+}
+.title-with-icon {
+  margin-top: 8px;
+  padding: 5px 10px;
+  margin-bottom: -5px;
 }
 .title-with-icon i {
   margin-right: 5px;

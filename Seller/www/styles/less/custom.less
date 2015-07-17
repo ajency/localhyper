@@ -29,9 +29,9 @@ h1, h2, h3, h4, h5, h6{
 .bar-light{
 	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
-.has-header{
-	background: #fff!important;
-}
+// .has-header{
+// 	background: #fff!important;
+// }
 .bar-assertive{
 	background:@brand-primary !important;
 }
@@ -554,20 +554,31 @@ sm{
 /************************************/
 .form-field{
 	.input-label {
-		 color: #c5c5c5;
-		  font-size: 11px;
-		  text-transform: uppercase;
+		// color: #c5c5c5;
+		// font-size: 11px;
+		// text-transform: uppercase;
+  		// padding-top: 0;
+  		i.icon {
+  			font-size: 24px;
+  			margin-right: 5px;
+  			padding: 0;
+  			line-height: 0;
+  			color: #989898;
+  			width: 23px;
+  			text-align: center;
+  			vertical-align: bottom;
+  		}
 	}
 	input{
-		  font-weight: 500;
-          font-size: 18px;
-            height: 26px;
+		// font-weight: 500;
+		font-size: 16px;
+		// height: 26px;
 	}
 	.item {
-		  border-color: #F4F4F4;
-		  background-color: #fff;
-		  color: #000;
-		}
+		// border-color: #F4F4F4;
+		// background-color: #fff;
+		// color: #000;
+	}
 }
 
 /************************************/
@@ -582,10 +593,98 @@ sm{
 /************************************/
 /* by Ren - Enter Details  */
 /************************************/
+.p-b-0 {padding-bottom: 0;}
+.business-details {
+	.card.m-red {
+		margin-top: 0;
+		margin-bottom: 5px;
+	}
+	.card {
+		.platop.row {
+			box-shadow: 0 -2px 1px rgba(0,0,0,0.1);
+			position: relative;
+		}
+		.view-rad {
+			text-align: center;
+			padding-right: 20px;
+			margin-right: 20px;
+			border-right: 1px solid #ddd;
+			float: left;
+			width: 77px;
+			b {font-weight: bolder;}
+			small {
+				// display: block;
+			}
+			i {
+				font-size: 36px;
+				display: block;
+				color: #909090;
+			}
+		}
+	}
+	.card.full-btn {
+		button.button-block {
+			margin: 0;
+		}
+	}
+}
+.the-loation {
+	background-image: url(../../img/mapbg.jpg);
+	background-size: cover;
+	background-position: center;
+	position: relative;
+	min-height: 58px;
+	.ico-loc.icon {
+		font-size: 22px;
+		color: @brand-primary;
+		position: absolute;
+		left: 10px;
+		top: 10px;
+		width: 35px;
+		height: 36px;
+		line-height: 35px;
+		text-align: center;
+		border: 1px solid @brand-primary;
+		border-radius: 50%;
+	}
+	h4 {
+		padding-left: 52px;
+		text-align: left;
+		margin-bottom: 5px;
+	}
+	p {
+		padding-right: 5px;
+		padding-left: 52px;
+		text-align: left;
+		margin-top: 8px;
+		font-size: 16px;
+		line-height: 22px;
+	}
+	.button {
+		bottom: 10px;
+		right: 10px;
+		line-height: 35px;
+		min-height: 0;
+		position: absolute;
+		.icon {
+			margin-right: 5px;
+			&:before {
+				font-size: 16px;
+				line-height: 32px;
+			}
+		}
+	}
+}
+
 .aj-small-map {
 	height: 157px;
 }
 .title-with-icon {
+	margin-top: 8px;
+	padding: 5px 10px;
+	// padding-bottom: 8px;
+	// border-bottom: 1px solid #ddd;
+	margin-bottom: -5px;
 	i {
 		margin-right: 5px;
 		margin-left: 10px;
@@ -734,3 +833,4 @@ h5.with-sep {
 		color: #000;
 	}
 }
+

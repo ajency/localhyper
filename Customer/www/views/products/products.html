@@ -21,23 +21,32 @@
 
 		<ion-list>
 			<div
-				class="col col-50 border-card border-card2"
+				class="col col-50 border-card border-card2 sing-pro"
 				collection-repeat="product in view.products"
 				item-width="50%"
 				ng-click="App.navigate('single-product', {productID: product.objectId})">
 
-				<h6 class="subdued">
-					<span class="text-danger">In</span> {{view.getPrimaryAttrs(product.primaryAttributes)}}
-				</h6>
-				<h5 class="text-left title">{{product.name}}</h5>
-
 				<img ng-src="{{product.images[0].src}}" class=" center-block aj-img" >
+
 				<div class="row">
+					<div class="col">
+						<h5 class="text-left title">{{product.name}}</h5>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<h6 class="subdued">
+							<span class="text-danger">In</span> {{view.getPrimaryAttrs(product.primaryAttributes)}}
+						</h6>
+					</div>
+				</div>
+
+				<div class="row open-links">
                     <div class="col col-67">
                 		<h4 class="margin-none pull-left strike" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
                 	</div>
                 	<div class="col">
-                		<h3 class="pull-right subdued"> <i class="ion-log-out"></i></h3>
+                		<h4 class="margin-none pull-right subdued"> <i class="ion-log-out"></i></h4>
                 	</div>
 				</div>
 			</div>
