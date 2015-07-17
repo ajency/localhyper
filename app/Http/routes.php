@@ -39,5 +39,6 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get( 'attribute/exportattributevalues', 'Admin\AttributeController@exportAttributeValues' );
     
      Route::get( 'product/exportproducts/{categoryid}', 'Admin\ProductController@exportProducts' );
+    Route::post( 'product/importproducts', 'Admin\ProductController@importProduct' );
 
 });    
