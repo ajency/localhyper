@@ -499,7 +499,7 @@
     requestId = request.params.requestId;
     sellerId = request.params.sellerId;
     priceValue = parseInt(request.params.priceValue);
-    deliveryTime = parseInt(request.params.deliveryTime);
+    deliveryTime = request.params.deliveryTime;
     comments = request.params.comments;
     status = request.params.status;
     Price = Parse.Object.extend("Price");
