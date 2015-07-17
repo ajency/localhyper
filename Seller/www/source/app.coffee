@@ -40,8 +40,6 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 			bool = !_.contains(hideForStates, App.currentState)
 			App.menuEnabled.left  = bool
 			App.notification.icon = bool
-
-			App.logo.small = App.currentState isnt 'requests'
 ]
 
 

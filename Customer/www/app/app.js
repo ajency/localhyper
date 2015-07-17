@@ -3,7 +3,19 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
     App.notification = {
-      icon: false
+      icon: false,
+      badge: false,
+      count: 0,
+      increment: function() {
+        this.badge = true;
+        return this.count = this.count + 1;
+      },
+      decrement: function() {
+        this.count = this.count - 1;
+        if (this.count === 0) {
+          return this.badge = false;
+        }
+      }
     };
     App.logo = {
       small: true
@@ -15,8 +27,7 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual'];
       bool = !_.contains(hideForStates, App.currentState);
       App.menuEnabled.left = bool;
-      App.notification.icon = bool;
-      return App.logo.small = App.currentState !== 'categories';
+      return App.notification.icon = bool;
     });
   }
 ]).config([
