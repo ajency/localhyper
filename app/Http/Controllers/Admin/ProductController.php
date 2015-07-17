@@ -324,23 +324,67 @@ class ProductController extends Controller
     }
 
     public function getCategoryProducts($categoryId, $page, $displayLimit){
+
+        $productQuery = new ParseQuery("ProductItem");
+        
+        $innerCategoryQuery = new ParseQuery("Category");
+        $innerCategoryQuery->equalTo("objectId",$categoryId);
+
+        # query to get products matching the child category
+        $productQuery->matchesQuery("category", $innerCategoryQuery);
+
+        $productQuery->includeKey("brand");
+        $productQuery->includeKey("primaryAttributes");
+        $productQuery->includeKey("primaryAttributes.attribute");
       
-      $categoryData = array (
-          'categoryId' => $categoryId,
-          'selectedFilters' => "all",
-          'sortBy' => 'popularity',
-          'ascending' => false,
-          'page' => $page,
-          'displayLimit' => $displayLimit,
-        );
 
-      $functionName = "getProducts";
+        # pagination
+        $productQuery->limit($displayLimit);
+        $productQuery->skip($page * $displayLimit);
 
-      $resultjson = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
-
-      $response =  json_encode($resultjson);
-      $response = json_decode($response,true);    
+        $results = $productQuery->find();   
       
-      return $response['result']['products'];
-    }    
+        return $results;
+    } 
+    
+
+   public static function parseProductImport($data){
+
+        $data = array (
+          'products' => 
+          array (
+            0 => 
+            array (
+              'category' => 'bOEz9mBh5Q',
+              'name' => 'Haier HRD-1905BR Direct-cool Single-door Refrigerator',
+              'model_number' => 'B00NKYN6NQ',
+              'description' => '',
+              'images' => 
+              array (
+                0 => 
+                array (
+                  'src' => 'http://ecx.images-amazon.com/images/I/31hp6N9QLrL.jpg',
+                  ),
+                ),
+              'attrs' => 
+              array (
+                0 => 'VYDUTNZDiS',
+                1 => 'n8OSsrbl8I',
+                2 => '6MC1FBqSHk',
+                3 => 'xh6ETgpp7g',
+                ),
+              'mrp' => '9900',
+              'brand' => 'dYRPINT23g',
+              'popularity' => 2,
+              'group' => 'fridge',
+              ),
+            ),
+          );
+
+        $functionName = "productImport";
+
+        $result = AttributeController::makeParseCurlRequest($functionName,$data,"jobs"); 
+
+        return $result;
+    }
 }
