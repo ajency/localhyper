@@ -190,7 +190,7 @@ class ProductController extends Controller
         $products = $headers = [];
 
         $headers []= 'Config' ;
-        $headers []= 'ProductID' ;
+        $headers []= 'ProductID' ; 
         $headers []= 'ProductName' ;
         $headers []= 'ModelNumber' ;
         $headers []= 'Image' ; 
@@ -240,5 +240,86 @@ class ProductController extends Controller
         header ('Pragma: public'); // HTTP/1.0
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
         $objWriter->save('php://output'); 
+    }
+    
+    public function importProduct(Request $request)
+    {
+        $data = [];
+        $product_file = $request->file('product_file')->getRealPath();
+        if ($request->hasFile('product_file'))
+        {
+            $inputFileType = \PHPExcel_IOFactory::identify($product_file);
+            $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+            $objPHPExcel = $objReader->load($product_file);
+            $sheetNames = $objPHPExcel->getSheetNames();
+            //  Get worksheet dimensions
+          
+                $sheet = $objPHPExcel->getSheet(0);
+                $highestRow = $sheet->getHighestRow(); 
+                $highestColumn = $sheet->getHighestColumn();
+
+                $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true); 
+                $headingsArray = $headingsArray[1];
+
+                $r = -1;
+                $namedDataArray = $config =array();
+                for ($row = 2; $row <= $highestRow; ++$row) {
+                    $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
+
+                        ++$r;
+                        foreach($headingsArray as $columnKey => $columnHeading) {
+
+                             if($columnHeading!='Config')
+                                $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+                            else
+                                $config[]=$dataRow[$row][$columnKey];
+
+                         }
+                }
+            
+            /****
+            *  (ProductID ProductName ModelNumber Image Brand BrandID Group) = 7
+            *
+            // Attribute values not included
+            ***/
+            $countFixedData = 7;
+            $dataCount = count($namedDataArray[0]);
+            $attributeIdKeys =[];
+            
+            $i=$countFixedData;
+            while($i<$dataCount)
+            {
+                $attributeIdKeys[] =($i + 1);
+                $i= $i+2;
+            }
+           
+            $products = [];
+            foreach($namedDataArray as $data)
+            {
+                $indexedData = array_values($data);
+                $attributeIds = [];
+                foreach($attributeIdKeys as $key)
+                {
+                    $attributeIds[] = $indexedData[$key];
+                }
+        
+                $products['category'] = $config[0];
+                $products['id'] = $data['ProductID'];
+                $products['name'] = $data['ProductName'];
+                $products['model_number'] = $data['ModelNumber'];
+                $products['description'] = '';
+                $products['images'] = ['src'=>$data['Image']];
+                $products['attrs'] = $attributeIds;
+                $products['mrp'] = '';
+                $products['brand'] = $data['BrandID'];
+                $products['popularity'] = '';
+                $products['group'] = $data['Group'];
+            }
+            
+            
+        }
+        return redirect("/admin/attribute/bulkimport");
+  
+        
     }
 }
