@@ -505,11 +505,39 @@
     queryDate.setTime(time24HoursAgo);
     queryRequest.greaterThanOrEqualTo("createdAt", queryDate);
     queryRequest.descending("createdAt");
-    return queryRequest.first().then(function(mostRecentRequest) {
-      if (_.isEmpty(mostRecentRequest)) {
-        return response.success("No recent non expired request found");
+    return queryRequest.find().then(function(allNonExpiredRequests) {
+      var innerRequestQuery, mostRecentRequest, queryOffer, recentRequestStatus, result;
+      if (allNonExpiredRequests.length === 0) {
+        result = {
+          "recentRequest": [],
+          "offers": []
+        };
+        return response.success(result);
       } else {
-        return response.success(mostRecentRequest);
+        mostRecentRequest = allNonExpiredRequests[0];
+        recentRequestStatus = mostRecentRequest.get("status");
+        if (recentRequestStatus === "open") {
+          queryOffer = new Parse.Query("Offer");
+          innerRequestQuery = new Parse.Query("Request");
+          innerRequestQuery.equalTo("objectId", mostRecentRequest.id);
+          queryOffer.matchesQuery("request", innerRequestQuery);
+          queryOffer.equalTo("status", "open");
+          return queryOffer.find().then(function(offers) {
+            result = {
+              "recentRequest": mostRecentRequest,
+              "offers": offers
+            };
+            return response.success(result);
+          }, function(error) {
+            return response.error(error);
+          });
+        } else {
+          result = {
+            "recentRequest": mostRecentRequest,
+            "offers": []
+          };
+          return response.success(result);
+        }
       }
     }, function(error) {
       return response.error(error);

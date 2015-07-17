@@ -31,12 +31,49 @@ Parse.Cloud.define 'getNewOffers', (request, response) ->
     queryRequest.descending("createdAt")
 
     
-    queryRequest.first()
-    .then (mostRecentRequest) ->
-        if _.isEmpty(mostRecentRequest) 
-            response.success "No recent non expired request found"
-        else
-            response.success mostRecentRequest
+    queryRequest.find()
+    .then (allNonExpiredRequests) ->
+
+        if allNonExpiredRequests.length is 0
+            result = 
+                "recentRequest" : []
+                "offers": []
+
+            response.success result
+
+        else 
+            mostRecentRequest = allNonExpiredRequests[0]
+
+            recentRequestStatus = mostRecentRequest.get "status"
+
+            if recentRequestStatus is "open"
+                # get open offers for the request
+
+                queryOffer = new Parse.Query("Offer")
+
+                innerRequestQuery = new Parse.Query("Request")
+                innerRequestQuery.equalTo("objectId",mostRecentRequest.id)
+                queryOffer.matchesQuery("request", innerRequestQuery)
+
+                queryOffer.equalTo("status","open")
+
+                queryOffer.find()
+                .then (offers) ->
+                    result = 
+                        "recentRequest" : mostRecentRequest
+                        "offers": offers
+
+                    response.success result 
+
+                , (error) ->
+                    response.error error
+
+            else
+                result = 
+                    "recentRequest" : mostRecentRequest
+                    "offers": []
+
+                response.success result 
     , (error) ->
         response.error error 
 
