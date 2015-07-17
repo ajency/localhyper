@@ -1,8 +1,10 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'Push'
-	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, Push)->
+.controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope'
+	, '$ionicModal', 'Push', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate'
+	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, Push, User, CToast, OffersAPI
+	, CSpinner, $ionicScrollDelegate)->
 
 		$scope.view = 
 			display: 'loader'
@@ -16,6 +18,44 @@ angular.module 'LocalHyper.requestsOffers'
 				display: 'noError'
 				errorType: ''
 				requestId: null
+				offerPrice: ''
+				reply: 
+					button: true
+					text: ''
+				deliveryTime:
+					display: false
+					value: 1
+					unit: 'hr'
+					unitText: 'Hour'
+					setDuration : ->
+						if !_.isNull @value
+							switch @unit
+								when 'hr'
+									@unitText = if @value is 1 then 'Hour' else 'Hours'
+								when 'day'
+									@unitText = if @value is 1 then 'Day' else 'Days'
+
+					done : ->
+						if _.isNull(@value)
+							@value = 1
+							@unit = 'hr'
+							@unitText = 'Hour'
+						@display = false
+						App.resize()
+
+				resetModal : ->
+					@display = 'noError'
+					@price = null
+					@offerPrice = ''
+					@deliveryTime.display = false
+					@deliveryTime.value = 1
+					@deliveryTime.unit = 'hr'
+					@deliveryTime.unitText = 'Hour'
+					@reply.button = true
+					@reply.text = ''
+					$ionicScrollDelegate
+						.$getByHandle 'request-details'
+						.scrollTop()
 
 				showModal : (requestId)->
 					@requestId = requestId
@@ -33,6 +73,43 @@ angular.module 'LocalHyper.requestsOffers'
 					, (type)=>
 						@display = 'error'
 						@errorType = type
+
+				makeOffer : ->
+					user = User.getCurrent()
+					priceValue = ''
+					switch @price
+						when 'localPrice'
+							priceValue = '9000'
+						when 'onlinePrice'
+							priceValue = '9000'
+						when 'yourPrice'
+							priceValue = @offerPrice
+
+					params = 
+						"sellerId": user.id
+						"requestId": @data.id
+						"priceValue": priceValue
+						"deliveryTime":
+							"value": @deliveryTime.value
+							"unit": @deliveryTime.unit
+						"comments": @reply.text
+						"status": "open"
+
+					if _.isNull(@price)
+						CToast.show 'Please select price'
+					else if _.isNull(priceValue) or priceValue is ''
+						CToast.show 'Please enter your offer price'
+					else
+						CSpinner.show '', 'Please wait...'
+						OffersAPI.makeOffer params
+						.then (data)=>
+							@modal.hide()
+							CToast.show 'Your offer has been made'
+						, (type)=>
+							CToast.show 'Failed to make offer, please try again'
+						.finally ->
+							CSpinner.hide()
+
 
 			init : ->
 				Push.register()
@@ -78,8 +155,8 @@ angular.module 'LocalHyper.requestsOffers'
 				@getRequests()
 
 			showRequestDetails : (request)->
-				@requestDetails.display = 'noError'
 				@requestDetails.data = request
+				@requestDetails.resetModal()
 				@requestDetails.modal.show()
 				@markNotificationAsSeen request.id
 
@@ -117,7 +194,7 @@ angular.module 'LocalHyper.requestsOffers'
 	minutes = parseInt duration.asMinutes().toFixed(0)
 	hours = parseInt duration.asHours().toFixed(0)
 
-	if minutes is 0
+	if minutes <= 5
 		timeStr = 'Just now'
 	else if minutes < 60
 		min = if minutes is 1 then 'min' else 'mins'

@@ -143,12 +143,14 @@ angular.module 'LocalHyper.products'
 				@getSingleProductDetails()
 
 			getPrimaryAttrs : ->
-				attrs = @product.primaryAttributes[0]
-				value = s.humanize attrs.value
-				unit = ''
-				if _.has attrs.attribute, 'unit'
-					unit = s.humanize attrs.attribute.unit
-				"#{value} #{unit}"
+				if !_.isUndefined @product.primaryAttributes
+					attrs = @product.primaryAttributes[0]
+					value = s.humanize attrs.value
+					unit = ''
+					if _.has attrs.attribute, 'unit'
+						unit = s.humanize attrs.attribute.unit
+					"#{value} #{unit}"
+				else ''
 
 			onEditLocation : ->
 				@location.modal.show()

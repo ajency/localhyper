@@ -3,26 +3,42 @@
 	<ion-content>
 
 	<div class="card">
-		<label class="item item-input">
-		<input type="text" placeholder="Product Name" ng-model="suggest.productName" >
-		</label>
-		<label class="item item-input">
-		<input type="text" placeholder="Category" ng-model="suggest.category">
-		</label>
-		<label class="item item-input">
-		<input type="text" placeholder="Brand" ng-model="suggest.brand" >
-		</label>
-		<label class="item item-input">
-		<input type="text" placeholder="product Description" ng-model="suggest.productDescription">
-		</label>
-		<label class="item item-input">
-		<textarea placeholder="Your comments" ng-model="suggest.yourComments" ></textarea>
+		<label class="item item-input item-stacked-label">
+			<span class="input-label"><i class="icon ion-cube"></i> Product</span>
+			<input type="text" placeholder="Which Product?" ng-model="suggest.productName" >
 		</label>
 	</div>
-	<div class="list">
-		<button class="button button-block bar-stable" ng-Click="suggest.onSuggest();App.navigate('categories')">
-			Suggest this product
-		</button>
+	<div class="card">
+		<label class="item item-input item-stacked-label">
+		<span class="input-label"><i class="icon ion-social-buffer"></i> Category</span>
+		<input type="text" placeholder="Product Category" ng-model="suggest.category">
+		</label>
+
+		<label class="item item-input item-stacked-label">
+		<span class="input-label"><i class="icon ion-flash"></i> Brand</span>
+		<input type="text" placeholder="Brand Name" ng-model="suggest.brand" >
+		</label>
+	</div>
+	<div class="card">
+		<label class="item item-input item-stacked-label">
+		<span class="input-label"><i class="icon ion-edit"></i> Description</span>
+		<textarea type="text" rows="3" placeholder="A few lines explaining the product" ng-model="suggest.productDescription"></textarea>
+		</label>
+	</div>
+	<div class="card">
+		<label class="item item-input item-stacked-label">
+		<span class="input-label"><i class="icon ion-android-textsms"></i> Comments</span>
+		<textarea placeholder="Your thoughts" rows="3" ng-model="suggest.yourComments" ></textarea>
+		</label>
+	</div>
+	<div class="list suggest-btn">
+		<div class="row">
+			<div class="col">
+				<button class="button button-block button-assertive" ng-Click="suggest.onSuggest();App.navigate('categories')">
+					Suggest this product
+				</button>
+			</div>
+		</div>
 	</div>
 	</ion-content>
 
