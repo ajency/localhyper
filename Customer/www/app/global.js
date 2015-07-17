@@ -2,7 +2,7 @@ var APP_ID, APP_NAME, GEO_DEFAULT, GOOGLE_MAPS_API_KEY, JS_KEY, PACKAGE_NAME, RE
 
 APP_NAME = 'ShopOye Customer';
 
-PACKAGE_NAME = 'com.local.hyper.alpha';
+PACKAGE_NAME = 'com.localhyper.customer';
 
 APP_ID = '837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7';
 
