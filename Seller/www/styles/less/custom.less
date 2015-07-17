@@ -633,7 +633,8 @@ sm{
 	background-size: cover;
 	background-position: center;
 	position: relative;
-	.icon {
+	min-height: 58px;
+	.ico-loc.icon {
 		font-size: 22px;
 		color: @brand-primary;
 		position: absolute;
@@ -665,6 +666,13 @@ sm{
 		line-height: 35px;
 		min-height: 0;
 		position: absolute;
+		.icon {
+			margin-right: 5px;
+			&:before {
+				font-size: 16px;
+				line-height: 32px;
+			}
+		}
 	}
 }
 

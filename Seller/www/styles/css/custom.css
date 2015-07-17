@@ -638,8 +638,9 @@ sm {
   background-size: cover;
   background-position: center;
   position: relative;
+  min-height: 58px;
 }
-.the-loation .icon {
+.the-loation .ico-loc.icon {
   font-size: 22px;
   color: #f35a59;
   position: absolute;
@@ -671,6 +672,13 @@ sm {
   line-height: 35px;
   min-height: 0;
   position: absolute;
+}
+.the-loation .button .icon {
+  margin-right: 5px;
+}
+.the-loation .button .icon:before {
+  font-size: 16px;
+  line-height: 32px;
 }
 .aj-small-map {
   height: 157px;
