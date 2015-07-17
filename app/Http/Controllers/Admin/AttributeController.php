@@ -79,7 +79,7 @@ class AttributeController extends Controller
         //
     }
     
-    public function bulkImport()
+    public function categoryConfiguration()
     {
         $parentCategories= CategoryController::getParentCategories();  
         return view('admin.attributeimport')->with('parentCategories', $parentCategories);
@@ -118,6 +118,7 @@ class AttributeController extends Controller
         $attributeSheet->fromArray([$catId], ' ', 'A2');
 
         $attributeSheet->getColumnDimension('A')->setVisible(false);
+        $attributeSheet->getColumnDimension('B')->setVisible(false);
  
         $attributeSheet->fromArray($attributes['attributes'], ' ','B2');
  
@@ -211,7 +212,7 @@ class AttributeController extends Controller
         $brandSheet->fromArray($headers, ' ', 'A1');
         $brandSheet->fromArray([$catId], ' ', 'A2');
         $brandSheet->getColumnDimension('A')->setVisible(false);
-        
+        $brandSheet->getColumnDimension('B')->setVisible(false);
         $brandSheet->fromArray($brands, ' ','B2');
  
         $lastColumn = $brandSheet->getHighestColumn();

@@ -1,10 +1,63 @@
-$.ajaxSetup({
+/*$.ajaxSetup({
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
+});*/
+var categorieData;
+
+$( document ).ready(function() {
+   $.ajax({
+        async :true, 
+        url: "https://api.parse.com/1/functions/getCategories",
+        type: "POST",
+        headers: {
+                    "x-parse-application-id": "837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7",
+                    "x-parse-rest-api-key": "zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy"
+                  },
+        data: {
+            "sort_by": "popularity",
+        },
+        dataType: "JSON",
+        success: function (response) {
+          window.categorieData = response.result.data; 
+            
+          getDepartment();     
+ 
+        }
+    });
+    
+   
 });
 
+function getDepartment()
+{   var temp= window.categorieData;
+    var deparments = _.where(temp, {parent: null});
+
+    $.each(deparments, function( index, items ) {
+      str = '<option value="'+items.id+'">'+items.name+'</option>';    
+      $('#department').append(str);
+    });
+    
+}
+
 function getChildCategory(obj) {
+    var deparmentId =obj.value;  
+    var temp= window.categorieData;
+    var deparmentChildrens = _.where(temp, {id: deparmentId});
+    var categoryData = deparmentChildrens[0].children;
+    
+    //Reset caregories
+    $("select[name='category']").html('<option value="">Select Category</option>');
+    $("select[name='category']").select2('val', '');
+    $(".export_block").addClass('hidden');
+    
+    $.each(categoryData, function( index, items ) {
+      str = '<option value="'+items.id+'">'+items.name+'</option>';    
+      $("select[name='category']").append(str);
+    });
+    
+}
+/*function getChildCategory(obj) {
     var catId =obj.value;
     if(catId=='')
     {
@@ -24,7 +77,7 @@ function getChildCategory(obj) {
  
         }
     });
-}
+}*/
 
 $("select[name='category']").change(function(){
     $(".export_block").addClass('hidden');

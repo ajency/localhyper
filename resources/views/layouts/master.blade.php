@@ -69,10 +69,10 @@
 					<div class="iconset top-settings-dark "></div> 	
 				</a>
 				<ul class="dropdown-menu  pull-right" role="menu" aria-labelledby="user-options">
-                  <li><a href="user-profile.html"><i class="fa fa-user"></i> My Account</a>
+                  <li><a href="#"><i class="fa fa-user"></i> My Account</a>
                   </li>
                   <li class="divider"></li>                
-                  <li><a href="login.html"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Log Out</a></li>
+                  <li><a href="{{ url('/auth/logout') }}"><i class="fa fa-power-off"></i>&nbsp;&nbsp;Log Out</a></li>
                </ul>
 			</li> 
 			
@@ -103,16 +103,8 @@
    <!-- BEGIN SIDEBAR MENU -->	
 	<p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="fa fa-refresh"></i></a></span></p>
     <ul>	
-      <li class="start active "> <a href="index.html"> <i class="fa fa-sitemap"></i> <span class="title">Category Map</span> <span class="selected"></span></a> </li>
-	   
-	  <li class=""> <a href="javascript:;"> <i class="fa fa fa-adjust"></i> <span class="title">Themes</span> <span class="arrow "></span> </a>
-        <ul class="sub-menu">
-          <li > <a href="#">Coporate </a> </li>
-          <li > <a href="#">Simple</a> </li>
-          <li > <a href="#">Elegant</a> </li>
-        </ul>
-	  </li>    
-	   
+      <li class="start active "> <a href="{{ url('admin/attribute/categoryconfiguration') }}"> <i class="fa fa-sitemap"></i> <span class="title">Category Configuration</span> <span class="selected"></span></a> </li>
+
     </ul>
 		
 	<div class="clearfix"></div>
@@ -153,6 +145,9 @@
 <script src="{{ asset('plugins/jquery-numberAnimate/jquery.animateNumbers.js') }}" type="text/javascript"></script>
 <!-- END PAGE LEVEL PLUGINS --> 	
 
+<script src="{{ asset('bower_components/underscore/underscore-min.js' ) }}" type="text/javascript"></script>    
+    
+    
 <!-- BEGIN CORE TEMPLATE JS --> 
 <script src="{{ asset('js/core.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('js/chat.js') }}" type="text/javascript"></script> 

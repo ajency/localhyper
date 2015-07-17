@@ -15,13 +15,9 @@ class AdminController extends Controller
      * @return Response
      */
     public function index()
-    {
-        // $testObject = ParseObject::create("PHPTestObject");
-        // $testObject->set("foo", "bar");
-        // $testObject->save();        
-        return view('admin.home')
-                        ->with('x1', 123)
-                        ->with('x2', 'sdfsf');
+    {  
+      
+        return view('admin.home');
     }
 
     /**

@@ -2,7 +2,7 @@
 @section('content')
 <div class="content">
                         <div class="page-title m-l-5">
-                            <h3 class="inline"><span class="semi-bold">Category</span> Map</h3> <i class="fa fa-sitemap"></i>
+                            <h3 class="inline"><span class="semi-bold">Category</span> Configuration</h3> <i class="fa fa-sitemap"></i>
                         </div>
                         <div class="grid simple vertical purple">
 
@@ -13,9 +13,6 @@
                                             <label class="form-label">Department</label>
                                             <select id="department" name="department" class="select2-container select2 form-control select2-container-active" onchange="getChildCategory(this);" >
                                                 <option value="">Select Department</option>
-                                                 @foreach($parentCategories as $parentCategory)
-                                                    <option value="{{ $parentCategory['cat_id']}}">{{ $parentCategory['cat_name']}}</option>
-                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -36,7 +33,7 @@
                                 <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Export</span></h4>
 
                                     <a href="#" target="_blank" class="export_attributes"><button type="button" class="btn btn-default btn-cons btn-small"><i class="fa fa-download"></i> Download Sheet</button></a>
-                                </div>
+                                
 
                                 <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Import</span></h4>
                                 <form action="{{ url( 'admin/attribute/importmasterdata') }}"  method="POST" enctype="multipart/form-data" >          
@@ -52,7 +49,8 @@
                                         <button type="submit" class="btn btn-default "><i class="fa fa-upload"></i> Import</button>
                                     </div>
                                 </div>
-                                </form>         
+                                </form>
+                                </div>    
                             </div>
                         </div>
                     </div>
