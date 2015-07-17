@@ -234,26 +234,28 @@ class ProductController extends Controller
         }
  
         //dd($productsData);
-        $products = $this->getCategoryProducts($catId, 0, 20) ;dd($products);
+        $products = $this->getCategoryProducts($catId, 0, 20) ;//dd($products);
  
-        
+        $i=0;
         foreach($products as $key=> $product) 
         {
-            $productsData[$key]=$product['objectId']; 
-            $productsData[$key]=$product['name'];  
-            $productsData[$key]=$product['model_number'];  
-            $productsData[$key]=$product['images'][0]['src']; 
-            $productsData[$key]=$product['mrp']; 
-            $productsData[$key]=$product['brandName']; 
-            $productsData[$key]=$product['brandId']; 
-            $productsData[$key]=$product['group']; 
+            $productsData[$i][]=$product['objectId']; 
+            $productsData[$i][]=$product['name'];  
+            $productsData[$i][]=$product['model_number'];  
+            $productsData[$i][]=$product['images'][0]['src']; 
+            $productsData[$i][]=$product['mrp']; 
+            $productsData[$i][]=$product['brandName']; 
+            $productsData[$i][]=$product['brandId']; 
+            $productsData[$i][]=$product['group']; 
             
             foreach($product['attrs'] as $attribute)
             {
-                $productsData[$key] = $attribute['attributeValue'];
-                $productsData[$key] = $attribute['attributeValueId'];
+                $productsData[$i][] = $attribute['attributeValue'];
+                $productsData[$i][] = $attribute['attributeValueId'];
             }
+            $i++;
         }
+       
         $productSheet->fromArray($productsData, ' ', 'C2');
         $lastColumn = $productSheet->getHighestColumn(); 
         $header = 'a1:'.$lastColumn.'1';
