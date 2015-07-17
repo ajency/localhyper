@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.googleMaps'
 
 
-.factory 'GPS', ['$q', '$cordovaGeolocation', 'App', ($q,$cordovaGeolocation, App)->
+.factory 'GPS', ['$q', '$cordovaGeolocation', 'App', ($q, $cordovaGeolocation, App)->
 
 	GPS = {}
 

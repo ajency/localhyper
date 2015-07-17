@@ -1,29 +1,43 @@
 <ion-modal-view>
 
-	<ion-header-bar 
-		style="height:65px;"
-		no-tap-scroll="true">
-
+	<ion-header-bar style="height:55px;">
 		<div class="row row-fluid">
 			<div class="col col-67 sm-text"> 
-				<h5 class="text-left">Select your location</h5> 
+				<h5 class="text-left">Confirm your location</h5> 
 			</div>
 			<div class="col">
-				<h2 
-					ng-click="view.location.modal.hide()"  
-					class="text-right">
+				<h2 ng-click="view.location.modal.hide()" class="text-right">
 					<i class="ion ion-ios-close-outline"></i> 
 				</h2>
 			</div>
 		</div>
 	</ion-header-bar>
 
-	<ion-content>
+	<ion-content class="map-content">
+		<br>
+		<address style="height:60px;">
+			{{view.location.address.full}}
+		</address>
+
 		<google-map 
 			class="aj-big-map"
-			on-create="view.onMapCreated(map)"> 
+			on-create="view.location.onMapCreated(map)"> 
 		</google-map>
-	
+		
 	</ion-content>
-	
+
+	<ion-footer-bar class="bar bar-footer bar-custom-footer">
+		<button 
+			class="button button-dark btn-action" 
+			ng-click="view.onConfirmLocation()">
+			Confirm Location
+		</button>
+
+		<button 
+			class="button button-dark btn-action" 
+			ng-click="view.location.getCurrent()">
+			<i class="ion ion-android-locate"></i>
+		</button>
+	</ion-footer-bar>
+
 </ion-modal-view>
