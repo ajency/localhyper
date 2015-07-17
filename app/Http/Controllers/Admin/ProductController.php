@@ -127,7 +127,7 @@ class ProductController extends Controller
           'secondaryAttributes' => true,
           ];
         $attributeValueData = $attributeController->getCategoryAttributeValues($categoryData); 
-        $attributeValues= $headerFlag =[];
+        $attributeValues= $headerFlag =$productHeader = [];
 
         foreach($attributeValueData['result'] as $attributeValue)
         {
@@ -136,6 +136,11 @@ class ProductController extends Controller
             {   
                 $headers[]=$attributeValue['attributeName'];
                 $headers[]=$attributeValue['attributeName'].' Id';
+                
+                $productHeader[]=$attributeValue['attributeName'];
+                $productHeader[]=$attributeValue['attributeName'].' Id';
+                
+                    
                 $headerFlag[$attributeId]=$attributeId;
             }
 
@@ -185,18 +190,34 @@ class ProductController extends Controller
         $products = $headers = [];
 
         $headers []= 'Config' ;
-        $headers []= 'objectId' ;
-        $headers []= 'name' ;
-        $headers []= 'imageUrl' ;
+        $headers []= 'ProductID' ;
+        $headers []= 'ProductName' ;
+        $headers []= 'ModelNumber' ;
+        $headers []= 'Image' ; 
+        $headers []= 'Brand' ;  
+        $headers []= 'BrandID' ; 
+        $headers []= 'Group' ;  
+         
+        $headers = array_merge($headers,$productHeader);  
  
  
         $productSheet->fromArray($headers, ' ', 'A1');
         $productSheet->fromArray([$catId], ' ', 'A2');
         $productSheet->getColumnDimension('A')->setVisible(false);
         $productSheet->getColumnDimension('B')->setVisible(false);
-        $productSheet->fromArray($products, ' ','B2');
+        $productSheet->getColumnDimension('G')->setVisible(false); 
+        
+        $column = 'I';
+        for($i=1; $i<=(count($productHeader)/2) ;$i++ )
+        {
+            //hide column
+            $hidecolumn = $attributeController->getNextCell($column,'1');
+            $productSheet->getColumnDimension($hidecolumn)->setVisible(false);
+            $column = $attributeController->getNextCell($column,'2');
+        }
+         
  
-        $lastColumn = $productSheet->getHighestColumn();
+        $lastColumn = $productSheet->getHighestColumn(); 
         $header = 'a1:'.$lastColumn.'1';
         $productSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
         $style = array(
