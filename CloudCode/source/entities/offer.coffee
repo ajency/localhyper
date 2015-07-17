@@ -4,81 +4,106 @@ Parse.Cloud.define 'getNewOffers', (request, response) ->
     productId = request.params.productId
     customerId  = request.params.customerId
 
-    # get expired requests for this customer and product
-    queryRequest = new Parse.Query("Request")
-
-    # find out if atleast one request is made for a given product id and customer id
-
     innerProductQuery = new Parse.Query("ProductItem")
     innerProductQuery.equalTo("objectId",productId)
 
     innerCustomerQuery = new Parse.Query(Parse.User)
-    innerCustomerQuery.equalTo("objectId",customerId)    
+    innerCustomerQuery.equalTo("objectId",customerId)  
 
-    # get requests based on customerId and productId 
-    queryRequest.matchesQuery("product", innerProductQuery)
-    queryRequest.matchesQuery("customerId", innerCustomerQuery)
+    # find out if atleast one request is made for a given product id and customer id
+    queryReq = new Parse.Query("Request")
+    queryReq.matchesQuery("product", innerProductQuery)
+    queryReq.matchesQuery("customerId", innerCustomerQuery)
 
-    # get only non expired requests
-    currentDate = new Date()
-    currentTimeStamp = currentDate.getTime()
-    expiryValueInHrs = 24
-    queryDate = new Date()
-    time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
-    queryDate.setTime(time24HoursAgo)
-
-    queryRequest.greaterThanOrEqualTo( "createdAt", queryDate )    
-
-    # get the most recent non expired request, i.e sort with new ones first
-    queryRequest.descending("createdAt")
-
-    
-    queryRequest.find()
-    .then (allNonExpiredRequests) ->
-
-        if allNonExpiredRequests.length is 0
+    queryReq.first()
+    .then (requestObj) ->
+        if _.isEmpty(requestObj) 
+            moreRequests = false
             result = 
                 "activeRequest" : {}
                 "offers": []
+                "moreRequests" : moreRequests 
 
-            response.success result
+            response.success result            
+        else
+            moreRequests = true
+            
+            # get expired requests for this customer and product
+            queryRequest = new Parse.Query("Request")
 
-        else 
-            mostRecentRequest = allNonExpiredRequests[0]
+            # get requests based on customerId and productId 
+            queryRequest.matchesQuery("product", innerProductQuery)
+            queryRequest.matchesQuery("customerId", innerCustomerQuery)
 
-            recentRequestStatus = mostRecentRequest.get "status"
+            # get only non expired requests
+            currentDate = new Date()
+            currentTimeStamp = currentDate.getTime()
+            expiryValueInHrs = 24
+            queryDate = new Date()
+            time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
+            queryDate.setTime(time24HoursAgo)
 
-            if recentRequestStatus is "open"
-                # get open offers for the request
+            queryRequest.greaterThanOrEqualTo( "createdAt", queryDate )    
 
-                queryOffer = new Parse.Query("Offer")
+            # get the most recent non expired request, i.e sort with new ones first
+            queryRequest.descending("createdAt")
 
-                innerRequestQuery = new Parse.Query("Request")
-                innerRequestQuery.equalTo("objectId",mostRecentRequest.id)
-                queryOffer.matchesQuery("request", innerRequestQuery)
+            
+            queryRequest.find()
+            .then (allNonExpiredRequests) ->
 
-                queryOffer.equalTo("status","open")
-
-                queryOffer.find()
-                .then (offers) ->
+                if allNonExpiredRequests.length is 0
                     result = 
-                        "activeRequest" : mostRecentRequest
-                        "offers": offers
+                        "activeRequest" : {}
+                        "offers": []
+                        "moreRequests" : moreRequests
 
-                    response.success result 
+                    response.success result
 
-                , (error) ->
-                    response.error error
+                else 
+                    mostRecentRequest = allNonExpiredRequests[0]
 
-            else
-                result = 
-                    "activeRequest" : {}
-                    "offers": []
+                    recentRequestStatus = mostRecentRequest.get "status"
 
-                response.success result 
+                    if recentRequestStatus is "open"
+                        # get open offers for the request
+
+                        queryOffer = new Parse.Query("Offer")
+
+                        innerRequestQuery = new Parse.Query("Request")
+                        innerRequestQuery.equalTo("objectId",mostRecentRequest.id)
+                        queryOffer.matchesQuery("request", innerRequestQuery)
+
+                        queryOffer.equalTo("status","open")
+
+                        queryOffer.find()
+                        .then (offers) ->
+                            result = 
+                                "activeRequest" : mostRecentRequest
+                                "offers": offers
+                                "moreRequests" : moreRequests
+
+                            response.success result 
+
+                        , (error) ->
+                            response.error error
+
+                    else
+                        result = 
+                            "activeRequest" : {}
+                            "offers": []
+                            "moreRequests" : moreRequests
+
+                        response.success result 
+            , (error) ->
+                response.error error 
+
+
+
     , (error) ->
-        response.error error 
+        response.error error
 
+  
         
 
 

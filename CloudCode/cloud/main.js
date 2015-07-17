@@ -524,57 +524,79 @@
   });
 
   Parse.Cloud.define('getNewOffers', function(request, response) {
-    var currentDate, currentTimeStamp, customerId, expiryValueInHrs, innerCustomerQuery, innerProductQuery, productId, queryDate, queryRequest, time24HoursAgo;
+    var customerId, innerCustomerQuery, innerProductQuery, productId, queryReq;
     productId = request.params.productId;
     customerId = request.params.customerId;
-    queryRequest = new Parse.Query("Request");
     innerProductQuery = new Parse.Query("ProductItem");
     innerProductQuery.equalTo("objectId", productId);
     innerCustomerQuery = new Parse.Query(Parse.User);
     innerCustomerQuery.equalTo("objectId", customerId);
-    queryRequest.matchesQuery("product", innerProductQuery);
-    queryRequest.matchesQuery("customerId", innerCustomerQuery);
-    currentDate = new Date();
-    currentTimeStamp = currentDate.getTime();
-    expiryValueInHrs = 24;
-    queryDate = new Date();
-    time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
-    queryDate.setTime(time24HoursAgo);
-    queryRequest.greaterThanOrEqualTo("createdAt", queryDate);
-    queryRequest.descending("createdAt");
-    return queryRequest.find().then(function(allNonExpiredRequests) {
-      var innerRequestQuery, mostRecentRequest, queryOffer, recentRequestStatus, result;
-      if (allNonExpiredRequests.length === 0) {
+    queryReq = new Parse.Query("Request");
+    queryReq.matchesQuery("product", innerProductQuery);
+    queryReq.matchesQuery("customerId", innerCustomerQuery);
+    return queryReq.first().then(function(requestObj) {
+      var currentDate, currentTimeStamp, expiryValueInHrs, moreRequests, queryDate, queryRequest, result, time24HoursAgo;
+      if (_.isEmpty(requestObj)) {
+        moreRequests = false;
         result = {
           "activeRequest": {},
-          "offers": []
+          "offers": [],
+          "moreRequests": moreRequests
         };
         return response.success(result);
       } else {
-        mostRecentRequest = allNonExpiredRequests[0];
-        recentRequestStatus = mostRecentRequest.get("status");
-        if (recentRequestStatus === "open") {
-          queryOffer = new Parse.Query("Offer");
-          innerRequestQuery = new Parse.Query("Request");
-          innerRequestQuery.equalTo("objectId", mostRecentRequest.id);
-          queryOffer.matchesQuery("request", innerRequestQuery);
-          queryOffer.equalTo("status", "open");
-          return queryOffer.find().then(function(offers) {
+        moreRequests = true;
+        queryRequest = new Parse.Query("Request");
+        queryRequest.matchesQuery("product", innerProductQuery);
+        queryRequest.matchesQuery("customerId", innerCustomerQuery);
+        currentDate = new Date();
+        currentTimeStamp = currentDate.getTime();
+        expiryValueInHrs = 24;
+        queryDate = new Date();
+        time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
+        queryDate.setTime(time24HoursAgo);
+        queryRequest.greaterThanOrEqualTo("createdAt", queryDate);
+        queryRequest.descending("createdAt");
+        return queryRequest.find().then(function(allNonExpiredRequests) {
+          var innerRequestQuery, mostRecentRequest, queryOffer, recentRequestStatus;
+          if (allNonExpiredRequests.length === 0) {
             result = {
-              "activeRequest": mostRecentRequest,
-              "offers": offers
+              "activeRequest": {},
+              "offers": [],
+              "moreRequests": moreRequests
             };
             return response.success(result);
-          }, function(error) {
-            return response.error(error);
-          });
-        } else {
-          result = {
-            "activeRequest": {},
-            "offers": []
-          };
-          return response.success(result);
-        }
+          } else {
+            mostRecentRequest = allNonExpiredRequests[0];
+            recentRequestStatus = mostRecentRequest.get("status");
+            if (recentRequestStatus === "open") {
+              queryOffer = new Parse.Query("Offer");
+              innerRequestQuery = new Parse.Query("Request");
+              innerRequestQuery.equalTo("objectId", mostRecentRequest.id);
+              queryOffer.matchesQuery("request", innerRequestQuery);
+              queryOffer.equalTo("status", "open");
+              return queryOffer.find().then(function(offers) {
+                result = {
+                  "activeRequest": mostRecentRequest,
+                  "offers": offers,
+                  "moreRequests": moreRequests
+                };
+                return response.success(result);
+              }, function(error) {
+                return response.error(error);
+              });
+            } else {
+              result = {
+                "activeRequest": {},
+                "offers": [],
+                "moreRequests": moreRequests
+              };
+              return response.success(result);
+            }
+          }
+        }, function(error) {
+          return response.error(error);
+        });
       }
     }, function(error) {
       return response.error(error);
