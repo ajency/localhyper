@@ -413,6 +413,7 @@ class ProductController extends Controller
                         'mrp' => $result->get("mrp"), 
                         'popularity' => $result->get("popularity"),
                         'attrs' => $productAttributes,
+                        'group' => $result->get("group")
                         );
             $products[] = $product;
          } 
