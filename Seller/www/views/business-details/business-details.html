@@ -7,6 +7,7 @@
 		<div class="row row-fluid">
 			<div class="col p-b-0">
 				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<i class="icon ion-briefcase"></i>
 					Business details
 				</h5>
 			</div>
@@ -15,7 +16,8 @@
 		<div class="card m-red">
 			<div class="list bg-white form-field">
 				<label class="item item-input item-stacked-label">
-					<span class="input-label"><i class="icon ion-briefcase"></i> Business Name</span>
+					<i class="icon ion-briefcase ico-out"></i>
+					<span class="input-label"><!-- <i class="icon ion-briefcase"></i> --> Business Name</span>
 					<input
 						type="text"
 						placeholder="Enter business name"
@@ -23,7 +25,8 @@
 				</label>
 
 				<label class="item item-input item-stacked-label">
-					<span class="input-label"><i class="icon ion-person"></i> Full Name</span>
+				<i class="icon ion-person ico-out"></i>
+					<span class="input-label"><!-- <i class="icon ion-person"></i> --> Full Name</span>
 						<input
 						type="text"
 						placeholder="Enter your full name"
@@ -31,7 +34,8 @@
 				</label>
 
 				<label class="item item-input item-stacked-label">
-					<span class="input-label"><i class="icon ion-ios-telephone"></i> Phone Number</span>
+				<i class="icon ion-ios-telephone ico-out"></i>
+					<span class="input-label"><!-- <i class="icon ion-ios-telephone"></i> --> Phone Number</span>
 					<input
 						type="tel"
 						minlength="10"
@@ -46,6 +50,7 @@
 		<div class="row row-fluid">
 			<div class="col p-b-0">
 				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<i class="icon ion-location"></i>
 					Your Location
 				</h5>
 			</div>
@@ -84,7 +89,18 @@
 					</div>
 				</div>
 			</div>
+		</div>
 
+		<div class="row row-fluid">
+			<div class="col p-b-0">
+				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<i class="icon ion-arrow-graph-up-right"></i>
+					Deliverable Area
+				</h5>
+			</div>
+		</div>
+
+		<div class="card m-red">
 			<div class="row platop">
 				<div class="col">
 					<div class="row">
@@ -99,12 +115,14 @@
 						</div>
 					</div>
 
-					<div class="item range range-assertive">
+					<div class="item range range-assertive range-with-incdec">
+						<i class="icon ion-minus-round"></i>
 						<input
 							type="range"
 							min="0"
 							max="99"
 							ng-model="view.deliveryRadius">
+						<i class="icon ion-plus-round"></i>
 					</div>
 				</div>
 			</div>
