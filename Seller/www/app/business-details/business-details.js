@@ -146,6 +146,13 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
           return CToast.show('Please enter valid phone number');
         } else if (this.confirmedAddress === '') {
           return CToast.show('Please select your location');
+        } else {
+          this.addressGeoPoint = new Parse.GeoPoint({
+            latitude: this.location.latLng.lat(),
+            longitude: this.location.latLng.lng()
+          });
+          User.info('set', $scope.view);
+          return App.navigate('categories');
         }
       }
     };

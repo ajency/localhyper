@@ -118,12 +118,12 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					CToast.show 'Please enter valid phone number'
 				else if @confirmedAddress is ''
 					CToast.show 'Please select your location'
-				# else
-					# @geoCode = 
-					#   latitude: @latLng.lat()
-					#   longitude: @latLng.lng()
-					# User.info 'set', $scope.view
-					# App.navigate 'categories'
+				else
+					@addressGeoPoint = new Parse.GeoPoint 
+						latitude: @location.latLng.lat()
+						longitude: @location.latLng.lng()
+					User.info 'set', $scope.view
+					App.navigate 'categories'
 		
 		
 		$scope.$on '$ionicView.enter', ->

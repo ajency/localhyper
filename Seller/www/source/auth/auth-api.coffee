@@ -58,9 +58,7 @@ angular.module 'LocalHyper.auth'
 
 		AuthAPI.getUserDetails = ->
 			user = User.info 'get'
-
-			addressGeoPoint = new Parse.GeoPoint 
-				latitude: user.geoCode.latitude, longitude: user.geoCode.longitude
+			address = user.location.address
 
 			categoryChains = CategoriesAPI.categoryChains 'get'
 			supportedCategories = []
@@ -87,10 +85,10 @@ angular.module 'LocalHyper.auth'
 				phone: user.phone
 				displayName: user.name
 				businessName: user.businessName
-				addressGeoPoint: addressGeoPoint
-				address: user.address
-				city: user.address.city
-				area: user.address.city
+				addressGeoPoint: user.addressGeoPoint
+				address: address
+				city: address.city
+				area: address.city
 				deliveryRadius: parseInt user.deliveryRadius
 				supportedCategories: supportedCategories
 				supportedBrands: supportedBrands
