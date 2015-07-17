@@ -127,7 +127,7 @@ class ProductController extends Controller
           'secondaryAttributes' => true,
           ];
         $attributeValueData = $attributeController->getCategoryAttributeValues($categoryData); 
-        $attributeValues= $headerFlag =$productHeader = [];
+        $attributeValues= $headerFlag =$productHeader = $productAttributeIds = [];
 
         foreach($attributeValueData['result'] as $attributeValue)
         {
@@ -145,6 +145,7 @@ class ProductController extends Controller
             }
 
             $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
+            $productAttributeIds []=$attributeId;
         } 
          
         
@@ -209,38 +210,46 @@ class ProductController extends Controller
         $productsData['BrandID']=[]; 
         $productsData['Group']=[]; 
   
-        $headers = array_merge($headers,$productHeader);  
+        $headers = array_merge($headers,$productHeader); 
+        /*foreach ($headers as $header)
+        {
+            $productsData[$header]=[]; 
+        }*/
  
- 
+        
         $productSheet->fromArray($headers, ' ', 'A1');
         $productSheet->fromArray([$catId], ' ', 'A2');
         $productSheet->getColumnDimension('A')->setVisible(false);
         $productSheet->getColumnDimension('B')->setVisible(false);
         $productSheet->getColumnDimension('G')->setVisible(false); 
  
-        $column = 'I';
+        $column = 'I'; 
         for($i=1; $i<=(count($productHeader)/2) ;$i++ )
         {
-            $productsData[$productHeader[$i-1]]=[];
-            $productsData[$productHeader[$i]]=[]; 
+ 
             //hide column
             $hidecolumn = $attributeController->getNextCell($column,'1');
             $productSheet->getColumnDimension($hidecolumn)->setVisible(false);
             $column = $attributeController->getNextCell($column,'2');
         }
-        //dd($productsData);
+        
         $products = $this->getCategoryProducts($catId, 1, 20) ;dd($products);
         
         foreach($products as $product) 
         {
             $productsData['ProductID'][]=$product['objectId']; 
             $productsData['ProductName'][]=$product['name'];  
-            $productsData['ModelNumber'][]=$product[''];  
+            $productsData['ModelNumber'][]=$product['model_number'];  
             $productsData['Image'][]=$product['images'][0]['src']; 
             $productsData['MRP'][]=$product['mrp']; 
             $productsData['Brand'][]=$product['brand']['name']; 
             $productsData['BrandID'][]=$product['brand']['objectId']; 
-            $productsData['Group'][]=$product['']; 
+            $productsData['Group'][]=$product['group']; 
+            
+            foreach($product['brand'] as $attribute)
+            {
+            
+            }
         }
  
         $lastColumn = $productSheet->getHighestColumn(); 
