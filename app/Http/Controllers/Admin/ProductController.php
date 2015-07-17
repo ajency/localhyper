@@ -187,7 +187,7 @@ class ProductController extends Controller
         $excel->addSheet($productSheet, 0);
         $productSheet->setTitle('Products');
         
-        $products = $headers = [];
+        $products = $productsData = $headers = [];
 
         $headers []= 'Config' ;
         $headers []= 'ProductID' ; 
@@ -198,8 +198,17 @@ class ProductController extends Controller
         $headers []= 'Popularity' ; 
         $headers []= 'Brand' ;  
         $headers []= 'BrandID' ; 
-        $headers []= 'Group' ;  
+        $headers []= 'Group' ;
          
+        $productsData['ProductID']=[]; 
+        $productsData['ProductName']=[]; 
+        $productsData['ModelNumber']=[]; 
+        $productsData['Image']=[]; 
+        $productsData['MRP']=[]; 
+        $productsData['Brand']=[]; 
+        $productsData['BrandID']=[]; 
+        $productsData['Group']=[]; 
+  
         $headers = array_merge($headers,$productHeader);  
  
  
@@ -208,16 +217,31 @@ class ProductController extends Controller
         $productSheet->getColumnDimension('A')->setVisible(false);
         $productSheet->getColumnDimension('B')->setVisible(false);
         $productSheet->getColumnDimension('G')->setVisible(false); 
-        
+ 
         $column = 'I';
         for($i=1; $i<=(count($productHeader)/2) ;$i++ )
         {
+            $productsData[$productHeader[$i-1]]=[];
+            $productsData[$productHeader[$i]]=[]; 
             //hide column
             $hidecolumn = $attributeController->getNextCell($column,'1');
             $productSheet->getColumnDimension($hidecolumn)->setVisible(false);
             $column = $attributeController->getNextCell($column,'2');
         }
-         
+        //dd($productsData);
+        $products = $this->getCategoryProducts($catId, 1, 20) ;dd($products);
+        
+        foreach($products as $product) 
+        {
+            $productsData['ProductID'][]=$product['objectId']; 
+            $productsData['ProductName'][]=$product['name'];  
+            $productsData['ModelNumber'][]=$product[''];  
+            $productsData['Image'][]=$product['images'][0]['src']; 
+            $productsData['MRP'][]=$product['mrp']; 
+            $productsData['Brand'][]=$product['brand']['name']; 
+            $productsData['BrandID'][]=$product['brand']['objectId']; 
+            $productsData['Group'][]=$product['']; 
+        }
  
         $lastColumn = $productSheet->getHighestColumn(); 
         $header = 'a1:'.$lastColumn.'1';
