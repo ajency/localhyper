@@ -118,16 +118,16 @@
 				I accept the terms & conditions
 			</div>
 		</div>
-		<br>
-		<br>
-		<div class="bar bar-footer with-btn">
-			<button
-				class="title button button-block button-assertive"
-				ng-disabled="!view.terms"
-				ng-click="view.onNext()">
-				Next
-			</button>
-		</div>
 
-   </ion-content>
+   	</ion-content>
+
+   	<ion-footer-bar class="bar bar-footer with-btn">
+		<button
+			class="title button button-block button-assertive"
+			ng-disabled="!view.terms"
+			ng-click="view.onNext()">
+			Next
+		</button>
+	</ion-footer-bar>
+
 </ion-view>

@@ -171,8 +171,16 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
           controller: 'BusinessDetailsCtrl',
           templateUrl: 'views/business-details/business-details.html',
           resolve: {
-            Maps: function(GoogleMaps) {
-              return GoogleMaps.loadScript();
+            Maps: function($q, CSpinner, GoogleMaps) {
+              var defer;
+              defer = $q.defer();
+              CSpinner.show('', 'Please wait...');
+              GoogleMaps.loadScript().then(function() {
+                return defer.resolve();
+              })["finally"](function() {
+                return CSpinner.hide();
+              });
+              return defer.promise;
             }
           }
         }

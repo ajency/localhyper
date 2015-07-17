@@ -36,31 +36,43 @@ angular.module 'LocalHyper.googleMaps'
 ]
 
 
-.directive 'googleMapSearch', [->
+# .directive 'googleMapSearch', [->
 
-	restrict: 'A'
-	replace: true
+# 	restrict: 'A'
 
-	link: (scope, el, attrs)->
+# 	link: (scope, el, attrs)->
 
-		initialize = ->
-			input = document.getElementById 'search'
-			options = 
-				componentRestrictions: country: 'in'
+# 		initialize = ->
+# 			input = document.getElementById 'search'
+# 			options = 
+# 				componentRestrictions: country: 'in'
 
-			autoComplete = new google.maps.places.Autocomplete el[0], options
+# 			autoComplete = new google.maps.places.Autocomplete el[0], options
 
-			# container =  $(el).parent().width()
-			# $('.pac-container').css('width': container+' !important')
+# 			# container =  $(el).parent().width()
+# 			# $('.pac-container').css('width': container+' !important')
 
-			google.maps.event.addListener autoComplete, 'places_changed', ->
-				# places = searchBox.getPlaces()
-				console.log 'places_changed'
+# 			google.maps.event.addListener autoComplete, 'place_changed', ->
+# 				# places = autoComplete.getPlaces()
+# 				console.log 'place_changed'
 
 
-		if document.readyState is "complete"
-			initialize()
-		else 
-			google.maps.event.addDomListener window, 'load', initialize
-]
+# 		if document.readyState is "complete"
+# 			initialize()
+# 		else 
+# 			google.maps.event.addDomListener window, 'load', initialize
+# ]
 
+
+# .directive 'googleSearchTapDisable', ['$timeout', ($timeout)->
+
+# 	link: ->
+# 		$timeout ->
+# 			container = document.getElementsByClassName 'pac-container'
+# 			angular.element(container).attr 'data-tap-disabled', 'true'
+# 			angular.element(container).on 'click', ->
+# 				console.log 1
+# 				document.getElementById('type-selector').blur()
+
+# 		, 500
+# ]

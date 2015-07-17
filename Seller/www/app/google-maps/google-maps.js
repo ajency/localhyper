@@ -8,7 +8,7 @@ angular.module('LocalHyper.googleMaps', []).factory('GoogleMaps', [
       if (_.isUndefined(window.google)) {
         script = document.createElement('script');
         script.type = 'text/javascript';
-        script.src = "https://maps.googleapis.com/maps/api/js?libraries=places" + ("&key=" + GOOGLE_MAPS_API_KEY + "&callback=onGMapScriptLoad");
+        script.src = "https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false" + ("&key=" + GOOGLE_MAPS_API_KEY + "&callback=onGMapScriptLoad");
         window.onGMapScriptLoad = function() {
           return defer.resolve();
         };

@@ -144,6 +144,14 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					controller: 'BusinessDetailsCtrl'
 					templateUrl: 'views/business-details/business-details.html'
 					resolve:
-						Maps : (GoogleMaps)->
+						Maps : ($q, CSpinner, GoogleMaps)->
+							defer = $q.defer()
+							CSpinner.show '', 'Please wait...'
 							GoogleMaps.loadScript()
+							.then ->
+								defer.resolve()
+							.finally ->
+								CSpinner.hide()
+							defer.promise
 ]
+

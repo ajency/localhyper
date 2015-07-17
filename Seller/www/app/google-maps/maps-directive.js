@@ -40,32 +40,4 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
       }
     };
   }
-]).directive('googleMapSearch', [
-  function() {
-    return {
-      restrict: 'A',
-      replace: true,
-      link: function(scope, el, attrs) {
-        var initialize;
-        initialize = function() {
-          var autoComplete, input, options;
-          input = document.getElementById('search');
-          options = {
-            componentRestrictions: {
-              country: 'in'
-            }
-          };
-          autoComplete = new google.maps.places.Autocomplete(el[0], options);
-          return google.maps.event.addListener(autoComplete, 'places_changed', function() {
-            return console.log('places_changed');
-          });
-        };
-        if (document.readyState === "complete") {
-          return initialize();
-        } else {
-          return google.maps.event.addDomListener(window, 'load', initialize);
-        }
-      }
-    };
-  }
 ]);
