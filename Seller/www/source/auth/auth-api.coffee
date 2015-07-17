@@ -89,7 +89,7 @@ angular.module 'LocalHyper.auth'
 				address: address
 				city: address.city
 				area: address.city
-				deliveryRadius: parseInt user.deliveryRadius
+				deliveryRadius: parseInt user.delivery.radius
 				supportedCategories: supportedCategories
 				supportedBrands: supportedBrands
 				

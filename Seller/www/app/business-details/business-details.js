@@ -1,12 +1,24 @@
 angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('BusinessDetailsCtrl', [
   '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout) {
     $scope.view = {
-      businessName: 'Ajency',
-      name: 'Deepak',
-      phone: '9765436351',
+      businessName: '',
+      name: '',
+      phone: '',
       confirmedAddress: '',
-      deliveryRadius: 10,
       terms: false,
+      delivery: {
+        radius: 10,
+        plus: function() {
+          if (this.radius < 99) {
+            return this.radius++;
+          }
+        },
+        minus: function() {
+          if (this.radius > 1) {
+            return this.radius--;
+          }
+        }
+      },
       location: {
         modal: null,
         map: null,

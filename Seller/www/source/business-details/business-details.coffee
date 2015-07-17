@@ -6,12 +6,18 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout)->
 
 		$scope.view = 
-			businessName: 'Ajency'
-			name: 'Deepak'
-			phone: '9765436351'
+			businessName: ''
+			name: ''
+			phone: ''
 			confirmedAddress: ''
-			deliveryRadius: 10
 			terms: false
+
+			delivery:
+				radius: 10
+				plus : ->
+					@radius++ if @radius < 99
+				minus : ->
+					@radius-- if @radius > 1
 
 			location:
 				modal: null
