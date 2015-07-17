@@ -57,7 +57,7 @@
 				<div class="row">
 					<div class="col-75">
 						<i class="icon ion-location ico-loc"></i>
-						<button 
+						<button
 							class="button button-outline button-assertive"
 							ng-click="view.onChangeLocation()">
 							<i class="icon ion-plus-round"></i> Add your Address
@@ -110,16 +110,19 @@
 			</div>
 		</div>
 
-		<div class="card full-btn">
-			<li class="item item-checkbox">
+		<div class="card">
+			<div class="item item-checkbox">
 				<label class="checkbox">
 					<input type="checkbox" ng-model="view.terms">
 				</label>
 				I accept the terms & conditions
-			</li>
-
+			</div>
+		</div>
+		<br>
+		<br>
+		<div class="bar bar-footer with-btn">
 			<button
-				class="button button-block button-assertive"
+				class="title button button-block button-assertive"
 				ng-disabled="!view.terms"
 				ng-click="view.onNext()">
 				Next
