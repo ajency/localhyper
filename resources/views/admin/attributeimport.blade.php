@@ -30,6 +30,8 @@
                                     </div>
                                 </div>
                                 <div class="export_block hidden">
+                                 <!--MASTER-->     
+                                <h3><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Attributes</span></h3>    
                                 <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Export</span></h4>
 
                                     <a href="#" target="_blank" class="export_attributes"><button type="button" class="btn btn-default btn-cons btn-small"><i class="fa fa-download"></i> Download Sheet</button></a>
@@ -50,6 +52,29 @@
                                     </div>
                                 </div>
                                 </form>
+                                    <hr>
+                                  <!--PRODUCT-->  
+                                <h3><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Product</span></h3>    
+                                <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Export</span></h4>
+
+                                    <a href="#" target="_blank" class="export_product"><button type="button" class="btn btn-default btn-cons btn-small"><i class="fa fa-download"></i> Download Sheet</button></a>
+                                
+
+                                <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Import</span></h4>
+                                <form action="{{ url( 'admin/product/importproducts') }}"  method="POST" enctype="multipart/form-data" >          
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="form-group">
+                                            <input type="file" name="product_file" class="form-control" style="line-height: 19px;" />
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="hidden" value="{{ csrf_token()}}" name="_token"/>
+                                        <button type="submit" class="btn btn-default "><i class="fa fa-upload"></i> Import</button>
+                                    </div>
+                                </div>
+                                </form>    
                                 </div>    
                             </div>
                         </div>

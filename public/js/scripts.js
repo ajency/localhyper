@@ -104,12 +104,18 @@ function showAttibuteExport()
  
     
     if(!error){
-        var url = BASEURL +'/admin/attribute/exportattributes/'+category;
-        $(".export_attributes").attr('href',url);
+        var attributeUrl = BASEURL +'/admin/attribute/exportattributes/'+category;
+        var productUrl = BASEURL +'/admin/product/exportproducts/'+category;
+        $(".export_attributes").attr('href',attributeUrl);
+        $(".export_product").attr('href',productUrl);
+        
         $(".export_block").removeClass('hidden');
     
     }
     else
+    {
         $(".export_attributes").attr('href','#');
+        $(".export_product").attr('href','#');
+    }
     
 }
