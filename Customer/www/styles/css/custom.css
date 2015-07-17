@@ -330,7 +330,7 @@ sm {
 }
 .sub-categories .border-card2 {
   height: 225px !important;
-  background: url(../../img/gray-bg.png) 0px 70px no-repeat !important;
+  background: url(../../img/gray-bg.png) #ffffff 0px 70px no-repeat !important;
 }
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
@@ -543,8 +543,11 @@ sm {
 .suggest-btn .button.button-assertive {
   margin: 0;
 }
+.item-input .input-label {
+  font-size: 14px;
+}
 .item-input .input-label i.icon {
-  font-size: 24px;
+  font-size: 20px;
   margin-right: 5px;
   padding: 0;
   line-height: 0;
@@ -554,7 +557,7 @@ sm {
 }
 .item-input input,
 .item-input textarea {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 20px;
 }
 .aboutus {
@@ -573,4 +576,7 @@ sm {
   margin: 0;
   padding-bottom: 8px;
   border-bottom: 1px solid #ddd;
+}
+.list-cont {
+  position: relative;
 }

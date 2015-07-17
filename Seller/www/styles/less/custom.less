@@ -419,7 +419,7 @@ sm{
 }
 .bar-custom-footer{
 	  border-top: 1px solid rgba(204, 204, 204, 0.44);
-     HEIGHT: 50PX;
+      height: 50px;
 }
 .aj-sp-img{
 		margin:6% auto;
@@ -558,8 +558,9 @@ sm{
 		// font-size: 11px;
 		// text-transform: uppercase;
   		// padding-top: 0;
+  		font-size: 14px;
   		i.icon {
-  			font-size: 24px;
+  			font-size: 20px;
   			margin-right: 5px;
   			padding: 0;
   			line-height: 0;
@@ -571,7 +572,7 @@ sm{
 	}
 	input{
 		// font-weight: 500;
-		font-size: 16px;
+		font-size: 14px;
 		// height: 26px;
 	}
 	.item {
@@ -657,13 +658,14 @@ sm{
 		padding-left: 52px;
 		text-align: left;
 		margin-top: 8px;
-		font-size: 16px;
-		line-height: 22px;
+		font-size: 14px;
+		line-height: 20px;
 	}
 	.button {
 		bottom: 10px;
 		right: 10px;
-		line-height: 35px;
+		line-height: 30px;
+		font-size: 14px;
 		min-height: 0;
 		position: absolute;
 		.icon {
@@ -674,6 +676,9 @@ sm{
 			}
 		}
 	}
+}
+.card .item.item-checkbox {
+	font-size: 14px;
 }
 
 .aj-small-map {
@@ -834,3 +839,27 @@ h5.with-sep {
 	}
 }
 
+.address-inputs {
+	padding-top: 8px;
+	label.no-input {
+		font-size: 14px;
+		line-height: 34px;
+		background-color: #EFEFEF;
+	}
+}
+
+.bar-footer.with-btn {
+	margin: 0;
+	padding: 0;
+	.button {
+		margin: 0;
+		font-size: 14px;
+		border-radius: 0;
+		i {margin-right: 5px;}
+	}
+	& > .button+.button:last-child {
+		position: relative;
+		top: 0;
+		left: 0;
+	}
+}
