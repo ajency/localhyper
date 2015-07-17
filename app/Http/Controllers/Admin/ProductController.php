@@ -201,14 +201,14 @@ class ProductController extends Controller
         $headers []= 'BrandID' ; 
         $headers []= 'Group' ;
          
-        $productsData['ProductID']=[]; 
+        /*$productsData['ProductID']=[]; 
         $productsData['ProductName']=[]; 
         $productsData['ModelNumber']=[]; 
         $productsData['Image']=[]; 
         $productsData['MRP']=[]; 
         $productsData['Brand']=[]; 
         $productsData['BrandID']=[]; 
-        $productsData['Group']=[]; 
+        $productsData['Group']=[]; */
   
         $headers = array_merge($headers,$productHeader); 
         /*foreach ($headers as $header)
@@ -224,7 +224,7 @@ class ProductController extends Controller
         $productSheet->getColumnDimension('G')->setVisible(false); 
  
         $column = 'I'; 
-        for($i=1; $i<=(count($productHeader)/2) ;$i++ )
+        for($i=0; $i<=(count($productHeader)/2) ;$i++ )
         {
  
             //hide column
@@ -237,23 +237,24 @@ class ProductController extends Controller
         $products = $this->getCategoryProducts($catId, 0, 20) ;dd($products);
  
         
-        foreach($products as $product) 
+        foreach($products as $key=> $product) 
         {
-            $productsData['ProductID'][]=$product['objectId']; 
-            $productsData['ProductName'][]=$product['name'];  
-            $productsData['ModelNumber'][]=$product['model_number'];  
-            $productsData['Image'][]=$product['images'][0]['src']; 
-            $productsData['MRP'][]=$product['mrp']; 
-            $productsData['Brand'][]=$product['brand']['name']; 
-            $productsData['BrandID'][]=$product['brand']['objectId']; 
-            $productsData['Group'][]=$product['group']; 
+            $productsData[$key]=$product['objectId']; 
+            $productsData[$key]=$product['name'];  
+            $productsData[$key]=$product['model_number'];  
+            $productsData[$key]=$product['images'][0]['src']; 
+            $productsData[$key]=$product['mrp']; 
+            $productsData[$key]=$product['brandName']; 
+            $productsData[$key]=$product['brandId']; 
+            $productsData[$key]=$product['group']; 
             
-            foreach($product['brand'] as $attribute)
+            foreach($product['attrs'] as $attribute)
             {
-            
+                $productsData[$key] = $attribute['attributeValue'];
+                $productsData[$key] = $attribute['attributeValueId'];
             }
         }
- 
+        $productSheet->fromArray($productsData, ' ', 'C2');
         $lastColumn = $productSheet->getHighestColumn(); 
         $header = 'a1:'.$lastColumn.'1';
         $productSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
