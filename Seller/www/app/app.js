@@ -28,8 +28,7 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       hideForStates = ['tutorial', 'business-details', 'verify-begin', 'verify-auto', 'verify-manual', 'categories', 'sub-categories', 'brands'];
       bool = !_.contains(hideForStates, App.currentState);
       App.menuEnabled.left = bool;
-      App.notification.icon = bool;
-      return App.logo.small = App.currentState !== 'requests';
+      return App.notification.icon = bool;
     });
   }
 ]).config([
