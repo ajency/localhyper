@@ -17,7 +17,7 @@ Parse.Cloud.define "sendMail", (request, status) ->
 	Mandrill.sendEmail({message:{
 		html: "<p>"+text+"</p>",
 		text: text,
-		subject: "Product suggestions",
+		subject: "Product suggestions!!",
 		from_email: "parse@cloudcode.com",
 		from_name: "Cloud Code",
 		to: [{ email: "namrata@ajency.in", name: "Your Name"}]
