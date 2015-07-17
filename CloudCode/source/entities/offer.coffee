@@ -7,6 +7,8 @@ Parse.Cloud.define 'getNewOffers', (request, response) ->
     # get expired requests for this customer and product
     queryRequest = new Parse.Query("Request")
 
+    # find out if atleast one request is made for a given product id and customer id
+
     innerProductQuery = new Parse.Query("ProductItem")
     innerProductQuery.equalTo("objectId",productId)
 
@@ -36,7 +38,7 @@ Parse.Cloud.define 'getNewOffers', (request, response) ->
 
         if allNonExpiredRequests.length is 0
             result = 
-                "recentRequest" : []
+                "activeRequest" : {}
                 "offers": []
 
             response.success result
@@ -60,7 +62,7 @@ Parse.Cloud.define 'getNewOffers', (request, response) ->
                 queryOffer.find()
                 .then (offers) ->
                     result = 
-                        "recentRequest" : mostRecentRequest
+                        "activeRequest" : mostRecentRequest
                         "offers": offers
 
                     response.success result 
@@ -70,7 +72,7 @@ Parse.Cloud.define 'getNewOffers', (request, response) ->
 
             else
                 result = 
-                    "recentRequest" : mostRecentRequest
+                    "activeRequest" : {}
                     "offers": []
 
                 response.success result 

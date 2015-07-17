@@ -509,7 +509,7 @@
       var innerRequestQuery, mostRecentRequest, queryOffer, recentRequestStatus, result;
       if (allNonExpiredRequests.length === 0) {
         result = {
-          "recentRequest": [],
+          "activeRequest": {},
           "offers": []
         };
         return response.success(result);
@@ -524,7 +524,7 @@
           queryOffer.equalTo("status", "open");
           return queryOffer.find().then(function(offers) {
             result = {
-              "recentRequest": mostRecentRequest,
+              "activeRequest": mostRecentRequest,
               "offers": offers
             };
             return response.success(result);
@@ -533,7 +533,7 @@
           });
         } else {
           result = {
-            "recentRequest": mostRecentRequest,
+            "activeRequest": {},
             "offers": []
           };
           return response.success(result);
