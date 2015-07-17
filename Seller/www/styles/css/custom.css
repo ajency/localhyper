@@ -582,20 +582,37 @@ sm {
 /* Forms  */
 /************************************/
 .form-field .input-label {
+  color: #c5c5c5;
+  font-size: 11px;
+  text-transform: uppercase;
+  padding-top: 0;
   font-size: 14px;
 }
-.form-field .input-label i.icon {
-  font-size: 20px;
-  margin-right: 5px;
-  padding: 0;
-  line-height: 0;
-  color: #989898;
-  width: 23px;
-  text-align: center;
-  vertical-align: bottom;
+.form-field .ico-out {
+  display: none;
+  color: #f35a59;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 100%;
+  font-size: 28px;
+  border-right: 1px solid #eee;
+  padding-left: 13px;
+  padding-right: 10px;
+  margin-right: 10px;
+  line-height: 50px;
+  background: #F7F7F7;
 }
 .form-field input {
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 16px;
+  height: 26px;
+}
+.form-field .item {
+  border-color: #F4F4F4;
+  background-color: #fff;
+  color: #000;
 }
 /************************************/
 /* Radio  */
@@ -608,6 +625,18 @@ sm {
 /************************************/
 .p-b-0 {
   padding-bottom: 0;
+}
+.p-t-0 {
+  padding-top: 0;
+}
+.p-l-0 {
+  padding-left: 0;
+}
+.p-r-0 {
+  padding-right: 0;
+}
+.b-r-1 {
+  border-right: 1px solid #ddd;
 }
 .business-details .card.m-red {
   margin-top: 0;
@@ -641,7 +670,7 @@ sm {
   background-size: cover;
   background-position: center;
   position: relative;
-  min-height: 58px;
+  min-height: 75px;
 }
 .the-loation .ico-loc.icon {
   font-size: 22px;
@@ -672,7 +701,7 @@ sm {
 .the-loation .button {
   bottom: 10px;
   right: 10px;
-  line-height: 30px;
+  line-height: 32px;
   font-size: 14px;
   min-height: 0;
   position: absolute;
@@ -697,7 +726,6 @@ sm {
 }
 .title-with-icon i {
   margin-right: 5px;
-  margin-left: 10px;
 }
 .item-input-inset .item-input-wrapper {
   padding: 2px 8px;
@@ -714,7 +742,6 @@ sm {
   display: block;
   min-width: 46px;
   font-size: 18px;
-  color: #f35a59;
 }
 .button.button-dark.btn-confirm {
   margin-top: 0;
@@ -840,7 +867,7 @@ h5.with-sep span {
 }
 .address-inputs label.no-input {
   font-size: 14px;
-  line-height: 34px;
+  line-height: 25px;
   background-color: #EFEFEF;
 }
 .bar-footer.with-btn {
