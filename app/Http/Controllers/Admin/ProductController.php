@@ -229,7 +229,7 @@ class ProductController extends Controller
             $column = $attributeController->getNextCell($column,'2');
         }
         //dd($productsData);
-        $products = $this->getCategoryProducts($catId, 1, 20) ;dd($products);
+        $products = $this->getCategoryProducts($catId, 0, 20) ;dd($products);
         
         foreach($products as $product) 
         {
@@ -361,15 +361,51 @@ class ProductController extends Controller
         $productQuery->includeKey("brand");
         $productQuery->includeKey("primaryAttributes");
         $productQuery->includeKey("primaryAttributes.attribute");
+        $productQuery->includeKey("attrs");
+        $productQuery->includeKey("attrs.attribute");
       
 
         # pagination
         $productQuery->limit($displayLimit);
         $productQuery->skip($page * $displayLimit);
 
-        $results = $productQuery->find();   
+        $results = $productQuery->find();
+
+        $products = [];
+
+        foreach ($results as $result) {
+            $attrs = [];
+            $attrs = $result->get("attrs");
+
+           
+            $productAttributes  = [];
+
+            foreach ($attrs as $attr) {
+               $productAttribute = array(
+                                    'attributeId' => $attr->get("attribute")->getObjectId() , 
+                                    'attributeName' => $attr->get("attribute")->get("name") , 
+                                    'attributeValueId' => $attr->getObjectId()  , 
+                                    'attributeValue' => $attr->get("value")
+                                    );
+
+               $productAttributes[] = $productAttribute;
+            }
+
+            $product = array(
+                        'objectId' => $result->getObjectId(), 
+                        'name' => $result->get("name"), 
+                        'brandId' => $result->get("brand")->getObjectId(), 
+                        'brandName' => $result->get("brand")->get("name"),
+                        'images' => $result->get("images"), 
+                        'model_number' => $result->get("model_number"), 
+                        'mrp' => $result->get("mrp"), 
+                        'popularity' => $result->get("popularity"),
+                        'attrs' => $productAttributes,
+                        );
+            $products[] = $product;
+         } 
       
-        return $results;
+        return $products;
     } 
     
 
