@@ -194,6 +194,8 @@ class ProductController extends Controller
         $headers []= 'ProductName' ;
         $headers []= 'ModelNumber' ;
         $headers []= 'Image' ; 
+        $headers []= 'MRP' ; 
+        $headers []= 'Popularity' ; 
         $headers []= 'Brand' ;  
         $headers []= 'BrandID' ; 
         $headers []= 'Group' ;  
@@ -279,11 +281,11 @@ class ProductController extends Controller
                 }
             
             /****
-            *  (ProductID ProductName ModelNumber Image Brand BrandID Group) = 7
+            *  (ProductID ProductName ModelNumber Image mrp ,popularity Brand BrandID Group) = 9
             *
             // Attribute values not included
             ***/
-            $countFixedData = 7;
+            $countFixedData = 9;
             $dataCount = count($namedDataArray[0]);
             $attributeIdKeys =[];
             
@@ -308,12 +310,11 @@ class ProductController extends Controller
                 $products['id'] = $data['ProductID'];
                 $products['name'] = $data['ProductName'];
                 $products['model_number'] = $data['ModelNumber'];
-                $products['description'] = '';
                 $products['images'] = ['src'=>$data['Image']];
                 $products['attrs'] = $attributeIds;
-                $products['mrp'] = '';
+                $products['mrp'] = $data['MRP'];
                 $products['brand'] = $data['BrandID'];
-                $products['popularity'] = '';
+                $products['popularity'] = $data['Popularity'];
                 $products['group'] = $data['Group'];
             }
             
