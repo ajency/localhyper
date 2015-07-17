@@ -92,7 +92,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 			onChangeLocation : ->
 				@location.modal.show()
-				mapHeight = $('.map-content').height()
+				mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
 				$('.aj-big-map').css 'height': mapHeight
 				if _.isNull @location.latLng
 					$timeout =>

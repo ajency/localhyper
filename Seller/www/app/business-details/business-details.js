@@ -107,7 +107,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
       onChangeLocation: function() {
         var mapHeight;
         this.location.modal.show();
-        mapHeight = $('.map-content').height();
+        mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10;
         $('.aj-big-map').css({
           'height': mapHeight
         });
