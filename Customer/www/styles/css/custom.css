@@ -350,8 +350,9 @@ sm {
 }
 .sub-categories .border-card .title {
   height: 39px;
-  font-weight: 800;
-  line-height: 18px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 20px;
   display: block;
   display: -webkit-box;
   max-width: 100%;
@@ -542,7 +543,7 @@ sm {
 .suggest-btn .button.button-assertive {
   margin: 0;
 }
-.input-label i.icon {
+.item-input .input-label i.icon {
   font-size: 24px;
   margin-right: 5px;
   padding: 0;
@@ -550,6 +551,11 @@ sm {
   color: #989898;
   width: 23px;
   text-align: center;
+}
+.item-input input,
+.item-input textarea {
+  font-size: 16px;
+  line-height: 20px;
 }
 .aboutus {
   margin-top: 35px;
