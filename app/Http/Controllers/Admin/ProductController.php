@@ -241,4 +241,26 @@ class ProductController extends Controller
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
         $objWriter->save('php://output'); 
     }
+
+
+    public function getCategoryProducts($categoryId, $page, $displayLimit){
+      
+      $categoryData = array (
+          'categoryId' => $categoryId,
+          'selectedFilters' => "all",
+          'sortBy' => 'popularity',
+          'ascending' => false,
+          'page' => $page,
+          'displayLimit' => $displayLimit,
+        );
+
+      $functionName = "getProducts";
+
+      $resultjson = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
+
+      $response =  json_encode($resultjson);
+      $response = json_decode($response,true);    
+      
+      return $response['result']['products'];
+    }
 }
