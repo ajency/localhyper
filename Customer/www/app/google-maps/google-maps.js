@@ -8,7 +8,7 @@ angular.module('LocalHyper.googleMaps', []).factory('GoogleMaps', [
       if (_.isUndefined(window.google)) {
         script = document.createElement('script');
         script.type = 'text/javascript';
-        script.src = "https://maps.googleapis.com/maps/api/js?libraries=places" + ("&key=" + GOOGLE_MAPS_API_KEY + "&callback=onGMapScriptLoad");
+        script.src = "https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false" + ("&key=" + GOOGLE_MAPS_API_KEY + "&callback=onGMapScriptLoad");
         window.onGMapScriptLoad = function() {
           return defer.resolve();
         };
@@ -66,6 +66,16 @@ angular.module('LocalHyper.googleMaps', []).factory('GoogleMaps', [
         }
       });
       return address;
+    };
+    GoogleMaps.fullAddress = function(address) {
+      var string;
+      string = '';
+      _.each(address, function(val, key) {
+        if (key !== 'full') {
+          return string += key === 'postal_code' ? "" + val : val + ", ";
+        }
+      });
+      return string;
     };
     return GoogleMaps;
   }

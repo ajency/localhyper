@@ -186,7 +186,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       onEditLocation: function() {
         var mapHeight;
         this.location.modal.show();
-        mapHeight = $('.map-content').height();
+        mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10;
         $('.aj-big-map').css({
           'height': mapHeight
         });
@@ -209,6 +209,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           return CDialog.confirm('Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']).then((function(_this) {
             return function(btnIndex) {
               if (btnIndex === 1) {
+                _this.location.address.full = GoogleMaps.fullAddress(_this.location.address);
                 _this.confirmedAddress = _this.location.address.full;
                 return _this.location.modal.hide();
               }
@@ -308,8 +309,16 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           templateUrl: 'views/products/single-product.html',
           controller: 'SingleProductCtrl',
           resolve: {
-            Maps: function(GoogleMaps) {
-              return GoogleMaps.loadScript();
+            Maps: function($q, CSpinner, GoogleMaps) {
+              var defer;
+              defer = $q.defer();
+              CSpinner.show('', 'Please wait...');
+              GoogleMaps.loadScript().then(function() {
+                return defer.resolve();
+              })["finally"](function() {
+                return CSpinner.hide();
+              });
+              return defer.promise;
             }
           }
         }
