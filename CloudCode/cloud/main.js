@@ -1048,18 +1048,28 @@
     });
   });
 
-  Parse.Cloud.define('cancelRequest', function(request, response) {
-    var Request, requestId;
+  Parse.Cloud.define('updateRequestStatus', function(request, response) {
+    var Request, isValidStatus, requestId, status, validStatuses;
     requestId = request.params.requestId;
-    Request = Parse.Object.extend('Request');
-    request = new Request();
-    request.id = requestId;
-    request.set("status", "cancelled");
-    return request.save().then(function(request) {
-      return response.success(request);
-    }, function(error) {
-      return response.error(error);
-    });
+    status = request.params.status;
+    validStatuses = ['successful', 'cancelled', 'open'];
+    isValidStatus = _.indexOf(validStatuses, status);
+    if (isValidStatus > -1) {
+      Request = Parse.Object.extend('Request');
+      request = new Request();
+      request.id = requestId;
+      request.set("status", status);
+      if (status === "successful") {
+        request.set("deliveryStatus", "pending");
+      }
+      return request.save().then(function(request) {
+        return response.success(request);
+      }, function(error) {
+        return response.error(error);
+      });
+    } else {
+      return response.error("Please enter a valid status");
+    }
   });
 
   getCategoryBasedSellers = function(geoPoint, categoryId, brandId, city, area) {

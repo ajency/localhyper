@@ -266,24 +266,35 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
     , (error) ->
         response.error (error)
 
-Parse.Cloud.define 'cancelRequest' , (request, response) ->
+Parse.Cloud.define 'updateRequestStatus' , (request, response) ->
     requestId = request.params.requestId
+    status = request.params.status
 
+    validStatuses = ['successful','cancelled','open']
+    isValidStatus = _.indexOf(validStatuses, status )
 
-    Request = Parse.Object.extend('Request')
-    request = new Request()
+    if isValidStatus > -1 
 
-    request.id = requestId
+        Request = Parse.Object.extend('Request')
+        request = new Request()
 
-    request.set "status", "cancelled"
-    
-    request.save() 
+        request.id = requestId
 
-    .then (request) ->
-        response.success request
+        request.set "status", status
 
-    , (error) ->
-        response.error error
+        if status is "successful"
+            request.set "deliveryStatus", "pending"
+        
+        request.save() 
+
+        .then (request) ->
+            response.success request
+
+        , (error) ->
+            response.error error
+
+    else 
+        response.error "Please enter a valid status"
 
 
 
