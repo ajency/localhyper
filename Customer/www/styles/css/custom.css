@@ -580,3 +580,11 @@ sm {
 .list-cont {
   position: relative;
 }
+.category .input-label {
+  width: 100%;
+  max-width: 100%;
+}
+.category select {
+  padding: 3px;
+  right: 30px;
+}
