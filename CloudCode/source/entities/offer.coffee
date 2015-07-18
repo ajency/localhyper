@@ -203,6 +203,9 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     # find out if atleast one request is made for a given product id and customer id
     queryOffers = new Parse.Query("Offer")
     queryOffers.matchesQuery("seller", innerSellerQuery)
+    
+    allowedStatuses = ["open", "rejected"]
+    queryOffers.containedIn("status", allowedStatuses)
 
     # pagination
     queryOffers.limit(displayLimit)
@@ -215,6 +218,7 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     queryOffers.include("request.product")  
     queryOffers.include("request.brand")  
     queryOffers.include("request.category")  
+    queryOffers.include("request.category.parent_category")  
 
     queryOffers.find()
 
@@ -240,10 +244,11 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
             category = 
                 "objectId" : categoryObj.id 
                 "name" : categoryObj.get("name")
+                "parentCategory" : categoryObj.get("parent_category").get("name")
 
             sellerGeoPoint = sellerObj.get("addressGeoPoint")
             requestGeoPoint =  requestObj.get("addressGeoPoint")  
-            sellersDistancFromCustomer =   reuqestGeoPoint.kilometersTo(sellerGeoPoint)                    
+            sellersDistancFromCustomer =   requestGeoPoint.kilometersTo(sellerGeoPoint)                    
 
            
             sellerOffer = 
@@ -251,9 +256,7 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 "brand" : brand
                 "category" : category
                 "address" : requestObj.get("address")
-                "distance" : sellerGeoPoint
-                "distance" : sellersDistancFromCustomer
-                "distance" : requestGeoPoint
+                "distanceFromCustomer" : sellersDistancFromCustomer
                 "offerPrice" : priceObj.get("value")   
                 "offerStatus" : offerObj.get("status")   
 

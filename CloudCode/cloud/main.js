@@ -666,7 +666,7 @@
   });
 
   Parse.Cloud.define('getSellerOffers', function(request, response) {
-    var displayLimit, innerSellerQuery, page, queryOffers, sellerId;
+    var allowedStatuses, displayLimit, innerSellerQuery, page, queryOffers, sellerId;
     sellerId = request.params.sellerId;
     page = parseInt(request.params.page);
     displayLimit = parseInt(request.params.displayLimit);
@@ -674,6 +674,8 @@
     innerSellerQuery.equalTo("objectId", sellerId);
     queryOffers = new Parse.Query("Offer");
     queryOffers.matchesQuery("seller", innerSellerQuery);
+    allowedStatuses = ["open", "rejected"];
+    queryOffers.containedIn("status", allowedStatuses);
     queryOffers.limit(displayLimit);
     queryOffers.skip(page * displayLimit);
     queryOffers.include("price");
@@ -683,6 +685,7 @@
     queryOffers.include("request.product");
     queryOffers.include("request.brand");
     queryOffers.include("request.category");
+    queryOffers.include("request.category.parent_category");
     return queryOffers.find().then(function(offers) {
       var sellerOffers;
       sellerOffers = _.map(offers, function(offerObj) {
@@ -704,19 +707,18 @@
         };
         category = {
           "objectId": categoryObj.id,
-          "name": categoryObj.get("name")
+          "name": categoryObj.get("name"),
+          "parentCategory": categoryObj.get("parent_category").get("name")
         };
         sellerGeoPoint = sellerObj.get("addressGeoPoint");
         requestGeoPoint = requestObj.get("addressGeoPoint");
-        sellersDistancFromCustomer = reuqestGeoPoint.kilometersTo(sellerGeoPoint);
+        sellersDistancFromCustomer = requestGeoPoint.kilometersTo(sellerGeoPoint);
         sellerOffer = {
           "product": product,
           "brand": brand,
           "category": category,
           "address": requestObj.get("address"),
-          "distance": sellerGeoPoint,
-          "distance": sellersDistancFromCustomer,
-          "distance": requestGeoPoint,
+          "distanceFromCustomer": sellersDistancFromCustomer,
           "offerPrice": priceObj.get("value"),
           "offerStatus": offerObj.get("status")
         };
