@@ -1,7 +1,13 @@
 angular.module 'LocalHyper.suggestProduct', []
 
 
-.controller 'suggestProductCtrl', ['$q', '$scope', ($q, $scope)->
+.controller 'suggestProductCtrl', ['$q', '$scope', '$http', '$location', 'CToast', 'CategoriesAPI', ($q, $scope, $http, $location, CToast, CategoriesAPI)->
+	$scope.suggest = {}
+
+	CategoriesAPI.getAll()
+	.then (categories)->
+		console.log(categories)
+		$scope.suggest.items = categories
 	
 	$scope.suggest = 
 		productName: null
@@ -12,20 +18,23 @@ angular.module 'LocalHyper.suggestProduct', []
 
 		onSuggest :->
 			defer = $q.defer()
-			Product = Parse.Object.extend "suggestProduct"
-			product = new Product()
-			product.set "productName", $scope.suggest.productName
-			product.set "category", $scope.suggest.category
-			product.set "brand", $scope.suggest.brand
-			product.set "productDescription", $scope.suggest.productDescription
-			product.set "Comments", $scope.suggest.yourComments
-			product.save()
-			.then ->
+			param = {"productName" : $scope.suggest.productName,"category" : $scope.suggest.category.name,"brand": $scope.suggest.brand,"description" : $scope.suggest.productDescription,"comments" : $scope.suggest.yourComments}
+			$http.post 'functions/sendMail', param
+			.then (data)->
 				defer.resolve
+				$location.path '/categories'	
 			, (error)->
-				defer.reject
+				# CToast.show('Request failed, please try again')
+				defer.reject error
 
-			defer.promise
+		 defer.promise	
+
+	
+
+
+	
+
+	
 
 ]
 
@@ -36,8 +45,8 @@ angular.module 'LocalHyper.suggestProduct', []
 
 		.state 'suggest-product',
 			url: '/suggest-product'
-			parent: 'main'
-			cache: false
+			parent: 'main',
+			cache: false,
 			views: 
 				"appContent":
 					controller: 'suggestProductCtrl'
