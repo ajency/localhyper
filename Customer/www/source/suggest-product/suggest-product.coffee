@@ -24,7 +24,7 @@ angular.module 'LocalHyper.suggestProduct', []
 				defer.resolve
 				$location.path '/categories'	
 			, (error)->
-				# CToast.show('Request failed, please try again')
+				CToast.show('Request failed, please try again')
 				defer.reject error
 
 		 defer.promise	

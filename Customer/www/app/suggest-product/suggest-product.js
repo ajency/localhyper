@@ -25,6 +25,7 @@ angular.module('LocalHyper.suggestProduct', []).controller('suggestProductCtrl',
           defer.resolve;
           return $location.path('/categories');
         }, function(error) {
+          CToast.show('Request failed, please try again');
           return defer.reject(error);
         });
         return defer.promise;
