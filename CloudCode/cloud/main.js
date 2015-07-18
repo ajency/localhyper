@@ -634,6 +634,7 @@
         offer = new Offer();
         requestObj = new Request();
         requestObj.id = requestId;
+        offer.set("seller", sellerObj);
         offer.set("request", requestObj);
         offer.set("price", priceObj);
         offer.set("status", status);
@@ -659,6 +660,24 @@
       }, function(error) {
         return response.error(error);
       });
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
+  Parse.Cloud.define('getSellerOffers', function(request, response) {
+    var displayLimit, innerSellerQuery, page, queryOffers, sellerId;
+    sellerId = request.params.sellerId;
+    page = parseInt(request.params.page);
+    displayLimit = parseInt(request.params.displayLimit);
+    innerSellerQuery = new Parse.Query(Parse.User);
+    innerSellerQuery.equalTo("objectId", sellerId);
+    queryOffers = new Parse.Query("Offer");
+    queryOffers.matchesQuery("seller", innerSellerQuery);
+    queryOffers.limit(displayLimit);
+    queryOffers.skip(page * displayLimit);
+    return queryOffers.find().then(function(sellerOffers) {
+      return response.success(sellerOffers);
     }, function(error) {
       return response.error(error);
     });

@@ -155,12 +155,13 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
             requestObj = new Request()
             requestObj.id = requestId
 
+            offer.set "seller" , sellerObj
             offer.set "request", requestObj 
             offer.set "price", priceObj 
             offer.set "status" , status
             offer.set "deliveryTime" , deliveryTime
             offer.set "comments" , comments
-
+                        
             offer.save()
             .then (offerObj) ->
 
@@ -189,3 +190,28 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
     , (error) ->
         response.error error
 
+
+
+Parse.Cloud.define 'getSellerOffers' , (request, response) ->
+    sellerId = request.params.sellerId
+    page = parseInt request.params.page
+    displayLimit = parseInt request.params.displayLimit    
+
+    innerSellerQuery = new Parse.Query(Parse.User)
+    innerSellerQuery.equalTo("objectId",sellerId)  
+
+    # find out if atleast one request is made for a given product id and customer id
+    queryOffers = new Parse.Query("Offer")
+    queryOffers.matchesQuery("seller", innerSellerQuery)
+
+    # pagination
+    queryOffers.limit(displayLimit)
+    queryOffers.skip(page * displayLimit)    
+
+    queryOffers.find()
+
+    .then (sellerOffers) ->
+        response.success sellerOffers
+    , (error) ->
+        response.error error  
+    
