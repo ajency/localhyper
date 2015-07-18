@@ -3,6 +3,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     $scope.view = {
       display: 'loader',
       errorType: '',
+      footer: false,
       productID: $stateParams.productID,
       product: {},
       specificationModal: null,
@@ -11,6 +12,15 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       comments: {
         modal: null,
         text: ''
+      },
+      request: {
+        active: false,
+        check: function() {
+          this.active = false;
+          if (User.isLoggedIn()) {
+            return this.active = !_.isEmpty($scope.view.product.activeRequest);
+          }
+        }
       },
       location: {
         modal: null,
@@ -148,8 +158,17 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       },
       getSingleProductDetails: function() {
         return ProductsAPI.getSingleProduct(this.productID).then((function(_this) {
-          return function(data) {
-            return _this.onSuccess(data);
+          return function(productData) {
+            _this.product = productData;
+            return ProductsAPI.getNewOffers(_this.productID);
+          };
+        })(this)).then((function(_this) {
+          return function(details) {
+            _.each(details, function(val, key) {
+              return _this.product[key] = val;
+            });
+            console.log(_this.product);
+            return _this.onSuccess();
           };
         })(this), (function(_this) {
           return function(error) {
@@ -157,9 +176,10 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           };
         })(this));
       },
-      onSuccess: function(data) {
-        this.display = 'noError';
-        return this.product = data;
+      onSuccess: function() {
+        this.footer = true;
+        this.request.check();
+        return this.display = 'noError';
       },
       onError: function(type) {
         this.display = 'error';
@@ -280,6 +300,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             return ProductsAPI.makeRequest(params);
           }).then((function(_this) {
             return function() {
+              _this.request.active = true;
               _this.makeRequestModal.hide();
               return CToast.show('Your request has been made');
             };

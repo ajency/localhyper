@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').factory('ProductsAPI', [
-  '$q', '$http', function($q, $http) {
+  '$q', '$http', 'User', function($q, $http, User) {
     var ProductsAPI;
     ProductsAPI = {};
     ProductsAPI.getAll = function(opts) {
@@ -40,6 +40,24 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
       }, function(error) {
         return defer.reject(error);
       });
+      return defer.promise;
+    };
+    ProductsAPI.getNewOffers = function(productId) {
+      var defer, params;
+      defer = $q.defer();
+      if (User.isLoggedIn()) {
+        params = {
+          "productId": productId,
+          "customerId": User.getId()
+        };
+        $http.post('functions/getNewOffers', params).then(function(data) {
+          return defer.resolve(data.data.result);
+        }, function(error) {
+          return defer.reject(error);
+        });
+      } else {
+        defer.resolve({});
+      }
       return defer.promise;
     };
     return ProductsAPI;

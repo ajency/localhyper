@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.products'
 
 
-.factory 'ProductsAPI', ['$q', '$http', ($q, $http)->
+.factory 'ProductsAPI', ['$q', '$http', 'User', ($q, $http, User)->
 
 	ProductsAPI = {}
 
@@ -43,6 +43,24 @@ angular.module 'LocalHyper.products'
 			defer.resolve data.data.result
 		, (error)->
 			defer.reject error
+
+		defer.promise
+
+	ProductsAPI.getNewOffers = (productId)->
+		defer = $q.defer()
+
+		if User.isLoggedIn()
+			params = 
+				"productId": productId
+				"customerId": User.getId()
+
+			$http.post 'functions/getNewOffers', params
+			.then (data)->
+				defer.resolve data.data.result
+			, (error)->
+				defer.reject error
+		else
+			defer.resolve {}
 
 		defer.promise
 
