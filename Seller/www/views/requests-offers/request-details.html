@@ -177,38 +177,40 @@
 					</div>
 				</div>
 			</div>
+			
+			<div ng-if="view.requestDetails.data.comments!==''">
+			    <div class="row">
+			    	<div class="col">
+			    		<h5 class="with-sep"><span>Comments</span></h5>
+			    	</div>
+			    </div>
 
-		    <div class="row">
-		    	<div class="col">
-		    		<h5 class="with-sep"><span>Comments</span></h5>
-		    	</div>
-		    </div>
+			    <div class="row">
+			    	<div class="col col-20">
+			    		<a href="#" class="userava">
+			    			C
+			    		</a>
+			    	</div>
+			    	<div class="col col-80 user-comment">
+			    		<p>{{view.requestDetails.data.comments}}</p>
+			    		<button 
+			    			class="button button-small button-black"
+			    			ng-show="view.requestDetails.reply.button"
+			    			ng-click="view.requestDetails.reply.button=false; App.resize();">
+			    			Reply
+			    		</button>
+			    	</div>
+			    </div>
 
-		    <div class="row">
-		    	<div class="col col-20">
-		    		<a href="#" class="userava">
-		    			C
-		    		</a>
-		    	</div>
-		    	<div class="col col-80 user-comment">
-		    		<p>Will the products I order be delivered to my doorstep?</p>
-		    		<button 
-		    			class="button button-small button-black"
-		    			ng-show="view.requestDetails.reply.button"
-		    			ng-click="view.requestDetails.reply.button=false; App.resize();">
-		    			Reply
-		    		</button>
-		    	</div>
-		    </div>
-
-			<div class="list">
-				<label class="item item-input">
-					<textarea 
-						placeholder="Your reply"
-						ng-hide="view.requestDetails.reply.button"
-						ng-model="view.requestDetails.reply.text">
-					</textarea>
-				</label>
+				<div class="list">
+					<label class="item item-input">
+						<textarea 
+							placeholder="Your reply"
+							ng-hide="view.requestDetails.reply.button"
+							ng-model="view.requestDetails.reply.text">
+						</textarea>
+					</label>
+				</div>
 			</div>
 
 		</ion-list>
