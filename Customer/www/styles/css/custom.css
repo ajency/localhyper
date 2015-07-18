@@ -330,7 +330,7 @@ sm {
 }
 .sub-categories .border-card2 {
   height: 225px !important;
-  background: url(../../img/gray-bg.png) #ffffff 0px 70px no-repeat !important;
+  background: none !important;
 }
 .sub-categories .border-card {
   border-right: 1px solid #cccccc;
@@ -579,4 +579,12 @@ sm {
 }
 .list-cont {
   position: relative;
+}
+.category .input-label {
+  width: 100%;
+  max-width: 100%;
+}
+.category select {
+  padding: 3px;
+  right: 30px;
 }
