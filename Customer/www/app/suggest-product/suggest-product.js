@@ -1,5 +1,10 @@
 angular.module('LocalHyper.suggestProduct', []).controller('suggestProductCtrl', [
-  '$q', '$scope', function($q, $scope) {
+  '$q', '$scope', '$http', '$location', 'CToast', 'CategoriesAPI', function($q, $scope, $http, $location, CToast, CategoriesAPI) {
+    $scope.suggest = {};
+    CategoriesAPI.getAll().then(function(categories) {
+      console.log(categories);
+      return $scope.suggest.items = categories;
+    });
     return $scope.suggest = {
       productName: null,
       category: null,
@@ -7,19 +12,21 @@ angular.module('LocalHyper.suggestProduct', []).controller('suggestProductCtrl',
       productDescription: null,
       yourComments: null,
       onSuggest: function() {
-        var Product, defer, product;
+        var defer, param;
         defer = $q.defer();
-        Product = Parse.Object.extend("suggestProduct");
-        product = new Product();
-        product.set("productName", $scope.suggest.productName);
-        product.set("category", $scope.suggest.category);
-        product.set("brand", $scope.suggest.brand);
-        product.set("productDescription", $scope.suggest.productDescription);
-        product.set("Comments", $scope.suggest.yourComments);
-        product.save().then(function() {
-          return defer.resolve;
+        param = {
+          "productName": $scope.suggest.productName,
+          "category": $scope.suggest.category.name,
+          "brand": $scope.suggest.brand,
+          "description": $scope.suggest.productDescription,
+          "comments": $scope.suggest.yourComments
+        };
+        $http.post('functions/sendMail', param).then(function(data) {
+          defer.resolve;
+          return $location.path('/categories');
         }, function(error) {
-          return defer.reject;
+          CToast.show('Request failed, please try again');
+          return defer.reject(error);
         });
         return defer.promise;
       }

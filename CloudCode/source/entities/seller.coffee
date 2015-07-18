@@ -24,9 +24,7 @@ getCategoryBasedSellers = (geoPoint,categoryId,brandId,city,area) ->
    
     .then (sellers) ->
         if sellers.length is 0
-            errorObj =
-                message: "No seller found"
-            promise.reject(errorObj)
+            promise.resolve()
         else
             promise.resolve(sellers)
     , (error) ->
