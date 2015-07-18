@@ -1048,6 +1048,20 @@
     });
   });
 
+  Parse.Cloud.define('cancelRequest', function(request, response) {
+    var Request, requestId;
+    requestId = request.params.requestId;
+    Request = Parse.Object.extend('Request');
+    request = new Request();
+    request.id = requestId;
+    request.set("status", "cancelled");
+    return request.save().then(function(request) {
+      return response.success(request);
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   getCategoryBasedSellers = function(geoPoint, categoryId, brandId, city, area) {
     var Brand, Category, brandPointer, categoryPointer, promise, sellerQuery;
     sellerQuery = new Parse.Query(Parse.User);

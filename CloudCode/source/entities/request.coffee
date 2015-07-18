@@ -266,6 +266,27 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
     , (error) ->
         response.error (error)
 
+Parse.Cloud.define 'cancelRequest' , (request, response) ->
+    requestId = request.params.requestId
+
+
+    Request = Parse.Object.extend('Request')
+    request = new Request()
+
+    request.id = requestId
+
+    request.set "status", "cancelled"
+    
+    request.save() 
+
+    .then (request) ->
+        response.success request
+
+    , (error) ->
+        response.error error
+
+
+
 
 
 
