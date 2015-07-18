@@ -12,7 +12,6 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 
 		Parse.initialize APP_ID, JS_KEY
 		$rootScope.App = App
-		GoogleMaps.loadScript()
 
 		#User Notification Icon (Right popover)
 		App.notification = 

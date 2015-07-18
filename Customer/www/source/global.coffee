@@ -1,6 +1,6 @@
 # App
 APP_NAME = 'ShopOye Customer'
-PACKAGE_NAME = 'com.local.hyper.alpha'
+PACKAGE_NAME = 'com.localhyper.customer'
 
 # Parse Keys
 APP_ID       = '837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7'

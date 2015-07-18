@@ -45,9 +45,6 @@ h6 {
 .bar-light {
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
-.has-header {
-  background: #fff!important;
-}
 .bar-assertive {
   background: #f35a59 !important;
 }
@@ -467,7 +464,7 @@ sm {
 }
 .bar-custom-footer {
   border-top: 1px solid rgba(204, 204, 204, 0.44);
-  HEIGHT: 50PX;
+  height: 50px;
 }
 .aj-sp-img {
   margin: 6% auto;
@@ -588,10 +585,28 @@ sm {
   color: #c5c5c5;
   font-size: 11px;
   text-transform: uppercase;
+  padding-top: 0;
+  font-size: 14px;
+}
+.form-field .ico-out {
+  display: none;
+  color: #f35a59;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 100%;
+  font-size: 28px;
+  border-right: 1px solid #eee;
+  padding-left: 13px;
+  padding-right: 10px;
+  margin-right: 10px;
+  line-height: 50px;
+  background: #F7F7F7;
 }
 .form-field input {
   font-weight: 500;
-  font-size: 18px;
+  font-size: 16px;
   height: 26px;
 }
 .form-field .item {
@@ -608,12 +623,109 @@ sm {
 /************************************/
 /* by Ren - Enter Details  */
 /************************************/
+.p-b-0 {
+  padding-bottom: 0;
+}
+.p-t-0 {
+  padding-top: 0;
+}
+.p-l-0 {
+  padding-left: 0;
+}
+.p-r-0 {
+  padding-right: 0;
+}
+.b-r-1 {
+  border-right: 1px solid #ddd;
+}
+.business-details .card.m-red {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+.business-details .card .platop.row {
+  box-shadow: 0 -2px 1px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+.business-details .card .view-rad {
+  text-align: center;
+  padding-right: 20px;
+  margin-right: 20px;
+  border-right: 1px solid #ddd;
+  float: left;
+  width: 77px;
+}
+.business-details .card .view-rad b {
+  font-weight: bolder;
+}
+.business-details .card .view-rad i {
+  font-size: 36px;
+  display: block;
+  color: #909090;
+}
+.business-details .card.full-btn button.button-block {
+  margin: 0;
+}
+.the-loation {
+  background-image: url(../../img/mapbg.jpg);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  min-height: 75px;
+}
+.the-loation .ico-loc.icon {
+  font-size: 22px;
+  color: #f35a59;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 35px;
+  height: 36px;
+  line-height: 35px;
+  text-align: center;
+  border: 1px solid #f35a59;
+  border-radius: 50%;
+}
+.the-loation h4 {
+  padding-left: 52px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.the-loation p {
+  padding-right: 5px;
+  padding-left: 52px;
+  text-align: left;
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 20px;
+}
+.the-loation .button {
+  bottom: 10px;
+  right: 10px;
+  line-height: 32px;
+  font-size: 14px;
+  min-height: 0;
+  position: absolute;
+}
+.the-loation .button .icon {
+  margin-right: 5px;
+}
+.the-loation .button .icon:before {
+  font-size: 16px;
+  line-height: 32px;
+}
+.card .item.item-checkbox {
+  font-size: 14px;
+}
 .aj-small-map {
   height: 157px;
 }
+.title-with-icon {
+  margin-top: 8px;
+  padding: 5px 10px;
+  margin-bottom: -5px;
+}
 .title-with-icon i {
   margin-right: 5px;
-  margin-left: 10px;
 }
 .item-input-inset .item-input-wrapper {
   padding: 2px 8px;
@@ -630,7 +742,6 @@ sm {
   display: block;
   min-width: 46px;
   font-size: 18px;
-  color: #f35a59;
 }
 .button.button-dark.btn-confirm {
   margin-top: 0;
@@ -750,4 +861,29 @@ h5.with-sep span {
   background: #eee;
   border-color: #000;
   color: #000;
+}
+.address-inputs {
+  padding-top: 8px;
+}
+.address-inputs label.no-input {
+  font-size: 14px;
+  line-height: 25px;
+  background-color: #EFEFEF;
+}
+.bar-footer.with-btn {
+  margin: 0;
+  padding: 0;
+}
+.bar-footer.with-btn .button {
+  margin: 0;
+  font-size: 14px;
+  border-radius: 0;
+}
+.bar-footer.with-btn .button i {
+  margin-right: 5px;
+}
+.bar-footer.with-btn > .button + .button:last-child {
+  position: relative;
+  top: 0;
+  left: 0;
 }
