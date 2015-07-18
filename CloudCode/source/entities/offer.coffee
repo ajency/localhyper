@@ -161,7 +161,7 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
             offer.set "status" , status
             offer.set "deliveryTime" , deliveryTime
             offer.set "comments" , comments
-                        
+
             offer.save()
             .then (offerObj) ->
 
@@ -206,11 +206,61 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
 
     # pagination
     queryOffers.limit(displayLimit)
-    queryOffers.skip(page * displayLimit)    
+    queryOffers.skip(page * displayLimit)  
+
+    queryOffers.include("price")  
+    queryOffers.include("request")  
+    queryOffers.include("seller")  
+    queryOffers.include("price")  
+    queryOffers.include("request.product")  
+    queryOffers.include("request.brand")  
+    queryOffers.include("request.category")  
 
     queryOffers.find()
 
-    .then (sellerOffers) ->
+    .then (offers) ->
+        sellerOffers = _.map(offers, (offerObj) ->
+
+            requestObj = offerObj.get("request")           
+            productObj = requestObj.get("product")
+            brandObj = requestObj.get("brand")
+            categoryObj = requestObj.get("category")
+            sellerObj = offerObj.get("seller")
+            priceObj = offerObj.get("price")
+
+            product = 
+                "objectId" : productObj.id
+                "name" : productObj.get("name")
+                "mrp" : productObj.get("mrp")
+
+            brand = 
+                "objectId" : brandObj.id 
+                "name" : brandObj.get("name") 
+
+            category = 
+                "objectId" : categoryObj.id 
+                "name" : categoryObj.get("name")
+
+            sellerGeoPoint = sellerObj.get("addressGeoPoint")
+            requestGeoPoint =  requestObj.get("addressGeoPoint")  
+            sellersDistancFromCustomer =   reuqestGeoPoint.kilometersTo(sellerGeoPoint)                    
+
+           
+            sellerOffer = 
+                "product" : product
+                "brand" : brand
+                "category" : category
+                "address" : requestObj.get("address")
+                "distance" : sellerGeoPoint
+                "distance" : sellersDistancFromCustomer
+                "distance" : requestGeoPoint
+                "offerPrice" : priceObj.get("value")   
+                "offerStatus" : offerObj.get("status")   
+
+
+            sellerOffer
+        )
+
         response.success sellerOffers
     , (error) ->
         response.error error  

@@ -676,7 +676,52 @@
     queryOffers.matchesQuery("seller", innerSellerQuery);
     queryOffers.limit(displayLimit);
     queryOffers.skip(page * displayLimit);
-    return queryOffers.find().then(function(sellerOffers) {
+    queryOffers.include("price");
+    queryOffers.include("request");
+    queryOffers.include("seller");
+    queryOffers.include("price");
+    queryOffers.include("request.product");
+    queryOffers.include("request.brand");
+    queryOffers.include("request.category");
+    return queryOffers.find().then(function(offers) {
+      var sellerOffers;
+      sellerOffers = _.map(offers, function(offerObj) {
+        var brand, brandObj, category, categoryObj, priceObj, product, productObj, requestGeoPoint, requestObj, sellerGeoPoint, sellerObj, sellerOffer, sellersDistancFromCustomer;
+        requestObj = offerObj.get("request");
+        productObj = requestObj.get("product");
+        brandObj = requestObj.get("brand");
+        categoryObj = requestObj.get("category");
+        sellerObj = offerObj.get("seller");
+        priceObj = offerObj.get("price");
+        product = {
+          "objectId": productObj.id,
+          "name": productObj.get("name"),
+          "mrp": productObj.get("mrp")
+        };
+        brand = {
+          "objectId": brandObj.id,
+          "name": brandObj.get("name")
+        };
+        category = {
+          "objectId": categoryObj.id,
+          "name": categoryObj.get("name")
+        };
+        sellerGeoPoint = sellerObj.get("addressGeoPoint");
+        requestGeoPoint = requestObj.get("addressGeoPoint");
+        sellersDistancFromCustomer = reuqestGeoPoint.kilometersTo(sellerGeoPoint);
+        sellerOffer = {
+          "product": product,
+          "brand": brand,
+          "category": category,
+          "address": requestObj.get("address"),
+          "distance": sellerGeoPoint,
+          "distance": sellersDistancFromCustomer,
+          "distance": requestGeoPoint,
+          "offerPrice": priceObj.get("value"),
+          "offerStatus": offerObj.get("status")
+        };
+        return sellerOffer;
+      });
       return response.success(sellerOffers);
     }, function(error) {
       return response.error(error);
@@ -1011,7 +1056,7 @@
       requestQuery.greaterThanOrEqualTo("createdAt", queryDate);
       sellerGeoPoint = new Parse.GeoPoint(sellerLocation);
       requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
-      requestQuery.select("address,addressGeoPoint,category,brand,product,customerId");
+      requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId");
       requestQuery.include("product");
       requestQuery.include("category");
       requestQuery.include("category.parent_category");
@@ -1047,7 +1092,8 @@
             product: product,
             category: category,
             brand: brand,
-            createdAt: filteredRequest.createdAt
+            createdAt: filteredRequest.createdAt,
+            comments: filteredRequest.get("comments")
           };
           return requests.push(requestObj);
         });
