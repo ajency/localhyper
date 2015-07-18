@@ -7,6 +7,7 @@
 		<div class="row row-fluid">
 			<div class="col p-b-0">
 				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<i class="icon ion-briefcase"></i>
 					Business details
 				</h5>
 			</div>
@@ -15,28 +16,28 @@
 		<div class="card m-red">
 			<div class="list bg-white form-field">
 				<label class="item item-input item-stacked-label">
-					<span class="input-label"><i class="icon ion-briefcase"></i> Business Name</span>
+					<i class="icon ion-briefcase ico-out"></i>
+					<span class="input-label">Business Name</span>
 					<input
 						type="text"
-						placeholder="Enter business name"
 						ng-model="view.businessName">
 				</label>
 
 				<label class="item item-input item-stacked-label">
-					<span class="input-label"><i class="icon ion-person"></i> Full Name</span>
+					<i class="icon ion-person ico-out"></i>
+					<span class="input-label">Full Name</span>
 						<input
 						type="text"
-						placeholder="Enter your full name"
 						ng-model="view.name">
 				</label>
 
 				<label class="item item-input item-stacked-label">
-					<span class="input-label"><i class="icon ion-ios-telephone"></i> Phone Number</span>
+				<i class="icon ion-ios-telephone ico-out"></i>
+					<span class="input-label">Phone Number</span>
 					<input
 						type="tel"
 						minlength="10"
 						maxlength="10"
-						placeholder="Enter your phone number"
 						ng-pattern="App.onlyNumbers"
 						ng-model="view.phone">
 				</label>
@@ -46,6 +47,7 @@
 		<div class="row row-fluid">
 			<div class="col p-b-0">
 				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<i class="icon ion-location"></i>
 					Your Location
 				</h5>
 			</div>
@@ -57,7 +59,7 @@
 				<div class="row">
 					<div class="col-75">
 						<i class="icon ion-location ico-loc"></i>
-						<button 
+						<button
 							class="button button-outline button-assertive"
 							ng-click="view.onChangeLocation()">
 							<i class="icon ion-plus-round"></i> Add your Address
@@ -84,13 +86,24 @@
 					</div>
 				</div>
 			</div>
+		</div>
 
+		<div class="row row-fluid">
+			<div class="col p-b-0">
+				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<i class="icon ion-arrow-graph-up-right"></i>
+					Deliverable Area
+				</h5>
+			</div>
+		</div>
+
+		<div class="card m-red">
 			<div class="row platop">
 				<div class="col">
 					<div class="row">
 						<div class="col">
 							<h3 class="m-t-0 view-rad">
-								<b>{{view.deliveryRadius}} <small>Kms</small></b>
+								<b>{{view.delivery.radius}} <small>Kms</small></b>
 								<i class=" ion ion-model-s"></i>
 							</h3>
 							<h5 class="text-left">
@@ -99,32 +112,38 @@
 						</div>
 					</div>
 
-					<div class="item range range-assertive">
+					<div class="item range range-assertive range-with-incdec">
+						<i class="icon ion-minus-round" ng-click="view.delivery.minus();"></i>
 						<input
 							type="range"
-							min="0"
+							min="1"
 							max="99"
-							ng-model="view.deliveryRadius">
+							ng-model="view.delivery.radius">
+						<i class="icon ion-plus-round" ng-click="view.delivery.plus();">
+						</i>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="card full-btn">
-			<li class="item item-checkbox">
+		<div class="card">
+			<div class="item item-checkbox">
 				<label class="checkbox">
 					<input type="checkbox" ng-model="view.terms">
 				</label>
 				I accept the terms & conditions
-			</li>
-
-			<button
-				class="button button-block button-assertive"
-				ng-disabled="!view.terms"
-				ng-click="view.onNext()">
-				Next
-			</button>
+			</div>
 		</div>
 
-   </ion-content>
+   	</ion-content>
+
+   	<ion-footer-bar class="bar bar-footer with-btn">
+		<button
+			class="title button button-block button-assertive"
+			ng-disabled="!view.terms"
+			ng-click="view.onNext()">
+			Next
+		</button>
+	</ion-footer-bar>
+
 </ion-view>

@@ -154,7 +154,7 @@ angular.module 'LocalHyper.products'
 
 			onEditLocation : ->
 				@location.modal.show()
-				mapHeight = $('.map-content').height()
+				mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
 				$('.aj-big-map').css 'height': mapHeight
 				if _.isNull @location.latLng
 					$timeout =>
@@ -168,6 +168,7 @@ angular.module 'LocalHyper.products'
 					CDialog.confirm 'Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']
 					.then (btnIndex)=>
 						if btnIndex is 1
+							@location.address.full = GoogleMaps.fullAddress(@location.address)
 							@confirmedAddress = @location.address.full
 							@location.modal.hide()
 				else
@@ -256,7 +257,14 @@ angular.module 'LocalHyper.products'
 					templateUrl: 'views/products/single-product.html'
 					controller: 'SingleProductCtrl'
 					resolve:
-						Maps : (GoogleMaps)->
+						Maps : ($q, CSpinner, GoogleMaps)->
+							defer = $q.defer()
+							CSpinner.show '', 'Please wait...'
 							GoogleMaps.loadScript()
+							.then ->
+								defer.resolve()
+							.finally ->
+								CSpinner.hide()
+							defer.promise
 ]
 

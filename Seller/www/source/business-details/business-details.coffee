@@ -6,12 +6,18 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout)->
 
 		$scope.view = 
-			businessName: 'Ajency'
-			name: 'Deepak'
-			phone: '9765436351'
+			businessName: ''
+			name: ''
+			phone: ''
 			confirmedAddress: ''
-			deliveryRadius: 2
 			terms: false
+
+			delivery:
+				radius: 10
+				plus : ->
+					@radius++ if @radius < 99
+				minus : ->
+					@radius-- if @radius > 1
 
 			location:
 				modal: null
@@ -92,7 +98,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 			onChangeLocation : ->
 				@location.modal.show()
-				mapHeight = $('.map-content').height()
+				mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
 				$('.aj-big-map').css 'height': mapHeight
 				if _.isNull @location.latLng
 					$timeout =>
@@ -106,6 +112,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					CDialog.confirm 'Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']
 					.then (btnIndex)=>
 						if btnIndex is 1
+							@location.address.full = GoogleMaps.fullAddress(@location.address)
 							@confirmedAddress = @location.address.full
 							@location.modal.hide()
 				else
@@ -143,6 +150,14 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					controller: 'BusinessDetailsCtrl'
 					templateUrl: 'views/business-details/business-details.html'
 					resolve:
-						Maps : (GoogleMaps)->
+						Maps : ($q, CSpinner, GoogleMaps)->
+							defer = $q.defer()
+							CSpinner.show '', 'Please wait...'
 							GoogleMaps.loadScript()
+							.then ->
+								defer.resolve()
+							.finally ->
+								CSpinner.hide()
+							defer.promise
 ]
+

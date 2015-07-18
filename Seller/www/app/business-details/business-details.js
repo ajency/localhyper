@@ -1,12 +1,24 @@
 angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('BusinessDetailsCtrl', [
   '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout) {
     $scope.view = {
-      businessName: 'Ajency',
-      name: 'Deepak',
-      phone: '9765436351',
+      businessName: '',
+      name: '',
+      phone: '',
       confirmedAddress: '',
-      deliveryRadius: 2,
       terms: false,
+      delivery: {
+        radius: 10,
+        plus: function() {
+          if (this.radius < 99) {
+            return this.radius++;
+          }
+        },
+        minus: function() {
+          if (this.radius > 1) {
+            return this.radius--;
+          }
+        }
+      },
       location: {
         modal: null,
         map: null,
@@ -107,7 +119,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
       onChangeLocation: function() {
         var mapHeight;
         this.location.modal.show();
-        mapHeight = $('.map-content').height();
+        mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10;
         $('.aj-big-map').css({
           'height': mapHeight
         });
@@ -130,6 +142,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
           return CDialog.confirm('Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']).then((function(_this) {
             return function(btnIndex) {
               if (btnIndex === 1) {
+                _this.location.address.full = GoogleMaps.fullAddress(_this.location.address);
                 _this.confirmedAddress = _this.location.address.full;
                 return _this.location.modal.hide();
               }
@@ -170,8 +183,16 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
           controller: 'BusinessDetailsCtrl',
           templateUrl: 'views/business-details/business-details.html',
           resolve: {
-            Maps: function(GoogleMaps) {
-              return GoogleMaps.loadScript();
+            Maps: function($q, CSpinner, GoogleMaps) {
+              var defer;
+              defer = $q.defer();
+              CSpinner.show('', 'Please wait...');
+              GoogleMaps.loadScript().then(function() {
+                return defer.resolve();
+              })["finally"](function() {
+                return CSpinner.hide();
+              });
+              return defer.promise;
             }
           }
         }

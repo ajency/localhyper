@@ -11,7 +11,7 @@ angular.module 'LocalHyper.googleMaps', []
 		if _.isUndefined window.google
 			script = document.createElement 'script'
 			script.type = 'text/javascript'
-			script.src  = "https://maps.googleapis.com/maps/api/js?libraries=places"+
+			script.src  = "https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"+
 						  "&key=#{GOOGLE_MAPS_API_KEY}&callback=onGMapScriptLoad"
 
 			window.onGMapScriptLoad = -> defer.resolve()
@@ -59,6 +59,13 @@ angular.module 'LocalHyper.googleMaps', []
 					address.postal_code = addr.long_name
 					
 		address
+
+	GoogleMaps.fullAddress = (address)->
+		string = ''
+		_.each address, (val, key)->
+			if key isnt 'full'
+				string += if key is 'postal_code' then "#{val}" else "#{val}, "
+		string
 
 	GoogleMaps
 ]

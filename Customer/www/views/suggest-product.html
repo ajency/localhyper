@@ -1,28 +1,35 @@
 <ion-view view-title="Suggest a product">
 
 	<ion-content>
-
+<form name="myForm" novalidate ng-submit="suggest.onSuggest()">
 	<div class="card">
 		<label class="item item-input item-stacked-label">
 			<span class="input-label"><i class="icon ion-cube"></i> Product</span>
-			<input type="text" placeholder="Which Product?" ng-model="suggest.productName" >
+			<input type="text" placeholder="Which Product?" ng-model="suggest.productName"  required >
+
 		</label>
 	</div>
 	<div class="card">
 		<label class="item item-input item-stacked-label">
-		<span class="input-label"><i class="icon ion-social-buffer"></i> Category</span>
-		<input type="text" placeholder="Product Category" ng-model="suggest.category">
+		<span class="input-label item-select"><i class="icon ion-social-buffer"></i> Category
+			&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<br>
+			<select class="pull-right" ng-model="suggest.category" ng-options="item as item.name for item in suggest.items" required>
+      			<option value="">-- choose Category --</option>
+   			 </select>
+		</span>
+		<!--input type="text" placeholder="Product Category" ng-model="suggest.category" required-->
+
 		</label>
 
 		<label class="item item-input item-stacked-label">
 		<span class="input-label"><i class="icon ion-flash"></i> Brand</span>
-		<input type="text" placeholder="Brand Name" ng-model="suggest.brand" >
+		<input type="text" placeholder="Brand Name" ng-model="suggest.brand" required>
 		</label>
 	</div>
 	<div class="card">
 		<label class="item item-input item-stacked-label">
 		<span class="input-label"><i class="icon ion-edit"></i> Description</span>
-		<textarea type="text" rows="3" placeholder="A few lines explaining the product" ng-model="suggest.productDescription"></textarea>
+		<textarea type="text" rows="3" placeholder="A few lines explaining the product" ng-model="suggest.productDescription" ></textarea>
 		</label>
 	</div>
 	<div class="card">
@@ -34,12 +41,13 @@
 	<div class="list suggest-btn">
 		<div class="row">
 			<div class="col">
-				<button class="button button-block button-assertive" ng-Click="suggest.onSuggest();App.navigate('categories')">
+				<button class="button button-block button-assertive" ng-disabled="!myForm.$valid">
 					Suggest this product
 				</button>
 			</div>
 		</div>
 	</div>
+</form>	
 	</ion-content>
 
 </ion-view>
