@@ -200,7 +200,7 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
         sellerGeoPoint = new Parse.GeoPoint sellerLocation
         requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
 
-        requestQuery.select("address,addressGeoPoint,category,brand,product,customerId")
+        requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId")
 
         requestQuery.include("product")
         requestQuery.include("category")
@@ -248,6 +248,7 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
                     category: category
                     brand: brand
                     createdAt: filteredRequest.createdAt
+                    comments: filteredRequest.get("comments")  
 
                 requests.push requestObj
 
