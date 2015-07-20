@@ -18,20 +18,6 @@
 			ng-switch-when="loader">
 		</ion-spinner>
 
-		<!--ion-list ng-switch-when="noError">
-			<a
-				class="item item-thumbnail-left department-list"
-				ng-repeat="category in view.parentCategories"
-				ng-click="App.navigate('sub-categories', {parentID: category.id})">
-					<div class="row">
-					  <div class="col col-50"><h2>{{category.name}}</h2></div>
-					  <div class="col col-50 "><img ng-src="{{category.image.src}}" class="img-responsive"></div>
-					</div>
-
-
-			</a>
-		</ion-list-->
-
 		<ion-list ng-switch-when="noError">
 			<div
 				class="item item-thumbnail-left department-list"
