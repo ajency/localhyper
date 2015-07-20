@@ -142,7 +142,7 @@ sm {
   background-size: 100%;
 }
 .bar-light {
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 /************************************/
 /* HEADER */
@@ -150,10 +150,14 @@ sm {
 .has-header {
   background: #e8e8e8;
 }
-.bar-header {
+[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light,
+.bar.bar-header {
+  background-image: url(../../img/header-bg.jpg) !important;
+  background-repeat: repeat-x !important;
   border-bottom: 1px solid #cccccc !important;
 }
-.bar-header .notification {
+[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light .notification,
+.bar.bar-header .notification {
   height: 20px;
   width: 20px;
   text-align: center;
@@ -330,15 +334,42 @@ sm {
 }
 .sub-categories .border-card2 {
   height: 225px !important;
-  background: none !important;
+}
+.sub-categories .border-card2.border-card {
+  background: #ffffff;
+  /* Old browsers */
+  background: -moz-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #f7f7f7));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #ffffff 0%, #f7f7f7 100%);
+  /* IE10+ */
+  background: linear-gradient(to bottom, #ffffff 0%, #f7f7f7 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f7f7f7', GradientType=0);
+  /* IE6-9 */
+  border-right: 1px solid #CBCBCB;
+  border-left: 1px solid #FFF;
+  border-bottom: 1px solid #BEBEBE;
+  box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0.1);
 }
 .sub-categories .border-card {
+  border-left: 1px solid #cccccc;
   border-right: 1px solid #cccccc;
   border-bottom: 1px solid #cccccc;
+  box-shadow: 1px 2px 1px rgba(0, 0, 0, 0);
   height: 8rem;
   float: left;
   background: url(../../img/gray-bg.png) no-repeat;
   background-size: 100%;
+}
+.sub-categories .border-card:first-child,
+.sub-categories .border-card:nth-child-of-type(3n) {
+  background: #F5F5F5 !important;
 }
 .sub-categories .border-card .aj-title {
   text-align: center;
@@ -465,15 +496,29 @@ sm {
 .item-avatar-left .item-content {
   padding: 0;
   min-height: 0;
-  width: 55px;
-  height: 55px;
+  width: 60px;
+  height: 60px;
   margin: 0 auto;
+  border-top-left-radius: 50%;
+  border-top-right-radius: 50%;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
   border-radius: 50%;
+  overflow-x: hidden;
+  overflow-y: hidden;
   overflow: hidden;
   background: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid #eee;
   text-align: center;
   line-height: 50px;
+  position: static;
+  -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
 .item-avatar img,
 .item-avatar .item-content img,
@@ -495,11 +540,34 @@ sm {
   display: inline-block;
   vertical-align: middle;
 }
+.item-avatar.activated,
+.item-avatar .item-content.activated,
+.item-avatar-left.activated,
+.item-avatar-left .item-content.activated {
+  background: #fff;
+  border-color: #f35a59;
+  color: #f35a59;
+  -moz-box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
+  -webkit-box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
+  box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
+}
+.item-avatar.activated img,
+.item-avatar .item-content.activated img,
+.item-avatar-left.activated img,
+.item-avatar-left .item-content.activated img {
+  opacity: 0.5;
+}
+.item-avatar.activated.more-link span,
+.item-avatar .item-content.activated.more-link span,
+.item-avatar-left.activated.more-link span,
+.item-avatar-left .item-content.activated.more-link span {
+  color: #aaa;
+}
 .item-avatar.more-link,
 .item-avatar .item-content.more-link,
 .item-avatar-left.more-link,
 .item-avatar-left .item-content.more-link {
-  line-height: 55px;
+  line-height: 54px;
 }
 .item-avatar.more-link i,
 .item-avatar .item-content.more-link i,
@@ -513,11 +581,11 @@ sm {
 .item-avatar .item-content.more-link span,
 .item-avatar-left.more-link span,
 .item-avatar-left .item-content.more-link span {
-  display: none;
   text-align: center;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  color: #f35a59;
 }
 .full-cont {
   padding: 0;

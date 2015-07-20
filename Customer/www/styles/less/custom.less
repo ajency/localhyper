@@ -127,7 +127,7 @@ sm{
 	            background-size: 100%;
 }
 .bar-light{
-	box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 /************************************/
 /* HEADER */
@@ -136,7 +136,9 @@ sm{
 .has-header{
 	background:@gray-transperent;
 }
-.bar-header{
+[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light, .bar.bar-header {
+	background-image: url(../../img/header-bg.jpg) !important;
+	background-repeat: repeat-x !important;
 	border-bottom:1px solid @gray-lighter !important;
 	.notification{
 		  height: 20px;
@@ -287,16 +289,36 @@ sm{
 .sub-categories {
 	background:@white;
 		.border-card2{
- 		   height: 225px !important;
- 		     background: none !important;
+			height: 225px !important;
+ 		    // background: none !important;
+ 		    &.border-card {
+ 		    background: #ffffff; /* Old browsers */
+ 		    background: -moz-linear-gradient(top,  #ffffff 0%, #f7f7f7 100%); /* FF3.6+ */
+ 		    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f7f7f7)); /* Chrome,Safari4+ */
+ 		    background: -webkit-linear-gradient(top,  #ffffff 0%,#f7f7f7 100%); /* Chrome10+,Safari5.1+ */
+ 		    background: -o-linear-gradient(top,  #ffffff 0%,#f7f7f7 100%); /* Opera 11.10+ */
+ 		    background: -ms-linear-gradient(top,  #ffffff 0%,#f7f7f7 100%); /* IE10+ */
+ 		    background: linear-gradient(to bottom,  #ffffff 0%,#f7f7f7 100%); /* W3C */
+ 		    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f7f7f7',GradientType=0 ); /* IE6-9 */
+ 		    border-right: 1px solid #CBCBCB;
+ 		    border-left: 1px solid #FFF;
+ 		    border-bottom: 1px solid #BEBEBE;
+ 		    box-shadow: inset 0 -2px 1px rgba(0, 0, 0, 0.1);
+ 		    }
+
 	}
 	.border-card{
-			   border-right: 1px solid @gray-lighter;
-	           border-bottom: 1px solid @gray-lighter;
-	           height: 8rem;
-	           float: left;
-	            background: url(../../img/gray-bg.png)no-repeat;
-	            background-size: 100%;
+		border-left: 1px solid @gray-lighter;
+		border-right: 1px solid @gray-lighter;
+		border-bottom: 1px solid @gray-lighter;
+		box-shadow: 1px 2px 1px rgba(0, 0, 0, 0);
+		height: 8rem;
+		float: left;
+		background: url(../../img/gray-bg.png)no-repeat;
+		background-size: 100%;
+	    &:first-child, &:nth-child-of-type(3n) {
+	    	background: #F5F5F5 !important;
+	    }
 	 .aj-title{
 	 	  text-align: center;
 		  position: absolute;
@@ -435,15 +457,29 @@ sm{
 .item-avatar, .item-avatar .item-content, .item-avatar-left, .item-avatar-left .item-content {
 	padding: 0;
 	min-height: 0;
-	width: 55px;
-	height: 55px;
+	width: 60px;
+	height: 60px;
 	margin: 0 auto;
+	border-top-left-radius: 50%;
+	border-top-right-radius: 50%;
+	border-bottom-left-radius: 50%;
+	border-bottom-right-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	-ms-border-radius: 50%;
+	-o-border-radius: 50%;
 	border-radius: 50%;
+	overflow-x: hidden;
+	overflow-y: hidden;
 	overflow: hidden;
 	background: #fff;
-	border: 1px solid #ccc;
+	border: 1px solid #eee;
 	text-align: center;
 	line-height: 50px;
+	position: static;
+	-moz-box-shadow: 0 0 2px rgba(0,0,0,0.2);
+	-webkit-box-shadow: 0 0 2px rgba(0,0,0,0.2);
+	box-shadow: 0 0 2px rgba(0,0,0,0.2);
 	img, & > img:first-child {
 		width: 100%;
 		height: auto;
@@ -458,25 +494,33 @@ sm{
 		vertical-align: middle;
 	}
 	&.activated {
-		// background: #ddd;
-		// border-color: #888;
-		// img {
-		// 	opacity: 0.5;
-		// }
+		background: #fff;
+		border-color: @brand-primary;
+		color: @brand-primary;
+		-moz-box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
+		-webkit-box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
+		box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
+		img {
+			opacity: 0.5;
+		}
+		&.more-link span {
+			color: #aaa;
+		}
 	}
 	&.more-link {
-		line-height: 55px;
+		line-height: 54px;
 		i {
 			display: block;
 			text-align: center;
 			font-size: 32px;
 		}
 		span {
-			display: none;
+			// display: none;
 			text-align: center;
 			font-size: 12px;
 			text-transform: uppercase;
 			letter-spacing: 1px;
+			color: @brand-primary;
 		}
 	}
 }
