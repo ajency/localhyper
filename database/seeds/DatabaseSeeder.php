@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
-use CommonFloor\User;
+use App\User;
 
 class DatabaseSeeder extends Seeder
 {
