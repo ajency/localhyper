@@ -38,7 +38,7 @@
 				ng-repeat="category in view.parentCategories">
 
 				<center>
-					<h4 class="cat-sub">Lorem ipsum dolor set amet</h4>
+					<h4 class="cat-sub"><!-- Lorem ipsum dolor set amet --></h4>
 				</center>
 				<center>
 					<h2 class="cat-title">{{category.name}}</h2>
@@ -53,10 +53,10 @@
 						</div>
 					</div>
 					<div class="col">
-						<div 
+						<div
 							class="item item-avatar more-link"
 							ng-click="App.navigate('sub-categories', {parentID: category.id})">
-							<i class="icon ion-ios-more-outline"></i>
+							<!-- <i class="icon ion-ios-more-outline"></i> -->
 							<span class="ico-text">More</span>
 						</div>
 					</div>
