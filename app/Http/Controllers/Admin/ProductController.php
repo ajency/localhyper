@@ -128,7 +128,8 @@ class ProductController extends Controller
           ];
         $attributeValueData = $attributeController->getCategoryAttributeValues($categoryData); 
         $attributeValues= $headerFlag =$productHeader = $productAttributeIds = [];
-
+        
+        $i=9; 
         foreach($attributeValueData['result'] as $attributeValue)
         {
             $attributeId =$attributeValue['attributeId'];
@@ -142,13 +143,15 @@ class ProductController extends Controller
                 
                     
                 $headerFlag[$attributeId]=$attributeId;
+                $productAttributeIds [$attributeId]=[];
+                $i=$i+2;
             }
 
             $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
-            $productAttributeIds []=$attributeId;
+            
         } 
          
-        
+     // dd($productAttributeIds);
         $indexSheet->fromArray($headers, ' ', 'A1');
         $indexSheet->fromArray([$catId], ' ', 'A2');
         $indexSheet->getColumnDimension('A')->setVisible(false);
@@ -177,7 +180,7 @@ class ProductController extends Controller
             'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
             );
         $indexSheet->getStyle($header)->applyFromArray($style);
-        $indexSheet->getProtection()->setSheet(true);
+        //$indexSheet->getProtection()->setSheet(true);
          
          /***
          * PRODUCTS SHEET
@@ -200,28 +203,15 @@ class ProductController extends Controller
         $headers []= 'Brand' ;  
         $headers []= 'BrandID' ; 
         $headers []= 'Group' ;
-         
-        /*$productsData['ProductID']=[]; 
-        $productsData['ProductName']=[]; 
-        $productsData['ModelNumber']=[]; 
-        $productsData['Image']=[]; 
-        $productsData['MRP']=[]; 
-        $productsData['Brand']=[]; 
-        $productsData['BrandID']=[]; 
-        $productsData['Group']=[]; */
-  
+       
         $headers = array_merge($headers,$productHeader); 
-        /*foreach ($headers as $header)
-        {
-            $productsData[$header]=[]; 
-        }*/
- 
+
         
         $productSheet->fromArray($headers, ' ', 'A1');
         $productSheet->fromArray([$catId], ' ', 'A2');
         $productSheet->getColumnDimension('A')->setVisible(false);
         $productSheet->getColumnDimension('B')->setVisible(false);
-        $productSheet->getColumnDimension('G')->setVisible(false); 
+        $productSheet->getColumnDimension('I')->setVisible(false); 
  
         $column = 'I'; 
         for($i=0; $i<=(count($productHeader)/2) ;$i++ )
@@ -232,9 +222,8 @@ class ProductController extends Controller
             $productSheet->getColumnDimension($hidecolumn)->setVisible(false);
             $column = $attributeController->getNextCell($column,'2');
         }
- 
-        //dd($productsData);
-        $products = $this->getCategoryProducts($catId, 0, 20) ;//dd($products);
+
+        $products = $this->getCategoryProducts($catId, 0, 150) ;
  
         $i=0;
         foreach($products as $key=> $product) 
@@ -243,20 +232,32 @@ class ProductController extends Controller
             $productsData[$i][]=$product['name'];  
             $productsData[$i][]=$product['model_number'];  
             $productsData[$i][]=$product['images'][0]['src']; 
-            $productsData[$i][]=$product['mrp']; 
+            $productsData[$i][]=$product['mrp'];
+            $productsData[$i][]=$product['popularity']; 
             $productsData[$i][]=$product['brandName']; 
             $productsData[$i][]=$product['brandId']; 
             $productsData[$i][]=$product['group']; 
             
             foreach($product['attrs'] as $attribute)
             {
-                $productsData[$i][] = $attribute['attributeValue'];
-                $productsData[$i][] = $attribute['attributeValueId'];
+                if(isset($productAttributeIds[$attribute['attributeId']]))
+                {
+                    $productAttributeIds[$attribute['attributeId']]=['value'=>$attribute['attributeValue'],'id'=>$attribute['attributeValueId']];
+                }
+ 
             }
+            
+            foreach($productAttributeIds as $productAttribute)
+            {
+ 
+                $productsData[$i][] = (isset($productAttribute["value"]))?$productAttribute["value"]:"";
+                $productsData[$i][] = (isset($productAttribute["id"]))?$productAttribute["id"]:"";
+            }
+             
             $i++;
         }
-       
-        $productSheet->fromArray($productsData, ' ', 'C2');
+
+        $productSheet->fromArray($productsData, ' ', 'B2');
         $lastColumn = $productSheet->getHighestColumn(); 
         $header = 'a1:'.$lastColumn.'1';
         $productSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
@@ -335,6 +336,7 @@ class ProductController extends Controller
             }
            
             $products = [];
+            $i=0;
             foreach($namedDataArray as $data)
             {
                 $indexedData = array_values($data);
@@ -344,21 +346,25 @@ class ProductController extends Controller
                     $attributeIds[] = $indexedData[$key];
                 }
         
-                $products['category'] = $config[0];
-                $products['id'] = $data['ProductID'];
-                $products['name'] = $data['ProductName'];
-                $products['model_number'] = $data['ModelNumber'];
-                $products['images'] = ['src'=>$data['Image']];
-                $products['attrs'] = $attributeIds;
-                $products['mrp'] = $data['MRP'];
-                $products['brand'] = $data['BrandID'];
-                $products['popularity'] = $data['Popularity'];
-                $products['group'] = $data['Group'];
+                $products[$i]['category'] = $config[0];
+                $products[$i]['id'] = $data['ProductID'];
+                $products[$i]['name'] = $data['ProductName'];
+                $products[$i]['model_number'] = $data['ModelNumber'];
+                $products[$i]['images'][] = ['src'=>$data['Image']];
+                $products[$i]['attrs']= $attributeIds;
+                $products[$i]['mrp'] = $data['MRP'];
+                $products[$i]['brand'] = $data['BrandID'];
+                $products[$i]['popularity'] = $data['Popularity'];
+                $products[$i]['group'] = $data['Group'];
+                $i++;
             }
             
+            $productData['products'] =$products; 
             
+            $this->parseProductImport($productData);
+ 
         }
-        return redirect("/admin/attribute/bulkimport");
+        return redirect("/admin/attribute/categoryconfiguration");
 
     }
 
@@ -425,38 +431,38 @@ class ProductController extends Controller
     
 
    public static function parseProductImport($data){
-
-        $data = array (
+ 
+       /* $data = array (
           'products' => 
           array (
             0 => 
             array (
-              'category' => 'bOEz9mBh5Q',
-              'name' => 'Haier HRD-1905BR Direct-cool Single-door Refrigerator',
-              'model_number' => 'B00NKYN6NQ',
+              'category' => 'dVwddmOP9F',
+              'name' => 'Test',
+              'model_number' => 'test23',
               'description' => '',
               'images' => 
               array (
                 0 => 
                 array (
-                  'src' => 'http://ecx.images-amazon.com/images/I/31hp6N9QLrL.jpg',
+                  'src' => '',
                   ),
                 ),
               'attrs' => 
               array (
-                0 => 'VYDUTNZDiS',
-                1 => 'n8OSsrbl8I',
-                2 => '6MC1FBqSHk',
-                3 => 'xh6ETgpp7g',
+                0 => 'mM8EBTU2eQ',
+                1 => 'aRftHc515c',
+                2 => 'OPTxXJmNz1',
+                3 => 'YCpWv1MSSI',
                 ),
-              'mrp' => '9900',
-              'brand' => 'dYRPINT23g',
+              'mrp' => '2000',
+              'brand' => 'CpMMbcUBuR',
               'popularity' => 2,
-              'group' => 'fridge',
+              'group' => 'ac',
               ),
             ),
           );
-
+*/
         $functionName = "productImport";
 
         $result = AttributeController::makeParseCurlRequest($functionName,$data,"jobs"); 

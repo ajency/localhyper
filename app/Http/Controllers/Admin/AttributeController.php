@@ -115,18 +115,21 @@ class AttributeController extends Controller
           ];
         $attributeValueData = $this->getCategoryAttributeValues($categoryData);//dd($attributeValueData);
         $headers = $data = $attributeValues= $headerFlag =[];
-
-        foreach($attributeValueData['result'] as $attributeValue)
+        
+        if(isset($attributeValueData['result']))
         {
-            $attributeId =$attributeValue['attributeId'];
-            if(!isset($headerFlag[$attributeId]))
-            {   
-                $headers[]=$attributeValue['attributeName']."(".$attributeId.")";
-                $headers[]=$attributeValue['attributeName'].' Id';            
-                $headerFlag[$attributeId]=$attributeId;
-            }
+            foreach($attributeValueData['result'] as $attributeValue)
+            {
+                $attributeId =$attributeValue['attributeId'];
+                if(!isset($headerFlag[$attributeId]))
+                {   
+                    $headers[]=$attributeValue['attributeName']."(".$attributeId.")";
+                    $headers[]=$attributeValue['attributeName'].' Id';            
+                    $headerFlag[$attributeId]=$attributeId;
+                }
 
-            $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
+                $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
+            }
         }
        // dd($attributeValues);
        
@@ -278,12 +281,12 @@ class AttributeController extends Controller
                 elseif($sheetTitle=='Attributes')
                     $this->importAttributes($sheet);
                 elseif($sheetTitle=='AttributeValues')
-                        $this->importAttributeValues($sheet);
+                    $this->importAttributeValues($sheet);
             }
  
             
         }
-        return redirect("/admin/attribute/bulkimport");
+        return redirect("/admin/attribute/categoryconfiguration");
         
        
         
@@ -544,15 +547,18 @@ class AttributeController extends Controller
       $supported_brands = $categoryObject->get("supported_brands");
 
       $brands = array();
-      
-      foreach ($supported_brands as $supported_brand) {
-        $brands[] = array(
-                'id' =>$supported_brand->getObjectId(),
-                'name' => $supported_brand->get('name'),
-                'image' => $supported_brand->get('image'),
-                );
+    
+        if(!empty($supported_brands))    
+        {
+          foreach ($supported_brands as $supported_brand) {
+            $brands[] = array(
+                    'id' =>$supported_brand->getObjectId(),
+                    'name' => $supported_brand->get('name'),
+                    'image' => $supported_brand->get('image'),
+                    );
 
-      }
+          }
+        }
 
       return $brands;
 
@@ -610,8 +616,8 @@ class AttributeController extends Controller
       $base_url = "https://api.parse.com/1";
 
       $post_url = $base_url."/".$parseFunctType."/".$functionName;
-
-      $data_string = json_encode($data); 
+        
+      $data_string = json_encode($data); //dd($data_string);
 
       // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
       // -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
@@ -621,7 +627,8 @@ class AttributeController extends Controller
 
       $header_array = array(                                                                          
         'X-Parse-Application-Id:' .$app_id ,                                                                                
-        'X-Parse-REST-API-Key:' .$rest_api_key ,                                                                                
+        'X-Parse-REST-API-Key:' .$rest_api_key , 
+        'X-Parse-Master-Key:aoyAfAqjov2pk7sDlKpMss8pE0EFFyjJyRKfUEJC',  
         'Content-Type: application/json'
         );
 
@@ -635,7 +642,7 @@ class AttributeController extends Controller
       curl_setopt($ch, CURLOPT_HTTPHEADER, $header_array);                                                                       
 
 
-      $curl_output = curl_exec($ch);
+      $curl_output = curl_exec($ch); //echo $curl_output;exit;
 
 
       if (curl_errno($ch)) {
@@ -651,7 +658,7 @@ class AttributeController extends Controller
         $result  = json_decode($curl_output);
 
       }
-
+//dd($result);
       curl_close($ch); 
 
       return $result;         
