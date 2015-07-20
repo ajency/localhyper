@@ -1,10 +1,10 @@
-angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.aboutUs', 'LocalHyper.googleMaps', 'LocalHyper.suggestProduct']).run([
-  '$rootScope', 'App', 'GoogleMaps', function($rootScope, App, GoogleMaps) {
+angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.aboutUs', 'LocalHyper.googleMaps', 'LocalHyper.suggestProduct', 'LocalHyper.profile']).run([
+  '$rootScope', 'App', 'GoogleMaps', 'User', function($rootScope, App, GoogleMaps, User) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
     GoogleMaps.loadScript();
     App.notification = {
-      icon: false,
+      icon: User.isLoggedIn(),
       badge: false,
       count: 0,
       increment: function() {
@@ -18,6 +18,9 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
         }
       }
     };
+    $rootScope.$on('$user:registration:success', function() {
+      return App.notification.icon = true;
+    });
     App.logo = {
       small: true
     };
@@ -27,8 +30,7 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       App.currentState = to.name;
       hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual'];
       bool = !_.contains(hideForStates, App.currentState);
-      App.menuEnabled.left = bool;
-      return App.notification.icon = bool;
+      return App.menuEnabled.left = bool;
     });
   }
 ]).config([

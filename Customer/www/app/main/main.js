@@ -7,7 +7,7 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         return $ionicSideMenuDelegate.edgeDragThreshold(true);
       },
       loadPopOver: function() {
-        return $ionicPopover.fromTemplateUrl('views/right-popover.html', {
+        return $ionicPopover.fromTemplateUrl('views/user-popover.html', {
           scope: $scope
         }).then((function(_this) {
           return function(popover) {
@@ -51,8 +51,8 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
       }
     };
     return $rootScope.$on('on:session:expiry', function() {
-      console.log('on:session:expiry');
-      return Parse.User.logOut();
+      Parse.User.logOut();
+      return App.notification.icon = false;
     });
   }
 ]).config([

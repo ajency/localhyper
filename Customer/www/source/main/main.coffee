@@ -14,7 +14,7 @@ angular.module 'LocalHyper.main', []
 				$ionicSideMenuDelegate.edgeDragThreshold true
 
 			loadPopOver : ->
-				$ionicPopover.fromTemplateUrl 'views/right-popover.html',
+				$ionicPopover.fromTemplateUrl 'views/user-popover.html',
 					scope: $scope
 				.then (popover)=>
 					@userPopover = popover
@@ -46,8 +46,8 @@ angular.module 'LocalHyper.main', []
 
 		
 		$rootScope.$on 'on:session:expiry', ->
-			console.log 'on:session:expiry'
 			Parse.User.logOut()
+			App.notification.icon = false
 ]
 
 

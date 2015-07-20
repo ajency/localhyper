@@ -28,4 +28,8 @@ angular.module 'LocalHyper.auth'
 					App.navigate state
 				else
 					CToast.show UIMsg.noInternet
+
+
+		$scope.$on '$ionicView.beforeEnter', ->
+			$scope.user.setDetails()
 ]

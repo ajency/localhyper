@@ -82,6 +82,7 @@ angular.module 'LocalHyper.auth'
 				AuthAPI.register @user
 				.then (success)->
 					App.goBack -2
+					$rootScope.$broadcast '$user:registration:success'
 				, (error)=>
 					@onError error, 'register'
 
@@ -97,6 +98,7 @@ angular.module 'LocalHyper.auth'
 					when 'register'
 						@register()
 
+		
 		$scope.$on '$ionicView.beforeEnter', ->
 			$scope.view.user = User.info 'get'
 

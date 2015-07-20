@@ -17,7 +17,11 @@
 
 			<ion-nav-buttons side="right">
 				<div ng-if="App.notification.icon">
-					<span class="notification badge badge-assertive">2</span>
+					<span 
+						class="notification badge badge-assertive"
+						ng-if="App.notification.badge">
+						{{App.notification.count}}
+					</span>
 					<button 
 						class="button button-icon ion-ios-person-outline"
 						ng-click="view.userPopover.show($event)">
