@@ -135,7 +135,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         })(this));
       },
       loadLocationModal: function() {
-        return $ionicModal.fromTemplateUrl('views/products/location.html', {
+        return $ionicModal.fromTemplateUrl('views/location.html', {
           scope: $scope,
           animation: 'slide-in-up',
           hardwareBackButtonClose: true
