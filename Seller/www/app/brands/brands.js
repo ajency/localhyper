@@ -1,6 +1,6 @@
 angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
   '$scope', 'BrandsAPI', '$stateParams', 'SubCategory', 'CToast', 'CategoriesAPI', 'App', 'CDialog', function($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog) {
-    return $scope.view = {
+    $scope.view = {
       title: SubCategory.name,
       brands: [],
       display: 'loader',
@@ -39,18 +39,57 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
         empty = _.isEmpty(this.categoryChains);
         return empty;
       },
-      setCategoryChains: function() {
+      brandSelection: function(brandID) {
+        var _brandIds, _brands, chain, selected;
+        selected = false;
+        if (this.isCategoryChainsEmpty()) {
+          selected = false;
+        } else {
+          chain = _.filter(this.categoryChains, function(chains) {
+            return chains.subCategory.id === SubCategory.id;
+          });
+          if (!_.isEmpty(chain)) {
+            _brands = chain[0].brands;
+            _brandIds = _.pluck(_brands, 'objectId');
+            selected = _.contains(_brandIds, brandID);
+          } else {
+            selected = false;
+          }
+        }
+        return selected;
+      },
+      setBrandSelection: function() {
+        var _brandIds, _brands, chain;
+        if (this.isCategoryChainsEmpty()) {
+          return _.each(this.brands, function(brand) {
+            return brand.selected = false;
+          });
+        } else {
+          chain = _.filter(this.categoryChains, function(chains) {
+            return chains.subCategory.id === SubCategory.id;
+          });
+          if (!_.isEmpty(chain)) {
+            _brands = chain[0].brands;
+            _brandIds = _.pluck(_brands, 'objectId');
+            return _.each(this.brands, function(brand) {
+              return brand.selected = _.contains(_brandIds, brand.objectId);
+            });
+          }
+        }
+      },
+      onDone: function() {
         var empty;
         empty = this.isCategoryChainsEmpty();
         return CategoriesAPI.getAll().then((function(_this) {
           return function(allCategories) {
-            var chain, data, existingChain, parentCategory, selectedBrands;
+            var chain, chainIndex, data, minOneBrandSelected, parentCategory, selectedBrands;
             parentCategory = _.filter(allCategories, function(category) {
               return category.id === SubCategory.parent;
             });
             selectedBrands = _.filter(_this.brands, function(brand) {
               return brand.selected === true;
             });
+            minOneBrandSelected = _.size(selectedBrands) === 0 ? false : true;
             data = [];
             chain = {
               category: parentCategory[0],
@@ -59,48 +98,49 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
             };
             data.push(chain);
             if (empty) {
-              return CategoriesAPI.categoryChains('set', data);
+              _this.categoryChains = data;
             } else {
-              existingChain = false;
-              _.each(_this.categoryChains, function(chains, index) {
-                if (chains.subCategory.id === SubCategory.id) {
-                  existingChain = true;
-                  if (_.size(selectedBrands) > 0) {
-                    return _this.categoryChains[index].brands = selectedBrands;
-                  } else {
-                    return _this.categoryChains.splice(index, 1);
-                  }
-                }
+              chainIndex = _.findIndex(_this.categoryChains, function(chains) {
+                return chains.subCategory.id === SubCategory.id;
               });
-              if (!existingChain && _.size(chain.brands) > 0) {
+              if (chainIndex !== -1) {
+                if (minOneBrandSelected) {
+                  _this.categoryChains[chainIndex].brands = selectedBrands;
+                } else {
+                  _this.categoryChains.splice(chainIndex, 1);
+                }
+              }
+              if (chainIndex === -1 && minOneBrandSelected) {
                 _this.categoryChains.push(chain);
               }
-              return CategoriesAPI.categoryChains('set', _this.categoryChains);
+            }
+            if (empty && !minOneBrandSelected) {
+              return CToast.show('Please select atleast one brand');
+            } else if (!empty && !minOneBrandSelected) {
+              return CDialog.confirm('Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']).then(function(btnIndex) {
+                if (btnIndex === 1) {
+                  CategoriesAPI.categoryChains('set', _this.categoryChains);
+                  return _this.goBack();
+                }
+              });
+            } else {
+              CategoriesAPI.categoryChains('set', _this.categoryChains);
+              return _this.goBack();
             }
           };
         })(this));
       },
-      onDone: function() {
-        var empty, minOneBrandSelected;
-        minOneBrandSelected = !_.isUndefined(_.find(this.brands, function(brand) {
-          return brand.selected === true;
-        }));
-        empty = this.isCategoryChainsEmpty();
-        if (empty && !minOneBrandSelected) {
-          return CToast.show('Please select atleast one brand');
-        } else if (!empty && !minOneBrandSelected) {
-          return CDialog.confirm('Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']).then((function(_this) {
-            return function(btnIndex) {
-              if (btnIndex === 1) {
-                return App.navigate('category-chains');
-              }
-            };
-          })(this));
-        } else {
-          return App.navigate('category-chains');
-        }
+      goBack: function() {
+        var count;
+        count = App.previousState === 'categories' ? -2 : -3;
+        return App.goBack(count);
       }
     };
+    return $scope.$on('$ionicView.beforeEnter', function() {
+      if ($scope.view.display === 'noError') {
+        return $scope.view.setBrandSelection();
+      }
+    });
   }
 ]).config([
   '$stateProvider', function($stateProvider) {

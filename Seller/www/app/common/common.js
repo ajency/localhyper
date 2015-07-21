@@ -75,6 +75,9 @@ angular.module('LocalHyper.common', []).factory('App', [
       goBack: function(count) {
         return $ionicHistory.goBack(count);
       },
+      clearHistory: function() {
+        return $ionicHistory.clearHistory();
+      },
       dragContent: function(bool) {
         return $ionicSideMenuDelegate.canDragContent(bool);
       },
