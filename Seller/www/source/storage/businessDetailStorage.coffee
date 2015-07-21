@@ -5,6 +5,11 @@ angular.module 'LocalHyper.BusinessDetailStorage', []
 
 	BusinessStorage = 
 
+		setData: (val)->
+			
+			localforage.setItem val
+
+
 		setBussinessName: (businessName) ->
 			localforage.setItem 'businessName', businessName
 

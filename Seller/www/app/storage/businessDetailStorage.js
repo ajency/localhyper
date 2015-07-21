@@ -2,6 +2,9 @@ angular.module('LocalHyper.BusinessDetailStorage', []).factory('BusinessDetailSt
   function() {
     var BusinessStorage;
     BusinessStorage = {
+      setData: function(val) {
+        return localforage.setItem(val);
+      },
       setBussinessName: function(businessName) {
         return localforage.setItem('businessName', businessName);
       },
