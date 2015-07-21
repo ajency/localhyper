@@ -20,10 +20,7 @@ angular.module 'LocalHyper.categories'
 					if chains.subCategory.id is subCategoryId
 						@categoryChains.splice index, 1
 
-				if _.isEmpty(@categoryChains)
-					App.goBack -3
-				else
-					CategoriesAPI.categoryChains 'set', @categoryChains
+				CategoriesAPI.categoryChains 'set', @categoryChains
 ]
 
 

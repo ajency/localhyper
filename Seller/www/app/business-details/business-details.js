@@ -165,7 +165,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
             longitude: this.location.latLng.lng()
           });
           User.info('set', $scope.view);
-          return App.navigate('categories');
+          return App.navigate('category-chains');
         }
       }
     };

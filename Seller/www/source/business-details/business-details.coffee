@@ -130,7 +130,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 						latitude: @location.latLng.lat()
 						longitude: @location.latLng.lng()
 					User.info 'set', $scope.view
-					App.navigate 'categories'
+					App.navigate 'category-chains'
 		
 		
 		$scope.$on '$ionicView.enter', ->
