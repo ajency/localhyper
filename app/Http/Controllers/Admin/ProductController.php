@@ -129,7 +129,6 @@ class ProductController extends Controller
         $attributeValueData = $attributeController->getCategoryAttributeValues($categoryData); 
         $attributeValues= $headerFlag =$productHeader = $productAttributeIds = [];
         
-        $i=9; 
         foreach($attributeValueData['result'] as $attributeValue)
         {
             $attributeId =$attributeValue['attributeId'];
@@ -138,13 +137,13 @@ class ProductController extends Controller
                 $headers[]=$attributeValue['attributeName'];
                 $headers[]=$attributeValue['attributeName'].' Id';
                 
-                $productHeader[]=$attributeValue['attributeName'];
+                $productHeader[]=$attributeValue['attributeName']."(".$attributeId.")";
                 $productHeader[]=$attributeValue['attributeName'].' Id';
                 
                     
                 $headerFlag[$attributeId]=$attributeId;
                 $productAttributeIds [$attributeId]=[];
-                $i=$i+2;
+              
             }
 
             $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
@@ -205,16 +204,15 @@ class ProductController extends Controller
         $headers []= 'Group' ;
        
         $headers = array_merge($headers,$productHeader); 
-
-        
+      
         $productSheet->fromArray($headers, ' ', 'A1');
         $productSheet->fromArray([$catId], ' ', 'A2');
         $productSheet->getColumnDimension('A')->setVisible(false);
         $productSheet->getColumnDimension('B')->setVisible(false);
         $productSheet->getColumnDimension('I')->setVisible(false); 
- 
-        $column = 'I'; 
-        for($i=0; $i<=(count($productHeader)/2) ;$i++ )
+        
+        $column = 'K';  
+        for($i=0; $i<(count($productHeader)/2) ;$i++)
         {
  
             //hide column
@@ -222,43 +220,57 @@ class ProductController extends Controller
             $productSheet->getColumnDimension($hidecolumn)->setVisible(false);
             $column = $attributeController->getNextCell($column,'2');
         }
-
-        $products = $this->getCategoryProducts($catId, 0, 150) ;
- 
-        $i=0;
-        foreach($products as $key=> $product) 
-        {
-            $productsData[$i][]=$product['objectId']; 
-            $productsData[$i][]=$product['name'];  
-            $productsData[$i][]=$product['model_number'];  
-            $productsData[$i][]=$product['images'][0]['src']; 
-            $productsData[$i][]=$product['mrp'];
-            $productsData[$i][]=$product['popularity']; 
-            $productsData[$i][]=$product['brandName']; 
-            $productsData[$i][]=$product['brandId']; 
-            $productsData[$i][]=$product['group']; 
+        
+       
+        $limit =10;
+        $page = 0; 
+        $i=0; 
+       while (true) {
+            $limit = $limit + 50;
+            $products = $this->getCategoryProducts($catId, $page, $limit) ;
             
-            foreach($product['attrs'] as $attribute)
+            if(empty($products))
+                break;
+ 
+            foreach($products as $key=> $product) 
             {
-                if(isset($productAttributeIds[$attribute['attributeId']]))
+                $productsData[$i][]=$product['objectId']; 
+                $productsData[$i][]=$product['name'];  
+                $productsData[$i][]=$product['model_number'];  
+                $productsData[$i][]=$product['images'][0]['src']; 
+                $productsData[$i][]=$product['mrp'];
+                $productsData[$i][]=$product['popularity']; 
+                $productsData[$i][]=$product['brandName']; 
+                $productsData[$i][]=$product['brandId']; 
+                $productsData[$i][]=$product['group']; 
+
+                foreach($product['attrs'] as $attribute)
                 {
-                    $productAttributeIds[$attribute['attributeId']]=['value'=>$attribute['attributeValue'],'id'=>$attribute['attributeValueId']];
-                }
- 
-            }
-            
-            foreach($productAttributeIds as $productAttribute)
-            {
- 
-                $productsData[$i][] = (isset($productAttribute["value"]))?$productAttribute["value"]:"";
-                $productsData[$i][] = (isset($productAttribute["id"]))?$productAttribute["id"]:"";
-            }
-             
-            $i++;
-        }
+                    if(isset($productAttributeIds[$attribute['attributeId']]))
+                    {
+                        $productAttributeIds[$attribute['attributeId']]=['value'=>$attribute['attributeValue'],'id'=>$attribute['attributeValueId']];
+                    }
 
+                }
+
+                foreach($productAttributeIds as $productAttribute)
+                {
+
+                    $productsData[$i][] = (isset($productAttribute["value"]))?$productAttribute["value"]:"";
+                    $productsData[$i][] = (isset($productAttribute["id"]))?$productAttribute["id"]:"";
+                }
+
+                $i++;
+            }
+ 
+            $page++;
+        }
+      
         $productSheet->fromArray($productsData, ' ', 'B2');
-        $lastColumn = $productSheet->getHighestColumn(); 
+       
+         
+      
+        $lastColumn = $productSheet->getHighestColumn();  
         $header = 'a1:'.$lastColumn.'1';
         $productSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
         $style = array(
@@ -302,6 +314,7 @@ class ProductController extends Controller
 
                 $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true); 
                 $headingsArray = $headingsArray[1];
+                $headerData =  array_values($headingsArray); 
 
                 $r = -1;
                 $namedDataArray = $config =array();
@@ -318,7 +331,7 @@ class ProductController extends Controller
 
                          }
                 }
-            
+           
             /****
             *  (ProductID ProductName ModelNumber Image mrp ,popularity Brand BrandID Group) = 9
             *
@@ -334,17 +347,22 @@ class ProductController extends Controller
                 $attributeIdKeys[] =($i + 1);
                 $i= $i+2;
             }
-           
+     
             $products = [];
             $i=0;
             foreach($namedDataArray as $data)
             {
-                $indexedData = array_values($data);
+                $indexedData = array_values($data); 
                 $attributeIds = [];
                 foreach($attributeIdKeys as $key)
                 {
-                    $attributeIds[] = $indexedData[$key];
-                }
+                    $attributeName = $headerData[$key]; 
+                    $dataKey = explode("(",$attributeName);
+                    $dataattributeId = explode(")",$dataKey[1]);
+                    $attributeId = $dataattributeId[0];// echo $attributeId; exit;
+                    
+                    $attributeIds[$attributeId] = $indexedData[$key];
+                }//dd($attributeIds);
         
                 $products[$i]['category'] = $config[0];
                 $products[$i]['id'] = $data['ProductID'];
@@ -359,7 +377,7 @@ class ProductController extends Controller
                 $i++;
             }
             
-            $productData['products'] =$products; 
+            $productData['products'] =$products;
             
             $this->parseProductImport($productData);
  
