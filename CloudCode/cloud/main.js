@@ -859,27 +859,26 @@
         }
         productFilters = categoryObj.get("filterable_attributes");
         _.each(productFilters, function(productFilter) {
-          var columnName, columnPosition, filterAttribId, filterObj, filterValueToSet;
+          var AttributeValues, columnName, columnPosition, fattributeValues, filterAttribId, filterValueToSet;
           columnPosition = productFilter.get("filterColumn");
           columnName = "filter" + columnPosition;
           filterAttribId = productFilter.get("filterAttribute").id;
           filterValueToSet = productAttributes[filterAttribId];
-          filterObj = {
-            "__type": "Pointer",
-            "className": "AttributeValues",
-            "objectId": filterValueToSet
-          };
+          AttributeValues = Parse.Object.extend("AttributeValues");
+          fattributeValues = new AttributeValues();
+          fattributeValues.id = filterValueToSet;
           if (!_.isUndefined(filterValueToSet)) {
-            return productItem.set(columnName, filterObj);
+            return productItem.set(columnName, fattributeValues);
           }
         });
         attributeValueArr = [];
         _.each(productAttributes, function(attrib) {
           var attribObj;
+          console.log(attrib);
           attribObj = {
             "__type": "Pointer",
             "className": "AttributeValues",
-            "objectId": attrib.attributeValueId
+            "objectId": attrib
           };
           return attributeValueArr.push(attribObj);
         });

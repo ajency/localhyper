@@ -72,22 +72,24 @@ Parse.Cloud.job 'productImport', (request, response) ->
 
         
                 filterValueToSet = productAttributes[filterAttribId]
-                filterObj = 
-                    "__type" : "Pointer",
-                    "className":"AttributeValues",
-                    "objectId":filterValueToSet
+
+                AttributeValues = Parse.Object.extend("AttributeValues")
+                fattributeValues = new AttributeValues()
+                fattributeValues.id = filterValueToSet
+               
 
                 if !_.isUndefined(filterValueToSet)
-                    productItem.set columnName, filterObj 
+                    productItem.set columnName, fattributeValues 
 
             # set all attributes of product 
             attributeValueArr = []
 
             _.each productAttributes, (attrib) ->
+                console.log attrib
                 attribObj = 
                     "__type" : "Pointer",
                     "className":"AttributeValues",
-                    "objectId":attrib.attributeValueId
+                    "objectId":attrib
 
                 attributeValueArr.push(attribObj)
 
