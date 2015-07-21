@@ -6,8 +6,8 @@
     </ion-nav-title>
 
 	<ion-nav-buttons side="left">
-		<button 
-			menu-toggle="left" 
+		<button
+			menu-toggle="left"
 			class="button button-icon icon ion-navicon">
 		</button>
 	</ion-nav-buttons>
@@ -19,33 +19,35 @@
 	</ion-refresher>
 
 	<ion-spinner
-			class="aj-spinner spinner-android" 
+			class="aj-spinner spinner-android"
 			ng-switch-when="loader">
 	</ion-spinner>
 
 	<ion-list ng-switch-when="noError"
 			  class="card-list">
 
-	       	<ion-item 
+	       	<ion-item
 	       		class="card"
 	       		ng-repeat="request in view.requests "
 	       		ng-click="view.showRequestDetails(request)"
 	       		>
-				
-				<div class="item item-avatar border-none margin-none">
-			        <img src="http://ajency.in/team/images/fridge1.jpg">
-			        <h2>{{request.product.name}}</h2>
-			        <p> {{request.distanceFromCustomer.toFixed(2)}} kms radius </p>
-			    </div>
-				
+
+	       		<div class="item-wrapper-nr">
+					<div class="item item-avatar border-none margin-none">
+				        <img src="http://ajency.in/team/images/fridge1.jpg">
+				    </div>
+				    <h2>{{request.product.name}}</h2>
+				    <p> {{request.distanceFromCustomer.toFixed(2)}} kms radius </p>
+				</div>
+
 				<div class="row item border-none" >
-			        <div class="col ">
+			        <div class="col p-t-0">
 			            <sm class="light-gray"> Local Price</sm><br>
 			            <h3 class=" item-text-wrap margin-none big-txt ">
 			            	<span class="WebRupee subdued">&#x20B9;</span> {{request.offerPrice}}
 			            </h3>
 			        </div>
-			        <div class="col">
+			        <div class="col p-t-0">
 			        	<div class="pull-right">
 			        		{{request.offerStatus}}
 			            <!--div class="offer"> 2 </div>
@@ -73,12 +75,12 @@
 	</ion-infinite-scroll >
 
 
-	<aj-error 
+	<aj-error
 			ng-switch-when="error"
 			error-type="view.errorType"
 			tap-to-retry="view.onTapToRetry()">
 	</aj-error>
-				
+
 	</ion-content>
 	<ion-footer-bar class="bar-dark">
 			<div class="row">
