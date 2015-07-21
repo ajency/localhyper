@@ -150,9 +150,8 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 				else if @confirmedAddress is ''
 					CToast.show 'Please select your location'
 				else
-					@addressGeoPoint = new Parse.GeoPoint 
-						latitude: @location.latLng.lat()
-						longitude: @location.latLng.lng()
+					@latitude = @location.latLng.lat()
+					@longitude = @location.latLng.lng()
 					User.info 'set', $scope.view
 					BusinessDetailStorage.setBussinessName(@businessName)
 					BusinessDetailStorage.setFullName(@name)

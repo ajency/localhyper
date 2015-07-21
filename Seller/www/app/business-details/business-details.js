@@ -178,10 +178,8 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
         } else if (this.confirmedAddress === '') {
           return CToast.show('Please select your location');
         } else {
-          this.addressGeoPoint = new Parse.GeoPoint({
-            latitude: this.location.latLng.lat(),
-            longitude: this.location.latLng.lng()
-          });
+          this.latitude = this.location.latLng.lat();
+          this.longitude = this.location.latLng.lng();
           User.info('set', $scope.view);
           BusinessDetailStorage.setBussinessName(this.businessName);
           BusinessDetailStorage.setFullName(this.name);

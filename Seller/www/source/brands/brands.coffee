@@ -66,7 +66,6 @@ angular.module 'LocalHyper.brands', []
 							brand.selected = _.contains _brandIds, brand.objectId
 
 			onDone : ->
-				empty = @isCategoryChainsEmpty()
 				CategoriesAPI.getAll()
 				.then (allCategories)=>
 					parentCategory = _.filter allCategories, (category)-> category.id is SubCategory.parent
@@ -80,7 +79,7 @@ angular.module 'LocalHyper.brands', []
 						brands: selectedBrands
 					data.push chain
 
-					if empty then @categoryChains = data
+					if @isCategoryChainsEmpty() then @categoryChains = data
 					else
 						chainIndex = _.findIndex @categoryChains, (chains)->
 							chains.subCategory.id is SubCategory.id
@@ -95,14 +94,10 @@ angular.module 'LocalHyper.brands', []
 						if chainIndex is -1 and minOneBrandSelected
 							@categoryChains.push chain
 
-					if empty and !minOneBrandSelected
-						CToast.show 'Please select atleast one brand'
-					else if !empty and !minOneBrandSelected
+					if !minOneBrandSelected
 						CDialog.confirm 'Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']
 						.then (btnIndex)=>
-							if btnIndex is 1
-								CategoriesAPI.categoryChains 'set', @categoryChains
-								@goBack()
+							if btnIndex is 1 then @goBack()
 					else
 						CategoriesAPI.categoryChains 'set', @categoryChains 
 						@goBack()
