@@ -5,19 +5,20 @@
 	<ion-nav-buttons side="right">
 		<button
 			class="button button-assertive"
-			ng-click="App.goBack(-3)">
+			ng-click="App.navigate('categories')">
 			Add More
 		</button>
 	</ion-nav-buttons>
-<div class="bar bar-subheader bar-dark">
-  <h2 class="title m-title">Your business categories are</h2>
-</div>
-	<ion-content>
 
+	<div class="bar bar-subheader bar-dark">
+		<h2 class="title m-title">Your business categories are</h2>
+	</div>
+
+	<ion-content>
 
 		</br></br>
 
-		<ion-list >
+		<ion-list>
 
 			<ion-item
 				class="item-text-wrap item-icon-right"
@@ -34,15 +35,15 @@
 		</ion-list>
 
 		</br>
+
 		<h5 class="subdued">There should always be atleast one category chain selected</h5>
-	<!-- 	<button
-			class="button button-block button-dark"
-			ng-click="App.goBack(-3)">
-			Add more
-		</button> -->
 
 	</ion-content>
-		<ion-footer class="bar bar-footer bar-assertive" ng-click="App.navigate('verify-begin')" >
-	 <div class="title">Next</div>
+
+	<ion-footer 
+		class="bar bar-footer bar-assertive" 
+		ng-click="App.navigate('verify-begin')">
+
+		<div class="title">Next</div>
 	</ion-footer>
 </ion-view>
