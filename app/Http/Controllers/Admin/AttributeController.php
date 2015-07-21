@@ -466,7 +466,7 @@ class AttributeController extends Controller
       //     'unit' => 'inches',
       //     ),
       //   );
-      
+
         $functionName = "attributeImport";
 
         $result = AttributeController::makeParseCurlRequest($functionName,$data); 
@@ -634,6 +634,7 @@ class AttributeController extends Controller
       
       $app_id = config('constants.parse_sdk.app_id');
       $rest_api_key = config('constants.parse_sdk.rest_api_key');
+      $master_key = config('constants.parse_sdk.master_key');
       $base_url = "https://api.parse.com/1";
 
       $post_url = $base_url."/".$parseFunctType."/".$functionName;
@@ -649,7 +650,7 @@ class AttributeController extends Controller
       $header_array = array(                                                                          
         'X-Parse-Application-Id:' .$app_id ,                                                                                
         'X-Parse-REST-API-Key:' .$rest_api_key , 
-        'X-Parse-Master-Key:aoyAfAqjov2pk7sDlKpMss8pE0EFFyjJyRKfUEJC',  
+        'X-Parse-Master-Key:' .$master_key,  
         'Content-Type: application/json'
         );
 
