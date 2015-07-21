@@ -1,75 +1,110 @@
 Parse.Cloud.job 'productImport', (request, response) ->
-
     ProductItem = Parse.Object.extend('ProductItem')
 
     productSavedArr = []
 
     products =  request.params.products
 
-    _.each products, (product) ->
-        productItem = new ProductItem()
-        productItem.set "name", product.name
-        productItem.set "images", product.images
-        productItem.set "model_number", product.model_number
-        productItem.set "mrp", parseInt product.mrp
-        productItem.set "popularity", product.popularity
-        productItem.set "group", product.group
+    categoryId = request.params.categoryId
 
-        # set product category
-        categoryObj = 
-            "__type" : "Pointer",
-            "className":"Category",
-            "objectId":product.category
+    # get category data
+    queryCategory = new Parse.Query("Category")
 
-        productItem.set "category", categoryObj 
-        
-        # set brand
-        brandObj =
-            "__type" : "Pointer",
-            "className":"Brand",
-            "objectId":product.brand                    
+    queryCategory.equalTo("objectId", categoryId)
 
-        productItem.set "brand", brandObj 
+    queryCategory.include("filterable_attributes")
+    queryCategory.include("filterable_attributes.filterAttribute")
+    queryCategory.include("primary_attributes")
+    queryCategory.select("filterable_attributes","primary_attributes")    
 
+    queryCategory.first()
 
-        primaryAttributeValueArr = []
-        primaryAttributes = product.primaryAttributes 
+    .then (categoryObj) ->
+        _.each products, (product) -> 
+            productItem = new ProductItem()
 
-        _.each primaryAttributes, (primaryAttributeId) ->
-            attribObj = 
+            if product.objectId isnt ""
+                productItem.id = product.objectId
+
+            productAttributes = product.attrs
+
+            # set direct columns of product item
+            productItem.set "name", product.name
+            productItem.set "images", product.images
+            productItem.set "model_number", product.model_number
+            productItem.set "mrp", parseInt product.mrp
+            productItem.set "popularity", product.popularity
+            productItem.set "group", product.group 
+
+            # set product brand
+            brandObj =
                 "__type" : "Pointer",
-                "className":"AttributeValues",
-                "objectId":primaryAttributeId
+                "className":"Brand",
+                "objectId":product.brandId                    
 
-            primaryAttributeValueArr.push(attribObj) 
+            productItem.set "brand", brandObj        
 
-        productItem.set "primaryAttributes", primaryAttributeValueArr         
+            productItem.set "category", categoryObj 
+
+
+            # get primary attribute from category and set that as primary attribute column 
+            categoryPrimaryAttribute = categoryObj.get("primary_attributes")
+            
+            if !_.isUndefined(categoryPrimaryAttribute)
+                primeAttrib =_.first(categoryPrimaryAttribute)
+                primaryAttributeValueArr = []
+                primaryAttribObj = 
+                    "__type" : "Pointer",
+                    "className":"AttributeValues",
+                    "objectId":primeAttrib.id
+                    
+                primaryAttributeValueArr.push(primaryAttribObj) 
+
+                productItem.set "primaryAttributes", primaryAttributeValueArr 
+
+            # set product filters columns
+            productFilters =  categoryObj.get "filterable_attributes"
+            
+            _.each productFilters, (productFilter) ->
+                columnPosition = productFilter.get("filterColumn") 
+                columnName = "filter#{columnPosition}"
+                filterAttribId = productFilter.get("filterAttribute").id
+
         
-        attributeValueArr = []
-        attributes = product.attrs
+                filterValueToSet = productAttributes[filterAttribId]
+                filterObj = 
+                    "__type" : "Pointer",
+                    "className":"AttributeValues",
+                    "objectId":filterValueToSet
 
-        _.each attributes, (attributeId) ->
-            attribObj = 
-                "__type" : "Pointer",
-                "className":"AttributeValues",
-                "objectId":attributeId
+                if !_.isUndefined(filterValueToSet)
+                    productItem.set columnName, filterObj 
 
-            attributeValueArr.push(attribObj)
+            # set all attributes of product 
+            attributeValueArr = []
 
-        productItem.set "attrs", attributeValueArr                      
+            _.each productAttributes, (attrib) ->
+                attribObj = 
+                    "__type" : "Pointer",
+                    "className":"AttributeValues",
+                    "objectId":attrib.attributeValueId
+
+                attributeValueArr.push(attribObj)
+
+            productItem.set "attrs", attributeValueArr                                          
 
 
-        productSavedArr.push(productItem)
-        
+            productSavedArr.push(productItem)  
 
-    # save all the newly created objects
-    Parse.Object.saveAll productSavedArr,
-      success: (objs) ->
-        response.success "Successfully added the products"
-        return
-      error: (error) ->
-        response.error "Failed to add products due to - #{error.message}"
+        # save all the newly created objects
+        Parse.Object.saveAll productSavedArr
+          .then (objs) ->
+            response.success "Successfully added the products"
+          , (error) ->
+            response.error "Failed to add products due to - #{error.message}" 
 
+    , (error) ->
+        response.error error           
 
 Parse.Cloud.define 'getProducts', (request, response) ->
   

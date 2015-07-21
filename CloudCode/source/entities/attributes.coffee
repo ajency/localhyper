@@ -212,7 +212,7 @@ Parse.Cloud.define 'attributeValueImport', (request, response) ->
     _.each attributeValues, (attributeValObj) ->
         attributeValue = new AttributeValues()
 
-        if (attributeValObj.objectId isnt "") 
+        if attributeValObj.objectId isnt ""
             attributeValue.id = attributeValObj.objectId
 
         value = String attributeValObj.value
