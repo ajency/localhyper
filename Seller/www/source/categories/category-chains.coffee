@@ -5,7 +5,7 @@ angular.module 'LocalHyper.categories'
 	, ($scope, App, CategoriesAPI)->
 
 		$scope.view = 
-			categoryChains : null
+			categoryChains : []
 
 			setCategoryChains : ->
 				@categoryChains = CategoriesAPI.categoryChains('get')
@@ -16,10 +16,9 @@ angular.module 'LocalHyper.categories'
 
 			removeItemFromChains : (subCategoryId)->
 				@setCategoryChains()
-				_.each @categoryChains, (chains, index)=>
-					if chains.subCategory.id is subCategoryId
-						@categoryChains.splice index, 1
-
+				spliceIndex = _.findIndex @categoryChains, (chains)->
+					chains.subCategory.id is subCategoryId
+				@categoryChains.splice spliceIndex, 1
 				CategoriesAPI.categoryChains 'set', @categoryChains
 ]
 
