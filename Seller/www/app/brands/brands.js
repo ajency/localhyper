@@ -77,18 +77,17 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
           }
         }
       },
-      setCategoryChains: function() {
-        var empty;
-        empty = this.isCategoryChainsEmpty();
+      onDone: function() {
         return CategoriesAPI.getAll().then((function(_this) {
           return function(allCategories) {
-            var chain, chainIndex, data, existingChain, parentCategory, selectedBrands;
+            var chain, chainIndex, data, minOneBrandSelected, parentCategory, selectedBrands;
             parentCategory = _.filter(allCategories, function(category) {
               return category.id === SubCategory.parent;
             });
             selectedBrands = _.filter(_this.brands, function(brand) {
               return brand.selected === true;
             });
+            minOneBrandSelected = _.size(selectedBrands) === 0 ? false : true;
             data = [];
             chain = {
               category: parentCategory[0],
@@ -96,49 +95,40 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
               brands: selectedBrands
             };
             data.push(chain);
-            if (empty) {
-              return CategoriesAPI.categoryChains('set', data);
+            if (_this.isCategoryChainsEmpty()) {
+              _this.categoryChains = data;
             } else {
-              existingChain = false;
               chainIndex = _.findIndex(_this.categoryChains, function(chains) {
                 return chains.subCategory.id === SubCategory.id;
               });
               if (chainIndex !== -1) {
-                if (_.size(selectedBrands) > 0) {
+                if (minOneBrandSelected) {
                   _this.categoryChains[chainIndex].brands = selectedBrands;
                 } else {
                   _this.categoryChains.splice(chainIndex, 1);
                 }
               }
-              if (chainIndex === -1 && _.size(chain.brands) > 0) {
+              if (chainIndex === -1 && minOneBrandSelected) {
                 _this.categoryChains.push(chain);
               }
-              return CategoriesAPI.categoryChains('set', _this.categoryChains);
+            }
+            if (!minOneBrandSelected) {
+              return CDialog.confirm('Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']).then(function(btnIndex) {
+                if (btnIndex === 1) {
+                  return _this.goBack();
+                }
+              });
+            } else {
+              CategoriesAPI.categoryChains('set', _this.categoryChains);
+              return _this.goBack();
             }
           };
         })(this));
       },
-      onDone: function() {
-        var count, empty, minOneBrandSelected;
-        this.setCategoryChains();
-        minOneBrandSelected = !_.isUndefined(_.find(this.brands, function(brand) {
-          return brand.selected === true;
-        }));
-        empty = this.isCategoryChainsEmpty();
-        if (empty && !minOneBrandSelected) {
-          return CToast.show('Please select atleast one brand');
-        } else if (!empty && !minOneBrandSelected) {
-          return CDialog.confirm('Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']).then((function(_this) {
-            return function(btnIndex) {
-              if (btnIndex === 1) {
-                return App.navigate('category-chains');
-              }
-            };
-          })(this));
-        } else {
-          count = App.previousState === 'categories' ? -2 : -3;
-          return App.goBack(count);
-        }
+      goBack: function() {
+        var count;
+        count = App.previousState === 'categories' ? -2 : -3;
+        return App.goBack(count);
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function() {
