@@ -3,18 +3,18 @@
 angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage'
 	, 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products'
-	, 'LocalHyper.aboutUs', 'LocalHyper.googleMaps','LocalHyper.suggestProduct']
+	, 'LocalHyper.aboutUs', 'LocalHyper.googleMaps','LocalHyper.suggestProduct', 'LocalHyper.profile']
 
 
-.run ['$rootScope', 'App', 'GoogleMaps', ($rootScope, App, GoogleMaps)->
+.run ['$rootScope', 'App', 'GoogleMaps', 'User', ($rootScope, App, GoogleMaps, User)->
 
 	Parse.initialize APP_ID, JS_KEY
 	$rootScope.App = App
-	# GoogleMaps.loadScript()
+	GoogleMaps.loadScript()
 
 	#User Notification Icon (Right popover)
 	App.notification = 
-		icon: false
+		icon: User.isLoggedIn()
 		badge: false
 		count: 0
 		increment : ->
@@ -22,8 +22,10 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 			@count = @count + 1
 		decrement : ->
 			@count = @count - 1
-			if @count is 0
-				@badge = false
+			@badge = false if @count is 0
+
+	$rootScope.$on '$user:registration:success', ->
+		App.notification.icon = true
 
 	#Hide small app logo on categories view
 	App.logo = small: true
@@ -36,7 +38,6 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual']
 		bool = !_.contains(hideForStates, App.currentState)
 		App.menuEnabled.left  = bool
-		App.notification.icon = bool
 ]
 
 

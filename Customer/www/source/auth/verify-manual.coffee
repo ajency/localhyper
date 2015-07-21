@@ -2,8 +2,8 @@ angular.module 'LocalHyper.auth'
 
 
 .controller 'VerifyManualCtrl', ['$scope', 'CToast', 'App', 'SmsAPI', 'AuthAPI'
-	, 'CSpinner', 'User', '$ionicPlatform'
-	, ($scope, CToast, App, SmsAPI, AuthAPI, CSpinner, User, $ionicPlatform)->
+	, 'CSpinner', 'User', '$ionicPlatform', '$rootScope'
+	, ($scope, CToast, App, SmsAPI, AuthAPI, CSpinner, User, $ionicPlatform, $rootScope)->
 
 		$scope.view = 
 			display: 'noError'
@@ -64,6 +64,7 @@ angular.module 'LocalHyper.auth'
 				.then (success)->
 					count = if App.isAndroid() then -3 else -2
 					App.goBack count
+					$rootScope.$broadcast '$user:registration:success'
 				, (error)=>
 					@onError error, 'register'
 				.finally ->

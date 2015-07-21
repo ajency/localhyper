@@ -1,0 +1,48 @@
+<ion-view 
+	view-title="My Profile"
+	ng-init="view.init()">
+
+	<ion-content>
+
+		<div class="card">
+			<div class="item item-divider">
+				{{view.name}}
+			</div>
+			<div class="item item-divider">
+				{{view.phone}}
+			</div>
+		</div>
+
+		<div class="card">
+			<div 
+				class="item item-divider"
+				ng-init="">
+				Address
+				<button class="button button-small">Edit</button>
+			</div>
+
+			<div class="item item-text-wrap">
+				{{view.profileAddress}}
+			</div>
+			
+			<div>
+				<ul class="list">
+					<li class="item item-checkbox">
+						<label class="checkbox">
+							<input type="checkbox">
+						</label>
+						Make this my permanent address
+					</li>
+				</ul>
+
+				<div class="item item-text-wrap">
+					Permanent address will be shown by default on make request
+				</div>
+
+				<button class="button button-block button-assertive">Save</button>
+			</div>
+		</div>
+
+	</ion-content>
+
+</ion-view>

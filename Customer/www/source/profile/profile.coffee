@@ -1,23 +1,25 @@
-angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
+angular.module 'LocalHyper.profile', []
 
 
-.controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
-	, 'CDialog', 'User', '$ionicModal', '$timeout'
-	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout)->
+.controller 'ProfileCtrl', ['$scope', 'User', 'App', 'CDialog', 'GPS', 'CToast'
+	, 'GoogleMaps', '$ionicModal'
+	, ($scope, User, App, CDialog, GPS, CToast, GoogleMaps, $ionicModal)->
+
+		user = User.getCurrent()
 
 		$scope.view = 
-			businessName: ''
-			name: ''
-			phone: ''
-			confirmedAddress: ''
-			terms: false
+			name: user.get 'displayName'
+			phone: "+91-#{user.get('username')}"
 
-			delivery:
-				radius: 10
-				plus : ->
-					@radius++ if @radius < 99
-				minus : ->
-					@radius-- if @radius > 1
+			profileAddress: ''
+
+			permanentAddress:
+				obj: user.get 'permanentAddress'
+				available: -> !_.isUndefined @obj
+
+			tempAddress:
+				obj: user.get 'address'
+				available: -> !_.isUndefined @obj
 
 			location:
 				modal: null
@@ -83,20 +85,26 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					.finally =>
 						@addressFetch = true
 
-			
 
 			init : ->
 				@loadLocationModal()
+				@checkForAddress()
 
 			loadLocationModal : ->
-				$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
+				$ionicModal.fromTemplateUrl 'views/location.html', 
 					scope: $scope,
 					animation: 'slide-in-up'
 					hardwareBackButtonClose: true
 				.then (modal)=>
 					@location.modal = modal
 
-			onChangeLocation : ->
+			checkForAddress : ->
+				if @permanentAddress.available()
+					@profileAddress = @permanentAddress.obj.full
+				else if @tempAddress.available()
+					@profileAddress = @tempAddress.obj.full
+
+			onEditLocation : ->
 				@location.modal.show()
 				mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
 				$('.aj-big-map').css 'height': mapHeight
@@ -118,23 +126,9 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 				else
 					CToast.show 'Please wait, getting location details...'
 
-			onNext : ->
-				if _.contains [@businessName, @name, @phone], ''
-					CToast.show 'Fill up all fields'
-				else if _.isUndefined @phone
-					CToast.show 'Please enter valid phone number'
-				else if @confirmedAddress is ''
-					CToast.show 'Please select your location'
-				else
-					@addressGeoPoint = new Parse.GeoPoint 
-						latitude: @location.latLng.lat()
-						longitude: @location.latLng.lng()
-					User.info 'set', $scope.view
-					App.navigate 'category-chains'
-		
-		
-		$scope.$on '$ionicView.enter', ->
-			App.hideSplashScreen()
+
+		$scope.$on '$destroy', ->
+			$scope.view.location.modal.remove()
 ]
 
 
@@ -142,13 +136,14 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 	$stateProvider
 
-		.state 'business-details',
-			url: '/business-details'
+		.state 'profile',
+			url: '/verify-begin'
 			parent: 'main'
+			cache: false
 			views: 
 				"appContent":
-					controller: 'BusinessDetailsCtrl'
-					templateUrl: 'views/business-details/business-details.html'
+					controller: 'ProfileCtrl'
+					templateUrl: 'views/profile.html'
 					resolve:
 						Maps : ($q, CSpinner, GoogleMaps)->
 							defer = $q.defer()
@@ -160,4 +155,3 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 								CSpinner.hide()
 							defer.promise
 ]
-

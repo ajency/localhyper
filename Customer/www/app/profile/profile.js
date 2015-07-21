@@ -1,22 +1,21 @@
-angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout) {
+angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
+  '$scope', 'User', 'App', 'CDialog', 'GPS', 'CToast', 'GoogleMaps', '$ionicModal', function($scope, User, App, CDialog, GPS, CToast, GoogleMaps, $ionicModal) {
+    var user;
+    user = User.getCurrent();
     $scope.view = {
-      businessName: '',
-      name: '',
-      phone: '',
-      confirmedAddress: '',
-      terms: false,
-      delivery: {
-        radius: 10,
-        plus: function() {
-          if (this.radius < 99) {
-            return this.radius++;
-          }
-        },
-        minus: function() {
-          if (this.radius > 1) {
-            return this.radius--;
-          }
+      name: user.get('displayName'),
+      phone: "+91-" + (user.get('username')),
+      profileAddress: '',
+      permanentAddress: {
+        obj: user.get('permanentAddress'),
+        available: function() {
+          return !_.isUndefined(this.obj);
+        }
+      },
+      tempAddress: {
+        obj: user.get('address'),
+        available: function() {
+          return !_.isUndefined(this.obj);
         }
       },
       location: {
@@ -103,10 +102,11 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
         }
       },
       init: function() {
-        return this.loadLocationModal();
+        this.loadLocationModal();
+        return this.checkForAddress();
       },
       loadLocationModal: function() {
-        return $ionicModal.fromTemplateUrl('views/business-details/location.html', {
+        return $ionicModal.fromTemplateUrl('views/location.html', {
           scope: $scope,
           animation: 'slide-in-up',
           hardwareBackButtonClose: true
@@ -116,7 +116,14 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
           };
         })(this));
       },
-      onChangeLocation: function() {
+      checkForAddress: function() {
+        if (this.permanentAddress.available()) {
+          return this.profileAddress = this.permanentAddress.obj.full;
+        } else if (this.tempAddress.available()) {
+          return this.profileAddress = this.tempAddress.obj.full;
+        }
+      },
+      onEditLocation: function() {
         var mapHeight;
         this.location.modal.show();
         mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10;
@@ -151,37 +158,22 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
         } else {
           return CToast.show('Please wait, getting location details...');
         }
-      },
-      onNext: function() {
-        if (_.contains([this.businessName, this.name, this.phone], '')) {
-          return CToast.show('Fill up all fields');
-        } else if (_.isUndefined(this.phone)) {
-          return CToast.show('Please enter valid phone number');
-        } else if (this.confirmedAddress === '') {
-          return CToast.show('Please select your location');
-        } else {
-          this.addressGeoPoint = new Parse.GeoPoint({
-            latitude: this.location.latLng.lat(),
-            longitude: this.location.latLng.lng()
-          });
-          User.info('set', $scope.view);
-          return App.navigate('category-chains');
-        }
       }
     };
-    return $scope.$on('$ionicView.enter', function() {
-      return App.hideSplashScreen();
+    return $scope.$on('$destroy', function() {
+      return $scope.view.location.modal.remove();
     });
   }
 ]).config([
   '$stateProvider', function($stateProvider) {
-    return $stateProvider.state('business-details', {
-      url: '/business-details',
+    return $stateProvider.state('profile', {
+      url: '/verify-begin',
       parent: 'main',
+      cache: false,
       views: {
         "appContent": {
-          controller: 'BusinessDetailsCtrl',
-          templateUrl: 'views/business-details/business-details.html',
+          controller: 'ProfileCtrl',
+          templateUrl: 'views/profile.html',
           resolve: {
             Maps: function($q, CSpinner, GoogleMaps) {
               var defer;

@@ -1,4 +1,4 @@
-<ion-view 
+<ion-view
 	aj-remove-box-shadow
 	ng-init="view.init()">
 
@@ -7,8 +7,8 @@
     </ion-nav-title>
 
 	<ion-nav-buttons side="left">
-		<button 
-			menu-toggle="left" 
+		<button
+			menu-toggle="left"
 			class="button button-icon icon ion-navicon">
 		</button>
 	</ion-nav-buttons>
@@ -16,34 +16,36 @@
 	<ion-content ng-switch="view.display">
 
 		<ion-spinner
-			class="aj-spinner spinner-android" 
+			class="aj-spinner spinner-android"
 			ng-switch-when="loader">
 		</ion-spinner>
 
 		<ion-list ng-switch-when="noError" class="card-list">
 
-	       	<ion-item 
+	       	<ion-item
 	       		class="card"
 	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
 	       		ng-init="request.new=view.isNew(request.id)"
 	       		ng-click="view.showRequestDetails(request)"
 	       		ng-class="(request.new) ? 'notify-alert' : ''"
 	       		ng-controller="EachRequestCtrl">
-				
-				<div class="item item-avatar border-none margin-none">
-			        <img ng-src="{{request.product.image[0].src}}">
-			        <h2>{{request.product.name}}</h2>
-			        <p>{{request.radius.toFixed(1)}} kms radius</p>
+
+				<div class="item-wrapper-nr">
+					<div class="item-avatar border-none margin-none">
+				        <img ng-src="{{request.product.image[0].src}}">
+				    </div>
+				    <h2>{{request.product.name}}</h2>
+				    <p>{{request.radius.toFixed(1)}} kms radius</p>
 			    </div>
-				
+
 				<div class="row item border-none" >
-			        <div class="col ">
+			        <div class="col  p-t-0">
 			            <sm class="light-gray"> Local Price</sm><br>
 			            <h3 class=" item-text-wrap margin-none big-txt ">
 			            	<span class="WebRupee subdued">&#x20B9;</span> 19,000
 			            </h3>
 			        </div>
-			        <div class="col">
+			        <div class="col p-t-0">
 			        	<div class="pull-right">
 			            <div class="offer"> 2 </div>
 			            <h4 class="offertxt light-gray"> No of offers</h4>
@@ -59,8 +61,8 @@
 			            <sm class="subdued">{{request.timeStr}}</sm>
 			        </div>
 			    </div>
-<!-- 
-			    <div 
+<!--
+			    <div
 			    	class="item item-avatar border-none">
 
 			        <img ng-src="{{request.product.image[0].src}}">
@@ -77,10 +79,10 @@
 			        </div>
 			        <div class="col">
 			            <sm class="subdued"> &nbsp;</sm>
-			            <h4 class="text-left margin-none"> 
+			            <h4 class="text-left margin-none">
 			            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.product.mrp)}} MRP
 			            </h4>
-			            <h4 class="text-left margin-none"> 
+			            <h4 class="text-left margin-none">
 			            	<span class="WebRupee subdued">&#x20B9;</span> 19,000 Online
 			            </h4>
 			        </div>
@@ -92,8 +94,8 @@
 
 			    <div class="row">
 			        <div class="col col-100">
-			            <span class="label"> {{request.category.parent}}</span> 
-			            <span class="label"> {{request.category.name}}</span> 
+			            <span class="label"> {{request.category.parent}}</span>
+			            <span class="label"> {{request.category.name}}</span>
 			            <span class="label"> {{request.brand.name}}</span>
 			        </div>
 			    </div>
@@ -110,7 +112,7 @@
 			</ion-item>
 		</ion-list>
 
-		<aj-error 
+		<aj-error
 			ng-switch-when="error"
 			error-type="view.errorType"
 			tap-to-retry="view.onTapToRetry()">
@@ -128,5 +130,5 @@
 			</div>
 		</div>
 	</ion-footer-bar>
-	
+
 </ion-view>

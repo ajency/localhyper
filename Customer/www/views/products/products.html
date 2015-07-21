@@ -7,19 +7,20 @@
 	<ion-content class="sub-categories product-list">
 
 		<ion-refresher
-			on-refresh="view.onPullToRefresh()" class="aj-refresher">
+			on-refresh="view.onPullToRefresh()" 
+			class="aj-refresher">
 		</ion-refresher>
 
-		<div class="row full-cont">
+		<!-- <div class="row full-cont">
 			<div class="col full-cont">
 				<button class="button button-dark button-full button-view-all-cat">
 					<i class="icon ion-grid"></i>
 					Browse all Departments
 				</button>
 			</div>
-		</div>
+		</div> -->
 
-		<div class="list-cont">
+		<!-- <div class="list-cont"> -->
 			<ion-list>
 				<div
 					class="col col-50 border-card border-card2 sing-pro"
@@ -37,7 +38,7 @@
 					<div class="row">
 						<div class="col">
 							<h6 class="subdued">
-								<span class="text-danger">In</span> {{view.getPrimaryAttrs(product.primaryAttributes)}}
+								<!-- <span class="text-danger"><strong>Available:</strong></span> --> {{view.getPrimaryAttrs(product.primaryAttributes)}}
 							</h6>
 						</div>
 					</div>
@@ -56,11 +57,12 @@
 			<ion-infinite-scroll
 				on-infinite="view.onInfiniteScroll()"
 				ng-if="view.canLoadMore"
-				distance="1%" class="aj-refresher">
-			</ion-infinite-scroll >
+				distance="1%" 
+				class="aj-refresher">
+			</ion-infinite-scroll>
 
-			<div class="clearfix"></div>
-		</div>
+			<!-- <div class="clearfix"></div> -->
+		<!-- </div> -->
 
 	</ion-content>
 

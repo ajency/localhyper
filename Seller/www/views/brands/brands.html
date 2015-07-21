@@ -32,7 +32,7 @@
 			<div
 				class="col col-50 border-card relative"
 				ng-repeat="brand in view.brands"
-				ng-init="brand.selected=false">
+				ng-init="brand.selected=view.brandSelection(brand.objectId);">
 
 					<img
 						ng-src="{{brand.image.src}}"
@@ -44,7 +44,7 @@
 
 					<ion-checkbox
 						ng-model="brand.selected"
-						ng-change="view.setCategoryChains()" class="item-check">
+						ng-change="" class="item-check">
 
 					</ion-checkbox>
 			</div>

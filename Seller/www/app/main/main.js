@@ -7,7 +7,7 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         return $ionicSideMenuDelegate.edgeDragThreshold(true);
       },
       loadPopOver: function() {
-        return $ionicPopover.fromTemplateUrl('views/right-popover.html', {
+        return $ionicPopover.fromTemplateUrl('views/user-popover.html', {
           scope: $scope
         }).then((function(_this) {
           return function(popover) {
