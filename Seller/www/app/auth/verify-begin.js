@@ -1,6 +1,6 @@
 angular.module('LocalHyper.auth').controller('VerifyBeginCtrl', [
   '$scope', 'App', 'CToast', 'User', 'UIMsg', function($scope, App, CToast, User, UIMsg) {
-    return $scope.user = {
+    $scope.user = {
       name: '',
       phone: '',
       setDetails: function() {
@@ -29,5 +29,8 @@ angular.module('LocalHyper.auth').controller('VerifyBeginCtrl', [
         }
       }
     };
+    return $scope.$on('$ionicView.beforeEnter', function() {
+      return $scope.user.setDetails();
+    });
   }
 ]);

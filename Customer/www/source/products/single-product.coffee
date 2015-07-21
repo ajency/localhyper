@@ -9,14 +9,23 @@ angular.module 'LocalHyper.products'
 		$scope.view = 
 			display: 'loader'
 			errorType: ''
+			footer: false
 			productID: $stateParams.productID
 			product: {}
 			specificationModal: null
 			makeRequestModal: null
 			confirmedAddress: ''
+
 			comments: 
 				modal: null
 				text: ''
+
+			request:
+				active: false
+				check: ->
+					@active = false
+					if User.isLoggedIn()
+						@active = !_.isEmpty($scope.view.product.activeRequest)
 			
 			location:
 				modal: null
@@ -125,14 +134,21 @@ angular.module 'LocalHyper.products'
 
 			getSingleProductDetails : ->
 				ProductsAPI.getSingleProduct @productID
-				.then (data)=>
-					@onSuccess data
+				.then (productData)=>
+					@product = productData
+					ProductsAPI.getNewOffers @productID
+				.then (details)=>
+					_.each details, (val, key)=>
+						@product[key] = val
+					console.log @product
+					@onSuccess()
 				, (error)=>
 					@onError error
 
-			onSuccess : (data)->
+			onSuccess : ->
+				@footer = true
+				@request.check()
 				@display = 'noError'
-				@product = data
 				
 			onError: (type)->
 				@display = 'error'
@@ -228,6 +244,7 @@ angular.module 'LocalHyper.products'
 					.then ->
 						ProductsAPI.makeRequest params
 					.then =>
+						@request.active = true
 						@makeRequestModal.hide()
 						CToast.show 'Your request has been made'
 					, (error)->

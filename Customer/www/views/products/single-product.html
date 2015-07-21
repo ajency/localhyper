@@ -8,6 +8,14 @@
 		</ion-spinner>
 
 		<ion-list ng-switch-when="noError">
+
+			<!-- <ion-item ng-if="view.request.active">
+				Last made request expires in
+				<span 
+					aj-count-down
+					created-at="view.product.activeRequest.createdAt">
+				</span>
+			</ion-item> -->
 	
 			<img
 				class="aj-sp-img img-responsive" 
@@ -62,7 +70,7 @@
 
 	</ion-content>
 
-	<ion-footer-bar class="bar bar-footer bar-custom-footer">
+	<ion-footer-bar ng-show="view.footer" class="bar bar-footer bar-custom-footer">
 		<button 
 			class="button button-clear btn-specification"
 			ng-click="view.specificationModal.show()"> 
@@ -71,8 +79,16 @@
 
 		<button 
 			class="button button-assertive btn-action" 
+			ng-if="!view.request.active"
 			ng-click="view.checkUserLogin()">
 			Make Request
+		</button>
+
+		<button 
+			class="button button-assertive btn-action"
+			ng-if="view.request.active"
+			ng-click="">
+			Cancel Request
 		</button>
 	</ion-footer-bar>
 
