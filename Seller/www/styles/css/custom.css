@@ -1024,3 +1024,6 @@ h5.with-sep span {
   letter-spacing: 1px;
   color: #f35a59;
 }
+.bar .title {
+  height: auto;
+}
