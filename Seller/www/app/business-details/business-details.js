@@ -1,9 +1,9 @@
 angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'BusinessDetailStorage', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, BusinessDetailStorage) {
     $scope.view = {
-      businessName: '',
       name: '',
       phone: '',
+      businessName: '',
       confirmedAddress: '',
       terms: false,
       delivery: {
@@ -103,7 +103,25 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
         }
       },
       init: function() {
-        return this.loadLocationModal();
+        this.loadLocationModal();
+        return this.initializebusinessValue();
+      },
+      initializebusinessValue: function() {
+        BusinessDetailStorage.getBussinessName().then(function(value) {
+          return $scope.view.businessName = value;
+        });
+        BusinessDetailStorage.getFullName().then(function(value) {
+          return $scope.view.name = value;
+        });
+        BusinessDetailStorage.getPhoneNo().then(function(value) {
+          return $scope.view.phone = value;
+        });
+        BusinessDetailStorage.getRadius().then(function(value) {
+          return $scope.view.delivery.radius = value;
+        });
+        return BusinessDetailStorage.getAddress().then(function(value) {
+          return $scope.view.confirmedAddress = value;
+        });
       },
       loadLocationModal: function() {
         return $ionicModal.fromTemplateUrl('views/business-details/location.html', {
@@ -165,6 +183,11 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
             longitude: this.location.latLng.lng()
           });
           User.info('set', $scope.view);
+          BusinessDetailStorage.setBussinessName(this.businessName);
+          BusinessDetailStorage.setFullName(this.name);
+          BusinessDetailStorage.setPhoneNo(this.phone);
+          BusinessDetailStorage.setRadius(this.delivery.radius);
+          BusinessDetailStorage.setAddress(this.confirmedAddress);
           return App.navigate('category-chains');
         }
       }

@@ -2,13 +2,14 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
-	, 'CDialog', 'User', '$ionicModal', '$timeout'
-	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout)->
+	, 'CDialog', 'User', '$ionicModal', '$timeout','BusinessDetailStorage'
+	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, BusinessDetailStorage)->
 
+	
 		$scope.view = 
-			businessName: ''
-			name: ''
-			phone: ''
+			name:''
+			phone:''
+			businessName:''
 			confirmedAddress: ''
 			terms: false
 
@@ -87,6 +88,29 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 			init : ->
 				@loadLocationModal()
+				@initializebusinessValue()
+
+
+			initializebusinessValue : ->
+				BusinessDetailStorage.getBussinessName()
+				.then (value)->
+					$scope.view.businessName = value
+
+				BusinessDetailStorage.getFullName()
+				.then (value)->
+					$scope.view.name = value
+
+				BusinessDetailStorage.getPhoneNo()
+				.then (value)->
+					$scope.view.phone = value
+
+				BusinessDetailStorage.getRadius()
+				.then (value)->
+					$scope.view.delivery.radius = value
+
+				BusinessDetailStorage.getAddress()
+				.then (value)->
+					$scope.view.confirmedAddress = value
 
 			loadLocationModal : ->
 				$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
@@ -130,6 +154,12 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 						latitude: @location.latLng.lat()
 						longitude: @location.latLng.lng()
 					User.info 'set', $scope.view
+					BusinessDetailStorage.setBussinessName(@businessName)
+					BusinessDetailStorage.setFullName(@name)
+					BusinessDetailStorage.setPhoneNo(@phone)
+					BusinessDetailStorage.setRadius(@delivery.radius)
+					BusinessDetailStorage.setAddress(@confirmedAddress)
+
 					App.navigate 'category-chains'
 		
 		
