@@ -23,8 +23,8 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 				@count = @count + 1
 			decrement : ->
 				@count = @count - 1
-				if @count is 0
-					@badge = false
+				@badge = false if @count is 0
+					
 
 		#Hide small app logo on categories view
 		App.logo = small: true

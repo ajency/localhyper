@@ -78,8 +78,6 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
         }
       },
       onDone: function() {
-        var empty;
-        empty = this.isCategoryChainsEmpty();
         return CategoriesAPI.getAll().then((function(_this) {
           return function(allCategories) {
             var chain, chainIndex, data, minOneBrandSelected, parentCategory, selectedBrands;
@@ -97,7 +95,7 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
               brands: selectedBrands
             };
             data.push(chain);
-            if (empty) {
+            if (_this.isCategoryChainsEmpty()) {
               _this.categoryChains = data;
             } else {
               chainIndex = _.findIndex(_this.categoryChains, function(chains) {
@@ -114,12 +112,9 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
                 _this.categoryChains.push(chain);
               }
             }
-            if (empty && !minOneBrandSelected) {
-              return CToast.show('Please select atleast one brand');
-            } else if (!empty && !minOneBrandSelected) {
+            if (!minOneBrandSelected) {
               return CDialog.confirm('Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']).then(function(btnIndex) {
                 if (btnIndex === 1) {
-                  CategoriesAPI.categoryChains('set', _this.categoryChains);
                   return _this.goBack();
                 }
               });

@@ -78,8 +78,12 @@ angular.module 'LocalHyper.auth'
 			supportedBrands = _.map(_.groupBy(supportedBrands, (brand)->
 				brand.objectId
 			), (grouped)->
-  				grouped[0]
-  			)
+				grouped[0]
+			)
+
+			addressGeoPoint = new Parse.GeoPoint
+				latitude: user.latitude
+				longitude: user.longitude
 
 			data = 
 				phone: user.phone
