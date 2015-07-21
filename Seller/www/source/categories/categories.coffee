@@ -31,7 +31,7 @@ angular.module 'LocalHyper.categories', []
 
 			onSubcategoryClick : (children, categoryID)->
 				CategoriesAPI.subCategories 'set', children
-				App.navigate('brands', {categoryID: categoryID})
+				App.navigate 'brands', categoryID: categoryID
 
 
 		$scope.$on '$ionicView.loaded', ->

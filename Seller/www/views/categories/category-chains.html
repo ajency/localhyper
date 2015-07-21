@@ -1,6 +1,7 @@
 <ion-view
 	view-title="Category Chains"
-	ng-init="view.setCategoryChains()" class="chain">
+	ng-init="view.setCategoryChains()" 
+	class="chain">
 
 	<ion-nav-buttons side="right">
 		<button
@@ -40,10 +41,12 @@
 
 	</ion-content>
 
-	<ion-footer 
-		class="bar bar-footer bar-assertive" 
-		ng-click="App.navigate('verify-begin')">
-
-		<div class="title">Next</div>
-	</ion-footer>
+	<ion-footer-bar class="bar bar-footer with-btn">
+		<button
+			class="title button button-block button-assertive"
+			ng-disabled="view.categoryChains.length == 0;"
+			ng-click="App.navigate('verify-begin')">
+			Next
+		</button>
+	</ion-footer-bar>
 </ion-view>

@@ -19,11 +19,7 @@ angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
             }
           };
         })(this));
-        if (_.isEmpty(this.categoryChains)) {
-          return App.goBack(-3);
-        } else {
-          return CategoriesAPI.categoryChains('set', this.categoryChains);
-        }
+        return CategoriesAPI.categoryChains('set', this.categoryChains);
       }
     };
   }
