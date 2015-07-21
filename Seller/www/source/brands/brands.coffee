@@ -40,6 +40,31 @@ angular.module 'LocalHyper.brands', []
 				empty = _.isEmpty @categoryChains
 				empty
 
+			brandSelection : (brandID)->
+				selected = false
+				if @isCategoryChainsEmpty()
+					selected = false
+				else
+					chain = _.filter @categoryChains, (chains)-> chains.subCategory.id is SubCategory.id
+					if !_.isEmpty chain
+						_brands = chain[0].brands
+						_brandIds = _.pluck _brands, 'objectId'
+						selected = _.contains _brandIds, brandID
+					else selected = false
+				selected
+
+			setBrandSelection : ->
+				if @isCategoryChainsEmpty()
+					_.each @brands, (brand)->
+						brand.selected = false
+				else
+					chain = _.filter @categoryChains, (chains)-> chains.subCategory.id is SubCategory.id
+					if !_.isEmpty chain
+						_brands = chain[0].brands
+						_brandIds = _.pluck _brands, 'objectId'
+						_.each @brands, (brand)->
+							brand.selected = _.contains _brandIds, brand.objectId
+
 			setCategoryChains : ->
 				empty = @isCategoryChainsEmpty()
 				CategoriesAPI.getAll()
@@ -57,20 +82,23 @@ angular.module 'LocalHyper.brands', []
 						CategoriesAPI.categoryChains 'set', data
 					else
 						existingChain = false
-						_.each @categoryChains, (chains, index)=>
-							if chains.subCategory.id is SubCategory.id
-								existingChain = true
-								if _.size(selectedBrands) > 0
-									@categoryChains[index].brands = selectedBrands
-								else
-									@categoryChains.splice index, 1
+						chainIndex = _.findIndex @categoryChains, (chains)->
+							chains.subCategory.id is SubCategory.id
+
+						if chainIndex isnt -1 #When existing category chain
+							if _.size(selectedBrands) > 0
+								@categoryChains[chainIndex].brands = selectedBrands
+							else
+								@categoryChains.splice chainIndex, 1
 						
-						if !existingChain and _.size(chain.brands) > 0
+						# When new existing category chain
+						if chainIndex is -1 and _.size(chain.brands) > 0
 							@categoryChains.push chain
 							
 						CategoriesAPI.categoryChains 'set', @categoryChains
 
 			onDone : ->
+				@setCategoryChains()
 				minOneBrandSelected = !_.isUndefined _.find @brands, (brand)-> brand.selected is true
 				empty = @isCategoryChainsEmpty()
 				if empty and !minOneBrandSelected
@@ -80,7 +108,14 @@ angular.module 'LocalHyper.brands', []
 					.then (btnIndex)=>
 						if btnIndex is 1 then App.navigate 'category-chains'
 				else
-					App.navigate 'category-chains'
+					count = if App.previousState is 'categories' then -2 else -3
+					App.goBack count
+					# App.navigate 'category-chains'
+
+
+		$scope.$on '$ionicView.beforeEnter', ->
+			if $scope.view.display is 'noError'
+				$scope.view.setBrandSelection() 
 ]
 
 
