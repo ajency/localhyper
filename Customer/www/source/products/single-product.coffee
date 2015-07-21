@@ -117,7 +117,7 @@ angular.module 'LocalHyper.products'
 					@makeRequestModal = modal
 
 			loadLocationModal : ->
-				$ionicModal.fromTemplateUrl 'views/products/location.html', 
+				$ionicModal.fromTemplateUrl 'views/location.html', 
 					scope: $scope,
 					animation: 'slide-in-up'
 					hardwareBackButtonClose: true
