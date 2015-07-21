@@ -19,8 +19,8 @@
 		</div>
 	</ion-header-bar>
 
-	<ion-content 
-		class="has-footer" 
+	<ion-content
+		class="has-footer"
 		delegate-handle="request-details">
 
 		<ion-spinner
@@ -31,8 +31,10 @@
 		<ion-list ng-switch-when="noError">
 
 			<div class="row">
-				<div class="col col-20 item-avatar">
-					<img class="" ng-src="{{view.requestDetails.data.product.image[0].src}}" >
+				<div class="col col-20">
+					<div class="item-avatar">
+						<img class="" ng-src="{{view.requestDetails.data.product.image[0].src}}" >
+					</div>
 				</div>
 				<div class="col col-60">
 					<h5 class="text-left">{{view.requestDetails.data.product.name}}</h5>
@@ -55,8 +57,8 @@
 			<div class="row make-an-offer">
 				<div class="col">
 					<label class="item item-radio">
-						<input 
-							type="radio" 
+						<input
+							type="radio"
 							name="group"
 							value="localPrice"
 							ng-model="view.requestDetails.price"
@@ -71,9 +73,9 @@
 				</div>
 				<div class="col">
 					<label class="item item-radio">
-						<input 
-							type="radio" 
-							name="group" 
+						<input
+							type="radio"
+							name="group"
 							value="onlinePrice"
 							ng-model="view.requestDetails.price"
 							ng-change="App.resize();">
@@ -87,9 +89,9 @@
 				</div>
 				<div class="col">
 					<label class="item item-radio">
-						<input 
-							type="radio" 
-							name="group" 
+						<input
+							type="radio"
+							name="group"
 							value="yourPrice"
 							ng-model="view.requestDetails.price"
 							ng-change="App.resize();">
@@ -103,18 +105,18 @@
 				</div>
 		    </div>
 
-			<div 
+			<div
 				class="list"
 				ng-if="view.requestDetails.price === 'yourPrice'">
 				<label class="item item-input item-floating-label">
 					<span class="input-label">Your offer price</span>
-					<input 
+					<input
 			    		type="number"
 			    		placeholder="Enter your offer price"
 			    		ng-pattern="App.onlyNumbers"
 			    		ng-model="view.requestDetails.offerPrice">
 				</label>
-			</div>	
+			</div>
 
 			<div class="row">
 				<div class="col">
@@ -125,11 +127,11 @@
 						<p>
 						<span class="ti">Delivery Time</span>
 						<span class="ac-ti">
-							<span 
+							<span
 								class="big">
 								{{view.requestDetails.deliveryTime.value}} {{view.requestDetails.deliveryTime.unitText}}
 							</span>
-							<span 
+							<span
 								class="change"
 								ng-click="view.requestDetails.deliveryTime.display=true; App.resize();">
 								(Change)
@@ -140,14 +142,14 @@
 				</div>
 			</div>
 
-			<div 
+			<div
 				class="list"
 				ng-show="view.requestDetails.deliveryTime.display">
 
 				<div class="row">
 					<div class="col col-20">
 						<label class="item item-input" style="width: 70px;">
-							<input 
+							<input
 					    		type="number"
 					    		min="1" max="100"
 					    		ng-pattern="App.onlyNumbers"
@@ -160,7 +162,7 @@
 							<div class="input-label">
 								Duration
 							</div>
-							<select 
+							<select
 								ng-model="view.requestDetails.deliveryTime.unit"
 								ng-change="view.requestDetails.deliveryTime.setDuration()">
 								<option value="hr">Hour(s)</option>
@@ -169,7 +171,7 @@
 						</label>
 					</div>
 					<div class="col col-20">
-						<button 
+						<button
 							class="button button-big button-black"
 							ng-click="view.requestDetails.deliveryTime.done();">
 							Done
@@ -177,7 +179,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 			<div ng-if="view.requestDetails.data.comments!==''">
 			    <div class="row">
 			    	<div class="col">
@@ -193,7 +195,7 @@
 			    	</div>
 			    	<div class="col col-80 user-comment">
 			    		<p>{{view.requestDetails.data.comments}}</p>
-			    		<button 
+			    		<button
 			    			class="button button-small button-black"
 			    			ng-show="view.requestDetails.reply.button"
 			    			ng-click="view.requestDetails.reply.button=false; App.resize();">
@@ -204,7 +206,7 @@
 
 				<div class="list">
 					<label class="item item-input">
-						<textarea 
+						<textarea
 							placeholder="Your reply"
 							ng-hide="view.requestDetails.reply.button"
 							ng-model="view.requestDetails.reply.text">
@@ -223,10 +225,10 @@
 
 	</ion-content>
 
-	<ion-footer 
+	<ion-footer
 		ng-switch-when="noError"
 		class="bar bar-footer bar-assertive" >
-		<div 
+		<div
 			class="title"
 			ng-click="view.requestDetails.makeOffer()">
 			Make offer
