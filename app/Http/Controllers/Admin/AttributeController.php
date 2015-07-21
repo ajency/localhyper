@@ -445,7 +445,28 @@ class AttributeController extends Controller
 
     public function parseAttributeImport($data){
 
-   
+      // $data = array (
+      //   'attributes' => 
+      //   array (
+      //     0 => 
+      //     array (
+      //       'objectId' => '',
+      //       'name' => 'new attributex',
+      //       'group' => 'general',
+      //       'unit' => '',
+      //       ),
+      //     ),
+      //   'categoryId' => 'vpEoQCuBoD',
+      //   'isFilterable' => true,
+      //   'primaryAttributeObj' => 
+      //   array (
+      //     'objectId' => '',
+      //     'name' => 'new attributey',
+      //     'group' => 'general',
+      //     'unit' => 'inches',
+      //     ),
+      //   );
+      
         $functionName = "attributeImport";
 
         $result = AttributeController::makeParseCurlRequest($functionName,$data); 

@@ -432,37 +432,35 @@ class ProductController extends Controller
 
    public static function parseProductImport($data){
  
-       /* $data = array (
-          'products' => 
-          array (
-            0 => 
-            array (
-              'category' => 'dVwddmOP9F',
-              'name' => 'Test',
-              'model_number' => 'test23',
-              'description' => '',
-              'images' => 
-              array (
-                0 => 
-                array (
-                  'src' => '',
-                  ),
-                ),
-              'attrs' => 
-              array (
-                0 => 'mM8EBTU2eQ',
-                1 => 'aRftHc515c',
-                2 => 'OPTxXJmNz1',
-                3 => 'YCpWv1MSSI',
-                ),
-              'mrp' => '2000',
-              'brand' => 'CpMMbcUBuR',
-              'popularity' => 2,
-              'group' => 'ac',
-              ),
-            ),
-          );
-*/
+      // $data = array (
+      //   'categoryId' => 'vpEoQCuBoD',
+      //   'products' => 
+      //   array (
+      //     0 => 
+      //     array (
+      //       'name' => 'Test product45',
+      //       'model_number' => 'B00NKYN6NQ',
+      //       'description' => '',
+      //       'images' => 
+      //       array (
+      //         0 => 
+      //         array (
+      //           'src' => 'http://ecx.images-amazon.com/images/I/31hp6N9QLrL.jpg',
+      //           ),
+      //         ),
+      //       'attrs' => 
+      //       array (
+      //         'bf7zmsjy0W' => 'aSUYZBgntN',
+      //         'vvFjEY2AMn' => '2aUV0bSP3r',
+      //         ),
+      //       'mrp' => '9900',
+      //       'brandId' => 'dYRPINT23g',
+      //       'popularity' => 2,
+      //       'group' => 'test product',
+      //       ),
+      //     ),
+      //   );
+
         $functionName = "productImport";
 
         $result = AttributeController::makeParseCurlRequest($functionName,$data,"jobs"); 
