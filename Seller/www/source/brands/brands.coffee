@@ -65,12 +65,14 @@ angular.module 'LocalHyper.brands', []
 						_.each @brands, (brand)->
 							brand.selected = _.contains _brandIds, brand.objectId
 
-			setCategoryChains : ->
+			onDone : ->
 				empty = @isCategoryChainsEmpty()
 				CategoriesAPI.getAll()
 				.then (allCategories)=>
 					parentCategory = _.filter allCategories, (category)-> category.id is SubCategory.parent
 					selectedBrands = _.filter @brands, (brand)-> brand.selected is true
+					minOneBrandSelected = if _.size(selectedBrands) is 0 then false else true
+
 					data = []
 					chain = 
 						category: parentCategory[0]
@@ -78,39 +80,37 @@ angular.module 'LocalHyper.brands', []
 						brands: selectedBrands
 					data.push chain
 
-					if empty
-						CategoriesAPI.categoryChains 'set', data
+					if empty then @categoryChains = data
 					else
-						existingChain = false
 						chainIndex = _.findIndex @categoryChains, (chains)->
 							chains.subCategory.id is SubCategory.id
 
 						if chainIndex isnt -1 #When existing category chain
-							if _.size(selectedBrands) > 0
+							if minOneBrandSelected
 								@categoryChains[chainIndex].brands = selectedBrands
 							else
 								@categoryChains.splice chainIndex, 1
 						
-						# When new existing category chain
-						if chainIndex is -1 and _.size(chain.brands) > 0
+						# When new category chain
+						if chainIndex is -1 and minOneBrandSelected
 							@categoryChains.push chain
-							
-						CategoriesAPI.categoryChains 'set', @categoryChains
 
-			onDone : ->
-				@setCategoryChains()
-				minOneBrandSelected = !_.isUndefined _.find @brands, (brand)-> brand.selected is true
-				empty = @isCategoryChainsEmpty()
-				if empty and !minOneBrandSelected
-					CToast.show 'Please select atleast one brand'
-				else if !empty and !minOneBrandSelected
-					CDialog.confirm 'Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']
-					.then (btnIndex)=>
-						if btnIndex is 1 then App.navigate 'category-chains'
-				else
-					count = if App.previousState is 'categories' then -2 else -3
-					App.goBack count
-					# App.navigate 'category-chains'
+					if empty and !minOneBrandSelected
+						CToast.show 'Please select atleast one brand'
+					else if !empty and !minOneBrandSelected
+						CDialog.confirm 'Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']
+						.then (btnIndex)=>
+							if btnIndex is 1
+								CategoriesAPI.categoryChains 'set', @categoryChains
+								@goBack()
+					else
+						CategoriesAPI.categoryChains 'set', @categoryChains 
+						@goBack()
+
+			goBack : ->
+				count = if App.previousState is 'categories' then -2 else -3
+				App.goBack count
+				# App.navigate 'category-chains'
 
 
 		$scope.$on '$ionicView.beforeEnter', ->
