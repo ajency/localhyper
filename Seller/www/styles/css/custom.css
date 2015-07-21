@@ -1024,6 +1024,22 @@ h5.with-sep span {
   letter-spacing: 1px;
   color: #f35a59;
 }
+.item-wrapper-nr {
+  padding: 8px 12px;
+}
+.item-wrapper-nr .item-avatar {
+  float: left;
+  margin-right: 8px !important;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  margin-bottom: 1px !important;
+}
+.item-wrapper-nr h2 {
+  width: 75%;
+  text-overflow: clip;
+  height: auto;
+  white-space: normal;
+  font-weight: bold;
+}
 .bar .title {
   height: auto;
 }
