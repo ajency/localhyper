@@ -74,10 +74,12 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
 
     attributeSavedArr = []
 
-    attributes =  request.params.attributes
+    attributes =  request.params.attributes # (all except primary)
     categoryId =  request.params.categoryId
-    isFilterable =  request.params.isFilterable
+    isFilterable =  request.params.isFilterable # true or false
+    primaryAttributeObj =  request.params.primaryAttributeObj # (empty object if no primary attribute sent)
 
+    # prepare attributes array to be saved/updated from input data
     _.each attributes, (attributeObj) ->
         attribute = new Attributes()
 
@@ -103,33 +105,100 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
         else
             attribute.set "type", "select"         
 
-        attributeSavedArr.push(attribute)
+        attributeSavedArr.push(attribute)    
 
-    # save all the newly created objects
-    Parse.Object.saveAll attributeSavedArr,
-      success: (objs) ->
+    # set primary_attributes column for category
+    primaryAttributeSavedArr = []
 
-        # get category and update its filterable column
-        Category = Parse.Object.extend('Category')
-        category = new Category()
-        category.id = categoryId
+    # save/update primary attribute
+    setPrimaryAttribute(primaryAttributeObj)
+    .then (primaryobj) ->
 
-        if isFilterable is true
-            category.set "filterable_attributes" , objs
-        else
-            category.set "secondary_attributes" , objs  
+        # save/updated all the newly attributes
+        Parse.Object.saveAll (attributeSavedArr)
+        .then (objs) ->
+            if !(_.isEmpty(primaryobj))
+                objs.push primaryobj
 
-        category.save()
-        .then (categoryObj)->
-            successObj = 
-                success: true
-                message: "Successfully added/updated the attributes"
-            response.success successObj
-        , (error) ->
-            response.error error
+            # get category and update its filterable column
+            Category = Parse.Object.extend('Category')
+            category = new Category()
+            category.id = categoryId
+            
+            ProductFilters = Parse.Object.extend('ProductFilters') 
 
-      error: (error) ->
-        response.error "Failed to add/update attributes due to - #{error.message}"    
+            if isFilterable is true
+                # if filterable is true then insert into ProductFilters table
+
+                #  i.e. first remove all previus entries for the categoryId and make fresh new insert 
+                queryProdFilters = new Parse.Query('ProductFilters')
+                queryProdFilters.equalTo("categoryId",categoryId)
+                queryProdFilters.find()
+                .then (oldCategoryFilters)->
+
+                    Parse.Object.destroyAll(oldCategoryFilters)
+                    .then (destroyedObjs) ->
+                        filterColumn = 1
+                        filterableAttribArr = []
+                        
+                        _.each objs , (obj) ->
+                            productFilters = new ProductFilters()
+                
+                            productFilters.set "categoryId" , categoryId
+                            productFilters.set "filterColumn" , filterColumn
+                            productFilters.set  "filterAttribute" , obj
+                            filterColumn++
+                            filterableAttribArr.push productFilters
+                        
+                        # save all the filters for the category
+                        Parse.Object.saveAll (filterableAttribArr)  
+                        .then (savedFilters) ->
+                            category.set "filterable_attributes" , savedFilters
+                           
+                            # set primary attribute for category
+                            primaryAttributeSavedArr.push primaryobj   
+                            category.set "primary_attributes" , primaryAttributeSavedArr
+
+                            category.save()
+                            .then (categoryObj)->
+                                successObj = 
+                                    success: true
+                                    message: "Successfully added/updated the attributes (with primary)"
+                                response.success successObj
+                            , (error) ->
+                                response.error error
+
+                        , (error) ->
+                            response.error error
+
+                    , (error) ->
+                        response.error "1. error due to #{error}"
+                    
+
+                ,(error) ->
+                    response.error error
+            else
+                category.set "secondary_attributes" , objs  
+
+                primaryAttributeSavedArr.push primaryobj   
+                category.set "primary_attributes" , primaryAttributeSavedArr  
+
+                category.save()
+                .then (categoryObj)->
+                    successObj = 
+                        success: true
+                        message: "Successfully added/updated the attributes (with primary)"
+                    response.success successObj
+                , (error) ->
+                    response.error error
+
+          ,(error) ->
+            response.error "Failed to add/update attributes due to - #{error.message}"              
+
+
+    ,(error) ->        
+        response.error "Failed to save/update primary attribute due to - #{error.message}" 
+      
 
 Parse.Cloud.define 'attributeValueImport', (request, response) ->
 
@@ -164,9 +233,53 @@ Parse.Cloud.define 'attributeValueImport', (request, response) ->
       success: (objs) ->
         successObj = 
             success: true
-            message: "Successfully added/updated the attribute values"
+            message: "Successfully added/updated the attribute valuess"
         response.success successObj
 
       error: (error) ->
         response.error "Failed to add/update attributes due to - #{error.message}"      
+
+setPrimaryAttribute =  (primaryAttributeObj ) ->
+    Attributes = Parse.Object.extend('Attributes')
+    promise = new Parse.Promise()
+
+    if _.isEmpty(primaryAttributeObj)
+        promise.resolve primaryAttributeObj
+
+    else
+        # set primary_attributes column and import attributes
+        pAttrib = new Attributes()
+
+        # if(attributeObj.hasOwnProperty("objectId"))
+        if primaryAttributeObj.objectId isnt ""
+            pAttrib.id = primaryAttributeObj.objectId
+
+
+        pAttrib.set "name", primaryAttributeObj.name
+
+        pAttrib.set "group", primaryAttributeObj.group
+        
+        if primaryAttributeObj.unit isnt ""       
+            pAttrib.set "unit", primaryAttributeObj.unit
+
+        if(primaryAttributeObj.hasOwnProperty("display_type"))
+            pAttrib.set "display_type", primaryAttributeObj.display_type
+        else
+            pAttrib.set "display_type", "checkbox" 
+
+        if(primaryAttributeObj.hasOwnProperty("type"))
+            pAttrib.set "type", primaryAttributeObj.type
+        else
+            pAttrib.set "type", "select" 
+
+        pAttrib.save()
+        .then (savedPrimaryObj) ->
+            promise.resolve savedPrimaryObj
+
+        , (error)->
+            promise.reject error
+        
+    promise
+
+
 

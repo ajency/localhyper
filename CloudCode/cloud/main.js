@@ -1,5 +1,5 @@
 (function() {
-  var _, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, processPushNotifications, treeify;
+  var _, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, processPushNotifications, setPrimaryAttribute, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -66,12 +66,13 @@
   });
 
   Parse.Cloud.define('attributeImport', function(request, response) {
-    var Attributes, attributeSavedArr, attributes, categoryId, isFilterable;
+    var Attributes, attributeSavedArr, attributes, categoryId, isFilterable, primaryAttributeObj, primaryAttributeSavedArr;
     Attributes = Parse.Object.extend('Attributes');
     attributeSavedArr = [];
     attributes = request.params.attributes;
     categoryId = request.params.categoryId;
     isFilterable = request.params.isFilterable;
+    primaryAttributeObj = request.params.primaryAttributeObj;
     _.each(attributes, function(attributeObj) {
       var attribute;
       attribute = new Attributes();
@@ -95,31 +96,77 @@
       }
       return attributeSavedArr.push(attribute);
     });
-    return Parse.Object.saveAll(attributeSavedArr, {
-      success: function(objs) {
-        var Category, category;
+    primaryAttributeSavedArr = [];
+    return setPrimaryAttribute(primaryAttributeObj).then(function(primaryobj) {
+      return Parse.Object.saveAll(attributeSavedArr).then(function(objs) {
+        var Category, ProductFilters, category, queryProdFilters;
+        if (!(_.isEmpty(primaryobj))) {
+          objs.push(primaryobj);
+        }
         Category = Parse.Object.extend('Category');
         category = new Category();
         category.id = categoryId;
+        ProductFilters = Parse.Object.extend('ProductFilters');
         if (isFilterable === true) {
-          category.set("filterable_attributes", objs);
+          queryProdFilters = new Parse.Query('ProductFilters');
+          queryProdFilters.equalTo("categoryId", categoryId);
+          return queryProdFilters.find().then(function(oldCategoryFilters) {
+            return Parse.Object.destroyAll(oldCategoryFilters).then(function(destroyedObjs) {
+              var filterColumn, filterableAttribArr;
+              filterColumn = 1;
+              filterableAttribArr = [];
+              _.each(objs, function(obj) {
+                var productFilters;
+                productFilters = new ProductFilters();
+                productFilters.set("categoryId", categoryId);
+                productFilters.set("filterColumn", filterColumn);
+                productFilters.set("filterAttribute", obj);
+                filterColumn++;
+                return filterableAttribArr.push(productFilters);
+              });
+              return Parse.Object.saveAll(filterableAttribArr).then(function(savedFilters) {
+                category.set("filterable_attributes", savedFilters);
+                primaryAttributeSavedArr.push(primaryobj);
+                category.set("primary_attributes", primaryAttributeSavedArr);
+                return category.save().then(function(categoryObj) {
+                  var successObj;
+                  successObj = {
+                    success: true,
+                    message: "Successfully added/updated the attributes (with primary)"
+                  };
+                  return response.success(successObj);
+                }, function(error) {
+                  return response.error(error);
+                });
+              }, function(error) {
+                return response.error(error);
+              });
+            }, function(error) {
+              return response.error("1. error due to " + error);
+            });
+          }, function(error) {
+            return response.error(error);
+          });
         } else {
           category.set("secondary_attributes", objs);
+          primaryAttributeSavedArr.push(primaryobj);
+          category.set("primary_attributes", primaryAttributeSavedArr);
+          return category.save().then(function(categoryObj) {
+            var successObj;
+            successObj = {
+              success: true,
+              message: "Successfully added/updated the attributes (with primary)"
+            };
+            return response.success(successObj);
+          }, function(error) {
+            return response.error(error);
+          });
         }
-        return category.save().then(function(categoryObj) {
-          var successObj;
-          successObj = {
-            success: true,
-            message: "Successfully added/updated the attributes"
-          };
-          return response.success(successObj);
-        }, function(error) {
-          return response.error(error);
-        });
-      },
-      error: function(error) {
+      }, function(error) {
         return response.error("Failed to add/update attributes due to - " + error.message);
-      }
+      });
+    }, function(error) {
+      return response.error("Failed to save/update primary attribute due to - " + error.message);
     });
   });
 
@@ -150,7 +197,7 @@
         var successObj;
         successObj = {
           success: true,
-          message: "Successfully added/updated the attribute values"
+          message: "Successfully added/updated the attribute valuess"
         };
         return response.success(successObj);
       },
@@ -159,6 +206,41 @@
       }
     });
   });
+
+  setPrimaryAttribute = function(primaryAttributeObj) {
+    var Attributes, pAttrib, promise;
+    Attributes = Parse.Object.extend('Attributes');
+    promise = new Parse.Promise();
+    if (_.isEmpty(primaryAttributeObj)) {
+      promise.resolve(primaryAttributeObj);
+    } else {
+      pAttrib = new Attributes();
+      if (primaryAttributeObj.objectId !== "") {
+        pAttrib.id = primaryAttributeObj.objectId;
+      }
+      pAttrib.set("name", primaryAttributeObj.name);
+      pAttrib.set("group", primaryAttributeObj.group);
+      if (primaryAttributeObj.unit !== "") {
+        pAttrib.set("unit", primaryAttributeObj.unit);
+      }
+      if (primaryAttributeObj.hasOwnProperty("display_type")) {
+        pAttrib.set("display_type", primaryAttributeObj.display_type);
+      } else {
+        pAttrib.set("display_type", "checkbox");
+      }
+      if (primaryAttributeObj.hasOwnProperty("type")) {
+        pAttrib.set("type", primaryAttributeObj.type);
+      } else {
+        pAttrib.set("type", "select");
+      }
+      pAttrib.save().then(function(savedPrimaryObj) {
+        return promise.resolve(savedPrimaryObj);
+      }, function(error) {
+        return promise.reject(error);
+      });
+    }
+    return promise;
+  };
 
   Parse.Cloud.define('getCategoryBasedBrands', function(request, response) {
     var categoryId, queryCategory;
