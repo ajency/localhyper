@@ -1,4 +1,5 @@
-<ion-view aj-remove-box-shadow>
+<ion-view aj-remove-box-shadow
+		ng-init="view.init()">
 
 	<ion-nav-title>
 		<img src="img/logo.png"/>
@@ -11,8 +12,73 @@
 		</button>
 	</ion-nav-buttons>
 
-	<ion-content>
+	<ion-content ng-switch="view.display" >
 
+	<ion-refresher
+			on-refresh="view.onPullToRefresh()" class="aj-refresher">
+	</ion-refresher>
+
+	<ion-spinner
+			class="aj-spinner spinner-android" 
+			ng-switch-when="loader">
+	</ion-spinner>
+
+	<ion-list ng-switch-when="noError"
+			  class="card-list">
+
+	       	<ion-item 
+	       		class="card"
+	       		ng-repeat="request in view.requests "
+	       		ng-click="view.showRequestDetails(request)"
+	       		>
+				
+				<div class="item item-avatar border-none margin-none">
+			        <img src="http://ajency.in/team/images/fridge1.jpg">
+			        <h2>{{request.product.name}}</h2>
+			        <p> {{request.distanceFromCustomer.toFixed(2)}} kms radius </p>
+			    </div>
+				
+				<div class="row item border-none" >
+			        <div class="col ">
+			            <sm class="light-gray"> Local Price</sm><br>
+			            <h3 class=" item-text-wrap margin-none big-txt ">
+			            	<span class="WebRupee subdued">&#x20B9;</span> {{request.offerPrice}}
+			            </h3>
+			        </div>
+			        <div class="col">
+			        	<div class="pull-right">
+			        		{{request.offerStatus}}
+			            <!--div class="offer"> 2 </div>
+			            <h4 class="offertxt light-gray"> No of offers</h4-->
+			           	</div>
+			        </div>
+			    </div>
+			      <!--div class="item item-divider">
+			        <div class="pull-right ">
+			            <h3 class="margin-none "> Make an offer &nbsp;<i class="ion ion-log-out btn-danger"></i></h3>
+			        </div>
+
+			        <div class="pull-left ">
+			            <sm class="subdued">12:00</sm>
+			        </div>
+			    </div-->
+
+			</ion-item>
+	</ion-list>
+
+	<ion-infinite-scroll
+				on-infinite="view.onInfiniteScroll()"
+				ng-if="view.canLoadMore"
+				distance="1%" class="aj-refresher">
+	</ion-infinite-scroll >
+
+
+	<aj-error 
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry()">
+	</aj-error>
+				
 	</ion-content>
 	<ion-footer-bar class="bar-dark">
 			<div class="row">
@@ -25,3 +91,4 @@
 			</div>
 	</ion-footer-bar>
 </ion-view>
+
