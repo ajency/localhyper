@@ -393,26 +393,39 @@ class AttributeController extends Controller
                  }
         }
         
-        $filterableAttribute= $nonFilterableAttribute= [];
+        $filterableAttribute= $nonFilterableAttribute= $primaryAttributes= [];
         foreach($namedDataArray as $attributeData)
         {  
-            $is_filterable = $attributeData['is_filterable']; 
+            $is_filterable = $attributeData['is_filterable'];
+            $is_primary = $attributeData['is_primary'];
             unset($attributeData['is_filterable']);
+            unset($attributeData['is_primary']);
+            
+            if($is_primary == 'yes')
+            {
+                $primaryAttributes= $attributeData;
+                continue;
+            }
+            
             if($is_filterable == 'yes')
               $filterableAttribute[]= $attributeData;
             else
                $nonFilterableAttribute[]= $attributeData; 
         }
-
+        //filterable Attributes
         $filterableData =['attributes' => $filterableAttribute,
                          'categoryId' => $config[0],
                           'isFilterable' => true,
+                          'primaryAttributeObj'=>$primaryAttributes,
                         ]; 
-        $this->parseAttributeImport($filterableData);
 
+        $this->parseAttributeImport($filterableData);
+        
+         //Non filterable Attributes
         $nonFilterableAttribute =['attributes' => $nonFilterableAttribute,
                          'categoryId' => $config[0],
-                          'isFilterable' => false,
+                         'isFilterable' => false,
+                         'primaryAttributeObj'=>$primaryAttributes,          
                         ]; 
         
         $this->parseAttributeImport($nonFilterableAttribute);
@@ -586,49 +599,6 @@ class AttributeController extends Controller
 
     } 
     
-    // public function getCategoryAttributeValues($categoryId){
-
-    //   $data =[];
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
-    //                             'ATTRIBUTE_NAME'=> 'Type',
-    //                             'ATTRIBUTE_VALUE'=> 'Single Door',  
-    //                             'ATTRIBUTE_VALUE_ID' => '1'];
-                                
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
-    //                             'ATTRIBUTE_NAME'=> 'Type',
-    //                             'ATTRIBUTE_VALUE'=> 'Double Door',  
-    //                             'ATTRIBUTE_VALUE_ID' => '2'];
-        
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-    //                             'ATTRIBUTE_NAME'=> 'Color',
-    //                             'ATTRIBUTE_VALUE'=> 'Red',  
-    //                             'ATTRIBUTE_VALUE_ID' => '1'];
-                                
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-    //                             'ATTRIBUTE_NAME'=> 'Color',
-    //                             'ATTRIBUTE_VALUE'=> 'Gray',  
-    //                             'ATTRIBUTE_VALUE_ID' => '2'];
-        
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-    //                             'ATTRIBUTE_NAME'=> 'Color',
-    //                             'ATTRIBUTE_VALUE'=> 'Black',  
-    //                             'ATTRIBUTE_VALUE_ID' => '3'];
-                                
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-    //                             'ATTRIBUTE_NAME'=> 'Color',
-    //                             'ATTRIBUTE_VALUE'=> 'Blue',  
-    //                             'ATTRIBUTE_VALUE_ID' => '4'];
-        
-
-    //     $data ['BRAND'][] =['NAME' =>'Samsung','ID'  => '1'];
-    //     $data ['BRAND'][] =['NAME' =>'Lg','ID'  => '2'];
-        
-    //     $data ['TEST'][] =['NAME' =>'test1','ID'  => '1'];
-    //     $data ['TEST'][] =['NAME' =>'test2','ID'  => '2'];
-   
-    //     return $data;
-
-    // } 
 
     public static function makeParseCurlRequest($functionName,$data,$parseFunctType="functions"){
       
