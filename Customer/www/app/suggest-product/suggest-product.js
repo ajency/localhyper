@@ -12,23 +12,19 @@ angular.module('LocalHyper.suggestProduct', []).controller('suggestProductCtrl',
       productDescription: null,
       yourComments: null,
       onSuggest: function() {
-        var defer, param;
-        defer = $q.defer();
+        var param;
         param = {
-          "productName": $scope.suggest.productName,
-          "category": $scope.suggest.category.name,
-          "brand": $scope.suggest.brand,
-          "description": $scope.suggest.productDescription,
-          "comments": $scope.suggest.yourComments
+          "productName": this.productName,
+          "category": this.category.name,
+          "brand": this.brand,
+          "description": this.productDescription,
+          "comments": this.yourComments
         };
-        $http.post('functions/sendMail', param).then(function(data) {
-          defer.resolve;
+        return $http.post('functions/sendMail', param).then(function(data) {
           return $location.path('/categories');
         }, function(error) {
-          CToast.show('Request failed, please try again');
-          return defer.reject(error);
+          return CToast.show('Request failed, please try again');
         });
-        return defer.promise;
       }
     };
   }
