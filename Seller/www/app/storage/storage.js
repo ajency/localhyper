@@ -10,6 +10,14 @@ angular.module('LocalHyper.storage', []).factory('Storage', [
           return localforage.getItem('app_tutorial_seen');
       }
     };
+    Storage.bussinessDetails = function(action, params) {
+      switch (action) {
+        case 'set':
+          return localforage.setItem('business_details', params);
+        case 'get':
+          return localforage.getItem('business_details');
+      }
+    };
     return Storage;
   }
 ]);
