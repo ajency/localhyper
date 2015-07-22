@@ -126,7 +126,7 @@ class ProductController extends Controller
           'filterableAttributes' => true,
           'secondaryAttributes' => true,
           ];
-        $attributeValueData = $attributeController->getCategoryAttributeValues($categoryData); 
+        $attributeValueData = $attributeController->getCategoryAttributeValues($categoryData);  
         $attributeValues= $headerFlag =$productHeader = $productAttributeIds = [];
         
         foreach($attributeValueData['result'] as $attributeValue)
@@ -364,8 +364,7 @@ class ProductController extends Controller
                     $attributeIds[$attributeId] = $indexedData[$key];
                 }//dd($attributeIds);
         
-                $products[$i]['category'] = $config[0];
-                $products[$i]['id'] = $data['ProductID'];
+                $products[$i]['objectId'] = $data['ProductID'];
                 $products[$i]['name'] = $data['ProductName'];
                 $products[$i]['model_number'] = $data['ModelNumber'];
                 $products[$i]['images'][] = ['src'=>$data['Image']];
@@ -377,6 +376,7 @@ class ProductController extends Controller
                 $i++;
             }
             
+            $productData['categoryId'] =$config[0];
             $productData['products'] =$products;
             
             $this->parseProductImport($productData);
