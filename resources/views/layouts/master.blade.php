@@ -27,6 +27,8 @@
 <link href="{{ asset('css/custom-icon-set.css') }}" rel="stylesheet" type="text/css"/>
 <script>
     var BASEURL = '{{ url() }}';
+    var JAVASCRIPT_KEY = '{{ config("constants.parse_sdk.javascript_key") }}';
+    var APPLICATION_ID = '{{ config("constants.parse_sdk.app_id") }}';
 
 </script>
 <!-- END CSS TEMPLATE -->
@@ -132,7 +134,7 @@
  </div>     
  </div>    
  
-
+<script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.4.2.min.js"></script> 
 <script src="{{ asset('plugins/jquery-1.8.3.min.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/boostrapv3/js/bootstrap.min.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/breakpoints.js') }}" type="text/javascript"></script> 
@@ -153,6 +155,7 @@
 <script src="{{ asset('js/core.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('js/chat.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
+<script src="{{ asset('js/app.js') }}" type="text/javascript"></script>
 <!-- END CORE TEMPLATE JS --> 
 
   <script type="text/javascript">
@@ -161,6 +164,9 @@
             $("#categories").select2();
            
              $(".tags").tagsinput("");
-        </script>   
+  </script> 
+  <script type="text/javascript">
+  Parse.initialize(window.APPLICATION_ID, window.JAVASCRIPT_KEY);
+  </script>  
 </body>
 </html>
