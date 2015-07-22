@@ -3,25 +3,25 @@
 <div class="content">  
        <button type="button" class="btn btn-default btn-cons pull-right"><i class="fa fa-download"></i> Download CSV</button>
 		<div class="page-title m-l-5">	
-			<h3 class="inline"><span class="semi-bold">Customers</span> List</h3>
+			<h3 class="inline"><span class="semi-bold">Sellers</span> List</h3>
 		</div>
 		<div class="grid simple vertical purple">
       
-			<h4 class="grid-title">List Of Customers</h4>
+			<h4 class="grid-title">List Of Sellers</h4>
 			<div class="grid-body">
-         <table class="table table-bordered customerList">
+         <table class="table table-bordered sellerList">
           <thead>
             <tr>
-              <th>Customer Name</th>
-              <th>Customer Registered Date</th>
+              <th>Seller Name</th>
+              <th>Seller Registered Date</th>
               
             </tr>
           </thead>
           <tbody>
-           @foreach($customers as $customer)
+           @foreach($sellers as $seller)
               <tr>
-                <td>{{ $customer['name'] }}</td>
-                <td>{{ $customer['createdAt'] }}</td>
+                <td>{{ $seller['name'] }}</td>
+                <td>{{ $seller['createdAt'] }}</td>
               </tr>
            @endforeach
           </tbody>

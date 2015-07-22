@@ -8,7 +8,7 @@ use Parse\ParseQuery;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class CustomerController extends Controller
+class SellerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,21 +17,19 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $customers = new ParseQuery("_User");
-        $customers->equalTo("userType", "customer");
-        $customerData = $customers->find();  
-        $customerList =[];
-        foreach($customerData as $customer)
+        $seller = new ParseQuery("_User");
+        $seller->equalTo("userType", "seller");
+        $sellerData = $seller->find();  
+        $sellerList =[];
+        foreach($sellerData as $seller)
         {
-  
-            $customerList[]= ['id' => $customer->getObjectId(),
-                              'name' => $customer->get("displayName"),
-                              'createdAt' =>$customer->getCreatedAt()->format('d-m-Y')
-                              ];
  
-            
-        } 
-        return view('admin.customerlist')->with('customers',$customerList);
+             $sellerList[]= ['id' => $seller->getObjectId(),
+                              'name' => $seller->get("displayName"),
+                              'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
+                              ];
+        }
+        return view('admin.sellerlist')->with('sellers',$sellerList);
     }
 
     /**
