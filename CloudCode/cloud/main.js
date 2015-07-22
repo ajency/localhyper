@@ -852,7 +852,7 @@
           primaryAttribObj = {
             "__type": "Pointer",
             "className": "AttributeValues",
-            "objectId": primeAttrib.id
+            "objectId": productAttributes[primeAttrib.id]
           };
           primaryAttributeValueArr.push(primaryAttribObj);
           productItem.set("primaryAttributes", primaryAttributeValueArr);

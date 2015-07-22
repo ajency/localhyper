@@ -56,7 +56,7 @@ Parse.Cloud.job 'productImport', (request, response) ->
                 primaryAttribObj = 
                     "__type" : "Pointer",
                     "className":"AttributeValues",
-                    "objectId":primeAttrib.id
+                    "objectId":productAttributes[primeAttrib.id]
                     
                 primaryAttributeValueArr.push(primaryAttribObj) 
 
