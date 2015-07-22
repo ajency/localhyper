@@ -1031,7 +1031,7 @@
         return findAttribValues(filter);
       });
       return Parse.Promise.when(findAttribValuesQs).then(function() {
-        var AttributeValues, ProductItem, brand, endPrice, filterableProps, innerBrandQuery, innerQuery, otherFilters, price, price_range, query, queryFindPromise, startPrice, supported_brands;
+        var AttributeValues, ProductItem, brands, endPrice, filterableProps, innerBrandQuery, innerQuery, otherFilterColumnNames, otherFilters, price, price_range, query, queryFindPromise, startPrice, supported_brands;
         displayFilters = arguments;
         supported_brands = categoryData.get("supported_brands");
         price_range = categoryData.get("price_range");
@@ -1042,10 +1042,10 @@
         query.matchesQuery("category", innerQuery);
         if ((selectedFilters !== "all") && (_.isObject(selectedFilters))) {
           filterableProps = Object.keys(selectedFilters);
-          if (_.contains(filterableProps, "brand")) {
-            brand = selectedFilters["brand"];
+          if (_.contains(filterableProps, "brands")) {
+            brands = selectedFilters["brands"];
             innerBrandQuery = new Parse.Query("Brand");
-            innerBrandQuery.equalTo("objectId", brand);
+            innerBrandQuery.containedIn("objectId", brands);
             query.matchesQuery("brand", innerBrandQuery);
           }
           if (_.contains(filterableProps, "price")) {
@@ -1055,9 +1055,17 @@
             query.greaterThanOrEqualTo("mrp", startPrice);
             query.lessThanOrEqualTo("mrp", endPrice);
           }
-          if (_.contains(filterableProps, "other_filters")) {
+          if (_.contains(filterableProps, "otherFilters")) {
             AttributeValues = Parse.Object.extend('AttributeValues');
-            otherFilters = selectedFilters['other_filters'];
+            otherFilters = selectedFilters['otherFilters'];
+            otherFilterColumnNames = _.keys(otherFilters);
+            _.each(otherFilterColumnNames, function(otherFilterColumnName) {
+              var innerAttributeValuesQuery;
+              brands = selectedFilters["brands"];
+              innerAttributeValuesQuery = new Parse.Query("AttributeValues");
+              innerAttributeValuesQuery.containedIn("objectId", otherFilters[otherFilterColumnName]);
+              return query.matchesQuery(otherFilterColumnName, innerAttributeValuesQuery);
+            });
           }
         }
         query.select("images,name,mrp,brand,primaryAttributes");

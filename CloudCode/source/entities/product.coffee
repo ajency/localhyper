@@ -292,11 +292,11 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
             if (selectedFilters isnt "all") and (_.isObject(selectedFilters))
                 filterableProps = Object.keys(selectedFilters)
 
-                if _.contains(filterableProps, "brand")
-                    brand = selectedFilters["brand"]
+                if _.contains(filterableProps, "brands")
+                    brands = selectedFilters["brands"]
         
                     innerBrandQuery = new Parse.Query("Brand")
-                    innerBrandQuery.equalTo("objectId",brand)
+                    innerBrandQuery.containedIn("objectId",brands)
                     query.matchesQuery("brand", innerBrandQuery)
                 
                 if _.contains(filterableProps, "price")
@@ -308,26 +308,19 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
                     query.greaterThanOrEqualTo("mrp", startPrice)
                     query.lessThanOrEqualTo("mrp", endPrice)
 
-                if _.contains(filterableProps, "other_filters")
+                if _.contains(filterableProps, "otherFilters")
                     AttributeValues = Parse.Object.extend('AttributeValues')
-                    otherFilters = selectedFilters['other_filters']
-                    # otherFilters = [[attribValueId1, attribBalueId2], [attribBalueId3],[attribBalueId4,attribBalueId5]]
+                    otherFilters = selectedFilters['otherFilters']
+                    
+                    otherFilterColumnNames = _.keys(otherFilters)
 
-                    # # applying multiple constraints is like an AND on constraints
-                    # _.each otherFilters , (sameAttribFilters) ->
-                    #     AttributeValues = Parse.Object.extend("AttributeValues")
-                    #     attribValuePointers = []
-                    #     attribValuePointers = _.map(sameAttribFilters, (attribValueId) ->
-                    #         AttributeValuePointer = new AttributeValues()
-                    #         AttributeValuePointer.id = attribValueId
-                    #         AttributeValuePointer
-                    #     )
-
-                    #     query.containedIn('attrs', attribValuePointers)
-
-                    # # lists objects matching any of the values in a list of value (can be used for OR condition)
-
-
+                    _.each otherFilterColumnNames , (otherFilterColumnName) ->
+                        brands = selectedFilters["brands"]
+        
+                        innerAttributeValuesQuery = new Parse.Query("AttributeValues")
+                        innerAttributeValuesQuery.containedIn("objectId",otherFilters[otherFilterColumnName])
+                        query.matchesQuery(otherFilterColumnName, innerAttributeValuesQuery)
+                    
             # restrict which fields are being returned
             query.select("images,name,mrp,brand,primaryAttributes")
 
