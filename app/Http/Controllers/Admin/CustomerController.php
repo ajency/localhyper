@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-
+use Parse\ParseObject;
+use Parse\ParseQuery;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -16,7 +17,10 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        return view('admin.customerlist');
+        $customers = new ParseQuery(ParseUser);
+        $customers->equalTo("userType", "customer");
+        $customerData = $customers->find();dd($customerData);
+        return view('admin.customerlist')->with('customers',$customerData);
     }
 
     /**

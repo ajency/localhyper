@@ -9,44 +9,47 @@
       
 			<h4 class="grid-title">List Of Customers</h4>
 			<div class="grid-body">
-                           <table class="table table-bordered">
+         <table class="table table-bordered customerList">
           <thead>
             <tr>
               <th>Customer Name</th>
               <th>Customer Registered Date</th>
-              <th>Customer Last Login</th>
-              <th>No. Of Requests Created</th>
-              <th>No. Of Requests Expired</th>
-              <th>No. Of Requests Cancelled</th>
-              <th>No. Of Requests Successfull</th>
-              <th>No. Of Failed Delivery</th>
+              
             </tr>
           </thead>
           <tbody>
-              <tr onclick="location.href='single-customer.html'">
-                <td>John Smith</td>
-                <td>23-04-2014</td>
-                <td>3 mins ago</td>
-                <td>10</td>
-                <td>5</td>
-                <td>5</td>
-                <td>0</td>
-                <td class="text-center">0</td>
-              </tr>
-               <tr onclick="location.href='single-customer.html'">
-                <td>Customer B</td>
-                <td>23-04-2014</td>
-                <td>3 mins ago</td>
-                <td>10</td>
-                <td>5</td>
-                <td>5</td>
-                <td>0</td>
-                <td class="text-center">0</td>
-              </tr>
+              
           </tbody>
          </table>
                         </div>
 		</div>
     </div>
 
+<script type="text/javascript">
+   /* $( document ).ready(function() {
+         var str='';
+        var customerList = getCustomers().then(function(results) {
+                            _.each(results, function(customer) {
+  //return console.log(customer.get("displayName"));
+                                 str = '<tr>';
+                                  str += '<td>'+customer.get("displayName")+'</td>'; 
+                                  str += '<td>23-04-2014</td>';  
+                                  str += '</tr>';    
+                                  $('.customerList tbody').append(str);
+});
+                             //console.log(results);
+                          }, function(error) {
+                            return error;
+                          });
+       
+       
+       /* $.each(customerList, function( index, user ) { //alert(index);
+          str = '<tr>';
+          str += '<td></td>'; 
+          str += '<td>23-04-2014</td>';  
+          str += '</tr>';    
+          $('.customerList tbody').append(str);
+        });
+    });*/
+</script> 
 @endsection

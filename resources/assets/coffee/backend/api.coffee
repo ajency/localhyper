@@ -1,4 +1,4 @@
-getCategoriesData =() ->
+window.getCategoriesData =() ->
     $.ajax
         async: true
         url: 'https://api.parse.com/1/functions/getCategories'
@@ -13,7 +13,7 @@ getCategoriesData =() ->
             getDepartment()
             return
 
-getDepartments =() ->
+window.getDepartments =() ->
     temp = window.categorieData
     deparments = _.where(temp, parent: null)
     str = ''
@@ -23,7 +23,7 @@ getDepartments =() ->
       return  
     
     
-getChildCategory =() ->
+window.getChildCategory =() ->
     deparmentId = $('#department').val
     temp = window.categorieData
     deparmentChildrens = _.where(temp, id: deparmentId)
@@ -39,8 +39,11 @@ getChildCategory =() ->
       return  
     
 
-getCustomers =() ->
-    query = new (Parse.Query)("User")
+window.getCustomers =() ->
+    query = new Parse.Query(Parse.User)
     query.equalTo("userType", "customer")
-    query.find success: (list) ->
-        return
+    query.find()
+    .then (results)->
+        return results
+    ,(error)->
+        return error

@@ -31,6 +31,7 @@
     var APPLICATION_ID = '{{ config("constants.parse_sdk.app_id") }}';
 
 </script>
+<script src="{{ asset('plugins/jquery-1.8.3.min.js') }}" type="text/javascript"></script>     
 <!-- END CSS TEMPLATE -->
 
 </head>
@@ -135,7 +136,6 @@
  </div>    
  
 <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.4.2.min.js"></script> 
-<script src="{{ asset('plugins/jquery-1.8.3.min.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/boostrapv3/js/bootstrap.min.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/breakpoints.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/jquery-unveil/jquery.unveil.min.js') }}" type="text/javascript"></script> 
@@ -157,14 +157,7 @@
 <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
 <script src="{{ asset('js/app.js') }}" type="text/javascript"></script>
 <!-- END CORE TEMPLATE JS --> 
-
-  <script type="text/javascript">
-            $("#unit_types").val(["Apartments"]).select2();
-            $("#Department").select2();
-            $("#categories").select2();
-           
-             $(".tags").tagsinput("");
-  </script> 
+ 
   <script type="text/javascript">
   Parse.initialize(window.APPLICATION_ID, window.JAVASCRIPT_KEY);
   </script>  

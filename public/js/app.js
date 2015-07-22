@@ -1,7 +1,5 @@
 (function() {
-  var getCategoriesData, getChildCategory, getCustomers, getDepartments;
-
-  getCategoriesData = function() {
+  window.getCategoriesData = function() {
     return $.ajax({
       async: true,
       url: 'https://api.parse.com/1/functions/getCategories',
@@ -21,7 +19,7 @@
     });
   };
 
-  getDepartments = function() {
+  window.getDepartments = function() {
     var deparments, str, temp;
     temp = window.categorieData;
     deparments = _.where(temp, {
@@ -34,7 +32,7 @@
     });
   };
 
-  getChildCategory = function() {
+  window.getChildCategory = function() {
     var categoryData, deparmentChildrens, deparmentId, str, temp;
     deparmentId = $('#department').val;
     temp = window.categorieData;
@@ -52,12 +50,14 @@
     });
   };
 
-  getCustomers = function() {
+  window.getCustomers = function() {
     var query;
-    query = new Parse.Query("User");
+    query = new Parse.Query(Parse.User);
     query.equalTo("userType", "customer");
-    return query.find({
-      success: function(list) {}
+    return query.find().then(function(results) {
+      return results;
+    }, function(error) {
+      return error;
     });
   };
 
