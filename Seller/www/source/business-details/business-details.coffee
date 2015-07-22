@@ -2,13 +2,14 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
-	, 'CDialog', 'User', '$ionicModal', '$timeout'
-	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout)->
+	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage'
+	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage)->
 
+	
 		$scope.view = 
-			businessName: ''
-			name: ''
-			phone: ''
+			name:''
+			phone:''
+			businessName:''
 			confirmedAddress: ''
 			terms: false
 
@@ -45,19 +46,29 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					latLng
 
 				getCurrent : ->
-					GPS.isLocationEnabled()
-					.then (enabled)=>
-						if !enabled
-							@showAlert()
-						else
-							CToast.show 'Getting current location'
-							GPS.getCurrentLocation()
-							.then (loc)=>
-								latLng = @setMapCenter loc
-								@map.setZoom 15
-								@addMarker latLng
-							, (error)->
-								CToast.show 'Error locating your position'
+					Storage.bussinessDetails 'get','null'
+					.then (value) =>
+						if !_.isNull value
+							location.lat = value.latitude
+							location.long = value.longitude
+							loc = location
+							latLng = @setMapCenter loc
+							@map.setZoom 15
+							@addMarker latLng
+						else 
+							GPS.isLocationEnabled()
+							.then (enabled)=>
+								if !enabled
+									@showAlert()
+								else
+									CToast.show 'Getting current location'
+									GPS.getCurrentLocation()
+									.then (loc)=>
+										latLng = @setMapCenter loc
+										@map.setZoom 15
+										@addMarker latLng
+									, (error)->
+										CToast.show 'Error locating your position'
 
 				addMarker : (latLng)->
 					@latLng = latLng
@@ -83,11 +94,22 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					.finally =>
 						@addressFetch = true
 
-			
-
 			init : ->
 				@loadLocationModal()
-
+				@initializebusinessValue()
+				
+			initializebusinessValue : ->
+				Storage.bussinessDetails 'get','null'
+				.then (value) =>
+					if !_.isNull value 
+						@name = value.name
+						@phone = value.phone
+						@businessName = value.businessName
+						@confirmedAddress = value.confirmedAddress
+						@delivery.radius =  value.deliveryRadius
+						@latitude =  value.latitude
+						@longitude =  value.longitude
+						
 			loadLocationModal : ->
 				$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
 					scope: $scope,
@@ -129,7 +151,17 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					@latitude = @location.latLng.lat()
 					@longitude = @location.latLng.lng()
 					User.info 'set', $scope.view
-					App.navigate 'category-chains'
+					Storage.bussinessDetails 'set',
+						name: @name
+						phone: @phone
+						businessName: @businessName
+						address: @location.address
+						confirmedAddress: @confirmedAddress
+						latitude: @latitude
+						longitude: @longitude
+						deliveryRadius: @delivery.radius
+					.then ->
+						App.navigate 'category-chains'
 		
 		
 		$scope.$on '$ionicView.enter', ->
