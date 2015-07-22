@@ -521,6 +521,9 @@ class AttributeController extends Controller
         
         
       foreach ($filterable_attributes as $filterable_attribute) {
+           if($filterable_attribute==null)
+              continue;
+          
         $attributes[] = array(
                 'id' =>$filterable_attribute->getObjectId(),
                 'name' => $filterable_attribute->get('name'),  
@@ -533,6 +536,9 @@ class AttributeController extends Controller
       }
  
       foreach ($secondary_attributes as $secondary_attribute) {
+          if($secondary_attribute==null)
+              continue;
+          
         $attributes[] = array(
                 'id' =>$secondary_attribute->getObjectId(),
                 'name' => $secondary_attribute->get('name'),
