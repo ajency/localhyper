@@ -108,7 +108,7 @@ Parse.Cloud.job 'productImport', (request, response) ->
     , (error) ->
         response.error error           
 
-Parse.Cloud.define 'getProducts', (request, response) ->
+Parse.Cloud.define 'getProductsOld', (request, response) ->
   
     categoryId = request.params.categoryId
     selectedFilters = request.params.selectedFilters # "all" / {"brand": "","price": "", "other_filters": [{"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}, {"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}]} 
@@ -243,7 +243,7 @@ Parse.Cloud.define 'getProduct', (request, response) ->
         response.error error    
 
 
-Parse.Cloud.define 'getProductsNew', (request, response) ->
+Parse.Cloud.define 'getProducts', (request, response) ->
     categoryId = request.params.categoryId
     selectedFilters = request.params.selectedFilters # "all" / {"brand": "","price": "", "other_filters": [{"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}, {"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}]} 
     sortBy =  request.params.sortBy
@@ -275,7 +275,17 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
         Parse.Promise.when(findAttribValuesQs).then ->
             displayFilters = arguments
 
-            supported_brands = categoryData.get "supported_brands"
+            categoryBrands = categoryData.get "supported_brands"
+
+            supported_brands = _.map( categoryBrands, (categoryBrand) ->
+                if categoryBrand isnt null
+                    brand =
+                        "id" : categoryBrand.id
+                        "name" : categoryBrand.get("name")
+
+            )
+
+
             price_range = categoryData.get "price_range"
 
             # get all category based products
@@ -311,15 +321,15 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
                 if _.contains(filterableProps, "otherFilters")
                     AttributeValues = Parse.Object.extend('AttributeValues')
                     otherFilters = selectedFilters['otherFilters']
-                    
-                    otherFilterColumnNames = _.keys(otherFilters)
 
-                    _.each otherFilterColumnNames , (otherFilterColumnName) ->
-                        brands = selectedFilters["brands"]
-        
-                        innerAttributeValuesQuery = new Parse.Query("AttributeValues")
-                        innerAttributeValuesQuery.containedIn("objectId",otherFilters[otherFilterColumnName])
-                        query.matchesQuery(otherFilterColumnName, innerAttributeValuesQuery)
+                    if !_.isEmpty(otherFilters)
+                        otherFilterColumnNames = _.keys(otherFilters)
+                        _.each otherFilterColumnNames , (otherFilterColumnName) ->
+                            brands = selectedFilters["brands"]
+            
+                            innerAttributeValuesQuery = new Parse.Query("AttributeValues")
+                            innerAttributeValuesQuery.containedIn("objectId",otherFilters[otherFilterColumnName])
+                            query.matchesQuery(otherFilterColumnName, innerAttributeValuesQuery)
                     
             # restrict which fields are being returned
             query.select("images,name,mrp,brand,primaryAttributes")
@@ -340,8 +350,25 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
                 query.descending(sortBy)
 
             queryFindPromise =query.find()
-            .then (products) ->
-                result = 
+            .then (productsList) ->
+
+                products = []
+
+                products = _.map(productsList, (singleProduct) ->
+                    
+                    brand = 
+                        "id" :  singleProduct.get("brand").id
+                        "name" :  singleProduct.get("brand").get("name")
+
+                    product = 
+                        "name" : singleProduct.get "name"
+                        "brand" : brand
+                        "images" : singleProduct.get("images")
+                        "mrp" : singleProduct.get("mrp")
+                        "primaryAttributes" : singleProduct.get("primaryAttributes") 
+                ) 
+                
+                result =  
                     products: products
                     filters: displayFilters
                     supportedBrands: supported_brands
@@ -380,8 +407,8 @@ findAttribValues = (filter) =>
     .then (allAttributeValues) ->
         attribValues = _.map(allAttributeValues, (attributeValue) ->
            attribValue =
-            "attributeValueId" : attributeValue.id     
-            "value" : attributeValue.get("value")     
+            "id" : attributeValue.id     
+            "name" : attributeValue.get("value")     
         )
         
         displayFilter =

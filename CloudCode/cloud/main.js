@@ -895,7 +895,7 @@
     });
   });
 
-  Parse.Cloud.define('getProducts', function(request, response) {
+  Parse.Cloud.define('getProductsOld', function(request, response) {
     var ascending, categoryId, displayLimit, filterableAttribQuery, findFilterableAttrib, page, selectedFilters, sortBy;
     categoryId = request.params.categoryId;
     selectedFilters = request.params.selectedFilters;
@@ -1007,7 +1007,7 @@
     });
   });
 
-  Parse.Cloud.define('getProductsNew', function(request, response) {
+  Parse.Cloud.define('getProducts', function(request, response) {
     var ascending, categoryId, categoryQuery, displayLimit, page, selectedFilters, sortBy;
     categoryId = request.params.categoryId;
     selectedFilters = request.params.selectedFilters;
@@ -1031,9 +1031,18 @@
         return findAttribValues(filter);
       });
       return Parse.Promise.when(findAttribValuesQs).then(function() {
-        var AttributeValues, ProductItem, brands, endPrice, filterableProps, innerBrandQuery, innerQuery, otherFilterColumnNames, otherFilters, price, price_range, query, queryFindPromise, startPrice, supported_brands;
+        var AttributeValues, ProductItem, brands, categoryBrands, endPrice, filterableProps, innerBrandQuery, innerQuery, otherFilterColumnNames, otherFilters, price, price_range, query, queryFindPromise, startPrice, supported_brands;
         displayFilters = arguments;
-        supported_brands = categoryData.get("supported_brands");
+        categoryBrands = categoryData.get("supported_brands");
+        supported_brands = _.map(categoryBrands, function(categoryBrand) {
+          var brand;
+          if (categoryBrand !== null) {
+            return brand = {
+              "id": categoryBrand.id,
+              "name": categoryBrand.get("name")
+            };
+          }
+        });
         price_range = categoryData.get("price_range");
         ProductItem = Parse.Object.extend("ProductItem");
         innerQuery = new Parse.Query("Category");
@@ -1058,14 +1067,16 @@
           if (_.contains(filterableProps, "otherFilters")) {
             AttributeValues = Parse.Object.extend('AttributeValues');
             otherFilters = selectedFilters['otherFilters'];
-            otherFilterColumnNames = _.keys(otherFilters);
-            _.each(otherFilterColumnNames, function(otherFilterColumnName) {
-              var innerAttributeValuesQuery;
-              brands = selectedFilters["brands"];
-              innerAttributeValuesQuery = new Parse.Query("AttributeValues");
-              innerAttributeValuesQuery.containedIn("objectId", otherFilters[otherFilterColumnName]);
-              return query.matchesQuery(otherFilterColumnName, innerAttributeValuesQuery);
-            });
+            if (!_.isEmpty(otherFilters)) {
+              otherFilterColumnNames = _.keys(otherFilters);
+              _.each(otherFilterColumnNames, function(otherFilterColumnName) {
+                var innerAttributeValuesQuery;
+                brands = selectedFilters["brands"];
+                innerAttributeValuesQuery = new Parse.Query("AttributeValues");
+                innerAttributeValuesQuery.containedIn("objectId", otherFilters[otherFilterColumnName]);
+                return query.matchesQuery(otherFilterColumnName, innerAttributeValuesQuery);
+              });
+            }
           }
         }
         query.select("images,name,mrp,brand,primaryAttributes");
@@ -1079,8 +1090,23 @@
         } else {
           query.descending(sortBy);
         }
-        return queryFindPromise = query.find().then(function(products) {
-          var result;
+        return queryFindPromise = query.find().then(function(productsList) {
+          var products, result;
+          products = [];
+          products = _.map(productsList, function(singleProduct) {
+            var brand, product;
+            brand = {
+              "id": singleProduct.get("brand").id,
+              "name": singleProduct.get("brand").get("name")
+            };
+            return product = {
+              "name": singleProduct.get("name"),
+              "brand": brand,
+              "images": singleProduct.get("images"),
+              "mrp": singleProduct.get("mrp"),
+              "primaryAttributes": singleProduct.get("primaryAttributes")
+            };
+          });
           result = {
             products: products,
             filters: displayFilters,
@@ -1116,8 +1142,8 @@
         attribValues = _.map(allAttributeValues, function(attributeValue) {
           var attribValue;
           return attribValue = {
-            "attributeValueId": attributeValue.id,
-            "value": attributeValue.get("value")
+            "id": attributeValue.id,
+            "name": attributeValue.get("value")
           };
         });
         displayFilter = {
