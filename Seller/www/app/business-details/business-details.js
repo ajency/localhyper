@@ -1,5 +1,5 @@
 angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'BusinessDetailStorage', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, BusinessDetailStorage) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage) {
     $scope.view = {
       name: '',
       phone: '',
@@ -50,19 +50,30 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
           return latLng;
         },
         getCurrent: function() {
-          return GPS.isLocationEnabled().then((function(_this) {
-            return function(enabled) {
-              if (!enabled) {
-                return _this.showAlert();
+          return Storage.bussinessDetails('get', 'null').then((function(_this) {
+            return function(value) {
+              var latLng, loc;
+              if (!_.isNull(value)) {
+                location.lat = value.latitude;
+                location.long = value.longitude;
+                loc = location;
+                latLng = _this.setMapCenter(loc);
+                _this.map.setZoom(15);
+                return _this.addMarker(latLng);
               } else {
-                CToast.show('Getting current location');
-                return GPS.getCurrentLocation().then(function(loc) {
-                  var latLng;
-                  latLng = _this.setMapCenter(loc);
-                  _this.map.setZoom(15);
-                  return _this.addMarker(latLng);
-                }, function(error) {
-                  return CToast.show('Error locating your position');
+                return GPS.isLocationEnabled().then(function(enabled) {
+                  if (!enabled) {
+                    return _this.showAlert();
+                  } else {
+                    CToast.show('Getting current location');
+                    return GPS.getCurrentLocation().then(function(loc) {
+                      latLng = _this.setMapCenter(loc);
+                      _this.map.setZoom(15);
+                      return _this.addMarker(latLng);
+                    }, function(error) {
+                      return CToast.show('Error locating your position');
+                    });
+                  }
                 });
               }
             };
@@ -107,21 +118,19 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
         return this.initializebusinessValue();
       },
       initializebusinessValue: function() {
-        BusinessDetailStorage.getBussinessName().then(function(value) {
-          return $scope.view.businessName = value;
-        });
-        BusinessDetailStorage.getFullName().then(function(value) {
-          return $scope.view.name = value;
-        });
-        BusinessDetailStorage.getPhoneNo().then(function(value) {
-          return $scope.view.phone = value;
-        });
-        BusinessDetailStorage.getRadius().then(function(value) {
-          return $scope.view.delivery.radius = value;
-        });
-        return BusinessDetailStorage.getAddress().then(function(value) {
-          return $scope.view.confirmedAddress = value;
-        });
+        return Storage.bussinessDetails('get', 'null').then((function(_this) {
+          return function(value) {
+            if (!_.isNull(value)) {
+              _this.name = value.name;
+              _this.phone = value.phone;
+              _this.businessName = value.businessName;
+              _this.confirmedAddress = value.confirmedAddress;
+              _this.delivery.radius = value.deliveryRadius;
+              _this.latitude = value.latitude;
+              return _this.longitude = value.longitude;
+            }
+          };
+        })(this));
       },
       loadLocationModal: function() {
         return $ionicModal.fromTemplateUrl('views/business-details/location.html', {
@@ -181,12 +190,18 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
           this.latitude = this.location.latLng.lat();
           this.longitude = this.location.latLng.lng();
           User.info('set', $scope.view);
-          BusinessDetailStorage.setBussinessName(this.businessName);
-          BusinessDetailStorage.setFullName(this.name);
-          BusinessDetailStorage.setPhoneNo(this.phone);
-          BusinessDetailStorage.setRadius(this.delivery.radius);
-          BusinessDetailStorage.setAddress(this.confirmedAddress);
-          return App.navigate('category-chains');
+          return Storage.bussinessDetails('set', {
+            name: this.name,
+            phone: this.phone,
+            businessName: this.businessName,
+            address: this.location.address,
+            confirmedAddress: this.confirmedAddress,
+            latitude: this.latitude,
+            longitude: this.longitude,
+            deliveryRadius: this.delivery.radius
+          }).then(function() {
+            return App.navigate('category-chains');
+          });
         }
       }
     };
