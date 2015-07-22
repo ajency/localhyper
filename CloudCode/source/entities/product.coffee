@@ -31,7 +31,7 @@ Parse.Cloud.job 'productImport', (request, response) ->
             # set direct columns of product item
             productItem.set "name", product.name
             productItem.set "images", product.images
-            productItem.set "model_number", product.model_number
+            productItem.set "model_number", String (product.model_number)
             productItem.set "mrp", parseInt product.mrp
             productItem.set "popularity", product.popularity
             productItem.set "group", product.group 
