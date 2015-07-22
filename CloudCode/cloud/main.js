@@ -1,5 +1,5 @@
 (function() {
-  var _, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, processPushNotifications, setPrimaryAttribute, treeify;
+  var _, findAttribValues, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, processPushNotifications, setPrimaryAttribute, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -1006,6 +1006,125 @@
       return response.error(error);
     });
   });
+
+  Parse.Cloud.define('getProductsNew', function(request, response) {
+    var ascending, categoryId, categoryQuery, displayLimit, page, selectedFilters, sortBy;
+    categoryId = request.params.categoryId;
+    selectedFilters = request.params.selectedFilters;
+    sortBy = request.params.sortBy;
+    ascending = request.params.ascending;
+    page = parseInt(request.params.page);
+    displayLimit = parseInt(request.params.displayLimit);
+    categoryQuery = new Parse.Query("Category");
+    categoryQuery.equalTo("objectId", categoryId);
+    categoryQuery.select("filterable_attributes");
+    categoryQuery.select("supported_brands");
+    categoryQuery.select("price_range");
+    categoryQuery.include("filterable_attributes");
+    categoryQuery.include("filterable_attributes.filterAttribute");
+    categoryQuery.include("supported_brands");
+    return categoryQuery.first().then(function(categoryData) {
+      var displayFilters, filters, findAttribValuesQs;
+      filters = categoryData.get("filterable_attributes");
+      displayFilters = [];
+      findAttribValuesQs = _.map(filters, function(filter) {
+        return findAttribValues(filter);
+      });
+      return Parse.Promise.when(findAttribValuesQs).then(function() {
+        var AttributeValues, ProductItem, brand, endPrice, filterableProps, innerBrandQuery, innerQuery, otherFilters, price, price_range, query, queryFindPromise, startPrice, supported_brands;
+        displayFilters = arguments;
+        supported_brands = categoryData.get("supported_brands");
+        price_range = categoryData.get("price_range");
+        ProductItem = Parse.Object.extend("ProductItem");
+        innerQuery = new Parse.Query("Category");
+        innerQuery.equalTo("objectId", categoryId);
+        query = new Parse.Query("ProductItem");
+        query.matchesQuery("category", innerQuery);
+        if ((selectedFilters !== "all") && (_.isObject(selectedFilters))) {
+          filterableProps = Object.keys(selectedFilters);
+          if (_.contains(filterableProps, "brand")) {
+            brand = selectedFilters["brand"];
+            innerBrandQuery = new Parse.Query("Brand");
+            innerBrandQuery.equalTo("objectId", brand);
+            query.matchesQuery("brand", innerBrandQuery);
+          }
+          if (_.contains(filterableProps, "price")) {
+            price = selectedFilters["price"];
+            startPrice = parseInt(price[0]);
+            endPrice = parseInt(price[1]);
+            query.greaterThanOrEqualTo("mrp", startPrice);
+            query.lessThanOrEqualTo("mrp", endPrice);
+          }
+          if (_.contains(filterableProps, "other_filters")) {
+            AttributeValues = Parse.Object.extend('AttributeValues');
+            otherFilters = selectedFilters['other_filters'];
+          }
+        }
+        query.select("images,name,mrp,brand,primaryAttributes");
+        query.include("brand");
+        query.include("primaryAttributes");
+        query.include("primaryAttributes.attribute");
+        query.limit(displayLimit);
+        query.skip(page * displayLimit);
+        if (ascending === true) {
+          query.ascending(sortBy);
+        } else {
+          query.descending(sortBy);
+        }
+        return queryFindPromise = query.find().then(function(products) {
+          var result;
+          result = {
+            products: products,
+            filters: displayFilters,
+            supportedBrands: supported_brands,
+            priceRange: price_range,
+            sortableAttributes: ["mrp", "popularity"]
+          };
+          return response.success(result);
+        }, function(error) {
+          return response.error(error);
+        });
+      }, function(error) {
+        return response.error(error);
+      });
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
+  findAttribValues = (function(_this) {
+    return function(filter) {
+      var attributeId, attributeName, filterColumn, innerAttributeQuery, promise, queryAttributeValues;
+      promise = new Parse.Promise();
+      filterColumn = filter.get('filterColumn');
+      attributeId = filter.get('filterAttribute').id;
+      attributeName = filter.get('filterAttribute').get("name");
+      queryAttributeValues = new Parse.Query("AttributeValues");
+      innerAttributeQuery = new Parse.Query("Attributes");
+      innerAttributeQuery.equalTo("objectId", attributeId);
+      queryAttributeValues.matchesQuery("attribute", innerAttributeQuery);
+      queryAttributeValues.find().then(function(allAttributeValues) {
+        var attribValues, displayFilter;
+        attribValues = _.map(allAttributeValues, function(attributeValue) {
+          var attribValue;
+          return attribValue = {
+            "attributeValueId": attributeValue.id,
+            "value": attributeValue.get("value")
+          };
+        });
+        displayFilter = {
+          "filterName": "filter" + filterColumn,
+          "attributeId": attributeId,
+          "attributeName": attributeName,
+          "values": attribValues
+        };
+        return promise.resolve(displayFilter);
+      }, function(error) {
+        return promise.reject(error);
+      });
+      return promise;
+    };
+  })(this);
 
   Parse.Cloud.define('makeRequest', function(request, response) {
     var Request, address, area, brandId, brandObj, categoryId, categoryObj, city, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;

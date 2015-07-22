@@ -243,10 +243,166 @@ Parse.Cloud.define 'getProduct', (request, response) ->
         response.error error    
 
 
-
-
-
+Parse.Cloud.define 'getProductsNew', (request, response) ->
+    categoryId = request.params.categoryId
+    selectedFilters = request.params.selectedFilters # "all" / {"brand": "","price": "", "other_filters": [{"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}, {"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}]} 
+    sortBy =  request.params.sortBy
+    ascending = request.params.ascending
+    page = parseInt request.params.page
+    displayLimit = parseInt request.params.displayLimit
     
+
+    # get filterable attributes for the child category
+    categoryQuery = new Parse.Query("Category")
+    categoryQuery.equalTo("objectId",categoryId)
+    categoryQuery.select("filterable_attributes")
+    categoryQuery.select("supported_brands")
+    categoryQuery.select("price_range")
+    categoryQuery.include("filterable_attributes")
+    categoryQuery.include("filterable_attributes.filterAttribute")
+    categoryQuery.include("supported_brands")
+
+    categoryQuery.first()
+    .then (categoryData) ->
+        filters = categoryData.get "filterable_attributes"
+        displayFilters = []
+
+        findAttribValuesQs = _.map(filters, (filter) ->
+            
+            findAttribValues(filter)
+        )
+
+        Parse.Promise.when(findAttribValuesQs).then ->
+            displayFilters = arguments
+
+            supported_brands = categoryData.get "supported_brands"
+            price_range = categoryData.get "price_range"
+
+            # get all category based products
+            ProductItem = Parse.Object.extend("ProductItem")
+            
+            # query to get specific category
+            innerQuery = new Parse.Query("Category")
+            innerQuery.equalTo("objectId",categoryId)
+
+            # query to get products matching the child category
+            query = new Parse.Query("ProductItem")
+            query.matchesQuery("category", innerQuery)
+
+            if (selectedFilters isnt "all") and (_.isObject(selectedFilters))
+                filterableProps = Object.keys(selectedFilters)
+
+                if _.contains(filterableProps, "brand")
+                    brand = selectedFilters["brand"]
+        
+                    innerBrandQuery = new Parse.Query("Brand")
+                    innerBrandQuery.equalTo("objectId",brand)
+                    query.matchesQuery("brand", innerBrandQuery)
+                
+                if _.contains(filterableProps, "price")
+                    price = selectedFilters["price"]
+                    
+                    startPrice = parseInt price[0]
+                    endPrice = parseInt price[1]
+                    
+                    query.greaterThanOrEqualTo("mrp", startPrice)
+                    query.lessThanOrEqualTo("mrp", endPrice)
+
+                if _.contains(filterableProps, "other_filters")
+                    AttributeValues = Parse.Object.extend('AttributeValues')
+                    otherFilters = selectedFilters['other_filters']
+                    # otherFilters = [[attribValueId1, attribBalueId2], [attribBalueId3],[attribBalueId4,attribBalueId5]]
+
+                    # # applying multiple constraints is like an AND on constraints
+                    # _.each otherFilters , (sameAttribFilters) ->
+                    #     AttributeValues = Parse.Object.extend("AttributeValues")
+                    #     attribValuePointers = []
+                    #     attribValuePointers = _.map(sameAttribFilters, (attribValueId) ->
+                    #         AttributeValuePointer = new AttributeValues()
+                    #         AttributeValuePointer.id = attribValueId
+                    #         AttributeValuePointer
+                    #     )
+
+                    #     query.containedIn('attrs', attribValuePointers)
+
+                    # # lists objects matching any of the values in a list of value (can be used for OR condition)
+
+
+            # restrict which fields are being returned
+            query.select("images,name,mrp,brand,primaryAttributes")
+
+            query.include("brand")
+            # query.include("category")
+            query.include("primaryAttributes")
+            query.include("primaryAttributes.attribute")
+
+            # pagination
+            query.limit(displayLimit)
+            query.skip(page * displayLimit)
+
+            # sorting
+            if ascending is true
+                query.ascending(sortBy)
+            else
+                query.descending(sortBy)
+
+            queryFindPromise =query.find()
+            .then (products) ->
+                result = 
+                    products: products
+                    filters: displayFilters
+                    supportedBrands: supported_brands
+                    priceRange: price_range
+                    sortableAttributes : ["mrp","popularity"]
+
+                response.success result                
+
+
+            ,(error) ->
+                response.error error  
+
+        ,(error) ->
+            response.error error            
+
+    ,(error) -> 
+        response.error error    
+
+
+  
+findAttribValues = (filter) =>
+
+    promise = new Parse.Promise()    
+                
+    filterColumn = filter.get('filterColumn')
+    attributeId = filter.get('filterAttribute').id
+    attributeName = filter.get('filterAttribute').get("name")
+
+    queryAttributeValues = new Parse.Query("AttributeValues")
+
+    innerAttributeQuery = new Parse.Query("Attributes")
+    innerAttributeQuery.equalTo("objectId", attributeId)
+    queryAttributeValues.matchesQuery("attribute", innerAttributeQuery)
+
+    queryAttributeValues.find()
+    .then (allAttributeValues) ->
+        attribValues = _.map(allAttributeValues, (attributeValue) ->
+           attribValue =
+            "attributeValueId" : attributeValue.id     
+            "value" : attributeValue.get("value")     
+        )
+        
+        displayFilter =
+            "filterName": "filter#{filterColumn}"
+            "attributeId": attributeId
+            "attributeName": attributeName
+            "values": attribValues
+
+        promise.resolve displayFilter
+
+    , (error) ->
+        promise.reject error
+
+    promise   
 
 
 
