@@ -14,14 +14,25 @@
             <tr>
               <th>Customer Name</th>
               <th>Customer Registered Date</th>
-              
+              <th>Customer Last Login</th>
+              <th>No. Of Requests Created</th>
+              <th>No. Of Requests Expired</th>
+              <th>No. Of Requests Cancelled</th>
+              <th>No. Of Requests Successfull</th>
+              <th>No. Of Failed Delivery</th>
             </tr>
           </thead>
           <tbody>
            @foreach($customers as $customer)
-              <tr>
+              <tr onclick="location.href='{{ url('admin/customer/'.$customer['id']) }}'">
                 <td>{{ $customer['name'] }}</td>
                 <td>{{ $customer['createdAt'] }}</td>
+                <td>{{ $customer['lastLogin'] }}</td>
+                <td>{{ $customer['numOfRequest'] }}</td>
+                <td>{{ $customer['requestExpired'] }}</td>
+                <td>{{ $customer['requestCancelled'] }}</td>  
+                <td>{{ $customer['requestSuccessfull'] }}</td>  
+                <td>{{ $customer['deliveryStatus'] }}</td>    
               </tr>
            @endforeach
           </tbody>
