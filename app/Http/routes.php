@@ -26,7 +26,8 @@ Route::controllers( [
  */
 Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get( '/', 'Admin\AdminController@index' );
-
+    Route::resource( 'customers', 'Admin\CustomerController' );
+    
     Route::get( 'attribute/categoryconfiguration', 'Admin\AttributeController@categoryConfiguration' );
     Route::get( 'attribute/exportattributes/{categoryid}', 'Admin\AttributeController@exportAttributes' );
 

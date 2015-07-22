@@ -104,7 +104,8 @@
 	<p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="fa fa-refresh"></i></a></span></p>
     <ul>	
       <li class="start active "> <a href="{{ url('admin/attribute/categoryconfiguration') }}"> <i class="fa fa-sitemap"></i> <span class="title">Category Configuration</span> <span class="selected"></span></a> </li>
-
+      <li class="start active "> <a href="{{ url('admin/customers') }}"> <i class="fa fa-sitemap"></i> <span class="title">Customers</span> <span class="selected"></span></a> </li>
+      <li class="start active "> <a href="#"> <i class="fa fa-sitemap"></i> <span class="title">Sellers</span> <span class="selected"></span></a> </li>    
     </ul>
 		
 	<div class="clearfix"></div>
