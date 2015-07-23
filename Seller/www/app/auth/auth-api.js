@@ -66,7 +66,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       return defer.promise;
     };
     AuthAPI.getUserDetails = function() {
-      var address, categoryChains, data, supportedBrands, supportedCategories, user;
+      var address, addressGeoPoint, categoryChains, data, supportedBrands, supportedCategories, user;
       user = User.info('get');
       address = user.location.address;
       categoryChains = CategoriesAPI.categoryChains('get');
@@ -90,6 +90,10 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
         return brand.objectId;
       }), function(grouped) {
         return grouped[0];
+      });
+      addressGeoPoint = new Parse.GeoPoint({
+        latitude: user.latitude,
+        longitude: user.longitude
       });
       data = {
         phone: user.phone,

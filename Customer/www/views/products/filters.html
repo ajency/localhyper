@@ -1,0 +1,78 @@
+<ion-modal-view>
+
+	<ion-header-bar style="height:55px;" no-tap-scroll="true">
+		<div class="row row-fluid">
+			<div class="col col-67 sm-text"> 
+				<h5 class="text-left">Filter by</h5> 
+			</div>
+			<div class="col">
+				<h2 class="text-right" ng-click="view.filter.resetFilters();">
+					<i class="ion ion-minus-circled"></i>
+				</h2>
+			</div>
+			<div class="col">
+				<h2 class="text-right" ng-click="view.filter.onApply();">
+					<i class="ion ion-checkmark-round"></i> 
+				</h2>
+			</div>
+			<div class="col">
+				<h2 ng-click="view.filter.closeModal()" class="text-right">
+					<i class="ion ion-ios-close-outline"></i> 
+				</h2>
+			</div>
+		</div>
+	</ion-header-bar>
+
+	<ion-content>
+
+		<div class="row">
+
+			<div class="col col-33">
+				<div class="list">
+					<label class="item item-radio">
+						<input 
+							type="radio" 
+							name="group" 
+							value="brand"
+							ng-model="view.filter.attribute">
+						<div class="item-content">
+							Brand
+						</div>
+					</label>
+
+					<label class="item item-radio">
+						<input 
+							type="radio" 
+							name="group"
+							value="price"
+							ng-model="view.filter.attribute">
+						<div class="item-content">
+							Price
+						</div>
+					</label>
+				</div>
+			</div>
+
+			<div class="col col-67">
+
+				<ul class="list">
+					<li 
+						class="item item-checkbox"
+						ng-repeat="value in view.filter.attrValues[view.filter.attribute]">
+
+						<label class="checkbox">
+							<input 
+								type="checkbox" 
+								ng-model="value.selected">
+						</label>
+						{{value.name}}
+					</li>
+				</ul>
+
+			</div>
+
+		</div>
+		
+	</ion-content>
+
+</ion-modal-view>

@@ -12,5 +12,12 @@ angular.module 'LocalHyper.storage', []
 			when 'get'
 				localforage.getItem 'app_tutorial_seen'
 
+	Storage.bussinessDetails = (action, params)->
+		switch action
+			when 'set'
+				localforage.setItem 'business_details', params
+			when 'get'
+				localforage.getItem 'business_details'
+
 	Storage
 ]

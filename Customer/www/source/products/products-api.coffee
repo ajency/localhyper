@@ -8,15 +8,22 @@ angular.module 'LocalHyper.products'
 	ProductsAPI.getAll = (opts)->
 		defer = $q.defer()
 
+		selectedFilters = opts.selectedFilters
+		brands = selectedFilters.brands
+		price = selectedFilters.price
+		otherFilters = selectedFilters.otherFilters
+		if _.isEmpty(brands) and _.isEmpty(price) and _.isEmpty(otherFilters)
+			selectedFilters = "all"
+
 		params = 
 			"categoryId": "#{opts.categoryID}"
-			"selectedFilters": "all"
+			"selectedFilters": selectedFilters
 			"sortBy": opts.sortBy
 			"ascending": opts.ascending
 			"page": opts.page
 			"displayLimit": 10
 
-		$http.post 'functions/getProducts', params
+		$http.post 'functions/getProductsNew', params
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->

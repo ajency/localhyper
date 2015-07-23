@@ -2,19 +2,113 @@ angular.module 'LocalHyper.products', []
 
 
 .controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal'
-	, '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform'
+	, '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform', 'CDialog'
 	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg
-	, $ionicLoading, $ionicPlatform)->
+	, $ionicLoading, $ionicPlatform, CDialog)->
 
 		$scope.view =
 			title: Product.subCategoryTitle
 			products: []
+			other: []
 			page: 0
 			footer: false
 			canLoadMore: true
 			refresh: false
 			sortBy: 'popularity'
 			ascending: true
+			
+			filter:
+				modal: null
+				attribute: 'brand'
+				attrValues: {}
+				selectedFilters: 
+					brands: []
+					price: []
+					otherFilters: {}
+
+				getPriceRange : (priceRange)->
+					prices = []
+					min = priceRange[0]
+					max = priceRange[1]
+					if max <= 1000 then increment = 100
+					else if max <= 5000 then increment = 1000
+					else increment = 5000
+					priceRange = _.range min, max, increment
+					_.each priceRange, (start, index)->
+						end = priceRange[index+1]
+						end = max if _.isUndefined(end)
+						prices.push 
+							start: start
+							end: end
+							name: "Rs #{start} - Rs #{end}"
+					prices
+
+				setAttrValues: ->
+					other = $scope.view.other
+					@attrValues['brand'] = other.supportedBrands
+					@attrValues['price'] = @getPriceRange other.priceRange
+
+				resetFilters : ->
+					@attribute = 'brand'
+					_.each @attrValues, (attrs)->
+						_.each attrs, (val)-> val.selected = false
+
+					@selectedFilters = 
+						brands:[]
+						price:[]
+						otherFilters: {}
+
+				selectionExists : ->
+					exists = false
+					_.each @attrValues, (attrs)->
+						_.each attrs, (val)-> 
+							exists = true if val.selected
+					exists
+
+				closeModal : ->
+					if @selectionExists()
+						msg = 'Your filter selection will go away'
+						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']
+						.then (btnIndex)=>
+							switch btnIndex
+								when 1
+									@modal.hide()
+									@resetFilters()
+								when 2
+									@onApply()
+					else @modal.hide()
+
+				onApply : ->
+					_.each @attrValues, (_values, attribute)=>
+						switch attribute
+							when 'price'
+								start = []
+								end = []
+								_.each _values, (price)=>
+									if price.selected
+										start.push price.start
+										end.push price.end
+								
+								if _.isEmpty start
+									@selectedFilters.price = []
+								else
+									@selectedFilters.price = [_.min(start), _.max(end)]
+
+							when 'brand'
+								selected = []
+								_.each _values, (brand)=>
+									selected.push(brand.id) if brand.selected
+								@selectedFilters.brands = selected
+							else
+								console.log 'other filters'
+
+					@modal.hide()
+					$scope.view.reFetch()
+					
+
+
+			init : ->
+				@loadFiltersModal()
 
 			reset : ->
 				@products = []
@@ -24,6 +118,14 @@ angular.module 'LocalHyper.products', []
 				@refresh = false
 				@sortBy = 'popularity'
 				@ascending = true
+				@filter.resetFilters()
+				@onScrollComplete()
+
+			reFetch : ->
+				@page = 0
+				@refresh = true
+				@products = []
+				@canLoadMore = true
 				@onScrollComplete()
 
 			showSortOptions : ->
@@ -32,14 +134,19 @@ angular.module 'LocalHyper.products', []
 					templateUrl: 'views/products/sort.html'
 					hideOnStateChange: true
 
+			loadFiltersModal : ->
+				$ionicModal.fromTemplateUrl 'views/products/filters.html', 
+					scope: $scope,
+					animation: 'slide-in-up'
+					hardwareBackButtonClose: false
+				.then (modal)=>
+					@filter.modal = modal
+
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 			
 			onRefreshComplete : ->
 				$scope.$broadcast 'scroll.refreshComplete'
-			
-			incrementPage : ->
-				@page = @page + 1
 			
 			onPullToRefresh : ->
 				if App.isOnline()
@@ -61,6 +168,7 @@ angular.module 'LocalHyper.products', []
 					page: @page
 					sortBy: @sortBy
 					ascending: @ascending
+					selectedFilters: @filter.selectedFilters
 				.then (data)=>
 					console.log data
 					@onSuccess data
@@ -68,7 +176,7 @@ angular.module 'LocalHyper.products', []
 					@onError error
 				.finally =>
 					@footer = true
-					@incrementPage()
+					@page = @page + 1
 					@onRefreshComplete()
 
 			onError : (error)->
@@ -76,6 +184,9 @@ angular.module 'LocalHyper.products', []
 				@canLoadMore = false
 			
 			onSuccess : (data)->
+				@other = data
+				@filter.setAttrValues() if _.isEmpty(@filter.attrValues['brand'])
+
 				_products = data.products
 				if _.size(_products) > 0
 					if _.size(_products) < 10 then @canLoadMore = false
@@ -98,33 +209,29 @@ angular.module 'LocalHyper.products', []
 			onSort : (sortBy, ascending)->
 				$ionicLoading.hide()
 
-				reFetch = =>
-					@page = 0
-					@refresh = true
-					@products = []
-					@canLoadMore = true
-					@onScrollComplete()
-
 				switch sortBy
 					when 'popularity'
 						if @sortBy isnt 'popularity'
 							@sortBy = 'popularity'
 							@ascending = true
-							reFetch()
+							@reFetch()
 					when 'mrp'
 						if @sortBy isnt 'mrp'
 							@sortBy = 'mrp'
 							@ascending = ascending
-							reFetch()
+							@reFetch()
 						else if @ascending isnt ascending
 							@sortBy = 'mrp'
 							@ascending = ascending
-							reFetch()
+							@reFetch()
 
 		
 		onDeviceBack = ->
+			filter = $scope.view.filter
 			if $('.loading-container').hasClass 'visible'
 				$ionicLoading.hide()
+			else if filter.modal.isShown()
+				filter.closeModal()
 			else
 				App.goBack -1
 
