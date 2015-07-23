@@ -21,21 +21,29 @@
     findCategoryPromise = categoryQuery.first();
     return findCategoryPromise.done((function(_this) {
       return function(categoryData) {
-        var filterable_attributes, findQs;
-        filterable_attributes = [];
+        var f_attributes, filterable_attributes, final_attributes, findQs, secondary_attributes;
+        final_attributes = [];
         if (filterableAttributes) {
           filterable_attributes = categoryData.get('filterable_attributes');
+          if (filterable_attributes.length > 0) {
+            f_attributes = [];
+            f_attributes = _.map(filterable_attributes, function(filterObj) {
+              return filterObj.get("filterAttribute");
+            });
+            final_attributes = f_attributes;
+          }
         }
         if (secondaryAttributes) {
-          filterable_attributes = _.union(filterable_attributes, categoryData.get('secondary_attributes'));
+          secondary_attributes = categoryData.get('secondary_attributes');
+          if (secondary_attributes) {
+            if (secondary_attributes.length > 0) {
+              final_attributes = _.union(filterable_attributes, secondary_attributes);
+            }
+          }
         }
         findQs = [];
-        findQs = _.map(filterable_attributes, function(filterObj) {
-          var attribute, attributeId, attributeValues, innerQuery, query;
-          console.log("start");
-          console.log(filterObj);
-          console.log("end");
-          attribute = filterObj.get("filterAttribute");
+        findQs = _.map(final_attributes, function(attribute) {
+          var attributeId, attributeValues, innerQuery, query;
           attributeId = attribute.id;
           attributeValues = [];
           innerQuery = new Parse.Query("Attributes");

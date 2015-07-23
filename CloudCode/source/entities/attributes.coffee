@@ -13,6 +13,7 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
 
     if filterableAttributes
         categoryQuery.include("filterable_attributes")
+        categoryQuery.include("filterable_attributes.filterAttribute")
     if secondaryAttributes
         categoryQuery.include("secondary_attributes")
     
@@ -20,17 +21,31 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
 
     # for such category find all the filterable_attributes and secondary_attributes
     findCategoryPromise.done (categoryData) =>
-        filterable_attributes = []
+
+        final_attributes = []
 
         if filterableAttributes
             filterable_attributes = categoryData.get('filterable_attributes')
 
+            if filterable_attributes.length > 0
+                f_attributes = []
+                f_attributes = _.map(filterable_attributes, (filterObj) ->
+                    filterObj.get("filterAttribute")
+                )
+
+                final_attributes = f_attributes
+
         if secondaryAttributes
-           filterable_attributes = _.union(filterable_attributes, categoryData.get('secondary_attributes') )         
+            secondary_attributes = categoryData.get('secondary_attributes')
+
+            if (secondary_attributes)
+                if secondary_attributes.length > 0
+                    final_attributes = _.union(filterable_attributes, secondary_attributes )         
+        
         
         findQs = []
 
-        findQs = _.map(filterable_attributes, (attribute) ->
+        findQs = _.map(final_attributes, (attribute) ->
             
             attributeId = attribute.id
             attributeValues = []
