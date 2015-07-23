@@ -27,6 +27,11 @@ angular.module 'LocalHyper.categories'
 				
 				CategoriesAPI.categoryChains 'set', @categoryChains
 				Storage.categoryChains 'set', @categoryChains
+
+			onChainClick : (chains)->
+				CategoriesAPI.subCategories 'set', chains.category.children
+				App.navigate 'brands', categoryID: chains.subCategory.id
+
 ]
 
 

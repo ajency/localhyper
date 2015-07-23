@@ -64,6 +64,8 @@ angular.module 'LocalHyper.brands', []
 						_brandIds = _.pluck _brands, 'objectId'
 						_.each @brands, (brand)->
 							brand.selected = _.contains _brandIds, brand.objectId
+					else
+						_.each @brands, (brand)-> brand.selected = false
 
 			onDone : ->
 				CategoriesAPI.getAll()
@@ -104,7 +106,11 @@ angular.module 'LocalHyper.brands', []
 				CategoriesAPI.categoryChains 'set', @categoryChains 
 				Storage.categoryChains 'set', @categoryChains
 				.then =>
-					count = if App.previousState is 'categories' then -2 else -3
+					switch App.previousState
+						when 'categories' then count = -2
+						when 'sub-categories' then count = -3
+						when 'category-chains' then count = -1
+						else count = 0
 					App.goBack count
 					# App.navigate 'category-chains'
 

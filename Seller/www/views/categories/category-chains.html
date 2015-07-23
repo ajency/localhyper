@@ -27,7 +27,8 @@
 
 			<ion-item
 				class="item-text-wrap item-icon-right cat-chain"
-				ng-repeat="chains in view.categoryChains track by $index">
+				ng-repeat="chains in view.categoryChains track by $index"
+				ng-click="view.onChainClick(chains)">
 
 				<ion-delete-button 
 					class="ion-trash-a"

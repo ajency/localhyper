@@ -27,6 +27,12 @@ angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
         this.categoryChains.splice(spliceIndex, 1);
         CategoriesAPI.categoryChains('set', this.categoryChains);
         return Storage.categoryChains('set', this.categoryChains);
+      },
+      onChainClick: function(chains) {
+        CategoriesAPI.subCategories('set', chains.category.children);
+        return App.navigate('brands', {
+          categoryID: chains.subCategory.id
+        });
       }
     };
   }
