@@ -503,6 +503,7 @@ class AttributeController extends Controller
       $categoryQuery->equalTo("objectId",$categoryId);
 
       $categoryQuery->includeKey("filterable_attributes");
+      $categoryQuery->includeKey("filterable_attributes.filterAttribute");
       $categoryQuery->includeKey("secondary_attributes");
       $categoryQuery->includeKey("primary_attributes");
 
@@ -520,10 +521,12 @@ class AttributeController extends Controller
       }    
         
         
-      foreach ($filterable_attributes as $filterable_attribute) {
-           if($filterable_attribute==null)
-              continue;
-          
+      foreach ($filterable_attributes as $filter) {
+
+        if($filter==null)
+            continue;
+        $filterable_attribute = $filter->get("filterAttribute");
+        
         $attributes[] = array(
                 'id' =>$filterable_attribute->getObjectId(),
                 'name' => $filterable_attribute->get('name'),  
