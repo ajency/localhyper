@@ -101,6 +101,8 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
+          Storage.bussinessDetails('remove');
+          Storage.categoryChains('remove');
           return App.navigate('new-requests', {}, {
             animate: true,
             back: false

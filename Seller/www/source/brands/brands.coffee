@@ -2,8 +2,8 @@ angular.module 'LocalHyper.brands', []
 
 
 .controller 'BrandsCtrl', ['$scope', 'BrandsAPI', '$stateParams', 'SubCategory'
-	, 'CToast', 'CategoriesAPI', 'App', 'CDialog'
-	, ($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog)->
+	, 'CToast', 'CategoriesAPI', 'App', 'CDialog', 'Storage'
+	, ($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog, Storage)->
 
 		$scope.view =
 			title: SubCategory.name
@@ -98,14 +98,15 @@ angular.module 'LocalHyper.brands', []
 						CDialog.confirm 'Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']
 						.then (btnIndex)=>
 							if btnIndex is 1 then @goBack()
-					else
-						CategoriesAPI.categoryChains 'set', @categoryChains 
-						@goBack()
+					else @goBack()
 
 			goBack : ->
-				count = if App.previousState is 'categories' then -2 else -3
-				App.goBack count
-				# App.navigate 'category-chains'
+				CategoriesAPI.categoryChains 'set', @categoryChains 
+				Storage.categoryChains 'set', @categoryChains
+				.then =>
+					count = if App.previousState is 'categories' then -2 else -3
+					App.goBack count
+					# App.navigate 'category-chains'
 
 
 		$scope.$on '$ionicView.beforeEnter', ->

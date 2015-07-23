@@ -2,7 +2,8 @@
   "name": "HelloIonic",
   "private": "true",
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.0.1"
+    "ionic": "driftyco/ionic-bower#1.0.1",
+    "com.parse.cordova.core": "/Users/ajency/Documents/localhyper/Assets/com.parse.cordova.core.pushplugin"
   },
   "dependencies": {
     "moment": "~2.10.3",

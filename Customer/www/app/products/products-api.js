@@ -3,17 +3,24 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
     var ProductsAPI;
     ProductsAPI = {};
     ProductsAPI.getAll = function(opts) {
-      var defer, params;
+      var brands, defer, otherFilters, params, price, selectedFilters;
       defer = $q.defer();
+      selectedFilters = opts.selectedFilters;
+      brands = selectedFilters.brands;
+      price = selectedFilters.price;
+      otherFilters = selectedFilters.otherFilters;
+      if (_.isEmpty(brands) && _.isEmpty(price) && _.isEmpty(otherFilters)) {
+        selectedFilters = "all";
+      }
       params = {
         "categoryId": "" + opts.categoryID,
-        "selectedFilters": "all",
+        "selectedFilters": selectedFilters,
         "sortBy": opts.sortBy,
         "ascending": opts.ascending,
         "page": opts.page,
         "displayLimit": 10
       };
-      $http.post('functions/getProducts', params).then(function(data) {
+      $http.post('functions/getProductsNew', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);

@@ -16,6 +16,18 @@ angular.module('LocalHyper.storage', []).factory('Storage', [
           return localforage.setItem('business_details', params);
         case 'get':
           return localforage.getItem('business_details');
+        case 'remove':
+          return localforage.removeItem('business_details');
+      }
+    };
+    Storage.categoryChains = function(action, params) {
+      switch (action) {
+        case 'set':
+          return localforage.setItem('category_chains', params);
+        case 'get':
+          return localforage.getItem('category_chains');
+        case 'remove':
+          return localforage.removeItem('category_chains');
       }
     };
     return Storage;

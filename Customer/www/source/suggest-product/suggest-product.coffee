@@ -1,41 +1,36 @@
 angular.module 'LocalHyper.suggestProduct', []
 
 
-.controller 'suggestProductCtrl', ['$q', '$scope', '$http', '$location', 'CToast', 'CategoriesAPI', ($q, $scope, $http, $location, CToast, CategoriesAPI)->
-	$scope.suggest = {}
+.controller 'suggestProductCtrl', ['$q', '$scope', '$http', '$location', 'CToast', 'CategoriesAPI'
+	, ($q, $scope, $http, $location, CToast, CategoriesAPI)->
 
-	CategoriesAPI.getAll()
-	.then (categories)->
-		console.log(categories)
-		$scope.suggest.items = categories
-	
-	$scope.suggest = 
-		productName: null
-		category: null
-		brand: null
-		productDescription: null
-		yourComments: null
+		$scope.suggest = {}
 
-		onSuggest :->
-			defer = $q.defer()
-			param = {"productName" : $scope.suggest.productName,"category" : $scope.suggest.category.name,"brand": $scope.suggest.brand,"description" : $scope.suggest.productDescription,"comments" : $scope.suggest.yourComments}
-			$http.post 'functions/sendMail', param
-			.then (data)->
-				defer.resolve
-				$location.path '/categories'	
-			, (error)->
-				CToast.show('Request failed, please try again')
-				defer.reject error
+		CategoriesAPI.getAll()
+		.then (categories)->
+			console.log(categories)
+			$scope.suggest.items = categories
+		
+		$scope.suggest = 
+			productName: null
+			category: null
+			brand: null
+			productDescription: null
+			yourComments: null
 
-		 defer.promise	
+			onSuggest :->
+				param = 
+					"productName" : @productName
+					"category" :@category.name
+					"brand": @brand
+					"description" : @productDescription
+					"comments" : @yourComments
 
-	
-
-
-	
-
-	
-
+				$http.post 'functions/sendMail', param
+				.then (data)->
+					$location.path '/categories'	
+				, (error)->
+					CToast.show('Request failed, please try again')
 ]
 
 

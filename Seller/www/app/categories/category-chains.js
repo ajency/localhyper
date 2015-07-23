@@ -1,9 +1,16 @@
 angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
-  '$scope', 'App', 'CategoriesAPI', function($scope, App, CategoriesAPI) {
+  '$scope', 'App', 'CategoriesAPI', 'Storage', function($scope, App, CategoriesAPI, Storage) {
     return $scope.view = {
       categoryChains: [],
       setCategoryChains: function() {
-        return this.categoryChains = CategoriesAPI.categoryChains('get');
+        return Storage.categoryChains('get').then((function(_this) {
+          return function(chains) {
+            if (!_.isNull(chains)) {
+              _this.categoryChains = chains;
+              return CategoriesAPI.categoryChains('set', chains);
+            }
+          };
+        })(this));
       },
       getBrands: function(brands) {
         var brandNames;
@@ -17,7 +24,8 @@ angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
           return chains.subCategory.id === subCategoryId;
         });
         this.categoryChains.splice(spliceIndex, 1);
-        return CategoriesAPI.categoryChains('set', this.categoryChains);
+        CategoriesAPI.categoryChains('set', this.categoryChains);
+        return Storage.categoryChains('set', this.categoryChains);
       }
     };
   }

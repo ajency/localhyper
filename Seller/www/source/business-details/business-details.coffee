@@ -4,7 +4,6 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
 	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage'
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage)->
-
 	
 		$scope.view = 
 			name:''
@@ -16,7 +15,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 			delivery:
 				radius: 10
 				plus : ->
-					@radius++ if @radius < 99
+					@radius++ if @radius < 100
 				minus : ->
 					@radius-- if @radius > 1
 
@@ -46,29 +45,19 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					latLng
 
 				getCurrent : ->
-					Storage.bussinessDetails 'get','null'
-					.then (value) =>
-						if !_.isNull value
-							location.lat = value.latitude
-							location.long = value.longitude
-							loc = location
-							latLng = @setMapCenter loc
-							@map.setZoom 15
-							@addMarker latLng
-						else 
-							GPS.isLocationEnabled()
-							.then (enabled)=>
-								if !enabled
-									@showAlert()
-								else
-									CToast.show 'Getting current location'
-									GPS.getCurrentLocation()
-									.then (loc)=>
-										latLng = @setMapCenter loc
-										@map.setZoom 15
-										@addMarker latLng
-									, (error)->
-										CToast.show 'Error locating your position'
+					GPS.isLocationEnabled()
+					.then (enabled)=>
+						if !enabled
+							@showAlert()
+						else
+							CToast.show 'Getting current location'
+							GPS.getCurrentLocation()
+							.then (loc)=>
+								latLng = @setMapCenter loc
+								@map.setZoom 15
+								@addMarker latLng
+							, (error)->
+								CToast.show 'Error locating your position'
 
 				addMarker : (latLng)->
 					@latLng = latLng
@@ -96,9 +85,9 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 			init : ->
 				@loadLocationModal()
-				@initializebusinessValue()
+				@initializeBusinessValue()
 				
-			initializebusinessValue : ->
+			initializeBusinessValue : ->
 				Storage.bussinessDetails 'get','null'
 				.then (value) =>
 					if !_.isNull value 
@@ -109,6 +98,8 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 						@delivery.radius =  value.deliveryRadius
 						@latitude =  value.latitude
 						@longitude =  value.longitude
+						@location.latLng = new google.maps.LatLng value.latitude, value.longitude
+						@location.address = value.address
 						
 			loadLocationModal : ->
 				$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
@@ -119,6 +110,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					@location.modal = modal
 
 			onChangeLocation : ->
+				
 				@location.modal.show()
 				mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
 				$('.aj-big-map').css 'height': mapHeight
@@ -128,6 +120,15 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 						@location.setMapCenter loc
 						@location.getCurrent()
 					, 200
+				else 
+					$timeout =>
+						loc = lat: @latitude, long: @longitude
+						latLng = @location.setMapCenter loc
+						@location.map.setZoom 15
+						@location.addMarker latLng
+					, 200
+
+
 
 			onConfirmLocation : ->
 				if !_.isNull(@location.latLng) and @location.addressFetch

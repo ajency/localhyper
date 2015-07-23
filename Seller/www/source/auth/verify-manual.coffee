@@ -2,8 +2,8 @@ angular.module 'LocalHyper.auth'
 
 
 .controller 'VerifyManualCtrl', ['$scope', 'CToast', 'App', 'SmsAPI', 'AuthAPI'
-	, 'CSpinner', 'User', '$ionicPlatform'
-	, ($scope, CToast, App, SmsAPI, AuthAPI, CSpinner, User, $ionicPlatform)->
+	, 'CSpinner', 'User', '$ionicPlatform', 'Storage'
+	, ($scope, CToast, App, SmsAPI, AuthAPI, CSpinner, User, $ionicPlatform, Storage)->
 
 		$scope.view = 
 			display: 'noError'
@@ -62,6 +62,8 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
+					Storage.bussinessDetails('remove')
+					Storage.categoryChains('remove')
 					App.navigate 'new-requests', {}, {animate: true, back: false}
 				, (error)=>
 					@onError error, 'register'
