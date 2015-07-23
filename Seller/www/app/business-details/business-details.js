@@ -103,9 +103,10 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
         }
       },
       init: function() {
-        return this.loadLocationModal();
+        this.loadLocationModal();
+        return this.initializeBusinessValue();
       },
-      initializebusinessValue: function() {
+      initializeBusinessValue: function() {
         return Storage.bussinessDetails('get', 'null').then((function(_this) {
           return function(value) {
             if (!_.isNull(value)) {

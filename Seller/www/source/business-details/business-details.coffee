@@ -85,9 +85,9 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 			init : ->
 				@loadLocationModal()
-				# @initializebusinessValue()
+				@initializeBusinessValue()
 				
-			initializebusinessValue : ->
+			initializeBusinessValue : ->
 				Storage.bussinessDetails 'get','null'
 				.then (value) =>
 					if !_.isNull value 
