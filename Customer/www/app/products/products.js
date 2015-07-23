@@ -30,8 +30,16 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             increment = 100;
           } else if (max <= 5000) {
             increment = 1000;
-          } else {
+          } else if (max <= 25000) {
             increment = 5000;
+          } else if (max <= 50000) {
+            increment = 10000;
+          } else if (max <= 75000) {
+            increment = 15000;
+          } else if (max <= 100000) {
+            increment = 20000;
+          } else {
+            increment = 25000;
           }
           priceRange = _.range(min, max, increment);
           _.each(priceRange, function(start, index) {

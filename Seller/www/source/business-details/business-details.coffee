@@ -4,7 +4,6 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
 	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage'
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage)->
-
 	
 		$scope.view = 
 			name:''

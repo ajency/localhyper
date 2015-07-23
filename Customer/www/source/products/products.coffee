@@ -33,7 +33,11 @@ angular.module 'LocalHyper.products', []
 					max = priceRange[1]
 					if max <= 1000 then increment = 100
 					else if max <= 5000 then increment = 1000
-					else increment = 5000
+					else if max <= 25000 then increment = 5000
+					else if max <= 50000 then increment = 10000
+					else if max <= 75000 then increment = 15000
+					else if max <= 100000 then increment = 20000
+					else increment = 25000
 					priceRange = _.range min, max, increment
 					_.each priceRange, (start, index)->
 						end = priceRange[index+1]
