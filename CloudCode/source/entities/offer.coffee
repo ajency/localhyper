@@ -259,6 +259,7 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 "distanceFromCustomer" : sellersDistancFromCustomer
                 "offerPrice" : priceObj.get("value")   
                 "offerStatus" : offerObj.get("status")   
+                "createdAt" : offerObj.createdAt  
 
 
             sellerOffer

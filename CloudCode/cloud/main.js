@@ -802,7 +802,8 @@
           "address": requestObj.get("address"),
           "distanceFromCustomer": sellersDistancFromCustomer,
           "offerPrice": priceObj.get("value"),
-          "offerStatus": offerObj.get("status")
+          "offerStatus": offerObj.get("status"),
+          "createdAt": offerObj.createdAt
         };
         return sellerOffer;
       });
@@ -1031,7 +1032,7 @@
         return findAttribValues(filter);
       });
       return Parse.Promise.when(findAttribValuesQs).then(function() {
-        var ProductItem, brandPointers, brands, categoryBrands, endPrice, filterableProps, innerQuery, price, price_range, query, queryFindPromise, startPrice, supported_brands;
+        var ProductItem, brandPointers, brands, categoryBrands, endPrice, filterableProps, innerQuery, otherFilterColumnNames, otherFilters, price, price_range, query, queryFindPromise, startPrice, supported_brands;
         displayFilters = arguments;
         categoryBrands = categoryData.get("supported_brands");
         supported_brands = _.map(categoryBrands, function(categoryBrand) {
@@ -1053,20 +1054,44 @@
           filterableProps = Object.keys(selectedFilters);
           if (_.contains(filterableProps, "brands")) {
             brands = selectedFilters["brands"];
-            brandPointers = _.map(brands, function(brandId) {
-              var brandPointer;
-              brandPointer = new Parse.Object('Brand');
-              brandPointer.id = brandId;
-              return brandPointer;
-            });
-            query.containedIn("brand", brandPointers);
+            if (brands.length > 0) {
+              brandPointers = _.map(brands, function(brandId) {
+                var brandPointer;
+                brandPointer = new Parse.Object('Brand');
+                brandPointer.id = brandId;
+                return brandPointer;
+              });
+              query.containedIn("brand", brandPointers);
+            }
           }
           if (_.contains(filterableProps, "price")) {
             price = selectedFilters["price"];
-            startPrice = parseInt(price[0]);
-            endPrice = parseInt(price[1]);
-            query.greaterThanOrEqualTo("mrp", startPrice);
-            query.lessThanOrEqualTo("mrp", endPrice);
+            if (price.length === 2) {
+              startPrice = parseInt(price[0]);
+              endPrice = parseInt(price[1]);
+              query.greaterThanOrEqualTo("mrp", startPrice);
+              query.lessThanOrEqualTo("mrp", endPrice);
+            }
+          }
+          if (_.contains(filterableProps, "otherFilters")) {
+            otherFilters = selectedFilters['otherFilters'];
+            if (!_.isEmpty(otherFilters)) {
+              otherFilterColumnNames = _.keys(otherFilters);
+              _.each(otherFilterColumnNames, function(otherFilterColumnName) {
+                var attributeValuePointers, specificFilterArr;
+                specificFilterArr = otherFilters[otherFilterColumnName];
+                console.log(specificFilterArr);
+                if (specificFilterArr.length > 0) {
+                  attributeValuePointers = _.map(specificFilterArr, function(attributeValueId) {
+                    var attributeValuePointer;
+                    attributeValuePointer = new Parse.Object('AttributeValues');
+                    attributeValuePointer.id = attributeValueId;
+                    return attributeValuePointer;
+                  });
+                  return query.containedIn(otherFilterColumnName, attributeValuePointers);
+                }
+              });
+            }
           }
         }
         query.select("images,name,mrp,brand,primaryAttributes");
