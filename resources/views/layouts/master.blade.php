@@ -139,14 +139,16 @@
 <script src="{{ asset('plugins/boostrapv3/js/bootstrap.min.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/breakpoints.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/jquery-unveil/jquery.unveil.min.js') }}" type="text/javascript"></script> 
-<script src="{{ asset('plugins/jquery-scrollbar/jquery.scrollbar.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('plugins/jquery-scrollbar/jquery.scrollbar.min.js') }}" type="text/javascript"></script> 
+<script src="{{ asset('plugins/bootstrap-toggle/js/bootstrap-toggle.min.js') }}" type="text/javascript"></script>
 <!-- END CORE JS FRAMEWORK --> 
 <!-- BEGIN PAGE LEVEL JS --> 
  <script src="{{ asset('plugins/select2/select2.min.js') }}" type="text/javascript"></script>
 
 <script src="{{ asset('plugins/pace/pace.min.js') }}" type="text/javascript"></script>  
 <script src="{{ asset('plugins/jquery-numberAnimate/jquery.animateNumbers.js') }}" type="text/javascript"></script>
-<!-- END PAGE LEVEL PLUGINS --> 	
+<!-- END PAGE LEVEL PLUGINS --> 
+<script src="{{ asset('js/tabs_accordian.js') }}" type="text/javascript"></script>    
 
 <script src="{{ asset('bower_components/underscore/underscore-min.js' ) }}" type="text/javascript"></script>    
     
@@ -155,7 +157,7 @@
 <script src="{{ asset('js/core.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('js/chat.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
-<script src="{{ asset('js/app.js') }}" type="text/javascript"></script>
+
 <!-- END CORE TEMPLATE JS --> 
  
   <script type="text/javascript">
