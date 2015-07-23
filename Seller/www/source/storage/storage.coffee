@@ -21,7 +21,6 @@ angular.module 'LocalHyper.storage', []
 			when 'remove'
 				localforage.removeItem 'business_details'
 
-
 	Storage.categoryChains = (action, params)->
 		switch action
 			when 'set'

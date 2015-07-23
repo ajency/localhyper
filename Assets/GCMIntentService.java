@@ -97,8 +97,11 @@ public class GCMIntentService extends GCMBaseIntentService {
 			Intent notificationIntent = new Intent(this, PushHandlerActivity.class);
 			notificationIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			notificationIntent.putExtra("pushBundle", extras);
-	
-			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			
+			int notId = getNotificationID();
+			setNotificationID(notId + 1);
+			
+			PendingIntent contentIntent = PendingIntent.getActivity(this, notId, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 			
 			//Common fields
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
@@ -115,10 +118,6 @@ public class GCMIntentService extends GCMBaseIntentService {
 				.setTicker(title)
 				.setContentText(alert)
 				.setStyle(new NotificationCompat.BigTextStyle().bigText(alert));
-			
-			
-			int notId = getNotificationID();
-			setNotificationID(notId + 1);
 			
 			mNotificationManager.notify((String) appName, notId, mBuilder.build());
 		}
