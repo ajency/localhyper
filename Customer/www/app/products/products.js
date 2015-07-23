@@ -14,6 +14,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       filter: {
         modal: null,
         attribute: 'brand',
+        allAttributes: [],
         attrValues: {},
         selectedFilters: {
           brands: [],
@@ -51,7 +52,26 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           var other;
           other = $scope.view.other;
           this.attrValues['brand'] = other.supportedBrands;
-          return this.attrValues['price'] = this.getPriceRange(other.priceRange);
+          this.attrValues['price'] = this.getPriceRange(other.priceRange);
+          this.allAttributes.push({
+            value: 'brand',
+            name: 'Brand'
+          });
+          this.allAttributes.push({
+            value: 'price',
+            name: 'Price'
+          });
+          return _.each(other.filters, (function(_this) {
+            return function(filter) {
+              var value;
+              value = filter.filterName;
+              _this.attrValues[value] = filter.values;
+              return _this.allAttributes.push({
+                value: value,
+                name: s.humanize(filter.attributeName)
+              });
+            };
+          })(this));
         },
         resetFilters: function() {
           this.attribute = 'brand';
@@ -87,7 +107,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
                 switch (btnIndex) {
                   case 1:
                     _this.modal.hide();
-                    return _this.resetFilters();
+                    return $scope.view.reset();
                   case 2:
                     return _this.onApply();
                 }
@@ -126,10 +146,17 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
                   });
                   return _this.selectedFilters.brands = selected;
                 default:
-                  return console.log('other filters');
+                  selected = [];
+                  _.each(_values, function(attr) {
+                    if (attr.selected) {
+                      return selected.push(attr.id);
+                    }
+                  });
+                  return _this.selectedFilters.otherFilters[attribute] = selected;
               }
             };
           })(this));
+          console.log(this.selectedFilters);
           this.modal.hide();
           return $scope.view.reFetch();
         }

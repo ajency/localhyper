@@ -20,6 +20,7 @@ angular.module 'LocalHyper.products', []
 			filter:
 				modal: null
 				attribute: 'brand'
+				allAttributes: []
 				attrValues: {}
 				selectedFilters: 
 					brands: []
@@ -47,6 +48,15 @@ angular.module 'LocalHyper.products', []
 					other = $scope.view.other
 					@attrValues['brand'] = other.supportedBrands
 					@attrValues['price'] = @getPriceRange other.priceRange
+					@allAttributes.push value: 'brand', name: 'Brand'
+					@allAttributes.push value: 'price', name: 'Price'
+
+					_.each other.filters, (filter)=>
+						value = filter.filterName
+						@attrValues[value] = filter.values
+						@allAttributes.push
+							value: value
+							name: s.humanize(filter.attributeName)
 
 				resetFilters : ->
 					@attribute = 'brand'
@@ -73,7 +83,8 @@ angular.module 'LocalHyper.products', []
 							switch btnIndex
 								when 1
 									@modal.hide()
-									@resetFilters()
+									# @resetFilters()
+									$scope.view.reset()
 								when 2
 									@onApply()
 					else @modal.hide()
@@ -89,19 +100,23 @@ angular.module 'LocalHyper.products', []
 										start.push price.start
 										end.push price.end
 								
-								if _.isEmpty start
-									@selectedFilters.price = []
-								else
-									@selectedFilters.price = [_.min(start), _.max(end)]
+								if _.isEmpty(start) then @selectedFilters.price = []
+								else @selectedFilters.price = [_.min(start), _.max(end)]
 
 							when 'brand'
 								selected = []
 								_.each _values, (brand)=>
 									selected.push(brand.id) if brand.selected
 								@selectedFilters.brands = selected
+							
 							else
-								console.log 'other filters'
+								# When other filters
+								selected = []
+								_.each _values, (attr)=>
+									selected.push(attr.id) if attr.selected
+								@selectedFilters.otherFilters[attribute] = selected
 
+					console.log @selectedFilters
 					@modal.hide()
 					$scope.view.reFetch()
 					
@@ -185,7 +200,8 @@ angular.module 'LocalHyper.products', []
 			
 			onSuccess : (data)->
 				@other = data
-				@filter.setAttrValues() if _.isEmpty(@filter.attrValues['brand'])
+				if _.isEmpty @filter.attrValues['brand']
+					@filter.setAttrValues() 
 
 				_products = data.products
 				if _.size(_products) > 0

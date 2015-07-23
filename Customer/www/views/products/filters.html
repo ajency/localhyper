@@ -29,25 +29,17 @@
 
 			<div class="col col-33">
 				<div class="list">
-					<label class="item item-radio">
-						<input 
-							type="radio" 
-							name="group" 
-							value="brand"
-							ng-model="view.filter.attribute">
-						<div class="item-content">
-							Brand
-						</div>
-					</label>
+					<label 
+						class="item item-radio"
+						ng-repeat="attr in view.filter.allAttributes">
 
-					<label class="item item-radio">
 						<input 
 							type="radio" 
 							name="group"
-							value="price"
+							value="{{attr.value}}"
 							ng-model="view.filter.attribute">
 						<div class="item-content">
-							Price
+							{{attr.name}}
 						</div>
 					</label>
 				</div>
