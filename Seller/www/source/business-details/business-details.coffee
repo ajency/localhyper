@@ -2,8 +2,9 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
-	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage'
-	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage)->
+	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails'
+	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout
+	, Storage, BusinessDetails)->
 	
 		$scope.view = 
 			name:''
@@ -85,21 +86,20 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 			init : ->
 				@loadLocationModal()
-				@initializeBusinessValue()
+				@getStoredBusinessDetails()
 				
-			initializeBusinessValue : ->
-				Storage.bussinessDetails 'get','null'
-				.then (value) =>
-					if !_.isNull value 
-						@name = value.name
-						@phone = value.phone
-						@businessName = value.businessName
-						@confirmedAddress = value.confirmedAddress
-						@delivery.radius =  value.deliveryRadius
-						@latitude =  value.latitude
-						@longitude =  value.longitude
-						@location.latLng = new google.maps.LatLng value.latitude, value.longitude
-						@location.address = value.address
+			getStoredBusinessDetails : ->
+				details = BusinessDetails
+				if !_.isNull details 
+					@name = details.name
+					@phone = details.phone
+					@businessName = details.businessName
+					@confirmedAddress = details.confirmedAddress
+					@delivery.radius =  details.deliveryRadius
+					@latitude =  details.latitude
+					@longitude =  details.longitude
+					@location.latLng = new google.maps.LatLng details.latitude, details.longitude
+					@location.address = details.address
 						
 			loadLocationModal : ->
 				$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
@@ -110,7 +110,6 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					@location.modal = modal
 
 			onChangeLocation : ->
-				
 				@location.modal.show()
 				mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
 				$('.aj-big-map').css 'height': mapHeight
@@ -120,15 +119,13 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 						@location.setMapCenter loc
 						@location.getCurrent()
 					, 200
-				else 
+				else if not _.isUndefined @latitude
 					$timeout =>
 						loc = lat: @latitude, long: @longitude
 						latLng = @location.setMapCenter loc
 						@location.map.setZoom 15
 						@location.addMarker latLng
 					, 200
-
-
 
 			onConfirmLocation : ->
 				if !_.isNull(@location.latLng) and @location.addressFetch
@@ -182,12 +179,15 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 					controller: 'BusinessDetailsCtrl'
 					templateUrl: 'views/business-details/business-details.html'
 					resolve:
-						Maps : ($q, CSpinner, GoogleMaps)->
+						BusinessDetails : ($q, CSpinner, GoogleMaps, Storage)->
 							defer = $q.defer()
 							CSpinner.show '', 'Please wait...'
+
 							GoogleMaps.loadScript()
 							.then ->
-								defer.resolve()
+								Storage.bussinessDetails 'get'
+							.then (details)->
+								defer.resolve details
 							.finally ->
 								CSpinner.hide()
 							defer.promise
