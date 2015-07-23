@@ -1052,6 +1052,15 @@ h5.with-sep span {
   background-image: none;
   background: none;
 }
+.terms {
+  margin-top: 15px;
+  border: 0;
+  font-weight: bold;
+  padding-left: 55px;
+}
+.terms input:before {
+  border-color: #A0A0A0;
+}
 .button.button-outline.icon-btn {
   width: 32px;
   height: 32px;
