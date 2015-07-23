@@ -304,38 +304,47 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
 
                 if _.contains(filterableProps, "brands")
                     brands = selectedFilters["brands"]
-                    
-                    brandPointers = _.map(brands, (brandId) ->
-                      brandPointer = new Parse.Object('Brand')
-                      brandPointer.id = brandId
-                      brandPointer
-                    )                    
-        
-                    query.containedIn("brand",brandPointers)
+
+                    if brands.length > 0
+                        brandPointers = _.map(brands, (brandId) ->
+                          brandPointer = new Parse.Object('Brand')
+                          brandPointer.id = brandId
+                          brandPointer
+                        )                    
+            
+                        query.containedIn("brand",brandPointers)
                 
                 if _.contains(filterableProps, "price")
                     price = selectedFilters["price"]
-                    
-                    startPrice = parseInt price[0]
-                    endPrice = parseInt price[1]
-                    
-                    query.greaterThanOrEqualTo("mrp", startPrice)
-                    query.lessThanOrEqualTo("mrp", endPrice)
 
-                # if _.contains(filterableProps, "otherFilters")
-                #     otherFilters = selectedFilters['otherFilters']
+                    if price.length is 2
+                        startPrice = parseInt price[0]
+                        endPrice = parseInt price[1]
+                        
+                        query.greaterThanOrEqualTo("mrp", startPrice)
+                        query.lessThanOrEqualTo("mrp", endPrice)
 
-                #     if !_.isEmpty(otherFilters)
-                #         otherFilterColumnNames = _.keys(otherFilters)
-                #         _.each otherFilterColumnNames , (otherFilterColumnName) ->
-                #             attributeValuePointers = _.map(otherFilters[otherFilterColumnName], (attributeValueId) ->
-                #               attributeValuePointer = new Parse.Object('AttributeValues')
-                #               attributeValuePointer.id = attributeValueId
-                #               attributeValuePointer
-                #               ) 
-            
-    
-                #             query.containedIn(otherFilterColumnName,attributeValuePointers)
+                if _.contains(filterableProps, "otherFilters")
+                    otherFilters = selectedFilters['otherFilters']
+
+                    if !_.isEmpty(otherFilters)
+                        otherFilterColumnNames = _.keys(otherFilters)
+                        
+                        _.each otherFilterColumnNames , (otherFilterColumnName) ->
+                            
+                            specificFilterArr = otherFilters[otherFilterColumnName]
+
+                            console.log specificFilterArr
+
+                            if specificFilterArr.length > 0
+                                attributeValuePointers = _.map(specificFilterArr, (attributeValueId) ->
+                                  attributeValuePointer = new Parse.Object('AttributeValues')
+                                  attributeValuePointer.id = attributeValueId
+                                  attributeValuePointer
+                                  ) 
+                
+        
+                                query.containedIn(otherFilterColumnName,attributeValuePointers)
                     
             # restrict which fields are being returned
             query.select("images,name,mrp,brand,primaryAttributes")
