@@ -1,10 +1,16 @@
 @extends('app')
 
 @section('content')
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
-			<div class="panel panel-default">
+<div class="content">  
+    
+		<div class="page-title m-l-5">	
+			<h3 class="inline"><span class="semi-bold">Login</span></h3>
+		</div>
+		<div class="grid simple vertical purple">
+      
+			 
+			<div class="grid-body">
+            <div class="panel panel-default">
 				<div class="panel-heading">Login</div>
 				<div class="panel-body">
 					@if (count($errors) > 0)
@@ -55,7 +61,8 @@
 					</form>
 				</div>
 			</div>
+                        </div>
 		</div>
-	</div>
-</div>
+    </div>
+
 @endsection
