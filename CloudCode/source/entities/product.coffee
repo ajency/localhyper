@@ -235,6 +235,7 @@ Parse.Cloud.define 'getProduct', (request, response) ->
     queryProductItem.include("attrs.attribute")
     queryProductItem.include("category")
     queryProductItem.include("primaryAttributes")
+    queryProductItem.include("primaryAttributes.attribute")
 
     queryProductItem.first()
     .then (ProductData)->
@@ -376,6 +377,7 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
                         "name" :  singleProduct.get("brand").get("name")
 
                     product = 
+                        "objectId" : singleProduct.id
                         "name" : singleProduct.get "name"
                         "brand" : brand
                         "images" : singleProduct.get("images")

@@ -13,6 +13,7 @@
     categoryQuery.equalTo("objectId", categoryId);
     if (filterableAttributes) {
       categoryQuery.include("filterable_attributes");
+      categoryQuery.include("filterable_attributes.filterAttribute");
     }
     if (secondaryAttributes) {
       categoryQuery.include("secondary_attributes");
@@ -29,8 +30,12 @@
           filterable_attributes = _.union(filterable_attributes, categoryData.get('secondary_attributes'));
         }
         findQs = [];
-        findQs = _.map(filterable_attributes, function(attribute) {
-          var attributeId, attributeValues, innerQuery, query;
+        findQs = _.map(filterable_attributes, function(filterObj) {
+          var attribute, attributeId, attributeValues, innerQuery, query;
+          console.log("start");
+          console.log(filterObj);
+          console.log("end");
+          attribute = filterObj.get("filterAttribute");
           attributeId = attribute.id;
           attributeValues = [];
           innerQuery = new Parse.Query("Attributes");
@@ -1001,6 +1006,7 @@
     queryProductItem.include("attrs.attribute");
     queryProductItem.include("category");
     queryProductItem.include("primaryAttributes");
+    queryProductItem.include("primaryAttributes.attribute");
     return queryProductItem.first().then(function(ProductData) {
       return response.success(ProductData);
     }, function(error) {
@@ -1115,6 +1121,7 @@
               "name": singleProduct.get("brand").get("name")
             };
             return product = {
+              "objectId": singleProduct.id,
               "name": singleProduct.get("name"),
               "brand": brand,
               "images": singleProduct.get("images"),
