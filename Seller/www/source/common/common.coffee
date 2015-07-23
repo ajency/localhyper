@@ -3,9 +3,9 @@ angular.module 'LocalHyper.common', []
 
 .factory 'App', ['$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate'
 	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout'
-	, '$q', '$ionicScrollDelegate'
+	, '$q', '$ionicScrollDelegate', '$cordovaInAppBrowser'
 	, ($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window
-	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate)->
+	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate, $cordovaInAppBrowser)->
 
 		App = 
 
@@ -77,6 +77,10 @@ angular.module 'LocalHyper.common', []
 					number = number.toString()
 					number.replace /(\d)(?=(\d\d)+\d$)/g, "$1,"
 				else ''
+
+			openLink : (url)->
+				options = location: 'yes'
+				$cordovaInAppBrowser.open url, '_system', options
 
 			getInstallationId : ->
 				defer = $q.defer()

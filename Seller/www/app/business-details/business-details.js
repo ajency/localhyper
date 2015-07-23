@@ -9,7 +9,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
       delivery: {
         radius: 10,
         plus: function() {
-          if (this.radius < 99) {
+          if (this.radius < 100) {
             return this.radius++;
           }
         },
@@ -103,8 +103,7 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
         }
       },
       init: function() {
-        this.loadLocationModal();
-        return this.initializebusinessValue();
+        return this.loadLocationModal();
       },
       initializebusinessValue: function() {
         return Storage.bussinessDetails('get', 'null').then((function(_this) {

@@ -18,7 +18,6 @@
     "cordova-plugin-device",
     "cordova-plugin-console",
     "cordova-plugin-whitelist",
-    "com.ionic.keyboard",
     "org.apache.cordova.splashscreen",
     {
       "locator": "https://github.com/asanka-x/Phonegap-SMS",
@@ -54,10 +53,9 @@
     {
       "locator": "https://github.com/pushandplay/cordova-plugin-apprate.git",
       "id": "org.pushandplay.cordova.apprate"
-    }
+    },
+    "cordova-plugin-splashscreen",
+    "com.ionic.keyboard"
   ],
-  "cordovaPlatforms": [
-    "ios",
-    "android"
-  ]
+  "cordovaPlatforms": []
 }

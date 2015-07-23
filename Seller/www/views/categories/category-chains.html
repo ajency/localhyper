@@ -1,36 +1,40 @@
 <ion-view
 	view-title="Category Chains"
-	ng-init="view.setCategoryChains()" 
+	ng-init="view.setCategoryChains()"
 	class="chain">
 
 	<ion-nav-buttons side="right">
 		<button
-			class="button button-assertive"
+			class="button button-outline button-assertive icon-btn"
 			ng-click="App.navigate('categories')">
-			Add More
+			<i class="icon ion-plus"></i>
 		</button>
 	</ion-nav-buttons>
 
-	<div class="bar bar-subheader bar-dark">
+	<div class="bar bar-subheader bar-assertive">
 		<h2 class="title m-title">Your business categories are</h2>
 	</div>
 
-	<ion-content>
-
-		</br></br>
+	<ion-content class="has-subheader">
 
 		<ion-list>
 
 			<ion-item
-				class="item-text-wrap item-icon-right"
-				ng-repeat="chains in view.categoryChains track by $index">
+				class="item-text-wrap item-icon-right cat-chain"
+				ng-repeat="chains in view.categoryChains">
+
 
 				<i
-					class="icon ion-close-circled"
+					class="icon "
 					ng-click="view.removeItemFromChains(chains.subCategory.id)">
+					<button class="button button-outline button-dark icon-btn ion-close-round"></button>
 				</i>
 
-				{{chains.category.name}} > {{chains.subCategory.name}} > {{view.getBrands(chains.brands)}}
+				<div class="lighter-nh">{{chains.category.name}} <i class="ion-ios-arrow-forward"></i> <span class="darker">{{chains.subCategory.name}}</span> <!-- <i class="ion-ios-arrow-forward"></i> --></div>
+
+				<div class="highlight">
+					{{view.getBrands(chains.brands)}}
+				</div>
 			</ion-item>
 
 		</ion-list>

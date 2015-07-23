@@ -4,7 +4,6 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
 	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage'
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage)->
-
 	
 		$scope.view = 
 			name:''
@@ -16,7 +15,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 			delivery:
 				radius: 10
 				plus : ->
-					@radius++ if @radius < 99
+					@radius++ if @radius < 100
 				minus : ->
 					@radius-- if @radius > 1
 
@@ -86,7 +85,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 
 			init : ->
 				@loadLocationModal()
-				@initializebusinessValue()
+				# @initializebusinessValue()
 				
 			initializebusinessValue : ->
 				Storage.bussinessDetails 'get','null'
