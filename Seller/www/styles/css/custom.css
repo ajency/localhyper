@@ -661,9 +661,13 @@ sm {
   border-right: 1px solid #ddd;
   float: left;
   width: 77px;
+  font-size: 20px;
 }
 .business-details .card .view-rad b {
   font-weight: bolder;
+}
+.business-details .card .view-rad small {
+  font-size: 11px;
 }
 .business-details .card .view-rad i {
   font-size: 36px;
@@ -1042,4 +1046,9 @@ h5.with-sep span {
 }
 .bar .title {
   height: auto;
+}
+.nobg {
+  background-color: transparent;
+  background-image: none;
+  background: none;
 }
