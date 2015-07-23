@@ -1054,8 +1054,36 @@ h5.with-sep {
 	text-align: center;
 	border-radius: 50%;
 	padding: 0;
+	min-width: 0;
+	max-width: none;
+	min-height: 0;
+	max-height: none;
 	i.icon:before {
 		font-size: 20px;
 		line-height: 30px;
+	}
+}
+
+//category chains
+.cat-chain {
+	&.item {border-color: #BEBEBE;}
+	.lighter-nh {
+		color: #7e7e7e;
+		i {
+			margin-left: 2px;
+			margin-right: 2px;
+		}
+		.darker {
+			color: #515151;
+		}
+	}
+	.highlight {
+		display: block;
+		font-size: 20px;
+		line-height: 27px;
+		color: #2F2F2F;
+		margin-top: 8px;
+		/* color: @brand-primary; */
+		font-weight: bold;
 	}
 }
