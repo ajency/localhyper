@@ -1,14 +1,18 @@
 angular.module 'LocalHyper.categories'
 
 
-.controller 'CategoryChainsCtrl', ['$scope', 'App', 'CategoriesAPI'
-	, ($scope, App, CategoriesAPI)->
+.controller 'CategoryChainsCtrl', ['$scope', 'App', 'CategoriesAPI', 'Storage'
+	, ($scope, App, CategoriesAPI, Storage)->
 
 		$scope.view = 
 			categoryChains : []
 
 			setCategoryChains : ->
-				@categoryChains = CategoriesAPI.categoryChains('get')
+				Storage.categoryChains 'get'
+				.then (chains) =>
+					if !_.isNull chains
+						@categoryChains = chains
+						CategoriesAPI.categoryChains 'set', chains
 
 			getBrands : (brands)->
 				brandNames = _.pluck brands, 'name'
@@ -20,6 +24,7 @@ angular.module 'LocalHyper.categories'
 					chains.subCategory.id is subCategoryId
 				@categoryChains.splice spliceIndex, 1
 				CategoriesAPI.categoryChains 'set', @categoryChains
+				Storage.categoryChains 'set', @categoryChains
 ]
 
 

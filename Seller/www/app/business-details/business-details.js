@@ -50,30 +50,19 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
           return latLng;
         },
         getCurrent: function() {
-          return Storage.bussinessDetails('get', 'null').then((function(_this) {
-            return function(value) {
-              var latLng, loc;
-              if (!_.isNull(value)) {
-                location.lat = value.latitude;
-                location.long = value.longitude;
-                loc = location;
-                latLng = _this.setMapCenter(loc);
-                _this.map.setZoom(15);
-                return _this.addMarker(latLng);
+          return GPS.isLocationEnabled().then((function(_this) {
+            return function(enabled) {
+              if (!enabled) {
+                return _this.showAlert();
               } else {
-                return GPS.isLocationEnabled().then(function(enabled) {
-                  if (!enabled) {
-                    return _this.showAlert();
-                  } else {
-                    CToast.show('Getting current location');
-                    return GPS.getCurrentLocation().then(function(loc) {
-                      latLng = _this.setMapCenter(loc);
-                      _this.map.setZoom(15);
-                      return _this.addMarker(latLng);
-                    }, function(error) {
-                      return CToast.show('Error locating your position');
-                    });
-                  }
+                CToast.show('Getting current location');
+                return GPS.getCurrentLocation().then(function(loc) {
+                  var latLng;
+                  latLng = _this.setMapCenter(loc);
+                  _this.map.setZoom(15);
+                  return _this.addMarker(latLng);
+                }, function(error) {
+                  return CToast.show('Error locating your position');
                 });
               }
             };
@@ -127,7 +116,9 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
               _this.confirmedAddress = value.confirmedAddress;
               _this.delivery.radius = value.deliveryRadius;
               _this.latitude = value.latitude;
-              return _this.longitude = value.longitude;
+              _this.longitude = value.longitude;
+              _this.location.latLng = new google.maps.LatLng(value.latitude, value.longitude);
+              return _this.location.address = value.address;
             }
           };
         })(this));
@@ -160,6 +151,19 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
               };
               _this.location.setMapCenter(loc);
               return _this.location.getCurrent();
+            };
+          })(this), 200);
+        } else {
+          return $timeout((function(_this) {
+            return function() {
+              var latLng, loc;
+              loc = {
+                lat: _this.latitude,
+                long: _this.longitude
+              };
+              latLng = _this.location.setMapCenter(loc);
+              _this.location.map.setZoom(15);
+              return _this.location.addMarker(latLng);
             };
           })(this), 200);
         }

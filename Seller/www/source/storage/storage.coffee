@@ -18,6 +18,18 @@ angular.module 'LocalHyper.storage', []
 				localforage.setItem 'business_details', params
 			when 'get'
 				localforage.getItem 'business_details'
+			when 'remove'
+				localforage.removeItem 'business_details'
+
+
+	Storage.categoryChains = (action, params)->
+		switch action
+			when 'set'
+				localforage.setItem 'category_chains', params
+			when 'get'
+				localforage.getItem 'category_chains'
+			when 'remove'
+				localforage.removeItem 'category_chains'
 
 	Storage
 ]

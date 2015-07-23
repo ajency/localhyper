@@ -81,6 +81,8 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
+					Storage.bussinessDetails('remove')
+					Storage.categoryChains('remove')
 					App.navigate 'new-requests', {}, {animate: true, back: false}
 				, (error)=>
 					@onError error, 'register'

@@ -1,5 +1,5 @@
 angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
-  '$scope', 'BrandsAPI', '$stateParams', 'SubCategory', 'CToast', 'CategoriesAPI', 'App', 'CDialog', function($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog) {
+  '$scope', 'BrandsAPI', '$stateParams', 'SubCategory', 'CToast', 'CategoriesAPI', 'App', 'CDialog', 'Storage', function($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog, Storage) {
     $scope.view = {
       title: SubCategory.name,
       brands: [],
@@ -119,16 +119,20 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
                 }
               });
             } else {
-              CategoriesAPI.categoryChains('set', _this.categoryChains);
               return _this.goBack();
             }
           };
         })(this));
       },
       goBack: function() {
-        var count;
-        count = App.previousState === 'categories' ? -2 : -3;
-        return App.goBack(count);
+        CategoriesAPI.categoryChains('set', this.categoryChains);
+        return Storage.categoryChains('set', this.categoryChains).then((function(_this) {
+          return function() {
+            var count;
+            count = App.previousState === 'categories' ? -2 : -3;
+            return App.goBack(count);
+          };
+        })(this));
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function() {

@@ -99,7 +99,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
         phone: user.phone,
         displayName: user.name,
         businessName: user.businessName,
-        addressGeoPoint: user.addressGeoPoint,
+        addressGeoPoint: addressGeoPoint,
         address: address,
         city: address.city,
         area: address.city,
