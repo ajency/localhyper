@@ -1,9 +1,15 @@
 <ion-view
-	view-title="Category Chains"
+	view-title="Add Categories"
 	ng-init="view.setCategoryChains()"
 	class="chain">
 
 	<ion-nav-buttons side="right">
+		<button
+			class="button button-outline button-assertive icon-btn"
+			ng-click="view.showDelete = !view.showDelete;">
+			<i class="icon ion-trash-a"></i>
+		</button>
+
 		<button
 			class="button button-outline button-assertive icon-btn"
 			ng-click="App.navigate('categories')">
@@ -17,20 +23,27 @@
 
 	<ion-content class="has-subheader">
 
-		<ion-list>
+		<ion-list show-delete="view.showDelete">
 
 			<ion-item
 				class="item-text-wrap item-icon-right cat-chain"
-				ng-repeat="chains in view.categoryChains">
+				ng-repeat="chains in view.categoryChains track by $index">
 
+				<ion-delete-button 
+					class="ion-trash-a"
+					ng-click="view.removeItemFromChains(chains.subCategory.id)">
+				</ion-delete-button>
 
-				<i
+				<!-- <i
 					class="icon "
 					ng-click="view.removeItemFromChains(chains.subCategory.id)">
 					<button class="button button-outline button-dark icon-btn ion-close-round"></button>
-				</i>
+				</i> -->
 
-				<div class="lighter-nh">{{chains.category.name}} <i class="ion-ios-arrow-forward"></i> <span class="darker">{{chains.subCategory.name}}</span> <!-- <i class="ion-ios-arrow-forward"></i> --></div>
+				<div class="lighter-nh">
+					{{chains.category.name}} <i class="ion-ios-arrow-forward"></i> 
+					<span class="darker">{{chains.subCategory.name}}</span>
+				</div>
 
 				<div class="highlight">
 					{{view.getBrands(chains.brands)}}
@@ -41,7 +54,10 @@
 
 		</br>
 
-		<h5 class="subdued">There should always be atleast one category chain selected</h5>
+		<h5 class="subdued" ng-if="view.categoryChains.length == 0;">
+			Choose the categories and brands you deal with. 
+			You shall receive requests based on the categories you select.
+		</h5>
 
 	</ion-content>
 
@@ -53,4 +69,5 @@
 			Next
 		</button>
 	</ion-footer-bar>
+
 </ion-view>

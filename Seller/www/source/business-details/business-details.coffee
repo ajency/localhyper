@@ -190,6 +190,7 @@ angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
 								defer.resolve details
 							.finally ->
 								CSpinner.hide()
+							
 							defer.promise
 ]
 

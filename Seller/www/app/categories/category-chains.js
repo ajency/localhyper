@@ -1,6 +1,7 @@
 angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
   '$scope', 'App', 'CategoriesAPI', 'Storage', function($scope, App, CategoriesAPI, Storage) {
     return $scope.view = {
+      showDelete: false,
       categoryChains: [],
       setCategoryChains: function() {
         return Storage.categoryChains('get').then((function(_this) {
@@ -19,7 +20,7 @@ angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
       },
       removeItemFromChains: function(subCategoryId) {
         var spliceIndex;
-        this.setCategoryChains();
+        this.categoryChains = CategoriesAPI.categoryChains('get');
         spliceIndex = _.findIndex(this.categoryChains, function(chains) {
           return chains.subCategory.id === subCategoryId;
         });
