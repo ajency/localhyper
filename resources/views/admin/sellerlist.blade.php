@@ -13,15 +13,32 @@
           <thead>
             <tr>
               <th>Seller Name</th>
-              <th>Seller Registered Date</th>
-              
+              <th>Area</th>
+              <th>Category</th>
+              <th>Avg Response Time</th>
+              <th>Response Ratio</th>
+              <th>No. of Successfull Offers</th>
+              <th>Avg Ratings</th>
+              <th>Balance Credits</th>
+              <th>Registered Date</th>
+              <th>Last Login</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
            @foreach($sellers as $seller)
               <tr>
                 <td>{{ $seller['name'] }}</td>
+                <td>{{ $seller['area'] }}</td>
+                <td>Electronics, Laptops</td>
+                <td>10 Hrs</td>
+                <td>15/30</td>
+                <td>4</td>
+                <td>3</td>
+                <td>345</td>
                 <td>{{ $seller['createdAt'] }}</td>
+                <td></td>
+                <td>Suspended</td>  
               </tr>
            @endforeach
           </tbody>

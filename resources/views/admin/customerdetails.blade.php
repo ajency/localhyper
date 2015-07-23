@@ -56,26 +56,18 @@
             </tr>
           </thead>
           <tbody>
+              @foreach($requests as $request)
               <tr>
-                <td>Nexus</td>
-                <td>Mobile</td>
-                <td>Rs. 10000</td>
-                <td>Rs. 8000</td>
-                 <td>Rs. 6000</td>
-                <td>Rs. 2000</td>
-                <td>5%</td>
-                <td>Closed</td>
+                <td>{{ $request['productName'] }}</td>
+                <td>{{ $request['category'] }}</td>
+                <td>{{ $request['mrp'] }}</td>
+                <td> </td>
+                 <td> </td>
+                <td> </td>
+                <td> </td>
+                <td>{{ $request['status'] }}</td>
                </tr>
-               <tr>
-                <td>Nexus</td>
-                <td>Mobile</td>
-                <td>Rs. 10000</td>
-                <td>Rs. 8000</td>
-                <td>Rs. 6000</td>
-                <td>Rs. 2000</td>
-                <td>5%</td>
-                <td>Closed</td>
-               </tr>
+               @endforeach
           </tbody>
          </table>
 </div>

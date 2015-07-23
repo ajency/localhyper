@@ -26,6 +26,7 @@ class SellerController extends Controller
  
              $sellerList[]= ['id' => $seller->getObjectId(),
                               'name' => $seller->get("displayName"),
+                              'area' => $seller->get("area"),
                               'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
                               ];
         }

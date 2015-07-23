@@ -48,23 +48,7 @@ class CustomerController extends Controller
                     $deliverStatusCount = $deliverStatusCount+1;
                 
             }
-            
-            /*$requestExpired = new ParseQuery("Request");
-            $requestExpired->greaterThan("createdAt", date('Y-m-d H:i:s'));
-            $requestExpiredCount = $requestExpired->count();
-             
-            
-            $requestCancelled = new ParseQuery("Request");
-            $requestCancelled->equalTo("status", 'cancelled');
-            $requestCancelledCount = $requestCancelled->count();
-            
-            $requestSuccessfull = new ParseQuery("Request");
-            $requestSuccessfull->equalTo("status", 'successfull');
-            $requestSuccessfullCount = $requestSuccessfull->count();
-            
-            $deliverStatus = new ParseQuery("Request");
-            $deliverStatus->equalTo("deliverStatus", 'failed');
-            $deliverStatusCount = $deliverStatus->count();*/
+ 
             
              $customerList[]= ['id' => $custId,
                               'name' => $customer->get("displayName"),
@@ -82,12 +66,13 @@ class CustomerController extends Controller
         return view('admin.customerlist')->with('customers',$customerList);
     }
     
-    public function date_diff($date2, $date1) { 
+    public function date_diff($date2, $date1) 
+    { 
       $start_ts = strtotime($date1);
       $end_ts = strtotime($date2);
       $diff = $end_ts - $start_ts;
       return round($diff / 86400); 
-} 
+    } 
 
     /**
      * Show the form for creating a new resource.
@@ -123,9 +108,32 @@ class CustomerController extends Controller
         $customer['name'] = $customerData->get("displayName"); 
         $customer['address'] = $customerData->get("address"); 
         $customer['area'] = $customerData->get("area"); 
-        $customer['city'] = $customerData->get("city"); 
+        $customer['city'] = $customerData->get("city");
         
-        return view('admin.customerdetails')->with('customer',$customer);
+        $request = new ParseQuery("Request");
+        $request->equalTo("customerId", $customerData);
+        $request->includeKey('product');
+        $request->includeKey('category');
+        $requestData = $request->find();
+        
+        $requests =$product =[];
+        foreach($requestData as $request)
+        {
+ 
+            $requests[] =[
+                            'productName'=>$request->get("product")->get("name"),
+                            'mrp'=>$request->get("product")->get("mrp"),
+                            'category'=>$request->get("category")->get("name"),
+                            'status'=>$request->get("status"),
+                         ] ;
+            
+ 
+
+        }
+ 
+ 
+        return view('admin.customerdetails')->with('customer',$customer)
+                                            ->with('requests',$requests);
     }
 
     /**
