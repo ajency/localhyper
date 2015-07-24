@@ -298,40 +298,40 @@ class ProductController extends Controller
 
     public function importProduct(Request $request)
     {
-        $data = [];
-        $product_file = $request->file('product_file')->getRealPath();
-        if ($request->hasFile('product_file'))
-        {
-            $inputFileType = \PHPExcel_IOFactory::identify($product_file);
-            $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
-            $objPHPExcel = $objReader->load($product_file);
-            $sheetNames = $objPHPExcel->getSheetNames();
+      $data = [];
+      $product_file = $request->file('product_file')->getRealPath();
+      if ($request->hasFile('product_file'))
+      {
+        $inputFileType = \PHPExcel_IOFactory::identify($product_file);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($product_file);
+        $sheetNames = $objPHPExcel->getSheetNames();
             //  Get worksheet dimensions
-          
-                $sheet = $objPHPExcel->getSheet(0);
-                $highestRow = $sheet->getHighestRow(); 
-                $highestColumn = $sheet->getHighestColumn();
 
-                $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true); 
-                $headingsArray = $headingsArray[1];
-                $headerData =  array_values($headingsArray); 
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow(); 
+        $highestColumn = $sheet->getHighestColumn();
 
-                $r = -1;
-                $namedDataArray = $config =array();
-                for ($row = 2; $row <= $highestRow; ++$row) {
-                    $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
+        $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true); 
+        $headingsArray = $headingsArray[1];
+        $headerData =  array_values($headingsArray); 
 
-                        ++$r;
-                        foreach($headingsArray as $columnKey => $columnHeading) {
+        $r = -1;
+        $namedDataArray = $config =array();
+        for ($row = 2; $row <= $highestRow; ++$row) {
+          $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
 
-                             if($columnHeading!='Config')
-                                $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
-                            else
-                                $config[]=$dataRow[$row][$columnKey];
+          ++$r;
+          foreach($headingsArray as $columnKey => $columnHeading) {
 
-                         }
-                }
-           
+           if($columnHeading!='Config')
+            $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+          else
+            $config[]=$dataRow[$row][$columnKey];
+
+        }
+      }
+
             /****
             *  (ProductID ProductName ModelNumber Image mrp ,popularity Brand BrandID Group) = 9
             *
@@ -344,26 +344,35 @@ class ProductController extends Controller
             $i=$countFixedData;
             while($i<$dataCount)
             {
-                $attributeIdKeys[] =($i + 1);
-                $i= $i+2;
+              $attributeIdKeys[] =($i + 1);
+              $i= $i+2;
             }
-     
+
             $products = [];
             $i=0;
-            foreach($namedDataArray as $data)
+
+            $productArr = [];
+            foreach($namedDataArray as $namedData)
             {
-                $indexedData = array_values($data); 
+
+
+              if(!(is_null(max( $namedData)))){
+
+                $indexedData = array_values($namedData); 
+
+                $data = $namedData;
+
                 $attributeIds = [];
                 foreach($attributeIdKeys as $key)
                 {
-                    $attributeName = $headerData[$key]; 
-                    $dataKey = explode("(",$attributeName);
+                  $attributeName = $headerData[$key]; 
+                  $dataKey = explode("(",$attributeName);
                     $dataattributeId = explode(")",$dataKey[1]);
                     $attributeId = $dataattributeId[0];// echo $attributeId; exit;
                     
                     $attributeIds[$attributeId] = $indexedData[$key];
                 }//dd($attributeIds);
-        
+
                 $products[$i]['objectId'] = $data['ProductID'];
                 $products[$i]['name'] = $data['ProductName'];
                 $products[$i]['model_number'] = $data['ModelNumber'];
@@ -372,19 +381,24 @@ class ProductController extends Controller
                 $products[$i]['mrp'] = $data['MRP'];
                 $products[$i]['brand'] = $data['BrandID'];
                 $products[$i]['popularity'] = $data['Popularity'];
-                $products[$i]['group'] = $data['Group'];
-                $i++;
-            }
-            
-            $productData['categoryId'] =$config[0];
-            $productData['products'] =$products;
-            
-            $this->parseProductImport($productData);
- 
-        }
-        return redirect("/admin/attribute/categoryconfiguration");
+                $products[$i]['group'] = $data['Group'];                
 
-    }
+              }
+
+
+
+              $i++;
+            }
+              
+              $productData['categoryId'] =$config[0];
+              $productData['products'] =$products;
+
+              $this->parseProductImport($productData);
+
+            }
+            return redirect("/admin/attribute/categoryconfiguration");
+
+          }
 
     public function getCategoryProducts($categoryId, $page, $displayLimit){
 
