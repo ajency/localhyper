@@ -82,8 +82,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             };
           })(this));
         },
-        resetFilters: function() {
-          this.attribute = 'brand';
+        clearFilters: function() {
           _.each(this.attrValues, function(attrs) {
             return _.each(attrs, function(val) {
               return val.selected = false;
@@ -94,6 +93,10 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             price: [],
             otherFilters: {}
           };
+        },
+        resetFilters: function() {
+          this.attribute = 'brand';
+          return this.clearFilters();
         },
         selectionExists: function() {
           var exists;
@@ -174,21 +177,21 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         return this.loadFiltersModal();
       },
       reset: function() {
-        this.products = [];
-        this.page = 0;
         this.footer = false;
-        this.canLoadMore = true;
-        this.refresh = false;
         this.sortBy = 'popularity';
         this.ascending = true;
         this.filter.resetFilters();
-        return this.onScrollComplete();
+        return this.reFetch(false);
       },
-      reFetch: function() {
+      reFetch: function(refresh) {
+        if (refresh == null) {
+          refresh = true;
+        }
+        this.refresh = refresh;
         this.page = 0;
-        this.refresh = true;
         this.products = [];
         this.canLoadMore = true;
+        this.gotAllProducts = false;
         return this.onScrollComplete();
       },
       showSortOptions: function() {

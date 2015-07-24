@@ -63,8 +63,7 @@ angular.module 'LocalHyper.products', []
 							value: value
 							name: s.humanize(filter.attributeName)
 
-				resetFilters : ->
-					@attribute = 'brand'
+				clearFilters : ->
 					_.each @attrValues, (attrs)->
 						_.each attrs, (val)-> val.selected = false
 
@@ -72,6 +71,10 @@ angular.module 'LocalHyper.products', []
 						brands:[]
 						price:[]
 						otherFilters: {}
+
+				resetFilters : ->
+					@attribute = 'brand'
+					@clearFilters()
 
 				selectionExists : ->
 					exists = false
@@ -131,21 +134,18 @@ angular.module 'LocalHyper.products', []
 				@loadFiltersModal()
 
 			reset : ->
-				@products = []
-				@page = 0
 				@footer = false
-				@canLoadMore = true
-				@refresh = false
 				@sortBy = 'popularity'
 				@ascending = true
 				@filter.resetFilters()
-				@onScrollComplete()
+				@reFetch false
 
-			reFetch : ->
+			reFetch : (refresh=true)->
+				@refresh = refresh
 				@page = 0
-				@refresh = true
 				@products = []
 				@canLoadMore = true
+				@gotAllProducts = false
 				@onScrollComplete()
 
 			showSortOptions : ->
