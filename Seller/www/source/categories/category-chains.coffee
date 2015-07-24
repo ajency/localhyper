@@ -5,6 +5,7 @@ angular.module 'LocalHyper.categories'
 	, ($scope, App, CategoriesAPI, Storage)->
 
 		$scope.view = 
+			showDelete: false
 			categoryChains : []
 
 			setCategoryChains : ->
@@ -19,12 +20,18 @@ angular.module 'LocalHyper.categories'
 				brandNames.join ', '
 
 			removeItemFromChains : (subCategoryId)->
-				@setCategoryChains()
+				@categoryChains = CategoriesAPI.categoryChains 'get'
 				spliceIndex = _.findIndex @categoryChains, (chains)->
 					chains.subCategory.id is subCategoryId
 				@categoryChains.splice spliceIndex, 1
+				
 				CategoriesAPI.categoryChains 'set', @categoryChains
 				Storage.categoryChains 'set', @categoryChains
+
+			onChainClick : (chains)->
+				CategoriesAPI.subCategories 'set', chains.category.children
+				App.navigate 'brands', categoryID: chains.subCategory.id
+
 ]
 
 

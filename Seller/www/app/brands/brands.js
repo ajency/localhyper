@@ -74,6 +74,10 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
             return _.each(this.brands, function(brand) {
               return brand.selected = _.contains(_brandIds, brand.objectId);
             });
+          } else {
+            return _.each(this.brands, function(brand) {
+              return brand.selected = false;
+            });
           }
         }
       },
@@ -129,7 +133,19 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
         return Storage.categoryChains('set', this.categoryChains).then((function(_this) {
           return function() {
             var count;
-            count = App.previousState === 'categories' ? -2 : -3;
+            switch (App.previousState) {
+              case 'categories':
+                count = -2;
+                break;
+              case 'sub-categories':
+                count = -3;
+                break;
+              case 'category-chains':
+                count = -1;
+                break;
+              default:
+                count = 0;
+            }
             return App.goBack(count);
           };
         })(this));

@@ -59,31 +59,33 @@ public class GCMIntentService extends GCMBaseIntentService {
 	@Override
 	protected void onMessage(Context context, Intent intent) {
 		Log.d(TAG, "onMessage - context: " + context);
-
-		// Extract the payload from the message
+		
 		Bundle extras = intent.getExtras();
 		if (extras != null)
 		{
-			// if we are in the foreground, just surface the payload, else post it to the statusbar
-            if (PushPlugin.isInForeground()) {
-				extras.putBoolean("foreground", true);
-                PushPlugin.sendExtras(extras);
-			}
-			else {
-				extras.putBoolean("foreground", false);
-				PushPlugin.sendExtras(extras);
-            
-	            try {
-					JSONObject extrasJson = new JSONObject(extras.get("data").toString());
-					//Send a notification if there is a header and message
-		            if (extrasJson.getString("header") != null && extrasJson.getString("message") != null)
-		            	createNotification(context, extras, extrasJson);
-		            else
-		            	Log.d("PARSE PUSH", "Invalid Payload");
-				} 
-	            catch (JSONException e) {
-					Log.e("JSON NOTIFICATION ERROR", "onMessage");
+			try{
+	            if (PushPlugin.isInForeground()) {
+					extras.putBoolean("foreground", true);
 				}
+				else {
+					extras.putBoolean("foreground", false);
+		            try {
+						JSONObject extrasJson = new JSONObject(extras.get("data").toString());
+						//Send a notification if there is a header and message
+			            if (extrasJson.getString("header") != null && extrasJson.getString("message") != null)
+			            	createNotification(context, extras, extrasJson);
+			            else
+			            	Log.d("PARSE PUSH", "Invalid Payload");
+					} 
+		            catch (JSONException e) {
+						Log.e("JSON NOTIFICATION ERROR", "onMessage");
+					}
+				}
+	            
+	            PushPlugin.sendExtras(extras);
+			}
+			catch(Exception e){
+				Log.e("PushPlugin instance error", "onMessage");
 			}
         }
 	}
