@@ -1,5 +1,5 @@
 angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
-  '$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout', 'CToast', function($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast) {
+  '$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout', 'CToast', 'Storage', function($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast, Storage) {
     $scope.view = {
       display: 'noError',
       smsCode: '',
