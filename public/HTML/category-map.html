@@ -96,23 +96,23 @@
     </div>
    </div>
   <!-- END MINI-PROFILE -->
+    <p class="menu-title" onclick="location.href='sellers-list.html'">Category Configuration <span class="text-right"> <i class="fa fa-check text-success"></i><a href="javascript:;"></a></span></p>
+  <p class="menu-title" onclick="location.href='sellers-list.html'">List of Sellers <span class="pull-right"><a href="javascript:;"></a></span></p>
    
-   <!-- BEGIN SIDEBAR MENU -->	
-	<p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="fa fa-refresh"></i></a></span></p>
-    <ul>	
-      <li class="start active "> <a href="index.html"> <i class="fa fa-sitemap"></i> <span class="title">Category Map</span> <span class="selected"></span></a> </li>
-	   
-	  <li class=""> <a href="javascript:;"> <i class="fa fa fa-adjust"></i> <span class="title">Themes</span> <span class="arrow "></span> </a>
-        <ul class="sub-menu">
+    <!--<li class=""> <a href="javascript:;"> <i class="fa fa fa-adjust"></i> <span class="title">Themes</span> <span class="arrow "></span> </a>
+       <ul class="sub-menu">
           <li > <a href="#">Coporate </a> </li>
           <li > <a href="#">Simple</a> </li>
           <li > <a href="#">Elegant</a> </li>
         </ul>
-	  </li>    
-	   
-    </ul>
-		
-	<div class="clearfix"></div>
+    </li>-->    
+     <p class="menu-title" onclick="location.href='all-offers-list.html'">List of Offers <span class="pull-right"><a href="javascript:;"></a></span></p>
+      <p class="menu-title" onclick="location.href='requests-list.html'">List of Requests <span class="pull-right"><a href="javascript:;"></a></span></p>
+      <p class="menu-title" onclick="location.href='customers-list.html'">List of Customers &nbsp;<span class="pull-right"> <a href="javascript:;"> </a></span></p>
+       <p class="menu-title" onclick="location.href='ratings-list.html'">List of Ratings <span class="pull-right"><a href="javascript:;"></a></span></p>
+    
+  <div class="clearfix"></div>
+    <!-- END SIDEBAR MENU --> 
     <!-- END SIDEBAR MENU --> 
   </div>
   </div>
@@ -132,53 +132,118 @@
     <div class="clearfix"></div>
     <div class="content">  
 		<div class="page-title m-l-5">	
-			<h3 class="inline"><span class="semi-bold">Category</span> Map</h3> <i class="fa fa-sitemap"></i> 	
+			<h3 class="inline"><span class="semi-bold">Category</span> Configuration</h3> <i class="fa fa-sitemap"></i> 	
 		</div>
+    <div class="alert alert-info">
+<button class="close" data-dismiss="alert"></button>
+Info:&nbsp;Category Configuration will allow you to import/export data for product catalogue. </div>
 		<div class="grid simple vertical purple">
-			
+			<h4 class="grid-title"><span class="semi-bold">Follow the steps below to proceed</span></h4>
 			<div class="grid-body">
-				<div class="row">
-					<div class="col-sm-4">
-						<div class="form-group">
-							<label class="form-label">Department</label>
-							<select id="Department" class="select2-container select2 form-control select2-container-active">
+   <div class="panel-group" id="accordion" data-toggle="collapse">
+<div class="panel panel-default">
+<div class="panel-heading collapsed">
+<h4 class="panel-title">
+<a class="" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+<span class="semi-bold">Step 1 :</span> Choose your categories and departments
+</a>
+</h4>
+</div>
+<div id="collapseOne" class="panel-collapse collapse in" style="height: auto;">
+<div class="panel-body">
+  <h4>Choose your <span class="semi-bold">Categories</span> and <span class="semi-bold">departments</span></h4>
+  <div class="row">
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="form-label">Department</label>
+              <select id="Department" class="select2-container select2 form-control select2-container-active">
                                                     <option value="">Select Department</option>
                                                     <option >Home Appliances</option>
                                                     <option >Kitchen Appliances</option>
                             </select>
-						</div>
-					</div>
-					<div class="col-sm-4">
-						<div class="form-group">
-							<label class="form-label">Categories</label>
-							<select id="categories" class="select2-container select2 form-control select2-container-active">
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group">
+              <label class="form-label">Categories</label>
+              <select id="categories" class="select2-container select2 form-control select2-container-active">
                                                     <option value="">Select Category</option>
                                                     <option >Home Appliances</option>
                                                     <option >Kitchen Appliances</option>
                                                 </select>
-						</div>
-					</div>
-					<div class="col-sm-4">
-							<button type="button" class="btn btn-info btn-cons m-t-25"><i class="fa fa-send"></i> Go</button>
-					</div>
-				</div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+              <button type="button" class="btn btn-info btn-cons m-t-25"><i class="fa fa-send"></i> Go</button>
+          </div>
+        </div>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading collapsed">
+<h4 class="panel-title">
+<a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+<span class="semi-bold">Step 2 :</span> Configure your brands, attributes and attribute values
+</a>
+</h4>
+</div>
+<div id="collapseTwo" class="panel-collapse collapse" style="height: 0px;">
+<div class="panel-body">
+    <h4>Configure your <span class="semi-bold">brands, attributes</span> and <span class="semi-bold">attribute values</span></h4>
+        <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Export</span></h4>
+        
+          <button type="button" class="btn btn-default btn-cons btn-small"><i class="fa fa-download"></i> Download Sheet</button>
+        
+        <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Import</span></h4>
+        <div class="row">
+          <div class="col-sm-4">
+        <div class="form-group">
+        <input type="file" class="form-control" style="line-height: 19px;"/>
+          
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <button type="button" class="btn btn-default "><i class="fa fa-upload"></i> Upload</button>
+      </div>
+      </div>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading collapsed">
+<h4 class="panel-title">
+<a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+<span class="semi-bold">Step 3 :</span> Configure your products
+</a>
+</h4>
+</div>
+<div id="collapseThree" class="panel-collapse collapse" style="height: 0px;">
+<div class="panel-body">
+    <h4>Configure your <span class="semi-bold">Products</span></h4>
+        <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Export</span></h4>
+        
+          <button type="button" class="btn btn-default btn-cons btn-small"><i class="fa fa-download"></i> Download Sheet</button>
+        
+        <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Import</span></h4>
+        <div class="row">
+          <div class="col-sm-4">
+        <div class="form-group">
+        <input type="file" class="form-control" style="line-height: 19px;"/>
+          
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <button type="button" class="btn btn-default "><i class="fa fa-upload"></i> Upload</button>
+      </div>
+      </div>
+</div>
+</div>
+</div>
+</div>
+
 			
-				<h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Export</span></h4>
-				
-					<button type="button" class="btn btn-default btn-cons btn-small"><i class="fa fa-download"></i> Download Sheet</button>
-				
-				<h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Import</span></h4>
-				<div class="row">
-					<div class="col-sm-4">
-				<div class="form-group">
-				<input type="file" class="form-control" style="line-height: 19px;"/>
-					
-				</div>
-			</div>
-			<div class="col-sm-4">
-				<button type="button" class="btn btn-default "><i class="fa fa-upload"></i> Import</button>
-			</div>
-			</div>
+			
 			</div>
 		</div>
     </div>
