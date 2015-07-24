@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 <meta charset="utf-8" />
-<title>Webarch - Responsive Admin Dashboard</title>
+<title>LocalHyper</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <meta content="" name="description" />
 <meta content="" name="author" />
@@ -27,8 +27,11 @@
 <link href="{{ asset('css/custom-icon-set.css') }}" rel="stylesheet" type="text/css"/>
 <script>
     var BASEURL = '{{ url() }}';
+    var JAVASCRIPT_KEY = '{{ config("constants.parse_sdk.javascript_key") }}';
+    var APPLICATION_ID = '{{ config("constants.parse_sdk.app_id") }}';
 
 </script>
+<script src="{{ asset('plugins/jquery-1.8.3.min.js') }}" type="text/javascript"></script>     
 <!-- END CSS TEMPLATE -->
 
 </head>
@@ -104,7 +107,8 @@
 	<p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="fa fa-refresh"></i></a></span></p>
     <ul>	
       <li class="start active "> <a href="{{ url('admin/attribute/categoryconfiguration') }}"> <i class="fa fa-sitemap"></i> <span class="title">Category Configuration</span> <span class="selected"></span></a> </li>
-
+      <li class="start active "> <a href="{{ url('admin/customer') }}"> <i class="fa fa-sitemap"></i> <span class="title">Customers</span> <span class="selected"></span></a> </li>
+      <li class="start active "> <a href="{{ url('admin/seller') }}"> <i class="fa fa-sitemap"></i> <span class="title">Sellers</span> <span class="selected"></span></a> </li>    
     </ul>
 		
 	<div class="clearfix"></div>
@@ -131,19 +135,20 @@
  </div>     
  </div>    
  
-
-<script src="{{ asset('plugins/jquery-1.8.3.min.js') }}" type="text/javascript"></script> 
+<script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.4.2.min.js"></script> 
 <script src="{{ asset('plugins/boostrapv3/js/bootstrap.min.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/breakpoints.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/jquery-unveil/jquery.unveil.min.js') }}" type="text/javascript"></script> 
-<script src="{{ asset('plugins/jquery-scrollbar/jquery.scrollbar.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('plugins/jquery-scrollbar/jquery.scrollbar.min.js') }}" type="text/javascript"></script> 
+<script src="{{ asset('plugins/bootstrap-toggle/js/bootstrap-toggle.min.js') }}" type="text/javascript"></script>
 <!-- END CORE JS FRAMEWORK --> 
 <!-- BEGIN PAGE LEVEL JS --> 
  <script src="{{ asset('plugins/select2/select2.min.js') }}" type="text/javascript"></script>
 
 <script src="{{ asset('plugins/pace/pace.min.js') }}" type="text/javascript"></script>  
 <script src="{{ asset('plugins/jquery-numberAnimate/jquery.animateNumbers.js') }}" type="text/javascript"></script>
-<!-- END PAGE LEVEL PLUGINS --> 	
+<!-- END PAGE LEVEL PLUGINS --> 
+<script src="{{ asset('js/tabs_accordian.js') }}" type="text/javascript"></script>    
 
 <script src="{{ asset('bower_components/underscore/underscore-min.js' ) }}" type="text/javascript"></script>    
     
@@ -152,14 +157,11 @@
 <script src="{{ asset('js/core.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('js/chat.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
-<!-- END CORE TEMPLATE JS --> 
 
+<!-- END CORE TEMPLATE JS --> 
+ 
   <script type="text/javascript">
-            $("#unit_types").val(["Apartments"]).select2();
-            $("#Department").select2();
-            $("#categories").select2();
-           
-             $(".tags").tagsinput("");
-        </script>   
+  Parse.initialize(window.APPLICATION_ID, window.JAVASCRIPT_KEY);
+  </script>  
 </body>
 </html>

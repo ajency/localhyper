@@ -44,8 +44,8 @@
     <body>
         <div class="container">
             <div class="content">
-                <div class="title">Laravel 5</div>
-                <div class="quote">{{ Inspiring::quote() }}</div>
+                <div class="title">LocalHyper</div>
+                <div class="quote"><a href="auth/login">LOGIN</a></div>
             </div>
         </div>
     </body>

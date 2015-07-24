@@ -102,48 +102,11 @@ class AttributeController extends Controller
         
         /***
         *
-        * SHEET 1 ATTRIBUTE 
+        * SHEET 1  ATTRIUTEVALUES
         *
         */
-        $attributeSheet = $excel->getSheet(0);
-        $attributeSheet->setTitle('Attributes');
-        $attributes = $this->getCategoryAttributes($catId);
-        $categoryName = $attributes['categoryName'];
-        
-        
-        $headers []= 'Config' ;
-        $headers []= 'objectId' ;
-        $headers []= 'name' ;
-        $headers []= 'group' ;
-        $headers []= 'unit' ;
-        $headers []= 'is_filterable';
-        $headers []= 'is_primary';
- 
-        $attributeSheet->fromArray($headers, ' ', 'A1');
-        $attributeSheet->fromArray([$catId], ' ', 'A2');
-
-        $attributeSheet->getColumnDimension('A')->setVisible(false);
-        $attributeSheet->getColumnDimension('B')->setVisible(false);
- 
-        $attributeSheet->fromArray($attributes['attributes'], ' ','B2');
- 
-        $lastColumn = $attributeSheet->getHighestColumn();
-        $header = 'a1:'.$lastColumn.'1';
-        $attributeSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
-        $style = array(
-            'font' => array('bold' => true,),
-            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
-            );
-        $attributeSheet->getStyle($header)->applyFromArray($style);
-        $attributeSheet->protectCells($header, 'PHP');
-        
-        
-        
-        /***
-        *
-        * SHEET 2 ATTRIUTEVALUES 
-        *
-        */
+        $attributeValueSheet = $excel->getSheet(0);
+        $attributeValueSheet->setTitle('AttributeValues');
         
         $categoryData = [
           'categoryId' => $catId,
@@ -151,28 +114,25 @@ class AttributeController extends Controller
           'secondaryAttributes' => true,
           ];
         $attributeValueData = $this->getCategoryAttributeValues($categoryData);//dd($attributeValueData);
-        $headers = $data = $attributeValues= $headerFlag = $attributeValueIndexHeader= [];
-
-        foreach($attributeValueData['result'] as $attributeValue)
+        $headers = $data = $attributeValues= $headerFlag =[];
+        
+        if(isset($attributeValueData['result']))
         {
-            $attributeId =$attributeValue['attributeId'];
-            if(!isset($headerFlag[$attributeId]))
-            {   
-                $headers[]=$attributeValue['attributeName']."(".$attributeId.")";
-                $headers[]=$attributeValue['attributeName'].' Id';
- 
-                $attributeValueIndexHeader[]=$attributeValue['attributeName'];
-                $attributeValueIndexHeader[]=$attributeValue['attributeName'].' Id';    
-                    
-                $headerFlag[$attributeId]=$attributeId;
-            }
+            foreach($attributeValueData['result'] as $attributeValue)
+            {
+                $attributeId =$attributeValue['attributeId'];
+                if(!isset($headerFlag[$attributeId]))
+                {   
+                    $headers[]=$attributeValue['attributeName']."(".$attributeId.")";
+                    $headers[]=$attributeValue['attributeName'].' Id';            
+                    $headerFlag[$attributeId]=$attributeId;
+                }
 
-            $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
+                $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
+            }
         }
        // dd($attributeValues);
-        $attributeValueSheet = new \PHPExcel_Worksheet($excel, 'AttributeValues');
-        $excel->addSheet($attributeValueSheet, 0);
-        $attributeValueSheet->setTitle('AttributeValues');
+       
  
         $attributeValueSheet->fromArray($headers, ' ', 'A1');
  
@@ -201,19 +161,60 @@ class AttributeController extends Controller
         $attributeValueSheet->protectCells($header, 'PHP');
         
         
+        
+        /***
+        *
+        * SHEET 2 ATTRIBUTE 
+        *
+        */
+        $attributeSheet = new \PHPExcel_Worksheet($excel, 'Attributes');
+        $excel->addSheet($attributeSheet, 0);
+        $attributeSheet->setTitle('Attributes');
+ 
+        $attributes = $this->getCategoryAttributes($catId);
+        $categoryName = $attributes['categoryName'];
+        
+        $headers =[];
+        $headers []= 'Config' ;
+        $headers []= 'objectId' ;
+        $headers []= 'name' ;
+        $headers []= 'group' ;
+        $headers []= 'unit' ;
+        $headers []= 'is_filterable';
+        $headers []= 'is_primary';
+ 
+        $attributeSheet->fromArray($headers, ' ', 'A1');
+        $attributeSheet->fromArray([$catId], ' ', 'A2');
+
+        $attributeSheet->getColumnDimension('A')->setVisible(false);
+        $attributeSheet->getColumnDimension('B')->setVisible(false);
+ 
+        $attributeSheet->fromArray($attributes['attributes'], ' ','B2');
+ 
+        $lastColumn = $attributeSheet->getHighestColumn();
+        $header = 'a1:'.$lastColumn.'1';
+        $attributeSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
+        $style = array(
+            'font' => array('bold' => true,),
+            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
+            );
+        $attributeSheet->getStyle($header)->applyFromArray($style);
+        $attributeSheet->protectCells($header, 'PHP');
+        
+        
+        
+        
         /***
         *
         * SHEET 3 BRANDS 
         *
         */
-        $brandIndexData =[];
         $brands = $this->getCategoryBrands($catId);
         foreach($brands as $key=> $brand)
         {
             $brand["image"] = $brand["image"]["src"];
             $brands[$key] = $brand;
-            $brandIndexData[] = ['name'=>$brand["name"],'id'=>$brand["id"]]; 
-            
+    
         }
 
         $headers = [];
@@ -245,53 +246,7 @@ class AttributeController extends Controller
         $brandSheet->getStyle($header)->applyFromArray($style);
         $brandSheet->protectCells($header, 'PHP');
         
-        /***
-        *
-        * SHEET 4 INDEX (Brands,Attribute values)
-        *
-        */
-        
-        $indexSheet = new \PHPExcel_Worksheet($excel, 'Index');
-        $excel->addSheet($indexSheet, 0);
-        $indexSheet->setTitle('Index');
- 
-        $headers = [];
-        $headers []= 'Config' ;
-        $headers []= 'Brand' ;
-        $headers []= 'Brand id' ;
-        $headers = array_merge($headers,$attributeValueIndexHeader);   //merge brand and attribute headers
-        
-        $indexSheet->fromArray($headers, ' ', 'A1');
-        $indexSheet->fromArray([$catId], ' ', 'A2');
-        $indexSheet->getColumnDimension('A')->setVisible(false);
-        $indexSheet->getColumnDimension('C')->setVisible(false);
-        $indexSheet->fromArray($brandIndexData, ' ','B2');
-        
-        $column = 'D';
-        foreach($attributeValues as $attributeValue)
-        {
-            $indexSheet->fromArray($attributeValue, ' ', $column.'2');
-            
-            //hide column
-            $hidecolumn = $this->getNextCell($column,'1');
-            $indexSheet->getColumnDimension($hidecolumn)->setVisible(false);
-            
-            $column = $this->getNextCell($column,'2');
-            
-    
-        }
- 
-        $lastColumn = $indexSheet->getHighestColumn();
-        $header = 'a1:'.$lastColumn.'1';
-        $indexSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
-        $style = array(
-            'font' => array('bold' => true,),
-            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
-            );
-        $indexSheet->getStyle($header)->applyFromArray($style);
-        $indexSheet->protectCells($header, 'PHP');
-        
-        
+               
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="'.$categoryName.'-export.xls"');
         header('Cache-Control: max-age=0');
@@ -326,12 +281,12 @@ class AttributeController extends Controller
                 elseif($sheetTitle=='Attributes')
                     $this->importAttributes($sheet);
                 elseif($sheetTitle=='AttributeValues')
-                        $this->importAttributeValues($sheet);
+                    $this->importAttributeValues($sheet);
             }
  
             
         }
-        return redirect("/admin/attribute/bulkimport");
+        return redirect("/admin/attribute/categoryconfiguration");
         
        
         
@@ -438,26 +393,39 @@ class AttributeController extends Controller
                  }
         }
         
-        $filterableAttribute= $nonFilterableAttribute= [];
+        $filterableAttribute= $nonFilterableAttribute= $primaryAttributes= [];
         foreach($namedDataArray as $attributeData)
         {  
-            $is_filterable = $attributeData['is_filterable']; 
+            $is_filterable = $attributeData['is_filterable'];
+            $is_primary = $attributeData['is_primary'];
             unset($attributeData['is_filterable']);
+            unset($attributeData['is_primary']);
+            
+            if($is_primary == 'yes')
+            {
+                $primaryAttributes= $attributeData;
+                continue;
+            }
+            
             if($is_filterable == 'yes')
               $filterableAttribute[]= $attributeData;
             else
                $nonFilterableAttribute[]= $attributeData; 
         }
-
+        //filterable Attributes
         $filterableData =['attributes' => $filterableAttribute,
                          'categoryId' => $config[0],
                           'isFilterable' => true,
+                          'primaryAttributeObj'=>$primaryAttributes,
                         ]; 
-        $this->parseAttributeImport($filterableData);
 
+        $this->parseAttributeImport($filterableData);
+        
+         //Non filterable Attributes
         $nonFilterableAttribute =['attributes' => $nonFilterableAttribute,
                          'categoryId' => $config[0],
-                          'isFilterable' => false,
+                         'isFilterable' => false,
+                         'primaryAttributeObj'=>$primaryAttributes,          
                         ]; 
         
         $this->parseAttributeImport($nonFilterableAttribute);
@@ -490,7 +458,28 @@ class AttributeController extends Controller
 
     public function parseAttributeImport($data){
 
-   
+      // $data = array (
+      //   'attributes' => 
+      //   array (
+      //     0 => 
+      //     array (
+      //       'objectId' => '',
+      //       'name' => 'new attributex',
+      //       'group' => 'general',
+      //       'unit' => '',
+      //       ),
+      //     ),
+      //   'categoryId' => 'vpEoQCuBoD',
+      //   'isFilterable' => true,
+      //   'primaryAttributeObj' => 
+      //   array (
+      //     'objectId' => '',
+      //     'name' => 'new attributey',
+      //     'group' => 'general',
+      //     'unit' => 'inches',
+      //     ),
+      //   );
+
         $functionName = "attributeImport";
 
         $result = AttributeController::makeParseCurlRequest($functionName,$data); 
@@ -514,6 +503,7 @@ class AttributeController extends Controller
       $categoryQuery->equalTo("objectId",$categoryId);
 
       $categoryQuery->includeKey("filterable_attributes");
+      $categoryQuery->includeKey("filterable_attributes.filterAttribute");
       $categoryQuery->includeKey("secondary_attributes");
       $categoryQuery->includeKey("primary_attributes");
 
@@ -531,7 +521,12 @@ class AttributeController extends Controller
       }    
         
         
-      foreach ($filterable_attributes as $filterable_attribute) {
+      foreach ($filterable_attributes as $filter) {
+
+        if($filter==null)
+            continue;
+        $filterable_attribute = $filter->get("filterAttribute");
+        
         $attributes[] = array(
                 'id' =>$filterable_attribute->getObjectId(),
                 'name' => $filterable_attribute->get('name'),  
@@ -544,6 +539,9 @@ class AttributeController extends Controller
       }
  
       foreach ($secondary_attributes as $secondary_attribute) {
+          if($secondary_attribute==null)
+              continue;
+          
         $attributes[] = array(
                 'id' =>$secondary_attribute->getObjectId(),
                 'name' => $secondary_attribute->get('name'),
@@ -592,74 +590,35 @@ class AttributeController extends Controller
       $supported_brands = $categoryObject->get("supported_brands");
 
       $brands = array();
-      
-      foreach ($supported_brands as $supported_brand) {
-        $brands[] = array(
-                'id' =>$supported_brand->getObjectId(),
-                'name' => $supported_brand->get('name'),
-                'image' => $supported_brand->get('image'),
-                );
+    
+        if(!empty($supported_brands))    
+        {
+          foreach ($supported_brands as $supported_brand) {
+            $brands[] = array(
+                    'id' =>$supported_brand->getObjectId(),
+                    'name' => $supported_brand->get('name'),
+                    'image' => $supported_brand->get('image'),
+                    );
 
-      }
+          }
+        }
 
       return $brands;
 
 
     } 
     
-    // public function getCategoryAttributeValues($categoryId){
-
-    //   $data =[];
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
-    //                             'ATTRIBUTE_NAME'=> 'Type',
-    //                             'ATTRIBUTE_VALUE'=> 'Single Door',  
-    //                             'ATTRIBUTE_VALUE_ID' => '1'];
-                                
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '1',
-    //                             'ATTRIBUTE_NAME'=> 'Type',
-    //                             'ATTRIBUTE_VALUE'=> 'Double Door',  
-    //                             'ATTRIBUTE_VALUE_ID' => '2'];
-        
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-    //                             'ATTRIBUTE_NAME'=> 'Color',
-    //                             'ATTRIBUTE_VALUE'=> 'Red',  
-    //                             'ATTRIBUTE_VALUE_ID' => '1'];
-                                
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-    //                             'ATTRIBUTE_NAME'=> 'Color',
-    //                             'ATTRIBUTE_VALUE'=> 'Gray',  
-    //                             'ATTRIBUTE_VALUE_ID' => '2'];
-        
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-    //                             'ATTRIBUTE_NAME'=> 'Color',
-    //                             'ATTRIBUTE_VALUE'=> 'Black',  
-    //                             'ATTRIBUTE_VALUE_ID' => '3'];
-                                
-    //     $data ['ATTRIBUTES'][]=['ATTRIBUTE_ID' => '2',
-    //                             'ATTRIBUTE_NAME'=> 'Color',
-    //                             'ATTRIBUTE_VALUE'=> 'Blue',  
-    //                             'ATTRIBUTE_VALUE_ID' => '4'];
-        
-
-    //     $data ['BRAND'][] =['NAME' =>'Samsung','ID'  => '1'];
-    //     $data ['BRAND'][] =['NAME' =>'Lg','ID'  => '2'];
-        
-    //     $data ['TEST'][] =['NAME' =>'test1','ID'  => '1'];
-    //     $data ['TEST'][] =['NAME' =>'test2','ID'  => '2'];
-   
-    //     return $data;
-
-    // } 
 
     public static function makeParseCurlRequest($functionName,$data,$parseFunctType="functions"){
       
       $app_id = config('constants.parse_sdk.app_id');
       $rest_api_key = config('constants.parse_sdk.rest_api_key');
+      $master_key = config('constants.parse_sdk.master_key');
       $base_url = "https://api.parse.com/1";
 
       $post_url = $base_url."/".$parseFunctType."/".$functionName;
-
-      $data_string = json_encode($data); 
+        
+      $data_string = json_encode($data); //dd($data_string);
 
       // -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
       // -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
@@ -669,7 +628,8 @@ class AttributeController extends Controller
 
       $header_array = array(                                                                          
         'X-Parse-Application-Id:' .$app_id ,                                                                                
-        'X-Parse-REST-API-Key:' .$rest_api_key ,                                                                                
+        'X-Parse-REST-API-Key:' .$rest_api_key , 
+        'X-Parse-Master-Key:' .$master_key,  
         'Content-Type: application/json'
         );
 
@@ -683,7 +643,7 @@ class AttributeController extends Controller
       curl_setopt($ch, CURLOPT_HTTPHEADER, $header_array);                                                                       
 
 
-      $curl_output = curl_exec($ch);
+      $curl_output = curl_exec($ch); //echo $curl_output;exit;
 
 
       if (curl_errno($ch)) {
@@ -699,7 +659,7 @@ class AttributeController extends Controller
         $result  = json_decode($curl_output);
 
       }
-
+//dd($result);
       curl_close($ch); 
 
       return $result;         

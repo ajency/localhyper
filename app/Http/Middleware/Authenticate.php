@@ -21,7 +21,7 @@ class Authenticate
      * @return void
      */
     public function __construct(Guard $auth)
-    {
+    { 
         $this->auth = $auth;
     }
 
@@ -37,7 +37,7 @@ class Authenticate
         if ($this->auth->guest()) {
             if ($request->ajax()) {
                 return response('Unauthorized.', 401);
-            } else {
+            } else {  
                 return redirect()->guest('auth/login');
             }
         }

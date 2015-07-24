@@ -7,7 +7,6 @@
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.1.*",
-        "bestmomo/scafold": "dev-master",
         "parse/php-sdk" : "1.1.*",
         "phpoffice/phpexcel": "dev-master"
     },
@@ -15,6 +14,7 @@
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
         "phpunit/phpunit": "~4.0",
+        "bestmomo/scafold": "dev-master",
         "phpspec/phpspec": "~2.1"
     },
     "autoload": {

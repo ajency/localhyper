@@ -11,9 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get( '/', 'WelcomeController@index' );
 
 /**
  * Auth and forgot password route
@@ -28,7 +26,9 @@ Route::controllers( [
  */
 Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get( '/', 'Admin\AdminController@index' );
-
+    Route::resource( 'customer', 'Admin\CustomerController' );
+    Route::resource( 'seller', 'Admin\SellerController' );
+    
     Route::get( 'attribute/categoryconfiguration', 'Admin\AttributeController@categoryConfiguration' );
     Route::get( 'attribute/exportattributes/{categoryid}', 'Admin\AttributeController@exportAttributes' );
 
@@ -37,5 +37,8 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::post( 'category/getchildcategories/{categoryid}', 'Admin\category\CategoryController@getChildCategory' );
     Route::post( 'attribute/importmasterdata', 'Admin\AttributeController@importMasterData' );
     Route::get( 'attribute/exportattributevalues', 'Admin\AttributeController@exportAttributeValues' );
+    
+     Route::get( 'product/exportproducts/{categoryid}', 'Admin\ProductController@exportProducts' );
+    Route::post( 'product/importproducts', 'Admin\ProductController@importProduct' );
 
 });    
