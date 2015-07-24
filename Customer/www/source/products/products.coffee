@@ -8,6 +8,7 @@ angular.module 'LocalHyper.products', []
 
 		$scope.view =
 			title: Product.subCategoryTitle
+			gotAllProducts: false
 			products: []
 			other: []
 			page: 0
@@ -169,6 +170,7 @@ angular.module 'LocalHyper.products', []
 			
 			onPullToRefresh : ->
 				if App.isOnline()
+					@gotAllProducts = false
 					@canLoadMore = true
 					@page = 0
 					@refresh = true
@@ -200,6 +202,7 @@ angular.module 'LocalHyper.products', []
 
 			onError : (error)->
 				console.log error
+				CToast.showLong UIMsg.serverError
 				@canLoadMore = false
 			
 			onSuccess : (data)->
@@ -215,6 +218,8 @@ angular.module 'LocalHyper.products', []
 					else @products = @products.concat _products
 				else
 					@canLoadMore = false
+
+				@gotAllProducts = true if !@canLoadMore
 
 			getPrimaryAttrs : (attrs)->
 				if !_.isUndefined attrs

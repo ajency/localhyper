@@ -42,7 +42,12 @@
                 	</div>
 				</div>
 			</div>
+
 		</ion-list>
+
+		<ion-item ng-if="view.gotAllProducts">
+			That's all folks, no more products to display.
+		</ion-item>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"

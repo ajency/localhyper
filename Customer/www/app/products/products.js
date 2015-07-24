@@ -3,6 +3,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
     var onDeviceBack;
     $scope.view = {
       title: Product.subCategoryTitle,
+      gotAllProducts: false,
       products: [],
       other: [],
       page: 0,
@@ -216,6 +217,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       },
       onPullToRefresh: function() {
         if (App.isOnline()) {
+          this.gotAllProducts = false;
           this.canLoadMore = true;
           this.page = 0;
           this.refresh = true;
@@ -255,6 +257,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       },
       onError: function(error) {
         console.log(error);
+        CToast.showLong(UIMsg.serverError);
         return this.canLoadMore = false;
       },
       onSuccess: function(data) {
@@ -271,12 +274,15 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             this.onScrollComplete();
           }
           if (this.refresh) {
-            return this.products = _products;
+            this.products = _products;
           } else {
-            return this.products = this.products.concat(_products);
+            this.products = this.products.concat(_products);
           }
         } else {
-          return this.canLoadMore = false;
+          this.canLoadMore = false;
+        }
+        if (!this.canLoadMore) {
+          return this.gotAllProducts = true;
         }
       },
       getPrimaryAttrs: function(attrs) {
