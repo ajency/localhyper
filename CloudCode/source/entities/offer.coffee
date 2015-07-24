@@ -236,6 +236,8 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 "objectId" : productObj.id
                 "name" : productObj.get("name")
                 "mrp" : productObj.get("mrp")
+                "modelNumber" : productObj.get("model_number")
+                "images" : productObj.get("images")
 
             brand = 
                 "objectId" : brandObj.id 
@@ -259,6 +261,7 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 "distanceFromCustomer" : sellersDistancFromCustomer
                 "offerPrice" : priceObj.get("value")   
                 "offerStatus" : offerObj.get("status")   
+                "offerDeliveryTime" : offerObj.get("deliveryTime")   
                 "createdAt" : offerObj.createdAt  
 
 
