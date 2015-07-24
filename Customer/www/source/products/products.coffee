@@ -23,6 +23,7 @@ angular.module 'LocalHyper.products', []
 				attribute: 'brand'
 				allAttributes: []
 				attrValues: {}
+				originalValues: {}
 				selectedFilters: 
 					brands: []
 					price: []
@@ -63,6 +64,10 @@ angular.module 'LocalHyper.products', []
 							value: value
 							name: s.humanize(filter.attributeName)
 
+					# De-select all attr values
+					_.each @attrValues, (attrs)->
+						_.each attrs, (val)-> val.selected = false
+
 				clearFilters : ->
 					_.each @attrValues, (attrs)->
 						_.each attrs, (val)-> val.selected = false
@@ -76,26 +81,26 @@ angular.module 'LocalHyper.products', []
 					@attribute = 'brand'
 					@clearFilters()
 
-				selectionExists : ->
-					exists = false
-					_.each @attrValues, (attrs)->
-						_.each attrs, (val)-> 
-							exists = true if val.selected
-					exists
+				noChangeInSelection : ->
+					_.isEqual _.sortBy(@originalValues), _.sortBy(@attrValues)
+
+				openModal : ->
+					@originalValues = JSON.parse JSON.stringify(@attrValues)
+					@modal.show()
 
 				closeModal : ->
-					if @selectionExists()
+					if @noChangeInSelection()
+						@modal.hide()
+					else
 						msg = 'Your filter selection will go away'
 						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']
 						.then (btnIndex)=>
 							switch btnIndex
 								when 1
+									@attrValues = @originalValues
 									@modal.hide()
-									# @resetFilters()
-									$scope.view.reset()
 								when 2
 									@onApply()
-					else @modal.hide()
 
 				onApply : ->
 					_.each @attrValues, (_values, attribute)=>
