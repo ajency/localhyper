@@ -129,7 +129,7 @@ class ProductController extends Controller
         $attributeValueData = $attributeController->getCategoryAttributeValues($categoryData);  
         $attributeValues= $headerFlag =$productHeader = $productAttributeIds = [];
         
-        foreach($attributeValueData['result'] as $attributeValue)
+        foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
         {
             $attributeId =$attributeValue['attributeId'];
             if(!isset($headerFlag[$attributeId]))
