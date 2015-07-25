@@ -1,13 +1,13 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', ($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal)->
+.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal'
+	, ($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal)->
 
-	$scope.view = 
+		$scope.view = 
 			display: 'loader'
 			errorType: ''
 			requests: []
-			requestIds: []
 			page: 0
 			canLoadMore: true
 
@@ -42,7 +42,6 @@ angular.module 'LocalHyper.requestsOffers'
 						@display = false
 						App.resize()
 
-
 			incrementPage : ->
 				$scope.$broadcast 'scroll.refreshComplete'
 				@page = @page + 1
@@ -51,39 +50,32 @@ angular.module 'LocalHyper.requestsOffers'
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 
 			onSuccess : (data)->
-				console.log('--my offer history--')
-				console.log(data)
 				@display = 'noError'
-				@requests = data
-				$scope.view.requests = data
-				if $scope.view.requests.length > 0
-					
-					if $scope.view.requests.length < 10 then @canLoadMore = false
-					else @onScrollComplete()
-					
+				offerhistory = data
+				if offerhistory.length > 0
+					@canLoadMore = true
+					@requests = @requests.concat(offerhistory)	
 				else
 					@canLoadMore = false
 
-				
 			onError: (type)->
 				@display = 'error'
 				@errorType = type
-				# @canLoadMore = false
+				@canLoadMore = false
 
 			onTapToRetry : ->
-				@display = 'loader'
+				@display = 'error'
+				@canLoadMore = true
 				@page = 0
-				@showOfferHistory()
 
 			onPullToRefresh : ->
-					# @canLoadMore = true
-					@page = 0
-					@showOfferHistory()
+				@requests = []
+				@page = 0
+				@showOfferHistory()
 
 			onInfiniteScroll : ->
 				@showOfferHistory()
 				
-
 			showOfferHistory : ()->
 				OfferHistoryAPI.offerhistory
 					page: @page
@@ -95,13 +87,10 @@ angular.module 'LocalHyper.requestsOffers'
 					@incrementPage()
 					@onScrollComplete()
 
-
 			init : ->
 				@loadOfferDetails()
 
-
 			loadOfferDetails : ->
-				console.log('inside offer details')
 				$ionicModal.fromTemplateUrl 'views/requests-offers/offer-history-details.html', 
 					scope: $scope,
 					animation: 'slide-in-up'
@@ -110,28 +99,37 @@ angular.module 'LocalHyper.requestsOffers'
 					@requestDetails.modal = modal
 
 			show : ->
-				console.log('inside show function')
 				view.modal.show()
-
 
 			showRequestDetails : (request)->
 				@requestDetails.data = request
-				
-				@requestDetails.modal.show()
-				
-				
-				
-
-					
-
-
-
-	$scope.view.showOfferHistory()		
-
+				@requestDetails.modal.show()	
 	
+]	
+
+.controller 'EachRequestTimeCtrl', ['$scope', ($scope)->
+	#Request time
+	iso = $scope.request.createdAt.iso
+	format = 'DD/MM/YYYY HH:mm:ss'
+	now = moment().format format
+	at = moment(iso).format format
+	diff = moment(now, format).diff(moment(at, format))
+	duration = moment.duration diff
+	minutes = parseInt duration.asMinutes().toFixed(0)
+	hours = parseInt duration.asHours().toFixed(0)
+
+	if minutes <= 5
+		timeStr = 'Just now'
+	else if minutes < 60
+		min = if minutes is 1 then 'min' else 'mins'
+		timeStr = "#{minutes} #{min} ago"
+	else
+		hr = if hours is 1 then 'hr' else 'hrs'
+		timeStr = "#{hours} #{hr} ago"
+
+	$scope.request.timeStr = timeStr
+]
 				
 
 
 
-
-]

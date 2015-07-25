@@ -1,10 +1,9 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
   '$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', function($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal) {
-    $scope.view = {
+    return $scope.view = {
       display: 'loader',
       errorType: '',
       requests: [],
-      requestIds: [],
       page: 0,
       canLoadMore: true,
       requestDetails: {
@@ -52,31 +51,28 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return $scope.$broadcast('scroll.infiniteScrollComplete');
       },
       onSuccess: function(data) {
-        console.log('--my offer history--');
-        console.log(data);
+        var offerhistory;
         this.display = 'noError';
-        this.requests = data;
-        $scope.view.requests = data;
-        if ($scope.view.requests.length > 0) {
-          if ($scope.view.requests.length < 10) {
-            return this.canLoadMore = false;
-          } else {
-            return this.onScrollComplete();
-          }
+        offerhistory = data;
+        if (offerhistory.length > 0) {
+          this.canLoadMore = true;
+          return this.requests = this.requests.concat(offerhistory);
         } else {
           return this.canLoadMore = false;
         }
       },
       onError: function(type) {
         this.display = 'error';
-        return this.errorType = type;
+        this.errorType = type;
+        return this.canLoadMore = false;
       },
       onTapToRetry: function() {
-        this.display = 'loader';
-        this.page = 0;
-        return this.showOfferHistory();
+        this.display = 'error';
+        this.canLoadMore = true;
+        return this.page = 0;
       },
       onPullToRefresh: function() {
+        this.requests = [];
         this.page = 0;
         return this.showOfferHistory();
       },
@@ -105,7 +101,6 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return this.loadOfferDetails();
       },
       loadOfferDetails: function() {
-        console.log('inside offer details');
         return $ionicModal.fromTemplateUrl('views/requests-offers/offer-history-details.html', {
           scope: $scope,
           animation: 'slide-in-up',
@@ -117,7 +112,6 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         })(this));
       },
       show: function() {
-        console.log('inside show function');
         return view.modal.show();
       },
       showRequestDetails: function(request) {
@@ -125,6 +119,27 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return this.requestDetails.modal.show();
       }
     };
-    return $scope.view.showOfferHistory();
+  }
+]).controller('EachRequestTimeCtrl', [
+  '$scope', function($scope) {
+    var at, diff, duration, format, hours, hr, iso, min, minutes, now, timeStr;
+    iso = $scope.request.createdAt.iso;
+    format = 'DD/MM/YYYY HH:mm:ss';
+    now = moment().format(format);
+    at = moment(iso).format(format);
+    diff = moment(now, format).diff(moment(at, format));
+    duration = moment.duration(diff);
+    minutes = parseInt(duration.asMinutes().toFixed(0));
+    hours = parseInt(duration.asHours().toFixed(0));
+    if (minutes <= 5) {
+      timeStr = 'Just now';
+    } else if (minutes < 60) {
+      min = minutes === 1 ? 'min' : 'mins';
+      timeStr = "" + minutes + " " + min + " ago";
+    } else {
+      hr = hours === 1 ? 'hr' : 'hrs';
+      timeStr = "" + hours + " " + hr + " ago";
+    }
+    return $scope.request.timeStr = timeStr;
   }
 ]);
