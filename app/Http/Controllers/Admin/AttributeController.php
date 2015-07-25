@@ -548,7 +548,9 @@ class AttributeController extends Controller
 			$attributes = $primaryattributes = array();
 			
 			foreach ($primary_attributes as $primary_attribute) {
-				$primaryattributes[] = $primary_attribute->getObjectId();
+				if (!empty($primary_attribute)) {
+					$primaryattributes[] = $primary_attribute->getObjectId();
+				}
 
 			}    
 				
