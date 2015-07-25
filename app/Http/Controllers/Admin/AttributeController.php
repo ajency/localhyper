@@ -443,11 +443,13 @@ class AttributeController extends Controller
 						}
 
 				}
+				
+				// pass primary attributes in the last call and pass empty array in previous calls
 				//filterable Attributes
 				$filterableData =['attributes' => $filterableAttribute,
 												 'categoryId' => $config[0],
 													'isFilterable' => true,
-													'primaryAttributeObj'=>$primaryAttributes,
+													'primaryAttributeObj'=>array(),
 												]; 
                
 				$this->parseAttributeImport($filterableData);
@@ -608,7 +610,7 @@ class AttributeController extends Controller
 			$resultjson = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
 
 			$response =  json_encode($resultjson);
-			 $response = json_decode($response,true);    
+			$response = json_decode($response,true);    
 			
 			return $response;
 		} 
@@ -654,7 +656,7 @@ class AttributeController extends Controller
 
 			$post_url = $base_url."/".$parseFunctType."/".$functionName;
 				
-			$data_string = json_encode($data); //dd($data_string);
+			$data_string = json_encode($data); 
 
 			// -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
 			// -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
