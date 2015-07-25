@@ -78,8 +78,20 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
                 
                 finalArr.push object
             
-            Parse.Promise.as()  
-            response.success finalArr 
+            Parse.Promise.as()
+
+            attributes = _.map(final_attributes, (attribute) ->
+            
+                attribute = 
+                    "id" : attribute.id
+                    "name" : attribute.get("name")
+            )
+
+
+            result = 
+                attributes :  attributes
+                attributeValues : finalArr
+            response.success result 
         , (error)->
             response.error error
 

@@ -54,7 +54,7 @@
           return query.find();
         });
         return Parse.Promise.when(findQs).then(function() {
-          var finalArr, individualFindResults;
+          var attributes, finalArr, individualFindResults, result;
           individualFindResults = _.flatten(_.toArray(arguments));
           finalArr = [];
           _.each(individualFindResults, function(individualResult) {
@@ -70,7 +70,17 @@
             return finalArr.push(object);
           });
           Parse.Promise.as();
-          return response.success(finalArr);
+          attributes = _.map(final_attributes, function(attribute) {
+            return attribute = {
+              "id": attribute.id,
+              "name": attribute.get("name")
+            };
+          });
+          result = {
+            attributes: attributes,
+            attributeValues: finalArr
+          };
+          return response.success(result);
         }, function(error) {
           return response.error(error);
         });
