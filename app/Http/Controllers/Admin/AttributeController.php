@@ -118,7 +118,7 @@ class AttributeController extends Controller
 				
 				if(isset($attributeValueData['result']))
 				{
-						foreach($attributeValueData['result'] as $attributeValue)
+						foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
 						{
 								$attributeId =$attributeValue['attributeId'];
 								if(!isset($headerFlag[$attributeId]))
@@ -131,9 +131,7 @@ class AttributeController extends Controller
 								$attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
 						}
 				}
-			 // dd($attributeValues);
 			 
- 
 				$attributeValueSheet->fromArray($headers, ' ', 'A1');
  
 				$column = 'A';
@@ -584,7 +582,7 @@ class AttributeController extends Controller
 								'group' => $secondary_attribute->get('group'),
 								'unit' => $secondary_attribute->get('unit'),
 								'filterable' => 'no',
-								'primary' => (in_array($filterable_attribute->getObjectId(),$primaryattributes))?'yes':'no',
+								'primary' => (in_array($secondary_attribute->getObjectId(),$primaryattributes))?'yes':'no',
 								);
 
 			}
