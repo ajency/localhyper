@@ -125,6 +125,11 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
           case 'register':
             return this.register();
         }
+      },
+      callSupport: function() {
+        var telURI;
+        telURI = "tel:" + SUPPORT_NUMBER;
+        return document.location.href = telURI;
       }
     };
     $scope.$on('$ionicView.beforeEnter', function() {
