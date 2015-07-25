@@ -4,6 +4,9 @@ angular.module('LocalHyper.categories', []).controller('CategoriesCtrl', [
       display: 'loader',
       errorType: '',
       parentCategories: [],
+      init: function() {
+        return this.getCategories();
+      },
       getCategories: function() {
         return CategoriesAPI.getAll().then((function(_this) {
           return function(data) {
@@ -35,9 +38,6 @@ angular.module('LocalHyper.categories', []).controller('CategoriesCtrl', [
         });
       }
     };
-    $scope.$on('$ionicView.loaded', function() {
-      return $scope.view.getCategories();
-    });
     return $scope.$on('$ionicView.afterEnter', function() {
       return App.hideSplashScreen();
     });
