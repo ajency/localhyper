@@ -7,6 +7,9 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
       errorType: '',
       timeout: null,
       smsPluginSrc: "info.asankan.phonegap.smsplugin.smsplugin",
+      phone: {
+        SUPPORT_NUMBER: SUPPORT_NUMBER
+      },
       onError: function(type, at) {
         this.display = 'error';
         this.errorType = type;

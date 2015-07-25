@@ -227,16 +227,16 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         timeStr = 'Just now';
       } else if (minutes < 60) {
         min = minutes === 1 ? 'min' : 'mins';
-        timeStr = minutes + " " + min + " ago";
+        timeStr = "" + minutes + " " + min + " ago";
       } else if (minutes >= 60 && minutes < 1440) {
         hr = hours === 1 ? 'hr' : 'hrs';
-        timeStr = hours + " " + hr + " ago";
+        timeStr = "" + hours + " " + hr + " ago";
       } else if (minutes >= 1440 && days < 7) {
         day = days === 1 ? 'day' : 'days';
-        timeStr = days + " " + day + " ago";
+        timeStr = "" + days + " " + day + " ago";
       } else if (days >= 7 && weeks <= 4) {
         week = weeks === 1 ? 'week' : 'weeks';
-        timeStr = weeks + " " + week + " ago";
+        timeStr = "" + weeks + " " + week + " ago";
       } else {
         timeStr = "On " + (moment(iso).format('DD-MM-YYYY'));
       }

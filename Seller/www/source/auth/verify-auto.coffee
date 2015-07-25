@@ -12,6 +12,7 @@ angular.module 'LocalHyper.auth'
 			errorType: ''
 			timeout: null
 			smsPluginSrc: "info.asankan.phonegap.smsplugin.smsplugin"
+			phone : {SUPPORT_NUMBER}
 
 			onError : (type, at)->
 				@display = 'error'
