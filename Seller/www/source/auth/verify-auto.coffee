@@ -12,6 +12,7 @@ angular.module 'LocalHyper.auth'
 			errorType: ''
 			timeout: null
 			smsPluginSrc: "info.asankan.phonegap.smsplugin.smsplugin"
+			phone : {SUPPORT_NUMBER}
 
 			onError : (type, at)->
 				@display = 'error'
@@ -99,7 +100,11 @@ angular.module 'LocalHyper.auth'
 						@verifySmsCode()
 					when 'register'
 						@register()
+			callSupport : ->
+				telURI = "tel:#{SUPPORT_NUMBER}"
+				document.location.href = telURI
 
+					   
 		$scope.$on '$ionicView.beforeEnter', ->
 			$scope.view.user = User.info 'get'
 
