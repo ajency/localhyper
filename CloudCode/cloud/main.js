@@ -858,7 +858,7 @@
         brandObj = {
           "__type": "Pointer",
           "className": "Brand",
-          "objectId": product.brandId
+          "objectId": product.brand
         };
         productItem.set("brand", brandObj);
         productItem.set("category", categoryObj);

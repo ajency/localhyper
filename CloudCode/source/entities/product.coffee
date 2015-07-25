@@ -40,7 +40,7 @@ Parse.Cloud.job 'productImport', (request, response) ->
             brandObj =
                 "__type" : "Pointer",
                 "className":"Brand",
-                "objectId":product.brandId                    
+                "objectId":product.brand                    
 
             productItem.set "brand", brandObj        
 
