@@ -1,4 +1,4 @@
-<ion-modal-view class="model-view">
+<!-- <ion-modal-view class="model-view">
 
 	<ion-header-bar>
 		<div class="bar bar-header">
@@ -42,4 +42,49 @@
 			Make Request
 		</div>
 	</ion-footer>
-</ion-modal-view>
+</ion-modal-view> -->
+
+<ion-view>
+
+	<ion-nav-title>
+		Search bar
+	</ion-nav-title>
+	
+    <ion-content>
+		<div class="row">
+			<div class="col"><img src="./img/Truck-32.png" class="m-t-5"/></div>
+			<div class="col col-80"> <h5 class="text-left">To make sellers close to you confirm your delivery address</h5></div>
+		</div>
+
+		<div class="list">
+			<div class="item item-divider">
+				Your Address
+				<span class="item-note" ng-click="view.onEditLocation()">
+					<i class="ion ion-compose"></i> Edit
+				</span>
+			</div>
+			<div class="item subdued">
+				<h3 class="normal-space grey">{{view.confirmedAddress}}</h3>
+			</div>
+			<div class="item item-divider">
+				Comments 
+				<span class="item-note" ng-click="view.comments.modal.show()">
+					<i class="ion ion-compose"></i> Enter Comments
+				</span>
+			</div>
+			<div class="item subdued">
+				<h3 class="normal-space grey">{{view.comments.text}}</h3>
+			</div>
+		</div>
+    </ion-content>
+
+	<ion-footer class="bar bar-footer bar-assertive" >
+		<div 
+			class="title"
+			ng-click="view.beforeMakeRequest()">
+			Make Request
+		</div>
+	</ion-footer>
+
+</ion-view>
+

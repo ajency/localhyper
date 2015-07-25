@@ -64,3 +64,17 @@ angular.module 'LocalHyper.googleMaps'
 			google.maps.event.addDomListener window, 'load', initialize
 ]
 
+
+.directive 'googleSearchTapDisable', ['$timeout', ($timeout)->
+
+	link: ->
+		$timeout ->
+			container = document.getElementsByClassName 'pac-container'
+			angular.element(container).attr 'data-tap-disabled', 'true'
+			angular.element(container).on 'click', ->
+				console.log 1
+				# document.getElementById('type-selector').blur()
+
+		, 500
+]
+

@@ -94,10 +94,14 @@ angular.module 'LocalHyper.products'
 			
 
 			init: ->
-				@loadSpecificationsModal()
-				@loadMakeRequestModal()
-				@loadLocationModal()
-				@loadCommentsModal()
+				# @loadSpecificationsModal()
+				# @loadMakeRequestModal()
+				# @loadLocationModal()
+				# @loadCommentsModal()
+
+			reset : ->
+				@display = 'loader'
+				@footer = false
 				@getSingleProductDetails()
 
 			loadSpecificationsModal : ->
@@ -193,11 +197,21 @@ angular.module 'LocalHyper.products'
 			checkUserLogin : ->
 				if !User.isLoggedIn()
 					App.navigate 'verify-begin'
+				else if _.isUndefined window.google
+					CSpinner.show '', 'Please wait...'
+					GoogleMaps.loadScript()
+					.then -> 
+						App.navigate 'make-request'
+					,(error)-> 
+						CToast.show 'Error loading content, please check your network settings'
+					.finally -> 
+						CSpinner.hide()
 				else
-					user = User.getCurrent()
-					address = user.get 'address'
-					@confirmedAddress = if _.isUndefined(address) then '' else address.full
-					@makeRequestModal.show()
+					App.navigate 'make-request'
+					# user = User.getCurrent()
+					# address = user.get 'address'
+					# @confirmedAddress = if _.isUndefined(address) then '' else address.full
+					# @makeRequestModal.show()
 
 			beforeMakeRequest : ->
 				if @confirmedAddress is ''
@@ -252,12 +266,9 @@ angular.module 'LocalHyper.products'
 					.finally ->
 						CSpinner.hide()
 
-		
-		$scope.$on '$destroy', ->
-			$scope.view.specificationModal.remove()
-			$scope.view.makeRequestModal.remove()
-			$scope.view.location.modal.remove()
-			$scope.view.comments.modal.remove()
+		$scope.$on '$ionicView.beforeEnter', ->
+			if _.contains ['products'], App.previousState
+				$scope.view.reset()
 ]
 
 
@@ -268,20 +279,9 @@ angular.module 'LocalHyper.products'
 		.state 'single-product',
 			url: '/single-product:productID'
 			parent: 'main'
-			cache: false
 			views: 
 				"appContent":
 					templateUrl: 'views/products/single-product.html'
 					controller: 'SingleProductCtrl'
-					resolve:
-						Maps : ($q, CSpinner, GoogleMaps)->
-							defer = $q.defer()
-							CSpinner.show '', 'Please wait...'
-							GoogleMaps.loadScript()
-							.then ->
-								defer.resolve()
-							.finally ->
-								CSpinner.hide()
-							defer.promise
 ]
 

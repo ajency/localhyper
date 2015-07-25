@@ -105,11 +105,10 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           })(this));
         }
       },
-      init: function() {
-        this.loadSpecificationsModal();
-        this.loadMakeRequestModal();
-        this.loadLocationModal();
-        this.loadCommentsModal();
+      init: function() {},
+      reset: function() {
+        this.display = 'loader';
+        this.footer = false;
         return this.getSingleProductDetails();
       },
       loadSpecificationsModal: function() {
@@ -240,14 +239,19 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         }
       },
       checkUserLogin: function() {
-        var address, user;
         if (!User.isLoggedIn()) {
           return App.navigate('verify-begin');
+        } else if (_.isUndefined(window.google)) {
+          CSpinner.show('', 'Please wait...');
+          return GoogleMaps.loadScript().then(function() {
+            return App.navigate('make-request');
+          }, function(error) {
+            return CToast.show('Error loading content, please check your network settings');
+          })["finally"](function() {
+            return CSpinner.hide();
+          });
         } else {
-          user = User.getCurrent();
-          address = user.get('address');
-          this.confirmedAddress = _.isUndefined(address) ? '' : address.full;
-          return this.makeRequestModal.show();
+          return App.navigate('make-request');
         }
       },
       beforeMakeRequest: function() {
@@ -312,11 +316,10 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         }
       }
     };
-    return $scope.$on('$destroy', function() {
-      $scope.view.specificationModal.remove();
-      $scope.view.makeRequestModal.remove();
-      $scope.view.location.modal.remove();
-      return $scope.view.comments.modal.remove();
+    return $scope.$on('$ionicView.beforeEnter', function() {
+      if (_.contains(['products'], App.previousState)) {
+        return $scope.view.reset();
+      }
     });
   }
 ]).config([
@@ -324,24 +327,10 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     return $stateProvider.state('single-product', {
       url: '/single-product:productID',
       parent: 'main',
-      cache: false,
       views: {
         "appContent": {
           templateUrl: 'views/products/single-product.html',
-          controller: 'SingleProductCtrl',
-          resolve: {
-            Maps: function($q, CSpinner, GoogleMaps) {
-              var defer;
-              defer = $q.defer();
-              CSpinner.show('', 'Please wait...');
-              GoogleMaps.loadScript().then(function() {
-                return defer.resolve();
-              })["finally"](function() {
-                return CSpinner.hide();
-              });
-              return defer.promise;
-            }
-          }
+          controller: 'SingleProductCtrl'
         }
       }
     });

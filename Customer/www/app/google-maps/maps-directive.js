@@ -68,4 +68,19 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
       }
     };
   }
+]).directive('googleSearchTapDisable', [
+  '$timeout', function($timeout) {
+    return {
+      link: function() {
+        return $timeout(function() {
+          var container;
+          container = document.getElementsByClassName('pac-container');
+          angular.element(container).attr('data-tap-disabled', 'true');
+          return angular.element(container).on('click', function() {
+            return console.log(1);
+          });
+        }, 500);
+      }
+    };
+  }
 ]);
