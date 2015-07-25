@@ -323,8 +323,25 @@ class AttributeController extends Controller
 								 }
 								 
 				}
-				$brands =['brands' => $brandsArr,'categoryId' => $config[0]]; 
-				// dd($brands) ;
+
+				$all_brands = BrandController::getAllParseBrands(); 
+
+				$updated_brands = [];
+
+				foreach ($brandsArr as $brand) {
+					
+					$brandExistingId = array_search(strtolower($brand['name']), $all_brands);
+					
+					// if $brand is present in $all_brands then update objecId for that $brand in brandsArr
+					if($brandExistingId !== false){
+						$brand['objectId'] = $brandExistingId;
+
+					}
+
+					$updated_brands[] = $brand;
+				}
+
+				$brands =['brands' => $updated_brands,'categoryId' => $config[0]]; 
 				BrandController::parseBrandImport($brands);
 				
 				return true;

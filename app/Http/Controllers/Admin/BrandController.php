@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Parse\ParseObject;
+use Parse\ParseQuery;
 
 class BrandController extends Controller
 {
@@ -83,6 +85,23 @@ class BrandController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public static function getAllParseBrands(){
+        $brandQuery = new ParseQuery("Brand");
+ 
+        $all_brands = $brandQuery->find();
+
+        $brands = [];
+
+        if (count($all_brands)) {
+            foreach ($all_brands as $brand_obj) {
+                $brands[$brand_obj->getObjectId()] = strtolower($brand_obj->get("name"));
+            }
+        }
+
+        return $brands;
+
     }
 
     public static function parseBrandImport($data){
