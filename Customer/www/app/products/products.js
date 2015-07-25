@@ -65,11 +65,13 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           this.attrValues['price'] = this.getPriceRange(other.priceRange);
           this.allAttributes.push({
             value: 'brand',
-            name: 'Brand'
+            name: 'Brand',
+            selected: 0
           });
           this.allAttributes.push({
             value: 'price',
-            name: 'Price'
+            name: 'Price',
+            selected: 0
           });
           _.each(other.filters, (function(_this) {
             return function(filter) {
@@ -78,21 +80,42 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
               _this.attrValues[value] = filter.values;
               return _this.allAttributes.push({
                 value: value,
-                name: s.humanize(filter.attributeName)
+                name: s.humanize(filter.attributeName),
+                selected: 0
               });
             };
           })(this));
-          return _.each(this.attrValues, function(attrs) {
-            return _.each(attrs, function(val) {
+          return _.each(this.attrValues, function(values) {
+            return _.each(values, function(val) {
               return val.selected = false;
             });
           });
         },
+        showAttrCount: function() {
+          return _.each(this.attrValues, (function(_this) {
+            return function(values, index) {
+              var attrIndex, count;
+              count = 0;
+              _.each(values, function(val) {
+                if (val.selected) {
+                  return count++;
+                }
+              });
+              attrIndex = _.findIndex(_this.allAttributes, function(attrs) {
+                return attrs.value === index;
+              });
+              return _this.allAttributes[attrIndex].selected = count;
+            };
+          })(this));
+        },
         clearFilters: function() {
-          _.each(this.attrValues, function(attrs) {
-            return _.each(attrs, function(val) {
+          _.each(this.attrValues, function(values) {
+            return _.each(values, function(val) {
               return val.selected = false;
             });
+          });
+          _.each(this.allAttributes, function(attrs) {
+            return attrs.selected = 0;
           });
           return this.selectedFilters = {
             brands: [],
@@ -122,6 +145,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
                 switch (btnIndex) {
                   case 1:
                     _this.attrValues = _this.originalValues;
+                    _this.showAttrCount();
                     return _this.modal.hide();
                   case 2:
                     return _this.onApply();
@@ -169,7 +193,6 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
               }
             };
           })(this));
-          console.log(this.selectedFilters);
           this.modal.hide();
           return $scope.view.reFetch();
         }

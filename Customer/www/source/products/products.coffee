@@ -54,8 +54,8 @@ angular.module 'LocalHyper.products', []
 					other = $scope.view.other
 					@attrValues['brand'] = other.supportedBrands
 					@attrValues['price'] = @getPriceRange other.priceRange
-					@allAttributes.push value: 'brand', name: 'Brand'
-					@allAttributes.push value: 'price', name: 'Price'
+					@allAttributes.push value: 'brand', name: 'Brand', selected: 0
+					@allAttributes.push value: 'price', name: 'Price', selected: 0
 
 					_.each other.filters, (filter)=>
 						value = filter.filterName
@@ -63,14 +63,24 @@ angular.module 'LocalHyper.products', []
 						@allAttributes.push
 							value: value
 							name: s.humanize(filter.attributeName)
+							selected: 0
 
 					# De-select all attr values
-					_.each @attrValues, (attrs)->
-						_.each attrs, (val)-> val.selected = false
+					_.each @attrValues, (values)->
+						_.each values, (val)-> val.selected = false
+
+				showAttrCount : ->
+					_.each @attrValues, (values, index)=>
+						count = 0
+						_.each values, (val)-> count++ if val.selected
+						attrIndex = _.findIndex @allAttributes, (attrs)-> attrs.value is index
+						@allAttributes[attrIndex].selected = count
 
 				clearFilters : ->
-					_.each @attrValues, (attrs)->
-						_.each attrs, (val)-> val.selected = false
+					_.each @attrValues, (values)->
+						_.each values, (val)-> val.selected = false
+
+					_.each @allAttributes, (attrs)-> attrs.selected = 0
 
 					@selectedFilters = 
 						brands:[]
@@ -98,6 +108,7 @@ angular.module 'LocalHyper.products', []
 							switch btnIndex
 								when 1
 									@attrValues = @originalValues
+									@showAttrCount()
 									@modal.hide()
 								when 2
 									@onApply()
@@ -128,8 +139,7 @@ angular.module 'LocalHyper.products', []
 								_.each _values, (attr)=>
 									selected.push(attr.id) if attr.selected
 								@selectedFilters.otherFilters[attribute] = selected
-
-					console.log @selectedFilters
+					
 					@modal.hide()
 					$scope.view.reFetch()
 					
