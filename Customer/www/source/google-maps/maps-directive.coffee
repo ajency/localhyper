@@ -40,23 +40,19 @@ angular.module 'LocalHyper.googleMaps'
 
 	restrict: 'A'
 	replace: true
+	scope:
+		onPlaceChange: '&'
 
 	link: (scope, el, attrs)->
 
 		initialize = ->
-			input = document.getElementById 'search'
-			options = 
-				componentRestrictions: country: 'in'
-
+			options = componentRestrictions: country: 'in'
 			autoComplete = new google.maps.places.Autocomplete el[0], options
 
-			# container =  $(el).parent().width()
-			# $('.pac-container').css('width': container+' !important')
-
-			google.maps.event.addListener autoComplete, 'places_changed', ->
-				# places = searchBox.getPlaces()
-				console.log 'places_changed'
-
+			google.maps.event.addListener autoComplete, 'place_changed', ->
+				scope.$apply ->
+					place = autoComplete.getPlace()
+					scope.onPlaceChange location: place.geometry.location
 
 		if document.readyState is "complete"
 			initialize()
@@ -69,12 +65,10 @@ angular.module 'LocalHyper.googleMaps'
 
 	link: ->
 		$timeout ->
-			container = document.getElementsByClassName 'pac-container'
-			angular.element(container).attr 'data-tap-disabled', 'true'
-			angular.element(container).on 'click', ->
-				console.log 1
-				# document.getElementById('type-selector').blur()
-
+			$ '.pac-container'
+				.attr 'data-tap-disabled', 'true'
+				.click ->
+					$('#locationSearch').blur()
 		, 500
 ]
 

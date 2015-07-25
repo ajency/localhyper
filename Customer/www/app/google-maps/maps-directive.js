@@ -45,19 +45,27 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
     return {
       restrict: 'A',
       replace: true,
+      scope: {
+        onPlaceChange: '&'
+      },
       link: function(scope, el, attrs) {
         var initialize;
         initialize = function() {
-          var autoComplete, input, options;
-          input = document.getElementById('search');
+          var autoComplete, options;
           options = {
             componentRestrictions: {
               country: 'in'
             }
           };
           autoComplete = new google.maps.places.Autocomplete(el[0], options);
-          return google.maps.event.addListener(autoComplete, 'places_changed', function() {
-            return console.log('places_changed');
+          return google.maps.event.addListener(autoComplete, 'place_changed', function() {
+            return scope.$apply(function() {
+              var place;
+              place = autoComplete.getPlace();
+              return scope.onPlaceChange({
+                location: place.geometry.location
+              });
+            });
           });
         };
         if (document.readyState === "complete") {
@@ -73,11 +81,8 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
     return {
       link: function() {
         return $timeout(function() {
-          var container;
-          container = document.getElementsByClassName('pac-container');
-          angular.element(container).attr('data-tap-disabled', 'true');
-          return angular.element(container).on('click', function() {
-            return console.log(1);
+          return $('.pac-container').attr('data-tap-disabled', 'true').click(function() {
+            return $('#locationSearch').blur();
           });
         }, 500);
       }
