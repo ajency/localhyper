@@ -1,4 +1,4 @@
-angular.module 'LocalHyper.myProducts'
+angular.module 'LocalHyper.myRequests'
 
 
 .controller 'OpenRequestCtrl', ['$scope', 'App'
