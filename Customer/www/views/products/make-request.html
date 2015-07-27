@@ -1,52 +1,4 @@
-<!-- <ion-modal-view class="model-view">
-
-	<ion-header-bar>
-		<div class="bar bar-header">
-			<h2 class="title normal">MAKE REQUEST</h2>
-		</div>
-	</ion-header-bar>
-	<br><br>
-	
-    <ion-content>
-		<div class="row">
-			<div class="col"><img src="./img/Truck-32.png" class="m-t-5"/></div>
-			<div class="col col-80"> <h5 class="text-left">To make sellers close to you confirm your delivery address</h5></div>
-		</div>
-
-		<div class="list">
-			<div class="item item-divider">
-				Your Address
-				<span class="item-note" ng-click="view.onEditLocation()">
-					<i class="ion ion-compose"></i> Edit
-				</span>
-			</div>
-			<div class="item subdued">
-				<h3 class="normal-space grey">{{view.confirmedAddress}}</h3>
-			</div>
-			<div class="item item-divider">
-				Comments 
-				<span class="item-note" ng-click="view.comments.modal.show()">
-					<i class="ion ion-compose"></i> Enter Comments
-				</span>
-			</div>
-			<div class="item subdued">
-				<h3 class="normal-space grey">{{view.comments.text}}</h3>
-			</div>
-		</div>
-    </ion-content>
-
-	<ion-footer class="bar bar-footer bar-assertive" >
-		<div 
-			class="title"
-			ng-click="view.beforeMakeRequest()">
-			Make Request
-		</div>
-	</ion-footer>
-</ion-modal-view> -->
-
-<ion-view 
-	google-search-tap-disable
-	ng-init="view.init()">
+<ion-view google-search-tap-disable>
 
 	<div class="bar bar-subheader">
 		<div class="row">
@@ -63,7 +15,7 @@
 					style="width: 100%; height: 100%;"
 					data-tap-disabled="true"
 					google-map-search
-					on-place-change="view.onPlacedChange(location)"
+					on-place-change="view.onPlaceChange(location)"
 					ng-model="view.searchText">
 			</div>
 			<div class="col col-10">
@@ -75,12 +27,109 @@
 		</div>
 	</div>
 	
-    <ion-content class="has-subheader">
+    <ion-content class="has-subheader map-content">
 
     	<google-map
 			class="aj-very-big-map"
 			on-create="view.onMapCreated(map)">
 		</google-map>
+
+		<div class="address-inputs">
+			<h3>Delivery Address</h3>
+
+			<div class="row p-b-0">
+				<div class="col p-b-0">
+					<label class="item item-input">
+						<input
+							type="text"
+							placeholder="Address Line 1"
+							ng-model="view.address.address_line1">
+					</label>
+				</div>
+			</div>
+			<div class="row p-b-0">
+				<div class="col p-b-0">
+					<label class="item item-input">
+						<input
+							type="text"
+							placeholder="Address Line 2"
+							ng-model="view.address.address_line2">
+					</label>
+				</div>
+			</div>
+			<div class="row p-b-0">
+				<div class="col">
+					<label class="item item-input">
+						<input
+							type="text"
+							placeholder="Address Line 3"
+							ng-model="view.address.address_line3">
+					</label>
+				</div>
+			</div>
+
+			<div class="row p-b-0">
+				<div class="col p-b-0 p-r-0 b-r-1">
+					<label class="item item-input no-input">
+						City: {{view.address.city}}
+					</label>
+				</div>
+				<div class="col p-b-0 p-l-0">
+					<label class="item item-input no-input">
+						Pincode: {{view.address.postal_code}}
+					</label>
+				</div>
+			</div>
+
+			<div class="row p-b-0">
+				<div class="col p-r-0 b-r-1">
+					<label class="item item-input no-input">
+						State: {{view.address.state}}
+					</label>
+				</div>
+				<div class="col p-l-0">
+					<label class="item item-input no-input">
+						Country: {{view.address.country}}
+					</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="list">
+			<label class="item item-input item-stacked-label">
+				<span class="input-label">Add comments</span>
+				<input 
+					readonly
+					type="text" 
+					placeholder="Enter comments if any"
+					ng-model="view.comments.text"
+					ng-click="view.addComments();">
+			</label>
+		</div>
+		
+		<div ng-if="view.sellers.displayCount">
+			<h4 ng-show="view.sellers.count == 0;">
+				Sorry, we did not find any sellers in your area. Please change your location and try again.
+			</h4>
+
+			<h4 ng-hide="view.sellers.count == 0;">
+				Found {{view.sellers.count}} sellers in your area
+			</h4>
+		</div>
+
+		<button 
+			class="button button-block button-dark"
+			ng-hide="view.sellers.found"
+			ng-click="view.findSellers();">
+			Find sellers
+		</button>
+
+		<button 
+			class="button button-block button-assertive"
+			ng-show="view.sellers.found"
+			ng-click="view.makeRequest();">
+			Make Request
+		</button>
 		
     </ion-content>
 
