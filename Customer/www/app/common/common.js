@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common', []).factory('App', [
-  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q) {
+  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', '$ionicScrollDelegate', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate) {
     var App;
     return App = {
       start: true,
@@ -51,6 +51,11 @@ angular.module('LocalHyper.common', []).factory('App', [
           return $cordovaStatusbar.style(0);
         }
       },
+      closeKeyboard: function() {
+        if (this.isWebView()) {
+          return $cordovaKeyboard.close();
+        }
+      },
       noTapScroll: function() {
         return !this.isIOS();
       },
@@ -77,6 +82,9 @@ angular.module('LocalHyper.common', []).factory('App', [
       },
       dragContent: function(bool) {
         return $ionicSideMenuDelegate.canDragContent(bool);
+      },
+      resize: function() {
+        return $ionicScrollDelegate.resize();
       },
       getInstallationId: function() {
         var defer;

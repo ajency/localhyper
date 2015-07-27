@@ -1,7 +1,8 @@
 angular.module('LocalHyper.products').factory('ProductsAPI', [
   '$q', '$http', 'User', function($q, $http, User) {
-    var ProductsAPI;
+    var ProductsAPI, productDetails;
     ProductsAPI = {};
+    productDetails = {};
     ProductsAPI.getAll = function(opts) {
       var brands, defer, otherFilters, params, price, selectedFilters;
       defer = $q.defer();
@@ -65,6 +66,27 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
       } else {
         defer.resolve({});
       }
+      return defer.promise;
+    };
+    ProductsAPI.productDetails = function(action, data) {
+      if (data == null) {
+        data = {};
+      }
+      switch (action) {
+        case 'set':
+          return productDetails = data;
+        case 'get':
+          return productDetails;
+      }
+    };
+    ProductsAPI.findSellers = function(params) {
+      var defer;
+      defer = $q.defer();
+      $http.post('functions/getLocationBasedSellers', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
       return defer.promise;
     };
     return ProductsAPI;

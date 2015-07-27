@@ -1,4 +1,4 @@
-<ion-view ng-init="view.init()">
+<ion-view>
 
 	<ion-content ng-switch="view.display" class="bg-white">
 
@@ -70,26 +70,12 @@
 
 	</ion-content>
 
-	<ion-footer-bar ng-show="view.footer" class="bar bar-footer bar-custom-footer">
-		<button 
-			class="button button-clear btn-specification"
-			ng-click="view.specificationModal.show()"> 
-			<b> <i class="ion ion-ios-plus-outline"></i> Specification</b>
-		</button>
-
-		<button 
-			class="button button-assertive btn-action" 
-			ng-if="!view.request.active"
+	<ion-footer ng-show="view.footer" class="bar bar-footer bar-assertive" >
+		<div 
+			class="title"
 			ng-click="view.checkUserLogin()">
-			Make Request
-		</button>
-
-		<button 
-			class="button button-assertive btn-action"
-			ng-if="view.request.active"
-			ng-click="">
-			Cancel Request
-		</button>
-	</ion-footer-bar>
+			Get Best Prices
+		</div>
+	</ion-footer>
 
 </ion-view>
