@@ -839,6 +839,20 @@
     });
   });
 
+  Parse.Cloud.afterSave("Offer", function(request) {
+    var RequestClass, offerObject, queryReq, requestId;
+    offerObject = request.object;
+    requestId = offerObject.get("request").id;
+    RequestClass = Parse.Object.extend("Request");
+    queryReq = new Parse.Query(RequestClass);
+    return queryReq.get(requestId).then(function(requestObj) {
+      requestObj.increment("offerCount");
+      return requestObj.save();
+    }, function(error) {
+      return console.log("Got an error " + error.code + " : " + error.message);
+    });
+  });
+
   Parse.Cloud.job('productImport', function(request, response) {
     var ProductItem, categoryId, productSavedArr, products, queryCategory;
     ProductItem = Parse.Object.extend('ProductItem');
@@ -1226,6 +1240,7 @@
     request.set("city", city);
     request.set("area", area);
     request.set("comments", comments);
+    request.set("offerCount", 0);
     customerObj = {
       "__type": "Pointer",
       "className": "_User",
@@ -1437,6 +1452,55 @@
     } else {
       return response.error("Please enter a valid status");
     }
+  });
+
+  Parse.Cloud.define('getCustomerRequests', function(request, response) {
+    var customerId, displayLimit, innerQueryCustomer, innerQueryProduct, openStatus, page, productId, queryRequest;
+    customerId = request.params.customerId;
+    productId = request.params.productId;
+    page = parseInt(request.params.page);
+    displayLimit = parseInt(request.params.displayLimit);
+    openStatus = request.params.openStatus;
+    queryRequest = new Parse.Query("Request");
+    innerQueryCustomer = new Parse.Query(Parse.User);
+    innerQueryCustomer.equalTo("objectId", customerId);
+    queryRequest.matchesQuery("customerId", innerQueryCustomer);
+    if (productId !== "") {
+      innerQueryProduct = new Parse.Query("ProductItem");
+      innerQueryProduct.equalTo("objectId", productId);
+      queryRequest.matchesQuery("product", innerQueryProduct);
+    }
+    if (openStatus === true) {
+      queryRequest.equalTo("status", "open");
+    } else {
+      queryRequest.notContainedIn("status", ["open"]);
+    }
+    queryRequest.include("product");
+    queryRequest.limit(displayLimit);
+    queryRequest.skip(page * displayLimit);
+    return queryRequest.find().then(function(requests) {
+      var pastRequests;
+      pastRequests = _.map(requests, function(requestObj) {
+        var pastReq, product;
+        product = {
+          "name": requestObj.get("product").get("name"),
+          "images": requestObj.get("product").get("images")
+        };
+        pastReq = {
+          "id": requestObj.id,
+          "product": product,
+          "status": requestObj.get("status"),
+          "createdAt": requestObj.createdAt,
+          "address": requestObj.get("address"),
+          "comments": requestObj.get("comments"),
+          "offerCount": requestObj.get("offerCount")
+        };
+        return pastReq;
+      });
+      return response.success(pastRequests);
+    }, function(error) {
+      return response.error(error);
+    });
   });
 
   getCategoryBasedSellers = function(categoryId, brandId, city, area) {

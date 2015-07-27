@@ -29,6 +29,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
     request.set "city", city
     request.set "area", area
     request.set "comments", comments
+    request.set "offerCount", 0
 
     # set request's customerId
     customerObj = 
@@ -300,6 +301,67 @@ Parse.Cloud.define 'updateRequestStatus' , (request, response) ->
     else 
         response.error "Please enter a valid status"
 
+# API for listing of re
+Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
+    customerId = request.params.customerId
+
+    productId = request.params.productId
+
+    page = parseInt request.params.page
+    displayLimit = parseInt request.params.displayLimit 
+
+    openStatus = request.params.openStatus     
+    
+    # for a given customer and product find all the requests made by customer if any
+
+    queryRequest = new Parse.Query("Request")
+
+    innerQueryCustomer = new Parse.Query(Parse.User)
+    innerQueryCustomer.equalTo("objectId", customerId)
+    queryRequest.matchesQuery("customerId", innerQueryCustomer)
+
+    if productId isnt ""
+        innerQueryProduct = new Parse.Query("ProductItem")
+        innerQueryProduct.equalTo("objectId", productId)
+        queryRequest.matchesQuery("product", innerQueryProduct) 
+
+    if openStatus is true 
+        queryRequest.equalTo("status", "open")
+    else
+        queryRequest.notContainedIn("status", ["open"])
+    
+
+    queryRequest.include("product") 
+
+
+    # pagination
+    queryRequest.limit(displayLimit)
+    queryRequest.skip(page * displayLimit)     
+
+    queryRequest.find()
+    .then (requests) ->
+        pastRequests = _.map(requests, (requestObj) ->
+
+            product =
+                "name": requestObj.get("product").get("name")
+                "images": requestObj.get("product").get("images")
+
+            pastReq = 
+                "id" : requestObj.id
+                "product" : product
+                "status" : requestObj.get("status")
+                "createdAt": requestObj.createdAt
+                "address": requestObj.get("address")
+                "comments": requestObj.get("comments")
+                "offerCount": requestObj.get("offerCount")
+
+            pastReq
+
+
+        )
+        response.success pastRequests
+    , (error) ->
+        response.error error    
 
 
 
