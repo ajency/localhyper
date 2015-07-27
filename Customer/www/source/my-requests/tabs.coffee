@@ -39,17 +39,14 @@ angular.module 'LocalHyper.myRequests', []
 					controller: 'OpenRequestCtrl'
 					templateUrl: 'views/my-requests/open-requests.html'
 
-		.state 'history-requests',
-			url: '/history-requests'
+		.state 'requests-history',
+			url: '/requests-history'
 			parent: 'tabs'
 			views: 
 				"historyRequestsTab":
 					controller: 'HistoryRequestsCtrl'
 					templateUrl: 'views/my-requests/requests-history.html'
 ]
-
-
-
 
 
 
