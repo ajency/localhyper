@@ -1,4 +1,4 @@
-angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.aboutUs', 'LocalHyper.googleMaps', 'LocalHyper.suggestProduct', 'LocalHyper.profile']).run([
+angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.aboutUs', 'LocalHyper.googleMaps', 'LocalHyper.suggestProduct', 'LocalHyper.profile', 'LocalHyper.myProducts']).run([
   '$rootScope', 'App', 'GoogleMaps', 'User', function($rootScope, App, GoogleMaps, User) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
