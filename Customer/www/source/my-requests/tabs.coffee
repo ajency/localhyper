@@ -1,4 +1,4 @@
-angular.module 'LocalHyper.myProducts', []
+angular.module 'LocalHyper.myRequests', []
 
 
 .directive 'ajRemoveBoxShadow', ['$timeout', ($timeout)->
@@ -29,7 +29,7 @@ angular.module 'LocalHyper.myProducts', []
 			parent: 'main'
 			views: 
 				"appContent":
-					templateUrl: 'views/my-products/tabs.html'
+					templateUrl: 'views/my-requests/tabs.html'
 
 		.state 'open-requests',
 			url: '/open-requests'
@@ -37,15 +37,15 @@ angular.module 'LocalHyper.myProducts', []
 			views: 
 				"openRequestsTab":
 					controller: 'OpenRequestCtrl'
-					templateUrl: 'views/my-products/open-requests.html'
+					templateUrl: 'views/my-requests/open-requests.html'
 
-		.state 'requests-history',
-			url: '/requests-history'
+		.state 'history-requests',
+			url: '/history-requests'
 			parent: 'tabs'
 			views: 
-				"requestsHistoryTab":
-					controller: 'RequestsHistoryCtrl'
-					templateUrl: 'views/my-products/requests-history.html'
+				"historyRequestsTab":
+					controller: 'HistoryRequestsCtrl'
+					templateUrl: 'views/my-requests/requests-history.html'
 
 		
 ]

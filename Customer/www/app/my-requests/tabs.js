@@ -1,4 +1,4 @@
-angular.module('LocalHyper.myProducts', []).directive('ajRemoveBoxShadow', [
+angular.module('LocalHyper.myRequests', []).directive('ajRemoveBoxShadow', [
   '$timeout', function($timeout) {
     return {
       restrict: 'A',
@@ -28,7 +28,7 @@ angular.module('LocalHyper.myProducts', []).directive('ajRemoveBoxShadow', [
       parent: 'main',
       views: {
         "appContent": {
-          templateUrl: 'views/my-products/tabs.html'
+          templateUrl: 'views/my-requests/tabs.html'
         }
       }
     }).state('open-requests', {
@@ -37,16 +37,16 @@ angular.module('LocalHyper.myProducts', []).directive('ajRemoveBoxShadow', [
       views: {
         "openRequestsTab": {
           controller: 'OpenRequestCtrl',
-          templateUrl: 'views/my-products/open-requests.html'
+          templateUrl: 'views/my-requests/open-requests.html'
         }
       }
-    }).state('requests-history', {
-      url: '/requests-history',
+    }).state('history-requests', {
+      url: '/history-requests',
       parent: 'tabs',
       views: {
-        "requestsHistoryTab": {
-          controller: 'RequestsHistoryCtrl',
-          templateUrl: 'views/my-products/requests-history.html'
+        "historyRequestsTab": {
+          controller: 'HistoryRequestsCtrl',
+          templateUrl: 'views/my-requests/requests-history.html'
         }
       }
     });
