@@ -44,9 +44,9 @@ angular.module('LocalHyper.myProducts', []).directive('ajRemoveBoxShadow', [
       url: '/requests-history',
       parent: 'tabs',
       views: {
-        "productHistoryTab": {
-          controller: 'ProductHistoryCtrl',
-          templateUrl: 'views/my-products/product-history.html'
+        "requestsHistoryTab": {
+          controller: 'RequestsHistoryCtrl',
+          templateUrl: 'views/my-products/requests-history.html'
         }
       }
     });

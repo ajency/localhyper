@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.myProducts'
 
 
-.controller 'ProductHistoryCtrl', ['$scope', 'App'
+.controller 'RequestsHistoryCtrl', ['$scope', 'App'
 	, ($scope, App, CategoriesAPI)->
 
 		

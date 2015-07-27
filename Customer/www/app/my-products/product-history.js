@@ -1,1 +1,1 @@
-angular.module('LocalHyper.myProducts').controller('ProductHistoryCtrl', ['$scope', 'App', function($scope, App, CategoriesAPI) {}]);
+angular.module('LocalHyper.myProducts').controller('RequestsHistoryCtrl', ['$scope', 'App', function($scope, App, CategoriesAPI) {}]);
