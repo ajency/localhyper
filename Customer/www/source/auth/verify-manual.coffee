@@ -62,9 +62,10 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
-					count = if App.isAndroid() then -3 else -2
-					App.goBack count
+					# count = if App.isAndroid() then -3 else -2
+					# App.goBack count
 					$rootScope.$broadcast '$user:registration:success'
+					App.navigate 'verify-success'
 				, (error)=>
 					@onError error, 'register'
 				.finally ->

@@ -82,7 +82,8 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
-					App.goBack -2
+					# App.goBack -2
+					App.navigate 'verify-success'
 					$rootScope.$broadcast '$user:registration:success'
 				, (error)=>
 					@onError error, 'register'

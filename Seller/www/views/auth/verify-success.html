@@ -1,0 +1,29 @@
+<ion-view view-title="Verified">
+	
+	<ion-nav-buttons side="right">
+		
+	</ion-nav-buttons>
+
+	<ion-content class="aj-text">
+		<div class="list">
+			<div class="item item-text-wrap cardTop">
+				<div class="row">
+					<div class="center sm-text col subdued">
+						<h5>Congratulation ! <br>
+							Your phone number is successfully verified as a customer .
+						</h5>
+					</div>
+				</div>
+				<div class="list" ng-switch="view.display">
+					<div class="row">
+						<button class="button button-outline button-assertive center col subdued" ng-click="view.onProceed()">
+							Proceed
+						</button>
+					</div>
+				</div>
+			</div>	
+			<br><br>
+		</div>
+	</ion-content>
+
+</ion-view>

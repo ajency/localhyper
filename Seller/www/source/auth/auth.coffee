@@ -32,4 +32,13 @@ angular.module 'LocalHyper.auth', []
 				"appContent":
 					controller: 'VerifyManualCtrl'
 					templateUrl: 'views/auth/verify-manual.html'
+
+		.state 'verify-success',
+			url: '/verify-success'
+			parent: 'main'
+			cache: false
+			views: 
+				"appContent":
+					controller: 'VerifySuccessCtrl'
+					templateUrl: 'views/auth/verify-success.html'
 ]
