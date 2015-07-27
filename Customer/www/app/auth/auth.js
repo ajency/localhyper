@@ -29,6 +29,16 @@ angular.module('LocalHyper.auth', []).config([
           templateUrl: 'views/auth/verify-manual.html'
         }
       }
+    }).state('verify-success', {
+      url: '/verify-success',
+      parent: 'main',
+      cache: false,
+      views: {
+        "appContent": {
+          controller: 'VerifySuccessCtrl',
+          templateUrl: 'views/auth/verify-success.html'
+        }
+      }
     });
   }
 ]);

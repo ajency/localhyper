@@ -104,7 +104,7 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
-          App.goBack(-2);
+          App.navigate('verify-success');
           return $rootScope.$broadcast('$user:registration:success');
         }, (function(_this) {
           return function(error) {

@@ -4,6 +4,7 @@ angular.module 'LocalHyper.products'
 .factory 'ProductsAPI', ['$q', '$http', 'User', ($q, $http, User)->
 
 	ProductsAPI = {}
+	productDetails = {}
 
 	ProductsAPI.getAll = (opts)->
 		defer = $q.defer()
@@ -68,6 +69,24 @@ angular.module 'LocalHyper.products'
 				defer.reject error
 		else
 			defer.resolve {}
+
+		defer.promise
+
+	ProductsAPI.productDetails = (action, data={})->
+		switch action
+			when 'set'
+				productDetails = data
+			when 'get'
+				productDetails
+
+	ProductsAPI.findSellers = (params)->
+		defer = $q.defer()
+
+		$http.post 'functions/getLocationBasedSellers', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
 
 		defer.promise
 

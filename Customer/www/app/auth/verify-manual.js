@@ -77,10 +77,8 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
-          var count;
-          count = App.isAndroid() ? -3 : -2;
-          App.goBack(count);
-          return $rootScope.$broadcast('$user:registration:success');
+          $rootScope.$broadcast('$user:registration:success');
+          return App.navigate('verify-success');
         }, (function(_this) {
           return function(error) {
             return _this.onError(error, 'register');

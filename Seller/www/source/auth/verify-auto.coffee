@@ -2,8 +2,8 @@ angular.module 'LocalHyper.auth'
 
 
 .controller 'VerifyAutoCtrl', ['$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout'
-	, 'CToast', 'Storage'
-	, ($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast, Storage)->
+	, 'CToast'
+	, ($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast)->
 
 		$scope.view =
 			display: 'noError'
@@ -83,9 +83,8 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
-					Storage.bussinessDetails 'remove'
-					Storage.categoryChains 'remove'
-					App.navigate 'new-requests', {}, {animate: true, back: false}
+					App.navigate 'verify-success'
+					# App.navigate 'new-requests', {}, {animate: true, back: false}
 				, (error)=>
 					@onError error, 'register'
 
