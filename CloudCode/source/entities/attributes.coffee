@@ -40,7 +40,7 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
 
             if (secondary_attributes)
                 if secondary_attributes.length > 0
-                    final_attributes = _.union(filterable_attributes, secondary_attributes )         
+                    final_attributes = _.union(f_attributes, secondary_attributes )         
         
         
         findQs = []
@@ -78,8 +78,20 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
                 
                 finalArr.push object
             
-            Parse.Promise.as()  
-            response.success finalArr 
+            Parse.Promise.as()
+
+            attributes = _.map(final_attributes, (attribute) ->
+            
+                attribute = 
+                    "id" : attribute.id
+                    "name" : attribute.get("name")
+            )
+
+
+            result = 
+                attributes :  attributes
+                attributeValues : finalArr
+            response.success result 
         , (error)->
             response.error error
 

@@ -37,7 +37,7 @@
           secondary_attributes = categoryData.get('secondary_attributes');
           if (secondary_attributes) {
             if (secondary_attributes.length > 0) {
-              final_attributes = _.union(filterable_attributes, secondary_attributes);
+              final_attributes = _.union(f_attributes, secondary_attributes);
             }
           }
         }
@@ -54,7 +54,7 @@
           return query.find();
         });
         return Parse.Promise.when(findQs).then(function() {
-          var finalArr, individualFindResults;
+          var attributes, finalArr, individualFindResults, result;
           individualFindResults = _.flatten(_.toArray(arguments));
           finalArr = [];
           _.each(individualFindResults, function(individualResult) {
@@ -70,7 +70,17 @@
             return finalArr.push(object);
           });
           Parse.Promise.as();
-          return response.success(finalArr);
+          attributes = _.map(final_attributes, function(attribute) {
+            return attribute = {
+              "id": attribute.id,
+              "name": attribute.get("name")
+            };
+          });
+          result = {
+            attributes: attributes,
+            attributeValues: finalArr
+          };
+          return response.success(result);
         }, function(error) {
           return response.error(error);
         });
@@ -858,7 +868,7 @@
         brandObj = {
           "__type": "Pointer",
           "className": "Brand",
-          "objectId": product.brandId
+          "objectId": product.brand
         };
         productItem.set("brand", brandObj);
         productItem.set("category", categoryObj);
