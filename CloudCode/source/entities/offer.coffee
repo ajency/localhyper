@@ -1,3 +1,4 @@
+
 # get new offers for a customer for a product
 Parse.Cloud.define 'getNewOffers', (request, response) ->
     
@@ -272,3 +273,19 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     , (error) ->
         response.error error  
     
+
+
+Parse.Cloud.afterSave "Offer", (request)->
+    offerObject = request.object
+    requestId = offerObject.get("request").id
+  
+    RequestClass = Parse.Object.extend("Request")
+    queryReq = new Parse.Query(RequestClass)
+  
+    queryReq.get(requestId)
+    .then (requestObj) ->
+        requestObj.increment("offerCount");
+        requestObj.save()
+    ,(error) ->
+        console.log "Got an error " + error.code + " : " + error.message
+  
