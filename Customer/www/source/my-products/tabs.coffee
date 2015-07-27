@@ -46,8 +46,6 @@ angular.module 'LocalHyper.myProducts', []
 				"requestsHistoryTab":
 					controller: 'RequestsHistoryCtrl'
 					templateUrl: 'views/my-products/requests-history.html'
-
-		
 ]
 
 
