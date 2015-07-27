@@ -8,6 +8,7 @@ angular.module 'LocalHyper.products', []
 
 		$scope.view =
 			title: Product.subCategoryTitle
+			gotAllProducts: false
 			products: []
 			other: []
 			page: 0
@@ -22,6 +23,7 @@ angular.module 'LocalHyper.products', []
 				attribute: 'brand'
 				allAttributes: []
 				attrValues: {}
+				originalValues: {}
 				selectedFilters: 
 					brands: []
 					price: []
@@ -52,8 +54,8 @@ angular.module 'LocalHyper.products', []
 					other = $scope.view.other
 					@attrValues['brand'] = other.supportedBrands
 					@attrValues['price'] = @getPriceRange other.priceRange
-					@allAttributes.push value: 'brand', name: 'Brand'
-					@allAttributes.push value: 'price', name: 'Price'
+					@allAttributes.push value: 'brand', name: 'Brand', selected: 0
+					@allAttributes.push value: 'price', name: 'Price', selected: 0
 
 					_.each other.filters, (filter)=>
 						value = filter.filterName
@@ -61,37 +63,55 @@ angular.module 'LocalHyper.products', []
 						@allAttributes.push
 							value: value
 							name: s.humanize(filter.attributeName)
+							selected: 0
 
-				resetFilters : ->
-					@attribute = 'brand'
-					_.each @attrValues, (attrs)->
-						_.each attrs, (val)-> val.selected = false
+					# De-select all attr values
+					_.each @attrValues, (values)->
+						_.each values, (val)-> val.selected = false
+
+				showAttrCount : ->
+					_.each @attrValues, (values, index)=>
+						count = 0
+						_.each values, (val)-> count++ if val.selected
+						attrIndex = _.findIndex @allAttributes, (attrs)-> attrs.value is index
+						@allAttributes[attrIndex].selected = count
+
+				clearFilters : ->
+					_.each @attrValues, (values)->
+						_.each values, (val)-> val.selected = false
+
+					_.each @allAttributes, (attrs)-> attrs.selected = 0
 
 					@selectedFilters = 
 						brands:[]
 						price:[]
 						otherFilters: {}
 
-				selectionExists : ->
-					exists = false
-					_.each @attrValues, (attrs)->
-						_.each attrs, (val)-> 
-							exists = true if val.selected
-					exists
+				resetFilters : ->
+					@attribute = 'brand'
+					@clearFilters()
+
+				noChangeInSelection : ->
+					_.isEqual _.sortBy(@originalValues), _.sortBy(@attrValues)
+
+				openModal : ->
+					@originalValues = JSON.parse JSON.stringify(@attrValues)
+					@modal.show()
 
 				closeModal : ->
-					if @selectionExists()
+					if @noChangeInSelection()
+						@modal.hide()
+					else
 						msg = 'Your filter selection will go away'
 						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']
 						.then (btnIndex)=>
 							switch btnIndex
 								when 1
+									@attrValues = @originalValues
+									@showAttrCount()
 									@modal.hide()
-									# @resetFilters()
-									$scope.view.reset()
 								when 2
 									@onApply()
-					else @modal.hide()
 
 				onApply : ->
 					_.each @attrValues, (_values, attribute)=>
@@ -119,8 +139,7 @@ angular.module 'LocalHyper.products', []
 								_.each _values, (attr)=>
 									selected.push(attr.id) if attr.selected
 								@selectedFilters.otherFilters[attribute] = selected
-
-					console.log @selectedFilters
+					
 					@modal.hide()
 					$scope.view.reFetch()
 					
@@ -130,21 +149,18 @@ angular.module 'LocalHyper.products', []
 				@loadFiltersModal()
 
 			reset : ->
-				@products = []
-				@page = 0
 				@footer = false
-				@canLoadMore = true
-				@refresh = false
 				@sortBy = 'popularity'
 				@ascending = true
 				@filter.resetFilters()
-				@onScrollComplete()
+				@reFetch false
 
-			reFetch : ->
+			reFetch : (refresh=true)->
+				@refresh = refresh
 				@page = 0
-				@refresh = true
 				@products = []
 				@canLoadMore = true
+				@gotAllProducts = false
 				@onScrollComplete()
 
 			showSortOptions : ->
@@ -169,6 +185,7 @@ angular.module 'LocalHyper.products', []
 			
 			onPullToRefresh : ->
 				if App.isOnline()
+					@gotAllProducts = false
 					@canLoadMore = true
 					@page = 0
 					@refresh = true
@@ -200,6 +217,7 @@ angular.module 'LocalHyper.products', []
 
 			onError : (error)->
 				console.log error
+				CToast.showLong UIMsg.serverError
 				@canLoadMore = false
 			
 			onSuccess : (data)->
@@ -215,6 +233,8 @@ angular.module 'LocalHyper.products', []
 					else @products = @products.concat _products
 				else
 					@canLoadMore = false
+
+				@gotAllProducts = true if !@canLoadMore
 
 			getPrimaryAttrs : (attrs)->
 				if !_.isUndefined attrs

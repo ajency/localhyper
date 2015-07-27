@@ -3,6 +3,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
     var onDeviceBack;
     $scope.view = {
       title: Product.subCategoryTitle,
+      gotAllProducts: false,
       products: [],
       other: [],
       page: 0,
@@ -16,6 +17,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         attribute: 'brand',
         allAttributes: [],
         attrValues: {},
+        originalValues: {},
         selectedFilters: {
           brands: [],
           price: [],
@@ -63,30 +65,57 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           this.attrValues['price'] = this.getPriceRange(other.priceRange);
           this.allAttributes.push({
             value: 'brand',
-            name: 'Brand'
+            name: 'Brand',
+            selected: 0
           });
           this.allAttributes.push({
             value: 'price',
-            name: 'Price'
+            name: 'Price',
+            selected: 0
           });
-          return _.each(other.filters, (function(_this) {
+          _.each(other.filters, (function(_this) {
             return function(filter) {
               var value;
               value = filter.filterName;
               _this.attrValues[value] = filter.values;
               return _this.allAttributes.push({
                 value: value,
-                name: s.humanize(filter.attributeName)
+                name: s.humanize(filter.attributeName),
+                selected: 0
               });
             };
           })(this));
-        },
-        resetFilters: function() {
-          this.attribute = 'brand';
-          _.each(this.attrValues, function(attrs) {
-            return _.each(attrs, function(val) {
+          return _.each(this.attrValues, function(values) {
+            return _.each(values, function(val) {
               return val.selected = false;
             });
+          });
+        },
+        showAttrCount: function() {
+          return _.each(this.attrValues, (function(_this) {
+            return function(values, index) {
+              var attrIndex, count;
+              count = 0;
+              _.each(values, function(val) {
+                if (val.selected) {
+                  return count++;
+                }
+              });
+              attrIndex = _.findIndex(_this.allAttributes, function(attrs) {
+                return attrs.value === index;
+              });
+              return _this.allAttributes[attrIndex].selected = count;
+            };
+          })(this));
+        },
+        clearFilters: function() {
+          _.each(this.attrValues, function(values) {
+            return _.each(values, function(val) {
+              return val.selected = false;
+            });
+          });
+          _.each(this.allAttributes, function(attrs) {
+            return attrs.selected = 0;
           });
           return this.selectedFilters = {
             brands: [],
@@ -94,35 +123,35 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             otherFilters: {}
           };
         },
-        selectionExists: function() {
-          var exists;
-          exists = false;
-          _.each(this.attrValues, function(attrs) {
-            return _.each(attrs, function(val) {
-              if (val.selected) {
-                return exists = true;
-              }
-            });
-          });
-          return exists;
+        resetFilters: function() {
+          this.attribute = 'brand';
+          return this.clearFilters();
+        },
+        noChangeInSelection: function() {
+          return _.isEqual(_.sortBy(this.originalValues), _.sortBy(this.attrValues));
+        },
+        openModal: function() {
+          this.originalValues = JSON.parse(JSON.stringify(this.attrValues));
+          return this.modal.show();
         },
         closeModal: function() {
           var msg;
-          if (this.selectionExists()) {
+          if (this.noChangeInSelection()) {
+            return this.modal.hide();
+          } else {
             msg = 'Your filter selection will go away';
             return CDialog.confirm('Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']).then((function(_this) {
               return function(btnIndex) {
                 switch (btnIndex) {
                   case 1:
-                    _this.modal.hide();
-                    return $scope.view.reset();
+                    _this.attrValues = _this.originalValues;
+                    _this.showAttrCount();
+                    return _this.modal.hide();
                   case 2:
                     return _this.onApply();
                 }
               };
             })(this));
-          } else {
-            return this.modal.hide();
           }
         },
         onApply: function() {
@@ -164,7 +193,6 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
               }
             };
           })(this));
-          console.log(this.selectedFilters);
           this.modal.hide();
           return $scope.view.reFetch();
         }
@@ -173,21 +201,21 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         return this.loadFiltersModal();
       },
       reset: function() {
-        this.products = [];
-        this.page = 0;
         this.footer = false;
-        this.canLoadMore = true;
-        this.refresh = false;
         this.sortBy = 'popularity';
         this.ascending = true;
         this.filter.resetFilters();
-        return this.onScrollComplete();
+        return this.reFetch(false);
       },
-      reFetch: function() {
+      reFetch: function(refresh) {
+        if (refresh == null) {
+          refresh = true;
+        }
+        this.refresh = refresh;
         this.page = 0;
-        this.refresh = true;
         this.products = [];
         this.canLoadMore = true;
+        this.gotAllProducts = false;
         return this.onScrollComplete();
       },
       showSortOptions: function() {
@@ -216,6 +244,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       },
       onPullToRefresh: function() {
         if (App.isOnline()) {
+          this.gotAllProducts = false;
           this.canLoadMore = true;
           this.page = 0;
           this.refresh = true;
@@ -255,6 +284,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       },
       onError: function(error) {
         console.log(error);
+        CToast.showLong(UIMsg.serverError);
         return this.canLoadMore = false;
       },
       onSuccess: function(data) {
@@ -271,12 +301,15 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             this.onScrollComplete();
           }
           if (this.refresh) {
-            return this.products = _products;
+            this.products = _products;
           } else {
-            return this.products = this.products.concat(_products);
+            this.products = this.products.concat(_products);
           }
         } else {
-          return this.canLoadMore = false;
+          this.canLoadMore = false;
+        }
+        if (!this.canLoadMore) {
+          return this.gotAllProducts = true;
         }
       },
       getPrimaryAttrs: function(attrs) {
@@ -288,7 +321,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return value + " " + unit;
+          return "" + value + " " + unit;
         } else {
           return '';
         }

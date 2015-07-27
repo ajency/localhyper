@@ -1,5 +1,5 @@
 angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
-  '$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout', 'CToast', function($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast) {
+  '$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout', 'CToast', 'Storage', function($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast, Storage) {
     $scope.view = {
       display: 'noError',
       smsCode: '',
@@ -7,6 +7,9 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
       errorType: '',
       timeout: null,
       smsPluginSrc: "info.asankan.phonegap.smsplugin.smsplugin",
+      phone: {
+        SUPPORT_NUMBER: SUPPORT_NUMBER
+      },
       onError: function(type, at) {
         this.display = 'error';
         this.errorType = type;
@@ -125,6 +128,11 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
           case 'register':
             return this.register();
         }
+      },
+      callSupport: function() {
+        var telURI;
+        telURI = "tel:" + SUPPORT_NUMBER;
+        return document.location.href = telURI;
       }
     };
     $scope.$on('$ionicView.beforeEnter', function() {

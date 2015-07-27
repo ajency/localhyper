@@ -20,3 +20,29 @@ angular.module 'LocalHyper.requestsOffers'
 	OffersAPI
 ]
 
+.factory 'OfferHistoryAPI', ['$q', '$http', 'User', '$timeout', ($q, $http, User, $timeout)->
+
+	OfferHistoryAPI = {}
+
+	OfferHistoryAPI.offerhistory = (opts)->
+
+		user = User.getCurrent()
+		defer = $q.defer()
+		user = User.getCurrent()
+
+		params = 
+			"sellerId": user.id
+			"page": opts.page
+			"displayLimit" : "3"
+			
+		$http.post 'functions/getSellerOffers', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
+	OfferHistoryAPI
+]
+

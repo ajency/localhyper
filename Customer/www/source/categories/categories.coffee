@@ -9,6 +9,9 @@ angular.module 'LocalHyper.categories', []
 			errorType: ''
 			parentCategories: []
 
+			init : ->
+				@getCategories()
+
 			getCategories : ->
 				CategoriesAPI.getAll()
 				.then (data)=>
@@ -31,11 +34,8 @@ angular.module 'LocalHyper.categories', []
 
 			onSubcategoryClick : (children, categoryID)->
 				CategoriesAPI.subCategories 'set', children
-				App.navigate('products', {categoryID: categoryID})
+				App.navigate 'products', categoryID: categoryID
 
-
-		$scope.$on '$ionicView.loaded', ->
-			$scope.view.getCategories()
 
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
@@ -53,6 +53,5 @@ angular.module 'LocalHyper.categories', []
 				"appContent":
 					templateUrl: 'views/categories/categories.html'
 					controller: 'CategoriesCtrl'
-
 ]
 

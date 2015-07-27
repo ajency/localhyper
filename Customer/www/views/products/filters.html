@@ -6,7 +6,7 @@
 				<h5 class="text-left">Filter by</h5> 
 			</div>
 			<div class="col">
-				<h2 class="text-right" ng-click="view.filter.resetFilters();">
+				<h2 class="text-right" ng-click="view.filter.clearFilters();">
 					<i class="ion ion-minus-circled"></i>
 				</h2>
 			</div>
@@ -30,9 +30,9 @@
 			<div class="col col-33">
 				<div class="list">
 					<label 
-						class="item item-radio"
+						class="item item-text-wrap item-radio"
 						ng-repeat="attr in view.filter.allAttributes">
-
+						<i ng-if="attr.selected !== 0">{{attr.selected}}</i>
 						<input 
 							type="radio" 
 							name="group"
@@ -49,13 +49,14 @@
 
 				<ul class="list">
 					<li 
-						class="item item-checkbox"
-						ng-repeat="value in view.filter.attrValues[view.filter.attribute]">
+						class="item item-text-wrap item-checkbox"
+						ng-repeat="value in view.filter.attrValues[view.filter.attribute] track by $index">
 
 						<label class="checkbox">
 							<input 
 								type="checkbox" 
-								ng-model="value.selected">
+								ng-model="value.selected"
+								ng-change="view.filter.showAttrCount()">
 						</label>
 						{{value.name}}
 					</li>
