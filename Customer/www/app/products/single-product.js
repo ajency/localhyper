@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -91,6 +91,9 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         return App.navigate('make-request');
       }
     };
+    $rootScope.$on('make:request:success', function() {
+      return $scope.view.request.active = true;
+    });
     return $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['products'], App.previousState)) {
         return $scope.view.reset();

@@ -2,9 +2,9 @@ angular.module 'LocalHyper.products'
 
 
 .controller 'MakeRequestCtrl', ['$scope', 'App', 'GPS', 'CToast', 'CDialog', '$timeout'
-	, 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup'
+	, 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope'
 	, ($scope, App, GPS, CToast, CDialog, $timeout, GoogleMaps, UIMsg, CSpinner
-	, User, ProductsAPI, $ionicPopup)->
+	, User, ProductsAPI, $ionicPopup, $rootScope)->
 
 		$scope.view =
 			latLng: null
@@ -67,6 +67,7 @@ angular.module 'LocalHyper.products'
 						GPS.getCurrentLocation()
 						.then (loc)=>
 							latLng = @toLatLng(loc)
+							@searchText = ''
 							@map.setCenter latLng
 							@map.setZoom 15
 							@addUserLocationMarker latLng
@@ -213,6 +214,7 @@ angular.module 'LocalHyper.products'
 							ProductsAPI.makeRequest params
 						.then =>
 							CToast.show 'Your request has been made'
+							$rootScope.$broadcast 'make:request:success'
 							$timeout =>
 								App.goBack -1
 							, 500

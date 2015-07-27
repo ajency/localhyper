@@ -2,8 +2,9 @@ angular.module 'LocalHyper.products'
 
 
 .controller 'SingleProductCtrl', ['$scope', '$stateParams', 'ProductsAPI', 'User'
-	, 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner'
-	, ($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner)->
+	, 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope'
+	, ($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps
+	, CSpinner, $rootScope)->
 
 		$scope.view = 
 			display: 'loader'
@@ -80,6 +81,9 @@ angular.module 'LocalHyper.products'
 				ProductsAPI.productDetails 'set', @product
 				App.navigate 'make-request'
 
+
+		$rootScope.$on 'make:request:success', ->
+			$scope.view.request.active = true
 		
 		$scope.$on '$ionicView.beforeEnter', ->
 			if _.contains ['products'], App.previousState

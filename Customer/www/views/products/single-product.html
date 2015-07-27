@@ -1,4 +1,4 @@
-<ion-view>
+<ion-view view-title="">
 
 	<ion-content ng-switch="view.display" class="bg-white">
 
@@ -73,8 +73,14 @@
 	<ion-footer ng-show="view.footer" class="bar bar-footer bar-assertive" >
 		<div 
 			class="title"
+			ng-hide="view.request.active"
 			ng-click="view.checkUserLogin()">
 			Get Best Prices
+		</div>
+		<div 
+			class="title"
+			ng-show="view.request.active">
+			You currently have an open request
 		</div>
 	</ion-footer>
 

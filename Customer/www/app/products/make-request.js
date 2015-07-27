@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
-  '$scope', 'App', 'GPS', 'CToast', 'CDialog', '$timeout', 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', function($scope, App, GPS, CToast, CDialog, $timeout, GoogleMaps, UIMsg, CSpinner, User, ProductsAPI, $ionicPopup) {
+  '$scope', 'App', 'GPS', 'CToast', 'CDialog', '$timeout', 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope', function($scope, App, GPS, CToast, CDialog, $timeout, GoogleMaps, UIMsg, CSpinner, User, ProductsAPI, $ionicPopup, $rootScope) {
     $scope.view = {
       latLng: null,
       addressFetch: true,
@@ -76,6 +76,7 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
               return GPS.getCurrentLocation().then(function(loc) {
                 var latLng;
                 latLng = _this.toLatLng(loc);
+                _this.searchText = '';
                 _this.map.setCenter(latLng);
                 _this.map.setZoom(15);
                 return _this.addUserLocationMarker(latLng);
@@ -257,6 +258,7 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
             }).then((function(_this) {
               return function() {
                 CToast.show('Your request has been made');
+                $rootScope.$broadcast('make:request:success');
                 return $timeout(function() {
                   return App.goBack(-1);
                 }, 500);
