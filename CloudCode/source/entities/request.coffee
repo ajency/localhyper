@@ -301,7 +301,7 @@ Parse.Cloud.define 'updateRequestStatus' , (request, response) ->
     else 
         response.error "Please enter a valid status"
 
-# API for listing of re
+# API for listing of request history for customer
 Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
     customerId = request.params.customerId
 
@@ -325,11 +325,24 @@ Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
         innerQueryProduct.equalTo("objectId", productId)
         queryRequest.matchesQuery("product", innerQueryProduct) 
 
+    # if openStatus is true then show only those requests that are open and non expired
+    #  else show all non open requests
+    
+    # put constraint for getting non expired requests
+    currentDate = new Date()
+    currentTimeStamp = currentDate.getTime()
+    expiryValueInHrs = 24
+    queryDate = new Date()
+    time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
+    queryDate.setTime(time24HoursAgo)    
+
     if openStatus is true 
         queryRequest.equalTo("status", "open")
+
+        queryRequest.greaterThanOrEqualTo( "createdAt", queryDate )            
     else
+        queryRequest.lessThanOrEqualTo( "createdAt", queryDate )         
         queryRequest.notContainedIn("status", ["open"])
-    
 
     queryRequest.include("product") 
 

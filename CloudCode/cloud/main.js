@@ -1455,7 +1455,7 @@
   });
 
   Parse.Cloud.define('getCustomerRequests', function(request, response) {
-    var customerId, displayLimit, innerQueryCustomer, innerQueryProduct, openStatus, page, productId, queryRequest;
+    var currentDate, currentTimeStamp, customerId, displayLimit, expiryValueInHrs, innerQueryCustomer, innerQueryProduct, openStatus, page, productId, queryDate, queryRequest, time24HoursAgo;
     customerId = request.params.customerId;
     productId = request.params.productId;
     page = parseInt(request.params.page);
@@ -1470,9 +1470,17 @@
       innerQueryProduct.equalTo("objectId", productId);
       queryRequest.matchesQuery("product", innerQueryProduct);
     }
+    currentDate = new Date();
+    currentTimeStamp = currentDate.getTime();
+    expiryValueInHrs = 24;
+    queryDate = new Date();
+    time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
+    queryDate.setTime(time24HoursAgo);
     if (openStatus === true) {
       queryRequest.equalTo("status", "open");
+      queryRequest.greaterThanOrEqualTo("createdAt", queryDate);
     } else {
+      queryRequest.lessThanOrEqualTo("createdAt", queryDate);
       queryRequest.notContainedIn("status", ["open"]);
     }
     queryRequest.include("product");
