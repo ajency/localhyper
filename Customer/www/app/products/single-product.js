@@ -63,7 +63,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return "" + value + " " + unit;
+          return value + " " + unit;
         } else {
           return '';
         }
@@ -95,7 +95,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       return $scope.view.request.active = true;
     });
     return $scope.$on('$ionicView.beforeEnter', function() {
-      if (_.contains(['products'], App.previousState)) {
+      if (_.contains(['products', 'verify-success'], App.previousState)) {
         return $scope.view.reset();
       }
     });

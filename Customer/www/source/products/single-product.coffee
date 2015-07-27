@@ -86,7 +86,7 @@ angular.module 'LocalHyper.products'
 			$scope.view.request.active = true
 		
 		$scope.$on '$ionicView.beforeEnter', ->
-			if _.contains ['products'], App.previousState
+			if _.contains ['products', 'verify-success'], App.previousState
 				$scope.view.reset()
 ]
 
