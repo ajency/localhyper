@@ -1256,7 +1256,7 @@
       city = requestObject.get("city");
       area = requestObject.get("area");
       sellersArray = [];
-      return getCategoryBasedSellers(point, categoryId, brandId, city, area).then(function(categoryBasedSellers) {
+      return getCategoryBasedSellers(categoryId, brandId, city, area).then(function(categoryBasedSellers) {
         var findQs;
         findQs = [];
         findQs = _.map(categoryBasedSellers, function(catBasedSeller) {
@@ -1264,14 +1264,15 @@
           sellerId = catBasedSeller.id;
           sellerGeoPoint = catBasedSeller.get("addressGeoPoint");
           sellerRadius = catBasedSeller.get("deliveryRadius");
-          return getAreaBoundSellers(sellerId, sellerGeoPoint, sellerRadius, createdRequestId, customerObj);
+          return getAreaBoundSellers(sellerId, sellerGeoPoint, sellerRadius, createdRequestId);
         });
         return Parse.Promise.when(findQs).then(function() {
-          var locationBasedSellerIds, notificationSavedArr;
-          locationBasedSellerIds = _.flatten(_.toArray(arguments));
+          var locationBasedSellers, notificationSavedArr;
+          locationBasedSellers = _.flatten(_.toArray(arguments));
           notificationSavedArr = [];
-          _.each(locationBasedSellerIds, function(locationBasedSellerId) {
-            var Notification, notification, notificationData, sellerObj;
+          _.each(locationBasedSellers, function(locationBasedSeller) {
+            var Notification, locationBasedSellerId, notification, notificationData, sellerObj;
+            locationBasedSellerId = locationBasedSeller.sellerId;
             if (locationBasedSellerId) {
               sellerObj = {
                 "__type": "Pointer",
@@ -1438,7 +1439,7 @@
     }
   });
 
-  getCategoryBasedSellers = function(geoPoint, categoryId, brandId, city, area) {
+  getCategoryBasedSellers = function(categoryId, brandId, city, area) {
     var Brand, Category, brandPointer, categoryPointer, promise, sellerQuery;
     sellerQuery = new Parse.Query(Parse.User);
     Category = Parse.Object.extend("Category");
@@ -1465,25 +1466,86 @@
     return promise;
   };
 
-  getAreaBoundSellers = function(sellerId, sellerGeoPoint, sellerRadius, createdRequestId, customerObj) {
+  getAreaBoundSellers = function(sellerId, sellerGeoPoint, sellerRadius, createdRequestId) {
     var promise, requestQuery;
     requestQuery = new Parse.Query("Request");
     requestQuery.equalTo("objectId", createdRequestId);
-    requestQuery.equalTo("customerId", customerObj);
-    requestQuery.equalTo("status", "open");
     requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
     promise = new Parse.Promise();
     requestQuery.find().then(function(requests) {
+      var seller;
       if (requests.length === 0) {
         return promise.resolve();
       } else {
-        return promise.resolve(sellerId);
+        seller = {
+          sellerId: sellerId,
+          sellerGeoPoint: sellerGeoPoint
+        };
+        return promise.resolve(seller);
       }
     }, function(error) {
       return promise.reject(error);
     });
     return promise;
   };
+
+  Parse.Cloud.define('getLocationBasedSellers', function(request, response) {
+    var Request, area, brandId, brandObj, categoryId, categoryObj, city, locationGeoPoint, point, status, tempRequest;
+    locationGeoPoint = {
+      "latitude": request.params.location.latitude,
+      "longitude": request.params.location.longitude
+    };
+    categoryId = request.params.categoryId;
+    brandId = request.params.brandId;
+    city = request.params.city;
+    area = request.params.area;
+    status = "temporary";
+    Request = Parse.Object.extend('Request');
+    tempRequest = new Request();
+    point = new Parse.GeoPoint(locationGeoPoint);
+    tempRequest.set("addressGeoPoint", point);
+    tempRequest.set("status", status);
+    tempRequest.set("city", city);
+    tempRequest.set("area", area);
+    categoryObj = {
+      "__type": "Pointer",
+      "className": "Category",
+      "objectId": categoryId
+    };
+    tempRequest.set("category", categoryObj);
+    brandObj = {
+      "__type": "Pointer",
+      "className": "Brand",
+      "objectId": brandId
+    };
+    tempRequest.set("brand", brandObj);
+    return tempRequest.save().then(function(requestObject) {
+      var createdRequestId, sellersArray;
+      createdRequestId = requestObject.id;
+      city = requestObject.get("city");
+      area = requestObject.get("area");
+      sellersArray = [];
+      return getCategoryBasedSellers(categoryId, brandId, city, area).then(function(categoryBasedSellers) {
+        var findQs;
+        findQs = [];
+        findQs = _.map(categoryBasedSellers, function(catBasedSeller) {
+          var sellerGeoPoint, sellerId, sellerRadius;
+          sellerId = catBasedSeller.id;
+          sellerGeoPoint = catBasedSeller.get("addressGeoPoint");
+          sellerRadius = catBasedSeller.get("deliveryRadius");
+          return getAreaBoundSellers(sellerId, sellerGeoPoint, sellerRadius, createdRequestId);
+        });
+        return Parse.Promise.when(findQs).then(function() {
+          var locationBasedSellers;
+          requestObject.destroy();
+          locationBasedSellers = _.flatten(_.toArray(arguments));
+          return response.success(locationBasedSellers);
+        }, function(error) {
+          return response.error(error);
+        });
+      });
+    });
+  });
 
   Parse.Cloud.define('createTestSeller', function(request, response) {
     var addressGeoPoint, supportedBrands, supportedBrandsArr, supportedCategories, supportedCategoriesArr, user, userData;

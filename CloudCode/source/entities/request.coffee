@@ -71,7 +71,7 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
 
             sellersArray = []
 
-            getCategoryBasedSellers(point,categoryId,brandId,city,area)
+            getCategoryBasedSellers(categoryId,brandId,city,area)
             .then (categoryBasedSellers) ->
                 # findQs = []
                 # console.log getCategoryBasedSellers.length
@@ -84,13 +84,16 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
                     sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
                     sellerRadius = catBasedSeller.get "deliveryRadius"
 
-                    getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId,customerObj)
+                    getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId)
                 )
 
                 Parse.Promise.when(findQs).then ->
-                    locationBasedSellerIds = _.flatten(_.toArray(arguments))
+                    locationBasedSellers = _.flatten(_.toArray(arguments))
                     notificationSavedArr = []
-                    _.each locationBasedSellerIds , (locationBasedSellerId) ->
+                    _.each locationBasedSellers , (locationBasedSeller) ->
+                        
+                        locationBasedSellerId = locationBasedSeller.sellerId
+                        
                         if locationBasedSellerId
                             sellerObj =
                                 "__type" : "Pointer",

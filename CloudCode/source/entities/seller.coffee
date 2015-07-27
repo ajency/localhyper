@@ -1,4 +1,4 @@
-getCategoryBasedSellers = (geoPoint,categoryId,brandId,city,area) ->
+getCategoryBasedSellers = (categoryId,brandId,city,area) ->
 
     # find all sellers from users class whose categories column contains categoryId 
     sellerQuery = new Parse.Query(Parse.User) 
@@ -32,12 +32,12 @@ getCategoryBasedSellers = (geoPoint,categoryId,brandId,city,area) ->
 
     promise
 
-getAreaBoundSellers = (sellerId,sellerGeoPoint,sellerRadius,createdRequestId,customerObj) ->
+getAreaBoundSellers = (sellerId,sellerGeoPoint,sellerRadius,createdRequestId) ->
     
     requestQuery = new Parse.Query("Request") 
     requestQuery.equalTo("objectId", createdRequestId)
-    requestQuery.equalTo("customerId", customerObj)
-    requestQuery.equalTo("status", "open")
+    # requestQuery.equalTo("customerId", customerObj)
+    # requestQuery.equalTo("status", "open")
     requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
 
     promise = new Parse.Promise()
@@ -47,7 +47,10 @@ getAreaBoundSellers = (sellerId,sellerGeoPoint,sellerRadius,createdRequestId,cus
         if requests.length is 0
             promise.resolve()
         else
-            promise.resolve(sellerId)
+            seller = 
+                sellerId : sellerId 
+                sellerGeoPoint : sellerGeoPoint 
+            promise.resolve(seller)
     , (error) ->
         promise.reject (error)
 
@@ -55,7 +58,80 @@ getAreaBoundSellers = (sellerId,sellerGeoPoint,sellerRadius,createdRequestId,cus
     promise    
 
   
+Parse.Cloud.define 'getLocationBasedSellers' , (request, response) ->
+    
+    locationGeoPoint = 
+        "latitude" : request.params.location.latitude
+        "longitude" : request.params.location.longitude
 
+    categoryId = request.params.categoryId
+    brandId = request.params.brandId
+    city = request.params.city
+    area = request.params.area
+
+    status = "temporary"
+
+    Request = Parse.Object.extend('Request')
+
+    tempRequest = new Request()
+
+    # set address geo point
+    point = new Parse.GeoPoint locationGeoPoint
+
+    tempRequest.set "addressGeoPoint", point
+    tempRequest.set "status", status
+    tempRequest.set "city", city
+    tempRequest.set "area", area
+
+    # set category
+    categoryObj =
+        "__type" : "Pointer",
+        "className":"Category",
+        "objectId":categoryId                    
+
+    tempRequest.set "category", categoryObj    
+
+    # set brand
+    brandObj =
+        "__type" : "Pointer",
+        "className":"Brand",
+        "objectId":brandId                    
+
+    tempRequest.set "brand", brandObj       
+
+    tempRequest.save()
+        .then (requestObject)->
+
+            createdRequestId = requestObject.id
+            city = requestObject.get("city")
+            area = requestObject.get("area")
+
+            sellersArray = []
+
+            getCategoryBasedSellers(categoryId,brandId,city,area)
+            .then (categoryBasedSellers) ->
+                # findQs = []
+                # console.log getCategoryBasedSellers.length
+
+                findQs = []
+
+                findQs = _.map(categoryBasedSellers, (catBasedSeller) ->
+                    
+                    sellerId = catBasedSeller.id
+                    sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
+                    sellerRadius = catBasedSeller.get "deliveryRadius"
+
+                    getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId)
+                )
+
+                Parse.Promise.when(findQs).then ->
+                    # delete temporary request and send result data
+                    requestObject.destroy() 
+                    locationBasedSellers = _.flatten(_.toArray(arguments)) 
+                    response.success locationBasedSellers 
+
+                , (error) ->
+                    response.error error   
 
 
 Parse.Cloud.define 'createTestSeller', (request, response) ->
