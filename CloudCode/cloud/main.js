@@ -1483,6 +1483,7 @@
       queryRequest.greaterThanOrEqualTo("createdAt", queryDate);
     }
     queryRequest.include("product");
+    queryRequest.descending("updatedAt");
     queryRequest.limit(displayLimit);
     queryRequest.skip(page * displayLimit);
     return queryRequest.find().then(function(requests) {

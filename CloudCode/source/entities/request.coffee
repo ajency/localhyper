@@ -346,10 +346,12 @@ Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
 
     queryRequest.include("product") 
 
-
+    queryRequest.descending("updatedAt")
+    
     # pagination
     queryRequest.limit(displayLimit)
     queryRequest.skip(page * displayLimit)     
+    
 
     queryRequest.find()
     .then (requests) ->
