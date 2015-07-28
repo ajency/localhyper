@@ -4,7 +4,7 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage'
 	, 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products'
 	, 'LocalHyper.aboutUs', 'LocalHyper.googleMaps','LocalHyper.suggestProduct', 'LocalHyper.profile'
-	, 'LocalHyper.myRequests']
+	, 'LocalHyper.myRequests', 'LocalHyper.myRequests']
 
 
 .run ['$rootScope', 'App', 'GoogleMaps', 'User', ($rootScope, App, GoogleMaps, User)->
