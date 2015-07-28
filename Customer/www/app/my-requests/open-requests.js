@@ -1,5 +1,5 @@
 angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
-  '$scope', 'App', 'MyRequestsAPI', function($scope, App, MyRequestsAPI) {
+  '$scope', 'App', 'RequestAPI', function($scope, App, RequestAPI) {
     return $scope.view = {
       display: 'loader',
       errorType: '',
@@ -27,8 +27,9 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
         return this.page = 0;
       },
       getMyOffers: function() {
-        return MyRequestsAPI.getOpenRequests({
-          page: this.page
+        return RequestAPI.get({
+          page: this.page,
+          openStatus: true
         }).then((function(_this) {
           return function(data) {
             return _this.onSuccess(data);

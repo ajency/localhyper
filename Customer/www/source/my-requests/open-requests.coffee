@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.myRequests'
 
-.controller 'OpenRequestCtrl', ['$scope', 'App', 'MyRequestsAPI'
-	, ($scope, App, MyRequestsAPI )->
+.controller 'OpenRequestCtrl', ['$scope', 'App', 'RequestAPI'
+	, ($scope, App, RequestAPI )->
 
 		$scope.view = 
 			display: 'loader'
@@ -31,8 +31,9 @@ angular.module 'LocalHyper.myRequests'
 				@page = 0
 				
 			getMyOffers : ()->
-				MyRequestsAPI.getOpenRequests
+				RequestAPI.get
 					page: @page
+					openStatus: true
 				.then (data)=>
 					@onSuccess data
 				, (error)=>
