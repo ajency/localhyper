@@ -117,7 +117,7 @@ class AttributeController extends Controller
 				$headers = $data = $attributeValues= $headerFlag =[];
 				
 				if(isset($attributeValueData['result']))
-				{ exit;
+				{  
 						foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
 						{
 								$attributeId =$attributeValue['attributeId'];
