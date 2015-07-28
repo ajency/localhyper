@@ -68,11 +68,13 @@
 
 		<ion-list class="card-list">
 
-			<h4 ng-if="view.request.all.length > 0;">Your earlier made requests</h4>
+			<h4 ng-if="view.request.all.length > 0">
+				Your earlier made requests
+			</h4>
 
 	       	<ion-item
 	       		class="card"
-	       		ng-repeat="request in view.request.all">
+	       		ng-repeat="request in view.request.all | limitTo: view.request.limitTo">
 
 				<div class="row item border-none" >
 			        <div class="col  p-t-0">
@@ -98,7 +100,20 @@
 			        </div>
 			    </div>
 			</ion-item>
+
+			<ion-item 
+				ng-if="view.request.all.length > 0 && view.request.limitTo == 1"
+				ng-click="view.request.showAllRequests()">
+				Show all requests
+			</ion-item>
 		</ion-list>
+
+		<ion-infinite-scroll
+			on-infinite="view.request.get()"
+			ng-if="view.request.canLoadMore"
+			distance="1%" 
+			class="aj-refresher">
+		</ion-infinite-scroll>
 				
 		<aj-error 
 			ng-switch-when="error"

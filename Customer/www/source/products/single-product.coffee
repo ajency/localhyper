@@ -14,17 +14,60 @@ angular.module 'LocalHyper.products'
 			product: {}
 
 			request:
+				page: 0
 				all: []
 				active: false
+				limitTo: 1
+				canLoadMore: false
+
+				onScrollComplete : ->
+					$scope.$broadcast 'scroll.infiniteScrollComplete'
+
 				checkIfActive: ->
 					@active = false
 					if User.isLoggedIn()
 						@active = !_.isEmpty($scope.view.product.activeRequest)
 
+				reset : ->
+					@page = 0
+					@all = []
+					@active = false
+					@limitTo = 1
+					@canLoadMore = false
+
+				showAllRequests : ->
+					@limitTo = 1000
+					@canLoadMore = true
+					App.scrollBottom()
+
+				get : ->
+					params = 
+						productId: $scope.view.productID
+						page: @page
+						displayLimit: 2
+						openStatus: false
+
+					RequestAPI.get params
+					.then (data)=>
+						@success data, params.displayLimit
+					, (error)=>
+						console.log error
+					.finally =>
+						@page = @page + 1
+						App.resize()
+
+				success : (data, limit)->
+					if _.size(data) > 0
+						if _.size(data) < limit then @canLoadMore = false
+						else @onScrollComplete()
+						@all = @all.concat data
+					else @canLoadMore = false
+
+
 			reset : ->
 				@display = 'loader'
 				@footer = false
-				@request.all = []
+				@request.reset()
 				@getSingleProductDetails()
 
 			getSingleProductDetails : ->
@@ -35,17 +78,17 @@ angular.module 'LocalHyper.products'
 				.then (details)=>
 					_.each details, (val, key)=>
 						@product[key] = val
-					console.log @product
 					@onSuccess()
 				, (error)=>
 					@onError error
+				.finally ->
+					App.resize()
 
 			onSuccess : ->
 				@footer = true
-				App.resize()
-				@request.checkIfActive()
 				@display = 'noError'
-				@getRequests() if User.isLoggedIn()
+				@request.checkIfActive()
+				@request.get() if User.isLoggedIn()
 				
 			onError: (type)->
 				@display = 'error'
@@ -84,26 +127,12 @@ angular.module 'LocalHyper.products'
 				ProductsAPI.productDetails 'set', @product
 				App.navigate 'make-request'
 
-			getRequests : ->
-				params = 
-					productId: @productID
-					page: 0
-					openStatus: false
-
-				RequestAPI.get params
-				.then (data)=>
-					console.log 'getRequests'
-					console.log data
-					@request.all = data
-				.finally ->
-					App.resize()
-
 
 		$rootScope.$on 'make:request:success', ->
 			$scope.view.request.active = true
 
 		$rootScope.$on 'on:session:expiry', ->
-
+			$scope.view.reset()
 		
 		$scope.$on '$ionicView.beforeEnter', ->
 			if _.contains ['products', 'verify-success'], App.previousState
