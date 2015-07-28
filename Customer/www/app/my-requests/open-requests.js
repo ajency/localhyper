@@ -85,10 +85,10 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
       timeStr = 'Just now';
     } else if (minutes < 60) {
       min = minutes === 1 ? 'min' : 'mins';
-      timeStr = "" + minutes + " " + min + " ago";
+      timeStr = minutes + " " + min + " ago";
     } else {
       hr = hours === 1 ? 'hr' : 'hrs';
-      timeStr = "" + hours + " " + hr + " ago";
+      timeStr = hours + " " + hr + " ago";
     }
     return $scope.openRequest.timeStr = timeStr;
   }

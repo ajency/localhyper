@@ -7,21 +7,19 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       productID: $stateParams.productID,
       product: {},
       request: {
+        all: [],
         active: false,
-        check: function() {
+        checkIfActive: function() {
           this.active = false;
           if (User.isLoggedIn()) {
             return this.active = !_.isEmpty($scope.view.product.activeRequest);
           }
         }
       },
-      requests: {
-        all: []
-      },
       reset: function() {
         this.display = 'loader';
         this.footer = false;
-        this.requests.all = [];
+        this.request.all = [];
         return this.getSingleProductDetails();
       },
       getSingleProductDetails: function() {
@@ -47,9 +45,11 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       onSuccess: function() {
         this.footer = true;
         App.resize();
-        this.request.check();
+        this.request.checkIfActive();
         this.display = 'noError';
-        return this.getRequests();
+        if (User.isLoggedIn()) {
+          return this.getRequests();
+        }
       },
       onError: function(type) {
         this.display = 'error';
@@ -68,7 +68,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return "" + value + " " + unit;
+          return value + " " + unit;
         } else {
           return '';
         }
@@ -100,13 +100,13 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         params = {
           productId: this.productID,
           page: 0,
-          openStatus: true
+          openStatus: false
         };
         return RequestAPI.get(params).then((function(_this) {
           return function(data) {
             console.log('getRequests');
             console.log(data);
-            return _this.requests.all = data;
+            return _this.request.all = data;
           };
         })(this))["finally"](function() {
           return App.resize();
@@ -116,6 +116,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     $rootScope.$on('make:request:success', function() {
       return $scope.view.request.active = true;
     });
+    $rootScope.$on('on:session:expiry', function() {});
     return $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['products', 'verify-success'], App.previousState)) {
         return $scope.view.reset();
