@@ -113,11 +113,11 @@ class AttributeController extends Controller
 					'filterableAttributes' => true,
 					'secondaryAttributes' => true,
 					];
-				$attributeValueData = $this->getCategoryAttributeValues($categoryData);dd($attributeValueData);
+				$attributeValueData = $this->getCategoryAttributeValues($categoryData);//dd($attributeValueData);
 				$headers = $data = $attributeValues= $headerFlag =[];
 				
 				if(isset($attributeValueData['result']))
-				{
+				{ exit;
 						foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
 						{
 								$attributeId =$attributeValue['attributeId'];
@@ -130,7 +130,7 @@ class AttributeController extends Controller
                                 $headerFlag[$attributeId]=[];
 								$attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
 						}
-                    
+                 
                         foreach($attributeValueData['result']['attributes'] as $attribute)
 						{
                             $attributeId = $attribute['id'];
