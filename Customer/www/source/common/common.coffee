@@ -71,6 +71,9 @@ angular.module 'LocalHyper.common', []
 			resize : ->
 				$ionicScrollDelegate.resize()
 
+			scrollBottom : ->
+				$ionicScrollDelegate.scrollBottom true
+
 			toINR : (number)->
 				if !_.isUndefined number
 					number = number.toString()

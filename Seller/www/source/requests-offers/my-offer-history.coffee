@@ -107,29 +107,3 @@ angular.module 'LocalHyper.requestsOffers'
 	
 ]	
 
-.controller 'EachRequestTimeCtrl', ['$scope', ($scope)->
-	#Request time
-	iso = $scope.request.createdAt.iso
-	format = 'DD/MM/YYYY HH:mm:ss'
-	now = moment().format format
-	at = moment(iso).format format
-	diff = moment(now, format).diff(moment(at, format))
-	duration = moment.duration diff
-	minutes = parseInt duration.asMinutes().toFixed(0)
-	hours = parseInt duration.asHours().toFixed(0)
-
-	if minutes <= 5
-		timeStr = 'Just now'
-	else if minutes < 60
-		min = if minutes is 1 then 'min' else 'mins'
-		timeStr = "#{minutes} #{min} ago"
-	else
-		hr = if hours is 1 then 'hr' else 'hrs'
-		timeStr = "#{hours} #{hr} ago"
-
-	$scope.request.timeStr = timeStr
-]
-				
-
-
-
