@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.myRequests'
 
 .controller 'OpenRequestCtrl', ['$scope', 'App', 'RequestAPI'
-	, ($scope, App, RequestAPI )->
+	, ($scope, App, RequestAPI)->
 
 		$scope.view = 
 			display: 'loader'
@@ -65,7 +65,10 @@ angular.module 'LocalHyper.myRequests'
 
 			onInfiniteScroll : ->
 				@getMyOffers()
-			
+
+
+		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
+    		viewData.enableBack = true
 ]
 
 

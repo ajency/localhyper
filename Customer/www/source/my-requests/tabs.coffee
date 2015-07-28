@@ -87,6 +87,3 @@ angular.module 'LocalHyper.myRequests', []
 					controller: 'RequestsHistoryCtrl'
 					templateUrl: 'views/my-requests/requests-history.html'
 ]
-
-
-
