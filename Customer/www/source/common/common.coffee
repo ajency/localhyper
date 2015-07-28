@@ -71,6 +71,15 @@ angular.module 'LocalHyper.common', []
 			resize : ->
 				$ionicScrollDelegate.resize()
 
+			toINR : (number)->
+				if !_.isUndefined number
+					number = number.toString()
+					number.replace /(\d)(?=(\d\d)+\d$)/g, "$1,"
+				else ''
+
+			humanize : (str)->
+				s.humanize str
+
 			getInstallationId : ->
 				defer = $q.defer()
 				if @isWebView()

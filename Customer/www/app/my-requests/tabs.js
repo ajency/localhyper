@@ -44,8 +44,8 @@ angular.module('LocalHyper.myRequests', []).directive('ajRemoveBoxShadow', [
       url: '/requests-history',
       parent: 'tabs',
       views: {
-        "historyRequestsTab": {
-          controller: 'HistoryRequestsCtrl',
+        "requestHistoryTab": {
+          controller: 'RequestsHistoryCtrl',
           templateUrl: 'views/my-requests/requests-history.html'
         }
       }

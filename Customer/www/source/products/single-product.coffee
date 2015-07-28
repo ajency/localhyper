@@ -2,9 +2,9 @@ angular.module 'LocalHyper.products'
 
 
 .controller 'SingleProductCtrl', ['$scope', '$stateParams', 'ProductsAPI', 'User'
-	, 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope'
+	, 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI'
 	, ($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps
-	, CSpinner, $rootScope)->
+	, CSpinner, $rootScope, RequestAPI)->
 
 		$scope.view = 
 			display: 'loader'
@@ -20,9 +20,14 @@ angular.module 'LocalHyper.products'
 					if User.isLoggedIn()
 						@active = !_.isEmpty($scope.view.product.activeRequest)
 
+			requests:
+				all: []
+
+
 			reset : ->
 				@display = 'loader'
 				@footer = false
+				@requests.all = []
 				@getSingleProductDetails()
 
 			getSingleProductDetails : ->
@@ -43,6 +48,7 @@ angular.module 'LocalHyper.products'
 				App.resize()
 				@request.check()
 				@display = 'noError'
+				@getRequests()
 				
 			onError: (type)->
 				@display = 'error'
@@ -80,6 +86,20 @@ angular.module 'LocalHyper.products'
 			getBestPrices : ->
 				ProductsAPI.productDetails 'set', @product
 				App.navigate 'make-request'
+
+			getRequests : ->
+				params = 
+					productId: @productID
+					page: 0
+					openStatus: true
+
+				RequestAPI.get params
+				.then (data)=>
+					console.log 'getRequests'
+					console.log data
+					@requests.all = data
+				.finally ->
+					App.resize()
 
 
 		$rootScope.$on 'make:request:success', ->
