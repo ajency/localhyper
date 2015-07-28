@@ -61,6 +61,46 @@
 				</div>
 				
 			</div>
+		</ion-list>
+		
+
+		<br><br>
+
+		<ion-list class="card-list">
+
+			<h4 ng-if="view.requests.all.length > 0;">
+				Your earlier made requests
+			</h4>
+
+	       	<ion-item
+	       		class="card"
+	       		ng-repeat="request in view.requests.all">
+
+				<div class="row item border-none" >
+			        <div class="col  p-t-0">
+			            <sm class="light-gray"> MRP</sm><br>
+			            <h3 class=" item-text-wrap margin-none big-txt ">
+			            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.product.mrp)}}
+			            </h3>
+			        </div>
+			        <div class="col p-t-0">
+			        	<div class="pull-right">
+			            <div class="offer"> {{request.offerCount}} </div>
+			            <h4 class="offertxt light-gray"> No of offers</h4>
+			           	</div>
+			        </div>
+			    </div>
+			      <div class="item item-divider">
+			        <div class="pull-right ">
+			            <h3 class="margin-none"> {{App.humanize(request.status)}} &nbsp;</h3>
+			        </div>
+
+			        <div class="pull-left ">
+			            <sm class="subdued">{{request.timeStr}}</sm>
+			        </div>
+			    </div>
+			</ion-item>
+		</ion-list>
 				
 		<aj-error 
 			ng-switch-when="error"
@@ -70,7 +110,7 @@
 
 	</ion-content>
 
-	<ion-footer ng-show="view.footer" class="bar bar-footer bar-assertive" >
+	<ion-footer-bar ng-show="view.footer" class="bar-assertive" >
 		<div 
 			class="title"
 			ng-hide="view.request.active"
@@ -82,6 +122,6 @@
 			ng-show="view.request.active">
 			You currently have an open request
 		</div>
-	</ion-footer>
+	</ion-footer-bar>
 
 </ion-view>

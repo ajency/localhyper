@@ -86,6 +86,17 @@ angular.module('LocalHyper.common', []).factory('App', [
       resize: function() {
         return $ionicScrollDelegate.resize();
       },
+      toINR: function(number) {
+        if (!_.isUndefined(number)) {
+          number = number.toString();
+          return number.replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+        } else {
+          return '';
+        }
+      },
+      humanize: function(str) {
+        return s.humanize(str);
+      },
       getInstallationId: function() {
         var defer;
         defer = $q.defer();

@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -15,9 +15,13 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           }
         }
       },
+      requests: {
+        all: []
+      },
       reset: function() {
         this.display = 'loader';
         this.footer = false;
+        this.requests.all = [];
         return this.getSingleProductDetails();
       },
       getSingleProductDetails: function() {
@@ -44,7 +48,8 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         this.footer = true;
         App.resize();
         this.request.check();
-        return this.display = 'noError';
+        this.display = 'noError';
+        return this.getRequests();
       },
       onError: function(type) {
         this.display = 'error';
@@ -89,6 +94,23 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       getBestPrices: function() {
         ProductsAPI.productDetails('set', this.product);
         return App.navigate('make-request');
+      },
+      getRequests: function() {
+        var params;
+        params = {
+          productId: this.productID,
+          page: 0,
+          openStatus: true
+        };
+        return RequestAPI.get(params).then((function(_this) {
+          return function(data) {
+            console.log('getRequests');
+            console.log(data);
+            return _this.requests.all = data;
+          };
+        })(this))["finally"](function() {
+          return App.resize();
+        });
       }
     };
     $rootScope.$on('make:request:success', function() {
