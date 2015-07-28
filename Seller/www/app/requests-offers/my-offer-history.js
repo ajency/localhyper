@@ -120,26 +120,4 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       }
     };
   }
-]).controller('EachRequestTimeCtrl', [
-  '$scope', function($scope) {
-    var at, diff, duration, format, hours, hr, iso, min, minutes, now, timeStr;
-    iso = $scope.request.createdAt.iso;
-    format = 'DD/MM/YYYY HH:mm:ss';
-    now = moment().format(format);
-    at = moment(iso).format(format);
-    diff = moment(now, format).diff(moment(at, format));
-    duration = moment.duration(diff);
-    minutes = parseInt(duration.asMinutes().toFixed(0));
-    hours = parseInt(duration.asHours().toFixed(0));
-    if (minutes <= 5) {
-      timeStr = 'Just now';
-    } else if (minutes < 60) {
-      min = minutes === 1 ? 'min' : 'mins';
-      timeStr = "" + minutes + " " + min + " ago";
-    } else {
-      hr = hours === 1 ? 'hr' : 'hrs';
-      timeStr = "" + hours + " " + hr + " ago";
-    }
-    return $scope.request.timeStr = timeStr;
-  }
 ]);

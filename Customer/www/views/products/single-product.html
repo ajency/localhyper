@@ -1,4 +1,4 @@
-<ion-view ng-init="view.init()">
+<ion-view view-title="">
 
 	<ion-content ng-switch="view.display" class="bg-white">
 
@@ -61,6 +61,59 @@
 				</div>
 				
 			</div>
+		</ion-list>
+		
+
+		<br><br>
+
+		<ion-list class="card-list">
+
+			<h4 ng-if="view.request.all.length > 0">
+				Your earlier made requests
+			</h4>
+
+	       	<ion-item
+	       		class="card"
+	       		ng-repeat="request in view.request.all | limitTo: view.request.limitTo">
+
+				<div class="row item border-none" >
+			        <div class="col  p-t-0">
+			            <sm class="light-gray"> MRP</sm><br>
+			            <h3 class=" item-text-wrap margin-none big-txt ">
+			            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.product.mrp)}}
+			            </h3>
+			        </div>
+			        <div class="col p-t-0">
+			        	<div class="pull-right">
+			            <div class="offer"> {{request.offerCount}} </div>
+			            <h4 class="offertxt light-gray"> No of offers</h4>
+			           	</div>
+			        </div>
+			    </div>
+			      <div class="item item-divider">
+			        <div class="pull-right ">
+			            <h3 class="margin-none"> {{App.humanize(request.status)}} &nbsp;</h3>
+			        </div>
+
+			        <div class="pull-left ">
+			            <sm class="subdued">{{request.timeStr}}</sm>
+			        </div>
+			    </div>
+			</ion-item>
+
+			<ion-item 
+				ng-if="view.request.all.length > 0 && view.request.limitTo == 1"
+				ng-click="view.request.showAllRequests()">
+				Show all requests
+			</ion-item>
+		</ion-list>
+
+		<ion-infinite-scroll
+			on-infinite="view.request.get()"
+			ng-if="view.request.canLoadMore"
+			distance="1%" 
+			class="aj-refresher">
+		</ion-infinite-scroll>
 				
 		<aj-error 
 			ng-switch-when="error"
@@ -70,26 +123,18 @@
 
 	</ion-content>
 
-	<ion-footer-bar ng-show="view.footer" class="bar bar-footer bar-custom-footer">
-		<button 
-			class="button button-clear btn-specification"
-			ng-click="view.specificationModal.show()"> 
-			<b> <i class="ion ion-ios-plus-outline"></i> Specification</b>
-		</button>
-
-		<button 
-			class="button button-assertive btn-action" 
-			ng-if="!view.request.active"
+	<ion-footer-bar ng-show="view.footer" class="bar-assertive" >
+		<div 
+			class="title"
+			ng-hide="view.request.active"
 			ng-click="view.checkUserLogin()">
-			Make Request
-		</button>
-
-		<button 
-			class="button button-assertive btn-action"
-			ng-if="view.request.active"
-			ng-click="">
-			Cancel Request
-		</button>
+			Get Best Prices
+		</div>
+		<div 
+			class="title"
+			ng-show="view.request.active">
+			You currently have an open request
+		</div>
 	</ion-footer-bar>
 
 </ion-view>

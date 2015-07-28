@@ -19,7 +19,7 @@
 			class="aj-refresher">
 		</ion-refresher>
 
-		<ion-list class="card-list"  ng-switch-when="noError">
+		<ion-list class="card-list" ng-switch-when="noError">
 	       	<ion-item
 	       		class="card"
 	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'" 

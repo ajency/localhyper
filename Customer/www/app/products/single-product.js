@@ -1,160 +1,79 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GPS', 'GoogleMaps', 'CSpinner', 'CDialog', '$timeout', 'UIMsg', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GPS, GoogleMaps, CSpinner, CDialog, $timeout, UIMsg) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI) {
     $scope.view = {
       display: 'loader',
       errorType: '',
       footer: false,
       productID: $stateParams.productID,
       product: {},
-      specificationModal: null,
-      makeRequestModal: null,
-      confirmedAddress: '',
-      comments: {
-        modal: null,
-        text: ''
-      },
       request: {
+        page: 0,
+        all: [],
         active: false,
-        check: function() {
+        limitTo: 1,
+        canLoadMore: false,
+        onScrollComplete: function() {
+          return $scope.$broadcast('scroll.infiniteScrollComplete');
+        },
+        checkIfActive: function() {
           this.active = false;
           if (User.isLoggedIn()) {
             return this.active = !_.isEmpty($scope.view.product.activeRequest);
           }
-        }
-      },
-      location: {
-        modal: null,
-        map: null,
-        marker: null,
-        latLng: null,
-        address: null,
-        addressFetch: true,
-        showAlert: function() {
-          var positiveBtn;
-          positiveBtn = App.isAndroid() ? 'Open Settings' : 'Ok';
-          return CDialog.confirm('Use location?', 'Please enable location settings', [positiveBtn, 'Cancel']).then(function(btnIndex) {
-            if (btnIndex === 1) {
-              return GPS.switchToLocationSettings();
-            }
-          });
         },
-        onMapCreated: function(map) {
-          this.map = map;
-          return google.maps.event.addListener(this.map, 'click', (function(_this) {
-            return function(event) {
-              return _this.addMarker(event.latLng);
+        reset: function() {
+          this.page = 0;
+          this.all = [];
+          this.active = false;
+          this.limitTo = 1;
+          return this.canLoadMore = false;
+        },
+        showAllRequests: function() {
+          this.limitTo = 1000;
+          this.canLoadMore = true;
+          return App.scrollBottom();
+        },
+        get: function() {
+          var params;
+          params = {
+            productId: $scope.view.productID,
+            page: this.page,
+            displayLimit: 2,
+            openStatus: false
+          };
+          return RequestAPI.get(params).then((function(_this) {
+            return function(data) {
+              return _this.success(data, params.displayLimit);
             };
-          })(this));
-        },
-        setMapCenter: function(loc) {
-          var latLng;
-          latLng = new google.maps.LatLng(loc.lat, loc.long);
-          this.map.setCenter(latLng);
-          return latLng;
-        },
-        getCurrent: function() {
-          return GPS.isLocationEnabled().then((function(_this) {
-            return function(enabled) {
-              if (!enabled) {
-                return _this.showAlert();
-              } else {
-                CToast.show('Getting current location');
-                return GPS.getCurrentLocation().then(function(loc) {
-                  var latLng;
-                  latLng = _this.setMapCenter(loc);
-                  _this.map.setZoom(15);
-                  return _this.addMarker(latLng);
-                }, function(error) {
-                  return CToast.show('Error locating your position');
-                });
-              }
+          })(this), (function(_this) {
+            return function(error) {
+              return console.log(error);
             };
-          })(this));
-        },
-        addMarker: function(latLng) {
-          this.latLng = latLng;
-          this.setAddress();
-          if (this.marker) {
-            this.marker.setMap(null);
-          }
-          this.marker = new google.maps.Marker({
-            position: latLng,
-            map: this.map,
-            draggable: true
-          });
-          this.marker.setMap(this.map);
-          return google.maps.event.addListener(this.marker, 'dragend', (function(_this) {
-            return function(event) {
-              _this.latLng = event.latLng;
-              return _this.setAddress();
-            };
-          })(this));
-        },
-        setAddress: function() {
-          this.addressFetch = false;
-          return GoogleMaps.getAddress(this.latLng).then((function(_this) {
-            return function(address) {
-              return _this.address = address;
-            };
-          })(this), function(error) {
-            return console.log('Geocode error: ' + error);
-          })["finally"]((function(_this) {
+          })(this))["finally"]((function(_this) {
             return function() {
-              return _this.addressFetch = true;
+              _this.page = _this.page + 1;
+              return App.resize();
             };
           })(this));
+        },
+        success: function(data, limit) {
+          if (_.size(data) > 0) {
+            if (_.size(data) < limit) {
+              this.canLoadMore = false;
+            } else {
+              this.onScrollComplete();
+            }
+            return this.all = this.all.concat(data);
+          } else {
+            return this.canLoadMore = false;
+          }
         }
       },
-      init: function() {
-        this.loadSpecificationsModal();
-        this.loadMakeRequestModal();
-        this.loadLocationModal();
-        this.loadCommentsModal();
+      reset: function() {
+        this.display = 'loader';
+        this.footer = false;
+        this.request.reset();
         return this.getSingleProductDetails();
-      },
-      loadSpecificationsModal: function() {
-        return $ionicModal.fromTemplateUrl('views/products/specification.html', {
-          scope: $scope,
-          animation: 'slide-in-up',
-          hardwareBackButtonClose: true
-        }).then((function(_this) {
-          return function(modal) {
-            return _this.specificationModal = modal;
-          };
-        })(this));
-      },
-      loadMakeRequestModal: function() {
-        return $ionicModal.fromTemplateUrl('views/products/make-request.html', {
-          scope: $scope,
-          animation: 'slide-in-up',
-          hardwareBackButtonClose: true
-        }).then((function(_this) {
-          return function(modal) {
-            return _this.makeRequestModal = modal;
-          };
-        })(this));
-      },
-      loadLocationModal: function() {
-        return $ionicModal.fromTemplateUrl('views/location.html', {
-          scope: $scope,
-          animation: 'slide-in-up',
-          hardwareBackButtonClose: true
-        }).then((function(_this) {
-          return function(modal) {
-            return _this.location.modal = modal;
-          };
-        })(this));
-      },
-      loadCommentsModal: function() {
-        return $ionicModal.fromTemplateUrl('views/products/comments.html', {
-          scope: $scope,
-          animation: 'slide-in-up',
-          hardwareBackButtonClose: true
-        }).then((function(_this) {
-          return function(modal) {
-            return _this.comments.modal = modal;
-          };
-        })(this));
       },
       getSingleProductDetails: function() {
         return ProductsAPI.getSingleProduct(this.productID).then((function(_this) {
@@ -167,19 +86,23 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             _.each(details, function(val, key) {
               return _this.product[key] = val;
             });
-            console.log(_this.product);
             return _this.onSuccess();
           };
         })(this), (function(_this) {
           return function(error) {
             return _this.onError(error);
           };
-        })(this));
+        })(this))["finally"](function() {
+          return App.resize();
+        });
       },
       onSuccess: function() {
         this.footer = true;
-        this.request.check();
-        return this.display = 'noError';
+        this.display = 'noError';
+        this.request.checkIfActive();
+        if (User.isLoggedIn()) {
+          return this.request.get();
+        }
       },
       onError: function(type) {
         this.display = 'error';
@@ -203,120 +126,39 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           return '';
         }
       },
-      onEditLocation: function() {
-        var mapHeight;
-        this.location.modal.show();
-        mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10;
-        $('.aj-big-map').css({
-          'height': mapHeight
-        });
-        if (_.isNull(this.location.latLng)) {
-          return $timeout((function(_this) {
-            return function() {
-              var loc;
-              loc = {
-                lat: GEO_DEFAULT.lat,
-                long: GEO_DEFAULT.lng
-              };
-              _this.location.setMapCenter(loc);
-              return _this.location.getCurrent();
-            };
-          })(this), 200);
-        }
-      },
-      onConfirmLocation: function() {
-        if (!_.isNull(this.location.latLng) && this.location.addressFetch) {
-          return CDialog.confirm('Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']).then((function(_this) {
-            return function(btnIndex) {
-              if (btnIndex === 1) {
-                _this.location.address.full = GoogleMaps.fullAddress(_this.location.address);
-                _this.confirmedAddress = _this.location.address.full;
-                return _this.location.modal.hide();
-              }
-            };
-          })(this));
-        } else {
-          return CToast.show('Please wait, getting location details...');
-        }
-      },
       checkUserLogin: function() {
-        var address, user;
         if (!User.isLoggedIn()) {
           return App.navigate('verify-begin');
-        } else {
-          user = User.getCurrent();
-          address = user.get('address');
-          this.confirmedAddress = _.isUndefined(address) ? '' : address.full;
-          return this.makeRequestModal.show();
-        }
-      },
-      beforeMakeRequest: function() {
-        if (this.confirmedAddress === '') {
-          return CToast.show('Please select your location');
-        } else {
-          return this.makeRequest();
-        }
-      },
-      makeRequest: function() {
-        var geoPoint, params, user;
-        if (!App.isOnline()) {
-          return CToast.show(UIMsg.noInternet);
-        } else {
+        } else if (_.isUndefined(window.google)) {
           CSpinner.show('', 'Please wait...');
-          user = User.getCurrent();
-          params = {
-            "customerId": user.id,
-            "productId": this.productID,
-            "categoryId": this.product.category.objectId,
-            "brandId": this.product.brand.objectId,
-            "comments": this.comments.text,
-            "status": "open",
-            "deliveryStatus": ""
-          };
-          if (!_.isNull(this.location.latLng)) {
-            params["location"] = {
-              latitude: this.location.latLng.lat(),
-              longitude: this.location.latLng.lng()
-            };
-            params["address"] = this.location.address;
-            params["city"] = this.location.address.city;
-            params["area"] = this.location.address.city;
-          } else {
-            geoPoint = user.get('addressGeoPoint');
-            params["location"] = {
-              latitude: geoPoint.latitude,
-              longitude: geoPoint.longitude
-            };
-            params["address"] = user.get('address');
-            params["city"] = user.get('city');
-            params["area"] = user.get('area');
-          }
-          return User.update({
-            "address": params.address,
-            "addressGeoPoint": new Parse.GeoPoint(params.location),
-            "area": params.area,
-            "city": params.city
-          }).then(function() {
-            return ProductsAPI.makeRequest(params);
-          }).then((function(_this) {
+          return GoogleMaps.loadScript().then((function(_this) {
             return function() {
-              _this.request.active = true;
-              _this.makeRequestModal.hide();
-              return CToast.show('Your request has been made');
+              return _this.getBestPrices();
             };
           })(this), function(error) {
-            return CToast.show('Request failed, please try again');
+            return CToast.show('Error loading content, please check your network settings');
           })["finally"](function() {
             return CSpinner.hide();
           });
+        } else {
+          return this.getBestPrices();
         }
+      },
+      getBestPrices: function() {
+        ProductsAPI.productDetails('set', this.product);
+        return App.navigate('make-request');
       }
     };
-    return $scope.$on('$destroy', function() {
-      $scope.view.specificationModal.remove();
-      $scope.view.makeRequestModal.remove();
-      $scope.view.location.modal.remove();
-      return $scope.view.comments.modal.remove();
+    $rootScope.$on('make:request:success', function() {
+      return $scope.view.request.active = true;
+    });
+    $rootScope.$on('on:session:expiry', function() {
+      return $scope.view.reset();
+    });
+    return $scope.$on('$ionicView.beforeEnter', function() {
+      if (_.contains(['products', 'verify-success'], App.previousState)) {
+        return $scope.view.reset();
+      }
     });
   }
 ]).config([
@@ -324,24 +166,10 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     return $stateProvider.state('single-product', {
       url: '/single-product:productID',
       parent: 'main',
-      cache: false,
       views: {
         "appContent": {
           templateUrl: 'views/products/single-product.html',
-          controller: 'SingleProductCtrl',
-          resolve: {
-            Maps: function($q, CSpinner, GoogleMaps) {
-              var defer;
-              defer = $q.defer();
-              CSpinner.show('', 'Please wait...');
-              GoogleMaps.loadScript().then(function() {
-                return defer.resolve();
-              })["finally"](function() {
-                return CSpinner.hide();
-              });
-              return defer.promise;
-            }
-          }
+          controller: 'SingleProductCtrl'
         }
       }
     });

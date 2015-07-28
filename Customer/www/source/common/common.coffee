@@ -2,9 +2,9 @@ angular.module 'LocalHyper.common', []
 
 
 .factory 'App', ['$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate'
-	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q'
+	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', '$ionicScrollDelegate'
 	, ($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window
-	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q)->
+	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate)->
 
 		App = 
 
@@ -45,6 +45,9 @@ angular.module 'LocalHyper.common', []
 				#styles: Default : 0, LightContent: 1, BlackTranslucent: 2, BlackOpaque: 3
 				$cordovaStatusbar.style(0) if $window.StatusBar
 
+			closeKeyboard : ->
+				$cordovaKeyboard.close() if @isWebView()
+
 			noTapScroll : ->
 				#Enable scroll to top on header click only for iOS
 				!@isIOS()
@@ -64,6 +67,21 @@ angular.module 'LocalHyper.common', []
 
 			dragContent : (bool)->
 				$ionicSideMenuDelegate.canDragContent bool
+
+			resize : ->
+				$ionicScrollDelegate.resize()
+
+			scrollBottom : ->
+				$ionicScrollDelegate.scrollBottom true
+
+			toINR : (number)->
+				if !_.isUndefined number
+					number = number.toString()
+					number.replace /(\d)(?=(\d\d)+\d$)/g, "$1,"
+				else ''
+
+			humanize : (str)->
+				s.humanize str
 
 			getInstallationId : ->
 				defer = $q.defer()

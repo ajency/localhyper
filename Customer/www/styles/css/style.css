@@ -173,6 +173,12 @@
 	padding: 0;
 }
 
+.aj-very-big-map {
+	height: 250px;
+	margin: 0; 
+	padding: 0;
+}
+
 .aj-textarea {
 	width: 100%;
   	height: 200px;
@@ -182,6 +188,11 @@
 	overflow: hidden !important;
 	width: 70% !important;
     height: 225px !important;
+}
+
+/*card on phone verification */
+.cardTop {
+	margin-top: 28%;
 }
 
 
