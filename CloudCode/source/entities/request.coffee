@@ -340,9 +340,9 @@ Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
         queryRequest.equalTo("status", "open")
 
         queryRequest.greaterThanOrEqualTo( "createdAt", queryDate )            
-    else
-        queryRequest.lessThanOrEqualTo( "createdAt", queryDate )         
-        queryRequest.notContainedIn("status", ["open"])
+    # else
+    #     queryRequest.lessThanOrEqualTo( "createdAt", queryDate )         
+    #     queryRequest.notContainedIn("status", ["open"])
 
     queryRequest.include("product") 
 
@@ -355,15 +355,31 @@ Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
     .then (requests) ->
         pastRequests = _.map(requests, (requestObj) ->
 
+            currentDate = new Date()
+            createdDate = requestObj.createdAt
+            diff = currentDate.getTime() - createdDate.getTime()
+            differenceInDays =  Math.floor(diff / (1000 * 60 * 60 * 24)) 
+
+            # if expired
+            requestStatus = requestObj.get("status")
+            
+            if differenceInDays >= 1 
+                if requestStatus is "open"
+                    requestStatus = "expired"
+                
             product =
                 "name": requestObj.get("product").get("name")
                 "images": requestObj.get("product").get("images")
+                "mrp": requestObj.get("product").get("mrp")
 
+            
+            
             pastReq = 
                 "id" : requestObj.id
                 "product" : product
-                "status" : requestObj.get("status")
+                "status" : requestStatus
                 "createdAt": requestObj.createdAt
+                "differenceInDays" :differenceInDays
                 "address": requestObj.get("address")
                 "comments": requestObj.get("comments")
                 "offerCount": requestObj.get("offerCount")

@@ -1,5 +1,5 @@
 (function() {
-  var _, findAttribValues, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, processPushNotifications, setPrimaryAttribute, treeify;
+  var _, findAttribValues, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, moment, processPushNotifications, setPrimaryAttribute, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -323,6 +323,8 @@
   });
 
   _ = require('underscore.js');
+
+  moment = require('moment');
 
   treeify = function(list, idAttr, parentAttr, childrenAttr) {
     var lookup, treeList;
@@ -1479,9 +1481,6 @@
     if (openStatus === true) {
       queryRequest.equalTo("status", "open");
       queryRequest.greaterThanOrEqualTo("createdAt", queryDate);
-    } else {
-      queryRequest.lessThanOrEqualTo("createdAt", queryDate);
-      queryRequest.notContainedIn("status", ["open"]);
     }
     queryRequest.include("product");
     queryRequest.limit(displayLimit);
@@ -1489,16 +1488,28 @@
     return queryRequest.find().then(function(requests) {
       var pastRequests;
       pastRequests = _.map(requests, function(requestObj) {
-        var pastReq, product;
+        var createdDate, diff, differenceInDays, pastReq, product, requestStatus;
+        currentDate = new Date();
+        createdDate = requestObj.createdAt;
+        diff = currentDate.getTime() - createdDate.getTime();
+        differenceInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        requestStatus = requestObj.get("status");
+        if (differenceInDays >= 1) {
+          if (requestStatus === "open") {
+            requestStatus = "expired";
+          }
+        }
         product = {
           "name": requestObj.get("product").get("name"),
-          "images": requestObj.get("product").get("images")
+          "images": requestObj.get("product").get("images"),
+          "mrp": requestObj.get("product").get("mrp")
         };
         pastReq = {
           "id": requestObj.id,
           "product": product,
-          "status": requestObj.get("status"),
+          "status": requestStatus,
           "createdAt": requestObj.createdAt,
+          "differenceInDays": differenceInDays,
           "address": requestObj.get("address"),
           "comments": requestObj.get("comments"),
           "offerCount": requestObj.get("offerCount")

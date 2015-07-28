@@ -19,6 +19,7 @@
 #         return
 #   return
 _ = require('underscore.js')
+moment = require('moment')
 
 treeify = (list, idAttr, parentAttr, childrenAttr) ->
   if !idAttr
