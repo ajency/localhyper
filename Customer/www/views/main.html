@@ -9,6 +9,10 @@
 			no-tap-scroll="{{App.noTapScroll()}}">
 
 			<ion-nav-buttons side="left">
+				<button 
+					class="button button-icon ion-ios-person-outline"
+					ng-click="App.goBack(-1);">
+				</button>
 				<img 
 					ng-if="App.logo.small"
 					src="./img/shopoye-logo.png" 
