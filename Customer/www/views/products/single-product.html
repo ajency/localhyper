@@ -68,13 +68,11 @@
 
 		<ion-list class="card-list">
 
-			<h4 ng-if="view.requests.all.length > 0;">
-				Your earlier made requests
-			</h4>
+			<h4 ng-if="view.request.all.length > 0;">Your earlier made requests</h4>
 
 	       	<ion-item
 	       		class="card"
-	       		ng-repeat="request in view.requests.all">
+	       		ng-repeat="request in view.request.all">
 
 				<div class="row item border-none" >
 			        <div class="col  p-t-0">

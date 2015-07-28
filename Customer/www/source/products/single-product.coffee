@@ -14,20 +14,17 @@ angular.module 'LocalHyper.products'
 			product: {}
 
 			request:
+				all: []
 				active: false
-				check: ->
+				checkIfActive: ->
 					@active = false
 					if User.isLoggedIn()
 						@active = !_.isEmpty($scope.view.product.activeRequest)
 
-			requests:
-				all: []
-
-
 			reset : ->
 				@display = 'loader'
 				@footer = false
-				@requests.all = []
+				@request.all = []
 				@getSingleProductDetails()
 
 			getSingleProductDetails : ->
@@ -46,9 +43,9 @@ angular.module 'LocalHyper.products'
 			onSuccess : ->
 				@footer = true
 				App.resize()
-				@request.check()
+				@request.checkIfActive()
 				@display = 'noError'
-				@getRequests()
+				@getRequests() if User.isLoggedIn()
 				
 			onError: (type)->
 				@display = 'error'
@@ -91,19 +88,22 @@ angular.module 'LocalHyper.products'
 				params = 
 					productId: @productID
 					page: 0
-					openStatus: true
+					openStatus: false
 
 				RequestAPI.get params
 				.then (data)=>
 					console.log 'getRequests'
 					console.log data
-					@requests.all = data
+					@request.all = data
 				.finally ->
 					App.resize()
 
 
 		$rootScope.$on 'make:request:success', ->
 			$scope.view.request.active = true
+
+		$rootScope.$on 'on:session:expiry', ->
+
 		
 		$scope.$on '$ionicView.beforeEnter', ->
 			if _.contains ['products', 'verify-success'], App.previousState
