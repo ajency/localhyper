@@ -86,6 +86,9 @@ angular.module('LocalHyper.common', []).factory('App', [
       resize: function() {
         return $ionicScrollDelegate.resize();
       },
+      scrollBottom: function() {
+        return $ionicScrollDelegate.scrollBottom(true);
+      },
       toINR: function(number) {
         if (!_.isUndefined(number)) {
           number = number.toString();

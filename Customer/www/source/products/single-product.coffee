@@ -15,12 +15,10 @@ angular.module 'LocalHyper.products'
 
 			request:
 				page: 0
-				canLoadMore: false
 				all: []
-				open: null
 				active: false
-				showAll: false
-				error: false
+				limitTo: 1
+				canLoadMore: false
 
 				onScrollComplete : ->
 					$scope.$broadcast 'scroll.infiniteScrollComplete'
@@ -32,40 +30,38 @@ angular.module 'LocalHyper.products'
 
 				reset : ->
 					@page = 0
-					@canLoadMore = false
 					@all = []
-					@open = null
 					@active = false
-					@showAll = false
+					@limitTo = 1
+					@canLoadMore = false
 
 				showAllRequests : ->
-					@showAll = true
-					@page = 0
-					@all = []
+					@limitTo = 1000
 					@canLoadMore = true
+					App.scrollBottom()
 
 				get : ->
 					params = 
 						productId: $scope.view.productID
 						page: @page
-						displayLimit: 3
+						displayLimit: 2
 						openStatus: false
 
 					RequestAPI.get params
 					.then (data)=>
-						if _.size(data) > 0
-							if _.size(data) < params.displayLimit then @canLoadMore = false
-							else @onScrollComplete()
-							if @showAll then @open = null
-							else @open = _.first data
-							@all = @all.concat data
-							console.log data
-						else @canLoadMore = false
+						@success data, params.displayLimit
 					, (error)=>
 						console.log error
 					.finally =>
 						@page = @page + 1
 						App.resize()
+
+				success : (data, limit)->
+					if _.size(data) > 0
+						if _.size(data) < limit then @canLoadMore = false
+						else @onScrollComplete()
+						@all = @all.concat data
+					else @canLoadMore = false
 
 
 			reset : ->
@@ -82,7 +78,6 @@ angular.module 'LocalHyper.products'
 				.then (details)=>
 					_.each details, (val, key)=>
 						@product[key] = val
-					console.log @product
 					@onSuccess()
 				, (error)=>
 					@onError error

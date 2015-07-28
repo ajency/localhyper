@@ -8,12 +8,10 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       product: {},
       request: {
         page: 0,
-        canLoadMore: false,
         all: [],
-        open: null,
         active: false,
-        showAll: false,
-        error: false,
+        limitTo: 1,
+        canLoadMore: false,
         onScrollComplete: function() {
           return $scope.$broadcast('scroll.infiniteScrollComplete');
         },
@@ -25,44 +23,27 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         },
         reset: function() {
           this.page = 0;
-          this.canLoadMore = false;
           this.all = [];
-          this.open = null;
           this.active = false;
-          return this.showAll = false;
+          this.limitTo = 1;
+          return this.canLoadMore = false;
         },
         showAllRequests: function() {
-          this.showAll = true;
-          this.page = 0;
-          this.all = [];
-          return this.canLoadMore = true;
+          this.limitTo = 1000;
+          this.canLoadMore = true;
+          return App.scrollBottom();
         },
         get: function() {
           var params;
           params = {
             productId: $scope.view.productID,
             page: this.page,
-            displayLimit: 3,
+            displayLimit: 2,
             openStatus: false
           };
           return RequestAPI.get(params).then((function(_this) {
             return function(data) {
-              if (_.size(data) > 0) {
-                if (_.size(data) < params.displayLimit) {
-                  _this.canLoadMore = false;
-                } else {
-                  _this.onScrollComplete();
-                }
-                if (_this.showAll) {
-                  _this.open = null;
-                } else {
-                  _this.open = _.first(data);
-                }
-                _this.all = _this.all.concat(data);
-                return console.log(data);
-              } else {
-                return _this.canLoadMore = false;
-              }
+              return _this.success(data, params.displayLimit);
             };
           })(this), (function(_this) {
             return function(error) {
@@ -74,6 +55,18 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
               return App.resize();
             };
           })(this));
+        },
+        success: function(data, limit) {
+          if (_.size(data) > 0) {
+            if (_.size(data) < limit) {
+              this.canLoadMore = false;
+            } else {
+              this.onScrollComplete();
+            }
+            return this.all = this.all.concat(data);
+          } else {
+            return this.canLoadMore = false;
+          }
         }
       },
       reset: function() {
@@ -93,7 +86,6 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             _.each(details, function(val, key) {
               return _this.product[key] = val;
             });
-            console.log(_this.product);
             return _this.onSuccess();
           };
         })(this), (function(_this) {
