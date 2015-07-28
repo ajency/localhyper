@@ -6,20 +6,12 @@
 		<img src="img/logo.png"/>
     </ion-nav-title>
 
-	<ion-nav-buttons side="left">
-		<button
-			menu-toggle="left"
-			class="button button-icon icon ion-navicon">
-		</button>
-	</ion-nav-buttons>
-
 	<ion-content ng-switch="view.display">
 
 		<ion-refresher
 			on-refresh="view.onPullToRefresh()" 
 			class="aj-refresher">
 		</ion-refresher>
-
 
 		<ion-list 
 		 class="card-list"
