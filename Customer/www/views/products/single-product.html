@@ -68,10 +68,46 @@
 
 		<ion-list class="card-list">
 
-			<h4 ng-if="view.request.all.length > 0;">Your earlier made requests</h4>
+			<h4 ng-if="view.request.active || view.request.all.length > 0">
+				Your earlier made requests
+			</h4>
+			
+			<div ng-if="view.request.open !== null">
+				<ion-item class="card">
+
+					<div class="row item border-none" >
+				        <div class="col  p-t-0">
+				            <sm class="light-gray"> MRP</sm><br>
+				            <h3 class=" item-text-wrap margin-none big-txt ">
+				            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.request.open.product.mrp)}}
+				            </h3>
+				        </div>
+				        <div class="col p-t-0">
+				        	<div class="pull-right">
+				            <div class="offer"> {{view.request.open.offerCount}} </div>
+				            <h4 class="offertxt light-gray"> No of offers</h4>
+				           	</div>
+				        </div>
+				    </div>
+				      <div class="item item-divider">
+				        <div class="pull-right ">
+				            <h3 class="margin-none"> {{App.humanize(view.request.open.status)}} &nbsp;</h3>
+				        </div>
+
+				        <div class="pull-left ">
+				            <sm class="subdued">{{request.timeStr}}</sm>
+				        </div>
+				    </div>
+				</ion-item>
+
+				<ion-item ng-click="view.request.showAllRequests()">
+					Show all requests
+				</ion-item>
+			</div>
 
 	       	<ion-item
 	       		class="card"
+	       		ng-if="view.request.showAll"
 	       		ng-repeat="request in view.request.all">
 
 				<div class="row item border-none" >
@@ -99,6 +135,13 @@
 			    </div>
 			</ion-item>
 		</ion-list>
+
+		<ion-infinite-scroll
+			on-infinite="view.request.get()"
+			ng-if="view.request.canLoadMore"
+			distance="1%" 
+			class="aj-refresher">
+		</ion-infinite-scroll>
 				
 		<aj-error 
 			ng-switch-when="error"

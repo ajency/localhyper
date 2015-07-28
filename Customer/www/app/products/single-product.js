@@ -7,19 +7,79 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       productID: $stateParams.productID,
       product: {},
       request: {
+        page: 0,
+        canLoadMore: false,
         all: [],
+        open: null,
         active: false,
+        showAll: false,
+        error: false,
+        onScrollComplete: function() {
+          return $scope.$broadcast('scroll.infiniteScrollComplete');
+        },
         checkIfActive: function() {
           this.active = false;
           if (User.isLoggedIn()) {
             return this.active = !_.isEmpty($scope.view.product.activeRequest);
           }
+        },
+        reset: function() {
+          this.page = 0;
+          this.canLoadMore = false;
+          this.all = [];
+          this.open = null;
+          this.active = false;
+          return this.showAll = false;
+        },
+        showAllRequests: function() {
+          this.showAll = true;
+          this.page = 0;
+          this.all = [];
+          return this.canLoadMore = true;
+        },
+        get: function() {
+          var params;
+          params = {
+            productId: $scope.view.productID,
+            page: this.page,
+            displayLimit: 3,
+            openStatus: false
+          };
+          return RequestAPI.get(params).then((function(_this) {
+            return function(data) {
+              if (_.size(data) > 0) {
+                if (_.size(data) < params.displayLimit) {
+                  _this.canLoadMore = false;
+                } else {
+                  _this.onScrollComplete();
+                }
+                if (_this.showAll) {
+                  _this.open = null;
+                } else {
+                  _this.open = _.first(data);
+                }
+                _this.all = _this.all.concat(data);
+                return console.log(data);
+              } else {
+                return _this.canLoadMore = false;
+              }
+            };
+          })(this), (function(_this) {
+            return function(error) {
+              return console.log(error);
+            };
+          })(this))["finally"]((function(_this) {
+            return function() {
+              _this.page = _this.page + 1;
+              return App.resize();
+            };
+          })(this));
         }
       },
       reset: function() {
         this.display = 'loader';
         this.footer = false;
-        this.request.all = [];
+        this.request.reset();
         return this.getSingleProductDetails();
       },
       getSingleProductDetails: function() {
@@ -40,15 +100,16 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           return function(error) {
             return _this.onError(error);
           };
-        })(this));
+        })(this))["finally"](function() {
+          return App.resize();
+        });
       },
       onSuccess: function() {
         this.footer = true;
-        App.resize();
-        this.request.checkIfActive();
         this.display = 'noError';
+        this.request.checkIfActive();
         if (User.isLoggedIn()) {
-          return this.getRequests();
+          return this.request.get();
         }
       },
       onError: function(type) {
@@ -68,7 +129,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return "" + value + " " + unit;
+          return value + " " + unit;
         } else {
           return '';
         }
@@ -94,29 +155,14 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       getBestPrices: function() {
         ProductsAPI.productDetails('set', this.product);
         return App.navigate('make-request');
-      },
-      getRequests: function() {
-        var params;
-        params = {
-          productId: this.productID,
-          page: 0,
-          openStatus: false
-        };
-        return RequestAPI.get(params).then((function(_this) {
-          return function(data) {
-            console.log('getRequests');
-            console.log(data);
-            return _this.request.all = data;
-          };
-        })(this))["finally"](function() {
-          return App.resize();
-        });
       }
     };
     $rootScope.$on('make:request:success', function() {
       return $scope.view.request.active = true;
     });
-    $rootScope.$on('on:session:expiry', function() {});
+    $rootScope.$on('on:session:expiry', function() {
+      return $scope.view.reset();
+    });
     return $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['products', 'verify-success'], App.previousState)) {
         return $scope.view.reset();

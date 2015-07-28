@@ -15,7 +15,7 @@ angular.module 'LocalHyper.myRequests'
 			"customerId": User.getId()
 			"productId" : productId
 			"page" : opts.page
-			"displayLimit" : 5
+			"displayLimit" : opts.displayLimit
 			"openStatus" : opts.openStatus
 
 		$http.post 'functions/getCustomerRequests', params
