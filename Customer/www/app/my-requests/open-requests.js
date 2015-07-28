@@ -29,7 +29,8 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
       getMyOffers: function() {
         return RequestAPI.get({
           page: this.page,
-          openStatus: true
+          openStatus: true,
+          displayLimit: 5
         }).then((function(_this) {
           return function(data) {
             return _this.onSuccess(data);
