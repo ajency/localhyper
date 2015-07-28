@@ -22,6 +22,7 @@ angular.module 'LocalHyper.myRequests', []
 .controller 'EachRequestTimeCtrl', ['$scope', '$interval', ($scope, $interval)->
 	#Request time
 	setTime = ->
+		console.log($scope.request)
 		iso       = $scope.request.createdAt.iso
 		format    = 'DD/MM/YYYY HH:mm:ss'
 		now       = moment().format format
