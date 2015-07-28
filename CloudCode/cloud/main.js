@@ -888,7 +888,7 @@
           "id": offerObject.id,
           "product": product,
           "seller": seller,
-          "price": priceObject.get("value"),
+          "price": priceObj.get("value"),
           "comment": offerObject.get("comment"),
           "deliveryTime": offerObject.get("deliveryTime"),
           "status": offerObject.get("status"),
