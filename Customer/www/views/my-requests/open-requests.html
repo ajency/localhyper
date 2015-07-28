@@ -13,12 +13,76 @@
 		</button>
 	</ion-nav-buttons>
 
-	<ion-content>
-		<div class="card">
-			<div class="item item-text-wrap">
-			This is a basic Card which contains an item that has wrapping text.
-			</div>
-		</div>
+	<ion-content ng-switch="view.display">
+
+		<ion-refresher
+			on-refresh="view.onPullToRefresh()" 
+			class="aj-refresher">
+		</ion-refresher>
+
+
+		<ion-list 
+		 class="card-list"
+		 ng-switch-when="noError">
+
+			<ion-item
+			class="card"
+			ng-repeat="openRequest in view.openRequests "
+			ng-controller="EachRequestTimeCtrl">
+
+				<div class="item-wrapper-nr">
+					<div class="item-avatar border-none margin-none">
+					<img ng-src="{{openRequest.product.images[0].src}}">
+					</div>
+					<h2>{{openRequest.product.name}}</h2>
+				</div>
+
+				<div class="row item border-none" >
+					<div class="col  p-t-0">
+						<sm class="light-gray"> Local Price</sm><br>
+						<h3 class=" item-text-wrap margin-none big-txt ">
+						{{openRequest.product.mrp.toLocaleString()}}
+						</h3>
+					</div>
+					<div class="col p-t-0">
+						<div class="pull-right">
+						<div class="offer">{{openRequest.offerCount}} </div>
+						<h4 class="offertxt light-gray"> No of offers</h4>
+						</div>
+					</div>
+				</div>
+				<div class="item ">
+					<div class="pull-right ">
+						<h3 class="margin-none "> Status:{{openRequest.status}}</h3>
+					</div>
+					<div class="pull-left ">
+						<sm class="subdued">{{openRequest.timeStr}}</sm>
+					</div>
+				</div>
+				<!--div class="item item-body">
+					<p>
+					<b>Address :</b>
+					{{openRequest.address.full}}
+					<br><br>
+					<b>Comments :{{openRequest.address.comments}}</b>
+					</p>
+				</div-->
+			</ion-item>
+		</ion-list>	
+
+		<ion-infinite-scroll
+			on-infinite="view.onInfiniteScroll()"
+			ng-if="view.canLoadMore"
+			distance="1%" 
+			class="aj-refresher">
+		</ion-infinite-scroll>
+
+		<aj-error
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry()">
+		</aj-error>
+
 	</ion-content>
 
 	<ion-footer-bar class="bar-dark">

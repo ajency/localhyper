@@ -10,7 +10,7 @@ angular.module 'LocalHyper.myRequests'
 
 		productId = opts.productId
 		productId = if _.isUndefined(productId) then "" else productId
-
+		
 		params =
 			"customerId": User.getId()
 			"productId" : productId
