@@ -855,6 +855,53 @@
     });
   });
 
+  Parse.Cloud.define('getRequestOffers', function(request, response) {
+    var innerQueryRequest, queryOffers, requestId;
+    requestId = request.params.requestId;
+    queryOffers = new Parse.Query("Offer");
+    innerQueryRequest = new Parse.Query("Request");
+    innerQueryRequest.equalTo("objectId", requestId);
+    queryOffers.matchesQuery("request", innerQueryRequest);
+    queryOffers.include("price");
+    queryOffers.include("request");
+    queryOffers.include("request.product");
+    queryOffers.include("seller");
+    return queryOffers.find().then(function(offerObjects) {
+      var offers;
+      offers = [];
+      offers = _.map(offerObjects, function(offerObject) {
+        var offer, priceObj, product, productObj, seller, sellerObj;
+        productObj = offerObject.get("request").get("product");
+        product = {
+          "name": productObj.get("name"),
+          "images": productObj.get("images")
+        };
+        sellerObj = offerObject.get("seller");
+        seller = {
+          "displayName": sellerObj.get("displayName"),
+          "businessName": sellerObj.get("businessName"),
+          "address": sellerObj.get("address"),
+          "city": sellerObj.get("city")
+        };
+        priceObj = offerObject.get("price");
+        offer = {
+          "id": offerObject.id,
+          "product": product,
+          "seller": seller,
+          "price": priceObject.get("value"),
+          "comment": offerObject.get("comment"),
+          "deliveryTime": offerObject.get("deliveryTime"),
+          "status": offerObject.get("status"),
+          "createdAt": offerObject.createdAt
+        };
+        return offer;
+      });
+      return response.success(offers);
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   Parse.Cloud.job('productImport', function(request, response) {
     var ProductItem, categoryId, productSavedArr, products, queryCategory;
     ProductItem = Parse.Object.extend('ProductItem');

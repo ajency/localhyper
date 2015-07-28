@@ -289,3 +289,58 @@ Parse.Cloud.afterSave "Offer", (request)->
     ,(error) ->
         console.log "Got an error " + error.code + " : " + error.message
   
+
+Parse.Cloud.define 'getRequestOffers' , (request, response) ->
+    requestId = request.params.requestId
+
+    # get all offers for the request
+    queryOffers = new Parse.Query("Offer")
+    innerQueryRequest = new Parse.Query("Request")
+    innerQueryRequest.equalTo("objectId",requestId)
+    queryOffers.matchesQuery("request",innerQueryRequest)
+    
+    queryOffers.include("price")
+    queryOffers.include("request")
+    queryOffers.include("request.product")
+    queryOffers.include("seller")
+
+    queryOffers.find()
+    .then (offerObjects) ->
+        offers = []      
+        offers = _.map(offerObjects , (offerObject) ->
+
+                    productObj = offerObject.get("request").get("product")
+
+                    product = 
+                        "name" : productObj.get("name")
+                        "images" : productObj.get("images")
+
+
+                    sellerObj = offerObject.get("seller")
+
+                    seller =
+                        "displayName" : sellerObj.get("displayName")
+                        "businessName" : sellerObj.get("businessName")
+                        "address" : sellerObj.get("address")
+                        "city" : sellerObj.get("city")
+
+                    priceObj = offerObject.get("price")
+                    
+                    offer = 
+                        "id" : offerObject.id
+                        "product" : product
+                        "seller" : seller
+                        "price" : priceObject.get("value")
+                        "comment" : offerObject.get("comment")
+                        "deliveryTime" : offerObject.get("deliveryTime")
+                        "status" : offerObject.get("status")
+                        "createdAt" : offerObject.createdAt
+
+                    offer    
+
+                )
+
+        response.success offers 
+
+    , (error) ->
+        response.error error
