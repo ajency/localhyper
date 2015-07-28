@@ -394,7 +394,126 @@ Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
     , (error) ->
         response.error error    
 
+# API for listing of request history for customer
+Parse.Cloud.define 'getCustomerRequestsAPI' , (request, response) ->
+    customerId = request.params.customerId
 
+    productId = request.params.productId
+
+    page = parseInt request.params.page
+    displayLimit = parseInt request.params.displayLimit 
+
+    failedRequests = request.params.failedRequests     
+
+    
+    # put constraint for getting non expired requests
+    currentDate = new Date()
+    currentTimeStamp = currentDate.getTime()
+    expiryValueInHrs = 24
+    queryDate = new Date()
+    time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
+    queryDate.setTime(time24HoursAgo)    
+
+    if failedRequests is true 
+        queryRequest = new Parse.Query("Request")
+
+        innerQueryCustomer = new Parse.Query(Parse.User)
+        innerQueryCustomer.equalTo("objectId", customerId)
+        queryRequest.matchesQuery("customerId", innerQueryCustomer)
+
+        if productId isnt ""
+            innerQueryProduct = new Parse.Query("ProductItem")
+            innerQueryProduct.equalTo("objectId", productId)
+            queryRequest.matchesQuery("product", innerQueryProduct)
+
+        queryRequest.equalTo("status", "open")
+
+        queryRequest.lessThanOrEqualTo( "createdAt", queryDate )  
+
+    else 
+        queryNonExpiredOpenReq = new Parse.Query("Request")
+
+        innerQueryCustomer = new Parse.Query(Parse.User)
+        innerQueryCustomer.equalTo("objectId", customerId)
+        queryNonExpiredOpenReq.matchesQuery("customerId", innerQueryCustomer)
+
+        if productId isnt ""
+            innerQueryProduct = new Parse.Query("ProductItem")
+            innerQueryProduct.equalTo("objectId", productId)
+            queryNonExpiredOpenReq.matchesQuery("product", innerQueryProduct)
+
+        queryNonExpiredOpenReq.equalTo("status","open")
+        queryNonExpiredOpenReq.greaterThanOrEqualTo( "createdAt", queryDate )
+
+        #########################################################################
+
+        otherRequestStatuses = ["cancelled","pending_delivery","failed_delivery","successful"]
+        
+        queryOtherStatusReq = new Parse.Query("Request") 
+
+        innerQueryCustomer2 = new Parse.Query(Parse.User)
+        innerQueryCustomer2.equalTo("objectId", customerId)
+        queryOtherStatusReq.matchesQuery("customerId", innerQueryCustomer2)
+
+        if productId isnt ""
+            innerQueryProduct2 = new Parse.Query("ProductItem")
+            innerQueryProduct2.equalTo("objectId", productId)
+            queryOtherStatusReq.matchesQuery("product", innerQueryProduct2)        
+        
+        queryOtherStatusReq.containedIn("status", otherRequestStatuses) 
+
+        queryRequest = Parse.Query.or(queryNonExpiredOpenReq, queryOtherStatusReq)        
+
+    
+    queryRequest.include("product") 
+
+    queryRequest.descending("updatedAt")
+    
+    # pagination
+    queryRequest.limit(displayLimit)
+    queryRequest.skip(page * displayLimit)     
+    
+
+    queryRequest.find()
+    .then (requests) ->
+        pastRequests = _.map(requests, (requestObj) ->
+
+            currentDate = new Date()
+            createdDate = requestObj.createdAt
+            diff = currentDate.getTime() - createdDate.getTime()
+            differenceInDays =  Math.floor(diff / (1000 * 60 * 60 * 24)) 
+
+            # if expired
+            requestStatus = requestObj.get("status")
+            
+            # if differenceInDays >= 1 
+            #     if requestStatus is "open"
+            #         requestStatus = "expired"
+                
+            product =
+                "name": requestObj.get("product").get("name")
+                "images": requestObj.get("product").get("images")
+                "mrp": requestObj.get("product").get("mrp")
+
+            
+            
+            pastReq = 
+                "id" : requestObj.id
+                "product" : product
+                "status" : requestStatus
+                "createdAt": requestObj.createdAt
+                "differenceInDays" :differenceInDays
+                "address": requestObj.get("address")
+                "comments": requestObj.get("comments")
+                "offerCount": requestObj.get("offerCount")
+
+            pastReq
+
+
+        )
+        response.success pastRequests
+    , (error) ->
+        response.error error    
 
 
 
