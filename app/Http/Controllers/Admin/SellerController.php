@@ -17,19 +17,44 @@ class SellerController extends Controller
      */
     public function index()
     {
-        $seller = new ParseQuery("_User");
-        $seller->equalTo("userType", "seller");
-        $sellerData = $seller->find();  
+        $sellers = new ParseQuery("_User");
+        $sellers->equalTo("userType", "seller");
+        $sellers->includeKey('supportedCategories');
+        $sellerData = $sellers->find();   //dd($sellerData);
         $sellerList =[];
         foreach($sellerData as $seller)
         {
+             $categories =[];
+             $supportedCategories =$seller->get("supportedCategories");
+             foreach($supportedCategories as $supportedCategory)
+             {
+                 $categories[] =$supportedCategory->get('name');
+             }
+            
+            $sellerId = $seller->getObjectId();
+            
+            $offer = new ParseQuery("Offer");
+            $offer->equalTo("seller", $seller);
+            $offertData = $offer->find();
+            $offerCount = count($sellerId);
+            $offerSuccessfullCount =  0;
+            
+            foreach($offertData as $offer)
+            {
+                if($offer->get("status")=='successfull')
+                    $offerSuccessfullCount = $offerSuccessfullCount+1;
  
+            }
+            
              $sellerList[]= ['id' => $seller->getObjectId(),
                               'name' => $seller->get("displayName"),
                               'area' => $seller->get("area"),
+                              'categories' => implode(", ",$categories),
+                              'offersCount' => $offerCount,
+                              'successfullCount' => $offerSuccessfullCount,
                               'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
                               ];
-        }
+        }  
         return view('admin.sellerlist')->with('sellers',$sellerList);
     }
 
@@ -61,7 +86,59 @@ class SellerController extends Controller
      */
     public function show($id)
     {
-        //
+        $sellers = new ParseQuery("_User");
+        $sellers->equalTo("objectId", $id);
+        $sellers->includeKey('supportedCategories');
+        $sellerData = $sellers->first();
+       
+         $categories =[];
+         $supportedCategories = $sellerData->get("supportedCategories");  
+         foreach($supportedCategories as $supportedCategory)
+         {
+             $categories[] =$supportedCategory->get('name');
+         } 
+       
+        $seller['businessname'] = $sellerData->get("businessName"); 
+        $seller['name'] = $sellerData->get("displayName"); 
+        $seller['email'] = $sellerData->get("email"); 
+        $seller['mobile'] =''; 
+        $seller['deliveryRadius'] = $sellerData->get("deliveryRadius");
+        $seller['address'] = $sellerData->get("address"); 
+        $seller['area'] = $sellerData->get("area"); 
+        $seller['city'] = $sellerData->get("city");
+        $seller['categories'] = $categories; 
+            
+        $offers = new ParseQuery("Offer");
+        $offers->equalTo("seller", $sellerData);
+        $offers->includeKey('request');
+        $offers->includeKey('request.product');
+        $offers->includeKey('request.category');
+        $offers->includeKey('Price');
+        $offersData = $offers->find(); 
+        
+        $sellerOffers =$product = $category =[];
+        foreach($offersData as $offer)
+        {
+            $requestObj= $offer->get("request");
+            $productObj = $requestObj->get('product');
+            $categoryObj = $requestObj->get('category');
+            $priceObj = $offer->get('Price');
+ 
+            $sellerOffers[] =[
+                        'productName'=>$productObj->get("name"),
+                        'category'=>$categoryObj->get("name"),
+                        'offerAmt'=>$priceObj->get("amount"),
+                        'status'=>$offer->get("status"),
+                        'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
+                         ] ;
+            
+ 
+
+        }
+ 
+ 
+        return view('admin.sellerdetails')->with('seller',$seller)
+                                            ->with('selleroffers',$sellerOffers);
     }
 
     /**

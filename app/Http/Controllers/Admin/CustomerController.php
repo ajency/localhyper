@@ -38,13 +38,13 @@ class CustomerController extends Controller
                 if($interval>=1)
                     $requestExpiredCount = $requestExpiredCount+1;
                 
-                if($customer->get("status")=='cancelled')
+                if($request->get("status")=='cancelled')
                     $requestCancelledCount = $requestCancelledCount+1;
                 
-                if($customer->get("status")=='successfull')
+                if($request->get("status")=='successfull')
                     $requestSuccessfullCount = $requestSuccessfullCount+1;
                 
-                if($customer->get("deliverStatus")=='failed')
+                if($request->get("deliverStatus")=='failed')
                     $deliverStatusCount = $deliverStatusCount+1;
                 
             }

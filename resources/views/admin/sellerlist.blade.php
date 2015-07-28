@@ -22,23 +22,21 @@
               <th>Balance Credits</th>
               <th>Registered Date</th>
               <th>Last Login</th>
-              <th>Status</th>
             </tr>
           </thead>
           <tbody>
            @foreach($sellers as $seller)
-              <tr>
+              <tr  onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">
                 <td>{{ $seller['name'] }}</td>
                 <td>{{ $seller['area'] }}</td>
-                <td>Electronics, Laptops</td>
-                <td>10 Hrs</td>
-                <td>15/30</td>
-                <td>4</td>
-                <td>3</td>
-                <td>345</td>
+                <td>{{ $seller['categories'] }}</td>
+                <td>-</td>
+                <td>{{ $seller['offersCount'] }}/-</td>
+                <td>{{ $seller['successfullCount'] }}</td>
+                <td>-</td>
+                <td>-</td>
                 <td>{{ $seller['createdAt'] }}</td>
-                <td></td>
-                <td>Suspended</td>  
+                <td>-</td>
               </tr>
            @endforeach
           </tbody>

@@ -17,10 +17,10 @@
 <link href="{{ asset('plugins/boostrapv3/css/bootstrap-theme.min.css') }}" rel="stylesheet" type="text/css"/>
 <link href="{{ asset('plugins/font-awesome/css/font-awesome.css') }}" rel="stylesheet" type="text/css"/>
 <link href="{{ asset('css/animate.min.css') }}" rel="stylesheet" type="text/css"/>
-
 <link href="{{ asset('plugins/jquery-scrollbar/jquery.scrollbar.css') }}" rel="stylesheet" type="text/css"/>
 <!-- END CORE CSS FRAMEWORK -->
 <!-- BEGIN CSS TEMPLATE -->
+<link href="{{ asset('plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css" media="screen">    
 <link href="{{ asset('plugins/select2/select2_metro.min.css') }}" rel="stylesheet" type="text/css" media="screen">
 <link href="{{ asset('css/style.css') }}" rel="stylesheet" type="text/css"/>
 <link href="{{ asset('css/responsive.css') }}" rel="stylesheet" type="text/css"/>
