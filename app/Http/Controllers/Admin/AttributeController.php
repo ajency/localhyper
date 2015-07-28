@@ -113,7 +113,7 @@ class AttributeController extends Controller
 					'filterableAttributes' => true,
 					'secondaryAttributes' => true,
 					];
-				$attributeValueData = $this->getCategoryAttributeValues($categoryData);//dd($attributeValueData);
+				$attributeValueData = $this->getCategoryAttributeValues($categoryData);dd($attributeValueData);
 				$headers = $data = $attributeValues= $headerFlag =[];
 				
 				if(isset($attributeValueData['result']))
@@ -121,16 +121,34 @@ class AttributeController extends Controller
 						foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
 						{
 								$attributeId =$attributeValue['attributeId'];
-								if(!isset($headerFlag[$attributeId]))
+								/*if(!isset($headerFlag[$attributeId]))
 								{   
 										$headers[]=$attributeValue['attributeName']."(".$attributeId.")";
 										$headers[]=$attributeValue['attributeName'].' Id';            
 										$headerFlag[$attributeId]=$attributeId;
-								}
-
+								}*/
+                                $headerFlag[$attributeId]=[];
 								$attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
 						}
+                    
+                        foreach($attributeValueData['result']['attributes'] as $attribute)
+						{
+                            $attributeId = $attribute['id'];
+                            $headerFlag[$attributeId] = $attribute;            	
+						}
+                    
+                        foreach($headerFlag as $attribute)
+						{
+                            $attributeId = $attribute['id'];
+                            $attributeName = $attribute['name'];
+                            $headers[]=$attributeName."(".$attributeId.")";
+                            $headers[]=$attributeName.' Id';            	
+						}
+                    
+                        
 				}
+            
+                
 			 
 				$attributeValueSheet->fromArray($headers, ' ', 'A1');
  
