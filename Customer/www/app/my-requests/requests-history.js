@@ -29,7 +29,8 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
       getMyOffers: function() {
         return RequestAPI.get({
           page: this.page,
-          openStatus: false
+          openStatus: false,
+          displayLimit: 5
         }).then((function(_this) {
           return function(data) {
             return _this.onSuccess(data);
@@ -48,8 +49,6 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
       onSuccess: function(data) {
         var openRequest;
         this.display = 'noError';
-        console.log('open request');
-        console.log(data);
         openRequest = data;
         if (openRequest.length > 0) {
           this.canLoadMore = true;

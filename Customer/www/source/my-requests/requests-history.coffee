@@ -35,6 +35,7 @@ angular.module 'LocalHyper.myRequests'
 				RequestAPI.get
 					page: @page
 					openStatus: false
+					displayLimit : 5
 				.then (data)=>
 					@onSuccess data
 				, (error)=>
@@ -45,8 +46,6 @@ angular.module 'LocalHyper.myRequests'
 					
 			onSuccess : (data)->
 				@display = 'noError'
-				console.log('open request')
-				console.log(data)
 				openRequest = data
 				if openRequest.length > 0
 					@canLoadMore = true
