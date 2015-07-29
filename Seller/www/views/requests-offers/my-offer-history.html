@@ -22,7 +22,7 @@
 		<ion-list class="card-list" ng-switch-when="noError">
 	       	<ion-item
 	       		class="card"
-	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'" 
+	       		ng-repeat="request in view.requests track by $index | orderBy:'-createdAt.iso'" 
 	       		ng-click="view.showRequestDetails(request)"
 	       		ng-controller="EachRequestTimeCtrl">
 
@@ -32,29 +32,39 @@
 				    </div>
 				    <h2>{{request.product.name}}</h2> 
 				    <p> {{request.distanceFromCustomer.toFixed(2)}} kms radius </p>
+				    <div class="pull-right"> Auto Bid : no </div>
+
+				    <div class="col p-t-0" ng-controller="ExpiredTimeCtrl" >
+			            <sm class="light-gray"> Claimed delivery :</sm>
+			            	 {{request.offerDeliveryTime.value}} {{request.offerDeliveryTime.unit}}
+			            <br>
+			            <sm class="light-gray"> Request expires at  :</sm>
+			            	 {{request.timeStr1}} 
+			        </div>
+
+				    
 				</div>
 				<div class="row item border-none" >
 			        <div class="col p-t-0">
-			            <sm class="light-gray"> Local Price</sm><br>
+			            <sm class="light-gray"> Offer Price</sm><br>
 			            <h3 class=" item-text-wrap margin-none big-txt ">
 			            	<span class="WebRupee subdued">&#x20B9;</span> {{request.offerPrice.toLocaleString()}}
 			            </h3>
 			        </div>
 			        <div class="col p-t-0">
 			        	<div class="pull-right">
-			        		{{request.offerStatus}}
-			            <!--div class="offer"> 2 </div>
-			            <h4 class="offertxt light-gray"> No of offers</h4-->
+				            <div class="offer"> 2 </div>
+				            <h4 class="offertxt light-gray"> No of offers</h4>
 			           	</div>
 			        </div>
 			    </div>
 			      <div class="item item-divider">
 			        <div class="pull-right ">
-			            <h3 class="margin-none "> offer history &nbsp;<i class="ion ion-log-out btn-danger"></i></h3>
+			            <h3 class="margin-none "> Details &nbsp;<i class="ion ion-log-out btn-danger"></i></h3>
 			        </div>
 
 			        <div class="pull-left ">
-			            <sm class="subdued">{{request.timeStr}}</sm>
+			            <b>Offer status:<b>{{request.offerStatus}}
 			        </div>
 			    </div>
 			</ion-item>

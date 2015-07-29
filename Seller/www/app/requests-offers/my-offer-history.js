@@ -53,6 +53,8 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       onSuccess: function(data) {
         var offerhistory;
         this.display = 'noError';
+        console.log('offer history');
+        console.log(data);
         offerhistory = data;
         if (offerhistory.length > 0) {
           this.canLoadMore = true;
@@ -72,6 +74,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return this.page = 0;
       },
       onPullToRefresh: function() {
+        this.canLoadMore = false;
         this.requests = [];
         this.page = 0;
         return this.showOfferHistory();
@@ -119,5 +122,40 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return this.requestDetails.modal.show();
       }
     };
+  }
+]).controller('ExpiredTimeCtrl', [
+  '$scope', '$interval', function($scope, $interval) {
+    var interval, setTime;
+    setTime = function() {
+      var createdAt, days, diff, duration, format, hhr, hours, iso, minutes, mmi, now, timeStr, weeks;
+      console.log($scope.request.product.name);
+      iso = $scope.request.createdAt.iso;
+      format = 'DD/MM/YYYY HH:mm:ss';
+      now = moment().format(format);
+      createdAt = moment(iso).format(format);
+      diff = moment(now, format).diff(moment(createdAt, format));
+      duration = moment.duration(diff);
+      minutes = parseInt(duration.asMinutes().toFixed(0));
+      hours = parseInt(duration.asHours().toFixed(0));
+      days = parseInt(duration.asDays().toFixed(0));
+      weeks = parseInt(duration.asWeeks().toFixed(0));
+      console.log("minutes" + minutes);
+      console.log("hours" + hours);
+      console.log("days" + days);
+      console.log("weeks" + weeks);
+      hhr = 24 - hours;
+      if (hhr !== 24) {
+        timeStr = "" + hhr + " hrs";
+      } else {
+        mmi = 60 - minutes;
+        timeStr = " 23hrs  " + mmi + " mins";
+      }
+      return $scope.request.timeStr1 = timeStr;
+    };
+    setTime();
+    interval = $interval(setTime, 60000);
+    return $scope.$on('$destroy', function() {
+      return $interval.cancel(interval);
+    });
   }
 ]);

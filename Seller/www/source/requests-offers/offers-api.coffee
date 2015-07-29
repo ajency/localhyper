@@ -33,7 +33,7 @@ angular.module 'LocalHyper.requestsOffers'
 		params = 
 			"sellerId": user.id
 			"page": opts.page
-			"displayLimit" : "3"
+			"displayLimit" : "10"
 			
 		$http.post 'functions/getSellerOffers', params
 		.then (data)->
