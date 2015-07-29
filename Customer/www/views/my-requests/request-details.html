@@ -20,20 +20,46 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col">
+					<div 
+						class="col"
+						ng-if="view.request"
+						ng-click="view.address.toggle()">
+
 						<p class="loca">
 							My Location
 							<span><i class="icon ion-ios-location"></i> {{view.request.address.city}}</span>
-							<a>More</a>
+							<a ng-if="!view.address.show">More</a>
+							<a ng-if="view.address.show">Less</a>
 						</p>
+
+						<ion-item 
+							class="item-text-wrap item-accordion"
+							ng-show="view.address.show">
+							{{view.request.address.full}}
+						</ion-item>
 					</div>
-					<div class="col">
-						<button class="button button-outline button-dark button-lighter">
+
+					<div 
+						class="col"
+						ng-if="view.request.comments !== ''">
+
+						<button 
+							class="button button-outline button-dark button-lighter"
+							ng-click="view.comments.toggle()">
+
 							<img src="./img/speechbubble.png" alt="Speech Bubble Icon">
 							01
 						</button>
+
+						<ion-item 
+							class="item-text-wrap item-accordion"
+							style="margin-top: 40px;"
+							ng-show="view.comments.show">
+							{{view.request.comments}}
+						</ion-item>
 					</div>
 				</div>
+
 				<div class="row">
 					<div class="col">
 						<div class="dash-div"></div>
@@ -47,7 +73,8 @@
 					<div class="col-25">
 						<h2 class="dura"
 							aj-count-down
-							created-at="view.request.createdAt">
+							created-at="view.request.createdAt"
+							count-down-finish="view.onRequestExpiry()">
 						</h2>
 					</div>
 					<div class="col">
@@ -61,15 +88,26 @@
 			</div>
 		</div>
 		
-		<ion-list>
-			<div class="row">
+		<ion-list ng-switch="view.display">
+			<div 
+				class="row"
+				ng-if="view.offers.all.length > 0;">
+
 				<div class="col">
-					<p>Recieved Offers <b>(12)</b></p>
+					<p>Received Offers <b>({{view.offers.all.length}})</b></p>
 				</div>
 			</div>
-			<div 
+
+			<ion-spinner
+				class="aj-spinner"
+				ng-switch-when="loader">
+			</ion-spinner>
+
+			<div
+				ng-switch-when="noError" 
 				class="card no-shadow rece-offer"
-				ng-repeat="offer in view.offers.all">
+				ng-repeat="offer in view.offers.all | limitTo: view.offers.limitTo"
+				ng-controller="EachOfferTimeCtrl">
 
 				<div class="item item-text-wrap">
 					<div class="row row-fluid">
@@ -78,11 +116,15 @@
 								<img src="./img/user.png" alt="" class="user">
 							</div>
 							<div class="user-details">
-								<p class="pull-right time-rece"><i>2 Hours ago</i></p>
-								<h3>John Brothers <span class="loc">panjim</span></h3>
-								<p class="comment">
+								<p class="pull-right time-rece"><i>{{offer.timeStr}}</i></p>
+								<h3>{{offer.seller.displayName}} 
+									<span class="loc">{{offer.seller.address.city}}</span>
+								</h3>
+								<p 
+									class="comment"
+									ng-if="offer.comments !== ''">
 									<img src="./img/speechbubble.png" alt="">
-									<span class="com">Installation will be immediate</span>
+									<span class="com">{{offer.comments}}</span>
 								</p>
 							</div>
 						</div>
@@ -91,11 +133,11 @@
 					<div class="row row-fluid offer-vals">
 						<div class="col">
 							<p class="info">Price Offered</p>
-							<h2><small>Rs.</small> 15000</h2>
+							<h2><small>Rs.</small> {{App.toINR(offer.price)}}</h2>
 						</div>
 						<div class="col">
-							<p class="info">Price Offered</p>
-							<h2><small>Rs.</small> 15000</h2>
+							<p class="info">Delivery time</p>
+							<h2>{{offer.deliveryTimeStr}}</h2>
 						</div>
 						<div class="col">
 							<button class="button button-outline button-balanced">Accept</button>
@@ -103,6 +145,18 @@
 					</div>
 				</div>
 			</div>
+
+			<ion-item 
+				ng-if="view.offers.limitTo == 1 && view.offers.all.length > 1;"
+				ng-click="view.showAllOffers()">
+				SHOW ALL OFFERS
+			</ion-item>
+
+			<aj-error
+				ng-switch-when="error"
+				error-type="view.errorType"
+				tap-to-retry="view.onTapToRetry()">
+			</aj-error>
 		</ion-list>
 
 	</ion-content>

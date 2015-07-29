@@ -1,11 +1,31 @@
 angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
-  '$scope', 'RequestAPI', '$interval', 'TimeString', function($scope, RequestAPI, $interval, TimeString) {
+  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', function($scope, RequestAPI, $interval, TimeString, App, $timeout) {
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
+      display: 'loader',
+      errorType: '',
+      address: {
+        show: false,
+        toggle: function() {
+          this.show = !this.show;
+          return $timeout(function() {
+            return App.resize();
+          }, 500);
+        }
+      },
+      comments: {
+        show: false,
+        toggle: function() {
+          this.show = !this.show;
+          return $timeout(function() {
+            return App.resize();
+          }, 500);
+        }
+      },
       offers: {
         all: [],
-        received: true,
-        count: 0
+        limitTo: 1,
+        received: true
       },
       init: function() {
         console.log($scope.view.request);
@@ -26,13 +46,38 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           };
         })(this), 60000);
       },
+      onRequestExpiry: function() {
+        return console.log('onRequestExpiry');
+      },
+      showAllOffers: function() {
+        this.offers.limitTo = 100;
+        return App.resize();
+      },
       getOffers: function() {
         return RequestAPI.getOffers(this.request.id).then((function(_this) {
           return function(offers) {
-            console.log(offers);
-            return _this.offers.all = offers;
+            return _this.onSuccess(offers);
           };
-        })(this));
+        })(this), (function(_this) {
+          return function(error) {
+            return _this.onError(error);
+          };
+        })(this))["finally"](function() {
+          return App.resize();
+        });
+      },
+      onSuccess: function(offers) {
+        console.log(offers);
+        this.display = 'noError';
+        return this.offers.all = offers;
+      },
+      onError: function(type) {
+        this.display = 'error';
+        return this.errorType = type;
+      },
+      onTapToRetry: function() {
+        this.display = 'loader';
+        return this.getOffers();
       }
     };
     return $scope.$on('$destroy', function() {
@@ -41,28 +86,46 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
   }
 ]).controller('EachOfferTimeCtrl', [
   '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
-    var interval, setTime;
+    var deliveryTime, interval, setTime, unit, value;
     setTime = function() {
       return $scope.offer.timeStr = TimeString.get($scope.offer.createdAt);
     };
     setTime();
     interval = $interval(setTime, 60000);
-    return $scope.$on('$destroy', function() {
+    $scope.$on('$destroy', function() {
       return $interval.cancel(interval);
     });
+    deliveryTime = $scope.offer.deliveryTime;
+    value = deliveryTime.value;
+    switch (deliveryTime.unit) {
+      case 'hr':
+        unit = value === 1 ? 'hr' : 'hrs';
+        break;
+      case 'day':
+        unit = value === 1 ? 'day' : 'days';
+    }
+    return $scope.offer.deliveryTimeStr = value + " " + unit;
   }
 ]).directive('ajCountDown', [
-  '$timeout', '$parse', function($timeout, $parse) {
+  '$timeout', function($timeout) {
     return {
       restrict: 'A',
+      scope: {
+        createdAt: '=',
+        countDownFinish: '&'
+      },
       link: function(scope, el, attrs) {
         return $timeout(function() {
           var createdAt, total, totalStr;
-          createdAt = $parse(attrs.createdAt)(scope);
-          total = moment(moment(createdAt.iso)).add(24, 'hours');
+          createdAt = moment(scope.createdAt.iso);
+          total = moment(createdAt).add(24, 'hours');
           totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
           return $(el).countdown(totalStr, function(event) {
             return $(el).html(event.strftime('%-H:%-M:%-S'));
+          }).on('finish.countdown', function(event) {
+            return scope.$apply(function() {
+              return scope.countDownFinish();
+            });
           });
         });
       }
