@@ -12,10 +12,6 @@ angular.module 'LocalHyper.myRequests'
 			canLoadMore: true
 			refresh: false
 
-			onClick : (request)->
-				RequestAPI.requestDetails 'set', request
-				App.navigate 'request-details'
-
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 			
@@ -72,6 +68,10 @@ angular.module 'LocalHyper.myRequests'
 			onInfiniteScroll : ->
 				@refresh = false
 				@getMyOffers()
+
+			onClick : (request)->
+				RequestAPI.requestDetails 'set', request
+				App.navigate 'request-details'
 
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			viewData.enableBack = true
