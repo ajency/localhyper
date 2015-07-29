@@ -1,7 +1,8 @@
 angular.module('LocalHyper.myRequests').factory('RequestAPI', [
   '$q', '$http', 'User', function($q, $http, User) {
-    var RequestAPI;
+    var RequestAPI, requestDetails;
     RequestAPI = {};
+    requestDetails = {};
     RequestAPI.get = function(opts) {
       var defer, params, productId;
       defer = $q.defer();
@@ -15,6 +16,30 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
         "openStatus": opts.openStatus
       };
       $http.post('functions/getCustomerRequests', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
+    RequestAPI.requestDetails = function(action, data) {
+      if (data == null) {
+        data = {};
+      }
+      switch (action) {
+        case 'set':
+          return requestDetails = data;
+        case 'get':
+          return requestDetails;
+      }
+    };
+    RequestAPI.getOffers = function(requestId) {
+      var defer, params;
+      defer = $q.defer();
+      params = {
+        "requestId": requestId
+      };
+      $http.post('functions/getRequestOffers', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);

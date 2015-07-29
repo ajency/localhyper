@@ -1,6 +1,6 @@
 angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
   '$scope', 'App', 'RequestAPI', function($scope, App, RequestAPI) {
-    return $scope.view = {
+    $scope.view = {
       display: 'loader',
       errorType: '',
       openRequests: [],
@@ -67,5 +67,8 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
         return this.getMyOffers();
       }
     };
+    return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
+      return viewData.enableBack = true;
+    });
   }
 ]);

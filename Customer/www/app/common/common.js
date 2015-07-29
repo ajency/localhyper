@@ -86,6 +86,9 @@ angular.module('LocalHyper.common', []).factory('App', [
       resize: function() {
         return $ionicScrollDelegate.resize();
       },
+      scrollTop: function() {
+        return $ionicScrollDelegate.scrollTop(true);
+      },
       scrollBottom: function() {
         return $ionicScrollDelegate.scrollBottom(true);
       },

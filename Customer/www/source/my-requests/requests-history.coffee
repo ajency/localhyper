@@ -64,7 +64,10 @@ angular.module 'LocalHyper.myRequests'
 
 			onInfiniteScroll : ->
 				@getMyOffers()
-			
+
+		
+		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
+			viewData.enableBack = true
 ]
 
 
