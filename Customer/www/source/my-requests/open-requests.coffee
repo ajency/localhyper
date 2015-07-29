@@ -11,6 +11,10 @@ angular.module 'LocalHyper.myRequests'
 			canLoadMore: true
 			refresh: false
 
+			onClick : (request)->
+				RequestAPI.requestDetails 'set', request
+				App.navigate 'request-details'
+
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 			
@@ -22,7 +26,6 @@ angular.module 'LocalHyper.myRequests'
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 
 			onPullToRefresh : ->
-				@openRequests = []
 				@page = 0
 				@refresh = true
 				@getMyOffers()
@@ -45,7 +48,6 @@ angular.module 'LocalHyper.myRequests'
 					@onError error
 				.finally =>
 					@incrementPage()
-					@onScrollComplete()
 					
 			onSuccess : (data)->
 				console.log(data)
@@ -70,6 +72,11 @@ angular.module 'LocalHyper.myRequests'
 			onInfiniteScroll : ->
 				@refresh = false
 				@getMyOffers()
+
+			onlick : ()->
+					alert('df')
+					# RequestAPI.requestDetails 'set', request
+					# App.navigate 'request-details'
 
 
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->

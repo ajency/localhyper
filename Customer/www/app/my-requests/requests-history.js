@@ -18,7 +18,6 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
         return $scope.$broadcast('scroll.infiniteScrollComplete');
       },
       onPullToRefresh: function() {
-        this.openRequests = [];
         this.page = 0;
         this.refresh = true;
         this.getMyOffers();
@@ -45,8 +44,7 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
           };
         })(this))["finally"]((function(_this) {
           return function() {
-            _this.incrementPage();
-            return _this.onScrollComplete();
+            return _this.incrementPage();
           };
         })(this));
       },

@@ -7,6 +7,10 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
       page: 0,
       canLoadMore: true,
       refresh: false,
+      onClick: function(request) {
+        RequestAPI.requestDetails('set', request);
+        return App.navigate('request-details');
+      },
       onScrollComplete: function() {
         return $scope.$broadcast('scroll.infiniteScrollComplete');
       },
@@ -18,7 +22,6 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
         return $scope.$broadcast('scroll.infiniteScrollComplete');
       },
       onPullToRefresh: function() {
-        this.openRequests = [];
         this.page = 0;
         this.refresh = true;
         this.getMyOffers();
@@ -45,8 +48,7 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
           };
         })(this))["finally"]((function(_this) {
           return function() {
-            _this.incrementPage();
-            return _this.onScrollComplete();
+            return _this.incrementPage();
           };
         })(this));
       },
@@ -79,6 +81,9 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
       onInfiniteScroll: function() {
         this.refresh = false;
         return this.getMyOffers();
+      },
+      onlick: function() {
+        return alert('df');
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {

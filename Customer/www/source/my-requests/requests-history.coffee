@@ -23,7 +23,6 @@ angular.module 'LocalHyper.myRequests'
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 
 			onPullToRefresh : ->
-				@openRequests = []
 				@page = 0
 				@refresh = true
 				@getMyOffers()
@@ -46,7 +45,6 @@ angular.module 'LocalHyper.myRequests'
 					@onError error
 				.finally =>
 					@incrementPage()
-					@onScrollComplete()
 					
 			onSuccess : (data)->
 				@display = 'noError'

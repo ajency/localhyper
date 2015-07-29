@@ -104,7 +104,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       case 'day':
         unit = value === 1 ? 'day' : 'days';
     }
-    return $scope.offer.deliveryTimeStr = value + " " + unit;
+    return $scope.offer.deliveryTimeStr = "" + value + " " + unit;
   }
 ]).directive('ajCountDown', [
   '$timeout', function($timeout) {
