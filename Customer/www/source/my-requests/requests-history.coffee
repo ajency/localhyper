@@ -12,6 +12,10 @@ angular.module 'LocalHyper.myRequests'
 			canLoadMore: true
 			refresh: false
 
+			onClick : (request)->
+				RequestAPI.requestDetails 'set', request
+				App.navigate 'request-details'
+
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 			

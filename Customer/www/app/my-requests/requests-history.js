@@ -7,6 +7,10 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
       page: 0,
       canLoadMore: true,
       refresh: false,
+      onClick: function(request) {
+        RequestAPI.requestDetails('set', request);
+        return App.navigate('request-details');
+      },
       onScrollComplete: function() {
         return $scope.$broadcast('scroll.infiniteScrollComplete');
       },
