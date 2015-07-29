@@ -7,7 +7,7 @@
 		<div class="row row-fluid">
 			<div class="col col-20"></div>
 			<div class="col col-60">
-				<h4>History detail</h4>
+				<h4>Details</h4>
 			</div>
 			<div class="col col-20">
 				<h2
@@ -49,8 +49,12 @@
 				<h5>
 					Category: {{view.requestDetails.data.category.parent}} > {{view.requestDetails.data.category.name}} > {{view.requestDetails.data.brand.name}}
 				</h5>
-				<h5>Your last price: {{view.requestDetails.data.offerPrice}}</h5>
-				<h5>Platform price: DUMMY</h5>
+				<h5>Your offer price: {{view.requestDetails.data.offerPrice}}</h5>
+				<h5  > Request expires within  :</sm>
+	            	 	<sm ng-if="view.requestDetails.showExpiry"
+							aj-count-down
+							created-at="view.requestDetails.data.request.createdAt">
+				</h5>
 			</div>
 
 			<br>

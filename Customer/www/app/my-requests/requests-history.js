@@ -6,6 +6,7 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
       openRequests: [],
       page: 0,
       canLoadMore: true,
+      refresh: false,
       onScrollComplete: function() {
         return $scope.$broadcast('scroll.infiniteScrollComplete');
       },
@@ -17,9 +18,10 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
         return $scope.$broadcast('scroll.infiniteScrollComplete');
       },
       onPullToRefresh: function() {
-        this.openRequests = [];
         this.page = 0;
-        return this.getMyOffers();
+        this.refresh = true;
+        this.getMyOffers();
+        return this.canLoadMore = true;
       },
       onTapToRetry: function() {
         this.canLoadMore = true;
@@ -29,8 +31,9 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
       getMyOffers: function() {
         return RequestAPI.get({
           page: this.page,
-          openStatus: false,
-          displayLimit: 5
+          displayLimit: 3,
+          requestType: 'expired',
+          selectedFilters: []
         }).then((function(_this) {
           return function(data) {
             return _this.onSuccess(data);
@@ -41,8 +44,7 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
           };
         })(this))["finally"]((function(_this) {
           return function() {
-            _this.incrementPage();
-            return _this.onScrollComplete();
+            return _this.incrementPage();
           };
         })(this));
       },
@@ -51,8 +53,16 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
         this.display = 'noError';
         openRequest = data;
         if (openRequest.length > 0) {
-          this.canLoadMore = true;
-          return this.openRequests = this.openRequests.concat(openRequest);
+          if (_.size(openRequest) < 3) {
+            this.canLoadMore = false;
+          } else {
+            this.onScrollComplete();
+          }
+          if (this.refresh) {
+            return this.openRequests = openRequest;
+          } else {
+            return this.openRequests = this.openRequests.concat(openRequest);
+          }
         } else {
           return this.canLoadMore = false;
         }
@@ -64,6 +74,7 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
       },
       init: function() {},
       onInfiniteScroll: function() {
+        this.refresh = false;
         return this.getMyOffers();
       }
     };

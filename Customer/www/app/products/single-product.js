@@ -27,7 +27,8 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           this.all = [];
           this.active = false;
           this.limitTo = 1;
-          return this.canLoadMore = false;
+          this.canLoadMore = false;
+          return this.error = false;
         },
         showAllRequests: function() {
           this.limitTo = 1000;
@@ -49,7 +50,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             };
           })(this), (function(_this) {
             return function(error) {
-              return console.log(error);
+              return _this.onError(error);
             };
           })(this))["finally"]((function(_this) {
             return function() {
@@ -70,11 +71,22 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             return this.canLoadMore = false;
           }
         },
-        error: function() {
+        onError: function(error) {
+          console.log(error);
           this.error = true;
           return this.canLoadMore = false;
         },
-        onTryAgain: function() {},
+        onTryAgain: function() {
+          this.page = 0;
+          this.all = [];
+          this.error = false;
+          return this.canLoadMore = true;
+        },
+        reFetch: function() {
+          this.page = 0;
+          this.all = [];
+          return this.get();
+        },
         onCardClick: function(request) {
           RequestAPI.requestDetails('set', request);
           return App.navigate('request-details');
@@ -132,7 +144,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return value + " " + unit;
+          return "" + value + " " + unit;
         } else {
           return '';
         }
@@ -161,7 +173,8 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       }
     };
     $rootScope.$on('make:request:success', function() {
-      return $scope.view.request.active = true;
+      $scope.view.request.active = true;
+      return $scope.view.request.reFetch();
     });
     $rootScope.$on('on:session:expiry', function() {
       return $scope.view.reset();

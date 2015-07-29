@@ -25,7 +25,6 @@ angular.module 'LocalHyper.requestsOffers'
 	OfferHistoryAPI = {}
 
 	OfferHistoryAPI.offerhistory = (opts)->
-
 		user = User.getCurrent()
 		defer = $q.defer()
 		user = User.getCurrent()
@@ -33,7 +32,12 @@ angular.module 'LocalHyper.requestsOffers'
 		params = 
 			"sellerId": user.id
 			"page": opts.page
-			"displayLimit" : "3"
+			"displayLimit" : "10"
+			"acceptedOffers": false
+			"selectedFilters" : []
+			"sortBy" : "updatedAt"
+			"descending" : true
+
 			
 		$http.post 'functions/getSellerOffers', params
 		.then (data)->

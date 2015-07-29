@@ -35,6 +35,7 @@ angular.module 'LocalHyper.products'
 					@active = false
 					@limitTo = 1
 					@canLoadMore = false
+					@error = false
 
 				showAllRequests : ->
 					@limitTo = 1000
@@ -53,7 +54,7 @@ angular.module 'LocalHyper.products'
 					.then (data)=>
 						@success data, params.displayLimit
 					, (error)=>
-						console.log error
+						@onError error
 					.finally =>
 						@page = @page + 1
 						App.resize()
@@ -65,12 +66,21 @@ angular.module 'LocalHyper.products'
 						@all = @all.concat data
 					else @canLoadMore = false
 
-				error : ->
+				onError : (error)->
+					console.log error
 					@error = true
 					@canLoadMore = false
 
 				onTryAgain : ->
+					@page = 0
+					@all = []
+					@error = false
+					@canLoadMore = true
 
+				reFetch : ->
+					@page = 0
+					@all = []
+					@get()
 
 				onCardClick : (request)->
 					RequestAPI.requestDetails 'set', request
@@ -144,6 +154,7 @@ angular.module 'LocalHyper.products'
 
 		$rootScope.$on 'make:request:success', ->
 			$scope.view.request.active = true
+			$scope.view.request.reFetch()
 
 		$rootScope.$on 'on:session:expiry', ->
 			$scope.view.reset()

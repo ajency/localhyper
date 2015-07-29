@@ -26,7 +26,11 @@ angular.module('LocalHyper.requestsOffers').factory('OffersAPI', [
       params = {
         "sellerId": user.id,
         "page": opts.page,
-        "displayLimit": "3"
+        "displayLimit": "10",
+        "acceptedOffers": false,
+        "selectedFilters": [],
+        "sortBy": "updatedAt",
+        "descending": true
       };
       $http.post('functions/getSellerOffers', params).then(function(data) {
         return defer.resolve(data.data.result);
