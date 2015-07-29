@@ -37,6 +37,13 @@ angular.module 'LocalHyper.products'
 					@canLoadMore = false
 					@error = false
 
+				reFetch : ->
+					@page = 0
+					@all = []
+					@limitTo = 1
+					@canLoadMore = false
+					@get()
+
 				showAllRequests : ->
 					@limitTo = 1000
 					@canLoadMore = true
@@ -76,11 +83,6 @@ angular.module 'LocalHyper.products'
 					@all = []
 					@error = false
 					@canLoadMore = true
-
-				reFetch : ->
-					@page = 0
-					@all = []
-					@get()
 
 				onCardClick : (request)->
 					RequestAPI.requestDetails 'set', request
@@ -155,6 +157,12 @@ angular.module 'LocalHyper.products'
 		$rootScope.$on 'make:request:success', ->
 			$scope.view.request.active = true
 			$scope.view.request.reFetch()
+
+		$rootScope.$on 'request:cancelled', ->
+			$scope.view.request.active = false
+
+		$rootScope.$on 'offer:accepted', ->
+			$scope.view.request.active = false
 
 		$rootScope.$on 'on:session:expiry', ->
 			$scope.view.reset()

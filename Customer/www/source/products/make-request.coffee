@@ -160,6 +160,7 @@ angular.module 'LocalHyper.products'
 					, (error)->
 						CToast.show 'Request failed, please try again'
 					.finally ->
+						App.resize()
 						CSpinner.hide()
 
 			addComments : ->
