@@ -9,6 +9,7 @@ angular.module 'LocalHyper.myRequests'
 			openRequests: []
 			page: 0
 			canLoadMore: true
+			refresh: false
 
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
@@ -23,7 +24,9 @@ angular.module 'LocalHyper.myRequests'
 			onPullToRefresh : ->
 				@openRequests = []
 				@page = 0
+				@refresh = true
 				@getMyOffers()
+				@canLoadMore = true
 
 			onTapToRetry : ->
 				@canLoadMore = true
@@ -33,8 +36,9 @@ angular.module 'LocalHyper.myRequests'
 			getMyOffers : ()->
 				RequestAPI.get
 					page: @page
-					openStatus: true
-					displayLimit: 5
+					displayLimit : 3
+					requestType : 'nonexpired'
+					selectedFilters : []
 				.then (data)=>
 					@onSuccess data
 				, (error)=>
@@ -44,16 +48,16 @@ angular.module 'LocalHyper.myRequests'
 					@onScrollComplete()
 					
 			onSuccess : (data)->
-				@display = 'noError'
-				console.log('open request')
 				console.log(data)
+				@display = 'noError'
 				openRequest = data
 				if openRequest.length > 0
-					@canLoadMore = true
-					@openRequests = @openRequests.concat(openRequest)	
+					if _.size(openRequest) < 3 then @canLoadMore = false
+					else @onScrollComplete()
+					if @refresh then @openRequests = openRequest
+					else @openRequests = @openRequests.concat(openRequest)
 				else
 					@canLoadMore = false
-
 
 			onError: (type)->
 				@canLoadMore = false
@@ -64,6 +68,7 @@ angular.module 'LocalHyper.myRequests'
 				# @getMyOffers()	
 
 			onInfiniteScroll : ->
+				@refresh = false
 				@getMyOffers()
 
 

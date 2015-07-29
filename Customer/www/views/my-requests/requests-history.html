@@ -14,48 +14,51 @@
 		</ion-refresher>
 
 		<ion-list 
-		 class="card-list"
-		 ng-switch-when="noError">
-		 	
-				<ion-item
-				class="card"
-				ng-repeat="request in view.openRequests "
-				ng-controller="EachRequestTimeCtrl"
-				ng-if="request.status =='expired'">
+			class="card-list"
+			ng-switch-when="noError">
 
-					<div class="item-wrapper-nr">
-						<div class="item-avatar border-none margin-none">
-						<img ng-src="{{request.product.images[0].src}}">
-						</div>
-						<h2>{{request.product.name}}</h2>
+			<ion-item
+			class="card"
+			ng-repeat="request in view.openRequests "
+			ng-controller="EachRequestTimeCtrl">
+
+				<div class="item-wrapper-nr">
+					<div class="item-avatar border-none margin-none">
+					<img ng-src="{{request.product.images[0].src}}">
 					</div>
-
-					<div class="row item border-none" >
-						<div class="col  p-t-0">
-							<sm class="light-gray"> Local Price</sm><br>
-							<h3 class=" item-text-wrap margin-none big-txt ">
-							{{request.product.mrp.toLocaleString()}}
-							</h3>
-						</div>
-						<div class="col p-t-0">
-							<div class="pull-right">
-							<div class="offer">{{request.offerCount}} </div>
-							<h4 class="offertxt light-gray"> No of offers</h4>
-							</div>
+					<h2>{{request.product.name}}</h2>
+				</div>
+				<br>
+				<div class="row item border-none" >
+					<div class="col  p-t-0">
+						<h3 class=" item-text-wrap margin-none big-txt ">
+						Local Price :{{request.product.mrp.toLocaleString()}}
+						</h3>
+					</div>
+					<div class="col p-t-0">
+						<div class="pull-right">
+						<div class="offer">{{request.offerCount}} </div>
+						<h4 class="offertxt light-gray"> No of offers</h4>
 						</div>
 					</div>
-					<div class="item ">
-						<div class="pull-right ">
-							<h3 class="margin-none "> Status:{{request.status}}</h3>
-						</div>
-						<div class="pull-left ">
-							<sm class="subdued">{{request.timeStr}}</sm>
-						</div>
+				</div>
+				<div class="item ">
+					<div class="pull-right ">
+						<h3 class="margin-none "> Status:{{request.status}}</h3>
 					</div>
-					
-
-				</ion-item>
-			
+					<div class="pull-left ">
+						<sm class="subdued">{{request.timeStr}}</sm>
+					</div>
+				</div>
+				<!--div class="item item-body">
+					<p>
+					<b>Address :</b>
+					{{openRequest.address.full}}
+					<br><br>
+					<b>Comments :{{openRequest.address.comments}}</b>
+					</p>
+				</div-->
+			</ion-item>
 		</ion-list>	
 
 		<ion-infinite-scroll
