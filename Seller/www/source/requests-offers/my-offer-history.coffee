@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal'
-	, ($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal)->
+.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', '$timeout'
+	, ($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal, $timeout)->
 
 		$scope.view = 
 			display: 'loader'
@@ -13,6 +13,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 			requestDetails:
 				modal: null
+				showExpiry : false
 				data: {}
 				display: 'noError'
 				errorType: ''
@@ -51,6 +52,8 @@ angular.module 'LocalHyper.requestsOffers'
 
 			onSuccess : (data)->
 				@display = 'noError'
+				console.log('offer history')
+				console.log(data)
 				offerhistory = data
 				if offerhistory.length > 0
 					@canLoadMore = true
@@ -69,7 +72,7 @@ angular.module 'LocalHyper.requestsOffers'
 				@page = 0
 
 			onPullToRefresh : ->
-				@requests = []
+				@canLoadMore = false
 				@page = 0
 				@showOfferHistory()
 
@@ -93,7 +96,7 @@ angular.module 'LocalHyper.requestsOffers'
 			loadOfferDetails : ->
 				$ionicModal.fromTemplateUrl 'views/requests-offers/offer-history-details.html', 
 					scope: $scope,
-					animation: 'slide-in-up'
+					animation: 'slide-in-up' 
 					hardwareBackButtonClose: true
 				.then (modal)=>
 					@requestDetails.modal = modal
@@ -103,7 +106,27 @@ angular.module 'LocalHyper.requestsOffers'
 
 			showRequestDetails : (request)->
 				@requestDetails.data = request
-				@requestDetails.modal.show()	
+				@requestDetails.modal.show()
+				@requestDetails.showExpiry = true
+
+		$scope.$on 'modal.hidden', ->
+			$timeout ->
+				$scope.view.requestDetails.showExpiry = false
+			, 1000
 	
-]	
+]
+
+.directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->
+
+	restrict: 'A'
+	link: (scope, el, attrs)->
+		$timeout ->
+			createdAt = $parse(attrs.createdAt)(scope)
+			total = moment(moment(createdAt.iso)).add 24, 'hours'
+			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
+
+			$(el).countdown totalStr, (event)->
+				$(el).html event.strftime('%-H:%-M:%-S')
+]
+
 

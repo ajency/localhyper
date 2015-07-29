@@ -1,6 +1,6 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', function($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal) {
-    return $scope.view = {
+  '$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', '$timeout', function($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal, $timeout) {
+    $scope.view = {
       display: 'loader',
       errorType: '',
       requests: [],
@@ -8,6 +8,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       canLoadMore: true,
       requestDetails: {
         modal: null,
+        showExpiry: false,
         data: {},
         display: 'noError',
         errorType: '',
@@ -53,6 +54,8 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       onSuccess: function(data) {
         var offerhistory;
         this.display = 'noError';
+        console.log('offer history');
+        console.log(data);
         offerhistory = data;
         if (offerhistory.length > 0) {
           this.canLoadMore = true;
@@ -72,7 +75,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return this.page = 0;
       },
       onPullToRefresh: function() {
-        this.requests = [];
+        this.canLoadMore = false;
         this.page = 0;
         return this.showOfferHistory();
       },
@@ -116,7 +119,30 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       },
       showRequestDetails: function(request) {
         this.requestDetails.data = request;
-        return this.requestDetails.modal.show();
+        this.requestDetails.modal.show();
+        return this.requestDetails.showExpiry = true;
+      }
+    };
+    return $scope.$on('modal.hidden', function() {
+      return $timeout(function() {
+        return $scope.view.requestDetails.showExpiry = false;
+      }, 1000);
+    });
+  }
+]).directive('ajCountDown', [
+  '$timeout', '$parse', function($timeout, $parse) {
+    return {
+      restrict: 'A',
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          var createdAt, total, totalStr;
+          createdAt = $parse(attrs.createdAt)(scope);
+          total = moment(moment(createdAt.iso)).add(24, 'hours');
+          totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
+          return $(el).countdown(totalStr, function(event) {
+            return $(el).html(event.strftime('%-H:%-M:%-S'));
+          });
+        });
       }
     };
   }
