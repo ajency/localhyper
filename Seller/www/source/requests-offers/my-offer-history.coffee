@@ -10,6 +10,7 @@ angular.module 'LocalHyper.requestsOffers'
 			requests: []
 			page: 0
 			canLoadMore: true
+			refresh: false
 
 			requestDetails:
 				modal: null
@@ -55,9 +56,12 @@ angular.module 'LocalHyper.requestsOffers'
 				console.log('offer history')
 				console.log(data)
 				offerhistory = data
+				
 				if offerhistory.length > 0
-					@canLoadMore = true
-					@requests = @requests.concat(offerhistory)	
+					if _.size(offerhistory) < 3 then @canLoadMore = false
+					else @onScrollComplete()
+					if @refresh then @requests = offerhistory
+					else @requests = @requests.concat(offerhistory)
 				else
 					@canLoadMore = false
 
@@ -72,11 +76,13 @@ angular.module 'LocalHyper.requestsOffers'
 				@page = 0
 
 			onPullToRefresh : ->
-				@canLoadMore = false
+				@refresh = true
+				@canLoadMore = true
 				@page = 0
 				@showOfferHistory()
 
 			onInfiniteScroll : ->
+				@refresh = false
 				@showOfferHistory()
 				
 			showOfferHistory : ()->
@@ -88,7 +94,6 @@ angular.module 'LocalHyper.requestsOffers'
 					@onError error
 				.finally =>
 					@incrementPage()
-					@onScrollComplete()
 
 			init : ->
 				@loadOfferDetails()

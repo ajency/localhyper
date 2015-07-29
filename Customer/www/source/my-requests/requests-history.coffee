@@ -69,6 +69,10 @@ angular.module 'LocalHyper.myRequests'
 				@refresh = false
 				@getMyOffers()
 
+			onClick : (request)->
+				RequestAPI.requestDetails 'set', request
+				App.navigate 'request-details'
+
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			viewData.enableBack = true
 ]

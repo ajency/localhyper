@@ -32,7 +32,7 @@ angular.module 'LocalHyper.requestsOffers'
 		params = 
 			"sellerId": user.id
 			"page": opts.page
-			"displayLimit" : "10"
+			"displayLimit" : "3"
 			"acceptedOffers": false
 			"selectedFilters" : []
 			"sortBy" : "updatedAt"
