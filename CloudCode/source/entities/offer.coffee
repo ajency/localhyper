@@ -197,6 +197,11 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     sellerId = request.params.sellerId
     page = parseInt request.params.page
     displayLimit = parseInt request.params.displayLimit    
+    acceptedOffers = request.params.acceptedOffers
+
+    selectedFilters = request.params.selectedFilters # ["open","unaccepted"] 
+    sortBy =  request.params.sortBy # "updatedAt"
+    descending = request.params.descending   # "true" - if latest first or "false" - if oldest first    
 
     innerSellerQuery = new Parse.Query(Parse.User)
     innerSellerQuery.equalTo("objectId",sellerId)  
@@ -205,12 +210,24 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     queryOffers = new Parse.Query("Offer")
     queryOffers.matchesQuery("seller", innerSellerQuery)
     
-    allowedStatuses = ["open", "unaccepted"]
+    if acceptedOffers is true
+        allowedStatuses = ["accepted"]
+    else
+        if selectedFilters.length is 0
+            allowedStatuses = ["open", "unaccepted"]  
+        else
+            allowedStatuses = _.without(selectedFilters, "expired")
+    
     queryOffers.containedIn("status", allowedStatuses)
 
     # pagination
     queryOffers.limit(displayLimit)
     queryOffers.skip(page * displayLimit)  
+
+    if descending is true
+        queryOffers.descending("updatedAt")
+    else
+        queryOffers.ascending("updatedAt")     
 
     queryOffers.include("price")  
     queryOffers.include("request")  
@@ -224,7 +241,8 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     queryOffers.find()
 
     .then (offers) ->
-        sellerOffers = _.map(offers, (offerObj) ->
+        sellerOffers = []
+        _.each offers, (offerObj) ->
 
             requestObj = offerObj.get("request")           
             productObj = requestObj.get("product")
@@ -287,10 +305,8 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 "offerComments" : offerObj.get("comments")   
                 "createdAt" : offerObj.createdAt  
                 
-
-
-            sellerOffer
-        )
+            
+            sellerOffers.push sellerOffer                
 
         response.success sellerOffers
     , (error) ->
@@ -367,3 +383,64 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
 
     , (error) ->
         response.error error
+
+
+Parse.Cloud.define 'acceptOffer', (request, response) ->
+    offerId = request.params.offerId
+
+    # get offer update offer status to "accepted"
+
+    queryOffer = new Parse.Query("Offer")
+    queryOffer.equalTo("objectId" , offerId )
+    queryOffer.include("request")
+    queryOffer.include("seller")
+
+    queryOffer.first()
+    .then (offer)->
+        sellerObj = offer.get "seller"
+        requestObj = offer.get "request"
+
+        offer.set "status", "accepted"
+
+        offer.save()
+        .then (savedOffer) ->
+            # update request status to "pending_delivery"
+            requestObj.set "status" , "pending_delivery"
+            requestObj.save()
+            .then (savedReq)->
+                # make entry in notification class
+                # create entry in notification class with recipient as the seller
+                notificationData = 
+                    hasSeen: false
+                    recipientUser: sellerObj
+                    channel : 'push'
+                    processed : false
+                    type : "AcceptedOffer"
+                    offerObject : savedOffer
+
+                Notification = Parse.Object.extend("Notification") 
+                notification = new Notification notificationData
+                notification.save()
+                .then (notifObj) ->
+                    resultObj =
+                        offerId : savedOffer.id 
+                        offerStatus : savedOffer.get("status")
+                        requestId : savedOffer.get("request").id
+                        requestStatus : savedOffer.get("request").get("status")
+                    response.success resultObj    
+                , (error) ->
+                    response.error error               
+
+            , (error) ->
+                response.error error
+
+        , (error) ->
+            response.error error
+
+
+    , (error) ->
+        response.error error
+        
+
+   
+
