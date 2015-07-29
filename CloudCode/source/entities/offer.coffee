@@ -192,7 +192,7 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
         response.error error
 
 
-
+# API for offer history for sellers
 Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     sellerId = request.params.sellerId
     page = parseInt request.params.page
@@ -205,7 +205,7 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     queryOffers = new Parse.Query("Offer")
     queryOffers.matchesQuery("seller", innerSellerQuery)
     
-    allowedStatuses = ["open", "rejected"]
+    allowedStatuses = ["open", "unaccepted"]
     queryOffers.containedIn("status", allowedStatuses)
 
     # pagination
@@ -251,19 +251,42 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
 
             sellerGeoPoint = sellerObj.get("addressGeoPoint")
             requestGeoPoint =  requestObj.get("addressGeoPoint")  
-            sellersDistancFromCustomer =   requestGeoPoint.kilometersTo(sellerGeoPoint)                    
+            sellersDistancFromCustomer =   requestGeoPoint.kilometersTo(sellerGeoPoint)  
 
-           
+            currentDate = new Date()
+            createdDate = requestObj.createdAt
+            diff = currentDate.getTime() - createdDate.getTime()
+            differenceInDays =  Math.floor(diff / (1000 * 60 * 60 * 24)) 
+
+            # if expired
+            requestStatus = requestObj.get("status")
+            
+            if differenceInDays >= 1 
+                if requestStatus is "open"
+                    requestStatus = "expired"                                
+
+            request = 
+                "id" : requestObj.id
+                "address" : requestObj.get("address")
+                "status" : requestStatus
+                "differenceInDays" :differenceInDays
+                "offerCount" : requestObj.get("offerCount")
+                "comments" : requestObj.get("comments")
+                "createdAt" : requestObj.createdAt  
+
             sellerOffer = 
+                "id" : offerObj.id
                 "product" : product
                 "brand" : brand
                 "category" : category
-                "address" : requestObj.get("address")
+                "request" : request
                 "distanceFromCustomer" : sellersDistancFromCustomer
                 "offerPrice" : priceObj.get("value")   
                 "offerStatus" : offerObj.get("status")   
                 "offerDeliveryTime" : offerObj.get("deliveryTime")   
+                "offerComments" : offerObj.get("comments")   
                 "createdAt" : offerObj.createdAt  
+                
 
 
             sellerOffer
@@ -331,7 +354,7 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
                         "product" : product
                         "seller" : seller
                         "price" : priceObj.get("value")
-                        "comment" : offerObject.get("comment")
+                        "comments" : offerObject.get("comments")
                         "deliveryTime" : offerObject.get("deliveryTime")
                         "status" : offerObject.get("status")
                         "createdAt" : offerObject.createdAt

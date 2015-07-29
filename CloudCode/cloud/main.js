@@ -781,7 +781,7 @@
     innerSellerQuery.equalTo("objectId", sellerId);
     queryOffers = new Parse.Query("Offer");
     queryOffers.matchesQuery("seller", innerSellerQuery);
-    allowedStatuses = ["open", "rejected"];
+    allowedStatuses = ["open", "unaccepted"];
     queryOffers.containedIn("status", allowedStatuses);
     queryOffers.limit(displayLimit);
     queryOffers.skip(page * displayLimit);
@@ -796,7 +796,7 @@
     return queryOffers.find().then(function(offers) {
       var sellerOffers;
       sellerOffers = _.map(offers, function(offerObj) {
-        var brand, brandObj, category, categoryObj, priceObj, product, productObj, requestGeoPoint, requestObj, sellerGeoPoint, sellerObj, sellerOffer, sellersDistancFromCustomer;
+        var brand, brandObj, category, categoryObj, createdDate, currentDate, diff, differenceInDays, priceObj, product, productObj, requestGeoPoint, requestObj, requestStatus, sellerGeoPoint, sellerObj, sellerOffer, sellersDistancFromCustomer;
         requestObj = offerObj.get("request");
         productObj = requestObj.get("product");
         brandObj = requestObj.get("brand");
@@ -822,15 +822,36 @@
         sellerGeoPoint = sellerObj.get("addressGeoPoint");
         requestGeoPoint = requestObj.get("addressGeoPoint");
         sellersDistancFromCustomer = requestGeoPoint.kilometersTo(sellerGeoPoint);
+        currentDate = new Date();
+        createdDate = requestObj.createdAt;
+        diff = currentDate.getTime() - createdDate.getTime();
+        differenceInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+        requestStatus = requestObj.get("status");
+        if (differenceInDays >= 1) {
+          if (requestStatus === "open") {
+            requestStatus = "expired";
+          }
+        }
+        request = {
+          "id": requestObj.id,
+          "address": requestObj.get("address"),
+          "status": requestStatus,
+          "differenceInDays": differenceInDays,
+          "offerCount": requestObj.get("offerCount"),
+          "comments": requestObj.get("comments"),
+          "createdAt": requestObj.createdAt
+        };
         sellerOffer = {
+          "id": offerObj.id,
           "product": product,
           "brand": brand,
           "category": category,
-          "address": requestObj.get("address"),
+          "request": request,
           "distanceFromCustomer": sellersDistancFromCustomer,
           "offerPrice": priceObj.get("value"),
           "offerStatus": offerObj.get("status"),
           "offerDeliveryTime": offerObj.get("deliveryTime"),
+          "offerComments": offerObj.get("comments"),
           "createdAt": offerObj.createdAt
         };
         return sellerOffer;
@@ -889,7 +910,7 @@
           "product": product,
           "seller": seller,
           "price": priceObj.get("value"),
-          "comment": offerObject.get("comment"),
+          "comments": offerObject.get("comments"),
           "deliveryTime": offerObject.get("deliveryTime"),
           "status": offerObject.get("status"),
           "createdAt": offerObject.createdAt
@@ -1504,33 +1525,82 @@
   });
 
   Parse.Cloud.define('getCustomerRequests', function(request, response) {
-    var currentDate, currentTimeStamp, customerId, displayLimit, expiryValueInHrs, innerQueryCustomer, innerQueryProduct, openStatus, page, productId, queryDate, queryRequest, time24HoursAgo;
+    var currentDate, currentTimeStamp, customerId, descending, displayLimit, expiryValueInHrs, innerQueryCustomer, innerQueryCustomer2, innerQueryProduct, innerQueryProduct2, otherRequestStatuses, page, productId, queryDate, queryNonExpiredOpenReq, queryOtherStatusReq, queryRequest, requestType, selectedFilters, sortBy, time24HoursAgo;
     customerId = request.params.customerId;
     productId = request.params.productId;
     page = parseInt(request.params.page);
     displayLimit = parseInt(request.params.displayLimit);
-    openStatus = request.params.openStatus;
-    queryRequest = new Parse.Query("Request");
-    innerQueryCustomer = new Parse.Query(Parse.User);
-    innerQueryCustomer.equalTo("objectId", customerId);
-    queryRequest.matchesQuery("customerId", innerQueryCustomer);
-    if (productId !== "") {
-      innerQueryProduct = new Parse.Query("ProductItem");
-      innerQueryProduct.equalTo("objectId", productId);
-      queryRequest.matchesQuery("product", innerQueryProduct);
-    }
+    requestType = request.params.requestType;
+    selectedFilters = request.params.selectedFilters;
+    sortBy = request.params.sortBy;
+    descending = request.params.descending;
     currentDate = new Date();
     currentTimeStamp = currentDate.getTime();
     expiryValueInHrs = 24;
     queryDate = new Date();
     time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
     queryDate.setTime(time24HoursAgo);
-    if (openStatus === true) {
+    if (requestType === "expired") {
+      queryRequest = new Parse.Query("Request");
+      innerQueryCustomer = new Parse.Query(Parse.User);
+      innerQueryCustomer.equalTo("objectId", customerId);
+      queryRequest.matchesQuery("customerId", innerQueryCustomer);
+      if (productId !== "") {
+        innerQueryProduct = new Parse.Query("ProductItem");
+        innerQueryProduct.equalTo("objectId", productId);
+        queryRequest.matchesQuery("product", innerQueryProduct);
+      }
       queryRequest.equalTo("status", "open");
-      queryRequest.greaterThanOrEqualTo("createdAt", queryDate);
+      queryRequest.lessThanOrEqualTo("createdAt", queryDate);
+    } else if (requestType === "nonexpired") {
+      queryNonExpiredOpenReq = new Parse.Query("Request");
+      innerQueryCustomer = new Parse.Query(Parse.User);
+      innerQueryCustomer.equalTo("objectId", customerId);
+      queryNonExpiredOpenReq.matchesQuery("customerId", innerQueryCustomer);
+      if (productId !== "") {
+        innerQueryProduct = new Parse.Query("ProductItem");
+        innerQueryProduct.equalTo("objectId", productId);
+        queryNonExpiredOpenReq.matchesQuery("product", innerQueryProduct);
+      }
+      queryNonExpiredOpenReq.equalTo("status", "open");
+      queryNonExpiredOpenReq.greaterThanOrEqualTo("createdAt", queryDate);
+      if (selectedFilters.length === 0) {
+        otherRequestStatuses = ["cancelled", "pending_delivery", "failed_delivery", "successful"];
+      } else {
+        otherRequestStatuses = _.without(selectedFilters, "open");
+      }
+      queryOtherStatusReq = new Parse.Query("Request");
+      innerQueryCustomer2 = new Parse.Query(Parse.User);
+      innerQueryCustomer2.equalTo("objectId", customerId);
+      queryOtherStatusReq.matchesQuery("customerId", innerQueryCustomer2);
+      if (productId !== "") {
+        innerQueryProduct2 = new Parse.Query("ProductItem");
+        innerQueryProduct2.equalTo("objectId", productId);
+        queryOtherStatusReq.matchesQuery("product", innerQueryProduct2);
+      }
+      queryOtherStatusReq.containedIn("status", otherRequestStatuses);
+      if ((_.indexOf(selectedFilters, "open") > -1) || (selectedFilters.length === 0)) {
+        queryRequest = Parse.Query.or(queryNonExpiredOpenReq, queryOtherStatusReq);
+      } else {
+        queryRequest = queryOtherStatusReq;
+      }
+    } else if (requestType === "all") {
+      queryRequest = new Parse.Query("Request");
+      innerQueryCustomer = new Parse.Query(Parse.User);
+      innerQueryCustomer.equalTo("objectId", customerId);
+      queryRequest.matchesQuery("customerId", innerQueryCustomer);
+      if (productId !== "") {
+        innerQueryProduct = new Parse.Query("ProductItem");
+        innerQueryProduct.equalTo("objectId", productId);
+        queryRequest.matchesQuery("product", innerQueryProduct);
+      }
     }
     queryRequest.include("product");
-    queryRequest.descending("updatedAt");
+    if (descending === true) {
+      queryRequest.descending("updatedAt");
+    } else {
+      queryRequest.ascending("updatedAt");
+    }
     queryRequest.limit(displayLimit);
     queryRequest.skip(page * displayLimit);
     return queryRequest.find().then(function(requests) {
@@ -1557,92 +1627,7 @@
           "product": product,
           "status": requestStatus,
           "createdAt": requestObj.createdAt,
-          "differenceInDays": differenceInDays,
-          "address": requestObj.get("address"),
-          "comments": requestObj.get("comments"),
-          "offerCount": requestObj.get("offerCount")
-        };
-        return pastReq;
-      });
-      return response.success(pastRequests);
-    }, function(error) {
-      return response.error(error);
-    });
-  });
-
-  Parse.Cloud.define('getCustomerRequestsAPI', function(request, response) {
-    var currentDate, currentTimeStamp, customerId, displayLimit, expiryValueInHrs, failedRequests, innerQueryCustomer, innerQueryCustomer2, innerQueryProduct, innerQueryProduct2, otherRequestStatuses, page, productId, queryDate, queryNonExpiredOpenReq, queryOtherStatusReq, queryRequest, time24HoursAgo;
-    customerId = request.params.customerId;
-    productId = request.params.productId;
-    page = parseInt(request.params.page);
-    displayLimit = parseInt(request.params.displayLimit);
-    failedRequests = request.params.failedRequests;
-    currentDate = new Date();
-    currentTimeStamp = currentDate.getTime();
-    expiryValueInHrs = 24;
-    queryDate = new Date();
-    time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
-    queryDate.setTime(time24HoursAgo);
-    if (failedRequests === true) {
-      queryRequest = new Parse.Query("Request");
-      innerQueryCustomer = new Parse.Query(Parse.User);
-      innerQueryCustomer.equalTo("objectId", customerId);
-      queryRequest.matchesQuery("customerId", innerQueryCustomer);
-      if (productId !== "") {
-        innerQueryProduct = new Parse.Query("ProductItem");
-        innerQueryProduct.equalTo("objectId", productId);
-        queryRequest.matchesQuery("product", innerQueryProduct);
-      }
-      queryRequest.equalTo("status", "open");
-      queryRequest.lessThanOrEqualTo("createdAt", queryDate);
-    } else {
-      queryNonExpiredOpenReq = new Parse.Query("Request");
-      innerQueryCustomer = new Parse.Query(Parse.User);
-      innerQueryCustomer.equalTo("objectId", customerId);
-      queryNonExpiredOpenReq.matchesQuery("customerId", innerQueryCustomer);
-      if (productId !== "") {
-        innerQueryProduct = new Parse.Query("ProductItem");
-        innerQueryProduct.equalTo("objectId", productId);
-        queryNonExpiredOpenReq.matchesQuery("product", innerQueryProduct);
-      }
-      queryNonExpiredOpenReq.equalTo("status", "open");
-      queryNonExpiredOpenReq.greaterThanOrEqualTo("createdAt", queryDate);
-      otherRequestStatuses = ["cancelled", "pending_delivery", "failed_delivery", "successful"];
-      queryOtherStatusReq = new Parse.Query("Request");
-      innerQueryCustomer2 = new Parse.Query(Parse.User);
-      innerQueryCustomer2.equalTo("objectId", customerId);
-      queryOtherStatusReq.matchesQuery("customerId", innerQueryCustomer2);
-      if (productId !== "") {
-        innerQueryProduct2 = new Parse.Query("ProductItem");
-        innerQueryProduct2.equalTo("objectId", productId);
-        queryOtherStatusReq.matchesQuery("product", innerQueryProduct2);
-      }
-      queryOtherStatusReq.containedIn("status", otherRequestStatuses);
-      queryRequest = Parse.Query.or(queryNonExpiredOpenReq, queryOtherStatusReq);
-    }
-    queryRequest.include("product");
-    queryRequest.descending("updatedAt");
-    queryRequest.limit(displayLimit);
-    queryRequest.skip(page * displayLimit);
-    return queryRequest.find().then(function(requests) {
-      var pastRequests;
-      pastRequests = _.map(requests, function(requestObj) {
-        var createdDate, diff, differenceInDays, pastReq, product, requestStatus;
-        currentDate = new Date();
-        createdDate = requestObj.createdAt;
-        diff = currentDate.getTime() - createdDate.getTime();
-        differenceInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
-        requestStatus = requestObj.get("status");
-        product = {
-          "name": requestObj.get("product").get("name"),
-          "images": requestObj.get("product").get("images"),
-          "mrp": requestObj.get("product").get("mrp")
-        };
-        pastReq = {
-          "id": requestObj.id,
-          "product": product,
-          "status": requestStatus,
-          "createdAt": requestObj.createdAt,
+          "updatedAt": requestObj.updatedAt,
           "differenceInDays": differenceInDays,
           "address": requestObj.get("address"),
           "comments": requestObj.get("comments"),
