@@ -99,6 +99,13 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
                     "id":obj.id
                     "type": "new_offer"
 
+            else if type is "AcceptedOffer"
+                obj = pendingNotification.get("offerObject")
+                msg = "Offer has been accepted"
+                otherPushData = 
+                    "id":obj.id
+                    "type": "accepted_offer"
+
             switch channel
                 when 'push'
                     # add code to push notifcation to the user

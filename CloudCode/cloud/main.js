@@ -538,6 +538,13 @@
             "id": obj.id,
             "type": "new_offer"
           };
+        } else if (type === "AcceptedOffer") {
+          obj = pendingNotification.get("offerObject");
+          msg = "Offer has been accepted";
+          otherPushData = {
+            "id": obj.id,
+            "type": "accepted_offer"
+          };
         }
         switch (channel) {
           case 'push':
@@ -773,18 +780,35 @@
   });
 
   Parse.Cloud.define('getSellerOffers', function(request, response) {
-    var allowedStatuses, displayLimit, innerSellerQuery, page, queryOffers, sellerId;
+    var acceptedOffers, allowedStatuses, descending, displayLimit, innerSellerQuery, page, queryOffers, selectedFilters, sellerId, sortBy;
     sellerId = request.params.sellerId;
     page = parseInt(request.params.page);
     displayLimit = parseInt(request.params.displayLimit);
+    acceptedOffers = request.params.acceptedOffers;
+    selectedFilters = request.params.selectedFilters;
+    sortBy = request.params.sortBy;
+    descending = request.params.descending;
     innerSellerQuery = new Parse.Query(Parse.User);
     innerSellerQuery.equalTo("objectId", sellerId);
     queryOffers = new Parse.Query("Offer");
     queryOffers.matchesQuery("seller", innerSellerQuery);
-    allowedStatuses = ["open", "unaccepted"];
+    if (acceptedOffers === true) {
+      allowedStatuses = ["accepted"];
+    } else {
+      if (selectedFilters.length === 0) {
+        allowedStatuses = ["open", "unaccepted"];
+      } else {
+        allowedStatuses = _.without(selectedFilters, "expired");
+      }
+    }
     queryOffers.containedIn("status", allowedStatuses);
     queryOffers.limit(displayLimit);
     queryOffers.skip(page * displayLimit);
+    if (descending === true) {
+      queryOffers.descending("updatedAt");
+    } else {
+      queryOffers.ascending("updatedAt");
+    }
     queryOffers.include("price");
     queryOffers.include("request");
     queryOffers.include("seller");
@@ -795,7 +819,8 @@
     queryOffers.include("request.category.parent_category");
     return queryOffers.find().then(function(offers) {
       var sellerOffers;
-      sellerOffers = _.map(offers, function(offerObj) {
+      sellerOffers = [];
+      _.each(offers, function(offerObj) {
         var brand, brandObj, category, categoryObj, createdDate, currentDate, diff, differenceInDays, priceObj, product, productObj, requestGeoPoint, requestObj, requestStatus, sellerGeoPoint, sellerObj, sellerOffer, sellersDistancFromCustomer;
         requestObj = offerObj.get("request");
         productObj = requestObj.get("product");
@@ -854,7 +879,7 @@
           "offerComments": offerObj.get("comments"),
           "createdAt": offerObj.createdAt
         };
-        return sellerOffer;
+        return sellerOffers.push(sellerOffer);
       });
       return response.success(sellerOffers);
     }, function(error) {
@@ -918,6 +943,55 @@
         return offer;
       });
       return response.success(offers);
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
+  Parse.Cloud.define('acceptOffer', function(request, response) {
+    var offerId, queryOffer;
+    offerId = request.params.offerId;
+    queryOffer = new Parse.Query("Offer");
+    queryOffer.equalTo("objectId", offerId);
+    queryOffer.include("request");
+    queryOffer.include("seller");
+    return queryOffer.first().then(function(offer) {
+      var requestObj, sellerObj;
+      sellerObj = offer.get("seller");
+      requestObj = offer.get("request");
+      offer.set("status", "accepted");
+      return offer.save().then(function(savedOffer) {
+        requestObj.set("status", "pending_delivery");
+        return requestObj.save().then(function(savedReq) {
+          var Notification, notification, notificationData;
+          notificationData = {
+            hasSeen: false,
+            recipientUser: sellerObj,
+            channel: 'push',
+            processed: false,
+            type: "AcceptedOffer",
+            offerObject: savedOffer
+          };
+          Notification = Parse.Object.extend("Notification");
+          notification = new Notification(notificationData);
+          return notification.save().then(function(notifObj) {
+            var resultObj;
+            resultObj = {
+              offerId: savedOffer.id,
+              offerStatus: savedOffer.get("status"),
+              requestId: savedOffer.get("request").id,
+              requestStatus: savedOffer.get("request").get("status")
+            };
+            return response.success(resultObj);
+          }, function(error) {
+            return response.error(error);
+          });
+        }, function(error) {
+          return response.error(error);
+        });
+      }, function(error) {
+        return response.error(error);
+      });
     }, function(error) {
       return response.error(error);
     });
