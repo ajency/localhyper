@@ -70,10 +70,15 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
     notificationQuery.equalTo("processed",false)
     notificationQuery.include("recipientUser")
     notificationQuery.include("requestObject")
+    notificationQuery.include("requestObject.product")
     notificationQuery.include("offerObject")
+    notificationQuery.include("offerObject.request")
+    notificationQuery.include("offerObject.request.product")
     notificationQuery.find()
     .then (pendingNotifications) ->
         notificationQs = []
+        sellerAppName = "ShopOye Seller"
+        customerAppName = "ShopOye Customer"
         # for each pending notifications send get channel of notifications and send take action accordingly
         _.each pendingNotifications, (pendingNotification) ->
             channel = pendingNotification.get "channel"
@@ -87,21 +92,27 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
 
             if type is "Request"
                 obj = pendingNotification.get("requestObject")
-                msg = "New request for a product"
+                productName = pendingNotification.get("requestObject").get("product").get("name")
+                title = customerAppName
+                msg = "You have received a request for #{productName}"
                 otherPushData = 
                     "id": obj.id
                     "type": "new_request"
 
             else if type is "Offer"
                 obj = pendingNotification.get("offerObject")
-                msg = "New offer for a product"
+                productName = pendingNotification.get("offerObject").get("request").get("product").get("name")
+                title = sellerAppName
+                msg = "You have received an offer for #{productName}"
                 otherPushData = 
                     "id":obj.id
                     "type": "new_offer"
 
             else if type is "AcceptedOffer"
                 obj = pendingNotification.get("offerObject")
-                msg = "Offer has been accepted"
+                productName = pendingNotification.get("offerObject").get("request").get("product").get("name")
+                title = sellerAppName
+                msg = "Your offer for #{productName} has been accepted"
                 otherPushData = 
                     "id":obj.id
                     "type": "accepted_offer"
@@ -110,7 +121,7 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
                 when 'push'
                     # add code to push notifcation to the user
                     pushOptions = 
-                        title: 'Shop Oye'
+                        title: title
                         alert: msg
                         notificationData: otherPushData 
                                         
