@@ -513,12 +513,17 @@
     notificationQuery.equalTo("processed", false);
     notificationQuery.include("recipientUser");
     notificationQuery.include("requestObject");
+    notificationQuery.include("requestObject.product");
     notificationQuery.include("offerObject");
+    notificationQuery.include("offerObject.request");
+    notificationQuery.include("offerObject.request.product");
     return notificationQuery.find().then(function(pendingNotifications) {
-      var notificationQs;
+      var customerAppName, notificationQs, sellerAppName;
       notificationQs = [];
+      sellerAppName = "ShopOye Seller";
+      customerAppName = "ShopOye Customer";
       _.each(pendingNotifications, function(pendingNotification) {
-        var channel, msg, notificationId, notificationPromise, obj, otherPushData, pushOptions, recipientUser, type, userInstallationId;
+        var channel, msg, notificationId, notificationPromise, obj, otherPushData, productName, pushOptions, recipientUser, title, type, userInstallationId;
         channel = pendingNotification.get("channel");
         recipientUser = pendingNotification.get("recipientUser");
         notificationId = pendingNotification.id;
@@ -526,21 +531,36 @@
         type = pendingNotification.get("type");
         if (type === "Request") {
           obj = pendingNotification.get("requestObject");
-          msg = "New request for a product";
+          productName = pendingNotification.get("requestObject").get("product").get("name");
+          title = sellerAppName;
+          msg = "You have received a request for " + productName;
           otherPushData = {
             "id": obj.id,
             "type": "new_request"
           };
         } else if (type === "Offer") {
           obj = pendingNotification.get("offerObject");
-          msg = "New offer for a product";
+          productName = pendingNotification.get("offerObject").get("request").get("product").get("name");
+          title = customerAppName;
+          msg = "You have received an offer for " + productName;
           otherPushData = {
             "id": obj.id,
             "type": "new_offer"
           };
         } else if (type === "AcceptedOffer") {
           obj = pendingNotification.get("offerObject");
-          msg = "Offer has been accepted";
+          productName = pendingNotification.get("offerObject").get("request").get("product").get("name");
+          title = sellerAppName;
+          msg = "Your offer for " + productName + " has been accepted";
+          otherPushData = {
+            "id": obj.id,
+            "type": "accepted_offer"
+          };
+        } else if (type === "CancelledRequest") {
+          obj = pendingNotification.get("requestObject");
+          productName = pendingNotification.get("requestObject").get("product").get("name");
+          title = sellerAppName;
+          msg = "Request for " + productName + " has been cancelled";
           otherPushData = {
             "id": obj.id,
             "type": "accepted_offer"
@@ -549,7 +569,7 @@
         switch (channel) {
           case 'push':
             pushOptions = {
-              title: 'Shop Oye',
+              title: title,
               alert: msg,
               notificationData: otherPushData
             };
@@ -1575,21 +1595,66 @@
   });
 
   Parse.Cloud.define('updateRequestStatus', function(request, response) {
-    var Request, isValidStatus, requestId, status, validStatuses;
+    var Request, failedDeliveryReason, isValidStatus, requestId, status, validStatuses;
     requestId = request.params.requestId;
     status = request.params.status;
-    validStatuses = ['successful', 'cancelled', 'open'];
+    failedDeliveryReason = request.params.failedDeliveryReason;
+    validStatuses = ['pending_delivery', 'failed_delivery', 'successful', 'cancelled'];
     isValidStatus = _.indexOf(validStatuses, status);
     if (isValidStatus > -1) {
       Request = Parse.Object.extend('Request');
       request = new Request();
       request.id = requestId;
       request.set("status", status);
-      if (status === "successful") {
-        request.set("deliveryStatus", "pending");
+      if (status === "failed_delivery") {
+        request.set("failedDeliveryReason", failedDeliveryReason);
       }
-      return request.save().then(function(request) {
-        return response.success(request);
+      return request.save().then(function(requestObj) {
+        var innerQueryRequest, queryNotification, requestStatus, resultObj;
+        requestStatus = requestObj.get("status");
+        requestId = requestObj.id;
+        if (requestStatus === "cancelled") {
+          queryNotification = new Parse.Query("Notification");
+          innerQueryRequest = new Parse.Query("Request");
+          innerQueryRequest.equalTo("objectId", requestId);
+          queryNotification.equalTo("type", "Request");
+          queryNotification.matchesQuery("requestObject", innerQueryRequest);
+          queryNotification.include("recipientUser");
+          return queryNotification.find().then(function(newReqNotifications) {
+            var notificationSavedArr, sellersArr;
+            sellersArr = _.map(newReqNotifications, function(newNotification) {
+              return newNotification.get("recipientUser");
+            });
+            notificationSavedArr = [];
+            _.each(sellersArr, function(sellerObj) {
+              var Notification, notification, notificationData;
+              notificationData = {
+                hasSeen: false,
+                recipientUser: sellerObj,
+                channel: 'push',
+                processed: false,
+                type: "CancelledRequest",
+                requestObject: requestObj
+              };
+              Notification = Parse.Object.extend("Notification");
+              notification = new Notification(notificationData);
+              return notificationSavedArr.push(notification);
+            });
+            return Parse.Object.saveAll(notificationSavedArr).then(function(objs) {
+              return response.success(objs);
+            }, function(error) {
+              return response.error(error);
+            });
+          }, function(error) {
+            return response.error(error);
+          });
+        } else {
+          resultObj = {
+            requestId: requestId,
+            requestStatus: requestObj.get("status")
+          };
+          return response.success(resultObj);
+        }
       }, function(error) {
         return response.error(error);
       });

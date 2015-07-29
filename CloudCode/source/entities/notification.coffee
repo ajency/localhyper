@@ -93,7 +93,7 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
             if type is "Request"
                 obj = pendingNotification.get("requestObject")
                 productName = pendingNotification.get("requestObject").get("product").get("name")
-                title = customerAppName
+                title = sellerAppName
                 msg = "You have received a request for #{productName}"
                 otherPushData = 
                     "id": obj.id
@@ -102,7 +102,7 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
             else if type is "Offer"
                 obj = pendingNotification.get("offerObject")
                 productName = pendingNotification.get("offerObject").get("request").get("product").get("name")
-                title = sellerAppName
+                title = customerAppName
                 msg = "You have received an offer for #{productName}"
                 otherPushData = 
                     "id":obj.id
@@ -113,6 +113,15 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
                 productName = pendingNotification.get("offerObject").get("request").get("product").get("name")
                 title = sellerAppName
                 msg = "Your offer for #{productName} has been accepted"
+                otherPushData = 
+                    "id":obj.id
+                    "type": "accepted_offer"
+
+            else if type is "CancelledRequest"
+                obj = pendingNotification.get("requestObject")
+                productName = pendingNotification.get("requestObject").get("product").get("name")
+                title = sellerAppName
+                msg = "Request for #{productName} has been cancelled"
                 otherPushData = 
                     "id":obj.id
                     "type": "accepted_offer"

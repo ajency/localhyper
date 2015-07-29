@@ -274,8 +274,9 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
 Parse.Cloud.define 'updateRequestStatus' , (request, response) ->
     requestId = request.params.requestId
     status = request.params.status
+    failedDeliveryReason = request.params.failedDeliveryReason
 
-    validStatuses = ['successful','cancelled','open']
+    validStatuses = ['pending_delivery','failed_delivery','successful','cancelled']
     isValidStatus = _.indexOf(validStatuses, status )
 
     if isValidStatus > -1 
@@ -287,13 +288,64 @@ Parse.Cloud.define 'updateRequestStatus' , (request, response) ->
 
         request.set "status", status
 
-        if status is "successful"
-            request.set "deliveryStatus", "pending"
+        if status is "failed_delivery"
+            request.set "failedDeliveryReason", failedDeliveryReason
         
         request.save() 
 
-        .then (request) ->
-            response.success request
+        .then (requestObj) ->
+            requestStatus = requestObj.get("status")
+            requestId = requestObj.id
+            
+            # send push notiifcations to all sellers to whom a new request notification was sent for this request id
+            # get all such sellerObj
+            if requestStatus is "cancelled"
+                queryNotification = new Parse.Query("Notification")
+
+                innerQueryRequest = new Parse.Query("Request")
+                innerQueryRequest.equalTo("objectId" , requestId)
+                
+                queryNotification.equalTo("type" , "Request")
+                queryNotification.matchesQuery("requestObject", innerQueryRequest)
+                
+                queryNotification.include("recipientUser")
+                
+                queryNotification.find()
+                .then (newReqNotifications)->
+                    sellersArr = _.map( newReqNotifications , (newNotification) ->
+                        newNotification.get("recipientUser")
+                     )
+
+                    notificationSavedArr = []
+                    _.each sellersArr , (sellerObj) ->
+                        notificationData = 
+                            hasSeen: false
+                            recipientUser: sellerObj
+                            channel : 'push'
+                            processed : false
+                            type : "CancelledRequest"
+                            requestObject : requestObj
+
+                        Notification = Parse.Object.extend("Notification") 
+                        notification = new Notification notificationData
+                        notificationSavedArr.push(notification)
+
+                    # save all the newly created objects
+                    Parse.Object.saveAll notificationSavedArr
+                    .then (objs) ->
+                        response.success objs
+                    , (error) ->
+                        response.error (error)                                                 
+
+
+                , (error) ->
+                    response.error error
+            
+            else
+                resultObj = 
+                    requestId : requestId
+                    requestStatus : requestObj.get("status")
+                response.success resultObj
 
         , (error) ->
             response.error error
