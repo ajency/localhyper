@@ -17,7 +17,10 @@ angular.module 'LocalHyper.myRequests'
 			"productId" : productId
 			"page" : opts.page
 			"displayLimit" : opts.displayLimit
-			"openStatus" : opts.openStatus
+			"requestType" : opts.requestType
+			"selectedFilters": opts.selectedFilters
+			"sortBy" : "updatedAt"
+			"descending" : true
 
 		$http.post 'functions/getCustomerRequests', params
 		.then (data)->

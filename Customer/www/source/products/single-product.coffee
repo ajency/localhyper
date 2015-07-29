@@ -19,6 +19,7 @@ angular.module 'LocalHyper.products'
 				active: false
 				limitTo: 1
 				canLoadMore: false
+				error: false
 
 				onScrollComplete : ->
 					$scope.$broadcast 'scroll.infiniteScrollComplete'
@@ -45,7 +46,8 @@ angular.module 'LocalHyper.products'
 						productId: $scope.view.productID
 						page: @page
 						displayLimit: 2
-						openStatus: false
+						requestType: 'all'
+						selectedFilters: []
 
 					RequestAPI.get params
 					.then (data)=>
@@ -62,6 +64,13 @@ angular.module 'LocalHyper.products'
 						else @onScrollComplete()
 						@all = @all.concat data
 					else @canLoadMore = false
+
+				error : ->
+					@error = true
+					@canLoadMore = false
+
+				onTryAgain : ->
+
 
 				onCardClick : (request)->
 					RequestAPI.requestDetails 'set', request

@@ -24,7 +24,7 @@
 						<p class="loca">
 							My Location
 							<span><i class="icon ion-ios-location"></i> {{view.request.address.city}}</span>
-							<a href="#">More</a>
+							<a>More</a>
 						</p>
 					</div>
 					<div class="col">
@@ -67,7 +67,10 @@
 					<p>Recieved Offers <b>(12)</b></p>
 				</div>
 			</div>
-			<div class="card no-shadow rece-offer">
+			<div 
+				class="card no-shadow rece-offer"
+				ng-repeat="offer in view.offers.all">
+
 				<div class="item item-text-wrap">
 					<div class="row row-fluid">
 						<div class="col">
@@ -105,3 +108,4 @@
 	</ion-content>
 
 </ion-view>
+

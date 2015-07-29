@@ -97,8 +97,14 @@
 
 			<ion-item 
 				ng-if="view.request.all.length > 0 && view.request.limitTo == 1"
-				ng-click="view.request.showAllRequests()">
+				ng-click="view.request.onTryAgain()">
 				Show all requests
+			</ion-item>
+
+			<ion-item 
+				ng-if="view.request.error"
+				ng-click="view.request.showAllRequests()">
+				An error occurred. Please tap to retry.
 			</ion-item>
 		</ion-list>
 

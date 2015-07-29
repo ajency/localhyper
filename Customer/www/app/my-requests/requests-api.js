@@ -13,7 +13,10 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
         "productId": productId,
         "page": opts.page,
         "displayLimit": opts.displayLimit,
-        "openStatus": opts.openStatus
+        "requestType": opts.requestType,
+        "selectedFilters": opts.selectedFilters,
+        "sortBy": "updatedAt",
+        "descending": true
       };
       $http.post('functions/getCustomerRequests', params).then(function(data) {
         return defer.resolve(data.data.result);

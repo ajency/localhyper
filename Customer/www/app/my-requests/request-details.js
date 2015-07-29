@@ -2,7 +2,11 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
   '$scope', 'RequestAPI', '$interval', 'TimeString', function($scope, RequestAPI, $interval, TimeString) {
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
-      offers: [],
+      offers: {
+        all: [],
+        received: true,
+        count: 0
+      },
       init: function() {
         console.log($scope.view.request);
         this.setRequestTime();
@@ -25,7 +29,8 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       getOffers: function() {
         return RequestAPI.getOffers(this.request.id).then((function(_this) {
           return function(offers) {
-            return console.log(offers);
+            console.log(offers);
+            return _this.offers.all = offers;
           };
         })(this));
       }

@@ -7,7 +7,10 @@ angular.module 'LocalHyper.myRequests'
 		$scope.view = 
 			request: RequestAPI.requestDetails 'get'
 			
-			offers:[]
+			offers:
+				all: []
+				received: true
+				count: 0
 
 			init : ->
 				console.log $scope.view.request
@@ -26,6 +29,7 @@ angular.module 'LocalHyper.myRequests'
 				RequestAPI.getOffers (@request.id)
 				.then (offers)=>
 					console.log offers
+					@offers.all = offers
 		
 		$scope.$on '$destroy', ->
 			$interval.cancel $scope.view.interval
