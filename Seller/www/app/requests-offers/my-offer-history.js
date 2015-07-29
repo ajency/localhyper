@@ -6,6 +6,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       requests: [],
       page: 0,
       canLoadMore: true,
+      refresh: false,
       requestDetails: {
         modal: null,
         showExpiry: false,
@@ -58,8 +59,16 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         console.log(data);
         offerhistory = data;
         if (offerhistory.length > 0) {
-          this.canLoadMore = true;
-          return this.requests = this.requests.concat(offerhistory);
+          if (_.size(offerhistory) < 3) {
+            this.canLoadMore = false;
+          } else {
+            this.onScrollComplete();
+          }
+          if (this.refresh) {
+            return this.requests = offerhistory;
+          } else {
+            return this.requests = this.requests.concat(offerhistory);
+          }
         } else {
           return this.canLoadMore = false;
         }
@@ -75,11 +84,13 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return this.page = 0;
       },
       onPullToRefresh: function() {
-        this.canLoadMore = false;
+        this.refresh = true;
+        this.canLoadMore = true;
         this.page = 0;
         return this.showOfferHistory();
       },
       onInfiniteScroll: function() {
+        this.refresh = false;
         return this.showOfferHistory();
       },
       showOfferHistory: function() {
@@ -95,8 +106,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
           };
         })(this))["finally"]((function(_this) {
           return function() {
-            _this.incrementPage();
-            return _this.onScrollComplete();
+            return _this.incrementPage();
           };
         })(this));
       },
