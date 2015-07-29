@@ -67,6 +67,10 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           } else {
             return this.canLoadMore = false;
           }
+        },
+        onCardClick: function(request) {
+          RequestAPI.requestDetails('set', request);
+          return App.navigate('request-details');
         }
       },
       reset: function() {
@@ -157,6 +161,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     });
     return $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['products', 'verify-success'], App.previousState)) {
+        App.scrollTop();
         return $scope.view.reset();
       }
     });

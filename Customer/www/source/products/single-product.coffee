@@ -63,6 +63,11 @@ angular.module 'LocalHyper.products'
 						@all = @all.concat data
 					else @canLoadMore = false
 
+				onCardClick : (request)->
+					RequestAPI.requestDetails 'set', request
+					App.navigate 'request-details'
+
+
 
 			reset : ->
 				@display = 'loader'
@@ -136,6 +141,7 @@ angular.module 'LocalHyper.products'
 		
 		$scope.$on '$ionicView.beforeEnter', ->
 			if _.contains ['products', 'verify-success'], App.previousState
+				App.scrollTop()
 				$scope.view.reset()
 ]
 
