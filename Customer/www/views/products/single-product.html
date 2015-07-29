@@ -8,14 +8,6 @@
 		</ion-spinner>
 
 		<ion-list ng-switch-when="noError">
-
-			<!-- <ion-item ng-if="view.request.active">
-				Last made request expires in
-				<span 
-					aj-count-down
-					created-at="view.product.activeRequest.createdAt">
-				</span>
-			</ion-item> -->
 	
 			<img
 				class="aj-sp-img img-responsive" 
@@ -74,7 +66,9 @@
 
 	       	<ion-item
 	       		class="card"
-	       		ng-repeat="request in view.request.all | limitTo: view.request.limitTo">
+	       		ng-repeat="request in view.request.all | limitTo: view.request.limitTo"
+	       		ng-controller="EachRequestTimeCtrl"
+	       		ng-click="view.request.onCardClick(request);">
 
 				<div class="row item border-none" >
 			        <div class="col  p-t-0">
@@ -103,8 +97,14 @@
 
 			<ion-item 
 				ng-if="view.request.all.length > 0 && view.request.limitTo == 1"
-				ng-click="view.request.showAllRequests()">
+				ng-click="view.request.onTryAgain()">
 				Show all requests
+			</ion-item>
+
+			<ion-item 
+				ng-if="view.request.error"
+				ng-click="view.request.showAllRequests()">
+				An error occurred. Please tap to retry.
 			</ion-item>
 		</ion-list>
 

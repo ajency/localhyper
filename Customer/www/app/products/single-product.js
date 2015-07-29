@@ -12,6 +12,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         active: false,
         limitTo: 1,
         canLoadMore: false,
+        error: false,
         onScrollComplete: function() {
           return $scope.$broadcast('scroll.infiniteScrollComplete');
         },
@@ -39,7 +40,8 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             productId: $scope.view.productID,
             page: this.page,
             displayLimit: 2,
-            openStatus: false
+            requestType: 'all',
+            selectedFilters: []
           };
           return RequestAPI.get(params).then((function(_this) {
             return function(data) {
@@ -67,6 +69,15 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           } else {
             return this.canLoadMore = false;
           }
+        },
+        error: function() {
+          this.error = true;
+          return this.canLoadMore = false;
+        },
+        onTryAgain: function() {},
+        onCardClick: function(request) {
+          RequestAPI.requestDetails('set', request);
+          return App.navigate('request-details');
         }
       },
       reset: function() {
@@ -121,7 +132,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return "" + value + " " + unit;
+          return value + " " + unit;
         } else {
           return '';
         }
@@ -157,6 +168,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     });
     return $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['products', 'verify-success'], App.previousState)) {
+        App.scrollTop();
         return $scope.view.reset();
       }
     });

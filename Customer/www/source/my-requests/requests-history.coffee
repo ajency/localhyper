@@ -67,7 +67,7 @@ angular.module 'LocalHyper.myRequests'
 
 		
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
-    		viewData.enableBack = true
+			viewData.enableBack = true
 ]
 
 
