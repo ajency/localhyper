@@ -136,13 +136,17 @@ class AttributeController extends Controller
                             $attributeId = $attribute['id'];
                             $headerFlag[$attributeId] = $attribute;            	
 						}
+
+						$attributes_label = [];
                     
                         foreach($headerFlag as $attribute)
 						{
                             $attributeId = $attribute['id'];
                             $attributeName = $attribute['name'];
                             $headers[]=$attributeName."(".$attributeId.")";
-                            $headers[]=$attributeName.' Id';            	
+                            $headers[]=$attributeName.' Id';
+                            $attributes_label[] = $attributeName;
+                            $attributes_label[] = '';            	
 						}
                     
                         
@@ -150,22 +154,19 @@ class AttributeController extends Controller
             
                 
 			 
-				$attributeValueSheet->fromArray($headers, ' ', 'A1');
+				$attributeValueSheet->fromArray($attributes_label, ' ', 'A2');
+				$attributeValueSheet->fromArray($headers, ' ', 'A3');
  
 				$column = 'A';
 				foreach($attributeValues as $attributeValue)
 				{
-						$attributeValueSheet->fromArray($attributeValue, ' ', $column.'2');
-						
-						//hide column
-						$hidecolumn = $this->getNextCell($column,'1');
-						$attributeValueSheet->getColumnDimension($hidecolumn)->setVisible(false);
-						
-						$column = $this->getNextCell($column,'2');
-						
-		
+						$attributeValueSheet->fromArray($attributeValue, ' ', $column.'4');
+						$column = $this->getNextCell($column,'5');
 				}
- 
+
+
+
+
 				$lastColumn = $attributeValueSheet->getHighestColumn();
 				$header = 'a1:'.$lastColumn.'1';
 				$attributeValueSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
@@ -174,6 +175,52 @@ class AttributeController extends Controller
 						'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
 						);
 				$attributeValueSheet->getStyle($header)->applyFromArray($style);
+
+				$attributeValueSheet->setCellValue('A1', "Attribute Values");
+
+
+				//freeze pan
+				$attributeValueSheet->getStyle('1:1')->getFont()->setBold(true);
+				$attributeValueSheet->freezePane('A3');
+
+				//Headr row height
+				$attributeValueSheet->getRowDimension('1')->setRowHeight(18);
+				$attributeValueSheet->getRowDimension('2')->setRowHeight(18);
+
+				//Hide second row
+				$attributeValueSheet->getRowDimension(3)->setVisible(false);
+
+				//Format sheet
+				self::formatSheet($attributeValueSheet, 'AttributesValues');
+
+				//Merge cells
+				$highest_column = $attributeValueSheet->getHighestColumn();
+				$attributeValueSheet->mergeCells('A1:'.$highest_column.'1');
+
+				//Format header row
+				self::format_header_row($attributeValueSheet, array(
+					'background_color'=>'FFFF00',
+					'border_color'=>'000000',
+					'font_size'=>'9',
+					'font_color'=>'000000',
+					'vertical_alignment'=>'VERTICAL_CENTER',
+					'font-weight'=>'bold'
+					), '1'
+				);
+
+				//Format header row
+				self::format_header_row($attributeValueSheet, array(
+					'background_color'=>'FFFF00',
+					'border_color'=>'000000',
+					'font_size'=>'9',
+					'font_color'=>'000000',
+					'vertical_alignment'=>'VERTICAL_CENTER',
+					'font-weight'=>'bold'
+					), '2'
+				);
+
+
+
 				$attributeValueSheet->protectCells($header, 'PHP');
 				
 				
@@ -190,22 +237,20 @@ class AttributeController extends Controller
 				$attributes = $this->getCategoryAttributes($catId);
 				$categoryName = $attributes['categoryName'];
 				
-				$headers =[];
-				$headers []= 'Config' ;
-				$headers []= 'objectId' ;
-				$headers []= 'name' ;
-				$headers []= 'group' ;
-				$headers []= 'unit' ;
-				$headers []= 'is_filterable';
-				$headers []= 'is_primary';
+				
+				$headers = array(
+					array('','',$categoryName),
+					array ('Config', 'objectId', 'Attribute Name', 'Group', 'Unit', 'Is Filternable', 'Is Primary'),
+					array('Config', 'objectId', 'name', 'group', 'unit', 'is_filterable', 'is_primary')
+					);
  
 				$attributeSheet->fromArray($headers, ' ', 'A1');
-				$attributeSheet->fromArray([$catId], ' ', 'A2');
+				$attributeSheet->fromArray([$catId], ' ', 'A4');
 
 				$attributeSheet->getColumnDimension('A')->setVisible(false);
 				$attributeSheet->getColumnDimension('B')->setVisible(false);
  
-				$attributeSheet->fromArray($attributes['attributes'], ' ','B2');
+				$attributeSheet->fromArray($attributes['attributes'], ' ','B4');
  
 				$lastColumn = $attributeSheet->getHighestColumn();
 				$header = 'a1:'.$lastColumn.'1';
@@ -216,6 +261,54 @@ class AttributeController extends Controller
 						);
 				$attributeSheet->getStyle($header)->applyFromArray($style);
 				$attributeSheet->protectCells($header, 'PHP');
+
+
+
+				/*Code Added by robiul*/
+				//freeze pan
+				$attributeSheet->getStyle('1:1')->getFont()->setBold(true);
+				$attributeSheet->freezePane('D3');
+
+				//Headr row height
+				$attributeSheet->getRowDimension('1')->setRowHeight(18);
+				$attributeSheet->getRowDimension('2')->setRowHeight(18);
+
+				//Merge cells
+				$attributeSheet->mergeCells('C1:G1');
+
+				//Hide third row
+				$attributeSheet->getRowDimension(3)->setVisible(false);
+
+				//Format sheet
+				self::formatSheet($attributeSheet, 'Attributes');
+
+
+				//Format header row
+				self::format_header_row($attributeSheet, array(
+					'background_color'=>'FFFF00',
+					'border_color'=>'000000',
+					'font_size'=>'9',
+					'font_color'=>'000000',
+					'vertical_alignment'=>'VERTICAL_CENTER',
+					'font-weight'=>'bold'
+					), '1'
+				);
+				//Format header row
+				self::format_header_row($attributeSheet, array(
+					'background_color'=>'FFFF00',
+					'border_color'=>'000000',
+					'font_size'=>'9',
+					'font_color'=>'000000',
+					'vertical_alignment'=>'VERTICAL_CENTER',
+					'font-weight'=>'bold'
+					), '2'
+				);
+
+
+
+
+
+
 				
 				
 				
@@ -239,6 +332,11 @@ class AttributeController extends Controller
 				$excel->addSheet($brandSheet, 0);
 				$brandSheet->setTitle('Brands');
 				
+				$labels = [];
+				$labels []= 'Config' ;
+				$labels []= 'objectId' ;
+				$labels []= 'Brand Name' ;
+				$labels []= 'Image URL' ;
 
 				$headers []= 'Config' ;
 				$headers []= 'objectId' ;
@@ -246,20 +344,37 @@ class AttributeController extends Controller
 				$headers []= 'imageUrl' ;
  
  
-				$brandSheet->fromArray($headers, ' ', 'A1');
-				$brandSheet->fromArray([$catId], ' ', 'A2');
+				$brandSheet->fromArray($labels, ' ', 'A1');
+				$brandSheet->fromArray($headers, ' ', 'A2');
+				$brandSheet->fromArray([$catId], ' ', 'A3');
 				$brandSheet->getColumnDimension('A')->setVisible(false);
 				$brandSheet->getColumnDimension('B')->setVisible(false);
-				$brandSheet->fromArray($brands, ' ','B2');
+				$brandSheet->fromArray($brands, ' ','B3');
  
-				$lastColumn = $brandSheet->getHighestColumn();
-				$header = 'a1:'.$lastColumn.'1';
-				$brandSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
-				$style = array(
-						'font' => array('bold' => true,),
-						'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
-						);
-				$brandSheet->getStyle($header)->applyFromArray($style);
+				
+				//Headr row height
+				$brandSheet->getRowDimension('1')->setRowHeight(20);
+
+				//freeze pan
+				$brandSheet->getStyle('1:1')->getFont()->setBold(true);
+				$brandSheet->freezePane('A2');
+
+				//Hide second row
+				$brandSheet->getRowDimension(2)->setVisible(false);
+
+				//Format header row
+				self::format_header_row($brandSheet, array(
+					'background_color'=>'FFFF00',
+					'border_color'=>'000000',
+					'font_size'=>'9',
+					'font_color'=>'000000',
+					'vertical_alignment'=>'VERTICAL_CENTER',
+					'font-weight'=>'bold'
+					), '1'
+				);
+
+				self::formatSheet($brandSheet, 'Brands');
+
 				$brandSheet->protectCells($header, 'PHP');
 				
 							 
@@ -717,5 +832,203 @@ class AttributeController extends Controller
 			curl_close($ch); 
 
 			return $result;         
-		}  
+		} 
+
+
+
+
+public static function format_header_row($sheet, $style, $row){
+	$lastColumn = $sheet->getHighestColumn();
+	$lastColumn++;
+	for ($column = 'A'; $column != $lastColumn; $column++) {
+
+		self::cell_style($sheet, $column.$row, array(
+			'background_color'=>$style['background_color'],
+			'border_color'=>$style['border_color'],
+			'font_size'=>$style['font_size'],
+			'font_color'=>$style['font_color'],
+			'vertical_alignment'=>$style['vertical_alignment'],
+			'font-weight'=>$style['font-weight']
+			)
+		);
+	}
+
+}
+
+
+
+
+public static function cell_style($sheet, $cell, $style){
+
+	if (array_key_exists('font-weight', $style)) {
+		$font_weight = $style['font-weight'];
+	}else{
+		$font_weight = false;
+	}
+
+	$sheet->getStyle($cell)->getFill()->applyFromArray(
+		array(
+			'type'       => \PHPExcel_Style_Fill::FILL_SOLID,
+			'startcolor' => array('rgb' => $style['background_color']),
+			)
+		);
+
+
+	$styleArray = array(
+		'borders' => array(
+			'outline' => array(
+				'style' => \PHPExcel_Style_Border::BORDER_THIN,
+				'color' => array('rgb' => $style['border_color']),
+				),
+			),
+		);
+	$sheet->getStyle($cell)->applyFromArray($styleArray);
+
+	$sheet->getStyle($cell)->getFont()->setBold($font_weight)
+	->setName('Verdana')
+	->setSize($style['font_size'])
+	->getColor()->setRGB($style['font_color']);
+
+	if (array_key_exists('vertical_alignment', $style)) {
+	if($style['vertical_alignment'] == 'VERTICAL_CENTER'){
+		$sheet->getStyle($cell)->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_CENTER);
+	}
+	}
+
+	if (array_key_exists('horizontal_alignment', $style)) {
+	if($style['horizontal_alignment'] == 'HORIZONTAL_CENTER'){
+		$sheet->getStyle($cell)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+	}	
+	}
+
+	
+
+}
+
+
+
+
+
+
+
+public static function single_cell_dropdown($sheet, $cell, $label, $options){
+	
+		$objValidation = $sheet->getCell($cell)->getDataValidation();
+		$objValidation->setType( \PHPExcel_Cell_DataValidation::TYPE_LIST );
+		$objValidation->setErrorStyle( \PHPExcel_Cell_DataValidation::STYLE_INFORMATION );
+		$objValidation->setAllowBlank(false);
+		$objValidation->setShowInputMessage(true);
+		$objValidation->setShowErrorMessage(true);
+		$objValidation->setShowDropDown(true);
+		$objValidation->setErrorTitle('Input error');
+		$objValidation->setError('Value is not in list.');
+		$objValidation->setPromptTitle('Pick from list');
+		$objValidation->setPrompt('Please pick a '.$label.' from the drop-down list.');
+		$objValidation->setFormula1('"'.$options.'"');		
+}
+
+
+
+
+
+
+
+
+
+
+public static function formatSheet($sheet, $type){
+	$lastColumn = $sheet->getHighestColumn();
+	$lastColumn++;
+	$data_count = $sheet->getHighestRow()+10;
+
+	if($type == 'Attributes'){
+		$head_row = 3;
+		$record_starts = $head_row+1;	
+	}else if($type == 'Brands'){
+		$head_row = 2;
+		$record_starts = $head_row+1;
+	}else if($type == 'AttributesValues'){
+		$head_row = 3;
+		$record_starts = $head_row+1;
+	}
+	
+
+	for ($column = 'A'; $column != $lastColumn; $column++) {
+		$value = $sheet->getCell($column.$head_row)->getValue();
+
+
+		if($type == 'AttributesValues'){
+			$coIndex = \PHPExcel_Cell::columnIndexFromString($column);
+			if ($coIndex % 2 == 0) {
+				$sheet->getColumnDimension($column)->setVisible(false);
+			}else{
+				//$sheet->getColumnDimension($column)->setVisible(false);
+			}
+		}
+
+		if($type == 'Brands'){
+			if($value == 'imageUrl'){
+				$sheet->getColumnDimension($column)->setWidth(50);
+			}else{
+				$sheet->getColumnDimension($column)->setAutoSize(true);
+			}
+		}else{
+		$sheet->getColumnDimension($column)->setAutoSize(true);
+		}
+
+		for ($x = $record_starts; $x <= $data_count; $x++) {
+			$cell = $column.$x;
+			$cell_value = $sheet->getCell($cell)->getValue();
+
+			//odd/even alternate coloring
+			if($type == 'AttributesValues'){
+				$colIndex = \PHPExcel_Cell::columnIndexFromString($column);
+				$half = ceil($colIndex / 2);
+				if ($colIndex % 2 && $half % 2) {
+					self::cellBackgroundColor($sheet, $cell, 'FFFFFF');
+				}else{
+					self::cellBackgroundColor($sheet, $cell, 'FFF2CC');
+				}
+			}else{
+				if ($x % 2 == 0) {
+					self::cellBackgroundColor($sheet, $cell, 'FFFFFF');
+				}else{
+					self::cellBackgroundColor($sheet, $cell, 'FFF2CC');
+				}
+			}
+
+
+
+			if($type == 'Attributes'){
+				if($value == 'is_filterable' || $value == 'is_primary'){
+				$label = 'value';
+				$options = 'yes,no';
+				self::single_cell_dropdown($sheet, $cell, $label, $options);
+			}
+			}
+
+			
+
+		}
+	}
+}
+
+
+
+
+
+public static function cellBackgroundColor($sheet, $cell, $color){
+$sheet->getStyle($cell)->getFill()->applyFromArray(
+		array(
+			'type'       => \PHPExcel_Style_Fill::FILL_SOLID,
+			'startcolor' => array('rgb' => $color),
+			)
+		);
+}
+
+
+
+
+
+
 }
