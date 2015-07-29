@@ -4,6 +4,7 @@ angular.module 'LocalHyper.myRequests'
 .factory 'RequestAPI', ['$q', '$http', 'User', ($q, $http, User)->
 
 	RequestAPI = {}
+	requestDetails = {}
 
 	RequestAPI.get = (opts)->
 		defer = $q.defer()
@@ -26,5 +27,26 @@ angular.module 'LocalHyper.myRequests'
 
 		defer.promise
 
+	RequestAPI.requestDetails = (action, data={})->
+		switch action
+			when 'set'
+				requestDetails = data
+			when 'get'
+				requestDetails
+
+	RequestAPI.getOffers = (requestId)->
+		defer = $q.defer()
+		
+		params = "requestId": requestId
+
+		$http.post 'functions/getRequestOffers', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
 	RequestAPI
 ]
+

@@ -1,4 +1,6 @@
-<ion-view view-title="Request Details">
+<ion-view 
+	view-title="Request Details"
+	ng-init="view.init()">
 
 	<ion-content>
 
@@ -7,19 +9,21 @@
 				<div class="row">
 					<div class="col-20">
 						<div class="item-avatar">
-							<img ng-src="http://ajency.in/shop/fridge.jpg" alt="">
+							<img ng-src="{{view.request.product.images[0].src}}" alt="">
 						</div>
 					</div>
 					<div class="col">
-						<h4>LG GL-BGKL105 Single Door Refrigerator</h4>
-						<p class="details">Price requested on <span>2 hours ago</span></p>
+						<h4>{{view.request.product.name}}</h4>
+						<p class="details">Price requested 
+							<span>{{view.request.timeStr}}</span>
+						</p>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col">
 						<p class="loca">
 							My Location
-							<span><i class="icon ion-ios-location"></i> Panjim</span>
+							<span><i class="icon ion-ios-location"></i> {{view.request.address.city}}</span>
 							<a href="#">More</a>
 						</p>
 					</div>
@@ -35,57 +39,68 @@
 						<div class="dash-div"></div>
 					</div>
 				</div>
-				<div class="row expires">
-					<div class="col-25">
-						<h2 class="dura">22.44</h2>
-					</div>
-					<div class="col">
-						<button class="button button-outline button-balanced pull-right">Open</button>
-						<p class="exp_in">Expires in <i class="icon ion-ios-clock-outline"></i></p>
-						<p class="why"><a href="#">Why this product expires in 24 hrs</a></p>
-					</div>
-				</div>
-			</div>
-		</div>
 
-		<div class="row">
-			<div class="col">
-				<p>Recieved Offers <b>(12)</b></p>
-			</div>
-		</div>
-		<div class="card no-shadow rece-offer">
-			<div class="item item-text-wrap">
-				<div class="row row-fluid">
-					<div class="col">
-						<div class="user-wrap pull-left">
-							<img src="./img/user.png" alt="" class="user">
-						</div>
-						<div class="user-details">
-							<p class="pull-right time-rece"><i>2 Hours ago</i></p>
-							<h3>John Brothers <span class="loc">panjim</span></h3>
-							<p class="comment">
-								<img src="./img/speechbubble.png" alt="">
-								<span class="com">Installation will be immediate</span>
-							</p>
-						</div>
-					</div>
-				</div>
-				<div class="dash-div"></div>
-				<div class="row row-fluid offer-vals">
-					<div class="col">
-						<p class="info">Price Offered</p>
-						<h2><small>Rs.</small> 15000</h2>
+				<div 
+					class="row expires"
+					ng-if="view.request.status == 'open';">
+
+					<div class="col-25">
+						<h2 class="dura"
+							aj-count-down
+							created-at="view.request.createdAt">
+						</h2>
 					</div>
 					<div class="col">
-						<p class="info">Price Offered</p>
-						<h2><small>Rs.</small> 15000</h2>
-					</div>
-					<div class="col">
-						<button class="button button-outline button-balanced">Accept</button>
+						<button class="button button-outline button-balanced pull-right">
+							{{App.humanize(view.request.status)}}
+						</button>
+						<p class="exp_in">Expires in <i class="icon ion-ios-clock-outline"></i></p>
+						<p class="why"><a>Why this product expires in 24 hrs</a></p>
 					</div>
 				</div>
 			</div>
 		</div>
+		
+		<ion-list>
+			<div class="row">
+				<div class="col">
+					<p>Recieved Offers <b>(12)</b></p>
+				</div>
+			</div>
+			<div class="card no-shadow rece-offer">
+				<div class="item item-text-wrap">
+					<div class="row row-fluid">
+						<div class="col">
+							<div class="user-wrap pull-left">
+								<img src="./img/user.png" alt="" class="user">
+							</div>
+							<div class="user-details">
+								<p class="pull-right time-rece"><i>2 Hours ago</i></p>
+								<h3>John Brothers <span class="loc">panjim</span></h3>
+								<p class="comment">
+									<img src="./img/speechbubble.png" alt="">
+									<span class="com">Installation will be immediate</span>
+								</p>
+							</div>
+						</div>
+					</div>
+					<div class="dash-div"></div>
+					<div class="row row-fluid offer-vals">
+						<div class="col">
+							<p class="info">Price Offered</p>
+							<h2><small>Rs.</small> 15000</h2>
+						</div>
+						<div class="col">
+							<p class="info">Price Offered</p>
+							<h2><small>Rs.</small> 15000</h2>
+						</div>
+						<div class="col">
+							<button class="button button-outline button-balanced">Accept</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</ion-list>
 
 	</ion-content>
 
