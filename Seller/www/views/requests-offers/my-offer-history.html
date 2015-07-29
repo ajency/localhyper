@@ -22,9 +22,9 @@
 		<ion-list class="card-list" ng-switch-when="noError">
 	       	<ion-item
 	       		class="card"
-	       		ng-repeat="request in view.requests track by $index | orderBy:'-createdAt.iso'" 
+	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
 	       		ng-click="view.showRequestDetails(request)"
-	       		ng-controller="EachRequestTimeCtrl">
+	       		>
 
 	       		<div class="item-wrapper-nr">
 					<div class="item-avatar border-none margin-none">
@@ -34,12 +34,15 @@
 				    <p> {{request.distanceFromCustomer.toFixed(2)}} kms radius </p>
 				    <div class="pull-right"> Auto Bid : no </div>
 
-				    <div class="col p-t-0" ng-controller="ExpiredTimeCtrl" >
+				    <div class="col p-t-0" >
 			            <sm class="light-gray"> Claimed delivery :</sm>
 			            	 {{request.offerDeliveryTime.value}} {{request.offerDeliveryTime.unit}}
 			            <br>
-			            <sm class="light-gray"> Request expires at  :</sm>
-			            	 {{request.timeStr1}} 
+			            <sm class="light-gray" > Request expires within  :</sm>
+	            	 	<sm class=""
+							aj-count-down
+							created-at="request.request.createdAt">
+						</sm>
 			        </div>
 
 				    
@@ -53,7 +56,7 @@
 			        </div>
 			        <div class="col p-t-0">
 			        	<div class="pull-right">
-				            <div class="offer"> 2 </div>
+				            <div class="offer"> {{request.request.offerCount}} </div>
 				            <h4 class="offertxt light-gray"> No of offers</h4>
 			           	</div>
 			        </div>
@@ -64,7 +67,7 @@
 			        </div>
 
 			        <div class="pull-left ">
-			            <b>Offer status:<b>{{request.offerStatus}}
+			            Offer status:<b>{{request.offerStatus}}</b>
 			        </div>
 			    </div>
 			</ion-item>
