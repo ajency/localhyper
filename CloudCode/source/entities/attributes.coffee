@@ -27,13 +27,14 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
         if filterableAttributes
             filterable_attributes = categoryData.get('filterable_attributes')
 
-            if filterable_attributes.length > 0
-                f_attributes = []
-                f_attributes = _.map(filterable_attributes, (filterObj) ->
-                    filterObj.get("filterAttribute")
-                )
+            if (filterable_attributes)
+                if filterable_attributes.length > 0
+                    f_attributes = []
+                    f_attributes = _.map(filterable_attributes, (filterObj) ->
+                        filterObj.get("filterAttribute")
+                    )
 
-                final_attributes = f_attributes
+                    final_attributes = f_attributes
 
         if secondaryAttributes
             secondary_attributes = categoryData.get('secondary_attributes')
