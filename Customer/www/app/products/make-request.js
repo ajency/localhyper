@@ -199,6 +199,7 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
           })(this), function(error) {
             return CToast.show('Request failed, please try again');
           })["finally"](function() {
+            App.resize();
             return CSpinner.hide();
           });
         }

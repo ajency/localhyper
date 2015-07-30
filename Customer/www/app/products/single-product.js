@@ -30,6 +30,13 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           this.canLoadMore = false;
           return this.error = false;
         },
+        reFetch: function() {
+          this.page = 0;
+          this.all = [];
+          this.limitTo = 1;
+          this.canLoadMore = false;
+          return this.get();
+        },
         showAllRequests: function() {
           this.limitTo = 1000;
           this.canLoadMore = true;
@@ -81,11 +88,6 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           this.all = [];
           this.error = false;
           return this.canLoadMore = true;
-        },
-        reFetch: function() {
-          this.page = 0;
-          this.all = [];
-          return this.get();
         },
         onCardClick: function(request) {
           RequestAPI.requestDetails('set', request);
@@ -144,7 +146,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return "" + value + " " + unit;
+          return value + " " + unit;
         } else {
           return '';
         }
@@ -175,6 +177,12 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     $rootScope.$on('make:request:success', function() {
       $scope.view.request.active = true;
       return $scope.view.request.reFetch();
+    });
+    $rootScope.$on('request:cancelled', function() {
+      return $scope.view.request.active = false;
+    });
+    $rootScope.$on('offer:accepted', function() {
+      return $scope.view.request.active = false;
     });
     $rootScope.$on('on:session:expiry', function() {
       return $scope.view.reset();

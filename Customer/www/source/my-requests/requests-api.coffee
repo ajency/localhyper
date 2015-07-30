@@ -50,6 +50,33 @@ angular.module 'LocalHyper.myRequests'
 
 		defer.promise
 
+	RequestAPI.acceptOffer = (offerId)->
+		defer = $q.defer()
+		
+		params = "offerId": offerId
+
+		$http.post 'functions/acceptOffer', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
+	RequestAPI.updateRequestStatus = (params)->
+		defer = $q.defer()
+
+		# requestID: ""
+		# "status" : "cancelled"  (accepted status values are : open / cancelled / successful)
+
+		$http.post 'functions/updateRequestStatus', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
 	RequestAPI
 ]
 

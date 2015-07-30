@@ -2,8 +2,8 @@ angular.module 'LocalHyper.myRequests'
 
 
 .controller 'RequestDetailsCtrl', ['$scope', 'RequestAPI', '$interval', 'TimeString'
-	, 'App', '$timeout'
-	, ($scope, RequestAPI, $interval, TimeString, App, $timeout)->
+	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope'
+	, ($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope)->
 
 		$scope.view = 
 			request: RequestAPI.requestDetails 'get'
@@ -31,6 +31,16 @@ angular.module 'LocalHyper.myRequests'
 				limitTo: 1
 				received: true
 
+			cancelRequest: 
+				footer: false
+				set : ->
+					status = $scope.view.request.status
+					count  = _.size $scope.view.offers.all
+					if status is 'open' and count is 0
+						@footer = true
+					else
+						@footer = false
+
 			init : ->
 				console.log $scope.view.request
 				@setRequestTime()
@@ -43,9 +53,6 @@ angular.module 'LocalHyper.myRequests'
 				@interval = $interval =>
 					set()
 				, 60000
-
-			onRequestExpiry : ->
-				console.log 'onRequestExpiry'
 
 			showAllOffers : ->
 				@offers.limitTo = 100
@@ -64,6 +71,7 @@ angular.module 'LocalHyper.myRequests'
 				console.log offers
 				@display = 'noError'
 				@offers.all = offers
+				@cancelRequest.set()
 
 			onError : (type)->
 				@display = 'error'
@@ -72,6 +80,41 @@ angular.module 'LocalHyper.myRequests'
 			onTapToRetry : ->
 				@display = 'loader'
 				@getOffers()
+
+			onRequestExpiry : ->
+				console.log 'onRequestExpiry'
+				@request.status = 'expired'
+				@cancelRequest.set()
+
+			onAcceptOffer : (offer)->
+				CSpinner.show '', 'Please wait...'
+				RequestAPI.acceptOffer offer.id
+				.then =>
+					@request.status = 'pending_delivery'
+					offer.status = 'accepted'
+					$rootScope.$broadcast 'offer:accepted'
+					CToast.show 'Thank you for accepting the offer. Seller will contact you soon.'
+				, (error)->
+					CToast.show 'Request failed, please try again'
+				.finally ->
+					CSpinner.hide()
+					App.resize()
+
+			onCancelRequest : ->
+				CSpinner.show '', 'Please wait...'
+				RequestAPI.updateRequestStatus
+					"requestId": @request.id
+					"status": "cancelled"
+				.then =>
+					@request.status = 'cancelled'
+					@cancelRequest.set()
+					$rootScope.$broadcast 'request:cancelled'
+					CToast.show 'Your request has been cancelled'
+				, (error)->
+					CToast.show 'Cancellation failed, please try again'
+				.finally ->
+					CSpinner.hide()
+					App.resize()
 
 		
 		$scope.$on '$destroy', ->

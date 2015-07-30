@@ -70,7 +70,7 @@
 					class="row expires"
 					ng-if="view.request.status == 'open';">
 
-					<div class="col-25">
+					<div class="col-30">
 						<h2 class="dura"
 							aj-count-down
 							created-at="view.request.createdAt"
@@ -85,10 +85,38 @@
 						<p class="why"><a>Why this product expires in 24 hrs</a></p>
 					</div>
 				</div>
+
+				<div 
+					class="row expires"
+					ng-if="view.request.status == 'cancelled' || view.request.status == 'expired';">
+					
+					<div class="col">
+						<button class="button button-outline button-assertive">
+							{{App.humanize(view.request.status)}}
+						</button>
+					</div>
+				</div>
+
+				<div 
+					class="row expires"
+					ng-if="view.request.status == 'pending_delivery';">
+					
+					<div class="col">
+						<button class="button button-outline button-balanced">
+							{{App.humanize(view.request.status)}}
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 		
 		<ion-list ng-switch="view.display">
+
+			<ion-spinner
+				class="aj-spinner"
+				ng-switch-when="loader">
+			</ion-spinner>
+
 			<div 
 				class="row"
 				ng-if="view.offers.all.length > 0;">
@@ -98,10 +126,13 @@
 				</div>
 			</div>
 
-			<ion-spinner
-				class="aj-spinner"
-				ng-switch-when="loader">
-			</ion-spinner>
+			<div 
+				class="row"
+				ng-if="view.offers.all.length == 0 && view.request.status === 'open';">
+				<div class="col">
+					<h3>We have sent your request to sellers, they will soon send their prices</h3>
+				</div>
+			</div>
 
 			<div
 				ng-switch-when="noError" 
@@ -117,7 +148,7 @@
 							</div>
 							<div class="user-details">
 								<p class="pull-right time-rece"><i>{{offer.timeStr}}</i></p>
-								<h3>{{offer.seller.displayName}} 
+								<h3>{{offer.seller.businessName}} 
 									<span class="loc">{{offer.seller.address.city}}</span>
 								</h3>
 								<p 
@@ -129,8 +160,13 @@
 							</div>
 						</div>
 					</div>
+
 					<div class="dash-div"></div>
-					<div class="row row-fluid offer-vals">
+					
+					<div 
+						class="row row-fluid offer-vals"
+						ng-if="offer.status === 'open'">
+
 						<div class="col">
 							<p class="info">Price Offered</p>
 							<h2><small>Rs.</small> {{App.toINR(offer.price)}}</h2>
@@ -140,7 +176,46 @@
 							<h2>{{offer.deliveryTimeStr}}</h2>
 						</div>
 						<div class="col">
-							<button class="button button-outline button-balanced">Accept</button>
+							<button 
+								class="button button-outline button-balanced"
+								ng-disabled="view.request.status === 'cancelled' || view.request.status === 'expired'"
+								ng-click="view.onAcceptOffer(offer);">
+								Accept
+							</button>
+						</div>
+					</div>
+
+					<div 
+						class="row row-fluid offer-vals"
+						ng-if="offer.status !== 'open'">
+
+						<div class="col">
+							<p class="info">Price Offered</p>
+							<h2><small>Rs.</small> {{App.toINR(offer.price)}}</h2>
+						</div>
+
+						<div class="col" ng-if="offer.status === 'accepted'">
+							<p class="info">Delivery time left</p>
+							<h2>{{offer.deliveryTimeStr}}</h2>
+						</div>
+						<div class="col" ng-if="offer.status === 'accepted'">
+							Offer Status
+							<button 
+								class="button button-outline button-assertive">
+								Accepted
+							</button>
+						</div>
+
+						<div class="col" ng-if="offer.status === 'unaccepted'">
+							<p class="info">Delivery time</p>
+							<h2>{{offer.deliveryTimeStr}}</h2>
+						</div>
+						<div class="col" ng-if="offer.status === 'unaccepted'">
+							<button 
+								class="button button-outline button-balanced"
+								ng-disabled="true">
+								Accept
+							</button>
 						</div>
 					</div>
 				</div>
@@ -152,6 +227,13 @@
 				SHOW ALL OFFERS
 			</ion-item>
 
+			<button
+				class="button button-block button-assertive"
+				ng-if="view.request.status === 'open' && view.offers.all.length > 0;"
+				ng-click="view.onCancelRequest()">
+				Cancel Request
+			</button>
+
 			<aj-error
 				ng-switch-when="error"
 				error-type="view.errorType"
@@ -160,6 +242,16 @@
 		</ion-list>
 
 	</ion-content>
+
+	<ion-footer-bar 
+		class="bar-assertive"
+		ng-show="view.cancelRequest.footer">
+		<div 
+			class="title"
+			ng-click="view.onCancelRequest()">
+			Cancel Request
+		</div>
+	</ion-footer-bar>
 
 </ion-view>
 

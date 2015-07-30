@@ -1,5 +1,5 @@
 angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
-  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', function($scope, RequestAPI, $interval, TimeString, App, $timeout) {
+  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope) {
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
       display: 'loader',
@@ -27,6 +27,19 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         limitTo: 1,
         received: true
       },
+      cancelRequest: {
+        footer: false,
+        set: function() {
+          var count, status;
+          status = $scope.view.request.status;
+          count = _.size($scope.view.offers.all);
+          if (status === 'open' && count === 0) {
+            return this.footer = true;
+          } else {
+            return this.footer = false;
+          }
+        }
+      },
       init: function() {
         console.log($scope.view.request);
         this.setRequestTime();
@@ -45,9 +58,6 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
             return set();
           };
         })(this), 60000);
-      },
-      onRequestExpiry: function() {
-        return console.log('onRequestExpiry');
       },
       showAllOffers: function() {
         this.offers.limitTo = 100;
@@ -69,7 +79,8 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       onSuccess: function(offers) {
         console.log(offers);
         this.display = 'noError';
-        return this.offers.all = offers;
+        this.offers.all = offers;
+        return this.cancelRequest.set();
       },
       onError: function(type) {
         this.display = 'error';
@@ -78,6 +89,46 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       onTapToRetry: function() {
         this.display = 'loader';
         return this.getOffers();
+      },
+      onRequestExpiry: function() {
+        console.log('onRequestExpiry');
+        this.request.status = 'expired';
+        return this.cancelRequest.set();
+      },
+      onAcceptOffer: function(offer) {
+        CSpinner.show('', 'Please wait...');
+        return RequestAPI.acceptOffer(offer.id).then((function(_this) {
+          return function() {
+            _this.request.status = 'pending_delivery';
+            offer.status = 'accepted';
+            $rootScope.$broadcast('offer:accepted');
+            return CToast.show('Thank you for accepting the offer. Seller will contact you soon.');
+          };
+        })(this), function(error) {
+          return CToast.show('Request failed, please try again');
+        })["finally"](function() {
+          CSpinner.hide();
+          return App.resize();
+        });
+      },
+      onCancelRequest: function() {
+        CSpinner.show('', 'Please wait...');
+        return RequestAPI.updateRequestStatus({
+          "requestId": this.request.id,
+          "status": "cancelled"
+        }).then((function(_this) {
+          return function() {
+            _this.request.status = 'cancelled';
+            _this.cancelRequest.set();
+            $rootScope.$broadcast('request:cancelled');
+            return CToast.show('Your request has been cancelled');
+          };
+        })(this), function(error) {
+          return CToast.show('Cancellation failed, please try again');
+        })["finally"](function() {
+          CSpinner.hide();
+          return App.resize();
+        });
       }
     };
     return $scope.$on('$destroy', function() {
@@ -104,7 +155,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       case 'day':
         unit = value === 1 ? 'day' : 'days';
     }
-    return $scope.offer.deliveryTimeStr = "" + value + " " + unit;
+    return $scope.offer.deliveryTimeStr = value + " " + unit;
   }
 ]).directive('ajCountDown', [
   '$timeout', function($timeout) {

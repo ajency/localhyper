@@ -49,6 +49,29 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
       });
       return defer.promise;
     };
+    RequestAPI.acceptOffer = function(offerId) {
+      var defer, params;
+      defer = $q.defer();
+      params = {
+        "offerId": offerId
+      };
+      $http.post('functions/acceptOffer', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
+    RequestAPI.updateRequestStatus = function(params) {
+      var defer;
+      defer = $q.defer();
+      $http.post('functions/updateRequestStatus', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
     return RequestAPI;
   }
 ]);
