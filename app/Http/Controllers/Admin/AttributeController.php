@@ -432,10 +432,16 @@ class AttributeController extends Controller
 		
 		public function importBrands($sheet){
 				$highestRow = $sheet->getHighestRow(); 
-				$highestColumn = $sheet->getHighestColumn();
+				
+				// $highestColumn = $sheet->getHighestColumn();
+				// since only 4 columns in brands sheet => highest column = D
+				$highestColumn = 'D';
+
+				// echo "Highest column <br/>";
+				// echo $highestColumn;
 
 				$headingsArray = $sheet->rangeToArray('A2:'.$highestColumn.'2',null, true, true, true); 
-				// dd($headingsArray);
+				
 				$headingsArray = $headingsArray[2];
 
 				$r = -1;
@@ -445,24 +451,24 @@ class AttributeController extends Controller
 				for ($row = 3; $row <= $highestRow; ++$row) {
 						$dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
 
-								++$r;
+						++$r;
 								foreach($headingsArray as $columnKey => $columnHeading) {
 
 										 if($columnHeading!='Config'){
-												
 												$namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
 										 }
 										else
 												$config[]=$dataRow[$row][$columnKey];
 									 
 								 }
+								
 								 if(!(is_null(max($namedDataArray[$r])))){
 									 $brandsArr[] = $namedDataArray[$r];
 
 								 }
 								 
 				}
-				
+
 				$all_brands = BrandController::getAllParseBrands(); 
 
 				$updated_brands = [];
@@ -481,6 +487,12 @@ class AttributeController extends Controller
 				}
 
 				$brands =['brands' => $updated_brands,'categoryId' => $config[0]]; 
+
+				// echo "<pre>";
+				// print_r($updated_brands) ; 
+				// echo "</pre>";				
+
+				
 				BrandController::parseBrandImport($brands);
 				
 				return true;
@@ -507,9 +519,6 @@ class AttributeController extends Controller
 				foreach($namedDataArray as $namedData)
 				{
 						$i=1; 
-						echo "<pre>";
-						print_r($namedData);
-						echo "</pre>";
 
 						foreach($namedData as $key=>$value)
 						{ 
