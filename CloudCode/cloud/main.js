@@ -25,12 +25,14 @@
         final_attributes = [];
         if (filterableAttributes) {
           filterable_attributes = categoryData.get('filterable_attributes');
-          if (filterable_attributes.length > 0) {
-            f_attributes = [];
-            f_attributes = _.map(filterable_attributes, function(filterObj) {
-              return filterObj.get("filterAttribute");
-            });
-            final_attributes = f_attributes;
+          if (filterable_attributes) {
+            if (filterable_attributes.length > 0) {
+              f_attributes = [];
+              f_attributes = _.map(filterable_attributes, function(filterObj) {
+                return filterObj.get("filterAttribute");
+              });
+              final_attributes = f_attributes;
+            }
           }
         }
         if (secondaryAttributes) {
@@ -614,12 +616,20 @@
     notificationQuery.matchesQuery("recipientUser", innerQueryUser);
     notificationQuery.equalTo("type", type);
     notificationQuery.select("requestObject");
+    notificationQuery.select("offerObject");
     return notificationQuery.find().then(function(notificationResults) {
       var unseenNotifications;
-      unseenNotifications = _.map(notificationResults, function(notificationObj) {
-        var requestId;
-        return requestId = notificationObj.get("requestObject").id;
-      });
+      if (type === "Request") {
+        unseenNotifications = _.map(notificationResults, function(notificationObj) {
+          var requestId;
+          return requestId = notificationObj.get("requestObject").id;
+        });
+      } else if (type === "Offer") {
+        unseenNotifications = _.map(notificationResults, function(notificationObj) {
+          var requestId;
+          return requestId = notificationObj.get("offerObject").id;
+        });
+      }
       return response.success(unseenNotifications);
     }, function(error) {
       return response.error(error);

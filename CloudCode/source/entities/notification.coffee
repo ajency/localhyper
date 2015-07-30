@@ -180,12 +180,19 @@ Parse.Cloud.define 'getUnseenNotifications', (request, response) ->
     notificationQuery.equalTo("type",type)
 
     notificationQuery.select("requestObject")
+    notificationQuery.select("offerObject")
 
     notificationQuery.find()
     .then (notificationResults) ->
-        unseenNotifications = _.map(notificationResults, (notificationObj) ->
-           requestId = notificationObj.get("requestObject").id     
-        )
+
+        if type is "Request"
+            unseenNotifications = _.map(notificationResults, (notificationObj) ->
+               requestId = notificationObj.get("requestObject").id     
+            )
+        else if type is "Offer"
+            unseenNotifications = _.map(notificationResults, (notificationObj) ->
+               requestId = notificationObj.get("offerObject").id     
+            )            
         response.success(unseenNotifications)
     , (error) ->
         response.error(error)
