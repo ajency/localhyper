@@ -95,12 +95,27 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         this.request.status = 'expired';
         return this.cancelRequest.set();
       },
-      onAcceptOffer: function(offer) {
+      onAcceptOffer: function(acceptedOffer) {
+        var offerId, offerIds, params, unacceptedOfferIds;
         CSpinner.show('', 'Please wait...');
-        return RequestAPI.acceptOffer(offer.id).then((function(_this) {
-          return function() {
+        offerId = acceptedOffer.id;
+        offerIds = _.pluck(this.offers.all, 'id');
+        unacceptedOfferIds = _.without(offerIds, offerId);
+        params = {
+          "offerId": offerId,
+          "unacceptedOfferIds": unacceptedOfferIds
+        };
+        return RequestAPI.acceptOffer(params).then((function(_this) {
+          return function(data) {
+            _.each(_this.offers.all, function(offer) {
+              if (offer.id === offerId) {
+                offer.status = 'accepted';
+                return offer.updatedAt = data.offerUpdatedAt;
+              } else {
+                return offer.status = 'unaccepted';
+              }
+            });
             _this.request.status = 'pending_delivery';
-            offer.status = 'accepted';
             $rootScope.$broadcast('offer:accepted');
             return CToast.show('Thank you for accepting the offer. Seller will contact you soon.');
           };
@@ -129,6 +144,11 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           CSpinner.hide();
           return App.resize();
         });
+      },
+      callSeller: function(sellerNumber) {
+        var telURI;
+        telURI = "tel:" + sellerNumber;
+        return document.location.href = telURI;
       }
     };
     return $scope.$on('$destroy', function() {
@@ -137,15 +157,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
   }
 ]).controller('EachOfferTimeCtrl', [
   '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
-    var deliveryTime, interval, setTime, unit, value;
-    setTime = function() {
-      return $scope.offer.timeStr = TimeString.get($scope.offer.createdAt);
-    };
-    setTime();
-    interval = $interval(setTime, 60000);
-    $scope.$on('$destroy', function() {
-      return $interval.cancel(interval);
-    });
+    var deliveryTime, getDeliveryTimeLeft, interval, setTime, unit, value;
     deliveryTime = $scope.offer.deliveryTime;
     value = deliveryTime.value;
     switch (deliveryTime.unit) {
@@ -155,7 +167,39 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       case 'day':
         unit = value === 1 ? 'day' : 'days';
     }
-    return $scope.offer.deliveryTimeStr = value + " " + unit;
+    $scope.offer.deliveryTimeStr = value + " " + unit;
+    getDeliveryTimeLeft = function(obj) {
+      var day, daysLeft, duration, format, hours, hoursLeft, hr, min, minsLeft, str, timeLeft, totalTime, updatedAt;
+      hours = deliveryTime.unit === 'hr' ? value : value * 24;
+      format = 'DD/MM/YYYY HH:mm:ss';
+      updatedAt = moment(obj.iso).format(format);
+      totalTime = moment(updatedAt, format).add(hours, 'h');
+      timeLeft = totalTime.diff(moment());
+      duration = moment.duration(timeLeft);
+      daysLeft = parseInt(duration.asDays().toFixed(0));
+      hoursLeft = parseInt(duration.asHours().toFixed(0));
+      minsLeft = parseInt(duration.asMinutes().toFixed(0));
+      if (minsLeft < 60) {
+        min = minsLeft === 1 ? 'min' : 'mins';
+        str = minsLeft >= 0 ? minsLeft + " " + min : "0";
+      } else if (hoursLeft < 24) {
+        hr = hoursLeft === 1 ? 'hr' : 'hrs';
+        str = hoursLeft + " " + hr;
+      } else {
+        day = daysLeft === 1 ? 'day' : 'days';
+        str = daysLeft + " " + day;
+      }
+      return str;
+    };
+    setTime = function() {
+      $scope.offer.timeStr = TimeString.get($scope.offer.createdAt);
+      return $scope.offer.deliveryTimeLeftStr = getDeliveryTimeLeft($scope.offer.updatedAt);
+    };
+    setTime();
+    interval = $interval(setTime, 60000);
+    return $scope.$on('$destroy', function() {
+      return $interval.cancel(interval);
+    });
   }
 ]).directive('ajCountDown', [
   '$timeout', function($timeout) {

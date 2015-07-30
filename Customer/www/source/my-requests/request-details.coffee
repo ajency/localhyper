@@ -86,14 +86,29 @@ angular.module 'LocalHyper.myRequests'
 				@request.status = 'expired'
 				@cancelRequest.set()
 
-			onAcceptOffer : (offer)->
+			onAcceptOffer : (acceptedOffer)->
 				CSpinner.show '', 'Please wait...'
-				RequestAPI.acceptOffer offer.id
-				.then =>
+				offerId  = acceptedOffer.id
+				offerIds = _.pluck @offers.all, 'id'
+				unacceptedOfferIds = _.without offerIds, offerId
+
+				params = 
+					"offerId": offerId
+					"unacceptedOfferIds": unacceptedOfferIds
+
+				RequestAPI.acceptOffer params
+				.then (data)=>
+					_.each @offers.all, (offer)=>
+						if offer.id is offerId
+							offer.status = 'accepted'
+							offer.updatedAt = data.offerUpdatedAt
+						else 
+							offer.status = 'unaccepted'
+
 					@request.status = 'pending_delivery'
-					offer.status = 'accepted'
 					$rootScope.$broadcast 'offer:accepted'
 					CToast.show 'Thank you for accepting the offer. Seller will contact you soon.'
+
 				, (error)->
 					CToast.show 'Request failed, please try again'
 				.finally ->
@@ -116,6 +131,10 @@ angular.module 'LocalHyper.myRequests'
 					CSpinner.hide()
 					App.resize()
 
+			callSeller : (sellerNumber)->
+				telURI = "tel:#{sellerNumber}"
+				document.location.href = telURI
+
 		
 		$scope.$on '$destroy', ->
 			$interval.cancel $scope.view.interval
@@ -123,15 +142,6 @@ angular.module 'LocalHyper.myRequests'
 
 
 .controller 'EachOfferTimeCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
-	#Offer time
-	setTime = ->
-		$scope.offer.timeStr = TimeString.get $scope.offer.createdAt
-
-	setTime()
-	interval = $interval setTime, 60000
-	$scope.$on '$destroy', ->
-		$interval.cancel interval
-
 
 	#Delivery time
 	deliveryTime = $scope.offer.deliveryTime
@@ -143,6 +153,37 @@ angular.module 'LocalHyper.myRequests'
 			unit = if value is 1 then 'day' else 'days' 
 
 	$scope.offer.deliveryTimeStr = "#{value} #{unit}"
+
+	getDeliveryTimeLeft = (obj)->
+		hours     = if deliveryTime.unit is 'hr' then value else value*24
+		format    = 'DD/MM/YYYY HH:mm:ss'
+		updatedAt = moment(obj.iso).format format
+		totalTime = moment(updatedAt, format).add hours, 'h'
+		timeLeft  = totalTime.diff moment()
+		duration  = moment.duration timeLeft
+		daysLeft  = parseInt duration.asDays().toFixed(0)
+		hoursLeft = parseInt duration.asHours().toFixed(0)
+		minsLeft  = parseInt duration.asMinutes().toFixed(0)
+		if minsLeft < 60
+			min = if minsLeft is 1 then 'min' else 'mins'
+			str = if minsLeft >= 0 then "#{minsLeft} #{min}" else "0"
+		else if hoursLeft < 24
+			hr = if hoursLeft is 1 then 'hr' else 'hrs'
+			str = "#{hoursLeft} #{hr}"
+		else
+			day = if daysLeft is 1 then 'day' else 'days'
+			str = "#{daysLeft} #{day}"
+		str
+	
+	#Offer & left delivery time
+	setTime = ->
+		$scope.offer.timeStr = TimeString.get $scope.offer.createdAt
+		$scope.offer.deliveryTimeLeftStr = getDeliveryTimeLeft $scope.offer.updatedAt
+
+	setTime()
+	interval = $interval setTime, 60000
+	$scope.$on '$destroy', ->
+		$interval.cancel interval
 ]
 
 
@@ -160,7 +201,7 @@ angular.module 'LocalHyper.myRequests'
 			total = moment(createdAt).add 24, 'hours'
 			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
 
-			# totalStr = '2015/07/29 17:2:00'
+			# totalStr = '2015/07/30 14:5:00'
 
 			$(el).countdown totalStr, (event)->
 				$(el).html event.strftime('%-H:%-M:%-S')

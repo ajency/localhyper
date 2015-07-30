@@ -41,7 +41,6 @@
 			</div>
 
 			<div>
-
 				<h5>Model No : {{view.requestDetails.data.product.modelNumber}} </h5>
 				<h5>Distance from you: {{view.requestDetails.data.distanceFromCustomer.toFixed(2)}} kms radius</h5>
 				<h5>MRP: Rs  {{App.toINR(view.requestDetails.data.product.mrp)}}</h5>
@@ -50,15 +49,21 @@
 					Category: {{view.requestDetails.data.category.parent}} > {{view.requestDetails.data.category.name}} > {{view.requestDetails.data.brand.name}}
 				</h5>
 				<h5>Your offer price: {{view.requestDetails.data.offerPrice}}</h5>
-				<h5  > Request expires within  :</sm>
+				<div ng-if="view.requestDetails.data.request.status == 'open' " >
+				<h5 > Request expires in  :</sm>
 	            	 	<sm ng-if="view.requestDetails.showExpiry"
 							aj-count-down
 							created-at="view.requestDetails.data.request.createdAt">
 				</h5>
 			</div>
-
+					<h5 ng-if="view.requestDetails.data.request.comments!==''">
+						Customer Comments : {{view.requestDetails.data.request.comments}} 
+					</h5>
+					<h5 ng-if="view.requestDetails.data.request.comments!==''">
+						Your Comments : {{view.requestDetails.data.offerComments}}
+					</h5>
+			</div>
 			<br>
-
 			<div 
 				class="list"
 				ng-if="view.requestDetails.price === 'yourPrice'">

@@ -108,7 +108,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             return OffersAPI.makeOffer(params).then((function(_this) {
               return function(data) {
                 _this.modal.hide();
-                return CToast.show('Your offer has been made');
+                CToast.show('Your offer has been made');
+                return $rootScope.$broadcast('offer:done:succ');
               };
             })(this), (function(_this) {
               return function(type) {
