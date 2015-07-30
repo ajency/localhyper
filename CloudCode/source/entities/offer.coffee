@@ -316,17 +316,19 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
 
 Parse.Cloud.afterSave "Offer", (request)->
     offerObject = request.object
-    requestId = offerObject.get("request").id
-  
-    RequestClass = Parse.Object.extend("Request")
-    queryReq = new Parse.Query(RequestClass)
-  
-    queryReq.get(requestId)
-    .then (requestObj) ->
-        requestObj.increment("offerCount");
-        requestObj.save()
-    ,(error) ->
-        console.log "Got an error " + error.code + " : " + error.message
+    
+    if !offerObject.existed()
+        requestId = offerObject.get("request").id
+      
+        RequestClass = Parse.Object.extend("Request")
+        queryReq = new Parse.Query(RequestClass)
+      
+        queryReq.get(requestId)
+        .then (requestObj) ->
+            requestObj.increment("offerCount");
+            requestObj.save()
+        ,(error) ->
+            console.log "Got an error " + error.code + " : " + error.message
   
 
 Parse.Cloud.define 'getRequestOffers' , (request, response) ->

@@ -910,15 +910,17 @@
   Parse.Cloud.afterSave("Offer", function(request) {
     var RequestClass, offerObject, queryReq, requestId;
     offerObject = request.object;
-    requestId = offerObject.get("request").id;
-    RequestClass = Parse.Object.extend("Request");
-    queryReq = new Parse.Query(RequestClass);
-    return queryReq.get(requestId).then(function(requestObj) {
-      requestObj.increment("offerCount");
-      return requestObj.save();
-    }, function(error) {
-      return console.log("Got an error " + error.code + " : " + error.message);
-    });
+    if (!offerObject.existed()) {
+      requestId = offerObject.get("request").id;
+      RequestClass = Parse.Object.extend("Request");
+      queryReq = new Parse.Query(RequestClass);
+      return queryReq.get(requestId).then(function(requestObj) {
+        requestObj.increment("offerCount");
+        return requestObj.save();
+      }, function(error) {
+        return console.log("Got an error " + error.code + " : " + error.message);
+      });
+    }
   });
 
   Parse.Cloud.define('getRequestOffers', function(request, response) {
