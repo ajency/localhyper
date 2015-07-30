@@ -13,6 +13,7 @@ use Parse\ParseObject;
 use Parse\ParseQuery;
 use \Session;
 use \Input;
+use App\Http\Helper\FormatPhpExcel;
 
 class ProductController extends Controller
 {
@@ -116,6 +117,7 @@ class ProductController extends Controller
             $brandIndexData[] = ['name'=>$brand["name"],'id'=>$brand["id"]]; 
         }
  
+        $labels = [];
         $headers = [];
         $headers []= 'Config' ;
         $headers []= 'Brand' ;
@@ -128,6 +130,8 @@ class ProductController extends Controller
           ];
         $attributeValueData = $attributeController->getCategoryAttributeValues($categoryData);  
         $attributeValues= $headerFlag =$productHeader = $productAttributeIds = [];
+
+        $labelsHeader = array();
         
         foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
         {
@@ -139,6 +143,9 @@ class ProductController extends Controller
                 
                 $productHeader[]=$attributeValue['attributeName']."(".$attributeId.")";
                 $productHeader[]=$attributeValue['attributeName'].' Id';
+
+                $labelsHeader[] = $attributeValue['attributeName'];
+                $labelsHeader[] = $attributeValue['attributeName'].' Id';
                 
                     
                 $headerFlag[$attributeId]=$attributeId;
@@ -179,6 +186,10 @@ class ProductController extends Controller
             'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
             );
         $indexSheet->getStyle($header)->applyFromArray($style);
+
+
+        //Hide the sheet
+        $indexSheet->setSheetState(\PHPExcel_Worksheet::SHEETSTATE_HIDDEN);
         //$indexSheet->getProtection()->setSheet(true);
          
          /***
@@ -192,6 +203,18 @@ class ProductController extends Controller
         
         $products = $productsData = $headers = [];
 
+        $labels []= 'Config' ;
+        $labels []= 'ProductID' ; 
+        $labels []= 'Product Name' ;
+        $labels []= 'Model Number' ;
+        $labels []= 'Image' ; 
+        $labels []= 'MRP' ; 
+        $labels []= 'Popularity' ; 
+        $labels []= 'Brand' ;  
+        $labels []= 'Brand ID' ; 
+        $labels []= 'Group' ;
+
+
         $headers []= 'Config' ;
         $headers []= 'ProductID' ; 
         $headers []= 'ProductName' ;
@@ -203,10 +226,12 @@ class ProductController extends Controller
         $headers []= 'BrandID' ; 
         $headers []= 'Group' ;
        
-        $headers = array_merge($headers,$productHeader); 
+        $headers = array_merge($headers,$productHeader);
+        $labels = array_merge($labels,$labelsHeader); 
       
-        $productSheet->fromArray($headers, ' ', 'A1');
-        $productSheet->fromArray([$catId], ' ', 'A2');
+        $productSheet->fromArray($labels, ' ', 'A1');
+        $productSheet->fromArray($headers, ' ', 'A2');
+        $productSheet->fromArray([$catId], ' ', 'A3');
         $productSheet->getColumnDimension('A')->setVisible(false);
         $productSheet->getColumnDimension('B')->setVisible(false);
         $productSheet->getColumnDimension('I')->setVisible(false); 
@@ -216,8 +241,8 @@ class ProductController extends Controller
         {
  
             //hide column
-            $hidecolumn = $attributeController->getNextCell($column,'1');
-            $productSheet->getColumnDimension($hidecolumn)->setVisible(false);
+            $hidecolumn = $attributeController->getNextCell($column,'3');
+            //$productSheet->getColumnDimension($hidecolumn)->setVisible(false);
             $column = $attributeController->getNextCell($column,'2');
         }
         
@@ -266,18 +291,37 @@ class ProductController extends Controller
             $page++;
         }
       
-        $productSheet->fromArray($productsData, ' ', 'B2');
+        $productSheet->fromArray($productsData, ' ', 'B3');
+
+
+        //freeze pan
+        $productSheet->getStyle('1:1')->getFont()->setBold(true);
+        $productSheet->freezePane('E2');
+
+        //Headr row height
+        $productSheet->getRowDimension('1')->setRowHeight(22);
+
+        //Hide second row
+        $productSheet->getRowDimension(2)->setVisible(false);
+
+        //Format sheet
+        FormatPhpExcel::formatSheet($productSheet, 'Products', $indexSheet);
+
+
+        //Format header row
+        FormatPhpExcel::format_header_row($productSheet, array(
+          'background_color'=>'FFFF00',
+          'border_color'=>'000000',
+          'font_size'=>'9',
+          'font_color'=>'000000',
+          'vertical_alignment'=>'VERTICAL_CENTER',
+          'font-weight'=>'bold'
+          ), '1'
+        );
        
          
       
-        $lastColumn = $productSheet->getHighestColumn();  
-        $header = 'a1:'.$lastColumn.'1';
-        $productSheet->getStyle($header)->getFill()->setFillType(\PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setARGB('00ffff00');
-        $style = array(
-            'font' => array('bold' => true,),
-            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,),
-            );
-        $productSheet->getStyle($header)->applyFromArray($style);
+        
         $productSheet->protectCells($header, 'PHP');
         
         
@@ -292,6 +336,7 @@ class ProductController extends Controller
         header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
         header ('Pragma: public'); // HTTP/1.0
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+        $objWriter->setPreCalculateFormulas(TRUE);
         $objWriter->save('php://output'); 
     }
 
