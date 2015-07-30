@@ -427,14 +427,15 @@ class AttributeController extends Controller
 				$highestRow = $sheet->getHighestRow(); 
 				$highestColumn = $sheet->getHighestColumn();
 
-				$headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true); 
-				$headingsArray = $headingsArray[1];
+				$headingsArray = $sheet->rangeToArray('A2:'.$highestColumn.'2',null, true, true, true); 
+				// dd($headingsArray);
+				$headingsArray = $headingsArray[2];
 
 				$r = -1;
 				$namedDataArray = $config =array();
 
 				$brandsArr = [];
-				for ($row = 2; $row <= $highestRow; ++$row) {
+				for ($row = 3; $row <= $highestRow; ++$row) {
 						$dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
 
 								++$r;
@@ -454,7 +455,7 @@ class AttributeController extends Controller
 								 }
 								 
 				}
-
+				
 				$all_brands = BrandController::getAllParseBrands(); 
 
 				$updated_brands = [];
@@ -482,12 +483,12 @@ class AttributeController extends Controller
 				$highestRow = $sheet->getHighestRow(); 
 				$highestColumn = $sheet->getHighestColumn();
 
-				$headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
-				$headingsArray = $headingsArray[1];
+				$headingsArray = $sheet->rangeToArray('A3:'.$highestColumn.'3',null, true, true, true);
+				$headingsArray = $headingsArray[3];
 
 				$r = -1;
 				$namedDataArray = array();
-				for ($row = 2; $row <= $highestRow; ++$row) {
+				for ($row = 4; $row <= $highestRow; ++$row) {
 						$dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
 
 								++$r;
@@ -499,15 +500,23 @@ class AttributeController extends Controller
 				foreach($namedDataArray as $namedData)
 				{
 						$i=1; 
+						echo "<pre>";
+						print_r($namedData);
+						echo "</pre>";
+
 						foreach($namedData as $key=>$value)
 						{ 
- 
+
 								if($i%2)
 								{
-										if($value=='')
-												continue;
+										if($value==''){
+											$i++;
+											continue;
+										}
+												
 										
 										$dataKey = explode("(",$key);
+
 										$dataattributeId = explode(")",$dataKey[1]); 
 										$attributeId = $dataattributeId[0];
 										$attributeValues['attributeValues'][] = ['objectId'=>'',
@@ -520,9 +529,11 @@ class AttributeController extends Controller
 										$attributeValueKey = count($attributeValues['attributeValues']);
 										$attributeValues['attributeValues'][($attributeValueKey-1)]['objectId']=$value;
 								}
+
  
 							 $i++; 
 						}
+
 				}
 	
 				 $this->parseAttributeValueImport($attributeValues);
@@ -535,12 +546,12 @@ class AttributeController extends Controller
 				$highestRow = $sheet->getHighestRow(); 
 				$highestColumn = $sheet->getHighestColumn();
 
-				$headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true);
-				$headingsArray = $headingsArray[1];
+				$headingsArray = $sheet->rangeToArray('A3:'.$highestColumn.'3',null, true, true, true);
+				$headingsArray = $headingsArray[3];
 
 				$r = -1;
 				$namedDataArray = $config =array();
-				for ($row = 2; $row <= $highestRow; ++$row) {
+				for ($row = 4; $row <= $highestRow; ++$row) {
 						$dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
 
 								++$r;
