@@ -22,7 +22,7 @@
 		<ion-list class="card-list" ng-switch-when="noError">
 	       	<ion-item
 	       		class="card"
-	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
+	       		ng-repeat="request in view.requests"
 	       		ng-click="view.showRequestDetails(request)"
 	       		>
 
@@ -46,7 +46,7 @@
 								</sm>
 						   </div>
 				        </div>
-						<sm class="light-gray"> Request Status : {{request.request.status}}</sm>
+						<sm class="light-gray" ng-if="request.offerStatus != 'unaccepted' " > Request Status : {{request.request.status}}</sm>
 					    
 					</div>
 

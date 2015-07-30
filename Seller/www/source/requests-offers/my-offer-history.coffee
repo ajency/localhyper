@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', '$timeout'
-	, ($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal, $timeout)->
+.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', '$timeout', '$rootScope'
+	, ($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal, $timeout, $rootScope)->
 
 		$scope.view = 
 			display: 'loader'
@@ -44,6 +44,11 @@ angular.module 'LocalHyper.requestsOffers'
 						@display = false
 						App.resize()
 
+			reFetch : ->
+				@canLoadMore = true
+				@page = 0
+				@showOfferHistory()			
+
 			incrementPage : ->
 				$scope.$broadcast 'scroll.refreshComplete'
 				@page = @page + 1
@@ -53,8 +58,6 @@ angular.module 'LocalHyper.requestsOffers'
 
 			onSuccess : (data)->
 				@display = 'noError'
-				console.log('offer history')
-				console.log(data)
 				offerhistory = data
 				
 				if offerhistory.length > 0
@@ -118,18 +121,21 @@ angular.module 'LocalHyper.requestsOffers'
 			$timeout ->
 				$scope.view.requestDetails.showExpiry = false
 			, 1000
+
+		$rootScope.$on 'offer:done:succ', ->
+			$scope.view.reFetch()
+			
+			
 	
 ]
 
 .directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->
-
 	restrict: 'A'
 	link: (scope, el, attrs)->
 		$timeout ->
 			createdAt = $parse(attrs.createdAt)(scope)
 			total = moment(moment(createdAt.iso)).add 24, 'hours'
 			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
-
 			$(el).countdown totalStr, (event)->
 				$(el).html event.strftime('%-H:%-M:%-S')
 ]
