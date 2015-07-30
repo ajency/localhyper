@@ -563,7 +563,7 @@
           msg = "Request for " + productName + " has been cancelled";
           otherPushData = {
             "id": obj.id,
-            "type": "accepted_offer"
+            "type": "cancelled_request"
           };
         }
         switch (channel) {
