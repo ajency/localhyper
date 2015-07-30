@@ -316,7 +316,7 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
 
 Parse.Cloud.afterSave "Offer", (request)->
     offerObject = request.object
-    
+
     if !offerObject.existed()
         requestId = offerObject.get("request").id
       
@@ -325,7 +325,7 @@ Parse.Cloud.afterSave "Offer", (request)->
       
         queryReq.get(requestId)
         .then (requestObj) ->
-            requestObj.increment("offerCount");
+            requestObj.increment("offerCount")
             requestObj.save()
         ,(error) ->
             console.log "Got an error " + error.code + " : " + error.message
@@ -364,6 +364,7 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
                         "businessName" : sellerObj.get("businessName")
                         "address" : sellerObj.get("address")
                         "city" : sellerObj.get("city")
+                        "phoneNumber" : sellerObj.get("username")
 
                     priceObj = offerObject.get("price")
                     
@@ -443,6 +444,5 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
     , (error) ->
         response.error error
         
-
    
 

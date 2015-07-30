@@ -949,7 +949,8 @@
           "displayName": sellerObj.get("displayName"),
           "businessName": sellerObj.get("businessName"),
           "address": sellerObj.get("address"),
-          "city": sellerObj.get("city")
+          "city": sellerObj.get("city"),
+          "phoneNumber": sellerObj.get("username")
         };
         priceObj = offerObject.get("price");
         offer = {
