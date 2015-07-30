@@ -199,9 +199,9 @@ Parse.Cloud.define 'getUnseenNotifications', (request, response) ->
 
 
 Parse.Cloud.define 'updateNotificationStatus', (request, response) ->
-    notificationType = request.params.notificationType
-    notificationTypeId = request.params.notificationTypeId
-    recipientId = request.params.recipientId
+    notificationType = request.params.notificationType  # Request / Offer / AcceptedOffer / CancelledRequest
+    notificationTypeId = request.params.notificationTypeId # request id / offer id
+    recipientId = request.params.recipientId # single recipient id
     hasSeen = request.params.hasSeen
     
     notificationQuery = new Parse.Query("Notification")
@@ -223,20 +223,32 @@ Parse.Cloud.define 'updateNotificationStatus', (request, response) ->
 
     else if notificationType is "Offer"
         innerQuery = new Parse.Query("Offer")
-        innerQuery.equalTo("objectId",notificationTypeId)
+        
+        if _.isArray(notificationTypeId)
+            innerQuery.containedIn("objectId",notificationTypeId)   
+                     
+        else if _.isString(notificationTypeId) 
+            innerQuery.equalTo("objectId",notificationTypeId)
+
 
         notificationQuery.matchesQuery("offerObject", innerQuery)
 
-    notificationQuery.first()
-    .then (notificationObj)->
-        notificationObj.set("hasSeen",hasSeen)
-        notificationObj.save() 
-        .then (notif) ->
-            response.success (notif)
+    notificationQuery.find()
+    .then (notificationObjects)->
+        saveQs = _.map( notificationObjects , (notificationObj) ->
+            notificationObj.set("hasSeen",hasSeen)
+            notificationObj.save() 
+        )
+        
+        Parse.Promise.when(saveQs).then ->
+            updatedNotifications = _.flatten(_.toArray(arguments))   
+            response.success (updatedNotifications)
+        
         , (error) ->
-            response.error (error)
+            response.error error
+            
     ,(error) ->
-        response.error(error)   
+        response.error error
 
 
 

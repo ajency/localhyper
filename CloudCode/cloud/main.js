@@ -656,13 +656,23 @@
       notificationQuery.matchesQuery("requestObject", innerQuery);
     } else if (notificationType === "Offer") {
       innerQuery = new Parse.Query("Offer");
-      innerQuery.equalTo("objectId", notificationTypeId);
+      if (_.isArray(notificationTypeId)) {
+        innerQuery.containedIn("objectId", notificationTypeId);
+      } else if (_.isString(notificationTypeId)) {
+        innerQuery.equalTo("objectId", notificationTypeId);
+      }
       notificationQuery.matchesQuery("offerObject", innerQuery);
     }
-    return notificationQuery.first().then(function(notificationObj) {
-      notificationObj.set("hasSeen", hasSeen);
-      return notificationObj.save().then(function(notif) {
-        return response.success(notif);
+    return notificationQuery.find().then(function(notificationObjects) {
+      var saveQs;
+      saveQs = _.map(notificationObjects, function(notificationObj) {
+        notificationObj.set("hasSeen", hasSeen);
+        return notificationObj.save();
+      });
+      return Parse.Promise.when(saveQs).then(function() {
+        var updatedNotifications;
+        updatedNotifications = _.flatten(_.toArray(arguments));
+        return response.success(updatedNotifications);
       }, function(error) {
         return response.error(error);
       });
