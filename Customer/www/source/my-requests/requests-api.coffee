@@ -50,10 +50,8 @@ angular.module 'LocalHyper.myRequests'
 
 		defer.promise
 
-	RequestAPI.acceptOffer = (offerId)->
+	RequestAPI.acceptOffer = (params)->
 		defer = $q.defer()
-		
-		params = "offerId": offerId
 
 		$http.post 'functions/acceptOffer', params
 		.then (data)->
