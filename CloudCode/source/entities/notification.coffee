@@ -221,6 +221,12 @@ Parse.Cloud.define 'updateNotificationStatus', (request, response) ->
 
         notificationQuery.matchesQuery("requestObject", innerQuery)
 
+    else if notificationType is "Offer"
+        innerQuery = new Parse.Query("Offer")
+        innerQuery.equalTo("objectId",notificationTypeId)
+
+        notificationQuery.matchesQuery("offerObject", innerQuery)
+
     notificationQuery.first()
     .then (notificationObj)->
         notificationObj.set("hasSeen",hasSeen)
