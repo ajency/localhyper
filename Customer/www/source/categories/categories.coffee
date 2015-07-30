@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.categories', []
 
 
-.controller 'CategoriesCtrl', ['$scope', 'App', 'CategoriesAPI'
-	, ($scope, App, CategoriesAPI)->
+.controller 'CategoriesCtrl', ['$scope', 'App', 'CategoriesAPI', 'Push'
+	, ($scope, App, CategoriesAPI, Push)->
 
 		$scope.view = 
 			display: 'loader'
@@ -10,6 +10,7 @@ angular.module 'LocalHyper.categories', []
 			parentCategories: []
 
 			init : ->
+				Push.register()
 				@getCategories()
 
 			getCategories : ->

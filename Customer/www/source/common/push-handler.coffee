@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.common'
 
 
-.factory 'Push', ['App', '$cordovaPush', (App, $cordovaPush)->
+.factory 'Push', ['App', '$cordovaPush', '$rootScope', (App, $cordovaPush, $rootScope)->
 
 	Push = {}
 
@@ -19,10 +19,11 @@ angular.module 'LocalHyper.common'
 				console.log 'Push Registration Error'
 
 	Push.getPayload = (p)->
+		console.log p
 		payload = {}
 		if App.isAndroid()
 			if p.event is 'message'
-				payload = p.payload.data
+				payload = p.payload.data.data
 				payload.foreground = p.foreground
 				payload.coldstart = p.coldstart if _.has(p, 'coldstart')
 
@@ -33,9 +34,26 @@ angular.module 'LocalHyper.common'
 
 		payload
 
-	Push.handlePayload = (event, payload)->
-		console.log 'Notification received'
-		console.log payload
+	Push.handlePayload = (payload)->
+
+		inAppNotification = ->
+			$rootScope.$broadcast 'in:app:notification', payload: payload
+
+		notificationClick = ->
+			$rootScope.$broadcast 'push:notification:click', payload: payload
+
+		if App.isAndroid()
+			if payload.coldstart
+				notificationClick()
+			else if !payload.foreground and !_.isUndefined(payload.coldstart) and !payload.coldstart
+				notificationClick()
+			else if payload.foreground
+				inAppNotification()
+			else if !payload.foreground
+				inAppNotification()
+		
+		else if App.isIOS()
+			console.log 'ios'
 
 	Push
 ]
