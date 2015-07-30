@@ -88,21 +88,14 @@
 
 				<div 
 					class="row expires"
-					ng-if="view.request.status == 'cancelled' || view.request.status == 'expired';">
+					ng-if="view.request.status !== 'open';">
 					
 					<div class="col">
-						<button class="button button-outline button-assertive">
-							{{App.humanize(view.request.status)}}
-						</button>
-					</div>
-				</div>
+						<button 
+							class="button button-outline"
+							ng-class="(view.request.status == 'cancelled' 
+										|| view.request.status == 'expired') ? 'button-assertive' : 'button-balanced'">
 
-				<div 
-					class="row expires"
-					ng-if="view.request.status == 'pending_delivery';">
-					
-					<div class="col">
-						<button class="button button-outline button-balanced">
 							{{App.humanize(view.request.status)}}
 						</button>
 					</div>
@@ -137,7 +130,7 @@
 			<div
 				ng-switch-when="noError" 
 				class="card no-shadow rece-offer"
-				ng-repeat="offer in view.offers.all | limitTo: view.offers.limitTo"
+				ng-repeat="offer in view.offers.all | orderBy: 'status' | limitTo: view.offers.limitTo"
 				ng-controller="EachOfferTimeCtrl">
 
 				<div class="item item-text-wrap">
@@ -158,6 +151,22 @@
 									<span class="com">{{offer.comments}}</span>
 								</p>
 							</div>
+						</div>
+					</div>
+
+					<div 
+						class="row row-fluid offer-vals"
+						ng-if="offer.status === 'accepted'">
+
+						<div class="col col-75">
+							<h4>{{offer.seller.address.full}}</h4>
+						</div>
+						<div class="col">
+							<button 
+								class="button button-small button-assertive"
+								ng-click="view.callSeller(offer.seller.phoneNumber)">
+								CALL SELLER
+							</button>
 						</div>
 					</div>
 
@@ -187,30 +196,40 @@
 
 					<div 
 						class="row row-fluid offer-vals"
-						ng-if="offer.status !== 'open'">
+						ng-if="offer.status === 'accepted'">
 
 						<div class="col">
 							<p class="info">Price Offered</p>
 							<h2><small>Rs.</small> {{App.toINR(offer.price)}}</h2>
 						</div>
 
-						<div class="col" ng-if="offer.status === 'accepted'">
+						<div class="col">
 							<p class="info">Delivery time left</p>
-							<h2>{{offer.deliveryTimeStr}}</h2>
+							<h2>{{offer.deliveryTimeLeftStr}}</h2>
 						</div>
-						<div class="col" ng-if="offer.status === 'accepted'">
+						<div class="col">
 							Offer Status
 							<button 
 								class="button button-outline button-assertive">
 								Accepted
 							</button>
 						</div>
+					</div>
 
-						<div class="col" ng-if="offer.status === 'unaccepted'">
+					<div 
+						class="row row-fluid offer-vals"
+						ng-if="offer.status === 'unaccepted'">
+
+						<div class="col">
+							<p class="info">Price Offered</p>
+							<h2><small>Rs.</small> {{App.toINR(offer.price)}}</h2>
+						</div>
+
+						<div class="col">
 							<p class="info">Delivery time</p>
 							<h2>{{offer.deliveryTimeStr}}</h2>
 						</div>
-						<div class="col" ng-if="offer.status === 'unaccepted'">
+						<div class="col">
 							<button 
 								class="button button-outline button-balanced"
 								ng-disabled="true">
