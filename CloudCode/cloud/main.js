@@ -654,6 +654,10 @@
       innerQuery = new Parse.Query("Request");
       innerQuery.equalTo("objectId", notificationTypeId);
       notificationQuery.matchesQuery("requestObject", innerQuery);
+    } else if (notificationType === "Offer") {
+      innerQuery = new Parse.Query("Offer");
+      innerQuery.equalTo("objectId", notificationTypeId);
+      notificationQuery.matchesQuery("offerObject", innerQuery);
     }
     return notificationQuery.first().then(function(notificationObj) {
       notificationObj.set("hasSeen", hasSeen);
@@ -1053,6 +1057,39 @@
       });
     }, function(error) {
       return response.error("Failed to update offer status due to - " + error.message);
+    });
+  });
+
+  Parse.Cloud.define('getRequestForOffer', function(request, response) {
+    var offerId, queryOffer;
+    offerId = request.params.offerId;
+    queryOffer = new Parse.Query("Offer");
+    queryOffer.equalTo("objectId", offerId);
+    queryOffer.select("request");
+    queryOffer.include("request");
+    queryOffer.include("request.product");
+    return queryOffer.first().then(function(offerObj) {
+      var product, productObj, requestObj, requestResult;
+      requestObj = offerObj.get("request");
+      productObj = requestObj.get("product");
+      product = {
+        "name": productObj.get("name"),
+        "images": productObj.get("images"),
+        "mrp": productObj.get("mrp")
+      };
+      requestResult = {
+        "id": requestObj.id,
+        "product": product,
+        "status": requestObj.get("status"),
+        "address": requestObj.get("address"),
+        "comments": requestObj.get("comments"),
+        "createdAt": requestObj.createdAt,
+        "updatedAt": requestObj.updatedAt,
+        "offerCount": requestObj.get("offerCount")
+      };
+      return response.success(requestResult);
+    }, function(error) {
+      return response.error(error);
     });
   });
 

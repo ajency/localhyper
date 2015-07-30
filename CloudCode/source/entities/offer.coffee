@@ -466,6 +466,40 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
         response.error "Failed to update offer status due to - #{error.message}" 
 
 
+
+Parse.Cloud.define 'getRequestForOffer', (request, response) ->
+    offerId = request.params.offerId
+
+    queryOffer = new Parse.Query("Offer")
+    queryOffer.equalTo("objectId", offerId)
+    queryOffer.select("request")
+    queryOffer.include("request")
+    queryOffer.include("request.product")
+
+    queryOffer.first()
+    .then (offerObj) ->
+        requestObj = offerObj.get("request")
+        productObj = requestObj.get("product")
+        
+        product = 
+            "name" :productObj.get("name")
+            "images" :productObj.get("images")
+            "mrp" :productObj.get("mrp")
+        
+        requestResult = 
+            "id" : requestObj.id
+            "product" : product
+            "status" : requestObj.get("status")
+            "address" : requestObj.get("address")
+            "comments" : requestObj.get("comments")
+            "createdAt" : requestObj.createdAt
+            "updatedAt" : requestObj.updatedAt
+            "offerCount" : requestObj.get("offerCount")
+
+        response.success requestResult
+
+    , (error) ->
+        response.error error
         
    
 
