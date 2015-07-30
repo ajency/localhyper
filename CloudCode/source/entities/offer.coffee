@@ -377,6 +377,7 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
                         "deliveryTime" : offerObject.get("deliveryTime")
                         "status" : offerObject.get("status")
                         "createdAt" : offerObject.createdAt
+                        "updatedAt" : offerObject.updatedAt
 
                     offer    
 
@@ -390,24 +391,48 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
 
 Parse.Cloud.define 'acceptOffer', (request, response) ->
     offerId = request.params.offerId
+    unacceptedOfferIds = request.params.unacceptedOfferIds
+    
+    Offer = Parse.Object.extend('Offer')
 
-    # get offer update offer status to "accepted"
+    offersToBeUpdated = []
 
-    queryOffer = new Parse.Query("Offer")
-    queryOffer.equalTo("objectId" , offerId )
-    queryOffer.include("request")
-    queryOffer.include("seller")
+    acceptedOffer = 
+        "id" : offerId
+        "status" : "accepted"
 
-    queryOffer.first()
-    .then (offer)->
-        sellerObj = offer.get "seller"
-        requestObj = offer.get "request"
+    offersToBeUpdated.push acceptedOffer
 
-        offer.set "status", "accepted"
+    _.each unacceptedOfferIds , (unacceptedOfferId) ->
+        unacceptedOffer = 
+            "id" : unacceptedOfferId
+            "status" : "unaccepted"
 
-        offer.save()
-        .then (savedOffer) ->
-            # update request status to "pending_delivery"
+        offersToBeUpdated.push unacceptedOffer
+
+    offerSavedArr = []
+    _.each offersToBeUpdated, (offerObj) -> 
+        offer = new Offer()
+
+        offer.id = offerObj.id        
+        offer.set "status" , offerObj.status
+
+        offerSavedArr.push(offer) 
+
+    # save all the newly created objects
+    Parse.Object.saveAll offerSavedArr
+    .then (savedOfferObjs) ->
+        queryOffer = new Parse.Query("Offer")
+        queryOffer.equalTo("objectId" , offerId )
+        queryOffer.include("request")
+        queryOffer.include("seller")
+
+        queryOffer.first()
+        .then (acceptedOffer)->
+            sellerObj = acceptedOffer.get "seller"
+            requestObj = acceptedOffer.get "request"
+
+
             requestObj.set "status" , "pending_delivery"
             requestObj.save()
             .then (savedReq)->
@@ -419,30 +444,27 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
                     channel : 'push'
                     processed : false
                     type : "AcceptedOffer"
-                    offerObject : savedOffer
+                    offerObject : acceptedOffer
 
                 Notification = Parse.Object.extend("Notification") 
                 notification = new Notification notificationData
                 notification.save()
                 .then (notifObj) ->
                     resultObj =
-                        offerId : savedOffer.id 
-                        offerStatus : savedOffer.get("status")
-                        requestId : savedOffer.get("request").id
-                        requestStatus : savedOffer.get("request").get("status")
+                        offerId : acceptedOffer.id 
+                        offerStatus : acceptedOffer.get("status")
+                        offerUpdatedAt : acceptedOffer.updatedAt
+                        requestId : acceptedOffer.get("request").id
+                        requestStatus : acceptedOffer.get("request").get("status")
                     response.success resultObj    
                 , (error) ->
-                    response.error error               
-
-            , (error) ->
-                response.error error
-
+                    response.error error 
         , (error) ->
-            response.error error
-
-
+            response.error error                               
     , (error) ->
-        response.error error
+        response.error "Failed to update offer status due to - #{error.message}" 
+
+
         
    
 

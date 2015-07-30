@@ -961,7 +961,8 @@
           "comments": offerObject.get("comments"),
           "deliveryTime": offerObject.get("deliveryTime"),
           "status": offerObject.get("status"),
-          "createdAt": offerObject.createdAt
+          "createdAt": offerObject.createdAt,
+          "updatedAt": offerObject.updatedAt
         };
         return offer;
       });
@@ -972,18 +973,42 @@
   });
 
   Parse.Cloud.define('acceptOffer', function(request, response) {
-    var offerId, queryOffer;
+    var Offer, acceptedOffer, offerId, offerSavedArr, offersToBeUpdated, unacceptedOfferIds;
     offerId = request.params.offerId;
-    queryOffer = new Parse.Query("Offer");
-    queryOffer.equalTo("objectId", offerId);
-    queryOffer.include("request");
-    queryOffer.include("seller");
-    return queryOffer.first().then(function(offer) {
-      var requestObj, sellerObj;
-      sellerObj = offer.get("seller");
-      requestObj = offer.get("request");
-      offer.set("status", "accepted");
-      return offer.save().then(function(savedOffer) {
+    unacceptedOfferIds = request.params.unacceptedOfferIds;
+    Offer = Parse.Object.extend('Offer');
+    offersToBeUpdated = [];
+    acceptedOffer = {
+      "id": offerId,
+      "status": "accepted"
+    };
+    offersToBeUpdated.push(acceptedOffer);
+    _.each(unacceptedOfferIds, function(unacceptedOfferId) {
+      var unacceptedOffer;
+      unacceptedOffer = {
+        "id": unacceptedOfferId,
+        "status": "unaccepted"
+      };
+      return offersToBeUpdated.push(unacceptedOffer);
+    });
+    offerSavedArr = [];
+    _.each(offersToBeUpdated, function(offerObj) {
+      var offer;
+      offer = new Offer();
+      offer.id = offerObj.id;
+      offer.set("status", offerObj.status);
+      return offerSavedArr.push(offer);
+    });
+    return Parse.Object.saveAll(offerSavedArr).then(function(savedOfferObjs) {
+      var queryOffer;
+      queryOffer = new Parse.Query("Offer");
+      queryOffer.equalTo("objectId", offerId);
+      queryOffer.include("request");
+      queryOffer.include("seller");
+      return queryOffer.first().then(function(acceptedOffer) {
+        var requestObj, sellerObj;
+        sellerObj = acceptedOffer.get("seller");
+        requestObj = acceptedOffer.get("request");
         requestObj.set("status", "pending_delivery");
         return requestObj.save().then(function(savedReq) {
           var Notification, notification, notificationData;
@@ -993,30 +1018,29 @@
             channel: 'push',
             processed: false,
             type: "AcceptedOffer",
-            offerObject: savedOffer
+            offerObject: acceptedOffer
           };
           Notification = Parse.Object.extend("Notification");
           notification = new Notification(notificationData);
           return notification.save().then(function(notifObj) {
             var resultObj;
             resultObj = {
-              offerId: savedOffer.id,
-              offerStatus: savedOffer.get("status"),
-              requestId: savedOffer.get("request").id,
-              requestStatus: savedOffer.get("request").get("status")
+              offerId: acceptedOffer.id,
+              offerStatus: acceptedOffer.get("status"),
+              offerUpdatedAt: acceptedOffer.updatedAt,
+              requestId: acceptedOffer.get("request").id,
+              requestStatus: acceptedOffer.get("request").get("status")
             };
             return response.success(resultObj);
           }, function(error) {
             return response.error(error);
           });
-        }, function(error) {
-          return response.error(error);
         });
       }, function(error) {
         return response.error(error);
       });
     }, function(error) {
-      return response.error(error);
+      return response.error("Failed to update offer status due to - " + error.message);
     });
   });
 
