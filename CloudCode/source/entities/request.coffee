@@ -181,93 +181,120 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
         else
             sellerRadius = parseInt request.params.sellerRadius
         
+        # find all requests for which seller has made offer
+        innerQuerySellers = new Parse.Query(Parse.User)
+        innerQuerySellers.equalTo("objectId" , sellerId )
 
-        requestQuery = new Parse.Query("Request")
-        requestQuery.containedIn("category",sellerCategories)
-        requestQuery.containedIn("brand",sellerBrands)
-        requestQuery.equalTo("city",city)
-        requestQuery.equalTo("area",area)
-        requestQuery.equalTo("status",status)
+        offerQuery = new Parse.Query("Offer")
+        offerQuery.matchesQuery("seller",innerQuerySellers)
 
+        offerQuery.select("request")
+        offerQuery.include("request")
 
-        # get only non expired requests
-        currentDate = new Date()
-        currentTimeStamp = currentDate.getTime()
-        expiryValueInHrs = 24
-        queryDate = new Date()
-        time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
-        queryDate.setTime(time24HoursAgo)
+        offerQuery.find()
+        .then (offersMadeBySeller) ->
+            requestsWhereOfferMade = _.map(offersMadeBySeller , (offerMade) ->
+                
+                offerMade.get("request").id
 
-        requestQuery.greaterThanOrEqualTo( "createdAt", queryDate )
+            )
 
-        # requests within catchment area
-        sellerGeoPoint = new Parse.GeoPoint sellerLocation
-        requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
+            console.log "requests where offer is made start"
+            console.log requestsWhereOfferMade
+            console.log "requests where offer is made end"            
 
-        requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId")
-
-        requestQuery.include("product")
-        requestQuery.include("category")
-        requestQuery.include("category.parent_category")
-        requestQuery.include("brand")
-
-        # @todo exclude requests if offer is already made
-
-        requestQuery.find()
-        .then (filteredRequests) ->
-
-            # Product name
-            # mrp
-            # parent category name
-            # sub category name
-            # brand name
-
-            requests = []
-            _.each filteredRequests , (filteredRequest) ->
-                prodObj = filteredRequest.get("product")
-                product =
-                    "id": prodObj.id
-                    "name":prodObj.get("name")
-                    "mrp":prodObj.get("mrp")
-                    "image":prodObj.get("images")
-
-                categoryObj = filteredRequest.get("category")
-                category =
-                    "id" : categoryObj.id
-                    "name": categoryObj.get("name")
-                    "parent": (categoryObj.get("parent_category")).get("name")
-
-                brandObj = filteredRequest.get("brand")
-                brand =
-                    "id" : brandObj.id
-                    "name": brandObj.get("name")  
-
-                reuqestGeoPoint =  filteredRequest.get("addressGeoPoint")  
-                radiusDiffInKm =   reuqestGeoPoint.kilometersTo(sellerGeoPoint)            
-
-                requestObj = 
-                    id : filteredRequest.id
-                    radius : radiusDiffInKm
-                    product: product
-                    category: category
-                    brand: brand
-                    createdAt: filteredRequest.createdAt
-                    comments: filteredRequest.get("comments")  
-
-                requests.push requestObj
+            requestQuery = new Parse.Query("Request")
+            requestQuery.containedIn("category",sellerCategories)
+            requestQuery.containedIn("brand",sellerBrands)
+            requestQuery.equalTo("city",city)
+            requestQuery.equalTo("area",area)
+            requestQuery.equalTo("status",status)
 
 
-            
-            requestsResult = 
-                "city" : city
-                "area" : area
-                "radius" : sellerRadius
-                "location" : sellerLocation
-                "requests" : requests
+            # get only non expired requests
+            currentDate = new Date()
+            currentTimeStamp = currentDate.getTime()
+            expiryValueInHrs = 24
+            queryDate = new Date()
+            time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
+            queryDate.setTime(time24HoursAgo)
 
-            response.success requestsResult   
+            requestQuery.greaterThanOrEqualTo( "createdAt", queryDate )
+
+            # requests within catchment area
+            sellerGeoPoint = new Parse.GeoPoint sellerLocation
+            requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius)
+
+            requestQuery.notContainedIn("objectId", requestsWhereOfferMade)
+
+            requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId")
+
+            requestQuery.include("product")
+            requestQuery.include("category")
+            requestQuery.include("category.parent_category")
+            requestQuery.include("brand")
+
+            # @todo exclude requests if offer is already made
+
+            requestQuery.find()
+            .then (filteredRequests) ->
+
+                # Product name
+                # mrp
+                # parent category name
+                # sub category name
+                # brand name
+
+                requests = []
+                _.each filteredRequests , (filteredRequest) ->
+                    prodObj = filteredRequest.get("product")
+                    product =
+                        "id": prodObj.id
+                        "name":prodObj.get("name")
+                        "mrp":prodObj.get("mrp")
+                        "image":prodObj.get("images")
+
+                    categoryObj = filteredRequest.get("category")
+                    category =
+                        "id" : categoryObj.id
+                        "name": categoryObj.get("name")
+                        "parent": (categoryObj.get("parent_category")).get("name")
+
+                    brandObj = filteredRequest.get("brand")
+                    brand =
+                        "id" : brandObj.id
+                        "name": brandObj.get("name")  
+
+                    reuqestGeoPoint =  filteredRequest.get("addressGeoPoint")  
+                    radiusDiffInKm =   reuqestGeoPoint.kilometersTo(sellerGeoPoint)            
+
+                    requestObj = 
+                        id : filteredRequest.id
+                        radius : radiusDiffInKm
+                        product: product
+                        category: category
+                        brand: brand
+                        createdAt: filteredRequest.createdAt
+                        comments: filteredRequest.get("comments")  
+
+                    requests.push requestObj
+
+
+                
+                requestsResult = 
+                    "city" : city
+                    "area" : area
+                    "radius" : sellerRadius
+                    "location" : sellerLocation
+                    "requests" : requests
+
+                response.success requestsResult   
+            , (error) ->
+                response.error (error)            
+
         , (error) ->
-            response.error (error)
+            response.error error 
+
     , (error) ->
         response.error (error)
 
