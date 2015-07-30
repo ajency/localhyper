@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', '$timeout', function($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal, $timeout) {
+  '$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', '$timeout', '$rootScope', function($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal, $timeout, $rootScope) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -45,6 +45,11 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
           }
         }
       },
+      reFetch: function() {
+        this.canLoadMore = true;
+        this.page = 0;
+        return this.showOfferHistory();
+      },
       incrementPage: function() {
         $scope.$broadcast('scroll.refreshComplete');
         return this.page = this.page + 1;
@@ -55,8 +60,6 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       onSuccess: function(data) {
         var offerhistory;
         this.display = 'noError';
-        console.log('offer history');
-        console.log(data);
         offerhistory = data;
         if (offerhistory.length > 0) {
           if (_.size(offerhistory) < 3) {
@@ -133,10 +136,13 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return this.requestDetails.showExpiry = true;
       }
     };
-    return $scope.$on('modal.hidden', function() {
+    $scope.$on('modal.hidden', function() {
       return $timeout(function() {
         return $scope.view.requestDetails.showExpiry = false;
       }, 1000);
+    });
+    return $rootScope.$on('offer:done:succ', function() {
+      return $scope.view.reFetch();
     });
   }
 ]).directive('ajCountDown', [
