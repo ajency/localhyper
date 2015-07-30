@@ -983,14 +983,16 @@
       "status": "accepted"
     };
     offersToBeUpdated.push(acceptedOffer);
-    _.each(unacceptedOfferIds, function(unacceptedOfferId) {
-      var unacceptedOffer;
-      unacceptedOffer = {
-        "id": unacceptedOfferId,
-        "status": "unaccepted"
-      };
-      return offersToBeUpdated.push(unacceptedOffer);
-    });
+    if (unacceptedOfferIds.length > 0) {
+      _.each(unacceptedOfferIds, function(unacceptedOfferId) {
+        var unacceptedOffer;
+        unacceptedOffer = {
+          "id": unacceptedOfferId,
+          "status": "unaccepted"
+        };
+        return offersToBeUpdated.push(unacceptedOffer);
+      });
+    }
     offerSavedArr = [];
     _.each(offersToBeUpdated, function(offerObj) {
       var offer;

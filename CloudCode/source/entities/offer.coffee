@@ -403,12 +403,13 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
 
     offersToBeUpdated.push acceptedOffer
 
-    _.each unacceptedOfferIds , (unacceptedOfferId) ->
-        unacceptedOffer = 
-            "id" : unacceptedOfferId
-            "status" : "unaccepted"
+    if unacceptedOfferIds.length > 0
+        _.each unacceptedOfferIds , (unacceptedOfferId) ->
+            unacceptedOffer = 
+                "id" : unacceptedOfferId
+                "status" : "unaccepted"
 
-        offersToBeUpdated.push unacceptedOffer
+            offersToBeUpdated.push unacceptedOffer
 
     offerSavedArr = []
     _.each offersToBeUpdated, (offerObj) -> 
