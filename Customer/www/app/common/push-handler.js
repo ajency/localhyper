@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common').factory('Push', [
-  'App', '$cordovaPush', '$rootScope', function(App, $cordovaPush, $rootScope) {
+  'App', '$cordovaPush', '$rootScope', 'RequestAPI', function(App, $cordovaPush, $rootScope, RequestAPI) {
     var Push;
     Push = {};
     Push.register = function() {

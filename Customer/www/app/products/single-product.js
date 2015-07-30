@@ -35,7 +35,8 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           this.all = [];
           this.limitTo = 1;
           this.canLoadMore = false;
-          return this.get();
+          this.get();
+          return App.resize();
         },
         showAllRequests: function() {
           this.limitTo = 1000;
@@ -186,6 +187,13 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     });
     $rootScope.$on('on:session:expiry', function() {
       return $scope.view.reset();
+    });
+    $rootScope.$on('in:app:notification', function(e, obj) {
+      var payload;
+      payload = obj.payload;
+      if (payload.type === 'new_offer') {
+        return $scope.view.request.reFetch();
+      }
     });
     return $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['products', 'verify-success'], App.previousState)) {

@@ -43,6 +43,7 @@ angular.module 'LocalHyper.products'
 					@limitTo = 1
 					@canLoadMore = false
 					@get()
+					App.resize()
 
 				showAllRequests : ->
 					@limitTo = 1000
@@ -166,6 +167,11 @@ angular.module 'LocalHyper.products'
 
 		$rootScope.$on 'on:session:expiry', ->
 			$scope.view.reset()
+
+		$rootScope.$on 'in:app:notification', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'new_offer'
+				$scope.view.request.reFetch()
 		
 		$scope.$on '$ionicView.beforeEnter', ->
 			if _.contains ['products', 'verify-success'], App.previousState

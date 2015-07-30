@@ -2,7 +2,8 @@ angular.module 'LocalHyper.categories', []
 
 
 .controller 'CategoriesCtrl', ['$scope', 'App', 'CategoriesAPI', 'Push'
-	, ($scope, App, CategoriesAPI, Push)->
+	, 'RequestAPI', '$rootScope'
+	, ($scope, App, CategoriesAPI, Push, RequestAPI, $rootScope)->
 
 		$scope.view = 
 			display: 'loader'
@@ -11,7 +12,16 @@ angular.module 'LocalHyper.categories', []
 
 			init : ->
 				Push.register()
+				@getNotifications()
 				@getCategories()
+
+			getNotifications : ->
+				RequestAPI.getNotifications()
+				.then (offerIds)=>
+					notifications = _.size offerIds
+					if notifications > 0
+						App.notification.badge = true
+						App.notification.count = notifications
 
 			getCategories : ->
 				CategoriesAPI.getAll()
@@ -37,6 +47,17 @@ angular.module 'LocalHyper.categories', []
 				CategoriesAPI.subCategories 'set', children
 				App.navigate 'products', categoryID: categoryID
 
+
+		$rootScope.$on 'in:app:notification', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'new_offer'
+				$scope.view.getNotifications()
+
+		$rootScope.$on 'push:notification:click', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'new_offer'
+				RequestAPI.requestDetails 'set', pushOfferId: payload.id
+				App.navigate 'request-details'
 
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()

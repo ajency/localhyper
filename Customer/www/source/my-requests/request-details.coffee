@@ -25,11 +25,6 @@ angular.module 'LocalHyper.myRequests'
 					$timeout -> 
 						App.resize()
 					, 500
-			
-			offers:
-				all: []
-				limitTo: 1
-				received: true
 
 			cancelRequest: 
 				footer: false
@@ -40,11 +35,73 @@ angular.module 'LocalHyper.myRequests'
 						@footer = true
 					else
 						@footer = false
+			
+			offers:
+				id: null
+				display: 'none'
+				errorType: ''
+				all: []
+				limitTo: 1
+
+				showAll : ->
+					@limitTo = 100
+					App.resize()
+
+				get: ->
+					@display = 'loader'
+					RequestAPI.getOffers $scope.view.request.id
+					.then (offers)=>
+						@onSuccess offers
+					, (error)=>
+						@onError error
+					.finally ->
+						App.resize()
+
+				getSilently : ->
+					RequestAPI.getOffers $scope.view.request.id
+					.then (offers)=>
+						@onSuccess offers
+
+				onSuccess : (offers)->
+					console.log offers
+					@display = 'noError'
+					@all = offers
+					$scope.view.cancelRequest.set()
+
+				onError : (type)->
+					@display = 'error'
+					@errorType = type
+
+			
 
 			init : ->
-				console.log $scope.view.request
+				if _.has(@request, 'pushOfferId')
+					@offers.id = @request.pushOfferId
+					@getRequestForOffer() 
+				else
+					@display = 'noError'
+					@setRequestTime()
+					@offers.get()
+
+			getRequestForOffer : ->
+				@display = 'loader'
+				RequestAPI.getRequestForOffer @offers.id
+				.then (request)=>
+					@onSuccess request
+				, (error)=>
+					@onError error
+				.finally ->
+					App.resize()
+
+			onSuccess : (request)->
+				@display = 'noError'
+				@request = request
 				@setRequestTime()
-				@getOffers()
+				@offers.get()
+
+			onError : (type)->
+				@display = 'error'
+				@errorType = type
 
 			setRequestTime : ->
 				set = => 
@@ -53,33 +110,6 @@ angular.module 'LocalHyper.myRequests'
 				@interval = $interval =>
 					set()
 				, 60000
-
-			showAllOffers : ->
-				@offers.limitTo = 100
-				App.resize()
-
-			getOffers : ->
-				RequestAPI.getOffers (@request.id)
-				.then (offers)=>
-					@onSuccess offers
-				, (error)=>
-					@onError error
-				.finally ->
-					App.resize()
-
-			onSuccess : (offers)->
-				console.log offers
-				@display = 'noError'
-				@offers.all = offers
-				@cancelRequest.set()
-
-			onError : (type)->
-				@display = 'error'
-				@errorType = type
-
-			onTapToRetry : ->
-				@display = 'loader'
-				@getOffers()
 
 			onRequestExpiry : ->
 				console.log 'onRequestExpiry'
@@ -135,8 +165,15 @@ angular.module 'LocalHyper.myRequests'
 				telURI = "tel:#{sellerNumber}"
 				document.location.href = telURI
 
+
+		inAppNotificationEvent = $rootScope.$on 'in:app:notification', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'new_offer'
+				if _.size($scope.view.offers.all) is 0 then $scope.view.offers.get()
+				else $scope.view.offers.getSilently()
 		
 		$scope.$on '$destroy', ->
+			inAppNotificationEvent()
 			$interval.cancel $scope.view.interval
 ]
 
