@@ -177,8 +177,8 @@ angular.module 'LocalHyper.myRequests'
 	
 	#Offer & left delivery time
 	setTime = ->
-		$scope.offer.deliveryTimeLeftStr = getDeliveryTimeLeft $scope.offer.updatedAt
 		$scope.offer.timeStr = TimeString.get $scope.offer.createdAt
+		$scope.offer.deliveryTimeLeftStr = getDeliveryTimeLeft $scope.offer.updatedAt
 
 	setTime()
 	interval = $interval setTime, 60000
@@ -201,7 +201,7 @@ angular.module 'LocalHyper.myRequests'
 			total = moment(createdAt).add 24, 'hours'
 			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
 
-			# totalStr = '2015/07/29 17:2:00'
+			# totalStr = '2015/07/30 14:5:00'
 
 			$(el).countdown totalStr, (event)->
 				$(el).html event.strftime('%-H:%-M:%-S')
