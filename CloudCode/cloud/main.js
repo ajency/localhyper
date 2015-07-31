@@ -295,9 +295,15 @@
           brand.id = brandObj.objectId;
         }
         brand.set("name", brandObj.name);
-        image = {
-          "src": brandObj.imageUrl
-        };
+        if (!_.isNull(brandObj.imageUrl)) {
+          image = {
+            "src": brandObj.imageUrl
+          };
+        } else {
+          image = {
+            "src": "https://placehold.it/350x150?text=Brand"
+          };
+        }
         brand.set("image", image);
         return brandsSavedArr.push(brand);
       }

@@ -25,17 +25,21 @@ Parse.Cloud.define 'brandImport', (request, response) ->
 
     _.each brands, (brandObj) ->
         
-        if !_.isNull(brandObj.name) 
+        if !_.isNull(brandObj.name)
             brand = new Brand()
 
-            if !_.isNull(brandObj.objectId) 
+            if !_.isNull(brandObj.objectId)
                 brand.id = brandObj.objectId
 
             
             brand.set "name", brandObj.name
 
-            image = 
-            	"src" : brandObj.imageUrl
+            if !_.isNull(brandObj.imageUrl)
+                image = 
+                	"src" : brandObj.imageUrl
+            else
+                image = 
+                    "src" : "https://placehold.it/350x150?text=Brand"
 
             brand.set "image", image
 
