@@ -216,7 +216,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       case 'day':
         unit = value === 1 ? 'day' : 'days';
     }
-    $scope.offer.deliveryTimeStr = "" + value + " " + unit;
+    $scope.offer.deliveryTimeStr = value + " " + unit;
     getDeliveryTimeLeft = function(obj) {
       var day, daysLeft, duration, format, hours, hoursLeft, hr, min, minsLeft, str, timeLeft, totalTime, updatedAt;
       hours = deliveryTime.unit === 'hr' ? value : value * 24;
@@ -230,13 +230,13 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       minsLeft = parseInt(duration.asMinutes().toFixed(0));
       if (minsLeft < 60) {
         min = minsLeft === 1 ? 'min' : 'mins';
-        str = minsLeft >= 0 ? "" + minsLeft + " " + min : "0";
+        str = minsLeft >= 0 ? minsLeft + " " + min : "0";
       } else if (hoursLeft < 24) {
         hr = hoursLeft === 1 ? 'hr' : 'hrs';
-        str = "" + hoursLeft + " " + hr;
+        str = hoursLeft + " " + hr;
       } else {
         day = daysLeft === 1 ? 'day' : 'days';
-        str = "" + daysLeft + " " + day;
+        str = daysLeft + " " + day;
       }
       return str;
     };
