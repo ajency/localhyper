@@ -87,7 +87,9 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
-      return viewData.enableBack = true;
+      if (!viewData.enableBack) {
+        return viewData.enableBack = true;
+      }
     });
   }
 ]);
