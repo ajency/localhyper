@@ -151,8 +151,10 @@
               });
               return Parse.Object.saveAll(filterableAttribArr).then(function(savedFilters) {
                 category.set("filterable_attributes", savedFilters);
-                primaryAttributeSavedArr.push(primaryobj);
-                category.set("primary_attributes", primaryAttributeSavedArr);
+                if (!(_.isEmpty(primaryobj))) {
+                  primaryAttributeSavedArr.push(primaryobj);
+                  category.set("primary_attributes", primaryAttributeSavedArr);
+                }
                 return category.save().then(function(categoryObj) {
                   var successObj;
                   successObj = {
@@ -174,8 +176,10 @@
           });
         } else {
           category.set("secondary_attributes", objs);
-          primaryAttributeSavedArr.push(primaryobj);
-          category.set("primary_attributes", primaryAttributeSavedArr);
+          if (!(_.isEmpty(primaryobj))) {
+            primaryAttributeSavedArr.push(primaryobj);
+            category.set("primary_attributes", primaryAttributeSavedArr);
+          }
           return category.save().then(function(categoryObj) {
             var successObj;
             successObj = {
@@ -240,7 +244,7 @@
       promise.resolve(primaryAttributeObj);
     } else {
       pAttrib = new Attributes();
-      if (primaryAttributeObj.objectId !== "") {
+      if (!_.isNull(primaryAttributeObj.objectId)) {
         pAttrib.id = primaryAttributeObj.objectId;
       }
       pAttrib.set("name", primaryAttributeObj.name);

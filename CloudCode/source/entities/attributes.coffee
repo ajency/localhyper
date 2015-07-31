@@ -145,8 +145,10 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
         # save/updated all the newly attributes
         Parse.Object.saveAll (attributeSavedArr)
         .then (objs) ->
+
             if !(_.isEmpty(primaryobj))
                 objs.push primaryobj
+
 
             # get category and update its filterable column
             Category = Parse.Object.extend('Category')
@@ -183,9 +185,10 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
                         .then (savedFilters) ->
                             category.set "filterable_attributes" , savedFilters
                            
-                            # set primary attribute for category
-                            primaryAttributeSavedArr.push primaryobj   
-                            category.set "primary_attributes" , primaryAttributeSavedArr
+                            # set primary attribute for category only if not empty
+                            if !(_.isEmpty(primaryobj))
+                                primaryAttributeSavedArr.push primaryobj   
+                                category.set "primary_attributes" , primaryAttributeSavedArr
 
                             category.save()
                             .then (categoryObj)->
@@ -208,8 +211,9 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
             else
                 category.set "secondary_attributes" , objs  
 
-                primaryAttributeSavedArr.push primaryobj   
-                category.set "primary_attributes" , primaryAttributeSavedArr  
+                if !(_.isEmpty(primaryobj))
+                    primaryAttributeSavedArr.push primaryobj   
+                    category.set "primary_attributes" , primaryAttributeSavedArr
 
                 category.save()
                 .then (categoryObj)->
@@ -279,7 +283,7 @@ setPrimaryAttribute =  (primaryAttributeObj ) ->
         pAttrib = new Attributes()
 
         # if(attributeObj.hasOwnProperty("objectId"))
-        if primaryAttributeObj.objectId isnt ""
+        if !_.isNull(primaryAttributeObj.objectId)
             pAttrib.id = primaryAttributeObj.objectId
 
 
