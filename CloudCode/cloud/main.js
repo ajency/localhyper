@@ -1121,6 +1121,52 @@
     });
   });
 
+  Parse.Cloud.define('isOfferNotificationSeen', function(request, response) {
+    var innerQueryRequest, queryOffer, requestId, type, userId;
+    userId = request.params.userId;
+    requestId = request.params.requestId;
+    type = "Offer";
+    queryOffer = new Parse.Query("Offer");
+    innerQueryRequest = new Parse.Query("Request");
+    innerQueryRequest.equalTo("objectId", requestId);
+    queryOffer.matchesQuery("request", innerQueryRequest);
+    return queryOffer.first().then(function(offerObj) {
+      var hasSeen, innerQueryOffer, innerUserQuery, offerId, queryNotification, result;
+      if (_.isEmpty(offerObj)) {
+        hasSeen = true;
+        result = {
+          "requestId": requestId,
+          "offerId": "",
+          "hasSeen": hasSeen
+        };
+        return response.success(result);
+      } else {
+        offerId = offerObj.id;
+        queryNotification = new Parse.Query("Notification");
+        queryNotification.equalTo("type", "Offer");
+        innerQueryOffer = new Parse.Query("Offer");
+        innerQueryOffer.equalTo("objectId", offerId);
+        queryNotification.matchesQuery("offerObject", innerQueryOffer);
+        innerUserQuery = new Parse.Query(Parse.User);
+        innerUserQuery.equalTo("objectId", userId);
+        queryNotification.matchesQuery("recipientUser", innerUserQuery);
+        return queryNotification.first().then(function(notificationObj) {
+          hasSeen = notificationObj.get("hasSeen");
+          result = {
+            "requestId": requestId,
+            "offerId": offerId,
+            "hasSeen": hasSeen
+          };
+          return response.success(result);
+        }, function(error) {
+          return response.error("1" + error);
+        });
+      }
+    }, function(error) {
+      return response.error("2" + error);
+    });
+  });
+
   Parse.Cloud.job('productImport', function(request, response) {
     var ProductItem, categoryId, productSavedArr, products, queryCategory;
     ProductItem = Parse.Object.extend('ProductItem');

@@ -500,6 +500,61 @@ Parse.Cloud.define 'getRequestForOffer', (request, response) ->
 
     , (error) ->
         response.error error
-        
-   
 
+# check if offer notification has been seen or not
+Parse.Cloud.define 'isOfferNotificationSeen', (request, response) ->
+    userId = request.params.userId
+    requestId = request.params.requestId
+
+    type = "Offer"
+
+    # find first offer for that request
+    # query offer and get request associated to it
+    queryOffer = new Parse.Query("Offer")
+
+    innerQueryRequest = new Parse.Query("Request")
+    innerQueryRequest.equalTo("objectId",requestId)
+    queryOffer.matchesQuery("request", innerQueryRequest)
+
+    queryOffer.first()
+    .then (offerObj) ->
+        if _.isEmpty(offerObj)
+            hasSeen = true
+            result =
+                "requestId" : requestId
+                "offerId" : ""
+                "hasSeen" : hasSeen
+            response.success result
+        else
+            offerId = offerObj.id
+
+            queryNotification = new Parse.Query("Notification")
+            queryNotification.equalTo("type", "Offer" )
+
+            innerQueryOffer = new Parse.Query("Offer")
+            innerQueryOffer.equalTo("objectId",offerId)
+
+            queryNotification.matchesQuery("offerObject",innerQueryOffer)
+
+            innerUserQuery = new Parse.Query(Parse.User)
+            innerUserQuery.equalTo("objectId",userId)
+
+            queryNotification.matchesQuery("recipientUser",innerUserQuery) 
+
+
+            queryNotification.first()
+            .then (notificationObj) ->
+                hasSeen = notificationObj.get("hasSeen") 
+                
+                result =
+                    "requestId" : requestId
+                    "offerId" : offerId
+                    "hasSeen" : hasSeen
+                
+                response.success result                      
+
+            , (error) ->
+                response.error "1"+error
+
+    , (error) ->
+        response.error "2"+error
