@@ -127,6 +127,11 @@ angular.module 'LocalHyper.profile', []
 					CToast.show 'Please wait, getting location details...'
 
 
+
+		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
+			if !viewData.enableBack
+				viewData.enableBack = true
+
 		$scope.$on '$destroy', ->
 			$scope.view.location.modal.remove()
 ]

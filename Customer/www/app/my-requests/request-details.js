@@ -71,13 +71,28 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           console.log(offers);
           this.display = 'noError';
           this.all = offers;
+          this.markOffersAsSeen();
           return $scope.view.cancelRequest.set();
         },
         onError: function(type) {
           this.display = 'error';
           return this.errorType = type;
         },
-        markOffersAsSeen: function() {}
+        markOffersAsSeen: function() {
+          return RequestAPI.isNotificationSeen($scope.view.request.id).then((function(_this) {
+            return function(obj) {
+              var offerIds;
+              if (!obj.hasSeen) {
+                offerIds = _.pluck(_this.all, 'id');
+                return RequestAPI.updateNotificationStatus(offerIds).then(function() {
+                  return _.each(_this.all, function(offer) {
+                    return App.notification.decrement();
+                  });
+                });
+              }
+            };
+          })(this));
+        }
       },
       init: function() {
         if (_.has(this.request, 'pushOfferId')) {
