@@ -74,7 +74,11 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
       var payload;
       payload = obj.payload;
       if (payload.type === 'new_offer') {
-        return App.notification.increment();
+        if (App.notification.count === 0) {
+          return $scope.view.getNotifications();
+        } else {
+          return App.notification.increment();
+        }
       }
     });
     $rootScope.$on('push:notification:click', function(e, obj) {

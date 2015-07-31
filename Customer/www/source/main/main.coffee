@@ -62,7 +62,9 @@ angular.module 'LocalHyper.main', []
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
 			if payload.type is 'new_offer'
-				App.notification.increment()
+				if App.notification.count is 0
+					$scope.view.getNotifications()
+				else App.notification.increment()
 		
 		$rootScope.$on 'push:notification:click', (e, obj)->
 			payload = obj.payload

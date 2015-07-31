@@ -1,8 +1,9 @@
 angular.module 'LocalHyper.auth'
 
 
-.controller 'VerifyAutoCtrl', ['$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout', 'CToast'
-	, ($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast)->
+.controller 'VerifyAutoCtrl', ['$scope', 'App', 'SmsAPI', 'AuthAPI', 'User'
+	, '$timeout', 'CToast', '$rootScope'
+	, ($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast, $rootScope)->
 
 		$scope.view =
 			display: 'noError'
@@ -52,7 +53,8 @@ angular.module 'LocalHyper.auth'
 					@cancelTimeout()
 
 			startSmsReception : ->
-				onSuccess = (smsContent)=>
+				smsplugin = cordova.require @smsPluginSrc
+				smsplugin.startReception (smsContent)=>
 					content = smsContent.split '>'
 					content = content[1]
 					if s.contains content, 'Welcome to ShopOye'
@@ -63,14 +65,9 @@ angular.module 'LocalHyper.auth'
 						@smsCode = code
 						@verifySmsCode()
 
-				if App.isWebView()
-					smsplugin = cordova.require @smsPluginSrc
-					smsplugin.startReception onSuccess
-
 			stopSmsReception : ->
-				if App.isWebView()
-					smsplugin = cordova.require @smsPluginSrc
-					smsplugin.stopReception()
+				smsplugin = cordova.require @smsPluginSrc
+				smsplugin.stopReception()
 
 			verifySmsCode : ->
 				SmsAPI.verifySMSCode @user.phone, @smsCode
@@ -82,9 +79,8 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
-					# App.goBack -2
-					App.navigate 'verify-success'
 					$rootScope.$broadcast '$user:registration:success'
+					App.navigate 'verify-success'
 				, (error)=>
 					@onError error, 'register'
 
@@ -103,17 +99,16 @@ angular.module 'LocalHyper.auth'
 			callSupport : ->
 				telURI = "tel:#{SUPPORT_NUMBER}"
 				document.location.href = telURI
-					   
 
 		
 		$scope.$on '$ionicView.beforeEnter', ->
 			$scope.view.user = User.info 'get'
 
 		$scope.$on '$ionicView.enter', ->
-			$scope.view.startSmsReception()
+			$scope.view.startSmsReception() if App.isWebView()
 			$scope.view.isExistingUser()
 
 		$scope.$on '$ionicView.leave', ->
-			$scope.view.stopSmsReception()
+			$scope.view.stopSmsReception()  if App.isWebView()
 			$scope.view.cancelTimeout()
 ]
