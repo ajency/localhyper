@@ -242,13 +242,14 @@ class AttributeController extends Controller
 				$attributeSheet->setTitle('Attributes');
  
 				$attributes = $this->getCategoryAttributes($catId);
+				// dd($attributes);
 				$categoryName = $attributes['categoryName'];
 				
 				
 				$headers = array(
 					array('','',$categoryName),
-					array ('Config', 'objectId', 'Attribute Name', 'Group', 'Unit', 'Is Filternable', 'Is Primary'),
-					array('Config', 'objectId', 'name', 'group', 'unit', 'is_filterable', 'is_primary')
+					array ('Config', 'objectId', 'Attribute Name', 'Type', 'Group', 'Unit', 'Is Filternable', 'Is Primary'),
+					array('Config', 'objectId', 'name', 'type', 'group', 'unit', 'is_filterable', 'is_primary')
 					);
  
 				$attributeSheet->fromArray($headers, ' ', 'A1');
@@ -560,7 +561,8 @@ class AttributeController extends Controller
 		public function importAttributes($sheet)
 		{
 				$highestRow = $sheet->getHighestRow(); 
-				$highestColumn = $sheet->getHighestColumn();
+				// $highestColumn = $sheet->getHighestColumn();
+				$highestColumn = 'H';
 
 				$headingsArray = $sheet->rangeToArray('A3:'.$highestColumn.'3',null, true, true, true);
 				$headingsArray = $headingsArray[3];
@@ -580,6 +582,8 @@ class AttributeController extends Controller
 				}
 				
 				$filterableAttribute= $nonFilterableAttribute= $primaryAttributes= [];
+				$primaryIsFilterable = true ;
+				
 				foreach($namedDataArray as $attributeData)
 				{  
 						$is_filterable = $attributeData['is_filterable'];
@@ -588,37 +592,85 @@ class AttributeController extends Controller
 						unset($attributeData['is_primary']);
 						
 						if (!(is_null(max($attributeData)))) {
-							if($is_primary == 'yes')
-							{
-								$primaryAttributes= $attributeData;
-								continue;
-							}
 							
-							if($is_filterable == 'yes')
-								$filterableAttribute[]= $attributeData;
-							else
-								$nonFilterableAttribute[]= $attributeData; 
+							// if($is_primary == 'yes' )
+							// {
+							// 	echo "<pre>";
+							// 	echo "is primary <br/>";
+							// 	print_r($attributeData);
+							// 	echo "</pre>";								
+							// 	$primaryAttributes= $attributeData;
+
+							// 	if($is_filterable == "yes"){
+							// 		$filterableAttribute[]= $attributeData;
+							// 	}
+							// 	else if(){
+
+							// 	}
+							// 	continue;
+							// }
+							
+							if($is_filterable == 'yes'){
+								// echo "<pre>";
+								// echo "is filterable <br/>";
+								// print_r($attributeData);
+								// echo "</pre>";
+								
+
+								// if it is also primary then set it as primary
+								if($is_primary == 'yes' ){
+									$primaryAttributes= $attributeData;
+
+									$primaryIsFilterable = true ;
+								}
+								else{
+									$filterableAttribute[]= $attributeData;
+								}
+								
+							}
+
+							else{
+								// echo "<pre>";
+								// echo "is not filterable <br/>";
+								// print_r($attributeData);
+								// echo "</pre>";								
+								
+								if($is_primary == 'yes' ){
+									$primaryAttributes= $attributeData;
+									$primaryIsFilterable = false ; 
+								}	
+								else{
+									$nonFilterableAttribute[]= $attributeData; 
+								}							
+							}
 						}
 
 				}
+
+				
 				
 				// pass primary attributes in the last call and pass empty array in previous calls
 				//filterable Attributes
+				$primaryFilterableAttributeObj = ($primaryIsFilterable) ? $primaryAttributes : array() ;
 				$filterableData =['attributes' => $filterableAttribute,
 												 'categoryId' => $config[0],
 													'isFilterable' => true,
-													'primaryAttributeObj'=>array(),
+													'primaryAttributeObj'=>$primaryFilterableAttributeObj,
 												]; 
-               
+               	
 				$this->parseAttributeImport($filterableData);
+
+
 				
+				$primaryNonFilterableAttributeObj = ($primaryIsFilterable) ? array() : $primaryAttributes ; 
 				 //Non filterable Attributes
 				$nonFilterableAttribute =['attributes' => $nonFilterableAttribute,
 												 'categoryId' => $config[0],
 												 'isFilterable' => false,
-												 'primaryAttributeObj'=>$primaryAttributes,          
+												 'primaryAttributeObj'=>$primaryNonFilterableAttributeObj,          
 												]; 
-
+																
+				
 				$this->parseAttributeImport($nonFilterableAttribute);
 				
 				return true;
@@ -724,6 +776,7 @@ class AttributeController extends Controller
 				$attributes[] = array(
 								'id' =>$filterable_attribute->getObjectId(),
 								'name' => $filterable_attribute->get('name'),  
+								'type' => $filterable_attribute->get('type'),  
 								'group' => $filterable_attribute->get('group'),
 								'unit' => $filterable_attribute->get('unit'),
 								'filterable' => 'yes',
@@ -731,7 +784,7 @@ class AttributeController extends Controller
 								);
 
 			}
- 
+ 			
 			foreach ($secondary_attributes as $secondary_attribute) {
 					if($secondary_attribute==null)
 							continue;
@@ -739,6 +792,7 @@ class AttributeController extends Controller
 				$attributes[] = array(
 								'id' =>$secondary_attribute->getObjectId(),
 								'name' => $secondary_attribute->get('name'),
+								'type' => $secondary_attribute->get('type'),
 								'group' => $secondary_attribute->get('group'),
 								'unit' => $secondary_attribute->get('unit'),
 								'filterable' => 'no',
@@ -752,6 +806,8 @@ class AttributeController extends Controller
 								'categoryName' =>  $categoryObject->get("name"), 
 								'attributes' =>  $attributes, 
 								);
+
+
 			
 			return $result;
 		}  
@@ -813,8 +869,11 @@ class AttributeController extends Controller
 			$base_url = "https://api.parse.com/1";
 
 			$post_url = $base_url."/".$parseFunctType."/".$functionName;
-				
+			
+
 			$data_string = json_encode($data); 
+
+			// dd($data_string);	
 
 			// -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
 			// -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \

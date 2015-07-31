@@ -194,6 +194,10 @@ class FormatPhpExcel
 						$label = 'value';
 						$options = 'yes,no';
 						self::single_cell_dropdown($sheet, $cell, $label, $options);
+					}else if($value == 'type'){
+						$label = 'type';
+						$options = 'select,text';
+						self::single_cell_dropdown($sheet, $cell, $label, $options);
 					}
 				}else if($type == 'Products'){
 					if($value == 'Brand'){
