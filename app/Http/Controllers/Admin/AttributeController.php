@@ -842,6 +842,7 @@ class AttributeController extends Controller
 			$response =  json_encode($resultjson);
 			$response = json_decode($response,true); 
 			$final_result = [];
+			$filteredAttrib = [];
 
 			if($sheetType == "attributeValues") {
 			  	
