@@ -118,10 +118,13 @@ class AttributeController extends Controller
 					'filterableAttributes' => true,
 					'secondaryAttributes' => true,
 					];
-				$attributeValueData = $this->getCategoryAttributeValues($categoryData);//dd($attributeValueData);
+				$attributeValueData = $this->getCategoryAttributeValues($categoryData, "attributeValues");
+
 				$headers = $data = $attributeValues= $headerFlag =[];
 
 				$attributes_label = [];
+
+				// dd($attributeValueData['result']);
 				
 				if(isset($attributeValueData['result']))
 				{  
@@ -812,7 +815,7 @@ class AttributeController extends Controller
 			return $result;
 		}  
 
-		public function getCategoryAttributeValues($categoryData){
+		public function getCategoryAttributeValues($categoryData, $sheetType = "index"){
 			// $categoryData = array (
 			//   'categoryId' => 'bOEz9mBh5Q',
 			//   'filterableAttributes' => true,
@@ -824,7 +827,22 @@ class AttributeController extends Controller
 			$resultjson = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
 
 			$response =  json_encode($resultjson);
-			$response = json_decode($response,true);    
+			$response = json_decode($response,true); 
+			$final_result = [];
+
+			if($sheetType == "attributeValues") {
+			  	
+				foreach ($response["result"]["attributes"] as $attributeArr) {
+					
+					if ($attributeArr['type'] == "select") {
+						$filteredAttrib[] = $attributeArr;
+					}
+
+ 				}
+ 				$response["result"]["attributes"] = $filteredAttrib;
+			
+			}
+
 			
 			return $response;
 		} 
