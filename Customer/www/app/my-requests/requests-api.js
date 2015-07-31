@@ -96,6 +96,20 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
       });
       return defer.promise;
     };
+    RequestAPI.isNotificationSeen = function(requestId) {
+      var defer, params;
+      defer = $q.defer();
+      params = {
+        "userId": User.getId(),
+        "requestId": requestId
+      };
+      $http.post('functions/isOfferNotificationSeen', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
     RequestAPI.updateNotificationStatus = function(offerIds) {
       var defer, params;
       defer = $q.defer();

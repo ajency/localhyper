@@ -66,6 +66,7 @@ angular.module 'LocalHyper.myRequests'
 					console.log offers
 					@display = 'noError'
 					@all = offers
+					@markOffersAsSeen()
 					$scope.view.cancelRequest.set()
 
 				onError : (type)->
@@ -73,6 +74,13 @@ angular.module 'LocalHyper.myRequests'
 					@errorType = type
 
 				markOffersAsSeen : ->
+					RequestAPI.isNotificationSeen $scope.view.request.id
+					.then (obj)=>
+						if !obj.hasSeen
+							offerIds = _.pluck @all, 'id'
+							RequestAPI.updateNotificationStatus offerIds
+							.then =>
+								_.each @all, (offer)-> App.notification.decrement()
 
 			
 

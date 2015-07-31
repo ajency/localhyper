@@ -102,6 +102,21 @@ angular.module 'LocalHyper.myRequests'
 
 		defer.promise
 
+	RequestAPI.isNotificationSeen = (requestId)->
+		defer = $q.defer()
+
+		params = 
+			"userId": User.getId()
+			"requestId": requestId
+
+		$http.post 'functions/isOfferNotificationSeen', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
 	RequestAPI.updateNotificationStatus = (offerIds)->
 		defer = $q.defer()
 

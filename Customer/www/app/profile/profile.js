@@ -160,6 +160,11 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
         }
       }
     };
+    $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
+      if (!viewData.enableBack) {
+        return viewData.enableBack = true;
+      }
+    });
     return $scope.$on('$destroy', function() {
       return $scope.view.location.modal.remove();
     });
