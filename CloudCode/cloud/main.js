@@ -75,7 +75,8 @@
           attributes = _.map(final_attributes, function(attribute) {
             return attribute = {
               "id": attribute.id,
-              "name": attribute.get("name")
+              "name": attribute.get("name"),
+              "type": attribute.get("type")
             };
           });
           result = {

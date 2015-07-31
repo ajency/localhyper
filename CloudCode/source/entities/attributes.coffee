@@ -86,6 +86,7 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
                 attribute = 
                     "id" : attribute.id
                     "name" : attribute.get("name")
+                    "type" : attribute.get("type")
             )
 
 
