@@ -289,16 +289,18 @@
     categoryId = request.params.categoryId;
     _.each(brands, function(brandObj) {
       var brand, image;
-      brand = new Brand();
-      if (brandObj.objectId !== "") {
-        brand.id = brandObj.objectId;
+      if (!_.isNull(brandObj.name)) {
+        brand = new Brand();
+        if (!_.isNull(brandObj.objectId)) {
+          brand.id = brandObj.objectId;
+        }
+        brand.set("name", brandObj.name);
+        image = {
+          "src": brandObj.imageUrl
+        };
+        brand.set("image", image);
+        return brandsSavedArr.push(brand);
       }
-      brand.set("name", brandObj.name);
-      image = {
-        "src": brandObj.imageUrl
-      };
-      brand.set("image", image);
-      return brandsSavedArr.push(brand);
     });
     return Parse.Object.saveAll(brandsSavedArr, {
       success: function(objs) {

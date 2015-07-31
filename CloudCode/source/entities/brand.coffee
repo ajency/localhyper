@@ -24,20 +24,22 @@ Parse.Cloud.define 'brandImport', (request, response) ->
     categoryId =  request.params.categoryId
 
     _.each brands, (brandObj) ->
-        brand = new Brand()
-
-        if (brandObj.objectId isnt "") 
-            brand.id = brandObj.objectId
-
         
-        brand.set "name", brandObj.name
+        if !_.isNull(brandObj.name) 
+            brand = new Brand()
 
-        image = 
-        	"src" : brandObj.imageUrl
+            if !_.isNull(brandObj.objectId) 
+                brand.id = brandObj.objectId
 
-        brand.set "image", image
+            
+            brand.set "name", brandObj.name
 
-        brandsSavedArr.push(brand)
+            image = 
+            	"src" : brandObj.imageUrl
+
+            brand.set "image", image
+
+            brandsSavedArr.push(brand)
         
 
     # save all the newly created objects
