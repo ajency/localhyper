@@ -45,8 +45,13 @@ angular.module 'LocalHyper.requestsOffers'
 						App.resize()
 
 			reFetch : ->
-				@canLoadMore = true
+				console.log('reff0')
+				@display = 'loader'
+				@errorType = ''
+				@requests = []
 				@page = 0
+				@canLoadMore = true
+				@refresh = false
 				@showOfferHistory()			
 
 			incrementPage : ->
@@ -122,11 +127,8 @@ angular.module 'LocalHyper.requestsOffers'
 				$scope.view.requestDetails.showExpiry = false
 			, 1000
 
-		$rootScope.$on 'offer:done:succ', ->
+		$rootScope.$on 'offer:done:success', ->
 			$scope.view.reFetch()
-			
-			
-	
 ]
 
 .directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->

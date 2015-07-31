@@ -105,7 +105,7 @@ angular.module 'LocalHyper.requestsOffers'
 						.then (data)=>
 							@modal.hide()
 							CToast.show 'Your offer has been made'
-							$rootScope.$broadcast 'offer:done:succ'
+							$rootScope.$broadcast 'offer:done:success'
 						, (type)=>
 							CToast.show 'Failed to make offer, please try again'
 						.finally ->

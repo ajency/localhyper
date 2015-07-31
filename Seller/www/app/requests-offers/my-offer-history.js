@@ -46,8 +46,13 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         }
       },
       reFetch: function() {
-        this.canLoadMore = true;
+        console.log('reff0');
+        this.display = 'loader';
+        this.errorType = '';
+        this.requests = [];
         this.page = 0;
+        this.canLoadMore = true;
+        this.refresh = false;
         return this.showOfferHistory();
       },
       incrementPage: function() {
@@ -141,7 +146,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return $scope.view.requestDetails.showExpiry = false;
       }, 1000);
     });
-    return $rootScope.$on('offer:done:succ', function() {
+    return $rootScope.$on('offer:done:success', function() {
       return $scope.view.reFetch();
     });
   }
