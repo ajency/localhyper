@@ -210,19 +210,21 @@
     categoryId = request.params.categoryId;
     _.each(attributeValues, function(attributeValObj) {
       var attributePointer, attributeValue, value;
-      attributeValue = new AttributeValues();
-      if (attributeValObj.objectId !== "") {
-        attributeValue.id = attributeValObj.objectId;
+      if ((!_.isNull(attributeValObj.attributeId)) && (!_.isNull(attributeValObj.value))) {
+        attributeValue = new AttributeValues();
+        if (!_.isNull(attributeValObj.objectId)) {
+          attributeValue.id = attributeValObj.objectId;
+        }
+        value = String(attributeValObj.value);
+        attributeValue.set("value", value);
+        attributePointer = {
+          "__type": "Pointer",
+          "className": "Attributes",
+          "objectId": attributeValObj.attributeId
+        };
+        attributeValue.set("attribute", attributePointer);
+        return attributeValSavedArr.push(attributeValue);
       }
-      value = String(attributeValObj.value);
-      attributeValue.set("value", value);
-      attributePointer = {
-        "__type": "Pointer",
-        "className": "Attributes",
-        "objectId": attributeValObj.attributeId
-      };
-      attributeValue.set("attribute", attributePointer);
-      return attributeValSavedArr.push(attributeValue);
     });
     return Parse.Object.saveAll(attributeValSavedArr, {
       success: function(objs) {

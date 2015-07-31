@@ -244,22 +244,24 @@ Parse.Cloud.define 'attributeValueImport', (request, response) ->
     categoryId =  request.params.categoryId
 
     _.each attributeValues, (attributeValObj) ->
-        attributeValue = new AttributeValues()
-
-        if attributeValObj.objectId isnt ""
-            attributeValue.id = attributeValObj.objectId
-
-        value = String attributeValObj.value
-        attributeValue.set "value", value
-
-        attributePointer = 
-            "__type" : "Pointer",
-            "className":"Attributes",
-            "objectId":attributeValObj.attributeId            
         
-        attributeValue.set "attribute", attributePointer
+        if (!_.isNull(attributeValObj.attributeId)) and (!_.isNull(attributeValObj.value))
+            attributeValue = new AttributeValues()
 
-        attributeValSavedArr.push(attributeValue)
+            if !_.isNull(attributeValObj.objectId)
+                attributeValue.id = attributeValObj.objectId
+
+            value = String attributeValObj.value
+            attributeValue.set "value", value
+
+            attributePointer = 
+                "__type" : "Pointer",
+                "className":"Attributes",
+                "objectId":attributeValObj.attributeId            
+            
+            attributeValue.set "attribute", attributePointer
+
+            attributeValSavedArr.push(attributeValue)
         
 
     # save all the newly created objects
