@@ -504,7 +504,8 @@ class AttributeController extends Controller
 		
 		public function importAttributeValues($sheet){
 				$highestRow = $sheet->getHighestRow(); 
-				$highestColumn = $sheet->getHighestColumn();
+				$highestColumn = $sheet->getHighestDataColumn();
+
 
 				$headingsArray = $sheet->rangeToArray('A3:'.$highestColumn.'3',null, true, true, true);
 				$headingsArray = $headingsArray[3];
@@ -520,43 +521,55 @@ class AttributeController extends Controller
 								 }
 				}
 				$attributeValues=$arr=[]; 
+				$attributeValues['attributeValues'] = [];
+
 				foreach($namedDataArray as $namedData)
 				{
 						$i=1; 
 
-						foreach($namedData as $key=>$value)
-						{ 
+						if (!(is_null(max($namedData)))) {
 
-								if($i%2)
-								{
-										if($value==''){
-											$i++;
-											continue;
-										}
-												
-										
-										$dataKey = explode("(",$key);
+							foreach($namedData as $key=>$value)
+							{ 
 
-										$dataattributeId = explode(")",$dataKey[1]); 
-										$attributeId = $dataattributeId[0];
-										$attributeValues['attributeValues'][] = ['objectId'=>'',
-																					'attributeId'=>$attributeId,
-																					'value'=>$value];
-								}
-								else
-								{
-										$value = $value;
-										$attributeValueKey = count($attributeValues['attributeValues']);
-										$attributeValues['attributeValues'][($attributeValueKey-1)]['objectId']=$value;
-								}
+									if($i%2)
+									{
+											if($value==''){
+												$i++;
+												continue;
+											}
+													
+											
+											$dataKey = explode("(",$key);
 
- 
-							 $i++; 
+											$dataattributeId = explode(")",$dataKey[1]); 
+											$attributeId = $dataattributeId[0];
+											$attributeValues['attributeValues'][] = ['objectId'=>'',
+																						'attributeId'=>$attributeId,
+																						'value'=>$value];
+									}
+									else
+									{
+
+										// $dec = str_replace( ',', '', $value );
+
+										// if( is_numeric( $dec ) ) {
+										// 	$value = $dec;
+										// }
+											$value = $value;
+											$attributeValueKey = count($attributeValues['attributeValues']);
+											$attributeValues['attributeValues'][($attributeValueKey-1)]['objectId']=$value;
+									}
+
+	 
+								 $i++; 
+							}
+
 						}
 
 				}
-	
-				 $this->parseAttributeValueImport($attributeValues);
+
+				$this->parseAttributeValueImport($attributeValues);
 				
 				return true;
 		}
