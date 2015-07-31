@@ -1,5 +1,5 @@
 angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
-  '$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout', 'CToast', function($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast) {
+  '$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout', 'CToast', '$rootScope', function($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast, $rootScope) {
     $scope.view = {
       display: 'noError',
       smsCode: '',
@@ -61,8 +61,9 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
         })(this));
       },
       startSmsReception: function() {
-        var onSuccess, smsplugin;
-        onSuccess = (function(_this) {
+        var smsplugin;
+        smsplugin = cordova.require(this.smsPluginSrc);
+        return smsplugin.startReception((function(_this) {
           return function(smsContent) {
             var code, content;
             content = smsContent.split('>');
@@ -76,18 +77,12 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
               return _this.verifySmsCode();
             }
           };
-        })(this);
-        if (App.isWebView()) {
-          smsplugin = cordova.require(this.smsPluginSrc);
-          return smsplugin.startReception(onSuccess);
-        }
+        })(this));
       },
       stopSmsReception: function() {
         var smsplugin;
-        if (App.isWebView()) {
-          smsplugin = cordova.require(this.smsPluginSrc);
-          return smsplugin.stopReception();
-        }
+        smsplugin = cordova.require(this.smsPluginSrc);
+        return smsplugin.stopReception();
       },
       verifySmsCode: function() {
         return SmsAPI.verifySMSCode(this.user.phone, this.smsCode).then((function(_this) {
@@ -104,8 +99,8 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
-          App.navigate('verify-success');
-          return $rootScope.$broadcast('$user:registration:success');
+          $rootScope.$broadcast('$user:registration:success');
+          return App.navigate('verify-success');
         }, (function(_this) {
           return function(error) {
             return _this.onError(error, 'register');
@@ -135,11 +130,15 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
       return $scope.view.user = User.info('get');
     });
     $scope.$on('$ionicView.enter', function() {
-      $scope.view.startSmsReception();
+      if (App.isWebView()) {
+        $scope.view.startSmsReception();
+      }
       return $scope.view.isExistingUser();
     });
     return $scope.$on('$ionicView.leave', function() {
-      $scope.view.stopSmsReception();
+      if (App.isWebView()) {
+        $scope.view.stopSmsReception();
+      }
       return $scope.view.cancelTimeout();
     });
   }
