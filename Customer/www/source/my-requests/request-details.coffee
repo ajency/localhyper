@@ -72,6 +72,8 @@ angular.module 'LocalHyper.myRequests'
 					@display = 'error'
 					@errorType = type
 
+				markOffersAsSeen : ->
+
 			
 
 			init : ->

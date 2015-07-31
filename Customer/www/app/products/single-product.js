@@ -12,7 +12,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         active: false,
         limitTo: 1,
         canLoadMore: false,
-        error: false,
+        display: 'none',
         onScrollComplete: function() {
           return $scope.$broadcast('scroll.infiniteScrollComplete');
         },
@@ -28,13 +28,14 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           this.active = false;
           this.limitTo = 1;
           this.canLoadMore = false;
-          return this.error = false;
+          return this.display = 'none';
         },
         reFetch: function() {
           this.page = 0;
           this.all = [];
           this.limitTo = 1;
           this.canLoadMore = false;
+          this.display = 'loader';
           this.get();
           return App.resize();
         },
@@ -68,6 +69,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           })(this));
         },
         success: function(data, limit) {
+          this.display = 'noError';
           if (_.size(data) > 0) {
             if (_.size(data) < limit) {
               this.canLoadMore = false;
@@ -81,13 +83,13 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         },
         onError: function(error) {
           console.log(error);
-          this.error = true;
+          this.display = 'error';
           return this.canLoadMore = false;
         },
         onTryAgain: function() {
+          this.display = 'noError';
           this.page = 0;
           this.all = [];
-          this.error = false;
           return this.canLoadMore = true;
         },
         onCardClick: function(request) {
@@ -127,6 +129,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         this.display = 'noError';
         this.request.checkIfActive();
         if (User.isLoggedIn()) {
+          this.request.display = 'loader';
           return this.request.get();
         }
       },

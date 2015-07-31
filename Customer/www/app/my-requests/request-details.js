@@ -76,7 +76,8 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         onError: function(type) {
           this.display = 'error';
           return this.errorType = type;
-        }
+        },
+        markOffersAsSeen: function() {}
       },
       init: function() {
         if (_.has(this.request, 'pushOfferId')) {

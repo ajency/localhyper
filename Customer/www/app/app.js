@@ -18,9 +18,6 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
         }
       }
     };
-    $rootScope.$on('$user:registration:success', function() {
-      return App.notification.icon = true;
-    });
     App.logo = {
       small: true
     };

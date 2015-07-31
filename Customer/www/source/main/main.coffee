@@ -2,16 +2,26 @@ angular.module 'LocalHyper.main', []
 
 
 .controller 'SideMenuCtrl', ['$scope', 'App', '$ionicPopover', '$rootScope'
-	, '$ionicSideMenuDelegate', '$cordovaSocialSharing', '$cordovaAppRate'
+	, '$ionicSideMenuDelegate', '$cordovaSocialSharing', '$cordovaAppRate', 'User', 'Push', 'RequestAPI'
 	, ($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate
-	, $cordovaSocialSharing, $cordovaAppRate)->
+	, $cordovaSocialSharing, $cordovaAppRate, User, Push, RequestAPI)->
 
 		$scope.view =
 			userPopover: null
 
 			init : ->
+				Push.register()
 				@loadPopOver()
+				@getNotifications() if User.isLoggedIn()
 				$ionicSideMenuDelegate.edgeDragThreshold true
+
+			getNotifications : ->
+				RequestAPI.getNotifications()
+				.then (offerIds)=>
+					notifications = _.size offerIds
+					if notifications > 0
+						App.notification.badge = true
+						App.notification.count = notifications
 
 			loadPopOver : ->
 				$ionicPopover.fromTemplateUrl 'views/user-popover.html',
@@ -43,11 +53,27 @@ angular.module 'LocalHyper.main', []
 			onRateUs : ->
 				@menuClose()
 				$cordovaAppRate.promptForRating(true) if App.isWebView()
+		
 
+		$rootScope.$on '$user:registration:success', ->
+			App.notification.icon = true
+			$scope.view.getNotifications()
+
+		$rootScope.$on 'in:app:notification', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'new_offer'
+				App.notification.increment()
+		
+		$rootScope.$on 'push:notification:click', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'new_offer'
+				RequestAPI.requestDetails 'set', pushOfferId: payload.id
+				App.navigate 'request-details'
 		
 		$rootScope.$on 'on:session:expiry', ->
 			Parse.User.logOut()
 			App.notification.icon = false
+			App.notification.badge = false
 ]
 
 

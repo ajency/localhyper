@@ -25,9 +25,7 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 			@count = @count - 1
 			@badge = false if @count is 0
 
-	$rootScope.$on '$user:registration:success', ->
-		App.notification.icon = true
-
+	
 	#Small app logo
 	App.logo = small: true
 	

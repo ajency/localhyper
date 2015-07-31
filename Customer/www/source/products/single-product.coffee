@@ -19,7 +19,7 @@ angular.module 'LocalHyper.products'
 				active: false
 				limitTo: 1
 				canLoadMore: false
-				error: false
+				display: 'none'
 
 				onScrollComplete : ->
 					$scope.$broadcast 'scroll.infiniteScrollComplete'
@@ -35,13 +35,14 @@ angular.module 'LocalHyper.products'
 					@active = false
 					@limitTo = 1
 					@canLoadMore = false
-					@error = false
+					@display = 'none'
 
 				reFetch : ->
 					@page = 0
 					@all = []
 					@limitTo = 1
 					@canLoadMore = false
+					@display = 'loader'
 					@get()
 					App.resize()
 
@@ -68,6 +69,7 @@ angular.module 'LocalHyper.products'
 						App.resize()
 
 				success : (data, limit)->
+					@display = 'noError'
 					if _.size(data) > 0
 						if _.size(data) < limit then @canLoadMore = false
 						else @onScrollComplete()
@@ -76,13 +78,13 @@ angular.module 'LocalHyper.products'
 
 				onError : (error)->
 					console.log error
-					@error = true
+					@display = 'error'
 					@canLoadMore = false
 
 				onTryAgain : ->
+					@display = 'noError'
 					@page = 0
 					@all = []
-					@error = false
 					@canLoadMore = true
 
 				onCardClick : (request)->
@@ -115,7 +117,9 @@ angular.module 'LocalHyper.products'
 				@footer = true
 				@display = 'noError'
 				@request.checkIfActive()
-				@request.get() if User.isLoggedIn()
+				if User.isLoggedIn()
+					@request.display = 'loader'
+					@request.get()
 				
 			onError: (type)->
 				@display = 'error'

@@ -121,29 +121,32 @@
 			</aj-error>
 
 		</ion-list>
-
+		
+		<br>
 		
 		<ion-list ng-switch="view.offers.display">
 
 			<ion-spinner
-				class="aj-spinner"
+				class="aj-verify-spinner"
 				ng-switch-when="loader">
 			</ion-spinner>
+			
+			<div ng-switch-when="noError" >
+				<div 
+					class="row"
+					ng-if="view.offers.all.length > 0;">
 
-			<div 
-				class="row"
-				ng-if="view.offers.all.length > 0;">
-
-				<div class="col">
-					<p>Received Offers <b>({{view.offers.all.length}})</b></p>
+					<div class="col">
+						<p>Received Offers <b>({{view.offers.all.length}})</b></p>
+					</div>
 				</div>
-			</div>
 
-			<div 
-				class="row"
-				ng-if="view.offers.all.length == 0 && view.request.status === 'open';">
-				<div class="col">
-					<h3>We have sent your request to sellers, they will soon send their prices</h3>
+				<div 
+					class="row"
+					ng-if="view.offers.all.length == 0 && view.request.status === 'open';">
+					<div class="col">
+						<h3>We have sent your request to sellers, they will soon send their prices</h3>
+					</div>
 				</div>
 			</div>
 

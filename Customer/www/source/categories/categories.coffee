@@ -1,66 +1,43 @@
 angular.module 'LocalHyper.categories', []
 
 
-.controller 'CategoriesCtrl', ['$scope', 'App', 'CategoriesAPI', 'Push'
-	, 'RequestAPI', '$rootScope'
-	, ($scope, App, CategoriesAPI, Push, RequestAPI, $rootScope)->
+.controller 'CategoriesCtrl', ['$scope', 'App', 'CategoriesAPI', ($scope, App, CategoriesAPI)->
 
-		$scope.view = 
-			display: 'loader'
-			errorType: ''
-			parentCategories: []
+	$scope.view = 
+		display: 'loader'
+		errorType: ''
+		parentCategories: []
 
-			init : ->
-				Push.register()
-				@getNotifications()
-				@getCategories()
+		init : ->
+			@getCategories()
 
-			getNotifications : ->
-				RequestAPI.getNotifications()
-				.then (offerIds)=>
-					notifications = _.size offerIds
-					if notifications > 0
-						App.notification.badge = true
-						App.notification.count = notifications
+		getCategories : ->
+			CategoriesAPI.getAll()
+			.then (data)=>
+				console.log data
+				@onSuccess data
+			, (error)=>
+				@onError error
 
-			getCategories : ->
-				CategoriesAPI.getAll()
-				.then (data)=>
-					console.log data
-					@onSuccess data
-				, (error)=>
-					@onError error
+		onSuccess : (data)->
+			@display = 'noError'
+			@parentCategories = data
+		
+		onError: (type)->
+			@display = 'error'
+			@errorType = type
 
-			onSuccess : (data)->
-				@display = 'noError'
-				@parentCategories = data
-			
-			onError: (type)->
-				@display = 'error'
-				@errorType = type
+		onTapToRetry : ->
+			@display = 'loader'
+			@getCategories()
 
-			onTapToRetry : ->
-				@display = 'loader'
-				@getCategories()
+		onSubcategoryClick : (children, categoryID)->
+			CategoriesAPI.subCategories 'set', children
+			App.navigate 'products', categoryID: categoryID
+	
 
-			onSubcategoryClick : (children, categoryID)->
-				CategoriesAPI.subCategories 'set', children
-				App.navigate 'products', categoryID: categoryID
-
-
-		$rootScope.$on 'in:app:notification', (e, obj)->
-			payload = obj.payload
-			if payload.type is 'new_offer'
-				$scope.view.getNotifications()
-
-		$rootScope.$on 'push:notification:click', (e, obj)->
-			payload = obj.payload
-			if payload.type is 'new_offer'
-				RequestAPI.requestDetails 'set', pushOfferId: payload.id
-				App.navigate 'request-details'
-
-		$scope.$on '$ionicView.afterEnter', ->
-			App.hideSplashScreen()
+	$scope.$on '$ionicView.afterEnter', ->
+		App.hideSplashScreen()
 ]
 
 
