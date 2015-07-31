@@ -82,7 +82,7 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
             Parse.Promise.as()
 
             attributes = _.map(final_attributes, (attribute) ->
-            
+                
                 attribute = 
                     "id" : attribute.id
                     "name" : attribute.get("name")
@@ -110,31 +110,32 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
 
     # prepare attributes array to be saved/updated from input data
     _.each attributes, (attributeObj) ->
-        attribute = new Attributes()
+        if !_.isNull(attributeObj.name)
+            attribute = new Attributes()
 
-        # if(attributeObj.hasOwnProperty("objectId"))
-        if attributeObj.objectId isnt ""
-            attribute.id = attributeObj.objectId
+            # if(attributeObj.hasOwnProperty("objectId"))
+            if !_.isNull(attributeObj.objectId)
+                attribute.id = attributeObj.objectId
 
 
-        attribute.set "name", attributeObj.name
+            attribute.set "name", attributeObj.name
 
-        attribute.set "group", attributeObj.group
-        
-        if attributeObj.unit isnt ""       
-            attribute.set "unit", attributeObj.unit
+            attribute.set "group", attributeObj.group
+            
+            if !_.isNull(attributeObj.unit)     
+                attribute.set "unit", attributeObj.unit
 
-        if(attributeObj.hasOwnProperty("display_type"))
-            attribute.set "display_type", attributeObj.display_type
-        else
-            attribute.set "display_type", "checkbox" 
+            if(attributeObj.hasOwnProperty("display_type"))
+                attribute.set "display_type", attributeObj.display_type
+            else
+                attribute.set "display_type", "checkbox" 
 
-        if(attributeObj.hasOwnProperty("type"))
-            attribute.set "type", attributeObj.type
-        else
-            attribute.set "type", "select"         
+            if(attributeObj.hasOwnProperty("type"))
+                attribute.set "type", attributeObj.type
+            else
+                attribute.set "type", "select"         
 
-        attributeSavedArr.push(attribute)    
+            attributeSavedArr.push(attribute)    
 
     # set primary_attributes column for category
     primaryAttributeSavedArr = []
@@ -276,7 +277,8 @@ setPrimaryAttribute =  (primaryAttributeObj ) ->
     Attributes = Parse.Object.extend('Attributes')
     promise = new Parse.Promise()
 
-    if _.isEmpty(primaryAttributeObj)
+    if _.isEmpty(primaryAttributeObj) or _.isNull(primaryAttributeObj.name)
+        primaryAttributeObj = {}
         promise.resolve primaryAttributeObj
 
     else

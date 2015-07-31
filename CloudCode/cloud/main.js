@@ -101,26 +101,28 @@
     primaryAttributeObj = request.params.primaryAttributeObj;
     _.each(attributes, function(attributeObj) {
       var attribute;
-      attribute = new Attributes();
-      if (attributeObj.objectId !== "") {
-        attribute.id = attributeObj.objectId;
+      if (!_.isNull(attributeObj.name)) {
+        attribute = new Attributes();
+        if (!_.isNull(attributeObj.objectId)) {
+          attribute.id = attributeObj.objectId;
+        }
+        attribute.set("name", attributeObj.name);
+        attribute.set("group", attributeObj.group);
+        if (!_.isNull(attributeObj.unit)) {
+          attribute.set("unit", attributeObj.unit);
+        }
+        if (attributeObj.hasOwnProperty("display_type")) {
+          attribute.set("display_type", attributeObj.display_type);
+        } else {
+          attribute.set("display_type", "checkbox");
+        }
+        if (attributeObj.hasOwnProperty("type")) {
+          attribute.set("type", attributeObj.type);
+        } else {
+          attribute.set("type", "select");
+        }
+        return attributeSavedArr.push(attribute);
       }
-      attribute.set("name", attributeObj.name);
-      attribute.set("group", attributeObj.group);
-      if (attributeObj.unit !== "") {
-        attribute.set("unit", attributeObj.unit);
-      }
-      if (attributeObj.hasOwnProperty("display_type")) {
-        attribute.set("display_type", attributeObj.display_type);
-      } else {
-        attribute.set("display_type", "checkbox");
-      }
-      if (attributeObj.hasOwnProperty("type")) {
-        attribute.set("type", attributeObj.type);
-      } else {
-        attribute.set("type", "select");
-      }
-      return attributeSavedArr.push(attribute);
     });
     primaryAttributeSavedArr = [];
     return setPrimaryAttribute(primaryAttributeObj).then(function(primaryobj) {
@@ -241,7 +243,8 @@
     var Attributes, pAttrib, promise;
     Attributes = Parse.Object.extend('Attributes');
     promise = new Parse.Promise();
-    if (_.isEmpty(primaryAttributeObj)) {
+    if (_.isEmpty(primaryAttributeObj) || _.isNull(primaryAttributeObj.name)) {
+      primaryAttributeObj = {};
       promise.resolve(primaryAttributeObj);
     } else {
       pAttrib = new Attributes();
