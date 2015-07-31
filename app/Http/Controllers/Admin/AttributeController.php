@@ -845,15 +845,20 @@ class AttributeController extends Controller
 			$filteredAttrib = [];
 
 			if($sheetType == "attributeValues") {
-			  	
-				foreach ($response["result"]["attributes"] as $attributeArr) {
-					
-					if ($attributeArr['type'] == "select") {
-						$filteredAttrib[] = $attributeArr;
-					}
+			  	if (isset($response["result"])) {
+			  		foreach ($response["result"]["attributes"] as $attributeArr) {
 
- 				}
- 				$response["result"]["attributes"] = $filteredAttrib;
+			  			if ($attributeArr['type'] == "select") {
+			  				$filteredAttrib[] = $attributeArr;
+			  			}
+
+			  		}
+			  		$response["result"]["attributes"] = $filteredAttrib;
+			  	}
+			  	else{
+			  		$response = array('result' =>  array('attributes' => [], "attributeValues" => [] ) );
+			  	}
+
 			
 			}
 
