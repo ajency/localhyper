@@ -62,8 +62,7 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
-					# App.navigate 'new-requests', {}, {animate: true, back: false}
-					App.navigate 'verify-success'
+					App.navigate 'verify-success', {}, {animate: true, back: false} 
 				, (error)=>
 					@onError error, 'register'
 				.finally ->
