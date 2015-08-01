@@ -357,13 +357,14 @@ class ProductController extends Controller
         $highestRow = $sheet->getHighestRow(); 
         $highestColumn = $sheet->getHighestColumn();
 
-        $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true); 
-        $headingsArray = $headingsArray[1];
-        $headerData =  array_values($headingsArray); 
+        $headingsArray = $sheet->rangeToArray('A2:'.$highestColumn.'2',null, true, true, true); 
+        $headingsArray = $headingsArray[2];
+        $headerData =  array_values($headingsArray);
+
 
         $r = -1;
         $namedDataArray = $config =array();
-        for ($row = 2; $row <= $highestRow; ++$row) {
+        for ($row = 3; $row <= $highestRow; ++$row) {
           $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
 
           ++$r;
@@ -376,6 +377,7 @@ class ProductController extends Controller
 
         }
       }
+
 
             /****
             *  (ProductID ProductName ModelNumber Image mrp ,popularity Brand BrandID Group) = 9
@@ -408,6 +410,7 @@ class ProductController extends Controller
                 $data = $namedData;
 
                 $attributeIds = [];
+
                 foreach($attributeIdKeys as $key)
                 {
                   $attributeName = $headerData[$key]; 
@@ -416,13 +419,14 @@ class ProductController extends Controller
                     $attributeId = $dataattributeId[0];// echo $attributeId; exit;
                     
                     $attributeIds[$attributeId] = $indexedData[$key];
-                }//dd($attributeIds);
+                }
 
                 $products[$i]['objectId'] = $data['ProductID'];
                 $products[$i]['name'] = $data['ProductName'];
                 $products[$i]['model_number'] = $data['ModelNumber'];
                 $products[$i]['images'][] = ['src'=>$data['Image']];
                 $products[$i]['attrs']= $attributeIds;
+                $products[$i]['text_attributes']= $attributeIds;
                 $products[$i]['mrp'] = $data['MRP'];
                 $products[$i]['brand'] = $data['BrandID'];
                 $products[$i]['popularity'] = $data['Popularity'];
