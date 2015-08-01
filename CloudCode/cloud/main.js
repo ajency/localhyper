@@ -1176,69 +1176,86 @@
     queryCategory = new Parse.Query("Category");
     queryCategory.equalTo("objectId", categoryId);
     queryCategory.include("filterable_attributes");
+    queryCategory.include("secondary_attributes");
     queryCategory.include("filterable_attributes.filterAttribute");
     queryCategory.include("primary_attributes");
-    queryCategory.select("filterable_attributes", "primary_attributes");
+    queryCategory.select("filterable_attributes", "primary_attributes", "secondary_attributes");
     return queryCategory.first().then(function(categoryObj) {
+      var countFilterableAttrib, countSecAttrib, totalAttrCount;
+      totalAttrCount = 0;
+      if (!_.isUndefined(categoryObj.get("filterable_attributes"))) {
+        countFilterableAttrib = categoryObj.get("filterable_attributes").length;
+      }
+      if (!_.isUndefined(categoryObj.get("secondary_attributes"))) {
+        countSecAttrib = categoryObj.get("secondary_attributes").length;
+      }
+      totalAttrCount = countFilterableAttrib + countSecAttrib;
       _.each(products, function(product) {
-        var attributeValueArr, brandObj, categoryPrimaryAttribute, primaryAttribObj, primaryAttributeValueArr, primeAttrib, productAttributes, productFilters, productItem;
-        productItem = new ProductItem();
-        if (product.objectId !== "") {
-          productItem.id = product.objectId;
-        }
-        productAttributes = product.attrs;
-        productItem.set("name", product.name);
-        productItem.set("images", product.images);
-        productItem.set("model_number", String(product.model_number));
-        productItem.set("mrp", parseInt(product.mrp));
-        productItem.set("popularity", product.popularity);
-        productItem.set("group", product.group);
-        brandObj = {
-          "__type": "Pointer",
-          "className": "Brand",
-          "objectId": product.brand
-        };
-        productItem.set("brand", brandObj);
-        productItem.set("category", categoryObj);
-        categoryPrimaryAttribute = categoryObj.get("primary_attributes");
-        if (!_.isUndefined(categoryPrimaryAttribute)) {
-          primeAttrib = _.first(categoryPrimaryAttribute);
-          primaryAttributeValueArr = [];
-          primaryAttribObj = {
-            "__type": "Pointer",
-            "className": "AttributeValues",
-            "objectId": productAttributes[primeAttrib.id]
-          };
-          primaryAttributeValueArr.push(primaryAttribObj);
-          productItem.set("primaryAttributes", primaryAttributeValueArr);
-        }
-        productFilters = categoryObj.get("filterable_attributes");
-        _.each(productFilters, function(productFilter) {
-          var AttributeValues, columnName, columnPosition, fattributeValues, filterAttribId, filterValueToSet;
-          columnPosition = productFilter.get("filterColumn");
-          columnName = "filter" + columnPosition;
-          filterAttribId = productFilter.get("filterAttribute").id;
-          filterValueToSet = productAttributes[filterAttribId];
-          AttributeValues = Parse.Object.extend("AttributeValues");
-          fattributeValues = new AttributeValues();
-          fattributeValues.id = filterValueToSet;
-          if (!_.isUndefined(filterValueToSet)) {
-            return productItem.set(columnName, fattributeValues);
+        var attributeValueArr, brandObj, categoryPrimaryAttribute, lengthOfAttr, lengthOfTextAttr, primaryAttribObj, primaryAttributeValueArr, primeAttrib, productAttributes, productFilters, productItem, validAttrLength;
+        lengthOfAttr = _.keys(product.attrs).length;
+        lengthOfTextAttr = _.keys(product.text_attributes).length;
+        validAttrLength = lengthOfAttr + lengthOfTextAttr;
+        if (!_.isNull(product.name) && (validAttrLength === totalAttrCount) && !_.isNull(product.brandId)) {
+          productItem = new ProductItem();
+          if (!_.isNull(product.objectId)) {
+            productItem.id = product.objectId;
           }
-        });
-        attributeValueArr = [];
-        _.each(productAttributes, function(attrib) {
-          var attribObj;
-          console.log(attrib);
-          attribObj = {
+          productAttributes = product.attrs;
+          productItem.set("name", product.name);
+          productItem.set("images", product.images);
+          productItem.set("model_number", String(product.model_number));
+          productItem.set("mrp", parseInt(product.mrp));
+          productItem.set("popularity", product.popularity);
+          productItem.set("group", product.group);
+          brandObj = {
             "__type": "Pointer",
-            "className": "AttributeValues",
-            "objectId": attrib
+            "className": "Brand",
+            "objectId": product.brandId
           };
-          return attributeValueArr.push(attribObj);
-        });
-        productItem.set("attrs", attributeValueArr);
-        return productSavedArr.push(productItem);
+          productItem.set("brand", brandObj);
+          productItem.set("category", categoryObj);
+          if (!(_.isEmpty(product.text_attributes))) {
+            productItem.set("textAttributes", product.text_attributes);
+          }
+          categoryPrimaryAttribute = categoryObj.get("primary_attributes");
+          if (!_.isUndefined(categoryPrimaryAttribute)) {
+            primeAttrib = _.first(categoryPrimaryAttribute);
+            primaryAttributeValueArr = [];
+            primaryAttribObj = {
+              "__type": "Pointer",
+              "className": "AttributeValues",
+              "objectId": productAttributes[primeAttrib.id]
+            };
+            primaryAttributeValueArr.push(primaryAttribObj);
+            productItem.set("primaryAttributes", primaryAttributeValueArr);
+          }
+          productFilters = categoryObj.get("filterable_attributes");
+          _.each(productFilters, function(productFilter) {
+            var AttributeValues, columnName, columnPosition, fattributeValues, filterAttribId, filterValueToSet;
+            columnPosition = productFilter.get("filterColumn");
+            columnName = "filter" + columnPosition;
+            filterAttribId = productFilter.get("filterAttribute").id;
+            filterValueToSet = productAttributes[filterAttribId];
+            AttributeValues = Parse.Object.extend("AttributeValues");
+            fattributeValues = new AttributeValues();
+            fattributeValues.id = filterValueToSet;
+            if (!_.isUndefined(filterValueToSet)) {
+              return productItem.set(columnName, fattributeValues);
+            }
+          });
+          attributeValueArr = [];
+          _.each(productAttributes, function(attrib) {
+            var attribObj;
+            attribObj = {
+              "__type": "Pointer",
+              "className": "AttributeValues",
+              "objectId": attrib
+            };
+            return attributeValueArr.push(attribObj);
+          });
+          productItem.set("attrs", attributeValueArr);
+          return productSavedArr.push(productItem);
+        }
       });
       return Parse.Object.saveAll(productSavedArr).then(function(objs) {
         return response.success("Successfully added the products");

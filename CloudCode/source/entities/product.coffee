@@ -13,90 +13,108 @@ Parse.Cloud.job 'productImport', (request, response) ->
     queryCategory.equalTo("objectId", categoryId)
 
     queryCategory.include("filterable_attributes")
+    queryCategory.include("secondary_attributes")
     queryCategory.include("filterable_attributes.filterAttribute")
     queryCategory.include("primary_attributes")
-    queryCategory.select("filterable_attributes","primary_attributes")    
+    queryCategory.select("filterable_attributes","primary_attributes", "secondary_attributes")    
 
     queryCategory.first()
 
     .then (categoryObj) ->
-        _.each products, (product) -> 
-            productItem = new ProductItem()
-
-            if product.objectId isnt ""
-                productItem.id = product.objectId
-
-            productAttributes = product.attrs
-
-            # set direct columns of product item
-            productItem.set "name", product.name
-            productItem.set "images", product.images
-            productItem.set "model_number", String (product.model_number)
-            productItem.set "mrp", parseInt product.mrp
-            productItem.set "popularity", product.popularity
-            productItem.set "group", product.group 
-
-            # set product brand
-            brandObj =
-                "__type" : "Pointer",
-                "className":"Brand",
-                "objectId":product.brand                    
-
-            productItem.set "brand", brandObj        
-
-            productItem.set "category", categoryObj 
-
-
-            # get primary attribute from category and set that as primary attribute column 
-            categoryPrimaryAttribute = categoryObj.get("primary_attributes")
+        totalAttrCount = 0
+        if !_.isUndefined(categoryObj.get("filterable_attributes"))
+            countFilterableAttrib = categoryObj.get("filterable_attributes").length
             
-            if !_.isUndefined(categoryPrimaryAttribute)
-                primeAttrib =_.first(categoryPrimaryAttribute)
-                primaryAttributeValueArr = []
-                primaryAttribObj = 
-                    "__type" : "Pointer",
-                    "className":"AttributeValues",
-                    "objectId":productAttributes[primeAttrib.id]
-                    
-                primaryAttributeValueArr.push(primaryAttribObj) 
+        if !_.isUndefined(categoryObj.get("secondary_attributes"))
+            countSecAttrib = categoryObj.get("secondary_attributes").length
 
-                productItem.set "primaryAttributes", primaryAttributeValueArr 
+        totalAttrCount = countFilterableAttrib + countSecAttrib
 
-            # set product filters columns
-            productFilters =  categoryObj.get "filterable_attributes"
+        _.each products, (product) ->
+            lengthOfAttr = _.keys(product.attrs).length
+            lengthOfTextAttr = _.keys(product.text_attributes).length
+            validAttrLength = lengthOfAttr + lengthOfTextAttr
             
-            _.each productFilters, (productFilter) ->
-                columnPosition = productFilter.get("filterColumn") 
-                columnName = "filter#{columnPosition}"
-                filterAttribId = productFilter.get("filterAttribute").id
+            if !_.isNull(product.name) and (validAttrLength is totalAttrCount) and !_.isNull(product.brandId) 
+                productItem = new ProductItem()
 
-        
-                filterValueToSet = productAttributes[filterAttribId]
+                if !_.isNull(product.objectId)
+                    productItem.id = product.objectId
 
-                AttributeValues = Parse.Object.extend("AttributeValues")
-                fattributeValues = new AttributeValues()
-                fattributeValues.id = filterValueToSet
-               
+                productAttributes = product.attrs
 
-                if !_.isUndefined(filterValueToSet)
-                    productItem.set columnName, fattributeValues 
+                # set direct columns of product item
+                productItem.set "name", product.name
+                productItem.set "images", product.images
+                productItem.set "model_number", String (product.model_number)
+                productItem.set "mrp", parseInt product.mrp
+                productItem.set "popularity", product.popularity
+                productItem.set "group", product.group 
 
-            # set all attributes of product 
-            attributeValueArr = []
-
-            _.each productAttributes, (attrib) ->
-                console.log attrib
-                attribObj = 
+                # set product brand
+                brandObj =
                     "__type" : "Pointer",
-                    "className":"AttributeValues",
-                    "objectId":attrib
+                    "className":"Brand",
+                    "objectId":product.brandId                    
 
-                attributeValueArr.push(attribObj)
+                productItem.set "brand", brandObj        
 
-            productItem.set "attrs", attributeValueArr                                          
+                productItem.set "category", categoryObj 
+
+                # set text attributes
+                if !(_.isEmpty(product.text_attributes))
+                    productItem.set "textAttributes" , product.text_attributes
 
 
-            productSavedArr.push(productItem)  
+                # get primary attribute from category and set that as primary attribute column 
+                categoryPrimaryAttribute = categoryObj.get("primary_attributes")
+                
+                if !_.isUndefined(categoryPrimaryAttribute)
+                    primeAttrib =_.first(categoryPrimaryAttribute)
+                    primaryAttributeValueArr = []
+                    primaryAttribObj = 
+                        "__type" : "Pointer",
+                        "className":"AttributeValues",
+                        "objectId":productAttributes[primeAttrib.id]
+                        
+                    primaryAttributeValueArr.push(primaryAttribObj) 
+
+                    productItem.set "primaryAttributes", primaryAttributeValueArr 
+
+                # set product filters columns
+                productFilters =  categoryObj.get "filterable_attributes"
+                
+                _.each productFilters, (productFilter) ->
+                    columnPosition = productFilter.get("filterColumn") 
+                    columnName = "filter#{columnPosition}"
+                    filterAttribId = productFilter.get("filterAttribute").id
+
+            
+                    filterValueToSet = productAttributes[filterAttribId]
+
+                    AttributeValues = Parse.Object.extend("AttributeValues")
+                    fattributeValues = new AttributeValues()
+                    fattributeValues.id = filterValueToSet
+                   
+
+                    if !_.isUndefined(filterValueToSet)
+                        productItem.set columnName, fattributeValues 
+
+                # set all attributes of product 
+                attributeValueArr = []
+
+                _.each productAttributes, (attrib) ->
+                    attribObj = 
+                        "__type" : "Pointer",
+                        "className":"AttributeValues",
+                        "objectId":attrib
+
+                    attributeValueArr.push(attribObj)
+
+                productItem.set "attrs", attributeValueArr                                          
+
+
+                productSavedArr.push(productItem)  
 
         # save all the newly created objects
         Parse.Object.saveAll productSavedArr
