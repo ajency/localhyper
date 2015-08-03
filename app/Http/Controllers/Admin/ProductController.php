@@ -112,6 +112,7 @@ class ProductController extends Controller
         
         $brandIndexData =[];
         $brands = $attributeController->getCategoryBrands($catId);
+        
         foreach($brands as $key=> $brand)
         {
             $brandIndexData[] = ['name'=>$brand["name"],'id'=>$brand["id"]]; 
@@ -132,30 +133,59 @@ class ProductController extends Controller
         $attributeValues= $headerFlag =$productHeader = $productAttributeIds = [];
 
         $labelsHeader = array();
-        
-        foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
-        {
+
+        if(isset($attributeValueData['result']))
+        {  
+          foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
+          {
             $attributeId =$attributeValue['attributeId'];
             if(!isset($headerFlag[$attributeId]))
             {   
-                $headers[]=$attributeValue['attributeName'];
-                $headers[]=$attributeValue['attributeName'].' Id';
-                
-                $productHeader[]=$attributeValue['attributeName']."(".$attributeId.")";
-                $productHeader[]=$attributeValue['attributeName'].' Id';
+              // $headers[]=$attributeValue['attributeName'];
+              // $headers[]=$attributeValue['attributeName'].' Id';
 
-                $labelsHeader[] = $attributeValue['attributeName'];
-                $labelsHeader[] = $attributeValue['attributeName'].' Id';
-                
-                    
-                $headerFlag[$attributeId]=$attributeId;
-                $productAttributeIds [$attributeId]=[];
-              
+              // $productHeader[]=$attributeValue['attributeName']."(".$attributeId.")";
+              // $productHeader[]=$attributeValue['attributeName'].' Id';
+
+              // $labelsHeader[] = $attributeValue['attributeName'];
+              // $labelsHeader[] = $attributeValue['attributeName'].' Id';
+
+
+              // $headerFlag[$attributeId]=$attributeId;
+              $productAttributeIds [$attributeId]=[];
+
             }
 
+            $headerFlag[$attributeId]=[];
+
             $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
-            
-        } 
+
+          } 
+
+          foreach($attributeValueData['result']['attributes'] as $attribute)
+          {
+            $attributeId = $attribute['id'];
+            $headerFlag[$attributeId] = $attribute;             
+          }
+
+
+
+          foreach($headerFlag as $attribute)
+          {
+            $attributeId = $attribute['id'];
+            $attributeName = $attribute['name'];
+
+            $headers[]=$attributeName;
+            $headers[]=$attributeName.' Id';
+
+            $productHeader[]=$attributeName."(".$attributeId.")";
+            $productHeader[]=$attributeName.' Id';
+
+            $labelsHeader[] = $attributeName;
+            $labelsHeader[] = $attributeName.' Id';
+
+          }          
+        }
          
      // dd($productAttributeIds);
         $indexSheet->fromArray($headers, ' ', 'A1');
@@ -305,9 +335,9 @@ class ProductController extends Controller
         $productSheet->getRowDimension(2)->setVisible(false);
 
         //Format sheet
-        FormatPhpExcel::formatSheet($productSheet, 'Products', $indexSheet);
+        FormatPhpExcel::formatSheet($productSheet, 'Products', $headerFlag, $indexSheet);
 
-
+        // dd("Exit");
         //Format header row
         FormatPhpExcel::format_header_row($productSheet, array(
           'background_color'=>'FFFF00',

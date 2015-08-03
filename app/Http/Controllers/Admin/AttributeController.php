@@ -201,7 +201,7 @@ class AttributeController extends Controller
 				$attributeValueSheet->getRowDimension(3)->setVisible(false);
 
 				//Format sheet
-				FormatPhpExcel::formatSheet($attributeValueSheet, 'AttributesValues');
+				FormatPhpExcel::formatSheet($attributeValueSheet, 'AttributesValues', $headerFlag);
 
 				//Merge cells
 				$highest_column = $attributeValueSheet->getHighestColumn();
@@ -291,7 +291,7 @@ class AttributeController extends Controller
 				$attributeSheet->getRowDimension(3)->setVisible(false);
 
 				//Format sheet
-				FormatPhpExcel::formatSheet($attributeSheet, 'Attributes');
+				FormatPhpExcel::formatSheet($attributeSheet, 'Attributes', $headerFlag);
 
 
 				//Format header row
@@ -384,7 +384,7 @@ class AttributeController extends Controller
 					), '1'
 				);
 
-				FormatPhpExcel::formatSheet($brandSheet, 'Brands');
+				FormatPhpExcel::formatSheet($brandSheet, 'Brands', $headerFlag);
 
 				$brandSheet->protectCells($header, 'PHP');
 				

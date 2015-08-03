@@ -105,7 +105,7 @@ class FormatPhpExcel
 
 
 
-	public static function formatSheet($sheet, $type, $attributeSheet = false){
+	public static function formatSheet($sheet, $type,$attributesArr, $attributeSheet = false){
 		$lastColumn = $sheet->getHighestColumn();
 		$lastColumn++;
 		$data_count = $sheet->getHighestRow()+10;
@@ -127,7 +127,6 @@ class FormatPhpExcel
 
 		for ($column = 'A'; $column != $lastColumn; $column++) {
 			$value = $sheet->getCell($column.$head_row)->getValue();
-
 
 			if($type == 'AttributesValues'){
 				$coIndex = \PHPExcel_Cell::columnIndexFromString($column);
@@ -160,6 +159,7 @@ class FormatPhpExcel
 				}else if($value == 'Image'){
 					$sheet->getColumnDimension($column)->setWidth(25);
 				}else{
+
 					$sheet->getColumnDimension($column)->setAutoSize(true);
 				}
 			}else{
@@ -217,12 +217,19 @@ class FormatPhpExcel
 						$sheet->setCellValue($next_cell, $vlookup_formula);
 					}else if( preg_match( '!\(([^\)]+)\)!', $value, $match ) ){
 						$wrd = $match[1];
+
+						$attributeId = $wrd;
+
 						if(strlen($wrd) == 10){
 							$label = $sheet->getCell($column.'1')->getValue();
 							$at_column = self::get_column_by_attribute($label, $attributeSheet);
 							$end_row = $at_column['count'];
 							$formula = 'Index!$'.$at_column['column'].'$2:$'.$at_column['column'].'$'.$end_row;
-							self::single_cell_dropdown_from_list($sheet, $cell, $label, $formula);
+							
+							if ($attributesArr[$attributeId]['type'] == "select") {
+								self::single_cell_dropdown_from_list($sheet, $cell, $label, $formula);
+							}
+
 
 
 							$at_columnIndex = \PHPExcel_Cell::columnIndexFromString($at_column['column']);
@@ -232,7 +239,11 @@ class FormatPhpExcel
 							$nextColumn = \PHPExcel_Cell::stringFromColumnIndex($columnIndex);
 							$next_cell = $nextColumn.$x;
 							$vlookup_formula = '=VLOOKUP('.$cell.',Index!'.$at_column['column'].'2:'.$at_nextColumn.$end_row.',2,0)';
-							$sheet->setCellValue($next_cell, $vlookup_formula);
+
+							if ($attributesArr[$attributeId]['type'] == "select") {
+								$sheet->setCellValue($next_cell, $vlookup_formula);
+							}
+
 
 						}
 					}
