@@ -1,5 +1,6 @@
 angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
   '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope) {
+    var inAppNotificationEvent;
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
       display: 'loader',
@@ -22,11 +23,6 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           }, 500);
         }
       },
-      offers: {
-        all: [],
-        limitTo: 1,
-        received: true
-      },
       cancelRequest: {
         footer: false,
         set: function() {
@@ -40,10 +36,97 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           }
         }
       },
+      offers: {
+        id: null,
+        display: 'none',
+        errorType: '',
+        all: [],
+        limitTo: 1,
+        showAll: function() {
+          this.limitTo = 100;
+          return App.resize();
+        },
+        get: function() {
+          this.display = 'loader';
+          return RequestAPI.getOffers($scope.view.request.id).then((function(_this) {
+            return function(offers) {
+              return _this.onSuccess(offers);
+            };
+          })(this), (function(_this) {
+            return function(error) {
+              return _this.onError(error);
+            };
+          })(this))["finally"](function() {
+            return App.resize();
+          });
+        },
+        getSilently: function() {
+          return RequestAPI.getOffers($scope.view.request.id).then((function(_this) {
+            return function(offers) {
+              return _this.onSuccess(offers);
+            };
+          })(this));
+        },
+        onSuccess: function(offers) {
+          console.log(offers);
+          this.display = 'noError';
+          this.all = offers;
+          this.markOffersAsSeen();
+          return $scope.view.cancelRequest.set();
+        },
+        onError: function(type) {
+          this.display = 'error';
+          return this.errorType = type;
+        },
+        markOffersAsSeen: function() {
+          return RequestAPI.isNotificationSeen($scope.view.request.id).then((function(_this) {
+            return function(obj) {
+              var offerIds;
+              if (!obj.hasSeen) {
+                offerIds = _.pluck(_this.all, 'id');
+                return RequestAPI.updateNotificationStatus(offerIds).then(function() {
+                  return _.each(_this.all, function(offer) {
+                    return App.notification.decrement();
+                  });
+                });
+              }
+            };
+          })(this));
+        }
+      },
       init: function() {
-        console.log($scope.view.request);
+        if (_.has(this.request, 'pushOfferId')) {
+          this.offers.id = this.request.pushOfferId;
+          return this.getRequestForOffer();
+        } else {
+          this.display = 'noError';
+          this.setRequestTime();
+          return this.offers.get();
+        }
+      },
+      getRequestForOffer: function() {
+        this.display = 'loader';
+        return RequestAPI.getRequestForOffer(this.offers.id).then((function(_this) {
+          return function(request) {
+            return _this.onSuccess(request);
+          };
+        })(this), (function(_this) {
+          return function(error) {
+            return _this.onError(error);
+          };
+        })(this))["finally"](function() {
+          return App.resize();
+        });
+      },
+      onSuccess: function(request) {
+        this.display = 'noError';
+        this.request = request;
         this.setRequestTime();
-        return this.getOffers();
+        return this.offers.get();
+      },
+      onError: function(type) {
+        this.display = 'error';
+        return this.errorType = type;
       },
       setRequestTime: function() {
         var set;
@@ -58,37 +141,6 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
             return set();
           };
         })(this), 60000);
-      },
-      showAllOffers: function() {
-        this.offers.limitTo = 100;
-        return App.resize();
-      },
-      getOffers: function() {
-        return RequestAPI.getOffers(this.request.id).then((function(_this) {
-          return function(offers) {
-            return _this.onSuccess(offers);
-          };
-        })(this), (function(_this) {
-          return function(error) {
-            return _this.onError(error);
-          };
-        })(this))["finally"](function() {
-          return App.resize();
-        });
-      },
-      onSuccess: function(offers) {
-        console.log(offers);
-        this.display = 'noError';
-        this.offers.all = offers;
-        return this.cancelRequest.set();
-      },
-      onError: function(type) {
-        this.display = 'error';
-        return this.errorType = type;
-      },
-      onTapToRetry: function() {
-        this.display = 'loader';
-        return this.getOffers();
       },
       onRequestExpiry: function() {
         console.log('onRequestExpiry');
@@ -151,7 +203,19 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         return document.location.href = telURI;
       }
     };
+    inAppNotificationEvent = $rootScope.$on('in:app:notification', function(e, obj) {
+      var payload;
+      payload = obj.payload;
+      if (payload.type === 'new_offer') {
+        if (_.size($scope.view.offers.all) === 0) {
+          return $scope.view.offers.get();
+        } else {
+          return $scope.view.offers.getSilently();
+        }
+      }
+    });
     return $scope.$on('$destroy', function() {
+      inAppNotificationEvent();
       return $interval.cancel($scope.view.interval);
     });
   }

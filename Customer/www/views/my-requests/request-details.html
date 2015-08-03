@@ -4,105 +4,6 @@
 
 	<ion-content>
 
-		<div class="row row-fluid obj-title">
-			<div class="col">
-				<div class="row">
-					<div class="col-20">
-						<div class="item-avatar">
-							<img ng-src="{{view.request.product.images[0].src}}" alt="">
-						</div>
-					</div>
-					<div class="col">
-						<h4>{{view.request.product.name}}</h4>
-						<p class="details">Price requested 
-							<span>{{view.request.timeStr}}</span>
-						</p>
-					</div>
-				</div>
-				<div class="row">
-					<div 
-						class="col"
-						ng-if="view.request"
-						ng-click="view.address.toggle()">
-
-						<p class="loca">
-							My Location
-							<span><i class="icon ion-ios-location"></i> {{view.request.address.city}}</span>
-							<a ng-if="!view.address.show">More</a>
-							<a ng-if="view.address.show">Less</a>
-						</p>
-
-						<ion-item 
-							class="item-text-wrap item-accordion"
-							ng-show="view.address.show">
-							{{view.request.address.full}}
-						</ion-item>
-					</div>
-
-					<div 
-						class="col"
-						ng-if="view.request.comments !== ''">
-
-						<button 
-							class="button button-outline button-dark button-lighter"
-							ng-click="view.comments.toggle()">
-
-							<img src="./img/speechbubble.png" alt="Speech Bubble Icon">
-							01
-						</button>
-
-						<ion-item 
-							class="item-text-wrap item-accordion"
-							style="margin-top: 40px;"
-							ng-show="view.comments.show">
-							{{view.request.comments}}
-						</ion-item>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col">
-						<div class="dash-div"></div>
-					</div>
-				</div>
-
-				<div 
-					class="row expires"
-					ng-if="view.request.status == 'open';">
-
-					<div class="col-30">
-						<h2 class="dura"
-							aj-count-down
-							created-at="view.request.createdAt"
-							count-down-finish="view.onRequestExpiry()">
-						</h2>
-					</div>
-					<div class="col">
-						<button class="button button-outline button-balanced pull-right">
-							{{App.humanize(view.request.status)}}
-						</button>
-						<p class="exp_in">Expires in <i class="icon ion-ios-clock-outline"></i></p>
-						<p class="why"><a>Why this product expires in 24 hrs</a></p>
-					</div>
-				</div>
-
-				<div 
-					class="row expires"
-					ng-if="view.request.status !== 'open';">
-					
-					<div class="col">
-						<button 
-							class="button button-outline"
-							ng-class="(view.request.status == 'cancelled' 
-										|| view.request.status == 'expired') ? 'button-assertive' : 'button-balanced'">
-
-							{{App.humanize(view.request.status)}}
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		
 		<ion-list ng-switch="view.display">
 
 			<ion-spinner
@@ -111,19 +12,141 @@
 			</ion-spinner>
 
 			<div 
-				class="row"
-				ng-if="view.offers.all.length > 0;">
+				class="row row-fluid obj-title"
+				ng-switch-when="noError">
 
 				<div class="col">
-					<p>Received Offers <b>({{view.offers.all.length}})</b></p>
+
+					<div class="row">
+						<div class="col-20">
+							<div class="item-avatar">
+								<img ng-src="{{view.request.product.images[0].src}}" alt="">
+							</div>
+						</div>
+						<div class="col">
+							<h4>{{view.request.product.name}}</h4>
+							<p class="details">Price requested 
+								<span>{{view.request.timeStr}}</span>
+							</p>
+						</div>
+					</div>
+					<div class="row">
+						<div 
+							class="col"
+							ng-if="view.request"
+							ng-click="view.address.toggle()">
+
+							<p class="loca">
+								My Location
+								<span><i class="icon ion-ios-location"></i> {{view.request.address.city}}</span>
+								<a ng-if="!view.address.show">More</a>
+								<a ng-if="view.address.show">Less</a>
+							</p>
+
+							<ion-item 
+								class="item-text-wrap item-accordion"
+								ng-show="view.address.show">
+								{{view.request.address.full}}
+							</ion-item>
+						</div>
+
+						<div 
+							class="col"
+							ng-if="view.request.comments !== ''">
+
+							<button 
+								class="button button-outline button-dark button-lighter"
+								ng-click="view.comments.toggle()">
+
+								<img src="./img/speechbubble.png" alt="Speech Bubble Icon">
+								01
+							</button>
+
+							<ion-item 
+								class="item-text-wrap item-accordion"
+								style="margin-top: 40px;"
+								ng-show="view.comments.show">
+								{{view.request.comments}}
+							</ion-item>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col">
+							<div class="dash-div"></div>
+						</div>
+					</div>
+
+					<div 
+						class="row expires"
+						ng-if="view.request.status == 'open';">
+
+						<div class="col-30">
+							<h2 class="dura"
+								aj-count-down
+								created-at="view.request.createdAt"
+								count-down-finish="view.onRequestExpiry()">
+							</h2>
+						</div>
+						<div class="col">
+							<button class="button button-outline button-balanced pull-right">
+								{{App.humanize(view.request.status)}}
+							</button>
+							<p class="exp_in">Expires in <i class="icon ion-ios-clock-outline"></i></p>
+							<p class="why"><a>Why this product expires in 24 hrs</a></p>
+						</div>
+					</div>
+
+					<div 
+						class="row expires"
+						ng-if="view.request.status !== 'open';">
+						
+						<div class="col">
+							<button 
+								class="button button-outline"
+								ng-class="(view.request.status == 'cancelled' 
+											|| view.request.status == 'expired') ? 'button-assertive' : 'button-balanced'">
+
+								{{App.humanize(view.request.status)}}
+							</button>
+						</div>
+					</div>
 				</div>
 			</div>
 
-			<div 
-				class="row"
-				ng-if="view.offers.all.length == 0 && view.request.status === 'open';">
-				<div class="col">
-					<h3>We have sent your request to sellers, they will soon send their prices</h3>
+			<aj-error
+				ng-switch-when="error"
+				error-type="view.errorType"
+				tap-to-retry="view.getRequestForOffer()">
+			</aj-error>
+
+		</ion-list>
+		
+		<br>
+		
+		<ion-list ng-switch="view.offers.display">
+
+			<ion-spinner
+				class="aj-verify-spinner"
+				ng-switch-when="loader">
+			</ion-spinner>
+			
+			<div ng-switch-when="noError" >
+				<div 
+					class="row"
+					ng-if="view.offers.all.length > 0;">
+
+					<div class="col">
+						<p>Received Offers <b>({{view.offers.all.length}})</b></p>
+					</div>
+				</div>
+
+				<div 
+					class="row"
+					ng-if="view.offers.all.length == 0 && view.request.status === 'open';">
+					<div class="col">
+						<h3>We have sent your request to sellers, they will soon send their prices</h3>
+					</div>
 				</div>
 			</div>
 
@@ -242,7 +265,7 @@
 
 			<ion-item 
 				ng-if="view.offers.limitTo == 1 && view.offers.all.length > 1;"
-				ng-click="view.showAllOffers()">
+				ng-click="view.offers.showAll()">
 				SHOW ALL OFFERS
 			</ion-item>
 
@@ -255,8 +278,8 @@
 
 			<aj-error
 				ng-switch-when="error"
-				error-type="view.errorType"
-				tap-to-retry="view.onTapToRetry()">
+				error-type="view.offers.errorType"
+				tap-to-retry="view.offers.get()">
 			</aj-error>
 		</ion-list>
 
@@ -264,7 +287,7 @@
 
 	<ion-footer-bar 
 		class="bar-assertive"
-		ng-show="view.cancelRequest.footer">
+		ng-if="view.cancelRequest.footer">
 		<div 
 			class="title"
 			ng-click="view.onCancelRequest()">

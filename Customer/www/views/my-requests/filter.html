@@ -1,0 +1,41 @@
+<ion-pane 
+	class="sort-model filter-popup"
+	aj-loading-back-drop>
+
+	<ul class="list">
+		<li class="item">SORT BY</li>
+
+		<li class="item"
+			ng-click="view.onFilter('open')">
+			Open
+		</li>
+
+		<li class="item" 
+			ng-click="view.onFilter('cancelled')">
+			cancelled
+		</li>
+
+		<li class="item" 
+			ng-click="view.onFilter('successful')">
+			successful Delivery
+		</li>
+
+		<li class="item" 
+			ng-click="view.onFilter('pending_delivery')">
+			Pending Delivery
+		</li>
+
+		<li class="item" 
+			ng-click="view.onFilter('failed_delivery')">
+			Failed Delivery
+		</li>
+
+		<li class="item" 
+			ng-click="view.onFilter('null')">
+			All
+		</li>
+
+
+	</ul>
+	
+</ion-pane>

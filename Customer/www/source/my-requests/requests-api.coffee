@@ -30,6 +30,19 @@ angular.module 'LocalHyper.myRequests'
 
 		defer.promise
 
+	RequestAPI.getRequestForOffer = (offerId)->
+		defer = $q.defer()
+		
+		params = "offerId": offerId
+
+		$http.post 'functions/getRequestForOffer', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
 	RequestAPI.requestDetails = (action, data={})->
 		switch action
 			when 'set'
@@ -68,6 +81,52 @@ angular.module 'LocalHyper.myRequests'
 		# "status" : "cancelled"  (accepted status values are : open / cancelled / successful)
 
 		$http.post 'functions/updateRequestStatus', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
+	RequestAPI.getNotifications = ->
+		defer = $q.defer()
+		params = 
+			"userId": User.getId()
+			"type": "Offer"
+
+		$http.post 'functions/getUnseenNotifications', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
+	RequestAPI.isNotificationSeen = (requestId)->
+		defer = $q.defer()
+
+		params = 
+			"userId": User.getId()
+			"requestId": requestId
+
+		$http.post 'functions/isOfferNotificationSeen', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
+	RequestAPI.updateNotificationStatus = (offerIds)->
+		defer = $q.defer()
+
+		params = 
+			"notificationTypeId": offerIds
+			"recipientId": User.getId()
+			"notificationType" : "Offer"
+			"hasSeen": true
+
+		$http.post 'functions/updateNotificationStatus', params
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->

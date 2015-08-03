@@ -10,6 +10,7 @@ angular.module 'LocalHyper.auth'
 			smsCode: ''
 			errorAt: ''
 			errorType: ''
+			phone : {SUPPORT_NUMBER}
 
 			onError : (type, at)->
 				@display = 'error'
@@ -62,8 +63,6 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
-					# count = if App.isAndroid() then -3 else -2
-					# App.goBack count
 					$rootScope.$broadcast '$user:registration:success'
 					App.navigate 'verify-success'
 				, (error)=>
@@ -82,6 +81,10 @@ angular.module 'LocalHyper.auth'
 						@verifySmsCode()
 					when 'register'
 						@register()
+
+			callSupport : ->
+				telURI = "tel:#{SUPPORT_NUMBER}"
+				document.location.href = telURI		
 
 		
 		onDeviceBack = ->

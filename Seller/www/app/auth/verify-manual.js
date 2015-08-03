@@ -6,6 +6,9 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
       smsCode: '',
       errorAt: '',
       errorType: '',
+      phone: {
+        SUPPORT_NUMBER: SUPPORT_NUMBER
+      },
       onError: function(type, at) {
         this.display = 'error';
         this.errorType = type;
@@ -77,7 +80,10 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
-          return App.navigate('verify-success');
+          return App.navigate('verify-success', {}, {
+            animate: true,
+            back: false
+          });
         }, (function(_this) {
           return function(error) {
             return _this.onError(error, 'register');
@@ -98,6 +104,11 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
           case 'register':
             return this.register();
         }
+      },
+      callSupport: function() {
+        var telURI;
+        telURI = "tel:" + SUPPORT_NUMBER;
+        return document.location.href = telURI;
       }
     };
     onDeviceBack = function() {

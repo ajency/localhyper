@@ -25,6 +25,19 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
       });
       return defer.promise;
     };
+    RequestAPI.getRequestForOffer = function(offerId) {
+      var defer, params;
+      defer = $q.defer();
+      params = {
+        "offerId": offerId
+      };
+      $http.post('functions/getRequestForOffer', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
     RequestAPI.requestDetails = function(action, data) {
       if (data == null) {
         data = {};
@@ -63,6 +76,50 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
       var defer;
       defer = $q.defer();
       $http.post('functions/updateRequestStatus', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
+    RequestAPI.getNotifications = function() {
+      var defer, params;
+      defer = $q.defer();
+      params = {
+        "userId": User.getId(),
+        "type": "Offer"
+      };
+      $http.post('functions/getUnseenNotifications', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
+    RequestAPI.isNotificationSeen = function(requestId) {
+      var defer, params;
+      defer = $q.defer();
+      params = {
+        "userId": User.getId(),
+        "requestId": requestId
+      };
+      $http.post('functions/isOfferNotificationSeen', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
+    RequestAPI.updateNotificationStatus = function(offerIds) {
+      var defer, params;
+      defer = $q.defer();
+      params = {
+        "notificationTypeId": offerIds,
+        "recipientId": User.getId(),
+        "notificationType": "Offer",
+        "hasSeen": true
+      };
+      $http.post('functions/updateNotificationStatus', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);

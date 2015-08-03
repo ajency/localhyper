@@ -1,5 +1,5 @@
 angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
-  '$scope', 'App', 'RequestAPI', function($scope, App, RequestAPI) {
+  '$scope', 'App', 'RequestAPI', '$ionicLoading', function($scope, App, RequestAPI, $ionicLoading) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -7,6 +7,8 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
       page: 0,
       canLoadMore: true,
       refresh: false,
+      getOpenProducts: false,
+      selectedFilters: [],
       onClick: function(request) {
         RequestAPI.requestDetails('set', request);
         return App.navigate('request-details');
@@ -22,6 +24,7 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
         return $scope.$broadcast('scroll.infiniteScrollComplete');
       },
       onPullToRefresh: function() {
+        this.getOpenProducts = false;
         this.page = 0;
         this.refresh = true;
         this.getMyOffers();
@@ -37,7 +40,7 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
           page: this.page,
           displayLimit: 3,
           requestType: 'nonexpired',
-          selectedFilters: []
+          selectedFilters: this.selectedFilters
         }).then((function(_this) {
           return function(data) {
             return _this.onSuccess(data);
@@ -54,7 +57,6 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
       },
       onSuccess: function(data) {
         var openRequest;
-        console.log(data);
         this.display = 'noError';
         openRequest = data;
         if (openRequest.length > 0) {
@@ -64,12 +66,15 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
             this.onScrollComplete();
           }
           if (this.refresh) {
-            return this.openRequests = openRequest;
+            this.openRequests = openRequest;
           } else {
-            return this.openRequests = this.openRequests.concat(openRequest);
+            this.openRequests = this.openRequests.concat(openRequest);
           }
         } else {
-          return this.canLoadMore = false;
+          this.canLoadMore = false;
+        }
+        if (!this.canLoadMore) {
+          return this.getOpenProducts = true;
         }
       },
       onError: function(type) {
@@ -82,8 +87,26 @@ angular.module('LocalHyper.myRequests').controller('OpenRequestCtrl', [
         this.refresh = false;
         return this.getMyOffers();
       },
-      onlick: function() {
-        return alert('df');
+      Filter: function() {
+        return $ionicLoading.show({
+          scope: $scope,
+          templateUrl: 'views/my-requests/filter.html',
+          hideOnStateChange: true
+        });
+      },
+      onFilter: function(status) {
+        this.canLoadMore = true;
+        $ionicLoading.hide();
+        if (status !== 'null') {
+          this.selectedFilters = [status];
+        } else {
+          this.selectedFilters = [];
+        }
+        this.refresh = true;
+        this.page = 0;
+        this.openRequests = [];
+        this.getOpenProducts = false;
+        return this.onScrollComplete();
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {

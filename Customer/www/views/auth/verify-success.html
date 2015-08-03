@@ -1,7 +1,4 @@
 <ion-view view-title="Verified">
-	
-	<ion-nav-buttons side="right">
-	</ion-nav-buttons>
 
 	<ion-content class="aj-text">
 		<div class="list">
@@ -13,9 +10,11 @@
 						</h5>
 					</div>
 				</div>
-				<div class="list" ng-switch="view.display">
+				<div class="list">
 					<div class="row">
-						<button class="button button-outline button-assertive center col subdued" ng-click="view.onNext()">
+						<button 
+							class="button button-outline button-assertive center col subdued" 
+							ng-click="goBack()">
 							Proceed
 						</button>
 					</div>

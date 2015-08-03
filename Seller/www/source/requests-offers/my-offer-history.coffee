@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', '$timeout', '$rootScope'
-	, ($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal, $timeout, $rootScope)->
+.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope'
+	, ($scope, App, RequestsAPI, OffersAPI, $ionicModal, $timeout, $rootScope)->
 
 		$scope.view = 
 			display: 'loader'
@@ -45,8 +45,13 @@ angular.module 'LocalHyper.requestsOffers'
 						App.resize()
 
 			reFetch : ->
-				@canLoadMore = true
+				console.log('reff0')
+				@display = 'loader'
+				@errorType = ''
+				@requests = []
 				@page = 0
+				@canLoadMore = true
+				@refresh = false
 				@showOfferHistory()			
 
 			incrementPage : ->
@@ -89,7 +94,7 @@ angular.module 'LocalHyper.requestsOffers'
 				@showOfferHistory()
 				
 			showOfferHistory : ()->
-				OfferHistoryAPI.offerhistory
+				OffersAPI.offerhistory
 					page: @page
 				.then (data)=>
 					@onSuccess data
@@ -122,11 +127,8 @@ angular.module 'LocalHyper.requestsOffers'
 				$scope.view.requestDetails.showExpiry = false
 			, 1000
 
-		$rootScope.$on 'offer:done:succ', ->
+		$rootScope.$on 'make:offer:success', ->
 			$scope.view.reFetch()
-			
-			
-	
 ]
 
 .directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->

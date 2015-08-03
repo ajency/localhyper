@@ -6,6 +6,9 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
       smsCode: '',
       errorAt: '',
       errorType: '',
+      phone: {
+        SUPPORT_NUMBER: SUPPORT_NUMBER
+      },
       onError: function(type, at) {
         this.display = 'error';
         this.errorType = type;
@@ -99,6 +102,11 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
           case 'register':
             return this.register();
         }
+      },
+      callSupport: function() {
+        var telURI;
+        telURI = "tel:" + SUPPORT_NUMBER;
+        return document.location.href = telURI;
       }
     };
     onDeviceBack = function() {

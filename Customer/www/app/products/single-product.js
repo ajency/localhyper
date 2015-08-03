@@ -12,7 +12,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         active: false,
         limitTo: 1,
         canLoadMore: false,
-        error: false,
+        display: 'none',
         onScrollComplete: function() {
           return $scope.$broadcast('scroll.infiniteScrollComplete');
         },
@@ -28,14 +28,16 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           this.active = false;
           this.limitTo = 1;
           this.canLoadMore = false;
-          return this.error = false;
+          return this.display = 'none';
         },
         reFetch: function() {
           this.page = 0;
           this.all = [];
           this.limitTo = 1;
           this.canLoadMore = false;
-          return this.get();
+          this.display = 'loader';
+          this.get();
+          return App.resize();
         },
         showAllRequests: function() {
           this.limitTo = 1000;
@@ -67,6 +69,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           })(this));
         },
         success: function(data, limit) {
+          this.display = 'noError';
           if (_.size(data) > 0) {
             if (_.size(data) < limit) {
               this.canLoadMore = false;
@@ -80,13 +83,13 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         },
         onError: function(error) {
           console.log(error);
-          this.error = true;
+          this.display = 'error';
           return this.canLoadMore = false;
         },
         onTryAgain: function() {
+          this.display = 'noError';
           this.page = 0;
           this.all = [];
-          this.error = false;
           return this.canLoadMore = true;
         },
         onCardClick: function(request) {
@@ -126,6 +129,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         this.display = 'noError';
         this.request.checkIfActive();
         if (User.isLoggedIn()) {
+          this.request.display = 'loader';
           return this.request.get();
         }
       },
@@ -186,6 +190,13 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     });
     $rootScope.$on('on:session:expiry', function() {
       return $scope.view.reset();
+    });
+    $rootScope.$on('in:app:notification', function(e, obj) {
+      var payload;
+      payload = obj.payload;
+      if (payload.type === 'new_offer') {
+        return $scope.view.request.reFetch();
+      }
     });
     return $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['products', 'verify-success'], App.previousState)) {

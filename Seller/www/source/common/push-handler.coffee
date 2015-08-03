@@ -37,22 +37,23 @@ angular.module 'LocalHyper.common'
 	Push.handlePayload = (payload)->
 
 		inAppNotification = ->
-			$rootScope.$broadcast 'on:new:request', {payload: payload}
+			$rootScope.$broadcast 'in:app:notification', payload: payload
 
 		notificationClick = ->
-			App.navigate 'new-requests'
-			$rootScope.$broadcast 'on:notification:click', {payload: payload}
+			$rootScope.$broadcast 'push:notification:click', payload: payload
 
-		switch payload.type
-			when 'new_request'
-				if payload.coldstart
-					notificationClick()
-				else if !payload.foreground and !_.isUndefined(payload.coldstart) and !payload.coldstart
-					notificationClick()
-				else if payload.foreground
-					inAppNotification()
-				else if !payload.foreground
-					inAppNotification()
+		if App.isAndroid()
+			if payload.coldstart
+				notificationClick()
+			else if !payload.foreground and !_.isUndefined(payload.coldstart) and !payload.coldstart
+				notificationClick()
+			else if payload.foreground
+				inAppNotification()
+			else if !payload.foreground
+				inAppNotification()
+		
+		else if App.isIOS()
+			console.log 'ios'
 
 	Push
 ]

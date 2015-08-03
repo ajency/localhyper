@@ -1,11 +1,10 @@
 angular.module('LocalHyper.categories', []).controller('CategoriesCtrl', [
-  '$scope', 'App', 'CategoriesAPI', 'Push', function($scope, App, CategoriesAPI, Push) {
+  '$scope', 'App', 'CategoriesAPI', function($scope, App, CategoriesAPI) {
     $scope.view = {
       display: 'loader',
       errorType: '',
       parentCategories: [],
       init: function() {
-        Push.register();
         return this.getCategories();
       },
       getCategories: function() {

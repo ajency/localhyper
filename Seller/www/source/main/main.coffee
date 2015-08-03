@@ -2,15 +2,26 @@ angular.module 'LocalHyper.main', []
 
 
 .controller 'SideMenuCtrl', ['$scope', 'App', '$ionicPopover', '$rootScope'
-	, '$ionicSideMenuDelegate', 'CSpinner', '$timeout'
-	, ($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, CSpinner, $timeout)->
+	, '$ionicSideMenuDelegate', 'CSpinner', '$timeout', 'Push', 'User', 'RequestsAPI'
+	, ($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, CSpinner
+	, $timeout, Push, User, RequestsAPI)->
 
 		$scope.view = 
 			userPopover: null
 
 			init : ->
+				Push.register()
 				@loadPopOver()
+				@getNotifications() if User.isLoggedIn()
 				$ionicSideMenuDelegate.edgeDragThreshold true
+
+			getNotifications : ->
+				RequestsAPI.getNotifications()
+				.then (requestIds)=>
+					notifications = _.size requestIds
+					if notifications > 0
+						App.notification.badge = true
+						App.notification.count = notifications
 
 			loadPopOver : ->
 				$ionicPopover.fromTemplateUrl 'views/user-popover.html',
@@ -28,13 +39,19 @@ angular.module 'LocalHyper.main', []
 				$ionicSideMenuDelegate.toggleLeft()
 
 
-		$rootScope.$on 'on:new:request', ->
-			App.notification.increment()
-
+		$rootScope.$on 'in:app:notification', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'new_request'
+				if App.notification.count is 0
+					$scope.view.getNotifications()
+				else App.notification.increment()
+		
 		$rootScope.$on 'on:session:expiry', ->
 			CSpinner.show '', 'Your session has expired, please wait...'
 			$timeout ->
 				Parse.User.logOut()
+				App.notification.icon = false
+				App.notification.badge = false
 				App.navigate 'business-details', {}, {animate: true, back: false}
 				CSpinner.hide()
 			, 2000

@@ -31,11 +31,10 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       return defer.promise;
     };
     RequestsAPI.getNotifications = function() {
-      var defer, params, user;
+      var defer, params;
       defer = $q.defer();
-      user = User.getCurrent();
       params = {
-        "userId": user.id,
+        "userId": User.getId(),
         "type": "Request"
       };
       $http.post('functions/getUnseenNotifications', params).then(function(data) {
@@ -46,12 +45,11 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       return defer.promise;
     };
     RequestsAPI.updateStatus = function(requestId) {
-      var defer, params, user;
+      var defer, params;
       defer = $q.defer();
-      user = User.getCurrent();
       params = {
-        "notificationTypeId": "" + requestId,
-        "recipientId": "" + user.id,
+        "notificationTypeId": requestId,
+        "recipientId": User.getId(),
         "notificationType": "Request",
         "hasSeen": true
       };

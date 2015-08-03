@@ -10,6 +10,7 @@ angular.module 'LocalHyper.auth'
 			smsCode: ''
 			errorAt: ''
 			errorType: ''
+			phone : {SUPPORT_NUMBER}
 
 			onError : (type, at)->
 				@display = 'error'
@@ -62,8 +63,7 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
-					# App.navigate 'new-requests', {}, {animate: true, back: false}
-					App.navigate 'verify-success'
+					App.navigate 'verify-success', {}, {animate: true, back: false} 
 				, (error)=>
 					@onError error, 'register'
 				.finally ->
@@ -80,6 +80,10 @@ angular.module 'LocalHyper.auth'
 						@verifySmsCode()
 					when 'register'
 						@register()
+						
+			callSupport : ->
+				telURI = "tel:#{SUPPORT_NUMBER}"
+				document.location.href = telURI			
 
 		
 		onDeviceBack = ->
