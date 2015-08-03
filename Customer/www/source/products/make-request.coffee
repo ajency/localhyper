@@ -127,7 +127,7 @@ angular.module 'LocalHyper.products'
 			addSellerMarkers : (sellers)->
 				@sellers.count = _.size sellers
 				@sellers.displayCount = true
-				@sellers.found = if @sellers.count > 0 then true else false
+				@sellers.found = true #if @sellers.count > 0 then true else false
 
 				_.each sellers, (seller)=>
 					geoPoint = seller.sellerGeoPoint
@@ -160,6 +160,7 @@ angular.module 'LocalHyper.products'
 					, (error)->
 						CToast.show 'Request failed, please try again'
 					.finally ->
+						App.resize()
 						CSpinner.hide()
 
 			addComments : ->

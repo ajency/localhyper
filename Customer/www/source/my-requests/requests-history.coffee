@@ -10,6 +10,7 @@ angular.module 'LocalHyper.myRequests'
 			openRequests: []
 			page: 0
 			canLoadMore: true
+			refresh: false
 
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
@@ -22,9 +23,10 @@ angular.module 'LocalHyper.myRequests'
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 
 			onPullToRefresh : ->
-				@openRequests = []
 				@page = 0
+				@refresh = true
 				@getMyOffers()
+				@canLoadMore = true
 
 			onTapToRetry : ->
 				@canLoadMore = true
@@ -34,25 +36,26 @@ angular.module 'LocalHyper.myRequests'
 			getMyOffers : ()->
 				RequestAPI.get
 					page: @page
-					openStatus: false
-					displayLimit : 5
+					displayLimit : 3
+					requestType : 'expired'
+					selectedFilters : []
 				.then (data)=>
 					@onSuccess data
 				, (error)=>
 					@onError error
 				.finally =>
 					@incrementPage()
-					@onScrollComplete()
 					
 			onSuccess : (data)->
 				@display = 'noError'
 				openRequest = data
 				if openRequest.length > 0
-					@canLoadMore = true
-					@openRequests = @openRequests.concat(openRequest)	
+					if _.size(openRequest) < 3 then @canLoadMore = false
+					else @onScrollComplete()
+					if @refresh then @openRequests = openRequest
+					else @openRequests = @openRequests.concat(openRequest)
 				else
 					@canLoadMore = false
-
 
 			onError: (type)->
 				@canLoadMore = false
@@ -63,35 +66,20 @@ angular.module 'LocalHyper.myRequests'
 				# @getMyOffers()	
 
 			onInfiniteScroll : ->
+				@refresh = false
 				@getMyOffers()
-			
-]
 
-.controller 'EachRequestTimeCtrl', ['$scope', ($scope)->
-	#Request time
-	iso = $scope.openRequest.createdAt.iso
-	format = 'DD/MM/YYYY HH:mm:ss'
-	now = moment().format format
-	at = moment(iso).format format
-	diff = moment(now, format).diff(moment(at, format))
-	duration = moment.duration diff
-	minutes = parseInt duration.asMinutes().toFixed(0)
-	hours = parseInt duration.asHours().toFixed(0)
-
-	if minutes <= 5
-		timeStr = 'Just now'
-	else if minutes < 60
-		min = if minutes is 1 then 'min' else 'mins'
-		timeStr = "#{minutes} #{min} ago"
-	else
-		hr = if hours is 1 then 'hr' else 'hrs'
-		timeStr = "#{hours} #{hr} ago"
-
-	$scope.openRequest.timeStr = timeStr
+			onClick : (request)->
+				RequestAPI.requestDetails 'set', request
+				App.navigate 'request-details'
 
 		
-			
+		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
+			if !viewData.enableBack
+				viewData.enableBack = true
 ]
+
+
 
 
 

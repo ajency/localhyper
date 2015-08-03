@@ -72,11 +72,20 @@ angular.module 'LocalHyper.common', []
 			resize : ->
 				$ionicScrollDelegate.resize()
 
+			scrollTop : ->
+				$ionicScrollDelegate.scrollTop true
+
+			scrollBottom : ->
+				$ionicScrollDelegate.scrollBottom true
+
 			toINR : (number)->
 				if !_.isUndefined number
 					number = number.toString()
 					number.replace /(\d)(?=(\d\d)+\d$)/g, "$1,"
 				else ''
+
+			humanize : (str)->
+				s.humanize str
 
 			openLink : (url)->
 				options = location: 'yes'

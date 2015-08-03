@@ -20,12 +20,13 @@ angular.module('LocalHyper.myRequests', []).directive('ajRemoveBoxShadow', [
       }
     };
   }
-]).controller('EachRequestTimeCtrl', [
-  '$scope', '$interval', function($scope, $interval) {
-    var interval, setTime;
-    setTime = function() {
+]).factory('TimeString', [
+  function() {
+    var TimeString;
+    TimeString = {};
+    TimeString.get = function(obj) {
       var createdAt, day, days, diff, duration, format, hours, hr, iso, min, minutes, now, timeStr, week, weeks;
-      iso = $scope.request.createdAt.iso;
+      iso = obj.iso;
       format = 'DD/MM/YYYY HH:mm:ss';
       now = moment().format(format);
       createdAt = moment(iso).format(format);
@@ -52,7 +53,15 @@ angular.module('LocalHyper.myRequests', []).directive('ajRemoveBoxShadow', [
       } else {
         timeStr = "On " + (moment(iso).format('DD-MM-YYYY'));
       }
-      return $scope.request.timeStr = timeStr;
+      return timeStr;
+    };
+    return TimeString;
+  }
+]).controller('EachRequestTimeCtrl', [
+  '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
+    var interval, setTime;
+    setTime = function() {
+      return $scope.request.timeStr = TimeString.get($scope.request.createdAt);
     };
     setTime();
     interval = $interval(setTime, 60000);

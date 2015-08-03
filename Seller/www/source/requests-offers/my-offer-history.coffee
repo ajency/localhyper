@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal'
-	, ($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal)->
+.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope'
+	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope)->
 
 		$scope.view = 
 			display: 'loader'
@@ -10,51 +10,61 @@ angular.module 'LocalHyper.requestsOffers'
 			requests: []
 			page: 0
 			canLoadMore: true
+			refresh: false
 
-			requestDetails:
+			offerDetails:
 				modal: null
+				showExpiry : false
 				data: {}
-				display: 'noError'
-				errorType: ''
-				requestId: null
-				offerPrice: ''
-				reply: 
-					button: true
-					text: ''
-				deliveryTime:
-					display: false
-					value: 1
-					unit: 'hr'
-					unitText: 'Hour'
-					setDuration : ->
-						if !_.isNull @value
-							switch @unit
-								when 'hr'
-									@unitText = if @value is 1 then 'Hour' else 'Hours'
-								when 'day'
-									@unitText = if @value is 1 then 'Day' else 'Days'
 
-					done : ->
-						if _.isNull(@value)
-							@value = 1
-							@unit = 'hr'
-							@unitText = 'Hour'
-						@display = false
-						App.resize()
-
-			incrementPage : ->
-				$scope.$broadcast 'scroll.refreshComplete'
-				@page = @page + 1
+				loadModal : ->
+					$ionicModal.fromTemplateUrl 'views/requests-offers/offer-history-details.html', 
+						scope: $scope,
+						animation: 'slide-in-up' 
+						hardwareBackButtonClose: true
+					.then (modal)=>
+						@modal = modal
 				
+				show : (request)->
+					@data = request
+					@modal.show()
+					@showExpiry = true
+
+			init : ->
+				@offerDetails.loadModal()
+
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 
-			onSuccess : (data)->
+			reFetch : ->
+				@display = 'loader'
+				@requests = []
+				@page = 0
+				@canLoadMore = true
+				@refresh = false
+				@showOfferHistory()
+
+			showOfferHistory : ()->
+				params = page: @page, displayLimit: 3
+
+				OffersAPI.getSellerOffers params
+				.then (data)=>
+					@onSuccess data, params.displayLimit
+				, (error)=>
+					@onError error
+				.finally =>
+					App.resize()
+					@page = @page + 1
+					$scope.$broadcast 'scroll.refreshComplete'
+
+			onSuccess : (offerData, displayLimit)->
 				@display = 'noError'
-				offerhistory = data
-				if offerhistory.length > 0
-					@canLoadMore = true
-					@requests = @requests.concat(offerhistory)	
+				offerDataSize = _.size(offerData)
+				if offerDataSize > 0
+					if offerDataSize < displayLimit then @canLoadMore = false
+					else @onScrollComplete()
+					if @refresh then @requests = offerData
+					else @requests = @requests.concat(offerData)
 				else
 					@canLoadMore = false
 
@@ -64,46 +74,43 @@ angular.module 'LocalHyper.requestsOffers'
 				@canLoadMore = false
 
 			onTapToRetry : ->
-				@display = 'error'
-				@canLoadMore = true
+				@display = 'loader'
 				@page = 0
+				@canLoadMore = true
 
 			onPullToRefresh : ->
-				@requests = []
+				@refresh = true
 				@page = 0
+				@canLoadMore = true
 				@showOfferHistory()
 
 			onInfiniteScroll : ->
+				@refresh = false
 				@showOfferHistory()
-				
-			showOfferHistory : ()->
-				OfferHistoryAPI.offerhistory
-					page: @page
-				.then (data)=>
-					@onSuccess data
-				, (error)=>
-					@onError error
-				.finally =>
-					@incrementPage()
-					@onScrollComplete()
 
-			init : ->
-				@loadOfferDetails()
+		
+		$scope.$on 'modal.hidden', ->
+			$timeout ->
+				$scope.view.offerDetails.showExpiry = false
+			, 1000
 
-			loadOfferDetails : ->
-				$ionicModal.fromTemplateUrl 'views/requests-offers/offer-history-details.html', 
-					scope: $scope,
-					animation: 'slide-in-up'
-					hardwareBackButtonClose: true
-				.then (modal)=>
-					@requestDetails.modal = modal
+		$rootScope.$on 'make:offer:success', ->
+			App.scrollTop()
+			$scope.view.reFetch()
+]
 
-			show : ->
-				view.modal.show()
 
-			showRequestDetails : (request)->
-				@requestDetails.data = request
-				@requestDetails.modal.show()	
+.directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->
 	
-]	
+	restrict: 'A'
+	link: (scope, el, attrs)->
+
+		$timeout ->
+			createdAt = $parse(attrs.createdAt)(scope)
+			total = moment(moment(createdAt.iso)).add 24, 'hours'
+			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
+			$(el).countdown totalStr, (event)->
+				$(el).html event.strftime('%-H:%-M:%-S')
+]
+
 

@@ -1,4 +1,4 @@
-angular.module 'LocalHyper.businessDetails', ['ngAutocomplete']
+angular.module 'LocalHyper.businessDetails', []
 
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'

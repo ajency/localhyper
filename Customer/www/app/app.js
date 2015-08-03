@@ -18,9 +18,6 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
         }
       }
     };
-    $rootScope.$on('$user:registration:success', function() {
-      return App.notification.icon = true;
-    });
     App.logo = {
       small: true
     };
@@ -37,6 +34,7 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
   '$ionicConfigProvider', function($ionicConfigProvider) {
     $ionicConfigProvider.views.forwardCache(true);
     $ionicConfigProvider.backButton.previousTitleText(false).text('');
-    return $ionicConfigProvider.navBar.alignTitle('center');
+    $ionicConfigProvider.navBar.alignTitle('center');
+    return $ionicConfigProvider.tabs.position('top');
   }
 ]);

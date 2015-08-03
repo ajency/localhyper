@@ -35,13 +35,22 @@
 			<div ng-switch-when="maxAttempts">
 				<br>
 				<h3 class="normal">Sorry...</h3>
-
 				</br>
+
+				<br>
 				<div class="row">
 					<div class="center sm-text col subdued">
 					Exceeded maximum number of attempts. Please contact our support and enter code manually.
 					</div>
-			</div>
+				</div>
+				<div class="row">
+						<button class="button button-outline button-assertive center col subdued" ng-click="view.callSupport()">
+							Call Support
+							<div>
+							<h4>{{view.phone.SUPPORT_NUMBER}}</h4>
+							<div>
+						</button>
+				</div>
 				
 
 				</br>

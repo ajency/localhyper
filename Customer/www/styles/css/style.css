@@ -162,6 +162,7 @@
   padding: 5px;
   box-shadow: 0px 2px 6px #B6B6B6;
 }
+
 .pane, .view {
   background-color: #E8E8E8;
 }
@@ -193,6 +194,21 @@
 /*card on phone verification */
 .cardTop {
 	margin-top: 28%;
+}
+
+/* accordion */
+.col .item.item-accordion {
+  line-height: 38px;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: 0.25s all linear;
+}
+.col .item.item-accordion.ng-hide {
+  line-height: 0px;
+}
+.col .item.item-accordion.ng-hide-add,
+.col .item.item-accordion.ng-hide-remove {
+  display: block !important;
 }
 
 

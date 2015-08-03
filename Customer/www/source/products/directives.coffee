@@ -12,20 +12,3 @@ angular.module 'LocalHyper.products'
 				if isBackdrop
 					$ionicLoading.hide()
 ]
-
-
-.directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->
-
-	restrict: 'A'
-	link: (scope, el, attrs)->
-		
-		$timeout ->
-			createdAt = $parse(attrs.createdAt)(scope)
-
-			m = moment createdAt
-			total = moment(m).add 24, 'hours'
-			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
-
-			$(el).countdown totalStr, (event)->
-				$(el).html event.strftime('%-H:%-M:%-S')
-]

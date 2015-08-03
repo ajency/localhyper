@@ -19,6 +19,7 @@ angular.module 'LocalHyper.products'
 				active: false
 				limitTo: 1
 				canLoadMore: false
+				display: 'none'
 
 				onScrollComplete : ->
 					$scope.$broadcast 'scroll.infiniteScrollComplete'
@@ -34,6 +35,16 @@ angular.module 'LocalHyper.products'
 					@active = false
 					@limitTo = 1
 					@canLoadMore = false
+					@display = 'none'
+
+				reFetch : ->
+					@page = 0
+					@all = []
+					@limitTo = 1
+					@canLoadMore = false
+					@display = 'loader'
+					@get()
+					App.resize()
 
 				showAllRequests : ->
 					@limitTo = 1000
@@ -45,23 +56,41 @@ angular.module 'LocalHyper.products'
 						productId: $scope.view.productID
 						page: @page
 						displayLimit: 2
-						openStatus: false
+						requestType: 'all'
+						selectedFilters: []
 
 					RequestAPI.get params
 					.then (data)=>
 						@success data, params.displayLimit
 					, (error)=>
-						console.log error
+						@onError error
 					.finally =>
 						@page = @page + 1
 						App.resize()
 
 				success : (data, limit)->
+					@display = 'noError'
 					if _.size(data) > 0
 						if _.size(data) < limit then @canLoadMore = false
 						else @onScrollComplete()
 						@all = @all.concat data
 					else @canLoadMore = false
+
+				onError : (error)->
+					console.log error
+					@display = 'error'
+					@canLoadMore = false
+
+				onTryAgain : ->
+					@display = 'noError'
+					@page = 0
+					@all = []
+					@canLoadMore = true
+
+				onCardClick : (request)->
+					RequestAPI.requestDetails 'set', request
+					App.navigate 'request-details'
+
 
 
 			reset : ->
@@ -88,7 +117,9 @@ angular.module 'LocalHyper.products'
 				@footer = true
 				@display = 'noError'
 				@request.checkIfActive()
-				@request.get() if User.isLoggedIn()
+				if User.isLoggedIn()
+					@request.display = 'loader'
+					@request.get()
 				
 			onError: (type)->
 				@display = 'error'
@@ -130,12 +161,25 @@ angular.module 'LocalHyper.products'
 
 		$rootScope.$on 'make:request:success', ->
 			$scope.view.request.active = true
+			$scope.view.request.reFetch()
+
+		$rootScope.$on 'request:cancelled', ->
+			$scope.view.request.active = false
+
+		$rootScope.$on 'offer:accepted', ->
+			$scope.view.request.active = false
 
 		$rootScope.$on 'on:session:expiry', ->
 			$scope.view.reset()
+
+		$rootScope.$on 'in:app:notification', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'new_offer'
+				$scope.view.request.reFetch()
 		
 		$scope.$on '$ionicView.beforeEnter', ->
 			if _.contains ['products', 'verify-success'], App.previousState
+				App.scrollTop()
 				$scope.view.reset()
 ]
 

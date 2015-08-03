@@ -153,7 +153,7 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       addSellerMarkers: function(sellers) {
         this.sellers.count = _.size(sellers);
         this.sellers.displayCount = true;
-        this.sellers.found = this.sellers.count > 0 ? true : false;
+        this.sellers.found = true;
         return _.each(sellers, (function(_this) {
           return function(seller) {
             var geoPoint, loc;
@@ -199,6 +199,7 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
           })(this), function(error) {
             return CToast.show('Request failed, please try again');
           })["finally"](function() {
+            App.resize();
             return CSpinner.hide();
           });
         }

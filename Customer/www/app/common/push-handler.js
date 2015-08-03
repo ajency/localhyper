@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common').factory('Push', [
-  'App', '$cordovaPush', function(App, $cordovaPush) {
+  'App', '$cordovaPush', '$rootScope', 'RequestAPI', function(App, $cordovaPush, $rootScope, RequestAPI) {
     var Push;
     Push = {};
     Push.register = function() {
@@ -23,10 +23,11 @@ angular.module('LocalHyper.common').factory('Push', [
     };
     Push.getPayload = function(p) {
       var foreground, payload;
+      console.log(p);
       payload = {};
       if (App.isAndroid()) {
         if (p.event === 'message') {
-          payload = p.payload.data;
+          payload = p.payload.data.data;
           payload.foreground = p.foreground;
           if (_.has(p, 'coldstart')) {
             payload.coldstart = p.coldstart;
@@ -40,9 +41,31 @@ angular.module('LocalHyper.common').factory('Push', [
       }
       return payload;
     };
-    Push.handlePayload = function(event, payload) {
-      console.log('Notification received');
-      return console.log(payload);
+    Push.handlePayload = function(payload) {
+      var inAppNotification, notificationClick;
+      inAppNotification = function() {
+        return $rootScope.$broadcast('in:app:notification', {
+          payload: payload
+        });
+      };
+      notificationClick = function() {
+        return $rootScope.$broadcast('push:notification:click', {
+          payload: payload
+        });
+      };
+      if (App.isAndroid()) {
+        if (payload.coldstart) {
+          return notificationClick();
+        } else if (!payload.foreground && !_.isUndefined(payload.coldstart) && !payload.coldstart) {
+          return notificationClick();
+        } else if (payload.foreground) {
+          return inAppNotification();
+        } else if (!payload.foreground) {
+          return inAppNotification();
+        }
+      } else if (App.isIOS()) {
+        return console.log('ios');
+      }
     };
     return Push;
   }

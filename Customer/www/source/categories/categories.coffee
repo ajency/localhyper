@@ -1,44 +1,43 @@
 angular.module 'LocalHyper.categories', []
 
 
-.controller 'CategoriesCtrl', ['$scope', 'App', 'CategoriesAPI'
-	, ($scope, App, CategoriesAPI)->
+.controller 'CategoriesCtrl', ['$scope', 'App', 'CategoriesAPI', ($scope, App, CategoriesAPI)->
 
-		$scope.view = 
-			display: 'loader'
-			errorType: ''
-			parentCategories: []
+	$scope.view = 
+		display: 'loader'
+		errorType: ''
+		parentCategories: []
 
-			init : ->
-				@getCategories()
+		init : ->
+			@getCategories()
 
-			getCategories : ->
-				CategoriesAPI.getAll()
-				.then (data)=>
-					console.log data
-					@onSuccess data
-				, (error)=>
-					@onError error
+		getCategories : ->
+			CategoriesAPI.getAll()
+			.then (data)=>
+				console.log data
+				@onSuccess data
+			, (error)=>
+				@onError error
 
-			onSuccess : (data)->
-				@display = 'noError'
-				@parentCategories = data
-			
-			onError: (type)->
-				@display = 'error'
-				@errorType = type
+		onSuccess : (data)->
+			@display = 'noError'
+			@parentCategories = data
+		
+		onError: (type)->
+			@display = 'error'
+			@errorType = type
 
-			onTapToRetry : ->
-				@display = 'loader'
-				@getCategories()
+		onTapToRetry : ->
+			@display = 'loader'
+			@getCategories()
 
-			onSubcategoryClick : (children, categoryID)->
-				CategoriesAPI.subCategories 'set', children
-				App.navigate 'products', categoryID: categoryID
+		onSubcategoryClick : (children, categoryID)->
+			CategoriesAPI.subCategories 'set', children
+			App.navigate 'products', categoryID: categoryID
+	
 
-
-		$scope.$on '$ionicView.afterEnter', ->
-			App.hideSplashScreen()
+	$scope.$on '$ionicView.afterEnter', ->
+		App.hideSplashScreen()
 ]
 
 

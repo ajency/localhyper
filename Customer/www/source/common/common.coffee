@@ -71,6 +71,9 @@ angular.module 'LocalHyper.common', []
 			resize : ->
 				$ionicScrollDelegate.resize()
 
+			scrollTop : ->
+				$ionicScrollDelegate.scrollTop true
+
 			scrollBottom : ->
 				$ionicScrollDelegate.scrollBottom true
 

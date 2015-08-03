@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.myRequests'
 
-.controller 'OpenRequestCtrl', ['$scope', 'App', 'RequestAPI'
-	, ($scope, App, RequestAPI )->
+.controller 'OpenRequestCtrl', ['$scope', 'App', 'RequestAPI', '$ionicLoading'
+	, ($scope, App, RequestAPI, $ionicLoading)->
 
 		$scope.view = 
 			display: 'loader'
@@ -9,6 +9,13 @@ angular.module 'LocalHyper.myRequests'
 			openRequests: []
 			page: 0
 			canLoadMore: true
+			refresh: false
+			getOpenProducts: false
+			selectedFilters : []
+
+			onClick : (request)->
+				RequestAPI.requestDetails 'set', request
+				App.navigate 'request-details'
 
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
@@ -21,9 +28,11 @@ angular.module 'LocalHyper.myRequests'
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 
 			onPullToRefresh : ->
-				@openRequests = []
+				@getOpenProducts = false
 				@page = 0
+				@refresh = true
 				@getMyOffers()
+				@canLoadMore = true
 
 			onTapToRetry : ->
 				@canLoadMore = true
@@ -33,27 +42,29 @@ angular.module 'LocalHyper.myRequests'
 			getMyOffers : ()->
 				RequestAPI.get
 					page: @page
-					openStatus: true
-					displayLimit: 5
+					displayLimit : 3
+					requestType : 'nonexpired'
+					selectedFilters : @selectedFilters
 				.then (data)=>
 					@onSuccess data
 				, (error)=>
 					@onError error
 				.finally =>
 					@incrementPage()
-					@onScrollComplete()
 					
 			onSuccess : (data)->
 				@display = 'noError'
-				console.log('open request')
-				console.log(data)
 				openRequest = data
 				if openRequest.length > 0
-					@canLoadMore = true
-					@openRequests = @openRequests.concat(openRequest)	
+					if _.size(openRequest) < 3 then @canLoadMore = false
+					else @onScrollComplete()
+					if @refresh then @openRequests = openRequest
+					else @openRequests = @openRequests.concat(openRequest)
 				else
 					@canLoadMore = false
-
+					
+				if !@canLoadMore
+				    @getOpenProducts = true
 
 			onError: (type)->
 				@canLoadMore = false
@@ -64,8 +75,32 @@ angular.module 'LocalHyper.myRequests'
 				# @getMyOffers()	
 
 			onInfiniteScroll : ->
+				@refresh = false
 				@getMyOffers()
-			
+
+			Filter : ->
+				$ionicLoading.show
+					scope: $scope
+					templateUrl: 'views/my-requests/filter.html'
+					hideOnStateChange: true
+					
+			onFilter:(status)->
+				@canLoadMore = true
+				$ionicLoading.hide()
+				if status != 'null'
+					@selectedFilters = [status]
+				else 
+					@selectedFilters = []
+				@refresh = true
+				@page = 0
+				@openRequests = []
+				
+				@getOpenProducts = false
+				@onScrollComplete()	
+
+
+		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
+			viewData.enableBack = true
 ]
 
 

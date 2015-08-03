@@ -1,10 +1,26 @@
 angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
-  '$scope', 'App', '$ionicPopover', '$rootScope', '$ionicSideMenuDelegate', '$cordovaSocialSharing', '$cordovaAppRate', function($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, $cordovaSocialSharing, $cordovaAppRate) {
+  '$scope', 'App', '$ionicPopover', '$rootScope', '$ionicSideMenuDelegate', '$cordovaSocialSharing', '$cordovaAppRate', 'User', 'Push', 'RequestAPI', function($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, $cordovaSocialSharing, $cordovaAppRate, User, Push, RequestAPI) {
     $scope.view = {
       userPopover: null,
       init: function() {
+        Push.register();
         this.loadPopOver();
+        if (User.isLoggedIn()) {
+          this.getNotifications();
+        }
         return $ionicSideMenuDelegate.edgeDragThreshold(true);
+      },
+      getNotifications: function() {
+        return RequestAPI.getNotifications().then((function(_this) {
+          return function(offerIds) {
+            var notifications;
+            notifications = _.size(offerIds);
+            if (notifications > 0) {
+              App.notification.badge = true;
+              return App.notification.count = notifications;
+            }
+          };
+        })(this));
       },
       loadPopOver: function() {
         return $ionicPopover.fromTemplateUrl('views/user-popover.html', {
@@ -50,9 +66,35 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         }
       }
     };
+    $rootScope.$on('$user:registration:success', function() {
+      App.notification.icon = true;
+      return $scope.view.getNotifications();
+    });
+    $rootScope.$on('in:app:notification', function(e, obj) {
+      var payload;
+      payload = obj.payload;
+      if (payload.type === 'new_offer') {
+        if (App.notification.count === 0) {
+          return $scope.view.getNotifications();
+        } else {
+          return App.notification.increment();
+        }
+      }
+    });
+    $rootScope.$on('push:notification:click', function(e, obj) {
+      var payload;
+      payload = obj.payload;
+      if (payload.type === 'new_offer') {
+        RequestAPI.requestDetails('set', {
+          pushOfferId: payload.id
+        });
+        return App.navigate('request-details');
+      }
+    });
     return $rootScope.$on('on:session:expiry', function() {
       Parse.User.logOut();
-      return App.notification.icon = false;
+      App.notification.icon = false;
+      return App.notification.badge = false;
     });
   }
 ]).config([

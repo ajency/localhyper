@@ -12,6 +12,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         active: false,
         limitTo: 1,
         canLoadMore: false,
+        display: 'none',
         onScrollComplete: function() {
           return $scope.$broadcast('scroll.infiniteScrollComplete');
         },
@@ -26,7 +27,17 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           this.all = [];
           this.active = false;
           this.limitTo = 1;
-          return this.canLoadMore = false;
+          this.canLoadMore = false;
+          return this.display = 'none';
+        },
+        reFetch: function() {
+          this.page = 0;
+          this.all = [];
+          this.limitTo = 1;
+          this.canLoadMore = false;
+          this.display = 'loader';
+          this.get();
+          return App.resize();
         },
         showAllRequests: function() {
           this.limitTo = 1000;
@@ -39,7 +50,8 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             productId: $scope.view.productID,
             page: this.page,
             displayLimit: 2,
-            openStatus: false
+            requestType: 'all',
+            selectedFilters: []
           };
           return RequestAPI.get(params).then((function(_this) {
             return function(data) {
@@ -47,7 +59,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             };
           })(this), (function(_this) {
             return function(error) {
-              return console.log(error);
+              return _this.onError(error);
             };
           })(this))["finally"]((function(_this) {
             return function() {
@@ -57,6 +69,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           })(this));
         },
         success: function(data, limit) {
+          this.display = 'noError';
           if (_.size(data) > 0) {
             if (_.size(data) < limit) {
               this.canLoadMore = false;
@@ -67,6 +80,21 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           } else {
             return this.canLoadMore = false;
           }
+        },
+        onError: function(error) {
+          console.log(error);
+          this.display = 'error';
+          return this.canLoadMore = false;
+        },
+        onTryAgain: function() {
+          this.display = 'noError';
+          this.page = 0;
+          this.all = [];
+          return this.canLoadMore = true;
+        },
+        onCardClick: function(request) {
+          RequestAPI.requestDetails('set', request);
+          return App.navigate('request-details');
         }
       },
       reset: function() {
@@ -101,6 +129,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         this.display = 'noError';
         this.request.checkIfActive();
         if (User.isLoggedIn()) {
+          this.request.display = 'loader';
           return this.request.get();
         }
       },
@@ -150,13 +179,28 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       }
     };
     $rootScope.$on('make:request:success', function() {
-      return $scope.view.request.active = true;
+      $scope.view.request.active = true;
+      return $scope.view.request.reFetch();
+    });
+    $rootScope.$on('request:cancelled', function() {
+      return $scope.view.request.active = false;
+    });
+    $rootScope.$on('offer:accepted', function() {
+      return $scope.view.request.active = false;
     });
     $rootScope.$on('on:session:expiry', function() {
       return $scope.view.reset();
     });
+    $rootScope.$on('in:app:notification', function(e, obj) {
+      var payload;
+      payload = obj.payload;
+      if (payload.type === 'new_offer') {
+        return $scope.view.request.reFetch();
+      }
+    });
     return $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['products', 'verify-success'], App.previousState)) {
+        App.scrollTop();
         return $scope.view.reset();
       }
     });

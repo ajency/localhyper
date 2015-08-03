@@ -19,10 +19,12 @@ angular.module 'LocalHyper.myRequests', []
 ]
 
 
-.controller 'EachRequestTimeCtrl', ['$scope', '$interval', ($scope, $interval)->
-	#Request time
-	setTime = ->
-		iso       = $scope.request.createdAt.iso
+.factory 'TimeString', [->
+
+	TimeString = {}
+
+	TimeString.get = (obj)->
+		iso       = obj.iso
 		format    = 'DD/MM/YYYY HH:mm:ss'
 		now       = moment().format format
 		createdAt = moment(iso).format format
@@ -49,7 +51,16 @@ angular.module 'LocalHyper.myRequests', []
 		else
 			timeStr = "On #{moment(iso).format('DD-MM-YYYY')}"
 
-		$scope.request.timeStr = timeStr
+		timeStr
+
+	TimeString
+]
+
+
+.controller 'EachRequestTimeCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
+	#Request time
+	setTime = ->
+		$scope.request.timeStr = TimeString.get $scope.request.createdAt
 
 	setTime()
 	interval = $interval setTime, 60000
@@ -86,6 +97,3 @@ angular.module 'LocalHyper.myRequests', []
 					controller: 'RequestsHistoryCtrl'
 					templateUrl: 'views/my-requests/requests-history.html'
 ]
-
-
-

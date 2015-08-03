@@ -6,13 +6,6 @@
 		<img src="img/logo.png"/>
     </ion-nav-title>
 
-	<ion-nav-buttons side="left">
-		<button
-			menu-toggle="left"
-			class="button button-icon icon ion-navicon">
-		</button>
-	</ion-nav-buttons>
-
 	<ion-content ng-switch="view.display">
 
 		<ion-refresher
@@ -20,55 +13,49 @@
 			class="aj-refresher">
 		</ion-refresher>
 
-
 		<ion-list 
-		 class="card-list"
-		 ng-switch-when="noError">
+			class="card-list"
+			ng-switch-when="noError">
 
 			<ion-item
-			class="card"
-			ng-repeat="openRequest in view.openRequests "
-			ng-controller="EachRequestTimeCtrl">
+				class="card"
+				ng-repeat="request in view.openRequests "
+				ng-controller="EachRequestTimeCtrl"
+				ng-click="view.onClick(request)">
 
-				<div class="item-wrapper-nr">
-					<div class="item-avatar border-none margin-none">
-					<img ng-src="{{openRequest.product.images[0].src}}">
+					<div class="item-wrapper-nr">
+						<div class="item-avatar border-none margin-none">
+						<img ng-src="{{request.product.images[0].src}}">
+						</div>
+						<h2>{{request.product.name}}</h2>
 					</div>
-					<h2>{{openRequest.product.name}}</h2>
-				</div>
-
-				<div class="row item border-none" >
-					<div class="col  p-t-0">
-						<sm class="light-gray"> Local Price</sm><br>
-						<h3 class=" item-text-wrap margin-none big-txt ">
-						{{openRequest.product.mrp.toLocaleString()}}
-						</h3>
-					</div>
-					<div class="col p-t-0">
-						<div class="pull-right">
-						<div class="offer">{{openRequest.offerCount}} </div>
-						<h4 class="offertxt light-gray"> No of offers</h4>
+					<br>
+					<div class="row item border-none" >
+						<div class="col  p-t-0">
+							<h3 class=" item-text-wrap margin-none big-txt ">
+							Local Price :{{request.product.mrp.toLocaleString()}}
+							</h3>
+						</div>
+						<div class="col p-t-0">
+							<div class="pull-right">
+							<div class="offer">{{request.offerCount}} </div>
+							<h4 class="offertxt light-gray"> No of offers</h4>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="item ">
-					<div class="pull-right ">
-						<h3 class="margin-none "> Status:{{openRequest.status}}</h3>
+					<div class="item ">
+						<div class="pull-right ">
+							<h3 class="margin-none "> Status:{{request.status}}</h3>
+						</div>
+						<div class="pull-left ">
+							<sm class="subdued">{{request.timeStr}}</sm>
+						</div>
 					</div>
-					<div class="pull-left ">
-						<sm class="subdued">{{openRequest.timeStr}}</sm>
-					</div>
-				</div>
-				<!--div class="item item-body">
-					<p>
-					<b>Address :</b>
-					{{openRequest.address.full}}
-					<br><br>
-					<b>Comments :{{openRequest.address.comments}}</b>
-					</p>
-				</div-->
 			</ion-item>
 		</ion-list>	
+		<ion-item ng-if="view.getOpenProducts">
+			No more products to display.
+		</ion-item>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
@@ -90,7 +77,7 @@
 			<div class="col col-50 text-center" >
 				<h5 class="margin-none text-light normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
 			</div>
-			<div class="col col-50 text-center border-left">
+			<div class="col col-50 text-center border-left" ng-click="view.Filter()">
 				<h5 class="margin-none text-light normal"><i class="ion ion-funnel"></i> FILTER</h5>
 			</div>
 		</div>

@@ -25,10 +25,8 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 			@count = @count - 1
 			@badge = false if @count is 0
 
-	$rootScope.$on '$user:registration:success', ->
-		App.notification.icon = true
-
-	#Hide small app logo on categories view
+	
+	#Small app logo
 	App.logo = small: true
 	
 	$rootScope.$on '$stateChangeSuccess', (ev, to, toParams, from, fromParams)->
@@ -47,5 +45,6 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	$ionicConfigProvider.views.forwardCache true
 	$ionicConfigProvider.backButton.previousTitleText(false).text ''
 	$ionicConfigProvider.navBar.alignTitle 'center'
+	$ionicConfigProvider.tabs.position 'top'
 ]
 
