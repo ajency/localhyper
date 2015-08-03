@@ -149,6 +149,11 @@ angular.module 'LocalHyper.requestsOffers'
 				.finally ->
 					$scope.$broadcast 'scroll.refreshComplete'
 
+				RequestsAPI.getById "eXKpMoOZ55"
+				.then (request)=>
+					console.log 'Request'
+					console.log request
+
 			onSuccess : (data)->
 				@display = 'noError'
 				@requests = data.requests

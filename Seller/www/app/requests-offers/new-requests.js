@@ -148,7 +148,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         })(this));
       },
       getRequests: function() {
-        return RequestsAPI.getNotifications().then((function(_this) {
+        RequestsAPI.getNotifications().then((function(_this) {
           return function(requestIds) {
             var notifications;
             _this.requestIds = requestIds;
@@ -171,6 +171,12 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         })(this))["finally"](function() {
           return $scope.$broadcast('scroll.refreshComplete');
         });
+        return RequestsAPI.getById("eXKpMoOZ55").then((function(_this) {
+          return function(request) {
+            console.log('Request');
+            return console.log(request);
+          };
+        })(this));
       },
       onSuccess: function(data) {
         this.display = 'noError';

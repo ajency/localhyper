@@ -16,13 +16,13 @@ angular.module 'LocalHyper.requestsOffers'
 
 		defer.promise
 
-	OffersAPI.offerhistory = (opts)->
+	OffersAPI.getSellerOffers = (opts)->
 		defer = $q.defer()
 
 		params = 
 			"sellerId": User.getId()
 			"page": opts.page
-			"displayLimit" : "3"
+			"displayLimit" : opts.displayLimit
 			"acceptedOffers": false
 			"selectedFilters" : []
 			"sortBy" : "updatedAt"

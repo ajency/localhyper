@@ -1,8 +1,9 @@
-<ion-modal-view ng-switch="view.requestDetails.display">
+<ion-modal-view>
 
 	<ion-header-bar
 		style="height:54px;"
-		no-tap-scroll="true" class="modal-offer-header">
+		class="modal-offer-header"
+		no-tap-scroll="true">
 
 		<div class="row row-fluid">
 			<div class="col col-20"></div>
@@ -11,7 +12,7 @@
 			</div>
 			<div class="col col-20">
 				<h2
-					ng-click="view.requestDetails.modal.hide()"
+					ng-click="view.offerDetails.modal.hide()"
 					class="text-right">
 					<i class="ion ion-ios-close-outline"></i>
 				</h2>
@@ -19,63 +20,64 @@
 		</div>
 	</ion-header-bar>
 
-	<ion-content 
-		class="has-footer" 
-		delegate-handle="request-details">
+	<ion-content class="has-footer">
 
-		<ion-spinner
-			class="aj-spinner spinner-android"
-			ng-switch-when="loader">
-		</ion-spinner>
-
-		<ion-list ng-switch-when="noError">
+		<ion-list>
 
 			<div class="row">
 				<div class="col col-20 item-avatar">
-					<img class="" ng-src="{{view.requestDetails.data.product.images[0].src}}" >
+					<img ng-src="{{view.offerDetails.data.product.images[0].src}}">
 				</div>
 				<div class="col col-60">
-					<h5 class="text-left">{{view.requestDetails.data.product.name}} </h5> 
+					<h5 class="text-left">
+						{{view.offerDetails.data.product.name}}
+					</h5> 
 				</div>
-				
 			</div>
 
 			<div>
-				<h5>Model No : {{view.requestDetails.data.product.modelNumber}} </h5>
-				<h5>Distance from you: {{view.requestDetails.data.distanceFromCustomer.toFixed(2)}} kms radius</h5>
-				<h5>MRP: Rs  {{App.toINR(view.requestDetails.data.product.mrp)}}</h5>
-				<h5>Number of bids: DUMMY</h5>
 				<h5>
-					Category: {{view.requestDetails.data.category.parent}} > {{view.requestDetails.data.category.name}} > {{view.requestDetails.data.brand.name}}
+					Model No : {{view.offerDetails.data.product.modelNumber}}
 				</h5>
-				<h5>Your offer price: {{view.requestDetails.data.offerPrice}}</h5>
-				<div ng-if="view.requestDetails.data.request.status == 'open' " >
-				<h5 > Request expires in  :</sm>
-	            	 	<sm ng-if="view.requestDetails.showExpiry"
+
+				<h5>
+					Distance from you: {{view.offerDetails.data.distanceFromCustomer.toFixed(2)}} kms radius
+				</h5>
+				
+				<h5>
+					MRP: Rs  {{App.toINR(view.offerDetails.data.product.mrp)}}
+				</h5>
+
+				<h5>Number of bids: DUMMY</h5>
+
+				<h5>
+					Category: {{view.offerDetails.data.category.parent}} > {{view.offerDetails.data.category.name}} > {{view.offerDetails.data.brand.name}}
+				</h5>
+
+				<h5>
+					Your offer price: {{App.toINR(view.offerDetails.data.offerPrice)}}
+				</h5>
+
+				<div ng-if="view.offerDetails.data.request.status == 'open' ">
+					<h5> 
+						Request expires in  :
+	            	 	<sm ng-if="view.offerDetails.showExpiry"
 							aj-count-down
-							created-at="view.requestDetails.data.request.createdAt">
+							created-at="view.offerDetails.data.request.createdAt">
+						</sm>
+					</h5>
+				</div>
+
+				<h5 ng-if="view.offerDetails.data.request.comments!==''">
+					Customer Comments : {{view.offerDetails.data.request.comments}} 
+				</h5>
+
+				<h5 ng-if="view.offerDetails.data.offerComments!==''">
+					Your Comments : {{view.offerDetails.data.offerComments}}
 				</h5>
 			</div>
-					<h5 ng-if="view.requestDetails.data.request.comments!==''">
-						Customer Comments : {{view.requestDetails.data.request.comments}} 
-					</h5>
-					<h5 ng-if="view.requestDetails.data.request.comments!==''">
-						Your Comments : {{view.requestDetails.data.offerComments}}
-					</h5>
-			</div>
+
 			<br>
-			<div 
-				class="list"
-				ng-if="view.requestDetails.price === 'yourPrice'">
-				<label class="item item-input item-floating-label">
-					<span class="input-label">Your offer price</span>
-					<input 
-			    		type="number"
-			    		placeholder="Enter your offer price"
-			    		ng-pattern="App.onlyNumbers"
-			    		ng-model="view.requestDetails.offerPrice">
-				</label>
-			</div>	
 
 			<div class="row">
 				<div class="col">
@@ -84,15 +86,13 @@
 							<img src="./img/cal.png" alt="">
 						</i>
 						<p>
-						<span class="ti">Delivery Time</span>
-						<span class="ac-ti">
-							<span 
-								class="big">
-								{{view.requestDetails.data.offerDeliveryTime.value}} {{view.requestDetails.data.offerDeliveryTime.unit}}
-								
+							<span class="ti">Delivery Time</span>
+							<span class="ac-ti">
+								<span 
+									class="big">
+									{{view.offerDetails.data.offerDeliveryTime.value}} {{view.offerDetails.data.offerDeliveryTime.unit}}
+								</span>
 							</span>
-							
-						</span>
 						</p>
 					</div>
 				</div>
@@ -100,14 +100,6 @@
 
 		</ion-list>
 
-		<aj-error
-			ng-switch-when="error"
-			error-type="view.requestDetails.errorType"
-			tap-to-retry="view.requestDetails.get()">
-		</aj-error>
-
 	</ion-content>
-
-	
 
 </ion-modal-view>
