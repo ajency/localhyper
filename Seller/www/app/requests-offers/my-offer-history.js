@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', '$timeout', '$rootScope', function($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal, $timeout, $rootScope) {
+  '$scope', 'App', 'RequestsAPI', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', function($scope, App, RequestsAPI, OffersAPI, $ionicModal, $timeout, $rootScope) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -102,7 +102,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return this.showOfferHistory();
       },
       showOfferHistory: function() {
-        return OfferHistoryAPI.offerhistory({
+        return OffersAPI.offerhistory({
           page: this.page
         }).then((function(_this) {
           return function(data) {

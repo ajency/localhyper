@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.factory 'OffersAPI', ['$q', '$http', ($q, $http)->
+.factory 'OffersAPI', ['$q', '$http', 'User', ($q, $http, User)->
 
 	OffersAPI = {}
 
@@ -16,28 +16,17 @@ angular.module 'LocalHyper.requestsOffers'
 
 		defer.promise
 
-
-	OffersAPI
-]
-
-.factory 'OfferHistoryAPI', ['$q', '$http', 'User', '$timeout', ($q, $http, User, $timeout)->
-
-	OfferHistoryAPI = {}
-
-	OfferHistoryAPI.offerhistory = (opts)->
-		user = User.getCurrent()
+	OffersAPI.offerhistory = (opts)->
 		defer = $q.defer()
-		user = User.getCurrent()
 
 		params = 
-			"sellerId": user.id
+			"sellerId": User.getId()
 			"page": opts.page
 			"displayLimit" : "3"
 			"acceptedOffers": false
 			"selectedFilters" : []
 			"sortBy" : "updatedAt"
 			"descending" : true
-
 			
 		$http.post 'functions/getSellerOffers', params
 		.then (data)->
@@ -47,6 +36,5 @@ angular.module 'LocalHyper.requestsOffers'
 
 		defer.promise
 
-	OfferHistoryAPI
+	OffersAPI
 ]
-

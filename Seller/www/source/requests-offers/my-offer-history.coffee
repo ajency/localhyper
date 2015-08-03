@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OfferHistoryAPI', '$ionicModal', '$timeout', '$rootScope'
-	, ($scope, App, RequestsAPI, OfferHistoryAPI, $ionicModal, $timeout, $rootScope)->
+.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope'
+	, ($scope, App, RequestsAPI, OffersAPI, $ionicModal, $timeout, $rootScope)->
 
 		$scope.view = 
 			display: 'loader'
@@ -94,7 +94,7 @@ angular.module 'LocalHyper.requestsOffers'
 				@showOfferHistory()
 				
 			showOfferHistory : ()->
-				OfferHistoryAPI.offerhistory
+				OffersAPI.offerhistory
 					page: @page
 				.then (data)=>
 					@onSuccess data

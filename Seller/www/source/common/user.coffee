@@ -19,6 +19,9 @@ angular.module 'LocalHyper.common'
 		user = Parse.User.current()
 		user
 
+	User.getId = ->
+		@getCurrent().id
+
 	User.info = (action, data={})->
 		switch action
 			when 'set'
