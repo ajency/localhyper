@@ -1202,7 +1202,20 @@
           }
           productAttributes = product.attrs;
           productItem.set("name", product.name);
-          productItem.set("images", product.images);
+          _.each(product.images, function(productImage) {
+            var prodImg;
+            if (!_.isNull(productImage.src)) {
+              prodImg = {
+                "src": productImage.src
+              };
+            } else {
+              prodImg = {
+                "src": "https://placehold.it/350x150?text=Product"
+              };
+            }
+            return productImgs.push(prodImg);
+          });
+          productItem.set("images", productImgs);
           productItem.set("model_number", String(product.model_number));
           productItem.set("mrp", parseInt(product.mrp));
           productItem.set("popularity", product.popularity);

@@ -45,7 +45,21 @@ Parse.Cloud.job 'productImport', (request, response) ->
 
                 # set direct columns of product item
                 productItem.set "name", product.name
-                productItem.set "images", product.images
+
+                _.each product.images , (productImage) ->
+
+                    if !_.isNull(productImage.src)
+                        prodImg = 
+                            "src" : productImage.src
+                    else
+                        prodImg = 
+                            "src" : "https://placehold.it/350x150?text=Product"
+
+                    productImgs.push prodImg
+
+                productItem.set "images", productImgs
+
+
                 productItem.set "model_number", String (product.model_number)
                 productItem.set "mrp", parseInt product.mrp
                 productItem.set "popularity", product.popularity
