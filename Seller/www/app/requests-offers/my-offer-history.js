@@ -146,7 +146,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         return $scope.view.requestDetails.showExpiry = false;
       }, 1000);
     });
-    return $rootScope.$on('offer:done:success', function() {
+    return $rootScope.$on('make:offer:success', function() {
       return $scope.view.reFetch();
     });
   }

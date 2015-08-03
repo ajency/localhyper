@@ -127,7 +127,7 @@ angular.module 'LocalHyper.requestsOffers'
 				$scope.view.requestDetails.showExpiry = false
 			, 1000
 
-		$rootScope.$on 'offer:done:success', ->
+		$rootScope.$on 'make:offer:success', ->
 			$scope.view.reFetch()
 ]
 

@@ -2,8 +2,8 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope'
-	, '$ionicModal', 'Push', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate'
-	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, Push, User, CToast, OffersAPI
+	, '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate'
+	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI
 	, CSpinner, $ionicScrollDelegate)->
 
 		$scope.view = 
@@ -103,17 +103,24 @@ angular.module 'LocalHyper.requestsOffers'
 						CSpinner.show '', 'Please wait...'
 						OffersAPI.makeOffer params
 						.then (data)=>
+							@removeRequestCard()
 							@modal.hide()
-							CToast.show 'Your offer has been made'
-							$rootScope.$broadcast 'offer:done:success'
+							CToast.showLongBottom 'Your offer has been made. For more details, please check your offer history.'
+							$rootScope.$broadcast 'make:offer:success'
 						, (type)=>
 							CToast.show 'Failed to make offer, please try again'
 						.finally ->
 							CSpinner.hide()
 
+				removeRequestCard : ->
+					requestId = @data.id
+					spliceIndex = _.findIndex $scope.view.requests, (request)->
+						request.id is requestId
+					$scope.view.requests.splice(spliceIndex, 1) if spliceIndex isnt -1
+
+
 
 			init : ->
-				Push.register()
 				@getRequests()
 				@loadRequestDetails()
 
@@ -139,17 +146,23 @@ angular.module 'LocalHyper.requestsOffers'
 					@onSuccess data
 				, (error)=>
 					@onError error
+				.finally ->
+					$scope.$broadcast 'scroll.refreshComplete'
 
 			onSuccess : (data)->
 				@display = 'noError'
 				@requests = data.requests
 			
-			onError: (type)->
+			onError : (type)->
 				@display = 'error'
 				@errorType = type
 
 			isNew : (requestId)->
 				_.contains @requestIds, requestId
+
+			onPullToRefresh : ->
+				@display = 'noError'
+				@getRequests()
 
 			onTapToRetry : ->
 				@display = 'loader'
@@ -172,11 +185,15 @@ angular.module 'LocalHyper.requestsOffers'
 							@requests[index].new = false
 
 
-		$rootScope.$on 'on:new:request', ->
-			$scope.view.getRequests()
+		$rootScope.$on 'in:app:notification', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'new_request'
+				$scope.view.getRequests()
 
-		$rootScope.$on 'on:notification:click', (e, obj)->
-			$scope.view.requestDetails.showModal obj.payload.id
+		$rootScope.$on 'push:notification:click', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'new_request'
+				$scope.view.requestDetails.showModal payload.id
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
