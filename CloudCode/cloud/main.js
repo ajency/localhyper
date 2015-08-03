@@ -1191,7 +1191,7 @@
       }
       totalAttrCount = countFilterableAttrib + countSecAttrib;
       _.each(products, function(product) {
-        var attributeValueArr, brandObj, categoryPrimaryAttribute, lengthOfAttr, lengthOfTextAttr, primaryAttribObj, primaryAttributeValueArr, primeAttrib, productAttributes, productFilters, productItem, validAttrLength;
+        var attributeValueArr, brandObj, categoryPrimaryAttribute, inputImages, lengthOfAttr, lengthOfTextAttr, primaryAttribObj, primaryAttributeValueArr, primeAttrib, productAttributes, productFilters, productImgs, productItem, validAttrLength;
         lengthOfAttr = _.keys(product.attrs).length;
         lengthOfTextAttr = _.keys(product.text_attributes).length;
         validAttrLength = lengthOfAttr + lengthOfTextAttr;
@@ -1202,6 +1202,8 @@
           }
           productAttributes = product.attrs;
           productItem.set("name", product.name);
+          productImgs = [];
+          inputImages = product.images;
           _.each(product.images, function(productImage) {
             var prodImg;
             if (!_.isNull(productImage.src)) {

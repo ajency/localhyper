@@ -46,6 +46,8 @@ Parse.Cloud.job 'productImport', (request, response) ->
                 # set direct columns of product item
                 productItem.set "name", product.name
 
+                productImgs = []
+                inputImages = product.images
                 _.each product.images , (productImage) ->
 
                     if !_.isNull(productImage.src)
