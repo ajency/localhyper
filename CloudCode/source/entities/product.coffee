@@ -438,7 +438,43 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
     ,(error) -> 
         response.error error    
 
+Parse.Cloud.afterSave "ProductItem", (request)->
+    productObject = request.object
 
+    mrp = parseInt(productObject.get("mrp"))
+
+    if (!productObject.existed()) or ( (productObject.existed()) and (productObject.createdAt isnt productObject.updatedAt))
+        categoryId = productObject.get("category").id
+
+        queryCategory = new Parse.Query("Category")
+        queryCategory.equalTo("objectId", categoryId)
+
+        queryCategory.first()
+        .then (categoryObject) ->
+            newPriceRange = []
+            oldPriceRange = categoryObject.get("price_range")
+            if (_.isUndefined(oldPriceRange)) or (_.isEmpty(oldPriceRange))
+                oldPriceRange[0] = 0
+                oldPriceRange[1] = 0
+
+            oldPriceRange[0] = parseInt(oldPriceRange[0])
+            oldPriceRange[1] = parseInt(oldPriceRange[1])
+
+            if (mrp >= oldPriceRange[1])
+                newPriceRange[0] = oldPriceRange[0]
+                newPriceRange[1] =  mrp
+            else
+                newPriceRange[0] = mrp
+                newPriceRange[1] = oldPriceRange[1]
+
+            # set new price range for category
+            categoryObject.set "price_range" , newPriceRange
+
+            categoryObject.save()
+
+        , (error) ->
+            console.log "Got an error while fetching category " + error.code + " : " + error.message
+        
   
 findAttribValues = (filter) =>
 
