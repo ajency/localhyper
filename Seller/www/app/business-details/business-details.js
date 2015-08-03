@@ -1,4 +1,4 @@
-angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('BusinessDetailsCtrl', [
+angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
   '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails) {
     $scope.view = {
       name: '',

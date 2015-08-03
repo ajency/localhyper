@@ -19,6 +19,9 @@ angular.module('LocalHyper.common').factory('User', [
       user = Parse.User.current();
       return user;
     };
+    User.getId = function() {
+      return this.getCurrent().id;
+    };
     User.info = function(action, data) {
       if (data == null) {
         data = {};
