@@ -814,9 +814,10 @@ sm {
 .obj-title .expires h2 {
   font-weight: bold;
   color: #464646;
-  font-size: 30px;
+  font-size: 25px;
   margin-bottom: 0;
-  margin-right: 7px;
+  margin-top: 3px;
+  margin-right: 9px;
 }
 .obj-title .expires p.exp_in {
   color: #959595;
