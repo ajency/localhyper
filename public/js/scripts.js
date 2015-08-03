@@ -106,8 +106,10 @@ function showAttibuteExport()
     if(!error){
         var attributeUrl = BASEURL +'/admin/attribute/exportattributes/'+category;
         var productUrl = BASEURL +'/admin/product/exportproducts/'+category;
+        var productPriceUrl = BASEURL +'/admin/product/exportproductonlineprice/'+category;
         $(".export_attributes").attr('href',attributeUrl);
         $(".export_product").attr('href',productUrl);
+        $(".export_product_price").attr('href',productPriceUrl);
         
         $(".export_block").removeClass('hidden');
     

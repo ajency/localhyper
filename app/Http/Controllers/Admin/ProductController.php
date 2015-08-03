@@ -665,12 +665,16 @@ class ProductController extends Controller
 
       $innerProductQuery = new ParseQuery("ProductItem");
       $innerProductQuery->equalTo("objectId",$productId);    
-      $innerProductQuery->equalTo("type", $price_type);    
+      
 
       $priceQuery->matchesQuery("product",$innerProductQuery);
+      
       $priceQuery->descending("createdAt");
+      $priceQuery->equalTo("type", $price_type);    
+      $priceQuery->descending("createdAt");    
 
       $priceResult = $priceQuery->first();
+
 
       if (!empty($priceResult)) {
       $price = array(
