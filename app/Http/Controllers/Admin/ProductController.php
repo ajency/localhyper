@@ -578,7 +578,7 @@ class ProductController extends Controller
     } 
     
 
-   public static function parseProductImport($data){
+    public static function parseProductImport($data){
  
       // $data = array (
       //   'categoryId' => 'vpEoQCuBoD',
@@ -614,5 +614,87 @@ class ProductController extends Controller
         $result = AttributeController::makeParseCurlRequest($functionName,$data,"jobs"); 
 
         return $result;
+    }
+
+    public function exportProductOnlinePrice( $catId ){
+
+      $categoryProductPrice = $this->getCategoryProductPrice($catId);
+
+      dd($categoryProductPrice);
+
+      return true;
+
+    } 
+
+    public function getCategoryProductPrice($categoryId){
+      // query products table to get all product ids that have given category id 
+      // for each such product query the price class to get the latest price entry for that product 
+      //  return array of product details + price for each
+
+      $productQuery = new ParseQuery("ProductItem");
+      
+      $innerCategoryQuery = new ParseQuery("Category");
+      $innerCategoryQuery->equalTo("objectId",$categoryId);
+
+      # query to get products matching the child category
+      $productQuery->matchesQuery("category", $innerCategoryQuery);
+
+      // $productQuery->select("name" , "model_number" ) ;
+
+      $parseProducts = $productQuery->find();
+
+      $products = [];
+
+      foreach ($parseProducts as $parseProduct) {
+            
+            $productId = $parseProduct->getObjectId();
+
+            $onlinePrice = $this->getLatestProductPrice($productId);
+
+            $product = array(
+                'objectId' => $parseProduct->getObjectId(), 
+                'name' => $parseProduct->get("name"),
+                'model_number' => $parseProduct->get("model_number"),
+                'price' => $onlinePrice['value'],
+                'price_source' => $onlinePrice['source'],
+                );
+            $products[] = $product;
+      }  
+
+      dd($products)    ;
+
+    }
+
+
+    public function getLatestProductPrice($productId, $price_type="online_market_price"){
+      
+      // query price class
+      $priceQuery = new ParseQuery("Price");
+
+      $innerProductQuery = new ParseQuery("ProductItem");
+      $innerProductQuery->equalTo("objectId",$productId);    
+      $innerProductQuery->equalTo("type", $price_type);    
+
+      $priceQuery->matchesQuery("product",$innerProductQuery);
+      $priceQuery->descending("createdAt");
+
+      $priceResult = $priceQuery->first();
+
+      if (!empty($priceResult)) {
+      $price = array(
+                'value' => $priceResult->get("value"), 
+                'source' => $priceResult->get("source"), 
+                );
+      }
+      else {
+              $price = array(
+                'value' => "", 
+                'source' => "" 
+                );
+      }
+
+
+      return $price;
+
     }
 }
