@@ -139,22 +139,9 @@ class ProductController extends Controller
           foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
           {
             $attributeId =$attributeValue['attributeId'];
-            if(!isset($headerFlag[$attributeId]))
-            {   
-              // $headers[]=$attributeValue['attributeName'];
-              // $headers[]=$attributeValue['attributeName'].' Id';
-
-              // $productHeader[]=$attributeValue['attributeName']."(".$attributeId.")";
-              // $productHeader[]=$attributeValue['attributeName'].' Id';
-
-              // $labelsHeader[] = $attributeValue['attributeName'];
-              // $labelsHeader[] = $attributeValue['attributeName'].' Id';
 
 
-              // $headerFlag[$attributeId]=$attributeId;
-              $productAttributeIds [$attributeId]=[];
-
-            }
+            $productAttributeIds [$attributeId]=[];
 
             $headerFlag[$attributeId]=[];
 
@@ -165,7 +152,8 @@ class ProductController extends Controller
           foreach($attributeValueData['result']['attributes'] as $attribute)
           {
             $attributeId = $attribute['id'];
-            $headerFlag[$attributeId] = $attribute;             
+            $headerFlag[$attributeId] = $attribute;  
+            $productAttributeIds[$attributeId]=[];           
           }
 
 
@@ -257,6 +245,7 @@ class ProductController extends Controller
         $headers []= 'Group' ;
        
         $headers = array_merge($headers,$productHeader);
+
         $labels = array_merge($labels,$labelsHeader); 
       
         $productSheet->fromArray($labels, ' ', 'A1');
@@ -309,7 +298,10 @@ class ProductController extends Controller
                 }
 
                 foreach ($product['textAttributes'] as $text_attrib_id => $text_attribute_value) {
-                  $productAttributeIds[$text_attrib_id]=['value'=>$text_attribute_value,'id'=>$text_attrib_id];
+                  if(isset($productAttributeIds[$text_attrib_id]))
+                    {
+                      $productAttributeIds[$text_attrib_id]=['value'=>$text_attribute_value,'id'=>$text_attrib_id];
+                    }
                 }
 
                 foreach($productAttributeIds as $productAttribute)
@@ -324,7 +316,7 @@ class ProductController extends Controller
  
             $page++;
         }
-      
+        dd($productsData);
         $productSheet->fromArray($productsData, ' ', 'B3');
 
 
