@@ -506,6 +506,37 @@ Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
     , (error) ->
         response.error error    
 
+Parse.Cloud.define 'getSingleRequest' , (request, response) ->
+    requestId = request.params.requestId
+    
+    sellerDetails = 
+        "id" : request.params.sellerId
+        "geoPoint" : request.params.sellerGeoPoint
+
+    queryRequest = new Parse.Query("Request")
+    queryRequest.equalTo("objectId", requestId)
+
+    queryRequest.select("address,addressGeoPoint,category,brand,product,comments,customerId")
+
+    queryRequest.include("product")
+    queryRequest.include("category")
+    queryRequest.include("category.parent_category")
+    queryRequest.include("brand")    
+
+    queryRequest.first()
+    .then (requestObj) ->
+        
+        getRequestData(requestObj,sellerDetails)
+
+        .then (requestData) ->
+            response.success requestData
+        , (error) ->
+            response.error error
+
+    , (error) ->
+        response.error error
+
+
 getRequestData =  (filteredRequest,seller) ->
     
     promise = new Parse.Promise()

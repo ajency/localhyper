@@ -1956,6 +1956,31 @@
     });
   });
 
+  Parse.Cloud.define('getSingleRequest', function(request, response) {
+    var queryRequest, requestId, sellerDetails;
+    requestId = request.params.requestId;
+    sellerDetails = {
+      "id": request.params.sellerId,
+      "geoPoint": request.params.sellerGeoPoint
+    };
+    queryRequest = new Parse.Query("Request");
+    queryRequest.equalTo("objectId", requestId);
+    queryRequest.select("address,addressGeoPoint,category,brand,product,comments,customerId");
+    queryRequest.include("product");
+    queryRequest.include("category");
+    queryRequest.include("category.parent_category");
+    queryRequest.include("brand");
+    return queryRequest.first().then(function(requestObj) {
+      return getRequestData(requestObj, sellerDetails).then(function(requestData) {
+        return response.success(requestData);
+      }, function(error) {
+        return response.error(error);
+      });
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   getRequestData = function(filteredRequest, seller) {
     var innerQueryRequest, innerQuerySeller, promise, queryNotification, sellerGeoPoint, sellerId;
     promise = new Parse.Promise();
