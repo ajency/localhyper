@@ -1,5 +1,5 @@
 (function() {
-  var _, findAttribValues, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, moment, processPushNotifications, setPrimaryAttribute, treeify;
+  var _, findAttribValues, getAreaBoundSellers, getCategoryBasedSellers, getNotificationData, getRequestData, moment, processPushNotifications, setPrimaryAttribute, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -1700,9 +1700,6 @@
         requestsWhereOfferMade = _.map(offersMadeBySeller, function(offerMade) {
           return offerMade.get("request").id;
         });
-        console.log("requests where offer is made start");
-        console.log(requestsWhereOfferMade);
-        console.log("requests where offer is made end");
         requestQuery = new Parse.Query("Request");
         requestQuery.containedIn("category", sellerCategories);
         requestQuery.containedIn("brand", sellerBrands);
@@ -1725,49 +1722,30 @@
         requestQuery.include("category.parent_category");
         requestQuery.include("brand");
         return requestQuery.find().then(function(filteredRequests) {
-          var requests, requestsResult;
-          requests = [];
-          _.each(filteredRequests, function(filteredRequest) {
-            var brand, brandObj, category, categoryObj, prodObj, product, radiusDiffInKm, requestObj, reuqestGeoPoint;
-            prodObj = filteredRequest.get("product");
-            product = {
-              "id": prodObj.id,
-              "name": prodObj.get("name"),
-              "mrp": prodObj.get("mrp"),
-              "image": prodObj.get("images")
-            };
-            categoryObj = filteredRequest.get("category");
-            category = {
-              "id": categoryObj.id,
-              "name": categoryObj.get("name"),
-              "parent": (categoryObj.get("parent_category")).get("name")
-            };
-            brandObj = filteredRequest.get("brand");
-            brand = {
-              "id": brandObj.id,
-              "name": brandObj.get("name")
-            };
-            reuqestGeoPoint = filteredRequest.get("addressGeoPoint");
-            radiusDiffInKm = reuqestGeoPoint.kilometersTo(sellerGeoPoint);
-            requestObj = {
-              id: filteredRequest.id,
-              radius: radiusDiffInKm,
-              product: product,
-              category: category,
-              brand: brand,
-              createdAt: filteredRequest.createdAt,
-              comments: filteredRequest.get("comments")
-            };
-            return requests.push(requestObj);
-          });
-          requestsResult = {
-            "city": city,
-            "area": area,
-            "radius": sellerRadius,
-            "location": sellerLocation,
-            "requests": requests
+          var requestsQs, sellerDetails;
+          requestsQs = [];
+          sellerDetails = {
+            "id": sellerId,
+            "geoPoint": sellerGeoPoint
           };
-          return response.success(requestsResult);
+          requestsQs = _.map(filteredRequests, function(filteredRequest) {
+            var requestPromise;
+            return requestPromise = getRequestData(filteredRequest, sellerDetails);
+          });
+          return Parse.Promise.when(requestsQs).then(function() {
+            var individualReqResults, requestsResult;
+            individualReqResults = _.flatten(_.toArray(arguments));
+            requestsResult = {
+              "city": city,
+              "area": area,
+              "radius": sellerRadius,
+              "location": sellerLocation,
+              "requests": individualReqResults
+            };
+            return response.success(requestsResult);
+          }, function(error) {
+            return response.error(error);
+          });
         }, function(error) {
           return response.error(error);
         });
@@ -1964,6 +1942,67 @@
       return response.error(error);
     });
   });
+
+  getRequestData = function(filteredRequest, seller) {
+    var innerQueryRequest, innerQuerySeller, promise, queryNotification, sellerGeoPoint, sellerId;
+    promise = new Parse.Promise();
+    sellerId = seller.id;
+    sellerGeoPoint = seller.geoPoint;
+    queryNotification = new Parse.Query("Notification");
+    innerQuerySeller = new Parse.Query(Parse.User);
+    innerQuerySeller.equalTo("objectId", sellerId);
+    queryNotification.matchesQuery("recipientUser", innerQuerySeller);
+    queryNotification.equalTo("type", "Request");
+    innerQueryRequest = new Parse.Query("Request");
+    innerQueryRequest.equalTo("objectId", filteredRequest.id);
+    queryNotification.matchesQuery("requestObject", innerQueryRequest);
+    queryNotification.first().then(function(notificationObject) {
+      var brand, brandObj, category, categoryObj, notification, prodObj, product, radiusDiffInKm, requestObj, reuqestGeoPoint;
+      if (!_.isEmpty(notificationObject)) {
+        notification = {
+          "hasSeen": notificationObject.get("hasSeen")
+        };
+      } else {
+        notification = {
+          "hasSeen": ""
+        };
+      }
+      prodObj = filteredRequest.get("product");
+      product = {
+        "id": prodObj.id,
+        "name": prodObj.get("name"),
+        "mrp": prodObj.get("mrp"),
+        "image": prodObj.get("images")
+      };
+      categoryObj = filteredRequest.get("category");
+      category = {
+        "id": categoryObj.id,
+        "name": categoryObj.get("name"),
+        "parent": (categoryObj.get("parent_category")).get("name")
+      };
+      brandObj = filteredRequest.get("brand");
+      brand = {
+        "id": brandObj.id,
+        "name": brandObj.get("name")
+      };
+      reuqestGeoPoint = filteredRequest.get("addressGeoPoint");
+      radiusDiffInKm = reuqestGeoPoint.kilometersTo(sellerGeoPoint);
+      requestObj = {
+        id: filteredRequest.id,
+        radius: radiusDiffInKm,
+        product: product,
+        category: category,
+        brand: brand,
+        createdAt: filteredRequest.createdAt,
+        notification: notification,
+        comments: filteredRequest.get("comments")
+      };
+      return promise.resolve(requestObj);
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
 
   getCategoryBasedSellers = function(categoryId, brandId, city, area) {
     var Brand, Category, brandPointer, categoryPointer, promise, sellerQuery;
