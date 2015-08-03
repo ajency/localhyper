@@ -316,7 +316,7 @@ class ProductController extends Controller
  
             $page++;
         }
-        dd($productsData);
+        
         $productSheet->fromArray($productsData, ' ', 'B3');
 
 
