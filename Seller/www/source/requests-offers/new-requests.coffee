@@ -10,18 +10,16 @@ angular.module 'LocalHyper.requestsOffers'
 			display: 'loader'
 			errorType: ''
 			requests: []
-			requestIds: []
+			pendingRequestIds: []
 
 			requestDetails:
 				modal: null
 				data: {}
 				display: 'noError'
 				errorType: ''
-				requestId: null
 				offerPrice: ''
-				reply: 
-					button: true
-					text: ''
+				reply: button: true, text: ''
+				
 				deliveryTime:
 					display: false
 					value: 1
@@ -43,6 +41,14 @@ angular.module 'LocalHyper.requestsOffers'
 						@display = false
 						App.resize()
 
+				loadModal : ->
+					$ionicModal.fromTemplateUrl 'views/requests-offers/request-details.html', 
+						scope: $scope,
+						animation: 'slide-in-up'
+						hardwareBackButtonClose: true
+					.then (modal)=>
+						@modal = modal
+
 				resetModal : ->
 					@display = 'noError'
 					@price = null
@@ -57,25 +63,39 @@ angular.module 'LocalHyper.requestsOffers'
 						.$getByHandle 'request-details'
 						.scrollTop()
 
-				showModal : (requestId)->
-					@requestId = requestId
+				show : (request)->
+					@data = request
+					@resetModal()
 					@modal.show()
-					@get()
+					@markNotificationAsSeen request
 
-				get : ->
-					@display = 'loader'
-					RequestsAPI.getById @requestId
-					.then (request)=>
-						console.log request
-						@display = 'noError'
-						@data = request
-						$scope.view.markNotificationAsSeen request.objectId
-					, (type)=>
-						@display = 'error'
-						@errorType = type
+				markNotificationAsSeen : (request)->
+					if !request.notification.hasSeen
+						requests = $scope.view.requests
+						index = _.findIndex requests, (val)-> val.id is request.id
+						RequestsAPI.updateStatus request.id
+						.then (data)=>
+							App.notification.decrement()
+							requests[index].notification.hasSeen = true
+
+				onNotificationClick : (requestId)->
+					requests = $scope.view.requests
+					index = _.findIndex requests, (val)-> val.id is requestId
+					if index is -1 #When request not present in list
+						$scope.view.pendingRequestIds.push requestId
+						@display = 'loader'
+						@modal.show()
+						RequestsAPI.getSingleRequest requestId
+						.then (request)=>
+							@display = 'noError'
+							@data = request
+						, (type)=>
+							@display = 'error'
+							@errorType = type
+					else
+						@show requests[index]
 
 				makeOffer : ->
-					user = User.getCurrent()
 					priceValue = ''
 					switch @price
 						when 'localPrice'
@@ -86,7 +106,7 @@ angular.module 'LocalHyper.requestsOffers'
 							priceValue = @offerPrice
 
 					params = 
-						"sellerId": user.id
+						"sellerId": User.getId()
 						"requestId": @data.id
 						"priceValue": priceValue
 						"deliveryTime":
@@ -122,25 +142,10 @@ angular.module 'LocalHyper.requestsOffers'
 
 			init : ->
 				@getRequests()
-				@loadRequestDetails()
-
-			loadRequestDetails : ->
-				$ionicModal.fromTemplateUrl 'views/requests-offers/request-details.html', 
-					scope: $scope,
-					animation: 'slide-in-up'
-					hardwareBackButtonClose: true
-				.then (modal)=>
-					@requestDetails.modal = modal
+				@requestDetails.loadModal()
 
 			getRequests : ->
-				RequestsAPI.getNotifications()
-				.then (requestIds)=>
-					@requestIds = requestIds
-					notifications = _.size requestIds
-					if notifications > 0
-						App.notification.badge = true
-						App.notification.count = notifications
-					RequestsAPI.getAll()
+				RequestsAPI.getAll()
 				.then (data)=>
 					console.log data
 					@onSuccess data
@@ -149,21 +154,14 @@ angular.module 'LocalHyper.requestsOffers'
 				.finally ->
 					$scope.$broadcast 'scroll.refreshComplete'
 
-				RequestsAPI.getById "eXKpMoOZ55"
-				.then (request)=>
-					console.log 'Request'
-					console.log request
-
 			onSuccess : (data)->
 				@display = 'noError'
 				@requests = data.requests
+				@markPendingNotificationsAsSeen()
 			
 			onError : (type)->
 				@display = 'error'
 				@errorType = type
-
-			isNew : (requestId)->
-				_.contains @requestIds, requestId
 
 			onPullToRefresh : ->
 				@display = 'noError'
@@ -171,23 +169,18 @@ angular.module 'LocalHyper.requestsOffers'
 
 			onTapToRetry : ->
 				@display = 'loader'
+				$rootScope.$broadcast 'get:unseen:notifications'
 				@getRequests()
 
-			showRequestDetails : (request)->
-				@requestDetails.data = request
-				@requestDetails.resetModal()
-				@requestDetails.modal.show()
-				@markNotificationAsSeen request.id
+			markPendingNotificationsAsSeen : ->
+				_.each @pendingRequestIds, (requestId)=>
+					RequestsAPI.updateStatus requestId
+					.then (data)=>
+						index = _.findIndex @requests, (val)-> val.id is requestId
+						App.notification.decrement()
+						@requests[index].notification.hasSeen = true
 
-			markNotificationAsSeen : (requestId)->
-				index = _.findIndex @requests, (val)-> val.id is requestId
-				if index isnt -1
-					newRequest = @requests[index].new 
-					if newRequest
-						RequestsAPI.updateStatus requestId
-						.then (data)=>
-							App.notification.decrement()
-							@requests[index].new = false
+				@pendingRequestIds = []
 
 
 		$rootScope.$on 'in:app:notification', (e, obj)->
@@ -198,7 +191,7 @@ angular.module 'LocalHyper.requestsOffers'
 		$rootScope.$on 'push:notification:click', (e, obj)->
 			payload = obj.payload
 			if payload.type is 'new_request'
-				$scope.view.requestDetails.showModal payload.id
+				$scope.view.requestDetails.onNotificationClick payload.id
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()

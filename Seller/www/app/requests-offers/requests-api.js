@@ -20,11 +20,17 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       });
       return defer.promise;
     };
-    RequestsAPI.getById = function(id) {
-      var defer;
+    RequestsAPI.getSingleRequest = function(requestId) {
+      var defer, params, user;
       defer = $q.defer();
-      $http.get("classes/Request/" + id + "?include=product,brand").then(function(data) {
-        return defer.resolve(data.data);
+      user = User.getCurrent();
+      params = {
+        "requestId": requestId,
+        "sellerId": user.id,
+        "sellerGeoPoint": user.get('addressGeoPoint')
+      };
+      $http.post('functions/getSingleRequest', params).then(function(data) {
+        return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);
       });

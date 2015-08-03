@@ -58,6 +58,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
           };
         })(this))["finally"]((function(_this) {
           return function() {
+            App.resize();
             _this.page = _this.page + 1;
             return $scope.$broadcast('scroll.refreshComplete');
           };

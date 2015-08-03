@@ -38,9 +38,8 @@
 	       	<ion-item
 	       		class="card"
 	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
-	       		ng-init="request.new=view.isNew(request.id)"
-	       		ng-click="view.showRequestDetails(request)"
-	       		ng-class="(request.new) ? 'notify-alert' : ''"
+	       		ng-click="view.requestDetails.show(request)"
+	       		ng-class="(request.notification.hasSeen) ? '' : 'notify-alert'"
 	       		ng-controller="EachRequestTimeCtrl">
 				
 				<div class="item-wrapper-nr">

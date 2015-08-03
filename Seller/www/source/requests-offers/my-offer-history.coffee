@@ -53,6 +53,7 @@ angular.module 'LocalHyper.requestsOffers'
 				, (error)=>
 					@onError error
 				.finally =>
+					App.resize()
 					@page = @page + 1
 					$scope.$broadcast 'scroll.refreshComplete'
 
