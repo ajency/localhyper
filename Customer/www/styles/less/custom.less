@@ -138,6 +138,7 @@ sm{
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light, .bar.bar-header {
 	background-image: url(../../img/header-bg.jpg) !important;
+	// background-color: #262626 !important;
 	background-repeat: repeat-x !important;
 	border-bottom:1px solid @gray-lighter !important;
 	.notification{
@@ -668,11 +669,17 @@ sm{
 }
 
 //Location
-
+.p-a-0 {padding: 0;}
 .p-b-0 {padding-bottom: 0;}
 .p-t-0 {padding-top: 0;}
 .p-l-0 {padding-left: 0;}
 .p-r-0 {padding-right: 0;}
+.p-r-6 {padding-right: 6px;}
+.m-a-0 {margin: 0;}
+.m-b-0 {margin-bottom: 0;}
+.m-t-0 {margin-top: 0;}
+.m-l-0 {margin-left: 0;}
+.m-r-0 {margin-right: 0;}
 .b-r-1 {border-right: 1px solid #ddd;}
 
 .address-inputs {
@@ -750,11 +757,12 @@ sm{
 		height: auto;
 		min-height: 0;
 		max-height: none;
+		white-space: nowrap;
 		img {
 			height: 14px;
 			display: inline-block;
 			vertical-align: middle;
-			margin-right: 8px;
+			margin-right: 2px;
 			margin-top: -5px;
 		}
 	}
@@ -763,9 +771,9 @@ sm{
 		h2 {
 			font-weight: bold;
 			color: #464646;
-			font-size: 32px;
+			font-size: 30px;
 			margin-bottom: 0;
-			margin-top: 5px;
+			margin-right: 7px;
 		}
 		p.exp_in {
 			color: #959595;
@@ -778,10 +786,12 @@ sm{
 				color: #b3b3b3;
 				text-decoration: underline;
 				font-size: 13px;
+				line-height: 18px;
+				display: block;
 			}
 		}
 		.button.button-outline.button-balanced {
-			padding: 0 12px;
+			padding: 0 9px;
 			line-height: 35px;
 			vertical-align: middle;
 			height: auto;
@@ -820,16 +830,17 @@ sm{
 		color: #6d6d6d;
 		font-weight: bold;
 		text-align: left;
-		margin-top: 5px;
-		margin-bottom: 2px;
+		margin-bottom: 3px;
+		margin-top: 3px;
 		span {
-			font-weight: normal;
+			font-weight: 100;
 			color: #c1c1c1;
 		}
 	}
 	p.time-rece {
 		font-style: italic;
 		color: #aaaaaa;
+		margin-top: 1px;
 	}
 	p.comment {
 		color: #777777;
@@ -839,16 +850,33 @@ sm{
 			vertical-align: middle;
 			margin-right: 5px;
 		}
+		span {
+			display: inline-block;
+			top: 2px;
+			position: relative;
+		}
 	}
 	.dash-div {
 		margin-left: -16px;
 		margin-right: -16px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+		width: auto;
+	}
+	.vert-div {
+		height: 50px;
+		width: 1px;
+		background-color: #c9c9c9;
+		margin-right: 6px;
 	}
 	.offer-vals {
+		padding-top: 6px;
 		.info {
 			font-size: 13px;
 			color: #ababab;
 			text-align: center;
+			margin-bottom: 0;
+			margin-top: 3px;
 		}
 		h2 {
 			font-size: 24px;
@@ -858,5 +886,37 @@ sm{
 				font-size: 14px;
 			}
 		}
+		.button {
+			padding: 0 15px;
+			margin-top: 6px;
+			height: auto;
+			min-height: 0;
+			line-height: 35px;
+		}
 	}
+}
+.align-left {text-align: left;}
+.align-center {text-align: center;}
+.align-right {text-align: right;}
+.high-span {
+	color: #686667;
+	b {
+		color: #252525;
+	}
+	&.rec-off {
+		margin-top: 20px;
+		margin-bottom: 5px;
+	}
+}
+.bar-primary {
+	background-color: @brand-primary;
+	.title {
+		font-weight: bold;
+		font-size: 16px !important;
+		color: #fff;
+	}
+}
+
+.spacer-40 {
+	height: 40px;
 }
