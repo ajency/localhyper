@@ -239,7 +239,7 @@ class ProductController extends Controller
         $labels []= 'Model Number' ;
         $labels []= 'Image' ; 
         $labels []= 'MRP' ; 
-        $labels []= 'Popularity' ; 
+        $labels []= 'Review Count' ; //Popularity is called review count
         $labels []= 'Brand' ;  
         $labels []= 'Brand ID' ; 
         $labels []= 'Group' ;
@@ -306,6 +306,10 @@ class ProductController extends Controller
                         $productAttributeIds[$attribute['attributeId']]=['value'=>$attribute['attributeValue'],'id'=>$attribute['attributeValueId']];
                     }
 
+                }
+
+                foreach ($product['textAttributes'] as $text_attrib_id => $text_attribute_value) {
+                  $productAttributeIds[$text_attrib_id]=['value'=>$text_attribute_value,'id'=>$text_attrib_id];
                 }
 
                 foreach($productAttributeIds as $productAttribute)
@@ -527,7 +531,6 @@ class ProductController extends Controller
         $productQuery->includeKey("primaryAttributes.attribute");
         $productQuery->includeKey("attrs");
         $productQuery->includeKey("attrs.attribute");
-      
 
         # pagination
         $productQuery->limit($displayLimit);
@@ -565,6 +568,7 @@ class ProductController extends Controller
                         'mrp' => $result->get("mrp"), 
                         'popularity' => $result->get("popularity"),
                         'attrs' => $productAttributes,
+                        'textAttributes' =>  $result->get("textAttributes"),
                         'group' => $result->get("group")
                         );
             $products[] = $product;
