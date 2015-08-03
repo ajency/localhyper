@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.myRequests'
 
-.controller 'OpenRequestCtrl', ['$scope', 'App', 'RequestAPI'
-	, ($scope, App, RequestAPI)->
+.controller 'OpenRequestCtrl', ['$scope', 'App', 'RequestAPI', '$ionicLoading'
+	, ($scope, App, RequestAPI, $ionicLoading)->
 
 		$scope.view = 
 			display: 'loader'
@@ -10,6 +10,8 @@ angular.module 'LocalHyper.myRequests'
 			page: 0
 			canLoadMore: true
 			refresh: false
+			getOpenProducts: false
+			selectedFilters : []
 
 			onClick : (request)->
 				RequestAPI.requestDetails 'set', request
@@ -26,6 +28,7 @@ angular.module 'LocalHyper.myRequests'
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
 
 			onPullToRefresh : ->
+				@getOpenProducts = false
 				@page = 0
 				@refresh = true
 				@getMyOffers()
@@ -41,7 +44,7 @@ angular.module 'LocalHyper.myRequests'
 					page: @page
 					displayLimit : 3
 					requestType : 'nonexpired'
-					selectedFilters : []
+					selectedFilters : @selectedFilters
 				.then (data)=>
 					@onSuccess data
 				, (error)=>
@@ -50,7 +53,6 @@ angular.module 'LocalHyper.myRequests'
 					@incrementPage()
 					
 			onSuccess : (data)->
-				console.log(data)
 				@display = 'noError'
 				openRequest = data
 				if openRequest.length > 0
@@ -60,6 +62,9 @@ angular.module 'LocalHyper.myRequests'
 					else @openRequests = @openRequests.concat(openRequest)
 				else
 					@canLoadMore = false
+					
+				if !@canLoadMore
+				    @getOpenProducts = true
 
 			onError: (type)->
 				@canLoadMore = false
@@ -73,15 +78,29 @@ angular.module 'LocalHyper.myRequests'
 				@refresh = false
 				@getMyOffers()
 
-			onlick : ()->
-					alert('df')
-					# RequestAPI.requestDetails 'set', request
-					# App.navigate 'request-details'
+			Filter : ->
+				$ionicLoading.show
+					scope: $scope
+					templateUrl: 'views/my-requests/filter.html'
+					hideOnStateChange: true
+					
+			onFilter:(status)->
+				@canLoadMore = true
+				$ionicLoading.hide()
+				if status != 'null'
+					@selectedFilters = [status]
+				else 
+					@selectedFilters = []
+				@refresh = true
+				@page = 0
+				@openRequests = []
+				
+				@getOpenProducts = false
+				@onScrollComplete()	
 
 
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
-			if !viewData.enableBack
-				viewData.enableBack = true
+			viewData.enableBack = true
 ]
 
 
