@@ -112,6 +112,7 @@ class ProductController extends Controller
         
         $brandIndexData =[];
         $brands = $attributeController->getCategoryBrands($catId);
+        
         foreach($brands as $key=> $brand)
         {
             $brandIndexData[] = ['name'=>$brand["name"],'id'=>$brand["id"]]; 
@@ -132,30 +133,59 @@ class ProductController extends Controller
         $attributeValues= $headerFlag =$productHeader = $productAttributeIds = [];
 
         $labelsHeader = array();
-        
-        foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
-        {
+
+        if(isset($attributeValueData['result']))
+        {  
+          foreach($attributeValueData['result']['attributeValues'] as $attributeValue)
+          {
             $attributeId =$attributeValue['attributeId'];
             if(!isset($headerFlag[$attributeId]))
             {   
-                $headers[]=$attributeValue['attributeName'];
-                $headers[]=$attributeValue['attributeName'].' Id';
-                
-                $productHeader[]=$attributeValue['attributeName']."(".$attributeId.")";
-                $productHeader[]=$attributeValue['attributeName'].' Id';
+              // $headers[]=$attributeValue['attributeName'];
+              // $headers[]=$attributeValue['attributeName'].' Id';
 
-                $labelsHeader[] = $attributeValue['attributeName'];
-                $labelsHeader[] = $attributeValue['attributeName'].' Id';
-                
-                    
-                $headerFlag[$attributeId]=$attributeId;
-                $productAttributeIds [$attributeId]=[];
-              
+              // $productHeader[]=$attributeValue['attributeName']."(".$attributeId.")";
+              // $productHeader[]=$attributeValue['attributeName'].' Id';
+
+              // $labelsHeader[] = $attributeValue['attributeName'];
+              // $labelsHeader[] = $attributeValue['attributeName'].' Id';
+
+
+              // $headerFlag[$attributeId]=$attributeId;
+              $productAttributeIds [$attributeId]=[];
+
             }
 
+            $headerFlag[$attributeId]=[];
+
             $attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
-            
-        } 
+
+          } 
+
+          foreach($attributeValueData['result']['attributes'] as $attribute)
+          {
+            $attributeId = $attribute['id'];
+            $headerFlag[$attributeId] = $attribute;             
+          }
+
+
+
+          foreach($headerFlag as $attribute)
+          {
+            $attributeId = $attribute['id'];
+            $attributeName = $attribute['name'];
+
+            $headers[]=$attributeName;
+            $headers[]=$attributeName.' Id';
+
+            $productHeader[]=$attributeName."(".$attributeId.")";
+            $productHeader[]=$attributeName.' Id';
+
+            $labelsHeader[] = $attributeName;
+            $labelsHeader[] = $attributeName.' Id';
+
+          }          
+        }
          
      // dd($productAttributeIds);
         $indexSheet->fromArray($headers, ' ', 'A1');
@@ -209,7 +239,7 @@ class ProductController extends Controller
         $labels []= 'Model Number' ;
         $labels []= 'Image' ; 
         $labels []= 'MRP' ; 
-        $labels []= 'Popularity' ; 
+        $labels []= 'Review Count' ; //Popularity is called review count
         $labels []= 'Brand' ;  
         $labels []= 'Brand ID' ; 
         $labels []= 'Group' ;
@@ -278,6 +308,10 @@ class ProductController extends Controller
 
                 }
 
+                foreach ($product['textAttributes'] as $text_attrib_id => $text_attribute_value) {
+                  $productAttributeIds[$text_attrib_id]=['value'=>$text_attribute_value,'id'=>$text_attrib_id];
+                }
+
                 foreach($productAttributeIds as $productAttribute)
                 {
 
@@ -305,8 +339,7 @@ class ProductController extends Controller
         $productSheet->getRowDimension(2)->setVisible(false);
 
         //Format sheet
-        FormatPhpExcel::formatSheet($productSheet, 'Products', $indexSheet);
-
+        FormatPhpExcel::formatSheet($productSheet, 'Products', $headerFlag, $indexSheet);
 
         //Format header row
         FormatPhpExcel::format_header_row($productSheet, array(
@@ -344,6 +377,8 @@ class ProductController extends Controller
     public function importProduct(Request $request)
     {
       $data = [];
+
+
       $product_file = $request->file('product_file')->getRealPath();
       if ($request->hasFile('product_file'))
       {
@@ -357,13 +392,14 @@ class ProductController extends Controller
         $highestRow = $sheet->getHighestRow(); 
         $highestColumn = $sheet->getHighestColumn();
 
-        $headingsArray = $sheet->rangeToArray('A1:'.$highestColumn.'1',null, true, true, true); 
-        $headingsArray = $headingsArray[1];
-        $headerData =  array_values($headingsArray); 
+        $headingsArray = $sheet->rangeToArray('A2:'.$highestColumn.'2',null, true, true, true); 
+        $headingsArray = $headingsArray[2];
+        $headerData =  array_values($headingsArray);
+
 
         $r = -1;
         $namedDataArray = $config =array();
-        for ($row = 2; $row <= $highestRow; ++$row) {
+        for ($row = 3; $row <= $highestRow; ++$row) {
           $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
 
           ++$r;
@@ -376,6 +412,24 @@ class ProductController extends Controller
 
         }
       }
+
+      //get attribute types for product
+      $attributeController = new AttributeController(); 
+      $categoryData = [
+          'categoryId' => $config[0],
+          'filterableAttributes' => true,
+          'secondaryAttributes' => true,
+          ];
+      $attributeValueData = $attributeController->getCategoryAttributeValues($categoryData);  
+      $attribArr = [] ;
+      foreach($attributeValueData['result']['attributes'] as $attribute)
+      {
+        $attributeId = $attribute['id'];
+        $attribArr[$attributeId] = $attribute;             
+      }
+
+
+
 
             /****
             *  (ProductID ProductName ModelNumber Image mrp ,popularity Brand BrandID Group) = 9
@@ -400,7 +454,6 @@ class ProductController extends Controller
             foreach($namedDataArray as $namedData)
             {
 
-
               if(!(is_null(max( $namedData)))){
 
                 $indexedData = array_values($namedData); 
@@ -408,25 +461,41 @@ class ProductController extends Controller
                 $data = $namedData;
 
                 $attributeIds = [];
-                foreach($attributeIdKeys as $key)
-                {
-                  $attributeName = $headerData[$key]; 
-                  $dataKey = explode("(",$attributeName);
-                    $dataattributeId = explode(")",$dataKey[1]);
+                $text_attributes = [];
+
+                if ($namedData["BrandID"] == "#N/A") {
+                  continue;
+                }
+                else{
+
+                  foreach($attributeIdKeys as $key)
+                  {
+                    $attributeName = $headerData[$key]; 
+                    $dataKey = explode("(",$attributeName);
+                      $dataattributeId = explode(")",$dataKey[1]);
                     $attributeId = $dataattributeId[0];// echo $attributeId; exit;
                     
-                    $attributeIds[$attributeId] = $indexedData[$key];
-                }//dd($attributeIds);
+                    if($attribArr[$attributeId]['type'] == "text"){
+                      $text_attributes[$attributeId] =  $indexedData[$key-1];
+                    }
+                    else{
+                      $attributeIds[$attributeId] = $indexedData[$key];
+                    }
 
-                $products[$i]['objectId'] = $data['ProductID'];
-                $products[$i]['name'] = $data['ProductName'];
-                $products[$i]['model_number'] = $data['ModelNumber'];
-                $products[$i]['images'][] = ['src'=>$data['Image']];
-                $products[$i]['attrs']= $attributeIds;
-                $products[$i]['mrp'] = $data['MRP'];
-                $products[$i]['brand'] = $data['BrandID'];
-                $products[$i]['popularity'] = $data['Popularity'];
-                $products[$i]['group'] = $data['Group'];                
+                  }
+
+                  $products[$i]['objectId'] = $data['ProductID'];
+                  $products[$i]['name'] = $data['ProductName'];
+                  $products[$i]['model_number'] = $data['ModelNumber'];
+                  $products[$i]['images'][] = ['src'=>$data['Image']];
+                  $products[$i]['attrs']= $attributeIds;
+                  $products[$i]['text_attributes']= $text_attributes;
+                  $products[$i]['mrp'] = $data['MRP'];
+                  $products[$i]['brandId'] = $data['BrandID'];
+                  $products[$i]['popularity'] = $data['Popularity'];
+                  $products[$i]['group'] = $data['Group'];                   
+
+                }
 
               }
 
@@ -437,6 +506,8 @@ class ProductController extends Controller
               
               $productData['categoryId'] =$config[0];
               $productData['products'] =$products;
+
+              // dd($productData);
 
               $this->parseProductImport($productData);
 
@@ -460,7 +531,6 @@ class ProductController extends Controller
         $productQuery->includeKey("primaryAttributes.attribute");
         $productQuery->includeKey("attrs");
         $productQuery->includeKey("attrs.attribute");
-      
 
         # pagination
         $productQuery->limit($displayLimit);
@@ -498,6 +568,7 @@ class ProductController extends Controller
                         'mrp' => $result->get("mrp"), 
                         'popularity' => $result->get("popularity"),
                         'attrs' => $productAttributes,
+                        'textAttributes' =>  $result->get("textAttributes"),
                         'group' => $result->get("group")
                         );
             $products[] = $product;
@@ -537,7 +608,7 @@ class ProductController extends Controller
       //       ),
       //     ),
       //   );
-
+        // dd($data);
         $functionName = "productImport";
 
         $result = AttributeController::makeParseCurlRequest($functionName,$data,"jobs"); 

@@ -118,10 +118,13 @@ class AttributeController extends Controller
 					'filterableAttributes' => true,
 					'secondaryAttributes' => true,
 					];
-				$attributeValueData = $this->getCategoryAttributeValues($categoryData);//dd($attributeValueData);
+				$attributeValueData = $this->getCategoryAttributeValues($categoryData, "attributeValues");
+
 				$headers = $data = $attributeValues= $headerFlag =[];
 
 				$attributes_label = [];
+
+				// dd($attributeValueData['result']);
 				
 				if(isset($attributeValueData['result']))
 				{  
@@ -198,7 +201,7 @@ class AttributeController extends Controller
 				$attributeValueSheet->getRowDimension(3)->setVisible(false);
 
 				//Format sheet
-				FormatPhpExcel::formatSheet($attributeValueSheet, 'AttributesValues');
+				FormatPhpExcel::formatSheet($attributeValueSheet, 'AttributesValues', $headerFlag);
 
 				//Merge cells
 				$highest_column = $attributeValueSheet->getHighestColumn();
@@ -242,13 +245,14 @@ class AttributeController extends Controller
 				$attributeSheet->setTitle('Attributes');
  
 				$attributes = $this->getCategoryAttributes($catId);
+				// dd($attributes);
 				$categoryName = $attributes['categoryName'];
 				
 				
 				$headers = array(
 					array('','',$categoryName),
-					array ('Config', 'objectId', 'Attribute Name', 'Group', 'Unit', 'Is Filternable', 'Is Primary'),
-					array('Config', 'objectId', 'name', 'group', 'unit', 'is_filterable', 'is_primary')
+					array ('Config', 'objectId', 'Attribute Name', 'Type', 'Group', 'Unit', 'Is Filternable', 'Is Primary'),
+					array('Config', 'objectId', 'name', 'type', 'group', 'unit', 'is_filterable', 'is_primary')
 					);
  
 				$attributeSheet->fromArray($headers, ' ', 'A1');
@@ -287,7 +291,7 @@ class AttributeController extends Controller
 				$attributeSheet->getRowDimension(3)->setVisible(false);
 
 				//Format sheet
-				FormatPhpExcel::formatSheet($attributeSheet, 'Attributes');
+				FormatPhpExcel::formatSheet($attributeSheet, 'Attributes', $headerFlag);
 
 
 				//Format header row
@@ -380,7 +384,7 @@ class AttributeController extends Controller
 					), '1'
 				);
 
-				FormatPhpExcel::formatSheet($brandSheet, 'Brands');
+				FormatPhpExcel::formatSheet($brandSheet, 'Brands', $headerFlag);
 
 				$brandSheet->protectCells($header, 'PHP');
 				
@@ -432,10 +436,16 @@ class AttributeController extends Controller
 		
 		public function importBrands($sheet){
 				$highestRow = $sheet->getHighestRow(); 
-				$highestColumn = $sheet->getHighestColumn();
+				
+				// $highestColumn = $sheet->getHighestColumn();
+				// since only 4 columns in brands sheet => highest column = D
+				$highestColumn = 'D';
+
+				// echo "Highest column <br/>";
+				// echo $highestColumn;
 
 				$headingsArray = $sheet->rangeToArray('A2:'.$highestColumn.'2',null, true, true, true); 
-				// dd($headingsArray);
+				
 				$headingsArray = $headingsArray[2];
 
 				$r = -1;
@@ -445,24 +455,24 @@ class AttributeController extends Controller
 				for ($row = 3; $row <= $highestRow; ++$row) {
 						$dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
 
-								++$r;
+						++$r;
 								foreach($headingsArray as $columnKey => $columnHeading) {
 
 										 if($columnHeading!='Config'){
-												
 												$namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
 										 }
 										else
 												$config[]=$dataRow[$row][$columnKey];
 									 
 								 }
+								
 								 if(!(is_null(max($namedDataArray[$r])))){
 									 $brandsArr[] = $namedDataArray[$r];
 
 								 }
 								 
 				}
-				
+
 				$all_brands = BrandController::getAllParseBrands(); 
 
 				$updated_brands = [];
@@ -481,6 +491,12 @@ class AttributeController extends Controller
 				}
 
 				$brands =['brands' => $updated_brands,'categoryId' => $config[0]]; 
+
+				// echo "<pre>";
+				// print_r($updated_brands) ; 
+				// echo "</pre>";				
+
+				
 				BrandController::parseBrandImport($brands);
 				
 				return true;
@@ -488,7 +504,8 @@ class AttributeController extends Controller
 		
 		public function importAttributeValues($sheet){
 				$highestRow = $sheet->getHighestRow(); 
-				$highestColumn = $sheet->getHighestColumn();
+				$highestColumn = $sheet->getHighestDataColumn();
+
 
 				$headingsArray = $sheet->rangeToArray('A3:'.$highestColumn.'3',null, true, true, true);
 				$headingsArray = $headingsArray[3];
@@ -504,46 +521,55 @@ class AttributeController extends Controller
 								 }
 				}
 				$attributeValues=$arr=[]; 
+				$attributeValues['attributeValues'] = [];
+
 				foreach($namedDataArray as $namedData)
 				{
 						$i=1; 
-						echo "<pre>";
-						print_r($namedData);
-						echo "</pre>";
 
-						foreach($namedData as $key=>$value)
-						{ 
+						if (!(is_null(max($namedData)))) {
 
-								if($i%2)
-								{
-										if($value==''){
-											$i++;
-											continue;
-										}
-												
-										
-										$dataKey = explode("(",$key);
+							foreach($namedData as $key=>$value)
+							{ 
 
-										$dataattributeId = explode(")",$dataKey[1]); 
-										$attributeId = $dataattributeId[0];
-										$attributeValues['attributeValues'][] = ['objectId'=>'',
-																					'attributeId'=>$attributeId,
-																					'value'=>$value];
-								}
-								else
-								{
-										$value = $value;
-										$attributeValueKey = count($attributeValues['attributeValues']);
-										$attributeValues['attributeValues'][($attributeValueKey-1)]['objectId']=$value;
-								}
+									if($i%2)
+									{
+											if($value==''){
+												$i++;
+												continue;
+											}
+													
+											
+											$dataKey = explode("(",$key);
 
- 
-							 $i++; 
+											$dataattributeId = explode(")",$dataKey[1]); 
+											$attributeId = $dataattributeId[0];
+											$attributeValues['attributeValues'][] = ['objectId'=>'',
+																						'attributeId'=>$attributeId,
+																						'value'=>$value];
+									}
+									else
+									{
+
+										// $dec = str_replace( ',', '', $value );
+
+										// if( is_numeric( $dec ) ) {
+										// 	$value = $dec;
+										// }
+											$value = $value;
+											$attributeValueKey = count($attributeValues['attributeValues']);
+											$attributeValues['attributeValues'][($attributeValueKey-1)]['objectId']=$value;
+									}
+
+	 
+								 $i++; 
+							}
+
 						}
 
 				}
-	
-				 $this->parseAttributeValueImport($attributeValues);
+
+				$this->parseAttributeValueImport($attributeValues);
 				
 				return true;
 		}
@@ -551,7 +577,8 @@ class AttributeController extends Controller
 		public function importAttributes($sheet)
 		{
 				$highestRow = $sheet->getHighestRow(); 
-				$highestColumn = $sheet->getHighestColumn();
+				// $highestColumn = $sheet->getHighestColumn();
+				$highestColumn = 'H';
 
 				$headingsArray = $sheet->rangeToArray('A3:'.$highestColumn.'3',null, true, true, true);
 				$headingsArray = $headingsArray[3];
@@ -571,6 +598,8 @@ class AttributeController extends Controller
 				}
 				
 				$filterableAttribute= $nonFilterableAttribute= $primaryAttributes= [];
+				$primaryIsFilterable = true ;
+				
 				foreach($namedDataArray as $attributeData)
 				{  
 						$is_filterable = $attributeData['is_filterable'];
@@ -579,37 +608,85 @@ class AttributeController extends Controller
 						unset($attributeData['is_primary']);
 						
 						if (!(is_null(max($attributeData)))) {
-							if($is_primary == 'yes')
-							{
-								$primaryAttributes= $attributeData;
-								continue;
-							}
 							
-							if($is_filterable == 'yes')
-								$filterableAttribute[]= $attributeData;
-							else
-								$nonFilterableAttribute[]= $attributeData; 
+							// if($is_primary == 'yes' )
+							// {
+							// 	echo "<pre>";
+							// 	echo "is primary <br/>";
+							// 	print_r($attributeData);
+							// 	echo "</pre>";								
+							// 	$primaryAttributes= $attributeData;
+
+							// 	if($is_filterable == "yes"){
+							// 		$filterableAttribute[]= $attributeData;
+							// 	}
+							// 	else if(){
+
+							// 	}
+							// 	continue;
+							// }
+							
+							if($is_filterable == 'yes'){
+								// echo "<pre>";
+								// echo "is filterable <br/>";
+								// print_r($attributeData);
+								// echo "</pre>";
+								
+
+								// if it is also primary then set it as primary
+								if($is_primary == 'yes' ){
+									$primaryAttributes= $attributeData;
+
+									$primaryIsFilterable = true ;
+								}
+								else{
+									$filterableAttribute[]= $attributeData;
+								}
+								
+							}
+
+							else{
+								// echo "<pre>";
+								// echo "is not filterable <br/>";
+								// print_r($attributeData);
+								// echo "</pre>";								
+								
+								if($is_primary == 'yes' ){
+									$primaryAttributes= $attributeData;
+									$primaryIsFilterable = false ; 
+								}	
+								else{
+									$nonFilterableAttribute[]= $attributeData; 
+								}							
+							}
 						}
 
 				}
+
+				
 				
 				// pass primary attributes in the last call and pass empty array in previous calls
 				//filterable Attributes
+				$primaryFilterableAttributeObj = ($primaryIsFilterable) ? $primaryAttributes : array() ;
 				$filterableData =['attributes' => $filterableAttribute,
 												 'categoryId' => $config[0],
 													'isFilterable' => true,
-													'primaryAttributeObj'=>array(),
+													'primaryAttributeObj'=>$primaryFilterableAttributeObj,
 												]; 
-               
+               	
 				$this->parseAttributeImport($filterableData);
+
+
 				
+				$primaryNonFilterableAttributeObj = ($primaryIsFilterable) ? array() : $primaryAttributes ; 
 				 //Non filterable Attributes
 				$nonFilterableAttribute =['attributes' => $nonFilterableAttribute,
 												 'categoryId' => $config[0],
 												 'isFilterable' => false,
-												 'primaryAttributeObj'=>$primaryAttributes,          
+												 'primaryAttributeObj'=>$primaryNonFilterableAttributeObj,          
 												]; 
-
+																
+				
 				$this->parseAttributeImport($nonFilterableAttribute);
 				
 				return true;
@@ -715,6 +792,7 @@ class AttributeController extends Controller
 				$attributes[] = array(
 								'id' =>$filterable_attribute->getObjectId(),
 								'name' => $filterable_attribute->get('name'),  
+								'type' => $filterable_attribute->get('type'),  
 								'group' => $filterable_attribute->get('group'),
 								'unit' => $filterable_attribute->get('unit'),
 								'filterable' => 'yes',
@@ -722,7 +800,7 @@ class AttributeController extends Controller
 								);
 
 			}
- 
+ 			
 			foreach ($secondary_attributes as $secondary_attribute) {
 					if($secondary_attribute==null)
 							continue;
@@ -730,6 +808,7 @@ class AttributeController extends Controller
 				$attributes[] = array(
 								'id' =>$secondary_attribute->getObjectId(),
 								'name' => $secondary_attribute->get('name'),
+								'type' => $secondary_attribute->get('type'),
 								'group' => $secondary_attribute->get('group'),
 								'unit' => $secondary_attribute->get('unit'),
 								'filterable' => 'no',
@@ -743,11 +822,13 @@ class AttributeController extends Controller
 								'categoryName' =>  $categoryObject->get("name"), 
 								'attributes' =>  $attributes, 
 								);
+
+
 			
 			return $result;
 		}  
 
-		public function getCategoryAttributeValues($categoryData){
+		public function getCategoryAttributeValues($categoryData, $sheetType = "index"){
 			// $categoryData = array (
 			//   'categoryId' => 'bOEz9mBh5Q',
 			//   'filterableAttributes' => true,
@@ -759,7 +840,28 @@ class AttributeController extends Controller
 			$resultjson = AttributeController::makeParseCurlRequest($functionName,$categoryData); 
 
 			$response =  json_encode($resultjson);
-			$response = json_decode($response,true);    
+			$response = json_decode($response,true); 
+			$final_result = [];
+			$filteredAttrib = [];
+
+			if($sheetType == "attributeValues") {
+			  	if (isset($response["result"])) {
+			  		foreach ($response["result"]["attributes"] as $attributeArr) {
+
+			  			if ($attributeArr['type'] == "select") {
+			  				$filteredAttrib[] = $attributeArr;
+			  			}
+
+			  		}
+			  		$response["result"]["attributes"] = $filteredAttrib;
+			  	}
+			  	else{
+			  		$response = array('result' =>  array('attributes' => [], "attributeValues" => [] ) );
+			  	}
+
+			
+			}
+
 			
 			return $response;
 		} 
@@ -804,8 +906,11 @@ class AttributeController extends Controller
 			$base_url = "https://api.parse.com/1";
 
 			$post_url = $base_url."/".$parseFunctType."/".$functionName;
-				
+			
+
 			$data_string = json_encode($data); 
+
+			// dd($data_string);	
 
 			// -H "X-Parse-Application-Id: 837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7" \
 			// -H "X-Parse-REST-API-Key: zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy" \
