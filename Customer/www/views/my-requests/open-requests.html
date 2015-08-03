@@ -51,17 +51,11 @@
 							<sm class="subdued">{{request.timeStr}}</sm>
 						</div>
 					</div>
-					<!--div class="item item-body">
-						<p>
-						<b>Address :</b>
-						{{openRequest.address.full}}
-						<br><br>
-						<b>Comments :{{openRequest.address.comments}}</b>
-						</p>
-					</div-->
-					
 			</ion-item>
 		</ion-list>	
+		<ion-item ng-if="view.getOpenProducts">
+			No more products to display.
+		</ion-item>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
@@ -83,7 +77,7 @@
 			<div class="col col-50 text-center" >
 				<h5 class="margin-none text-light normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
 			</div>
-			<div class="col col-50 text-center border-left">
+			<div class="col col-50 text-center border-left" ng-click="view.Filter()">
 				<h5 class="margin-none text-light normal"><i class="ion ion-funnel"></i> FILTER</h5>
 			</div>
 		</div>
