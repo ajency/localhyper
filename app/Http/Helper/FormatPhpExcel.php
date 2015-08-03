@@ -201,6 +201,7 @@ class FormatPhpExcel
 						$at_column = self::get_column_by_attribute('Brand', $attributeSheet);
 						$end_row = $at_column['count'];
 						$formula = 'Index!$'.$at_column['column'].'$2:$'.$at_column['column'].'$'.$end_row;
+						//$sheet->setCellValue($cell, $formula);
 						self::single_cell_dropdown_from_list($sheet, $cell, $label, $formula);
 
 						$at_columnIndex = \PHPExcel_Cell::columnIndexFromString($at_column['column']);
@@ -293,6 +294,11 @@ class FormatPhpExcel
 			if(empty($dvalue)){
 				$count = $drow-1;
 				break;
+			}else{
+				if($row_count == $drow+1){
+					$count = $drow+1;
+					break;
+				}
 			}
 		}
 
