@@ -148,7 +148,7 @@ sm {
 /* HEADER */
 /************************************/
 .has-header {
-  background: #e8e8e8;
+  background-color: #F2F1ED;
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light,
 .bar.bar-header {
@@ -958,6 +958,15 @@ sm {
 .high-span.rec-off {
   margin-top: 20px;
   margin-bottom: 5px;
+}
+.no-offs-det {
+  padding-top: 25px;
+}
+.no-offs-det img {
+  height: 100px;
+  display: inline-block;
+  margin-bottom: 10px;
+  margin-left: -50px;
 }
 .bar-primary {
   background-color: #f45152;
