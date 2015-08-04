@@ -1985,7 +1985,7 @@
         sellerGeoPoint = new Parse.GeoPoint(sellerLocation);
         requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
         requestQuery.notContainedIn("objectId", requestsWhereOfferMade);
-        requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId");
+        requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId,offerCount");
         requestQuery.include("product");
         requestQuery.include("category");
         requestQuery.include("category.parent_category");
@@ -2004,8 +2004,6 @@
           return Parse.Promise.when(requestsQs).then(function() {
             var individualReqResults, requestsResult;
             individualReqResults = _.flatten(_.toArray(arguments));
-            console.log("individualReqResult");
-            console.log(individualReqResults);
             requestsResult = {
               "city": city,
               "area": area,
@@ -2060,7 +2058,8 @@
       brand: brand,
       createdAt: filteredRequest.createdAt,
       comments: filteredRequest.get("comments"),
-      status: filteredRequest.get("status")
+      status: filteredRequest.get("status"),
+      offerCount: filteredRequest.get("offerCount")
     };
     queryNotification = new Parse.Query("Notification");
     innerQuerySeller = new Parse.Query(Parse.User);

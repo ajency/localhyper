@@ -494,7 +494,7 @@ getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius)
 
             requestQuery.notContainedIn("objectId", requestsWhereOfferMade)
 
-            requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId")
+            requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId,offerCount")
 
             requestQuery.include("product")
             requestQuery.include("category")
@@ -522,10 +522,7 @@ getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius)
                 )   
 
                 Parse.Promise.when(requestsQs).then ->
-                    individualReqResults = _.flatten(_.toArray(arguments))  
-
-                    console.log "individualReqResult"
-                    console.log individualReqResults  
+                    individualReqResults = _.flatten(_.toArray(arguments)) 
 
                     requestsResult = 
                         "city" : city
@@ -584,6 +581,7 @@ getRequestData =  (filteredRequest,seller) ->
         createdAt: filteredRequest.createdAt
         comments: filteredRequest.get("comments")  
         status: filteredRequest.get("status")            
+        offerCount: filteredRequest.get("offerCount")            
 
     
     #  now query notification to get notificaton status
