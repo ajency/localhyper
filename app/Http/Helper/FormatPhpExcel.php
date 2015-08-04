@@ -201,6 +201,12 @@ class FormatPhpExcel
 						$options = 'select,text';
 						self::single_cell_dropdown($sheet, $cell, $label, $options);
 					}
+				}else if($type == 'Price'){
+					if($value == 'price_source'){
+						$label = 'price source';
+						$options = 'flipkart,snapdeal';
+						self::single_cell_dropdown($sheet, $cell, $label, $options);
+					}
 				}else if($type == 'Products'){
 					if($value == 'Brand'){
 						$label = 'Brand';
