@@ -23,12 +23,18 @@ angular.module 'LocalHyper.requestsOffers'
 
 		defer.promise
 
-	RequestsAPI.getById = (id)->
+	RequestsAPI.getSingleRequest = (requestId)->
 		defer = $q.defer()
+		user = User.getCurrent()
 
-		$http.get "classes/Request/#{id}?include=product,brand"
+		params = 
+			"requestId": requestId
+			"sellerId": user.id
+			"sellerGeoPoint": user.get 'addressGeoPoint'
+
+		$http.post 'functions/getSingleRequest', params
 		.then (data)->
-			defer.resolve data.data
+			defer.resolve data.data.result
 		, (error)->
 			defer.reject error
 
@@ -36,9 +42,8 @@ angular.module 'LocalHyper.requestsOffers'
 
 	RequestsAPI.getNotifications = ->
 		defer = $q.defer()
-		user = User.getCurrent()
 		params = 
-			"userId": user.id
+			"userId": User.getId()
 			"type": "Request"
 
 		$http.post 'functions/getUnseenNotifications', params
@@ -51,11 +56,10 @@ angular.module 'LocalHyper.requestsOffers'
 
 	RequestsAPI.updateStatus = (requestId)->
 		defer = $q.defer()
-		user = User.getCurrent()
 
 		params = 
-			"notificationTypeId": "#{requestId}"
-			"recipientId": "#{user.id}"
+			"notificationTypeId": requestId
+			"recipientId": User.getId()
 			"notificationType" : "Request"
 			"hasSeen": true
 

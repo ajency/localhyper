@@ -15,21 +15,33 @@
 
 	<ion-content ng-switch="view.display">
 
+		<ion-refresher
+			on-refresh="view.onPullToRefresh()" 
+			class="aj-refresher">
+		</ion-refresher>
+
 		<ion-spinner
-			class="aj-spinner spinner-android"
+			class="aj-spinner"
 			ng-switch-when="loader">
 		</ion-spinner>
 
-		<ion-list ng-switch-when="noError" class="card-list">
+		<ion-list 
+			ng-switch-when="noError" 
+			class="card-list">
+
+			<ion-item 
+				ng-if="view.requests.length == 0;"
+				class="item-text-wrap">
+				You currently do not have new requests.
+			</ion-item>
 
 	       	<ion-item
 	       		class="card"
 	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
-	       		ng-init="request.new=view.isNew(request.id)"
-	       		ng-click="view.showRequestDetails(request)"
-	       		ng-class="(request.new) ? 'notify-alert' : ''"
+	       		ng-click="view.requestDetails.show(request)"
+	       		ng-class="(request.notification.hasSeen) ? '' : 'notify-alert'"
 	       		ng-controller="EachRequestTimeCtrl">
-
+				
 				<div class="item-wrapper-nr">
 					<div class="item-avatar border-none margin-none">
 				        <img ng-src="{{request.product.image[0].src}}">

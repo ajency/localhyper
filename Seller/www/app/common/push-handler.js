@@ -44,27 +44,27 @@ angular.module('LocalHyper.common').factory('Push', [
     Push.handlePayload = function(payload) {
       var inAppNotification, notificationClick;
       inAppNotification = function() {
-        return $rootScope.$broadcast('on:new:request', {
+        return $rootScope.$broadcast('in:app:notification', {
           payload: payload
         });
       };
       notificationClick = function() {
-        App.navigate('new-requests');
-        return $rootScope.$broadcast('on:notification:click', {
+        return $rootScope.$broadcast('push:notification:click', {
           payload: payload
         });
       };
-      switch (payload.type) {
-        case 'new_request':
-          if (payload.coldstart) {
-            return notificationClick();
-          } else if (!payload.foreground && !_.isUndefined(payload.coldstart) && !payload.coldstart) {
-            return notificationClick();
-          } else if (payload.foreground) {
-            return inAppNotification();
-          } else if (!payload.foreground) {
-            return inAppNotification();
-          }
+      if (App.isAndroid()) {
+        if (payload.coldstart) {
+          return notificationClick();
+        } else if (!payload.foreground && !_.isUndefined(payload.coldstart) && !payload.coldstart) {
+          return notificationClick();
+        } else if (payload.foreground) {
+          return inAppNotification();
+        } else if (!payload.foreground) {
+          return inAppNotification();
+        }
+      } else if (App.isIOS()) {
+        return console.log('ios');
       }
     };
     return Push;

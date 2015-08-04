@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'RequestsAPI', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', function($scope, App, RequestsAPI, OffersAPI, $ionicModal, $timeout, $rootScope) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -7,75 +7,72 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       page: 0,
       canLoadMore: true,
       refresh: false,
-      requestDetails: {
+      offerDetails: {
         modal: null,
         showExpiry: false,
         data: {},
-        display: 'noError',
-        errorType: '',
-        requestId: null,
-        offerPrice: '',
-        reply: {
-          button: true,
-          text: ''
+        loadModal: function() {
+          return $ionicModal.fromTemplateUrl('views/requests-offers/offer-history-details.html', {
+            scope: $scope,
+            animation: 'slide-in-up',
+            hardwareBackButtonClose: true
+          }).then((function(_this) {
+            return function(modal) {
+              return _this.modal = modal;
+            };
+          })(this));
         },
-        deliveryTime: {
-          display: false,
-          value: 1,
-          unit: 'hr',
-          unitText: 'Hour',
-          setDuration: function() {
-            if (!_.isNull(this.value)) {
-              switch (this.unit) {
-                case 'hr':
-                  return this.unitText = this.value === 1 ? 'Hour' : 'Hours';
-                case 'day':
-                  return this.unitText = this.value === 1 ? 'Day' : 'Days';
-              }
-            }
-          },
-          done: function() {
-            if (_.isNull(this.value)) {
-              this.value = 1;
-              this.unit = 'hr';
-              this.unitText = 'Hour';
-            }
-            this.display = false;
-            return App.resize();
-          }
+        show: function(request) {
+          this.data = request;
+          this.modal.show();
+          return this.showExpiry = true;
         }
       },
+      init: function() {
+        return this.offerDetails.loadModal();
+      },
       reFetch: function() {
-        console.log('reff0');
-        this.display = 'loader';
-        this.errorType = '';
-        this.requests = [];
         this.page = 0;
-        this.canLoadMore = true;
-        this.refresh = false;
+        this.requests = [];
         return this.showOfferHistory();
       },
-      incrementPage: function() {
-        $scope.$broadcast('scroll.refreshComplete');
-        return this.page = this.page + 1;
+      showOfferHistory: function() {
+        var params;
+        params = {
+          page: this.page,
+          displayLimit: 3
+        };
+        return OffersAPI.getSellerOffers(params).then((function(_this) {
+          return function(data) {
+            return _this.onSuccess(data, params.displayLimit);
+          };
+        })(this), (function(_this) {
+          return function(error) {
+            return _this.onError(error);
+          };
+        })(this))["finally"]((function(_this) {
+          return function() {
+            App.resize();
+            _this.page = _this.page + 1;
+            return $scope.$broadcast('scroll.refreshComplete');
+          };
+        })(this));
       },
-      onScrollComplete: function() {
-        return $scope.$broadcast('scroll.infiniteScrollComplete');
-      },
-      onSuccess: function(data) {
-        var offerhistory;
+      onSuccess: function(offerData, displayLimit) {
+        var offerDataSize;
         this.display = 'noError';
-        offerhistory = data;
-        if (offerhistory.length > 0) {
-          if (_.size(offerhistory) < 3) {
+        offerDataSize = _.size(offerData);
+        if (offerDataSize > 0) {
+          if (offerDataSize < displayLimit) {
             this.canLoadMore = false;
           } else {
-            this.onScrollComplete();
+            this.canLoadMore = true;
+            $scope.$broadcast('scroll.infiniteScrollComplete');
           }
           if (this.refresh) {
-            return this.requests = offerhistory;
+            return this.requests = offerData;
           } else {
-            return this.requests = this.requests.concat(offerhistory);
+            return this.requests = this.requests.concat(offerData);
           }
         } else {
           return this.canLoadMore = false;
@@ -86,67 +83,29 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         this.errorType = type;
         return this.canLoadMore = false;
       },
-      onTapToRetry: function() {
-        this.display = 'error';
-        this.canLoadMore = true;
-        return this.page = 0;
-      },
       onPullToRefresh: function() {
         this.refresh = true;
-        this.canLoadMore = true;
         this.page = 0;
+        this.canLoadMore = true;
         return this.showOfferHistory();
       },
       onInfiniteScroll: function() {
         this.refresh = false;
         return this.showOfferHistory();
       },
-      showOfferHistory: function() {
-        return OffersAPI.offerhistory({
-          page: this.page
-        }).then((function(_this) {
-          return function(data) {
-            return _this.onSuccess(data);
-          };
-        })(this), (function(_this) {
-          return function(error) {
-            return _this.onError(error);
-          };
-        })(this))["finally"]((function(_this) {
-          return function() {
-            return _this.incrementPage();
-          };
-        })(this));
-      },
-      init: function() {
-        return this.loadOfferDetails();
-      },
-      loadOfferDetails: function() {
-        return $ionicModal.fromTemplateUrl('views/requests-offers/offer-history-details.html', {
-          scope: $scope,
-          animation: 'slide-in-up',
-          hardwareBackButtonClose: true
-        }).then((function(_this) {
-          return function(modal) {
-            return _this.requestDetails.modal = modal;
-          };
-        })(this));
-      },
-      show: function() {
-        return view.modal.show();
-      },
-      showRequestDetails: function(request) {
-        this.requestDetails.data = request;
-        this.requestDetails.modal.show();
-        return this.requestDetails.showExpiry = true;
+      onTapToRetry: function() {
+        this.display = 'loader';
+        this.page = 0;
+        return this.canLoadMore = true;
       }
     };
     $scope.$on('modal.hidden', function() {
       return $timeout(function() {
-        return $scope.view.requestDetails.showExpiry = false;
+        return $scope.view.offerDetails.showExpiry = false;
       }, 1000);
     });
-    return $rootScope.$on('offer:done:success', function() {
+    return $rootScope.$on('make:offer:success', function() {
+      App.scrollTop();
       return $scope.view.reFetch();
     });
   }

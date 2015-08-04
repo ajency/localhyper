@@ -37,7 +37,7 @@ h6 {
   padding: 0px;
 }
 .text-primary {
-  color: #f35a59;
+  color: #f45152;
 }
 .bg-white {
   background: #ffffff !important;
@@ -52,7 +52,7 @@ h6 {
   text-decoration: line-through;
 }
 .text-danger {
-  color: #f35a59;
+  color: #f45152;
 }
 .text-light {
   color: #ffffff;
@@ -393,7 +393,7 @@ sm {
   text-overflow: ellipsis;
 }
 .product-list h4 {
-  color: #f35a59;
+  color: #f45152;
 }
 /************************************/
 /* Sort model */
@@ -414,7 +414,7 @@ sm {
   background: rgba(0, 0, 0, 0.34);
 }
 .item.active {
-  color: #f35a59;
+  color: #f45152;
 }
 .item.active .i-price-high {
   background-position: -61px -42px;
@@ -466,7 +466,7 @@ sm {
   font-size: 12px;
 }
 .btn-danger {
-  color: #f35a59;
+  color: #f45152;
 }
 .label {
   border: 1px solid #ccc;
@@ -545,8 +545,8 @@ sm {
 .item-avatar-left.activated,
 .item-avatar-left .item-content.activated {
   background: #fff;
-  border-color: #f35a59;
-  color: #f35a59;
+  border-color: #f45152;
+  color: #f45152;
   -moz-box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
   -webkit-box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
   box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
@@ -585,7 +585,7 @@ sm {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  color: #f35a59;
+  color: #f45152;
 }
 .full-cont {
   padding: 0;
@@ -665,7 +665,7 @@ sm {
 }
 .form-field .ico-out {
   display: none;
-  color: #f35a59;
+  color: #f45152;
   position: absolute;
   top: 0;
   left: 0;
@@ -689,6 +689,9 @@ sm {
   background-color: #fff;
   color: #000;
 }
+.p-a-0 {
+  padding: 0;
+}
 .p-b-0 {
   padding-bottom: 0;
 }
@@ -700,6 +703,24 @@ sm {
 }
 .p-r-0 {
   padding-right: 0;
+}
+.p-r-6 {
+  padding-right: 6px;
+}
+.m-a-0 {
+  margin: 0;
+}
+.m-b-0 {
+  margin-bottom: 0;
+}
+.m-t-0 {
+  margin-top: 0;
+}
+.m-l-0 {
+  margin-left: 0;
+}
+.m-r-0 {
+  margin-right: 0;
 }
 .b-r-1 {
   border-right: 1px solid #ddd;
@@ -767,7 +788,7 @@ sm {
 }
 .obj-title p.loca a {
   text-decoration: none;
-  color: #f35a59;
+  color: #f45152;
 }
 .obj-title .button-lighter.button.button-dark.button-outline {
   float: right;
@@ -778,12 +799,13 @@ sm {
   height: auto;
   min-height: 0;
   max-height: none;
+  white-space: nowrap;
 }
 .obj-title .button-lighter.button.button-dark.button-outline img {
   height: 14px;
   display: inline-block;
   vertical-align: middle;
-  margin-right: 8px;
+  margin-right: 2px;
   margin-top: -5px;
 }
 .obj-title .expires {
@@ -792,9 +814,10 @@ sm {
 .obj-title .expires h2 {
   font-weight: bold;
   color: #464646;
-  font-size: 32px;
+  font-size: 25px;
   margin-bottom: 0;
-  margin-top: 5px;
+  margin-top: 3px;
+  margin-right: 9px;
 }
 .obj-title .expires p.exp_in {
   color: #959595;
@@ -808,9 +831,11 @@ sm {
   color: #b3b3b3;
   text-decoration: underline;
   font-size: 13px;
+  line-height: 18px;
+  display: block;
 }
 .obj-title .expires .button.button-outline.button-balanced {
-  padding: 0 12px;
+  padding: 0 9px;
   line-height: 35px;
   vertical-align: middle;
   height: auto;
@@ -845,16 +870,17 @@ sm {
   color: #6d6d6d;
   font-weight: bold;
   text-align: left;
-  margin-top: 5px;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
+  margin-top: 3px;
 }
 .rece-offer h3 span {
-  font-weight: normal;
+  font-weight: 100;
   color: #c1c1c1;
 }
 .rece-offer p.time-rece {
   font-style: italic;
   color: #aaaaaa;
+  margin-top: 1px;
 }
 .rece-offer p.comment {
   color: #777777;
@@ -865,14 +891,33 @@ sm {
   vertical-align: middle;
   margin-right: 5px;
 }
+.rece-offer p.comment span {
+  display: inline-block;
+  top: 2px;
+  position: relative;
+}
 .rece-offer .dash-div {
   margin-left: -16px;
   margin-right: -16px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: auto;
+}
+.rece-offer .vert-div {
+  height: 50px;
+  width: 1px;
+  background-color: #c9c9c9;
+  margin-right: 6px;
+}
+.rece-offer .offer-vals {
+  padding-top: 6px;
 }
 .rece-offer .offer-vals .info {
   font-size: 13px;
   color: #ababab;
   text-align: center;
+  margin-bottom: 0;
+  margin-top: 3px;
 }
 .rece-offer .offer-vals h2 {
   font-size: 24px;
@@ -881,4 +926,41 @@ sm {
 .rece-offer .offer-vals h2 small {
   font-weight: normal;
   font-size: 14px;
+}
+.rece-offer .offer-vals .button {
+  padding: 0 15px;
+  margin-top: 6px;
+  height: auto;
+  min-height: 0;
+  line-height: 35px;
+}
+.align-left {
+  text-align: left;
+}
+.align-center {
+  text-align: center;
+}
+.align-right {
+  text-align: right;
+}
+.high-span {
+  color: #686667;
+}
+.high-span b {
+  color: #252525;
+}
+.high-span.rec-off {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+.bar-primary {
+  background-color: #f45152;
+}
+.bar-primary .title {
+  font-weight: bold;
+  font-size: 16px !important;
+  color: #fff;
+}
+.spacer-40 {
+  height: 40px;
 }
