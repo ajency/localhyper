@@ -51,7 +51,7 @@
 						</div>
 
 						<div
-							class="col col-20"
+							class="co l c ol-20 pull-right"
 							ng-if="view.request.comments !== ''">
 
 							<button
@@ -136,28 +136,32 @@
 					ng-if="view.offers.all.length > 0;">
 
 					<div class="col">
-						<p>Received Offers <b>({{view.offers.all.length}})</b></p>
+						<h4 class="align-left high-span rec-off">Received Offers <b>({{view.offers.all.length}})</b></h4>
 					</div>
 				</div>
 
 				<div
 					class="row"
 					ng-if="view.offers.all.length == 0 && view.request.status === 'open';">
-					<div class="col">
-						<h3>We have sent your request to sellers, they will soon send their prices</h3>
+					<div class="col no-offs-det align-center">
+
+						<img ng-src="./img/requestsent-icon.png" alt="Request has been sent!">
+
+						<h4>We have sent your request to sellers,<br>they will soon send their prices</h4>
 					</div>
 				</div>
+				<div class="spacer-40"></div>
 			</div>
 
 			<div
 				ng-switch-when="noError"
-				class="card no-shadow rece-offer"
+				class="card no-shadow rece-offer m-t-0"
 				ng-repeat="offer in view.offers.all | orderBy: 'status' | limitTo: view.offers.limitTo"
 				ng-controller="EachOfferTimeCtrl">
 
 				<div class="item item-text-wrap">
 					<div class="row row-fluid">
-						<div class="col">
+						<div class="col p-t-0 p-l-0 p-r-0">
 							<div class="user-wrap pull-left">
 								<img src="./img/user.png" alt="" class="user">
 							</div>
@@ -198,15 +202,17 @@
 						class="row row-fluid offer-vals"
 						ng-if="offer.status === 'open'">
 
-						<div class="col">
+						<div class="col align-center p-a-0 p-r-6">
 							<p class="info">Price Offered</p>
-							<h2><small>Rs.</small> {{App.toINR(offer.price)}}</h2>
+							<h2><small>Rs</small> {{App.toINR(offer.price)}}</h2>
 						</div>
-						<div class="col">
+						<div class="col align-center p-a-0 p-r-6">
+							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery time</p>
 							<h2>{{offer.deliveryTimeStr}}</h2>
 						</div>
-						<div class="col">
+						<div class="col align-right p-a-0">
+							<div class="vert-div pull-left"></div>
 							<button
 								class="button button-outline button-balanced"
 								ng-disabled="view.request.status === 'cancelled' || view.request.status === 'expired'"
@@ -220,16 +226,18 @@
 						class="row row-fluid offer-vals"
 						ng-if="offer.status === 'accepted'">
 
-						<div class="col">
+						<div class="col align-center p-a-0 p-r-6">
 							<p class="info">Price Offered</p>
 							<h2><small>Rs.</small> {{App.toINR(offer.price)}}</h2>
 						</div>
 
-						<div class="col">
+						<div class="col align-center p-a-0 p-r-6">
+							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery time left</p>
 							<h2>{{offer.deliveryTimeLeftStr}}</h2>
 						</div>
-						<div class="col">
+						<div class="col align-right p-a-0">
+							<div class="vert-div pull-left"></div>
 							Offer Status
 							<button
 								class="button button-outline button-assertive">
@@ -242,16 +250,18 @@
 						class="row row-fluid offer-vals"
 						ng-if="offer.status === 'unaccepted'">
 
-						<div class="col">
+						<div class="col align-center p-a-0 p-r-6">
 							<p class="info">Price Offered</p>
 							<h2><small>Rs.</small> {{App.toINR(offer.price)}}</h2>
 						</div>
 
-						<div class="col">
+						<div class="col align-center p-a-0 p-r-6">
+							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery time</p>
 							<h2>{{offer.deliveryTimeStr}}</h2>
 						</div>
-						<div class="col">
+						<div class="col align-right p-a-0">
+							<div class="vert-div pull-left"></div>
 							<button
 								class="button button-outline button-balanced"
 								ng-disabled="true">
