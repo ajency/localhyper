@@ -44,6 +44,9 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         return $ionicSideMenuDelegate.toggleLeft();
       }
     };
+    $rootScope.$on('get:unseen:notifications', function(e, obj) {
+      return $scope.view.getNotifications();
+    });
     $rootScope.$on('in:app:notification', function(e, obj) {
       var payload;
       payload = obj.payload;

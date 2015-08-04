@@ -1,8 +1,9 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'RequestsAPI', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope'
-	, ($scope, App, RequestsAPI, OffersAPI, $ionicModal, $timeout, $rootScope)->
+.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
+	, '$timeout', '$rootScope', '$stateParams'
+	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, $stateParams)->
 
 		$scope.view = 
 			display: 'loader'
@@ -12,128 +13,130 @@ angular.module 'LocalHyper.requestsOffers'
 			canLoadMore: true
 			refresh: false
 
-			requestDetails:
+			offerDetails:
 				modal: null
 				showExpiry : false
 				data: {}
-				display: 'noError'
-				errorType: ''
-				requestId: null
-				offerPrice: ''
-				reply: 
-					button: true
-					text: ''
-				deliveryTime:
-					display: false
-					value: 1
-					unit: 'hr'
-					unitText: 'Hour'
-					setDuration : ->
-						if !_.isNull @value
-							switch @unit
-								when 'hr'
-									@unitText = if @value is 1 then 'Hour' else 'Hours'
-								when 'day'
-									@unitText = if @value is 1 then 'Day' else 'Days'
+				pendingRequestId: ""
 
-					done : ->
-						if _.isNull(@value)
-							@value = 1
-							@unit = 'hr'
-							@unitText = 'Hour'
-						@display = false
-						App.resize()
+				loadModal : ->
+					$ionicModal.fromTemplateUrl 'views/requests-offers/offer-history-details.html', 
+						scope: $scope,
+						animation: 'slide-in-up' 
+						hardwareBackButtonClose: true
+					.then (modal)=>
+						@modal = modal
+				
+				show : (request)->
+					@data = request
+					@modal.show()
+					@showExpiry = true
+
+				onNotificationClick : (requestId)->
+					requests = $scope.view.requests
+					index = _.findIndex requests, (request)-> request.id is requestId
+					if index is -1
+						@pendingRequestId = requestId
+						@modal.show()
+					else 
+						@show requests[index]
+
+				handlePendingRequest : ->
+					if @pendingRequestId isnt ""
+						requests = $scope.view.requests
+						index = _.findIndex requests, (request)=> request.request.id is @pendingRequestId
+						@data = requests[index]
+						@showExpiry = true
+						@pendingRequestId = ""
+
+			init : ->
+				@offerDetails.loadModal()
 
 			reFetch : ->
-				console.log('reff0')
-				@display = 'loader'
-				@errorType = ''
-				@requests = []
 				@page = 0
-				@canLoadMore = true
-				@refresh = false
-				@showOfferHistory()			
+				@requests = []
+				@showOfferHistory()
 
-			incrementPage : ->
-				$scope.$broadcast 'scroll.refreshComplete'
-				@page = @page + 1
-				
-			onScrollComplete : ->
-				$scope.$broadcast 'scroll.infiniteScrollComplete'
+			showOfferHistory : ->
+				params = page: @page, displayLimit: 3
 
-			onSuccess : (data)->
+				OffersAPI.getSellerOffers params
+				.then (data)=>
+					console.log data
+					@onSuccess data, params.displayLimit
+				, (error)=>
+					@onError error
+				.finally =>
+					App.resize()
+					@page = @page + 1
+					$scope.$broadcast 'scroll.refreshComplete'
+
+			onSuccess : (offerData, displayLimit)->
 				@display = 'noError'
-				offerhistory = data
-				
-				if offerhistory.length > 0
-					if _.size(offerhistory) < 3 then @canLoadMore = false
-					else @onScrollComplete()
-					if @refresh then @requests = offerhistory
-					else @requests = @requests.concat(offerhistory)
+				offerDataSize = _.size(offerData)
+				if offerDataSize > 0
+					if offerDataSize < displayLimit
+						@canLoadMore = false
+					else
+						@canLoadMore = true 
+						$scope.$broadcast 'scroll.infiniteScrollComplete'
+
+					if @refresh then @requests = offerData
+					else @requests = @requests.concat offerData
 				else
 					@canLoadMore = false
+
+				@offerDetails.handlePendingRequest()
 
 			onError: (type)->
 				@display = 'error'
 				@errorType = type
 				@canLoadMore = false
 
-			onTapToRetry : ->
-				@display = 'error'
-				@canLoadMore = true
-				@page = 0
-
 			onPullToRefresh : ->
 				@refresh = true
-				@canLoadMore = true
 				@page = 0
+				@canLoadMore = true
 				@showOfferHistory()
 
 			onInfiniteScroll : ->
 				@refresh = false
 				@showOfferHistory()
-				
-			showOfferHistory : ()->
-				OffersAPI.offerhistory
-					page: @page
-				.then (data)=>
-					@onSuccess data
-				, (error)=>
-					@onError error
-				.finally =>
-					@incrementPage()
 
-			init : ->
-				@loadOfferDetails()
-
-			loadOfferDetails : ->
-				$ionicModal.fromTemplateUrl 'views/requests-offers/offer-history-details.html', 
-					scope: $scope,
-					animation: 'slide-in-up' 
-					hardwareBackButtonClose: true
-				.then (modal)=>
-					@requestDetails.modal = modal
-
-			show : ->
-				view.modal.show()
-
-			showRequestDetails : (request)->
-				@requestDetails.data = request
-				@requestDetails.modal.show()
-				@requestDetails.showExpiry = true
-
+			onTapToRetry : ->
+				@display = 'loader'
+				@page = 0
+				@canLoadMore = true
+		
+		
 		$scope.$on 'modal.hidden', ->
+			$scope.view.offerDetails.pendingRequestId = ""
 			$timeout ->
-				$scope.view.requestDetails.showExpiry = false
+				$scope.view.offerDetails.showExpiry = false
 			, 1000
 
 		$rootScope.$on 'make:offer:success', ->
+			App.scrollTop()
 			$scope.view.reFetch()
+
+		$rootScope.$on 'in:app:notification', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'cancelled_request'
+				App.scrollTop()
+				$scope.view.reFetch()
+
+		$scope.$on '$ionicView.enter', ->
+			#When cancelled request
+			requestId = $stateParams.requestId
+			$scope.view.offerDetails.onNotificationClick(requestId) if requestId isnt ""
 ]
 
+
 .directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->
+	
 	restrict: 'A'
 	link: (scope, el, attrs)->
+
 		$timeout ->
 			createdAt = $parse(attrs.createdAt)(scope)
 			total = moment(moment(createdAt.iso)).add 24, 'hours'

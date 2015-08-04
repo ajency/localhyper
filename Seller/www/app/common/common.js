@@ -84,6 +84,12 @@ angular.module('LocalHyper.common', []).factory('App', [
       resize: function() {
         return $ionicScrollDelegate.resize();
       },
+      scrollTop: function() {
+        return $ionicScrollDelegate.scrollTop(true);
+      },
+      scrollBottom: function() {
+        return $ionicScrollDelegate.scrollBottom(true);
+      },
       toINR: function(number) {
         if (!_.isUndefined(number)) {
           number = number.toString();
@@ -91,6 +97,9 @@ angular.module('LocalHyper.common', []).factory('App', [
         } else {
           return '';
         }
+      },
+      humanize: function(str) {
+        return s.humanize(str);
       },
       openLink: function(url) {
         var options;

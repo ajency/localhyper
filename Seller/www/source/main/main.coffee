@@ -39,11 +39,14 @@ angular.module 'LocalHyper.main', []
 				$ionicSideMenuDelegate.toggleLeft()
 
 
+		
+		$rootScope.$on 'get:unseen:notifications', (e, obj)->
+			$scope.view.getNotifications()
+
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
 			if payload.type is 'new_request'
-				if App.notification.count is 0
-					$scope.view.getNotifications()
+				if App.notification.count is 0 then $scope.view.getNotifications()
 				else App.notification.increment()
 		
 		$rootScope.$on 'on:session:expiry', ->

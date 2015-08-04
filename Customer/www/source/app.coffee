@@ -23,7 +23,7 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 			@count = @count + 1
 		decrement : ->
 			@count = @count - 1
-			@badge = false if @count is 0
+			@badge = false if @count <= 0
 
 	
 	#Small app logo
@@ -45,6 +45,8 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	$ionicConfigProvider.views.forwardCache true
 	$ionicConfigProvider.backButton.previousTitleText(false).text ''
 	$ionicConfigProvider.navBar.alignTitle 'center'
-	$ionicConfigProvider.tabs.position 'top'
+	$ionicConfigProvider.tabs
+		.style 'striped'
+		.position 'top'
 ]
 
