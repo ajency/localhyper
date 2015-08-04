@@ -687,7 +687,7 @@ sm {
   background-size: cover;
   background-position: center;
   position: relative;
-  min-height: 75px;
+  min-height: 55px;
 }
 .the-loation .ico-loc.icon {
   font-size: 22px;
