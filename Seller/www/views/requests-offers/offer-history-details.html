@@ -20,9 +20,16 @@
 		</div>
 	</ion-header-bar>
 
-	<ion-content class="has-footer">
+	<ion-content 
+		class="has-footer"
+		ng-switch="view.display">
 
-		<ion-list>
+		<ion-spinner
+			class="aj-spinner spinner-android"
+			ng-switch-when="loader">
+		</ion-spinner>
+
+		<ion-list ng-switch-when="noError">
 
 			<div class="row">
 				<div class="col col-20 item-avatar">
@@ -99,6 +106,12 @@
 			</div>
 
 		</ion-list>
+
+		<aj-error
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry()">
+		</aj-error>
 
 	</ion-content>
 

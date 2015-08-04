@@ -2,8 +2,8 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope'
-	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope)->
+	, '$timeout', '$rootScope', '$stateParams'
+	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, $stateParams)->
 
 		$scope.view = 
 			display: 'loader'
@@ -17,6 +17,7 @@ angular.module 'LocalHyper.requestsOffers'
 				modal: null
 				showExpiry : false
 				data: {}
+				pendingRequestId: ""
 
 				loadModal : ->
 					$ionicModal.fromTemplateUrl 'views/requests-offers/offer-history-details.html', 
@@ -31,6 +32,23 @@ angular.module 'LocalHyper.requestsOffers'
 					@modal.show()
 					@showExpiry = true
 
+				onNotificationClick : (requestId)->
+					requests = $scope.view.requests
+					index = _.findIndex requests, (request)-> request.id is requestId
+					if index is -1
+						@pendingRequestId = requestId
+						@modal.show()
+					else 
+						@show requests[index]
+
+				handlePendingRequest : ->
+					if @pendingRequestId isnt ""
+						requests = $scope.view.requests
+						index = _.findIndex requests, (request)=> request.request.id is @pendingRequestId
+						@data = requests[index]
+						@showExpiry = true
+						@pendingRequestId = ""
+
 			init : ->
 				@offerDetails.loadModal()
 
@@ -44,6 +62,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 				OffersAPI.getSellerOffers params
 				.then (data)=>
+					console.log data
 					@onSuccess data, params.displayLimit
 				, (error)=>
 					@onError error
@@ -67,6 +86,8 @@ angular.module 'LocalHyper.requestsOffers'
 				else
 					@canLoadMore = false
 
+				@offerDetails.handlePendingRequest()
+
 			onError: (type)->
 				@display = 'error'
 				@errorType = type
@@ -89,6 +110,7 @@ angular.module 'LocalHyper.requestsOffers'
 		
 		
 		$scope.$on 'modal.hidden', ->
+			$scope.view.offerDetails.pendingRequestId = ""
 			$timeout ->
 				$scope.view.offerDetails.showExpiry = false
 			, 1000
@@ -96,6 +118,17 @@ angular.module 'LocalHyper.requestsOffers'
 		$rootScope.$on 'make:offer:success', ->
 			App.scrollTop()
 			$scope.view.reFetch()
+
+		$rootScope.$on 'in:app:notification', (e, obj)->
+			payload = obj.payload
+			if payload.type is 'cancelled_request'
+				App.scrollTop()
+				$scope.view.reFetch()
+
+		$scope.$on '$ionicView.enter', ->
+			#When cancelled request
+			requestId = $stateParams.requestId
+			$scope.view.offerDetails.onNotificationClick(requestId) if requestId isnt ""
 ]
 
 

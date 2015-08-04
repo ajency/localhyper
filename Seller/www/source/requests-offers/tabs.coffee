@@ -91,7 +91,7 @@ angular.module 'LocalHyper.requestsOffers', []
 					templateUrl: 'views/requests-offers/new-requests.html'
 
 		.state 'my-offer-history',
-			url: '/my-offer-history'
+			url: '/my-offer-history:requestId'
 			parent: 'tabs'
 			views: 
 				"myOfferHistoryTab":

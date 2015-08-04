@@ -90,7 +90,7 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
         }
       }
     }).state('my-offer-history', {
-      url: '/my-offer-history',
+      url: '/my-offer-history:requestId',
       parent: 'tabs',
       views: {
         "myOfferHistoryTab": {

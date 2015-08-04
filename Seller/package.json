@@ -16,7 +16,6 @@
   },
   "cordovaPlugins": [
     "cordova-plugin-device",
-    "cordova-plugin-console",
     "cordova-plugin-whitelist",
     "org.apache.cordova.splashscreen",
     {

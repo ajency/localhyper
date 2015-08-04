@@ -12,7 +12,7 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       },
       decrement: function() {
         this.count = this.count - 1;
-        if (this.count === 0) {
+        if (this.count <= 0) {
           return this.badge = false;
         }
       }
