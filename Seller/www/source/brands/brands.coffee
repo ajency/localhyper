@@ -110,6 +110,7 @@ angular.module 'LocalHyper.brands', []
 						when 'categories' then count = -2
 						when 'sub-categories' then count = -3
 						when 'category-chains' then count = -1
+						when 'my-profile' then count = -1
 						else count = 0
 					App.goBack count
 					# App.navigate 'category-chains'

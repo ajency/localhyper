@@ -143,6 +143,9 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
               case 'category-chains':
                 count = -1;
                 break;
+              case 'my-profile':
+                count = -1;
+                break;
               default:
                 count = 0;
             }

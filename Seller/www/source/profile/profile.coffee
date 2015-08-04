@@ -1,139 +1,50 @@
 angular.module 'LocalHyper.profile', []
 
 
-.controller 'ProfileCtrl', ['$scope', 'User', 'App', 'CDialog', 'GPS', 'CToast'
-	, 'GoogleMaps', '$ionicModal'
-	, ($scope, User, App, CDialog, GPS, CToast, GoogleMaps, $ionicModal)->
+.controller 'ProfileCtrl', ['$scope', 'User', 'App', 'CToast', 'Storage', 'CategoriesAPI'
+	, ($scope, User, App, CToast, Storage, CategoriesAPI)->
 
 		user = User.getCurrent()
+		
+		console.log(user)
 
 		$scope.view = 
-			name: user.get 'displayName'
-			phone: "+91-#{user.get('username')}"
+			showDelete: false
+			categoryChains : []
 
-			profileAddress: ''
+			setCategoryChains : ->
+				Storage.categoryChains 'get'
+				.then (chains) =>
+					console.log(chains)
+					if !_.isNull chains
+						@categoryChains = chains
+						CategoriesAPI.categoryChains 'set', chains
 
-			permanentAddress:
-				obj: user.get 'permanentAddress'
-				available: -> !_.isUndefined @obj
+			getBrands : (brands)->
+				brandNames = _.pluck brands, 'name'
+				brandNames.join ', '
 
-			tempAddress:
-				obj: user.get 'address'
-				available: -> !_.isUndefined @obj
+			onChainClick : (chains)->
+				CategoriesAPI.subCategories 'set', chains.category.children
+				App.navigate 'brands', categoryID: chains.subCategory.id
 
-			location:
-				modal: null
-				map: null
-				marker: null
-				latLng: null
-				address: null
-				addressFetch: true
+			removeItemFromChains : (subCategoryId)->
+				@categoryChains = CategoriesAPI.categoryChains 'get'
+				spliceIndex = _.findIndex @categoryChains, (chains)->
+					chains.subCategory.id is subCategoryId
+				@categoryChains.splice spliceIndex, 1
+				
+				CategoriesAPI.categoryChains 'set', @categoryChains
+				Storage.categoryChains 'set', @categoryChains
+						
 
-				showAlert : ->
-					positiveBtn = if App.isAndroid() then 'Open Settings' else 'Ok'
-					CDialog.confirm 'Use location?', 'Please enable location settings', [positiveBtn, 'Cancel']
-					.then (btnIndex)->
-						if btnIndex is 1
-							GPS.switchToLocationSettings()
+			
+		# $scope.$on '$ionicView.beforeEnter', (event, viewData)->
+		# 	if !viewData.enableBack
+		# 		viewData.enableBack = true
 
-				onMapCreated : (map)->
-					@map = map
-					google.maps.event.addListener @map, 'click', (event)=>
-						@addMarker event.latLng
-
-				setMapCenter : (loc)->
-					latLng = new google.maps.LatLng loc.lat, loc.long
-					@map.setCenter latLng
-					latLng
-
-				getCurrent : ->
-					GPS.isLocationEnabled()
-					.then (enabled)=>
-						if !enabled
-							@showAlert()
-						else
-							CToast.show 'Getting current location'
-							GPS.getCurrentLocation()
-							.then (loc)=>
-								latLng = @setMapCenter loc
-								@map.setZoom 15
-								@addMarker latLng
-							, (error)->
-								CToast.show 'Error locating your position'
-
-				addMarker : (latLng)->
-					@latLng = latLng
-					@setAddress()
-					@marker.setMap null if @marker
-					@marker = new google.maps.Marker
-						position: latLng
-						map: @map
-						draggable: true
-
-					@marker.setMap @map
-					google.maps.event.addListener @marker, 'dragend', (event)=>
-						@latLng = event.latLng
-						@setAddress()
-
-				setAddress : ->
-					@addressFetch = false
-					GoogleMaps.getAddress @latLng
-					.then (address)=>
-						@address = address
-					, (error)->
-						console.log 'Geocode error: '+error
-					.finally =>
-						@addressFetch = true
-
-
-			init : ->
-				@loadLocationModal()
-				@checkForAddress()
-
-			loadLocationModal : ->
-				$ionicModal.fromTemplateUrl 'views/location.html', 
-					scope: $scope,
-					animation: 'slide-in-up'
-					hardwareBackButtonClose: true
-				.then (modal)=>
-					@location.modal = modal
-
-			checkForAddress : ->
-				if @permanentAddress.available()
-					@profileAddress = @permanentAddress.obj.full
-				else if @tempAddress.available()
-					@profileAddress = @tempAddress.obj.full
-
-			onEditLocation : ->
-				@location.modal.show()
-				mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
-				$('.aj-big-map').css 'height': mapHeight
-				if _.isNull @location.latLng
-					$timeout =>
-						loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
-						@location.setMapCenter loc
-						@location.getCurrent()
-					, 200
-
-			onConfirmLocation : ->
-				if !_.isNull(@location.latLng) and @location.addressFetch
-					CDialog.confirm 'Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']
-					.then (btnIndex)=>
-						if btnIndex is 1
-							@location.address.full = GoogleMaps.fullAddress(@location.address)
-							@confirmedAddress = @location.address.full
-							@location.modal.hide()
-				else
-					CToast.show 'Please wait, getting location details...'
-
-
-
-		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
-			if !viewData.enableBack
-				viewData.enableBack = true
-
-		$scope.$on '$destroy', ->
-			$scope.view.location.modal.remove()
+		# $scope.$on '$destroy', ->
+		# 	$scope.view.location.modal.remove()
 ]
 
 
@@ -141,22 +52,13 @@ angular.module 'LocalHyper.profile', []
 
 	$stateProvider
 
-		.state 'profile',
-			url: '/Seller-profile'
+		.state 'my-profile',
+			url: '/seller-profile'
 			parent: 'main'
 			cache: false
 			views: 
 				"appContent":
 					controller: 'ProfileCtrl'
 					templateUrl: 'views/profile/profile.html'
-					resolve:
-						Maps : ($q, CSpinner, GoogleMaps)->
-							defer = $q.defer()
-							CSpinner.show '', 'Please wait...'
-							GoogleMaps.loadScript()
-							.then ->
-								defer.resolve()
-							.finally ->
-								CSpinner.hide()
-							defer.promise
+					
 ]

@@ -1,73 +1,93 @@
 <ion-view 
 	view-title="My Profile"
-	ng-init="view.init()">
+	ng-init="view.setCategoryChains()">
 
 	<ion-content>
 
 		<div class="row">
-			<div class="col card">
-				Available credit points
-				<br><br>
-				20   &nbsp, view details
+			<div class="col card ">
+				<div class=" item-text-wrap">
+					Available credit points
+					<br><br>
+					20   &nbsp, view details
+				</div>
 			</div>
 			<div class="col card">
-				Auto Offer
-				<br><br>
-			<label class="toggle">
-				<input type="checkbox">
-				<div class="track">
-				<div class="handle"></div>
+				<div class=" item-text-wrap">
+					Auto Offer
 				</div>
-			</label>
+				<div class=" item-text-wrap">
+					<div class="pull-left  ">
+		            	 <i class="ion-ios-information-outline"></i>
+		        	</div>
+		        	<div class="pull-right ">
+						<label class="toggle">
+							<input type="checkbox">
+							<div class="track">
+								<div class="handle"></div>
+							</div>
+						</label>
+					</div>
+				</div>	
 			</div>
 		</div>
 
-		<button class="button button-full button-positive">
+
+		<div class="card">
+			<div class="item item-divider ">
+				My Bussiness Categories are 
+
+				<button
+					class="pull-right  button button-outline button-assertive icon-btn"
+					ng-click="view.showDelete = !view.showDelete;">
+					<i class="icon ion-trash-a"></i>
+				</button>
+			</div>
+			<ion-list show-delete="view.showDelete">
+				<ion-item 
+					class="item item-text-wrap cat-chain item-icon-left" 
+					ng-repeat="chains in view.categoryChains track by $index"
+					ng-click="view.onChainClick(chains)">
+
+						<ion-delete-button 
+						class="ion-trash-a"
+						ng-click="view.removeItemFromChains(chains.subCategory.id)">
+						</ion-delete-button>
+
+						<div class="lighter-nh">
+							{{chains.category.name}} <i class="ion-ios-arrow-forward"></i> 
+							<span class="darker">{{chains.subCategory.name}}</span>
+						</div>
+						<div class="highlight">
+							{{view.getBrands(chains.brands)}}
+						</div>
+				
+				</ion-item>
+			</ion-list>
+		</div>
+
+
+		<button class="button button-block bar-assertive" ng-click="App.navigate('categories');">
 			Add Categories
 		</button>
 
-		<div class="card">
-			 You receive request from customer for products under categories you added here
-		</div>	
-
-		<div class="card">
-			<div class="item item-divider">
-				{{view.name}}
-			</div>
-			<div class="item item-divider">
-				{{view.phone}}
-			</div>
+		<div class="list card">
+			<a href="#" class="item item-text-wrap item-icon-left">
+				<i class="icon ion-information-circled"></i>
+				You receive request from customer for products under categories you added here
+			</a>
 		</div>
 
-		<div class="card">
-			<div 
-				class="item item-divider"
-				ng-init="">
-				Address
-				<button class="button button-small">Edit</button>
-			</div>
+		<button class=" pull-right  button button-stable">
+ 			Edit Bussiness Details
+		</button>
 
-			<div class="item item-text-wrap">
-				{{view.profileAddress}}
-			</div>
-			
-			<div>
-				<ul class="list">
-					<li class="item item-checkbox">
-						<label class="checkbox">
-							<input type="checkbox">
-						</label>
-						Make this my permanent address
-					</li>
-				</ul>
+		<br><br>
 
-				<div class="item item-text-wrap">
-					Permanent address will be shown by default on make request
-				</div>
-
-				<button class="button button-block button-assertive">Save</button>
-			</div>
-		</div>
+		<button class="button button-assertive">
+			Save
+		</button>
+		
 
 	</ion-content>
 
