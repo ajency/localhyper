@@ -257,6 +257,10 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           return App.navigate('my-offer-history', {
             requestId: payload.id
           });
+        case 'accepted_offer':
+          return App.navigate('successful-offers', {
+            offerId: payload.id
+          });
       }
     });
     return $scope.$on('$ionicView.afterEnter', function() {

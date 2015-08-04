@@ -216,6 +216,8 @@ angular.module 'LocalHyper.requestsOffers'
 					$scope.view.requestDetails.onNotificationClick payload.id
 				when 'cancelled_request'
 					App.navigate 'my-offer-history', requestId: payload.id
+				when 'accepted_offer'
+					App.navigate 'successful-offers', offerId: payload.id
 
 		
 		$scope.$on '$ionicView.afterEnter', ->

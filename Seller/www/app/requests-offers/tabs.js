@@ -57,6 +57,23 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
     };
     return TimeString;
   }
+]).directive('ajCountDown', [
+  '$timeout', '$parse', function($timeout, $parse) {
+    return {
+      restrict: 'A',
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          var createdAt, total, totalStr;
+          createdAt = $parse(attrs.createdAt)(scope);
+          total = moment(moment(createdAt.iso)).add(24, 'hours');
+          totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
+          return $(el).countdown(totalStr, function(event) {
+            return $(el).html(event.strftime('%-H:%-M:%-S'));
+          });
+        });
+      }
+    };
+  }
 ]).controller('EachRequestTimeCtrl', [
   '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
     var interval, setTime;
@@ -99,7 +116,7 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
         }
       }
     }).state('successful-offers', {
-      url: '/successful-offers',
+      url: '/successful-offers:offerId',
       parent: 'tabs',
       views: {
         "successfulOffersTab": {

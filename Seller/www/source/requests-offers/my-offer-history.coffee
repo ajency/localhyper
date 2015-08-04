@@ -2,8 +2,8 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope', '$stateParams'
-	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, $stateParams)->
+	, '$timeout', '$rootScope', '$stateParams', 'CSpinner'
+	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, $stateParams, CSpinner)->
 
 		$scope.view = 
 			display: 'loader'
@@ -33,21 +33,30 @@ angular.module 'LocalHyper.requestsOffers'
 					@showExpiry = true
 
 				onNotificationClick : (requestId)->
-					requests = $scope.view.requests
-					index = _.findIndex requests, (request)-> request.id is requestId
-					if index is -1
-						@pendingRequestId = requestId
-						@modal.show()
-					else 
-						@show requests[index]
+					@pendingRequestId = requestId
+					@modal.show()
 
 				handlePendingRequest : ->
 					if @pendingRequestId isnt ""
 						requests = $scope.view.requests
 						index = _.findIndex requests, (request)=> request.request.id is @pendingRequestId
-						@data = requests[index]
-						@showExpiry = true
-						@pendingRequestId = ""
+						if index isnt -1
+							@data = requests[index]
+							@showExpiry = true
+							@pendingRequestId = ""
+						else
+							@modal.hide()
+							CSpinner.show '', 'Sorry, this request has been cancelled'
+							$timeout =>
+								CSpinner.hide()
+							, 2000
+
+				removeRequestCard : (offerId)->
+					spliceIndex = _.findIndex $scope.view.requests, (offer)->
+						offer.id is offerId
+					$scope.view.requests.splice(spliceIndex, 1) if spliceIndex isnt -1
+
+
 
 			init : ->
 				@offerDetails.loadModal()
@@ -58,7 +67,10 @@ angular.module 'LocalHyper.requestsOffers'
 				@showOfferHistory()
 
 			showOfferHistory : ->
-				params = page: @page, displayLimit: 3
+				params = 
+					page: @page
+					acceptedOffers: false
+					displayLimit: 3
 
 				OffersAPI.getSellerOffers params
 				.then (data)=>
@@ -121,28 +133,18 @@ angular.module 'LocalHyper.requestsOffers'
 
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
-			if payload.type is 'cancelled_request'
-				App.scrollTop()
-				$scope.view.reFetch()
-
+			switch payload.type
+				when 'cancelled_request'
+					App.scrollTop()
+					$scope.view.reFetch()
+				when 'accepted_offer'
+					offerId = payload.id
+					$scope.view.offerDetails.removeRequestCard offerId
+		
 		$scope.$on '$ionicView.enter', ->
 			#When cancelled request
 			requestId = $stateParams.requestId
 			$scope.view.offerDetails.onNotificationClick(requestId) if requestId isnt ""
-]
-
-
-.directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->
-	
-	restrict: 'A'
-	link: (scope, el, attrs)->
-
-		$timeout ->
-			createdAt = $parse(attrs.createdAt)(scope)
-			total = moment(moment(createdAt.iso)).add 24, 'hours'
-			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
-			$(el).countdown totalStr, (event)->
-				$(el).html event.strftime('%-H:%-M:%-S')
 ]
 
 
