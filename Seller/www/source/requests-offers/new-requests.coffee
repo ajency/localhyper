@@ -2,9 +2,9 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope'
-	, '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate'
+	, '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout'
 	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI
-	, CSpinner, $ionicScrollDelegate)->
+	, CSpinner, $ionicScrollDelegate, $q, $timeout)->
 
 		$scope.view = 
 			display: 'loader'
@@ -42,12 +42,16 @@ angular.module 'LocalHyper.requestsOffers'
 						App.resize()
 
 				loadModal : ->
-					$ionicModal.fromTemplateUrl 'views/requests-offers/request-details.html', 
-						scope: $scope,
-						animation: 'slide-in-up'
-						hardwareBackButtonClose: true
-					.then (modal)=>
-						@modal = modal
+					defer = $q.defer()
+					if _.isNull @modal
+						$ionicModal.fromTemplateUrl 'views/requests-offers/request-details.html', 
+							scope: $scope,
+							animation: 'slide-in-up'
+							hardwareBackButtonClose: true
+						.then (modal)=>
+							defer.resolve @modal = modal
+					else defer.resolve()
+					defer.promise
 
 				resetModal : ->
 					@display = 'noError'
@@ -81,21 +85,31 @@ angular.module 'LocalHyper.requestsOffers'
 				onNotificationClick : (requestId)->
 					requests = $scope.view.requests
 					index = _.findIndex requests, (val)-> val.id is requestId
-					if index is -1 #When request not present in list
-						$scope.view.pendingRequestIds.push requestId
-						@display = 'loader'
-						@modal.show()
-						RequestsAPI.getSingleRequest requestId
-						.then (request)=>
-							@display = 'noError'
-							@data = request
-						, (type)=>
-							@display = 'error'
-							@errorType = type
-					else
+					if index isnt -1 
 						@show requests[index]
+					else
+						#When request not present in list
+						@loadModal().then =>
+							$scope.view.pendingRequestIds.push requestId
+							@display = 'loader'
+							@modal.show()
+							RequestsAPI.getSingleRequest requestId
+							.then (request)=>
+								if request.status is 'cancelled'
+									CSpinner.show '', 'Sorry, this request has been cancelled'
+									$timeout =>
+										@modal.hide()
+										CSpinner.hide()
+									, 2000
+								else
+									@display = 'noError'
+									@data = request
+							, (type)=>
+								@display = 'error'
+								@errorType = type
 
 				makeOffer : ->
+					requestId = @data.id
 					priceValue = ''
 					switch @price
 						when 'localPrice'
@@ -107,7 +121,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 					params = 
 						"sellerId": User.getId()
-						"requestId": @data.id
+						"requestId": requestId
 						"priceValue": priceValue
 						"deliveryTime":
 							"value": @deliveryTime.value
@@ -123,7 +137,7 @@ angular.module 'LocalHyper.requestsOffers'
 						CSpinner.show '', 'Please wait...'
 						OffersAPI.makeOffer params
 						.then (data)=>
-							@removeRequestCard()
+							@removeRequestCard requestId
 							@modal.hide()
 							CToast.showLongBottom 'Your offer has been made. For more details, please check your offer history.'
 							$rootScope.$broadcast 'make:offer:success'
@@ -132,8 +146,7 @@ angular.module 'LocalHyper.requestsOffers'
 						.finally ->
 							CSpinner.hide()
 
-				removeRequestCard : ->
-					requestId = @data.id
+				removeRequestCard : (requestId)->
 					spliceIndex = _.findIndex $scope.view.requests, (request)->
 						request.id is requestId
 					$scope.view.requests.splice(spliceIndex, 1) if spliceIndex isnt -1
@@ -177,21 +190,33 @@ angular.module 'LocalHyper.requestsOffers'
 					RequestsAPI.updateStatus requestId
 					.then (data)=>
 						index = _.findIndex @requests, (val)-> val.id is requestId
-						App.notification.decrement()
-						@requests[index].notification.hasSeen = true
+						if index isnt -1
+							App.notification.decrement()
+							@requests[index].notification.hasSeen = true
 
 				@pendingRequestIds = []
 
 
+		
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
-			if payload.type is 'new_request'
-				$scope.view.getRequests()
+			switch payload.type
+				when 'new_request'
+					$scope.view.getRequests()
+				when 'cancelled_request'
+					$rootScope.$broadcast 'get:unseen:notifications'
+					$scope.view.requestDetails.removeRequestCard payload.id
 
+		
 		$rootScope.$on 'push:notification:click', (e, obj)->
 			payload = obj.payload
-			if payload.type is 'new_request'
-				$scope.view.requestDetails.onNotificationClick payload.id
+			switch payload.type
+				when 'new_request'
+					App.navigate 'new-requests'
+					$scope.view.requestDetails.onNotificationClick payload.id
+				when 'cancelled_request'
+					App.navigate 'my-offer-history', requestId: payload.id
+
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()

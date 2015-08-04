@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', '$stateParams', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, $stateParams) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -11,6 +11,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         modal: null,
         showExpiry: false,
         data: {},
+        pendingRequestId: "",
         loadModal: function() {
           return $ionicModal.fromTemplateUrl('views/requests-offers/offer-history-details.html', {
             scope: $scope,
@@ -26,6 +27,33 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
           this.data = request;
           this.modal.show();
           return this.showExpiry = true;
+        },
+        onNotificationClick: function(requestId) {
+          var index, requests;
+          requests = $scope.view.requests;
+          index = _.findIndex(requests, function(request) {
+            return request.id === requestId;
+          });
+          if (index === -1) {
+            this.pendingRequestId = requestId;
+            return this.modal.show();
+          } else {
+            return this.show(requests[index]);
+          }
+        },
+        handlePendingRequest: function() {
+          var index, requests;
+          if (this.pendingRequestId !== "") {
+            requests = $scope.view.requests;
+            index = _.findIndex(requests, (function(_this) {
+              return function(request) {
+                return request.request.id === _this.pendingRequestId;
+              };
+            })(this));
+            this.data = requests[index];
+            this.showExpiry = true;
+            return this.pendingRequestId = "";
+          }
         }
       },
       init: function() {
@@ -44,6 +72,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         };
         return OffersAPI.getSellerOffers(params).then((function(_this) {
           return function(data) {
+            console.log(data);
             return _this.onSuccess(data, params.displayLimit);
           };
         })(this), (function(_this) {
@@ -70,13 +99,14 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
             $scope.$broadcast('scroll.infiniteScrollComplete');
           }
           if (this.refresh) {
-            return this.requests = offerData;
+            this.requests = offerData;
           } else {
-            return this.requests = this.requests.concat(offerData);
+            this.requests = this.requests.concat(offerData);
           }
         } else {
-          return this.canLoadMore = false;
+          this.canLoadMore = false;
         }
+        return this.offerDetails.handlePendingRequest();
       },
       onError: function(type) {
         this.display = 'error';
@@ -100,13 +130,29 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       }
     };
     $scope.$on('modal.hidden', function() {
+      $scope.view.offerDetails.pendingRequestId = "";
       return $timeout(function() {
         return $scope.view.offerDetails.showExpiry = false;
       }, 1000);
     });
-    return $rootScope.$on('make:offer:success', function() {
+    $rootScope.$on('make:offer:success', function() {
       App.scrollTop();
       return $scope.view.reFetch();
+    });
+    $rootScope.$on('in:app:notification', function(e, obj) {
+      var payload;
+      payload = obj.payload;
+      if (payload.type === 'cancelled_request') {
+        App.scrollTop();
+        return $scope.view.reFetch();
+      }
+    });
+    return $scope.$on('$ionicView.enter', function() {
+      var requestId;
+      requestId = $stateParams.requestId;
+      if (requestId !== "") {
+        return $scope.view.offerDetails.onNotificationClick(requestId);
+      }
     });
   }
 ]).directive('ajCountDown', [
