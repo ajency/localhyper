@@ -450,16 +450,19 @@ class ProductController extends Controller
 
                 $indexedData = array_values($namedData); 
 
+
                 $data = $namedData;
 
                 $attributeIds = [];
                 $text_attributes = [];
 
-                if ($namedData["BrandID"] == "#N/A") {
+                $naAttribValue = in_array("#N/A", $indexedData,TRUE);
+
+                if (($namedData["BrandID"] == "#N/A") || ($naAttribValue == 1) ) {
+
                   continue;
                 }
                 else{
-
                   foreach($attributeIdKeys as $key)
                   {
                     $attributeName = $headerData[$key]; 
@@ -471,10 +474,12 @@ class ProductController extends Controller
                       $text_attributes[$attributeId] =  $indexedData[$key-1];
                     }
                     else{
+                        
                       $attributeIds[$attributeId] = $indexedData[$key];
                     }
 
                   }
+
 
                   $products[$i]['objectId'] = $data['ProductID'];
                   $products[$i]['name'] = $data['ProductName'];
@@ -498,8 +503,6 @@ class ProductController extends Controller
               
               $productData['categoryId'] =$config[0];
               $productData['products'] =$products;
-
-              // dd($productData);
 
               $this->parseProductImport($productData);
 
