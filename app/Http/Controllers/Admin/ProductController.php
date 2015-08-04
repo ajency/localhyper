@@ -612,11 +612,71 @@ class ProductController extends Controller
 
       $categoryProductPrice = $this->getCategoryProductPrice($catId);
 
-      dd($categoryProductPrice);
+      $excel = new PHPExcel(); 
+      $excel->getProperties()
+      ->setCreator('Ajency')
+      ->setTitle('Product Price')
+      ->setLastModifiedBy('Ajency')
+      ->setDescription('Product price list')
+      ->setSubject('Price list')
+      ->setKeywords('product,price,list')
+      ->setCategory('Products');
 
-      return true;
 
+      $priceSheet = $excel->getSheet(0);
+      $priceSheet->setTitle('Price');
+
+
+      $headers = array(
+        array('objectId','Name','Model Number','Price','Price Source'),
+        array('objectId','name','model_number','price','price_source'),
+        );
+
+      $priceSheet->fromArray($headers, ' ', 'A1');
+      $priceSheet->fromArray($categoryProductPrice, ' ', 'A3');
+      $priceSheet->getColumnDimension('A')->setVisible(false);
+
+      //Headr row height
+        $priceSheet->getRowDimension('1')->setRowHeight(20);
+
+        //freeze pan
+        $priceSheet->getStyle('1:1')->getFont()->setBold(true);
+        $priceSheet->freezePane('A2');
+
+        //Hide second row
+        $priceSheet->getRowDimension(2)->setVisible(false);
+
+        //Format header row
+        FormatPhpExcel::format_header_row($priceSheet, array(
+          'background_color'=>'FFFF00',
+          'border_color'=>'000000',
+          'font_size'=>'9',
+          'font_color'=>'000000',
+          'vertical_alignment'=>'VERTICAL_CENTER',
+          'font-weight'=>'bold'
+          ), '1'
+        );
+
+        FormatPhpExcel::formatSheet($priceSheet, 'Price', '');
+
+
+      header('Content-Type: application/vnd.ms-excel');
+      header('Content-Disposition: attachment;filename="Product_Price.xls"');
+      header('Cache-Control: max-age=0');
+      header('Cache-Control: max-age=1');
+      header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+      header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+      header ('Cache-Control: cache, must-revalidate');
+      header ('Pragma: public'); 
+      $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+      $objWriter->setPreCalculateFormulas(TRUE);
+      $objWriter->save('php://output'); 
     } 
+
+
+
+
+
 
     public function getCategoryProductPrice($categoryId){
       // query products table to get all product ids that have given category id 
@@ -653,7 +713,9 @@ class ProductController extends Controller
             $products[] = $product;
       }  
 
-      dd($products)    ;
+      //dd($products)    ;
+
+      return $products;
 
     }
 

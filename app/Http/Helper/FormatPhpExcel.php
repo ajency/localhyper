@@ -113,7 +113,7 @@ class FormatPhpExcel
 		if($type == 'Attributes'){
 			$head_row = 3;
 			$record_starts = $head_row+1;	
-		}else if($type == 'Brands'){
+		}else if($type == 'Brands' || $type == 'Price'){
 			$head_row = 2;
 			$record_starts = $head_row+1;
 		}else if($type == 'AttributesValues'){
@@ -162,6 +162,8 @@ class FormatPhpExcel
 
 					$sheet->getColumnDimension($column)->setAutoSize(true);
 				}
+			}else if($type == 'Price'){
+			$sheet->getColumnDimension($column)->setAutoSize(true);
 			}else{
 				$sheet->getColumnDimension($column)->setAutoSize(true);
 			}
