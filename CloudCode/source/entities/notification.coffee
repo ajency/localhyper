@@ -179,16 +179,33 @@ Parse.Cloud.define 'getUnseenNotifications', (request, response) ->
 
     notificationQuery.equalTo("type",type)
 
+    notificationQuery.include("requestObject")
     notificationQuery.select("requestObject")
     notificationQuery.select("offerObject")
 
     notificationQuery.find()
     .then (notificationResults) ->
-
+        unseenNotifications = []
         if type is "Request"
-            unseenNotifications = _.map(notificationResults, (notificationObj) ->
-               requestId = notificationObj.get("requestObject").id     
-            )
+             _.each notificationResults, (notificationObj) ->
+
+                requestObj = notificationObj.get("requestObject")
+
+                currentDate = new Date()
+                createdDate = requestObj.createdAt
+                diff = currentDate.getTime() - createdDate.getTime()
+                differenceInDays =  Math.floor(diff / (1000 * 60 * 60 * 24)) 
+
+                requestStatus = requestObj.get("status")   
+                
+                if differenceInDays >= 1 
+                    if requestStatus is "open"
+                        requestStatus = "expired"                              
+           
+                if requestStatus is "open"
+                    requestId = notificationObj.get("requestObject").id
+                    unseenNotifications.push requestId     
+            
         else if type is "Offer"
             unseenNotifications = _.map(notificationResults, (notificationObj) ->
                requestId = notificationObj.get("offerObject").id     

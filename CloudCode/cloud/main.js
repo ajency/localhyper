@@ -1,5 +1,5 @@
 (function() {
-  var _, findAttribValues, getAreaBoundSellers, getCategoryBasedSellers, getNewRequestsForSeller, getNotificationData, getRequestData, moment, processPushNotifications, setPrimaryAttribute, treeify;
+  var _, findAttribValues, getAreaBoundSellers, getCategoryBasedSellers, getNewRequestsForSeller, getNotificationData, getRequestData, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -423,6 +423,55 @@
     })(this));
   });
 
+  resetRequestOfferCount = function(requestId) {
+    var innerQueryRequest, promise, queryOffer;
+    promise = new Parse.Promise();
+    queryOffer = new Parse.Query("Offer");
+    innerQueryRequest = new Parse.Query("Request");
+    innerQueryRequest.equalTo("objectId", requestId);
+    queryOffer.matchesQuery("request", innerQueryRequest);
+    queryOffer.count().then(function(offerCount) {
+      var Request, requestInstance;
+      Request = Parse.Object.extend("Request");
+      requestInstance = new Request();
+      requestInstance.id = requestId;
+      requestInstance.set("offerCount", offerCount);
+      return requestInstance.save().then(function(savedReq) {
+        return promise.resolve(savedReq);
+      }, function(error) {
+        return promise.reject(error);
+      });
+    }, function(error) {
+      return response.error(error);
+    });
+    return promise;
+  };
+
+  Parse.Cloud.define('updateRequestOfferCount', function(request, response) {
+    var customerId, innerQueryCustomer, queryRequest;
+    customerId = request.params.customerId;
+    queryRequest = new Parse.Query("Request");
+    innerQueryCustomer = new Parse.Query(Parse.User);
+    innerQueryCustomer.equalTo("objectId", customerId);
+    queryRequest.matchesQuery("customerId", innerQueryCustomer);
+    return queryRequest.find().then(function(customersRequests) {
+      var requestsQs;
+      requestsQs = [];
+      requestsQs = _.map(customersRequests, function(customersRequest) {
+        return resetRequestOfferCount(customersRequest.id);
+      });
+      return Parse.Promise.when(requestsQs).then(function() {
+        var individualReqResults;
+        individualReqResults = _.flatten(_.toArray(arguments));
+        return response.success(individualReqResults);
+      }, function(error) {
+        return response.error(error);
+      });
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   Parse.Cloud.define("sendMail", function(request, status) {
     var Mandrill, brand, category, comments, description, productName, text;
     productName = request.params.productName;
@@ -633,14 +682,30 @@
     innerQueryUser.equalTo("objectId", userId);
     notificationQuery.matchesQuery("recipientUser", innerQueryUser);
     notificationQuery.equalTo("type", type);
+    notificationQuery.include("requestObject");
     notificationQuery.select("requestObject");
     notificationQuery.select("offerObject");
     return notificationQuery.find().then(function(notificationResults) {
       var unseenNotifications;
+      unseenNotifications = [];
       if (type === "Request") {
-        unseenNotifications = _.map(notificationResults, function(notificationObj) {
-          var requestId;
-          return requestId = notificationObj.get("requestObject").id;
+        _.each(notificationResults, function(notificationObj) {
+          var createdDate, currentDate, diff, differenceInDays, requestId, requestObj, requestStatus;
+          requestObj = notificationObj.get("requestObject");
+          currentDate = new Date();
+          createdDate = requestObj.createdAt;
+          diff = currentDate.getTime() - createdDate.getTime();
+          differenceInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+          requestStatus = requestObj.get("status");
+          if (differenceInDays >= 1) {
+            if (requestStatus === "open") {
+              requestStatus = "expired";
+            }
+          }
+          if (requestStatus === "open") {
+            requestId = notificationObj.get("requestObject").id;
+            return unseenNotifications.push(requestId);
+          }
         });
       } else if (type === "Offer") {
         unseenNotifications = _.map(notificationResults, function(notificationObj) {
