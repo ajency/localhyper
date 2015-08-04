@@ -764,6 +764,12 @@ sm {
   box-shadow: 0 0 0 #fff;
   background: #efefef;
 }
+.obj-title .col .item.item-accordion.item-text-wrap {
+  font-size: 14px;
+  line-height: 20px;
+  padding: 5px 12px;
+  margin-top: 6px;
+}
 .obj-title h4 {
   color: #272727;
   text-align: left;
