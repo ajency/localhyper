@@ -39,6 +39,10 @@ angular.module 'LocalHyper.main', []
 				$ionicSideMenuDelegate.toggleLeft()
 
 
+
+		$rootScope.$on '$user:registration:success', ->
+			App.notification.icon = true
+			$scope.view.getNotifications()
 		
 		$rootScope.$on 'get:unseen:notifications', (e, obj)->
 			$scope.view.getNotifications()

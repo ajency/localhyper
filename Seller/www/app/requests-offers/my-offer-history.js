@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', '$stateParams', 'CSpinner', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, $stateParams, CSpinner) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -29,8 +29,19 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
           return this.showExpiry = true;
         },
         onNotificationClick: function(requestId) {
-          this.pendingRequestId = requestId;
-          return this.modal.show();
+          var index, requests;
+          requests = $scope.view.requests;
+          index = _.findIndex(requests, (function(_this) {
+            return function(request) {
+              return request.request.id === requestId;
+            };
+          })(this));
+          if (index === -1) {
+            this.pendingRequestId = requestId;
+            return this.modal.show();
+          } else {
+            return this.show(requests[index]);
+          }
         },
         handlePendingRequest: function() {
           var index, requests;
@@ -162,12 +173,8 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
           return $scope.view.offerDetails.removeRequestCard(offerId);
       }
     });
-    return $scope.$on('$ionicView.enter', function() {
-      var requestId;
-      requestId = $stateParams.requestId;
-      if (requestId !== "") {
-        return $scope.view.offerDetails.onNotificationClick(requestId);
-      }
+    return $rootScope.$on('cancelled:request', function(e, obj) {
+      return $scope.view.offerDetails.onNotificationClick(obj.requestId);
     });
   }
 ]);

@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', '$stateParams', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, $stateParams) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -29,8 +29,19 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
           return this.showExpiry = true;
         },
         onNotificationClick: function(offerId) {
-          this.pendingOfferId = offerId;
-          return this.modal.show();
+          var index, requests;
+          requests = $scope.view.requests;
+          index = _.findIndex(requests, (function(_this) {
+            return function(offer) {
+              return offer.id === offerId;
+            };
+          })(this));
+          if (index === -1) {
+            this.pendingOfferId = offerId;
+            return this.modal.show();
+          } else {
+            return this.show(requests[index]);
+          }
         },
         handlePendingOffer: function() {
           var index, requests;
@@ -135,12 +146,8 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         return $scope.view.reFetch();
       }
     });
-    return $scope.$on('$ionicView.enter', function() {
-      var offerId;
-      offerId = $stateParams.offerId;
-      if (offerId !== "") {
-        return $scope.view.offerDetails.onNotificationClick(offerId);
-      }
+    return $rootScope.$on('accepted:offer', function(e, obj) {
+      return $scope.view.offerDetails.onNotificationClick(obj.offerId);
     });
   }
 ]);

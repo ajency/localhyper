@@ -2,8 +2,8 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'SuccessfulOffersCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope', '$stateParams'
-	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, $stateParams)->
+	, '$timeout', '$rootScope'
+	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope)->
 
 		$scope.view = 
 			display: 'loader'
@@ -33,8 +33,13 @@ angular.module 'LocalHyper.requestsOffers'
 					@showExpiry = true
 
 				onNotificationClick : (offerId)->
-					@pendingOfferId = offerId
-					@modal.show()
+					requests = $scope.view.requests
+					index = _.findIndex requests, (offer)=> offer.id is offerId
+					if index is -1
+						@pendingOfferId = offerId
+						@modal.show()
+					else
+						@show requests[index]
 
 				handlePendingOffer : ->
 					if @pendingOfferId isnt ""
@@ -107,13 +112,11 @@ angular.module 'LocalHyper.requestsOffers'
 				@canLoadMore = true
 		
 		
-		
 		$scope.$on 'modal.hidden', ->
 			$scope.view.offerDetails.pendingOfferId = ""
 			$timeout ->
 				$scope.view.offerDetails.showExpiry = false
 			, 1000
-
 		
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
@@ -121,9 +124,6 @@ angular.module 'LocalHyper.requestsOffers'
 				App.scrollTop()
 				$scope.view.reFetch()
 
-		
-		$scope.$on '$ionicView.enter', ->
-			#When offer accepted
-			offerId = $stateParams.offerId
-			$scope.view.offerDetails.onNotificationClick(offerId) if offerId isnt ""
+		$rootScope.$on 'accepted:offer', (e, obj)->
+			$scope.view.offerDetails.onNotificationClick obj.offerId
 ]

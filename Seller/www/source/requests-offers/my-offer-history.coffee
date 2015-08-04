@@ -2,8 +2,8 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope', '$stateParams', 'CSpinner'
-	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, $stateParams, CSpinner)->
+	, '$timeout', '$rootScope', 'CSpinner'
+	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner)->
 
 		$scope.view = 
 			display: 'loader'
@@ -33,8 +33,13 @@ angular.module 'LocalHyper.requestsOffers'
 					@showExpiry = true
 
 				onNotificationClick : (requestId)->
-					@pendingRequestId = requestId
-					@modal.show()
+					requests = $scope.view.requests
+					index = _.findIndex requests, (request)=> request.request.id is requestId
+					if index is -1
+						@pendingRequestId = requestId
+						@modal.show()
+					else
+						@show requests[index]
 
 				handlePendingRequest : ->
 					if @pendingRequestId isnt ""
@@ -140,11 +145,9 @@ angular.module 'LocalHyper.requestsOffers'
 				when 'accepted_offer'
 					offerId = payload.id
 					$scope.view.offerDetails.removeRequestCard offerId
-		
-		$scope.$on '$ionicView.enter', ->
-			#When cancelled request
-			requestId = $stateParams.requestId
-			$scope.view.offerDetails.onNotificationClick(requestId) if requestId isnt ""
+
+		$rootScope.$on 'cancelled:request', (e, obj)->
+			$scope.view.offerDetails.onNotificationClick obj.requestId
 ]
 
 

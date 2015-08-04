@@ -2,8 +2,8 @@ angular.module 'LocalHyper.auth'
 
 
 .controller 'VerifyAutoCtrl', ['$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout'
-	, 'CToast'
-	, ($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast)->
+	, 'CToast', '$rootScope'
+	, ($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast, $rootScope)->
 
 		$scope.view =
 			display: 'noError'
@@ -83,6 +83,7 @@ angular.module 'LocalHyper.auth'
 			register : ->
 				AuthAPI.register @user
 				.then (success)->
+					$rootScope.$broadcast '$user:registration:success'
 					App.navigate 'verify-success', {}, {animate: true, back: false}
 				, (error)=>
 					@onError error, 'register'

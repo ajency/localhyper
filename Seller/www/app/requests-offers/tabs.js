@@ -107,7 +107,7 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
         }
       }
     }).state('my-offer-history', {
-      url: '/my-offer-history:requestId',
+      url: '/my-offer-history',
       parent: 'tabs',
       views: {
         "myOfferHistoryTab": {
@@ -116,7 +116,7 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
         }
       }
     }).state('successful-offers', {
-      url: '/successful-offers:offerId',
+      url: '/successful-offers',
       parent: 'tabs',
       views: {
         "successfulOffersTab": {
