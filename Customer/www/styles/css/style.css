@@ -198,13 +198,13 @@
 
 /* accordion */
 .col .item.item-accordion {
-  line-height: 38px;
+  line-height: 38px !important;
   padding-top: 0;
   padding-bottom: 0;
   transition: 0.25s all linear;
 }
 .col .item.item-accordion.ng-hide {
-  line-height: 0px;
+  line-height: 0px !important;
 }
 .col .item.item-accordion.ng-hide-add,
 .col .item.item-accordion.ng-hide-remove {

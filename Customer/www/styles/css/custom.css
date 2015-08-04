@@ -283,8 +283,7 @@ sm {
 /************************************/
 .department-list {
   /*height: 199px;*/
-  height: 175px;
-  background: #e8e8e8;
+  height: 190px;
   padding: 0px;
   /*	h3{
 		 font-weight: 600;
@@ -305,16 +304,41 @@ sm {
   text-transform: uppercase;
   overflow: visible;
   white-space: normal;
-  margin: 5px auto;
+  margin: 2px auto;
   margin-bottom: 10px !important;
   font-weight: 700;
-  color: #515151;
+  color: #1f1f1f;
 }
 .department-list h4 {
   text-transform: uppercase;
   margin-top: 30px;
   color: #5d5d5d;
-  font-weight: 400;
+  font-weight: 300;
+}
+.department-list div.button.btn-out {
+  display: block;
+  clear: both;
+  height: auto;
+  min-height: 0;
+}
+.department-list div.button.btn-out i {
+  float: left;
+  margin-right: 3px;
+}
+.department-list .btn-more {
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  margin: 0 auto;
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  text-align: center;
+}
+.department-list .btn-more i.icon {
+  padding-top: 1px;
+  display: block;
 }
 .department-list:nth-child(2n) {
   background: #ffffff;
@@ -483,7 +507,7 @@ sm {
   text-align: center;
   font-size: 1.5rem;
   line-height: 39px;
-  margin: auto;
+  margin: 8px auto;
 }
 .offertxt {
   background: #ffffff;
@@ -512,7 +536,7 @@ sm {
   overflow-y: hidden;
   overflow: hidden;
   background: #fff;
-  border: 1px solid #eee;
+  border: 1px solid #D6D6D6;
   text-align: center;
   line-height: 50px;
   position: static;
@@ -978,4 +1002,18 @@ sm {
 }
 .spacer-40 {
   height: 40px;
+}
+.bg-lightgrey {
+  background-color: #f2f1ed;
+}
+.bg-lightgrey .list {
+  background-color: #f2f1ed;
+  border-top: 1px solid #C1C1C1;
+}
+.early-head {
+  margin-top: 15px;
+  margin-bottom: -10px;
+}
+.req-ca.activated {
+  box-shadow: 0 0 1px 1px #f45152;
 }
