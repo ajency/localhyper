@@ -2000,7 +2000,7 @@
     };
     queryRequest = new Parse.Query("Request");
     queryRequest.equalTo("objectId", requestId);
-    queryRequest.select("address,addressGeoPoint,category,brand,product,comments,customerId");
+    queryRequest.select("address,addressGeoPoint,category,brand,product,comments,customerId,status");
     queryRequest.include("product");
     queryRequest.include("category");
     queryRequest.include("category.parent_category");
@@ -2068,7 +2068,8 @@
         brand: brand,
         createdAt: filteredRequest.createdAt,
         notification: notification,
-        comments: filteredRequest.get("comments")
+        comments: filteredRequest.get("comments"),
+        status: filteredRequest.get("status")
       };
       return promise.resolve(requestObj);
     }, function(error) {

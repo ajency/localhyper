@@ -516,7 +516,7 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
     queryRequest = new Parse.Query("Request")
     queryRequest.equalTo("objectId", requestId)
 
-    queryRequest.select("address,addressGeoPoint,category,brand,product,comments,customerId")
+    queryRequest.select("address,addressGeoPoint,category,brand,product,comments,customerId,status")
 
     queryRequest.include("product")
     queryRequest.include("category")
@@ -598,6 +598,7 @@ getRequestData =  (filteredRequest,seller) ->
             createdAt: filteredRequest.createdAt
             notification : notification
             comments: filteredRequest.get("comments")  
+            status: filteredRequest.get("status")  
 
         promise.resolve requestObj
 
