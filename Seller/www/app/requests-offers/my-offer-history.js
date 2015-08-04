@@ -31,15 +31,9 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       init: function() {
         return this.offerDetails.loadModal();
       },
-      onScrollComplete: function() {
-        return $scope.$broadcast('scroll.infiniteScrollComplete');
-      },
       reFetch: function() {
-        this.display = 'loader';
-        this.requests = [];
         this.page = 0;
-        this.canLoadMore = true;
-        this.refresh = false;
+        this.requests = [];
         return this.showOfferHistory();
       },
       showOfferHistory: function() {
@@ -72,7 +66,8 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
           if (offerDataSize < displayLimit) {
             this.canLoadMore = false;
           } else {
-            this.onScrollComplete();
+            this.canLoadMore = true;
+            $scope.$broadcast('scroll.infiniteScrollComplete');
           }
           if (this.refresh) {
             return this.requests = offerData;
@@ -88,11 +83,6 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         this.errorType = type;
         return this.canLoadMore = false;
       },
-      onTapToRetry: function() {
-        this.display = 'loader';
-        this.page = 0;
-        return this.canLoadMore = true;
-      },
       onPullToRefresh: function() {
         this.refresh = true;
         this.page = 0;
@@ -102,6 +92,11 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       onInfiniteScroll: function() {
         this.refresh = false;
         return this.showOfferHistory();
+      },
+      onTapToRetry: function() {
+        this.display = 'loader';
+        this.page = 0;
+        return this.canLoadMore = true;
       }
     };
     $scope.$on('modal.hidden', function() {

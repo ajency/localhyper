@@ -1,7 +1,8 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope'
+.controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
+	, '$timeout', '$rootScope'
 	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope)->
 
 		$scope.view = 
@@ -33,18 +34,12 @@ angular.module 'LocalHyper.requestsOffers'
 			init : ->
 				@offerDetails.loadModal()
 
-			onScrollComplete : ->
-				$scope.$broadcast 'scroll.infiniteScrollComplete'
-
 			reFetch : ->
-				@display = 'loader'
-				@requests = []
 				@page = 0
-				@canLoadMore = true
-				@refresh = false
+				@requests = []
 				@showOfferHistory()
 
-			showOfferHistory : ()->
+			showOfferHistory : ->
 				params = page: @page, displayLimit: 3
 
 				OffersAPI.getSellerOffers params
@@ -61,10 +56,14 @@ angular.module 'LocalHyper.requestsOffers'
 				@display = 'noError'
 				offerDataSize = _.size(offerData)
 				if offerDataSize > 0
-					if offerDataSize < displayLimit then @canLoadMore = false
-					else @onScrollComplete()
+					if offerDataSize < displayLimit
+						@canLoadMore = false
+					else
+						@canLoadMore = true 
+						$scope.$broadcast 'scroll.infiniteScrollComplete'
+
 					if @refresh then @requests = offerData
-					else @requests = @requests.concat(offerData)
+					else @requests = @requests.concat offerData
 				else
 					@canLoadMore = false
 
@@ -72,11 +71,6 @@ angular.module 'LocalHyper.requestsOffers'
 				@display = 'error'
 				@errorType = type
 				@canLoadMore = false
-
-			onTapToRetry : ->
-				@display = 'loader'
-				@page = 0
-				@canLoadMore = true
 
 			onPullToRefresh : ->
 				@refresh = true
@@ -88,6 +82,11 @@ angular.module 'LocalHyper.requestsOffers'
 				@refresh = false
 				@showOfferHistory()
 
+			onTapToRetry : ->
+				@display = 'loader'
+				@page = 0
+				@canLoadMore = true
+		
 		
 		$scope.$on 'modal.hidden', ->
 			$timeout ->

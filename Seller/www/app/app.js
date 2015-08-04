@@ -35,6 +35,6 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
     $ionicConfigProvider.views.forwardCache(true);
     $ionicConfigProvider.backButton.previousTitleText(false).text('');
     $ionicConfigProvider.navBar.alignTitle('center');
-    return $ionicConfigProvider.tabs.position('top');
+    return $ionicConfigProvider.tabs.style('striped').position('top');
   }
 ]);
