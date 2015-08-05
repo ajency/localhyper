@@ -59,12 +59,11 @@
 								ng-click="view.comments.toggle()">
 
 								<img src="./img/speechbubble.png" alt="Speech Bubble Icon">
-								01
 							</button>
 
 							<ion-item
-								class="item-text-wrap item-accordion"
-								style="margin-top: 40px;"
+								class="item-text-wrap item-accordion com-acc"
+								style="margin-top: 0;"
 								ng-show="view.comments.show">
 								{{view.request.comments}}
 							</ion-item>
@@ -81,6 +80,9 @@
 						class="row expires"
 						ng-if="view.request.status == 'open';">
 						<div class="col">
+							<label class="status-text pull-right">
+								{{App.humanize(view.request.status)}}
+							</label>
 							<h2 class="dura pull-left"
 								aj-count-down
 								created-at="view.request.createdAt"
@@ -89,11 +91,9 @@
 							<p class="exp_in">Expires in <i class="icon ion-ios-clock-outline"></i></p>
 							<p class="why"><a>Why this product expires in 24 hrs</a></p>
 						</div>
-						<div class="col col-20">
-							<button class="button button-outline button-balanced pull-right">
-								{{App.humanize(view.request.status)}}
-							</button>
-						</div>
+						<!-- <div class="col col-20">
+
+						</div> -->
 					</div>
 
 					<div
@@ -101,13 +101,13 @@
 						ng-if="view.request.status !== 'open';">
 
 						<div class="col">
-							<button
-								class="button button-outline"
+							<label
+								class="status-label align-center"
 								ng-class="(view.request.status == 'cancelled'
-											|| view.request.status == 'expired') ? 'button-assertive' : 'button-balanced'">
+											|| view.request.status == 'expired') ? 'status-assertive' : 'status-balanced'">
 
 								{{App.humanize(view.request.status)}}
-							</button>
+							</label>
 						</div>
 					</div>
 				</div>
@@ -121,7 +121,7 @@
 
 		</ion-list>
 
-		<br>
+		<!-- <br> -->
 
 		<ion-list ng-switch="view.offers.display">
 
@@ -148,9 +148,9 @@
 						<img ng-src="./img/requestsent-icon.png" alt="Request has been sent!">
 
 						<h4>We have sent your request to sellers,<br>they will soon send their prices</h4>
+						<div class="spacer-40"></div>
 					</div>
 				</div>
-				<div class="spacer-40"></div>
 			</div>
 
 			<div
@@ -184,15 +184,14 @@
 						class="row row-fluid offer-vals"
 						ng-if="offer.status === 'accepted'">
 
-						<div class="col col-75">
-							<h4>{{offer.seller.address.full}}</h4>
-						</div>
-						<div class="col">
+						<div class="col co l-75 p-a-0">
 							<button
-								class="button button-small button-assertive"
+								class="button button-small button-assertive btn-phone"
 								ng-click="view.callSeller(offer.seller.phoneNumber)">
-								CALL SELLER
+								<!-- CALL SELLER -->
+								<i class="icon ion-ios-telephone"></i>
 							</button>
+							<p>{{offer.seller.address.full}}</p>
 						</div>
 					</div>
 
@@ -236,13 +235,13 @@
 							<p class="info">Delivery time left</p>
 							<h2>{{offer.deliveryTimeLeftStr}}</h2>
 						</div>
-						<div class="col align-right p-a-0">
+						<div class="col align-center p-a-0">
 							<div class="vert-div pull-left"></div>
-							Offer Status
-							<button
-								class="button button-outline button-assertive">
+							<p class="info">Offer Status</p>
+							<label
+								class="status-label status-assertive">
 								Accepted
-							</button>
+							</label>
 						</div>
 					</div>
 
