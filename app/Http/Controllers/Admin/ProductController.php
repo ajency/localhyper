@@ -443,6 +443,8 @@ class ProductController extends Controller
 						$i=0;
 
 						$productArr = [];
+						$priceRange = array();
+						$insertedPrices=[];
 						foreach($namedDataArray as $namedData)
 						{
 
@@ -490,8 +492,11 @@ class ProductController extends Controller
 									$products[$i]['mrp'] = $data['MRP'];
 									$products[$i]['brandId'] = $data['BrandID'];
 									$products[$i]['popularity'] = $data['Popularity'];
-									$products[$i]['group'] = $data['Group'];                   
+									$products[$i]['group'] = $data['Group'];   
 
+									$insertedPrice = (int)$data['MRP'];
+									
+									$insertedPrices[]=$insertedPrice;
 								}
 
 							}
@@ -500,10 +505,12 @@ class ProductController extends Controller
 
 							$i++;
 						}
-							
+							$priceRange[0]= min($insertedPrices);
+							$priceRange[1]= max($insertedPrices);
 							$productData['categoryId'] =$config[0];
+							$productData['priceRange'] =$priceRange;
 							$productData['products'] =$products;
-
+							
 							$this->parseProductImport($productData);
 
 						}
@@ -603,7 +610,7 @@ class ProductController extends Controller
 			//       ),
 			//     ),
 			//   );
-				// dd($data);
+				// dd(json_encode($data));
 				$functionName = "productImport";
 
 				$result = AttributeController::makeParseCurlRequest($functionName,$data,"jobs"); 
