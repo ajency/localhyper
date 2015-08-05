@@ -111,8 +111,6 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
     };
     AuthAPI.loginExistingUser = function(userObj) {
       var defer, info, newPassword, oldPassword, oldPasswordhash, phone;
-      console.log('--loginExistingUser--');
-      console.log(userObj);
       defer = $q.defer();
       info = this.getUserDetails();
       phone = info.phone;

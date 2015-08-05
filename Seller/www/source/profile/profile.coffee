@@ -1,24 +1,22 @@
 angular.module 'LocalHyper.profile', []
 
 
-.controller 'ProfileCtrl', ['$scope', 'User', 'App', 'CToast', 'Storage', 'CategoriesAPI'
-	, ($scope, User, App, CToast, Storage, CategoriesAPI)->
+.controller 'ProfileCtrl', ['$q', '$scope', 'User', 'App', 'CToast', 'Storage', 'CategoriesAPI', 'AuthAPI', 'CSpinner', 'CategoryChains'
+	, ($q, $scope, User, App, CToast, Storage, CategoriesAPI, AuthAPI, CSpinner, CategoryChains)->
 
-		user = User.getCurrent()
 		
-		console.log(user)
-
 		$scope.view = 
 			showDelete: false
 			categoryChains : []
 
 			setCategoryChains : ->
-				Storage.categoryChains 'get'
-				.then (chains) =>
-					console.log(chains)
-					if !_.isNull chains
-						@categoryChains = chains
-						CategoriesAPI.categoryChains 'set', chains
+				# Storage.categoryChains 'get'
+				# .then (chains) =>
+				# 	if !_.isNull chains
+				# 		@categoryChains = chains
+				# 		CategoriesAPI.categoryChains 'set', chains
+				@categoryChains = CategoryChains
+				CategoriesAPI.categoryChains 'set', CategoryChains
 
 			getBrands : (brands)->
 				brandNames = _.pluck brands, 'name'
@@ -34,17 +32,31 @@ angular.module 'LocalHyper.profile', []
 					chains.subCategory.id is subCategoryId
 				@categoryChains.splice spliceIndex, 1
 				
+				# CategoriesAPI.categoryChains 'set', @categoryChains
+				# Storage.categoryChains 'set', @categoryChains
+
+			saveDetails : ->
+				CSpinner.show '', 'Please wait...'
+				
 				CategoriesAPI.categoryChains 'set', @categoryChains
 				Storage.categoryChains 'set', @categoryChains
-						
 
+				user = User.info 'get'
+				AuthAPI.isExistingUser(user)
+				.then (data)=>
+					AuthAPI.loginExistingUser(data.userObj)
+				.then (success)->
+					App.navigate('new-requests')
+				, (error)=>
+					CToast.show 'Please try again data not saved'
+				.finally ->
+					CSpinner.hide()
+
+
+		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
+			if !viewData.enableBack
+				viewData.enableBack = true
 			
-		# $scope.$on '$ionicView.beforeEnter', (event, viewData)->
-		# 	if !viewData.enableBack
-		# 		viewData.enableBack = true
-
-		# $scope.$on '$destroy', ->
-		# 	$scope.view.location.modal.remove()
 ]
 
 
@@ -60,5 +72,13 @@ angular.module 'LocalHyper.profile', []
 				"appContent":
 					controller: 'ProfileCtrl'
 					templateUrl: 'views/profile/profile.html'
+					resolve :
+						CategoryChains : ($q, Storage)->
+							defer = $q.defer()
+							Storage.categoryChains 'get'
+							.then (chains) ->
+								defer.resolve chains
+							defer.promise
+
 					
 ]

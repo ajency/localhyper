@@ -100,8 +100,6 @@ angular.module 'LocalHyper.auth'
 			data
 
 		AuthAPI.loginExistingUser = (userObj)->
-			console.log('--loginExistingUser--')
-			console.log(userObj)
 			defer = $q.defer()
 			info = @getUserDetails()
 			phone = info.phone

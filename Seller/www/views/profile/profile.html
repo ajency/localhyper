@@ -1,3 +1,4 @@
+
 <ion-view 
 	view-title="My Profile"
 	ng-init="view.setCategoryChains()">
@@ -21,7 +22,7 @@
 		            	 <i class="ion-ios-information-outline"></i>
 		        	</div>
 		        	<div class="pull-right ">
-						<label class="toggle">
+						<label class="toggle toggle-assertive">
 							<input type="checkbox">
 							<div class="track">
 								<div class="handle"></div>
@@ -63,9 +64,13 @@
 						</div>
 				
 				</ion-item>
+				
+				<h5 class="subdued item-text-wrap" ng-if="view.categoryChains.length == 0;">
+					Choose the categories and brands you deal with. 
+					You shall receive requests based on the categories you select.
+				</h5>
 			</ion-list>
 		</div>
-
 
 		<button class="button button-block bar-assertive" ng-click="App.navigate('categories');">
 			Add Categories
@@ -78,14 +83,17 @@
 			</a>
 		</div>
 
-		<button class=" pull-right  button button-stable">
+		<button class="pull-right  button button-stable" ng-click="App.navigate('business-details')">
  			Edit Bussiness Details
 		</button>
 
 		<br><br>
 
-		<button class="button button-assertive">
-			Save
+		<button 
+			class="button button-assertive" 
+			ng-click="view.saveDetails()"
+			ng-disabled="view.categoryChains.length == 0;">
+				Save
 		</button>
 		
 

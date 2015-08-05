@@ -39,7 +39,8 @@
 						minlength="10"
 						maxlength="10"
 						ng-pattern="App.onlyNumbers"
-						ng-model="view.phone">
+						ng-model="view.phone"
+						ng-readonly="view.myProfileState">
 				</label>
 			</div>
 		</div>
@@ -129,19 +130,28 @@
 		</div>
 
 
-		<div class="item item-checkbox nobg terms">
+		<div 
+			class="item item-checkbox nobg terms"
+			ng-if ="!view.myProfileState" >
 			<label class="checkbox">
 				<input type="checkbox" ng-model="view.terms">
 			</label>
-			I agree with the terms & conditions
+			 I agree with the terms & conditions 
 		</div>
 
 		<ion-item class="nobg">
 			<button
 				class="title button button-block button-assertive"
 				ng-disabled="!view.terms"
+				ng-if ="!view.myProfileState"
 				ng-click="view.onNext()">
 				Next
+			</button>
+			<button
+				class="title button button-block button-assertive"
+				ng-if ="view.myProfileState"
+				ng-click="view.onNext()">
+				Save
 			</button>
 		</ion-item>
 

@@ -149,14 +149,5 @@ angular.module 'LocalHyper.profile', []
 				"appContent":
 					controller: 'ProfileCtrl'
 					templateUrl: 'views/profile.html'
-					resolve:
-						Maps : ($q, CSpinner, GoogleMaps)->
-							defer = $q.defer()
-							CSpinner.show '', 'Please wait...'
-							GoogleMaps.loadScript()
-							.then ->
-								defer.resolve()
-							.finally ->
-								CSpinner.hide()
-							defer.promise
+					
 ]
