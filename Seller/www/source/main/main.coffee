@@ -31,9 +31,11 @@ angular.module 'LocalHyper.main', []
 					@userPopover = popover
 
 			onBackClick : ->
-				if App.currentState is 'verify-manual'
-					count = if App.isAndroid() then -2 else -1
-				else count = -1
+				switch App.currentState
+					when 'verify-manual'
+						count = if App.isAndroid() then -2 else -1
+					else
+						count = -1
 				App.goBack count
 
 			menuClose : ->
@@ -54,7 +56,6 @@ angular.module 'LocalHyper.main', []
 			onRateUs : ->
 				@menuClose()
 				$cordovaAppRate.promptForRating(true) if App.isWebView()
-
 
 
 		$rootScope.$on '$user:registration:success', ->
