@@ -1,5 +1,5 @@
 angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
-  '$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout', 'CToast', function($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast) {
+  '$scope', 'App', 'SmsAPI', 'AuthAPI', 'User', '$timeout', 'CToast', '$rootScope', function($scope, App, SmsAPI, AuthAPI, User, $timeout, CToast, $rootScope) {
     $scope.view = {
       display: 'noError',
       smsCode: '',
@@ -104,6 +104,7 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
+          $rootScope.$broadcast('$user:registration:success');
           return App.navigate('verify-success', {}, {
             animate: true,
             back: false

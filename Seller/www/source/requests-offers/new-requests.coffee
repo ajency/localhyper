@@ -178,6 +178,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 			onPullToRefresh : ->
 				@display = 'noError'
+				$rootScope.$broadcast 'get:unseen:notifications'
 				@getRequests()
 
 			onTapToRetry : ->
@@ -215,7 +216,15 @@ angular.module 'LocalHyper.requestsOffers'
 					App.navigate 'new-requests'
 					$scope.view.requestDetails.onNotificationClick payload.id
 				when 'cancelled_request'
-					App.navigate 'my-offer-history', requestId: payload.id
+					App.navigate 'my-offer-history'
+					$timeout ->
+						$rootScope.$broadcast 'cancelled:request', requestId: payload.id
+					, 1000
+				when 'accepted_offer'
+					App.navigate 'successful-offers'
+					$timeout ->
+						$rootScope.$broadcast 'accepted:offer', offerId: payload.id
+					, 1000
 
 		
 		$scope.$on '$ionicView.afterEnter', ->

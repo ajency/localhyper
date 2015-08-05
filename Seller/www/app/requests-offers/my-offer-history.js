@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', '$stateParams', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, $stateParams) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -31,9 +31,11 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         onNotificationClick: function(requestId) {
           var index, requests;
           requests = $scope.view.requests;
-          index = _.findIndex(requests, function(request) {
-            return request.id === requestId;
-          });
+          index = _.findIndex(requests, (function(_this) {
+            return function(request) {
+              return request.request.id === requestId;
+            };
+          })(this));
           if (index === -1) {
             this.pendingRequestId = requestId;
             return this.modal.show();
@@ -50,9 +52,28 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
                 return request.request.id === _this.pendingRequestId;
               };
             })(this));
-            this.data = requests[index];
-            this.showExpiry = true;
-            return this.pendingRequestId = "";
+            if (index !== -1) {
+              this.data = requests[index];
+              this.showExpiry = true;
+              return this.pendingRequestId = "";
+            } else {
+              this.modal.hide();
+              CSpinner.show('', 'Sorry, this request has been cancelled');
+              return $timeout((function(_this) {
+                return function() {
+                  return CSpinner.hide();
+                };
+              })(this), 2000);
+            }
+          }
+        },
+        removeRequestCard: function(offerId) {
+          var spliceIndex;
+          spliceIndex = _.findIndex($scope.view.requests, function(offer) {
+            return offer.id === offerId;
+          });
+          if (spliceIndex !== -1) {
+            return $scope.view.requests.splice(spliceIndex, 1);
           }
         }
       },
@@ -68,6 +89,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         var params;
         params = {
           page: this.page,
+          acceptedOffers: false,
           displayLimit: 3
         };
         return OffersAPI.getSellerOffers(params).then((function(_this) {
@@ -140,36 +162,19 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       return $scope.view.reFetch();
     });
     $rootScope.$on('in:app:notification', function(e, obj) {
-      var payload;
+      var offerId, payload;
       payload = obj.payload;
-      if (payload.type === 'cancelled_request') {
-        App.scrollTop();
-        return $scope.view.reFetch();
+      switch (payload.type) {
+        case 'cancelled_request':
+          App.scrollTop();
+          return $scope.view.reFetch();
+        case 'accepted_offer':
+          offerId = payload.id;
+          return $scope.view.offerDetails.removeRequestCard(offerId);
       }
     });
-    return $scope.$on('$ionicView.enter', function() {
-      var requestId;
-      requestId = $stateParams.requestId;
-      if (requestId !== "") {
-        return $scope.view.offerDetails.onNotificationClick(requestId);
-      }
+    return $rootScope.$on('cancelled:request', function(e, obj) {
+      return $scope.view.offerDetails.onNotificationClick(obj.requestId);
     });
-  }
-]).directive('ajCountDown', [
-  '$timeout', '$parse', function($timeout, $parse) {
-    return {
-      restrict: 'A',
-      link: function(scope, el, attrs) {
-        return $timeout(function() {
-          var createdAt, total, totalStr;
-          createdAt = $parse(attrs.createdAt)(scope);
-          total = moment(moment(createdAt.iso)).add(24, 'hours');
-          totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
-          return $(el).countdown(totalStr, function(event) {
-            return $(el).html(event.strftime('%-H:%-M:%-S'));
-          });
-        });
-      }
-    };
   }
 ]);

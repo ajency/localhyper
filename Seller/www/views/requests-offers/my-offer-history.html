@@ -35,7 +35,7 @@
 				    </div>
 				    <h2>{{request.product.name}}</h2> 
 				    <p> {{request.distanceFromCustomer.toFixed(2)}} kms radius </p>
-				    <div class="pull-right"> Auto Bid : no </div>
+				    <!-- <div class="pull-right"> Auto Bid : no </div> -->
 
 				    <div class="col p-t-0" >
 			            <sm class="light-gray"> Claimed delivery :</sm>
@@ -53,7 +53,7 @@
 					<sm 
 						class="light-gray" 
 						ng-if="request.offerStatus != 'unaccepted'"> 
-						Request Status : {{request.request.status}}
+						Request Status : {{App.humanize(request.request.status)}}
 					</sm>
 				</div>
 
@@ -62,7 +62,7 @@
 			            <sm class="light-gray">Offer Price</sm><br>
 			            <h3 class=" item-text-wrap margin-none big-txt ">
 			            	<span class="WebRupee subdued">&#x20B9;</span> 
-			            	{{request.offerPrice.toLocaleString()}}
+			            	{{App.toINR(request.offerPrice)}}
 			            </h3>
 			        </div>
 			        <div class="col p-t-0">
@@ -79,7 +79,7 @@
 			        </div>
 
 			        <div class="pull-left ">
-			            Offer status:<b>{{request.offerStatus}}</b>
+			            Offer status: <b>{{App.humanize(request.offerStatus)}}</b>
 			        </div>
 			    </div>
 			</ion-item>

@@ -19,7 +19,7 @@ angular.module('LocalHyper.requestsOffers').factory('OffersAPI', [
         "sellerId": User.getId(),
         "page": opts.page,
         "displayLimit": opts.displayLimit,
-        "acceptedOffers": false,
+        "acceptedOffers": opts.acceptedOffers,
         "selectedFilters": [],
         "sortBy": "updatedAt",
         "descending": true

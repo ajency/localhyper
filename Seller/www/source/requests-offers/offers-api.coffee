@@ -23,7 +23,7 @@ angular.module 'LocalHyper.requestsOffers'
 			"sellerId": User.getId()
 			"page": opts.page
 			"displayLimit" : opts.displayLimit
-			"acceptedOffers": false
+			"acceptedOffers": opts.acceptedOffers
 			"selectedFilters" : []
 			"sortBy" : "updatedAt"
 			"descending" : true
