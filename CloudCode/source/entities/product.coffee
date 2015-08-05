@@ -6,6 +6,7 @@ Parse.Cloud.job 'productImport', (request, response) ->
     products =  request.params.products
 
     categoryId = request.params.categoryId
+    priceRange = request.params.priceRange
 
     # get category data
     queryCategory = new Parse.Query("Category")
@@ -135,7 +136,12 @@ Parse.Cloud.job 'productImport', (request, response) ->
         # save all the newly created objects
         Parse.Object.saveAll productSavedArr
           .then (objs) ->
-            response.success "Successfully added the products"
+            categoryObj.set "price_range" , priceRange
+            categoryObj.save()
+            .then (savedCat)->
+                response.success "Successfully added the products"
+            , (error) ->
+                response.error "Failed to add products due to - #{error.message}"
           , (error) ->
             response.error "Failed to add products due to - #{error.message}" 
 

@@ -1233,11 +1233,12 @@
   });
 
   Parse.Cloud.job('productImport', function(request, response) {
-    var ProductItem, categoryId, productSavedArr, products, queryCategory;
+    var ProductItem, categoryId, priceRange, productSavedArr, products, queryCategory;
     ProductItem = Parse.Object.extend('ProductItem');
     productSavedArr = [];
     products = request.params.products;
     categoryId = request.params.categoryId;
+    priceRange = request.params.priceRange;
     queryCategory = new Parse.Query("Category");
     queryCategory.equalTo("objectId", categoryId);
     queryCategory.include("filterable_attributes");
@@ -1338,7 +1339,12 @@
         }
       });
       return Parse.Object.saveAll(productSavedArr).then(function(objs) {
-        return response.success("Successfully added the products");
+        categoryObj.set("price_range", priceRange);
+        return categoryObj.save().then(function(savedCat) {
+          return response.success("Successfully added the products");
+        }, function(error) {
+          return response.error("Failed to add products due to - " + error.message);
+        });
       }, function(error) {
         return response.error("Failed to add products due to - " + error.message);
       });
