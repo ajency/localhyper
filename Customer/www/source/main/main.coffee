@@ -45,9 +45,16 @@ angular.module 'LocalHyper.main', []
 					@userPopover = popover
 
 			onBackClick : ->
-				if App.currentState is 'verify-manual'
-					count = if App.isAndroid() then -2 else -1
-				else count = -1
+				switch App.currentState
+					when 'verify-manual'
+						count = if App.isAndroid() then -2 else -1
+					when 'verify-success'
+						forAndroid = if App.previousState is 'verify-manual' then -4 else -3
+						forIOS     = -3
+						count = if App.isAndroid() then forAndroid else forIOS
+					else
+						count = -1
+
 				App.goBack count
 
 			menuClose : ->

@@ -177,3 +177,11 @@
 	margin-top: 28%;
 }
 
+/* sort */
+.offer-history-sort {
+	height: 380px !important;
+}
+
+.offer-history-filter {
+	height: 240px !important;
+}

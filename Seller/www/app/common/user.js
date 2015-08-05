@@ -33,6 +33,8 @@ angular.module('LocalHyper.common').factory('User', [
           });
         case 'get':
           return userInfo;
+        case 'reset':
+          return userInfo = data;
       }
     };
     return User;

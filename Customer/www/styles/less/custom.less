@@ -10,7 +10,7 @@
 /* Commen css */
 /************************************/
 
-h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider {
+h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider, span, div, input, textarea, select, small, big, b, strong, body {
 	font-family: 'source_sans' !important;
 	color: #424242;
 }
@@ -475,9 +475,9 @@ sm{
 }
 .offertxt{
 	  background: @white;
-  	  margin-top: -11px;
+  	  margin-top: -15px !important;
   	  text-align: center;
-  	  text-transform: uppercase;
+  	  // text-transform: uppercase;
 }
 
 
@@ -536,7 +536,7 @@ sm{
 		}
 	}
 	&.more-link {
-		line-height: 54px;
+		line-height: 59px;
 		i {
 			display: block;
 			text-align: center;
@@ -707,6 +707,7 @@ sm{
 .m-t-0 {margin-top: 0;}
 .m-l-0 {margin-left: 0;}
 .m-r-0 {margin-right: 0;}
+.m-t-6 {margin-top: 6px;}
 .b-r-1 {border-right: 1px solid #ddd;}
 
 .address-inputs {
@@ -750,9 +751,13 @@ sm{
 	}
 	.col .item.item-accordion.item-text-wrap {
 		font-size: 14px;
-		line-height: 20px !important;
+		// line-height: 20px !important;
 		padding: 5px 12px;
 		margin-top: 6px;
+		&.com-acc {
+			min-width: 150px;
+			float: right;
+		}
 	}
 	h4 {
 		color: #272727;
@@ -798,6 +803,11 @@ sm{
 			margin-right: 2px;
 			margin-top: -5px;
 		}
+	}
+	label.status-text {
+		color: @balanced;
+		text-transform: uppercase;
+		padding: 0 1px;
 	}
 	.expires {
 		padding-top: 7px;
@@ -940,6 +950,15 @@ sm{
 			height: auto;
 			min-height: 0;
 			line-height: 35px;
+			&.btn-phone {
+				padding: 0 11px;
+				float: right;
+				margin-top: 0;
+				& .icon:before {
+					font-size: 24px;
+					line-height: 27px;
+				}
+			}
 		}
 	}
 }
@@ -991,10 +1010,98 @@ sm{
     margin-bottom: -10px;
 }
 .req-ca {
+	// border: 2px solid #f35a59;
 	&.activated {
 		box-shadow: 0 0 1px 1px @brand-primary;
 	}
+	.WebRupee {
+		font-size: 20px;
+	}
 	.item-divider {
-		border-top: 1px solid #949494;
+		// border-top: 1px solid #949494;
+		padding: 7px 8px;
+		// background: #FFE9E9 !important;
+	}
+}
+.WebRupee.sym-sma {font-size: 16px;}
+
+label.status-label {
+	text-transform: uppercase;
+	padding: 2px 1px;
+	display: block;
+	font-size: 14px;
+	// letter-spacing: 1px;
+}
+.status-assertive, .color-assertive {
+	color: @brand-primary;
+}
+.status-balanced, .color-balanced {
+	color: @balanced;
+}
+.color-greylight {
+	color: @gray-light;
+}
+
+//Filter view
+.products-filter-view {
+	margin-top: 9px;
+	label.item-radio {
+		border-color: #666;
+		.item-content {
+			padding: 14px 10px;
+			background: @gray-darker;
+			color: @white;
+			box-shadow: 0 0 0 #000;
+			.sel-count {
+				float: right;
+				width: 19px;
+				height: 19px;
+				line-height: 21px;
+				font-size: 14px;
+				color: #fff;
+				background-color: #f45152;
+				// border-radius: 50%;
+				text-align: center;
+				font-weight: bold;
+				margin-top: 0px;
+			}
+		}
+		input:checked~.item-content {
+			background-color: #F7F7F7;
+			color: @gray-darker;
+		}
+	}
+	.item-checkbox {
+		padding: 9px 60px;
+		padding-right: 9px;
+	}
+	.checkbox input, .checkbox-icon {
+		width: 24px;
+		height: 24px;
+		top: 2px;
+		&:after {
+			top: 31%;
+			left: 21%;
+			width: 14px;
+			height: 7px;
+			border: 2px solid #fff;
+			border-top: 0;
+			border-right: 0;
+		}
+	}
+	.checkbox input:checked+.checkbox-icon:before, .checkbox input:checked:before {
+		background: #f45152;
+		border-color: #f45152;
+	}
+	.col.col-33.p-a-0 {
+		position: relative;
+		z-index: 3;
+		&:before {
+			content: '';
+			width: 33.33%;
+			height: 1000%;
+			position: fixed;
+			background-color: @gray-darker;
+		}
 	}
 }

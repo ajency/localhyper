@@ -1,5 +1,6 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner, RequestsAPI) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform', '$ionicLoading', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner, RequestsAPI, $ionicPlatform, $ionicLoading) {
+    var onDeviceBack;
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -7,6 +8,75 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       page: 0,
       canLoadMore: true,
       refresh: false,
+      sortBy: 'updatedAt',
+      sortName: 'Recent Activity',
+      descending: true,
+      filter: {
+        open: false,
+        excerpt: '',
+        selected: [],
+        originalAttrs: [],
+        attributes: [
+          {
+            name: 'Open offers',
+            value: 'open',
+            selected: false
+          }, {
+            name: 'Unaccepted offers',
+            value: 'unaccepted',
+            selected: false
+          }
+        ],
+        showOptions: function() {
+          this.open = true;
+          this.originalAttrs = JSON.parse(JSON.stringify(this.attributes));
+          return $ionicLoading.show({
+            scope: $scope,
+            templateUrl: 'views/requests-offers/offer-history-filter.html',
+            hideOnStateChange: true
+          });
+        },
+        setExcerpt: function() {
+          var filterNames;
+          filterNames = [];
+          _.each(this.selected, (function(_this) {
+            return function(val) {
+              var attribute;
+              attribute = _.filter(_this.attributes, function(attr) {
+                return attr.value === val;
+              });
+              return filterNames.push(attribute[0].name);
+            };
+          })(this));
+          return this.excerpt = filterNames.join(', ');
+        },
+        onApply: function() {
+          this.open = false;
+          $ionicLoading.hide();
+          _.each(this.attributes, (function(_this) {
+            return function(attr) {
+              if (attr.selected) {
+                if (!_.contains(_this.selected, attr.value)) {
+                  return _this.selected.push(attr.value);
+                }
+              } else {
+                return _this.selected = _.without(_this.selected, attr.value);
+              }
+            };
+          })(this));
+          this.setExcerpt();
+          return $scope.view.reFetch();
+        },
+        noChangeInSelection: function() {
+          return _.isEqual(_.sortBy(this.originalAttrs), _.sortBy(this.attributes));
+        },
+        onHide: function() {
+          if (this.open && !this.noChangeInSelection()) {
+            this.attributes = this.originalAttrs;
+          }
+          return this.open = false;
+        }
+      },
       offerDetails: {
         modal: null,
         showExpiry: false,
@@ -80,17 +150,44 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       init: function() {
         return this.offerDetails.loadModal();
       },
-      reFetch: function() {
+      onScrollComplete: function() {
+        return $scope.$broadcast('scroll.infiniteScrollComplete');
+      },
+      autoFetch: function() {
         this.page = 0;
         this.requests = [];
         return this.showOfferHistory();
+      },
+      reFetch: function(refresh) {
+        if (refresh == null) {
+          refresh = true;
+        }
+        this.refresh = refresh;
+        this.page = 0;
+        this.requests = [];
+        this.canLoadMore = true;
+        return $timeout((function(_this) {
+          return function() {
+            return _this.onScrollComplete();
+          };
+        })(this));
+      },
+      showSortOptions: function() {
+        return $ionicLoading.show({
+          scope: $scope,
+          templateUrl: 'views/requests-offers/offer-history-sort.html',
+          hideOnStateChange: true
+        });
       },
       showOfferHistory: function() {
         var params;
         params = {
           page: this.page,
           acceptedOffers: false,
-          displayLimit: 3
+          displayLimit: 3,
+          sortBy: this.sortBy,
+          descending: this.descending,
+          selectedFilters: this.filter.selected
         };
         return OffersAPI.getSellerOffers(params).then((function(_this) {
           return function(data) {
@@ -118,7 +215,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
             this.canLoadMore = false;
           } else {
             this.canLoadMore = true;
-            $scope.$broadcast('scroll.infiniteScrollComplete');
+            this.onScrollComplete();
           }
           if (this.refresh) {
             this.requests = offerData;
@@ -149,8 +246,68 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         this.display = 'loader';
         this.page = 0;
         return this.canLoadMore = true;
+      },
+      onSort: function(sortBy, sortName, descending) {
+        $ionicLoading.hide();
+        switch (sortBy) {
+          case 'updatedAt':
+            if (this.sortBy !== 'updatedAt') {
+              this.sortBy = 'updatedAt';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            }
+            break;
+          case 'distance':
+            if (this.sortBy !== 'distance') {
+              this.sortBy = 'distance';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            }
+            break;
+          case 'offerPrice':
+            if (this.sortBy !== 'offerPrice') {
+              this.sortBy = 'offerPrice';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            } else if (this.descending !== descending) {
+              this.sortBy = 'offerPrice';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            }
+            break;
+          case 'expiryTime':
+            if (this.sortBy !== 'expiryTime') {
+              this.sortBy = 'expiryTime';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            } else if (this.descending !== descending) {
+              this.sortBy = 'expiryTime';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            }
+        }
       }
     };
+    onDeviceBack = function() {
+      if ($('.loading-container').hasClass('visible')) {
+        $scope.view.filter.open = false;
+        return $ionicLoading.hide();
+      } else {
+        return App.goBack(-1);
+      }
+    };
+    $scope.$on('$ionicView.enter', function() {
+      return $ionicPlatform.onHardwareBackButton(onDeviceBack);
+    });
+    $scope.$on('$ionicView.leave', function() {
+      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
+    });
     $scope.$on('modal.hidden', function() {
       $scope.view.offerDetails.pendingRequestId = "";
       return $timeout(function() {
@@ -159,7 +316,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
     });
     $rootScope.$on('make:offer:success', function() {
       App.scrollTop();
-      return $scope.view.reFetch();
+      return $scope.view.autoFetch();
     });
     $rootScope.$on('in:app:notification', function(e, obj) {
       var offerId, payload;
@@ -167,7 +324,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       switch (payload.type) {
         case 'cancelled_request':
           App.scrollTop();
-          return $scope.view.reFetch();
+          return $scope.view.autoFetch();
         case 'accepted_offer':
           offerId = payload.id;
           return $scope.view.offerDetails.removeRequestCard(offerId);

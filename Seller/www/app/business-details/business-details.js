@@ -201,24 +201,34 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
             confirmedAddress: this.confirmedAddress,
             latitude: this.latitude,
             longitude: this.longitude,
-            deliveryRadius: this.delivery.radius
+            deliveryRadius: this.delivery.radius,
+            location: {
+              address: this.location.address
+            },
+            delivery: {
+              radius: this.delivery.radius
+            }
           }).then(function() {
-            var user;
-            if (App.previousState === 'my-profile') {
+            if (App.previousState === 'my-profile' || App.previousState === '') {
               CSpinner.show('', 'Please wait...');
-              user = User.info('get');
-              return AuthAPI.isExistingUser(user).then((function(_this) {
-                return function(data) {
-                  return AuthAPI.loginExistingUser(data.userObj);
-                };
-              })(this)).then(function(success) {
-                return App.navigate('my-profile');
-              }, (function(_this) {
-                return function(error) {
-                  return CToast.show('Please try again data not saved');
-                };
-              })(this))["finally"](function() {
-                return CSpinner.hide();
+              return Storage.bussinessDetails('get').then(function(details) {
+                var user;
+                User.info('reset', details);
+                user = User.info('get');
+                user = User.info('get');
+                return AuthAPI.isExistingUser(user).then((function(_this) {
+                  return function(data) {
+                    return AuthAPI.loginExistingUser(data.userObj);
+                  };
+                })(this)).then(function(success) {
+                  return App.navigate('my-profile');
+                }, (function(_this) {
+                  return function(error) {
+                    return CToast.show('Please try again data not saved');
+                  };
+                })(this))["finally"](function() {
+                  return CSpinner.hide();
+                });
               });
             } else {
               return App.navigate('category-chains');
@@ -228,7 +238,7 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
       }
     };
     $scope.$on('$ionicView.beforeEnter', function() {
-      return $scope.view.myProfileState = App.previousState === 'my-profile';
+      return $scope.view.myProfileState = App.previousState === 'my-profile' || App.previousState === '';
     });
     return $scope.$on('$ionicView.enter', function() {
       return App.hideSplashScreen();

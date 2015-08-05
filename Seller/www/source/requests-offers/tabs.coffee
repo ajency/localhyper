@@ -19,6 +19,38 @@ angular.module 'LocalHyper.requestsOffers', []
 ]
 
 
+.directive 'ajLoadingBackDrop', ['$timeout', '$ionicLoading', ($timeout, $ionicLoading)->
+
+	restrict: 'A'
+	scope:
+		onLoadingHidden: '&'
+
+	link: (scope, el, attrs)->
+		
+		$timeout ->
+			$('.loading-container').on 'click', (event)->
+				isBackdrop = $(event.target).hasClass 'loading-container'
+				if isBackdrop
+					$ionicLoading.hide()
+					scope.$apply ->
+						scope.onLoadingHidden()
+]
+
+
+.directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->
+	
+	restrict: 'A'
+	link: (scope, el, attrs)->
+
+		$timeout ->
+			createdAt = $parse(attrs.createdAt)(scope)
+			total = moment(moment(createdAt.iso)).add 24, 'hours'
+			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
+			$(el).countdown totalStr, (event)->
+				$(el).html event.strftime('%-H:%-M:%-S')
+]
+
+
 .factory 'TimeString', [->
 
 	TimeString = {}
@@ -54,20 +86,6 @@ angular.module 'LocalHyper.requestsOffers', []
 		timeStr
 
 	TimeString
-]
-
-
-.directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->
-	
-	restrict: 'A'
-	link: (scope, el, attrs)->
-
-		$timeout ->
-			createdAt = $parse(attrs.createdAt)(scope)
-			total = moment(moment(createdAt.iso)).add 24, 'hours'
-			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
-			$(el).countdown totalStr, (event)->
-				$(el).html event.strftime('%-H:%-M:%-S')
 ]
 
 
