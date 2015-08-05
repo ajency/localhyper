@@ -185,6 +185,14 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         this.getRequests();
         return this.requestDetails.loadModal();
       },
+      reFetch: function() {
+        this.page = 0;
+        this.requests = [];
+        this.display = 'loader';
+        this.errorType = '';
+        this.getRequests();
+        return this.requestDetails.loadModal();
+      },
       getRequests: function() {
         return RequestsAPI.getAll().then((function(_this) {
           return function(data) {
@@ -262,8 +270,11 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           return App.navigate('successful-offers');
       }
     });
-    return $scope.$on('$ionicView.afterEnter', function() {
+    $scope.$on('$ionicView.afterEnter', function() {
       return App.hideSplashScreen();
+    });
+    return $rootScope.$on('category:chain:changed', function() {
+      return $scope.view.reFetch();
     });
   }
 ]);
