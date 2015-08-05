@@ -157,6 +157,14 @@ angular.module 'LocalHyper.requestsOffers'
 				@getRequests()
 				@requestDetails.loadModal()
 
+			reFetch : ->
+				@page = 0
+				@requests = []
+				@display = 'loader'
+				@errorType = ''
+				@getRequests()
+				@requestDetails.loadModal()
+
 			getRequests : ->
 				RequestsAPI.getAll()
 				.then (data)=>
@@ -223,5 +231,10 @@ angular.module 'LocalHyper.requestsOffers'
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
+
+
+		$rootScope.$on 'category:chain:changed', ->
+			# App.scrollTop()
+			$scope.view.reFetch()
 ]
 

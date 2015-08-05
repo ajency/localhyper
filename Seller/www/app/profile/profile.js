@@ -1,5 +1,5 @@
 angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
-  '$q', '$scope', 'User', 'App', 'CToast', 'Storage', 'CategoriesAPI', 'AuthAPI', 'CSpinner', 'CategoryChains', function($q, $scope, User, App, CToast, Storage, CategoriesAPI, AuthAPI, CSpinner, CategoryChains) {
+  '$q', '$scope', 'User', 'App', 'CToast', 'Storage', 'CategoriesAPI', 'AuthAPI', 'CSpinner', 'CategoryChains', '$rootScope', function($q, $scope, User, App, CToast, Storage, CategoriesAPI, AuthAPI, CSpinner, CategoryChains, $rootScope) {
     $scope.view = {
       showDelete: false,
       categoryChains: [],
@@ -26,23 +26,30 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
         return this.categoryChains.splice(spliceIndex, 1);
       },
       saveDetails: function() {
-        var user;
+        var defer;
         CSpinner.show('', 'Please wait...');
         CategoriesAPI.categoryChains('set', this.categoryChains);
         Storage.categoryChains('set', this.categoryChains);
-        user = User.info('get');
-        return AuthAPI.isExistingUser(user).then((function(_this) {
-          return function(data) {
-            return AuthAPI.loginExistingUser(data.userObj);
-          };
-        })(this)).then(function(success) {
-          return App.navigate('new-requests');
-        }, (function(_this) {
-          return function(error) {
-            return CToast.show('Please try again data not saved');
-          };
-        })(this))["finally"](function() {
-          return CSpinner.hide();
+        defer = $q.defer();
+        return Storage.bussinessDetails('get').then(function(details) {
+          var user;
+          User.info('reset', details);
+          user = User.info('get');
+          user = User.info('get');
+          return AuthAPI.isExistingUser(user).then((function(_this) {
+            return function(data) {
+              return AuthAPI.loginExistingUser(data.userObj);
+            };
+          })(this)).then(function(success) {
+            $rootScope.$broadcast('category:chain:changed');
+            return App.navigate('new-requests');
+          }, (function(_this) {
+            return function(error) {
+              return CToast.show('Please try again data not saved');
+            };
+          })(this))["finally"](function() {
+            return CSpinner.hide();
+          });
         });
       }
     };
@@ -68,7 +75,7 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
     });
   }
 ]).config([
-  '$stateProvider', function($stateProvider) {
+  '$stateProvider', function($stateProvider, Storage, CategoriesAPI) {
     return $stateProvider.state('my-profile', {
       url: '/seller-profile',
       parent: 'main',
@@ -79,8 +86,19 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
           templateUrl: 'views/profile/profile.html',
           resolve: {
             CategoryChains: function($q, Storage, CategoriesAPI) {
-              var chains;
-              return chains = CategoriesAPI.categoryChains('get');
+              var chains, defer;
+              chains = CategoriesAPI.categoryChains('get');
+              defer = $q.defer();
+              if (chains.length === 0) {
+                defer = $q.defer();
+                Storage.categoryChains('get').then(function(chains) {
+                  CategoriesAPI.categoryChains('set', chains);
+                  return defer.resolve(chains);
+                });
+              } else {
+                defer.resolve(chains);
+              }
+              return defer.promise;
             }
           }
         }
