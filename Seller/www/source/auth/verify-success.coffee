@@ -6,8 +6,8 @@ angular.module 'LocalHyper.auth'
 	, ($scope, CToast, App, CSpinner, User, $ionicPlatform, $rootScope, Storage)->
 
 		$scope.onProceed = ->
-			Storage.bussinessDetails 'remove'
-			Storage.categoryChains 'remove'
+			# Storage.bussinessDetails 'remove'
+			# Storage.categoryChains 'remove'
 			App.navigate 'new-requests', {}, {animate: true, back: false}
 
 			

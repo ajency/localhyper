@@ -178,20 +178,7 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
       views: {
         "appContent": {
           controller: 'ProfileCtrl',
-          templateUrl: 'views/profile.html',
-          resolve: {
-            Maps: function($q, CSpinner, GoogleMaps) {
-              var defer;
-              defer = $q.defer();
-              CSpinner.show('', 'Please wait...');
-              GoogleMaps.loadScript().then(function() {
-                return defer.resolve();
-              })["finally"](function() {
-                return CSpinner.hide();
-              });
-              return defer.promise;
-            }
-          }
+          templateUrl: 'views/profile.html'
         }
       }
     });
