@@ -1600,39 +1600,6 @@
     });
   });
 
-  Parse.Cloud.afterSave("ProductItem", function(request) {
-    var categoryId, mrp, productObject, queryCategory;
-    productObject = request.object;
-    mrp = parseInt(productObject.get("mrp"));
-    if ((!productObject.existed()) || ((productObject.existed()) && (productObject.createdAt !== productObject.updatedAt))) {
-      categoryId = productObject.get("category").id;
-      queryCategory = new Parse.Query("Category");
-      queryCategory.equalTo("objectId", categoryId);
-      return queryCategory.first().then(function(categoryObject) {
-        var newPriceRange, oldPriceRange;
-        newPriceRange = [];
-        oldPriceRange = categoryObject.get("price_range");
-        if ((_.isUndefined(oldPriceRange)) || (_.isEmpty(oldPriceRange))) {
-          oldPriceRange[0] = 0;
-          oldPriceRange[1] = 0;
-        }
-        oldPriceRange[0] = parseInt(oldPriceRange[0]);
-        oldPriceRange[1] = parseInt(oldPriceRange[1]);
-        if (mrp >= oldPriceRange[1]) {
-          newPriceRange[0] = oldPriceRange[0];
-          newPriceRange[1] = mrp;
-        } else {
-          newPriceRange[0] = mrp;
-          newPriceRange[1] = oldPriceRange[1];
-        }
-        categoryObject.set("price_range", newPriceRange);
-        return categoryObject.save();
-      }, function(error) {
-        return console.log("Got an error while fetching category " + error.code + " : " + error.message);
-      });
-    }
-  });
-
   findAttribValues = (function(_this) {
     return function(filter) {
       var attributeId, attributeName, filterColumn, innerAttributeQuery, promise, queryAttributeValues;
