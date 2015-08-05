@@ -21,7 +21,17 @@ textarea,
 .h4,
 .h5,
 .h6 .item,
-.item-divider {
+.item-divider,
+span,
+div,
+input,
+textarea,
+select,
+small,
+big,
+b,
+strong,
+body {
   font-family: 'source_sans' !important;
   color: #424242;
 }
@@ -591,7 +601,7 @@ sm {
 .item-avatar .item-content.more-link,
 .item-avatar-left.more-link,
 .item-avatar-left .item-content.more-link {
-  line-height: 54px;
+  line-height: 59px;
 }
 .item-avatar.more-link i,
 .item-avatar .item-content.more-link i,
@@ -745,6 +755,9 @@ sm {
 }
 .m-r-0 {
   margin-right: 0;
+}
+.m-t-6 {
+  margin-top: 6px;
 }
 .b-r-1 {
   border-right: 1px solid #ddd;
@@ -1054,15 +1067,87 @@ sm {
 .req-ca .item-divider {
   padding: 7px 8px;
 }
+.WebRupee.sym-sma {
+  font-size: 16px;
+}
 label.status-label {
   text-transform: uppercase;
   padding: 2px 1px;
   display: block;
   font-size: 14px;
 }
-.status-assertive {
+.status-assertive,
+.color-assertive {
   color: #f45152;
 }
-.status-balanced {
+.status-balanced,
+.color-balanced {
   color: #33cd5f;
+}
+.color-greylight {
+  color: #999999;
+}
+.products-filter-view {
+  margin-top: 9px;
+}
+.products-filter-view label.item-radio {
+  border-color: #666;
+}
+.products-filter-view label.item-radio .item-content {
+  padding: 14px 10px;
+  background: #262626;
+  color: #ffffff;
+  box-shadow: 0 0 0 #000;
+}
+.products-filter-view label.item-radio .item-content .sel-count {
+  float: right;
+  width: 19px;
+  height: 19px;
+  line-height: 21px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #f45152;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 0px;
+}
+.products-filter-view label.item-radio input:checked ~ .item-content {
+  background-color: #F7F7F7;
+  color: #262626;
+}
+.products-filter-view .item-checkbox {
+  padding: 9px 60px;
+  padding-right: 9px;
+}
+.products-filter-view .checkbox input,
+.products-filter-view .checkbox-icon {
+  width: 24px;
+  height: 24px;
+  top: 2px;
+}
+.products-filter-view .checkbox input:after,
+.products-filter-view .checkbox-icon:after {
+  top: 31%;
+  left: 21%;
+  width: 14px;
+  height: 7px;
+  border: 2px solid #fff;
+  border-top: 0;
+  border-right: 0;
+}
+.products-filter-view .checkbox input:checked + .checkbox-icon:before,
+.products-filter-view .checkbox input:checked:before {
+  background: #f45152;
+  border-color: #f45152;
+}
+.products-filter-view .col.col-33.p-a-0 {
+  position: relative;
+  z-index: 3;
+}
+.products-filter-view .col.col-33.p-a-0:before {
+  content: '';
+  width: 33.33%;
+  height: 1000%;
+  position: fixed;
+  background-color: #262626;
 }
