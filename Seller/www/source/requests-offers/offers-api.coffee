@@ -4,6 +4,7 @@ angular.module 'LocalHyper.requestsOffers'
 .factory 'OffersAPI', ['$q', '$http', 'User', ($q, $http, User)->
 
 	OffersAPI = {}
+	acceptedOfferId = ''
 
 	OffersAPI.makeOffer = (params)->
 		defer = $q.defer()
@@ -35,6 +36,13 @@ angular.module 'LocalHyper.requestsOffers'
 			defer.reject error
 
 		defer.promise
+
+	OffersAPI.acceptedOfferId = (action, id)->
+		switch action
+			when 'set'
+				acceptedOfferId = id
+			when 'get'
+				acceptedOfferId
 
 	OffersAPI
 ]

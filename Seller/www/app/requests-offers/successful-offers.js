@@ -146,8 +146,13 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         return $scope.view.reFetch();
       }
     });
-    return $rootScope.$on('accepted:offer', function(e, obj) {
-      return $scope.view.offerDetails.onNotificationClick(obj.offerId);
+    return $scope.$on('$ionicView.enter', function() {
+      var offerId;
+      offerId = OffersAPI.acceptedOfferId('get');
+      if (offerId !== '') {
+        $scope.view.offerDetails.onNotificationClick(offerId);
+      }
+      return OffersAPI.acceptedOfferId('set', '');
     });
   }
 ]);

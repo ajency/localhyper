@@ -85,6 +85,7 @@ angular.module 'LocalHyper.auth'
 					"password": newPassword
 					"passwordHash": newPasswordHash
 					"installationId": installationId
+					"lastLogin": new Date()
 		.then ->
 			Parse.User.logOut()
 		.then ->
@@ -112,6 +113,7 @@ angular.module 'LocalHyper.auth'
 				"password": password
 				"passwordHash": @encryptPassword(password, phone)
 				"installationId": installationId
+				"lastLogin": new Date()
 			
 			user.signUp()
 		.then (success)->

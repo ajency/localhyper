@@ -2,8 +2,8 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope', 'CSpinner'
-	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner)->
+	, '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI'
+	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner, RequestsAPI)->
 
 		$scope.view = 
 			display: 'loader'
@@ -146,8 +146,11 @@ angular.module 'LocalHyper.requestsOffers'
 					offerId = payload.id
 					$scope.view.offerDetails.removeRequestCard offerId
 
-		$rootScope.$on 'cancelled:request', (e, obj)->
-			$scope.view.offerDetails.onNotificationClick obj.requestId
+		$scope.$on '$ionicView.enter', ->
+			#Handle notification click for cancelled request
+			requestId = RequestsAPI.cancelledRequestId 'get'
+			$scope.view.offerDetails.onNotificationClick(requestId) if requestId isnt ''
+			RequestsAPI.cancelledRequestId 'set', ''
 ]
 
 

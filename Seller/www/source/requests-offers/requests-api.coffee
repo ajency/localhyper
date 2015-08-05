@@ -4,6 +4,7 @@ angular.module 'LocalHyper.requestsOffers'
 .factory 'RequestsAPI', ['$q', '$http', 'User', '$timeout', ($q, $http, User, $timeout)->
 
 	RequestsAPI = {}
+	cancelledRequestId = ''
 
 	RequestsAPI.getAll = ->
 		defer = $q.defer()
@@ -70,6 +71,13 @@ angular.module 'LocalHyper.requestsOffers'
 			defer.reject error
 
 		defer.promise
+
+	RequestsAPI.cancelledRequestId = (action, id)->
+		switch action
+			when 'set'
+				cancelledRequestId = id
+			when 'get'
+				cancelledRequestId
 
 	RequestsAPI
 ]

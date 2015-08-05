@@ -1,7 +1,8 @@
 angular.module('LocalHyper.requestsOffers').factory('OffersAPI', [
   '$q', '$http', 'User', function($q, $http, User) {
-    var OffersAPI;
+    var OffersAPI, acceptedOfferId;
     OffersAPI = {};
+    acceptedOfferId = '';
     OffersAPI.makeOffer = function(params) {
       var defer;
       defer = $q.defer();
@@ -30,6 +31,14 @@ angular.module('LocalHyper.requestsOffers').factory('OffersAPI', [
         return defer.reject(error);
       });
       return defer.promise;
+    };
+    OffersAPI.acceptedOfferId = function(action, id) {
+      switch (action) {
+        case 'set':
+          return acceptedOfferId = id;
+        case 'get':
+          return acceptedOfferId;
+      }
     };
     return OffersAPI;
   }
