@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner, RequestsAPI) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -173,8 +173,13 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
           return $scope.view.offerDetails.removeRequestCard(offerId);
       }
     });
-    return $rootScope.$on('cancelled:request', function(e, obj) {
-      return $scope.view.offerDetails.onNotificationClick(obj.requestId);
+    return $scope.$on('$ionicView.enter', function() {
+      var requestId;
+      requestId = RequestsAPI.cancelledRequestId('get');
+      if (requestId !== '') {
+        $scope.view.offerDetails.onNotificationClick(requestId);
+      }
+      return RequestsAPI.cancelledRequestId('set', '');
     });
   }
 ]);

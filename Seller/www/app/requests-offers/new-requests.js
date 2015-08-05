@@ -255,19 +255,11 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           App.navigate('new-requests');
           return $scope.view.requestDetails.onNotificationClick(payload.id);
         case 'cancelled_request':
-          App.navigate('my-offer-history');
-          return $timeout(function() {
-            return $rootScope.$broadcast('cancelled:request', {
-              requestId: payload.id
-            });
-          }, 1000);
+          RequestsAPI.cancelledRequestId('set', payload.id);
+          return App.navigate('my-offer-history');
         case 'accepted_offer':
-          App.navigate('successful-offers');
-          return $timeout(function() {
-            return $rootScope.$broadcast('accepted:offer', {
-              offerId: payload.id
-            });
-          }, 1000);
+          OffersAPI.acceptedOfferId('set', payload.id);
+          return App.navigate('successful-offers');
       }
     });
     return $scope.$on('$ionicView.afterEnter', function() {

@@ -207,7 +207,6 @@ angular.module 'LocalHyper.requestsOffers'
 				when 'cancelled_request'
 					$rootScope.$broadcast 'get:unseen:notifications'
 					$scope.view.requestDetails.removeRequestCard payload.id
-
 		
 		$rootScope.$on 'push:notification:click', (e, obj)->
 			payload = obj.payload
@@ -216,16 +215,11 @@ angular.module 'LocalHyper.requestsOffers'
 					App.navigate 'new-requests'
 					$scope.view.requestDetails.onNotificationClick payload.id
 				when 'cancelled_request'
+					RequestsAPI.cancelledRequestId 'set', payload.id
 					App.navigate 'my-offer-history'
-					$timeout ->
-						$rootScope.$broadcast 'cancelled:request', requestId: payload.id
-					, 1000
 				when 'accepted_offer'
+					OffersAPI.acceptedOfferId 'set', payload.id
 					App.navigate 'successful-offers'
-					$timeout ->
-						$rootScope.$broadcast 'accepted:offer', offerId: payload.id
-					, 1000
-
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()

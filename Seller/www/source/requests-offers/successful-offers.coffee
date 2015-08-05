@@ -124,6 +124,9 @@ angular.module 'LocalHyper.requestsOffers'
 				App.scrollTop()
 				$scope.view.reFetch()
 
-		$rootScope.$on 'accepted:offer', (e, obj)->
-			$scope.view.offerDetails.onNotificationClick obj.offerId
+		$scope.$on '$ionicView.enter', ->
+			#Handle notification click for accepted offer
+			offerId = OffersAPI.acceptedOfferId 'get'
+			$scope.view.offerDetails.onNotificationClick(offerId) if offerId isnt ''
+			OffersAPI.acceptedOfferId 'set', ''
 ]
