@@ -175,7 +175,7 @@ class ProductController extends Controller
           }          
         }
          
-     // dd($productAttributeIds);
+        // dd($productAttributeIds);
         $indexSheet->fromArray($headers, ' ', 'A1');
         $indexSheet->fromArray([$catId], ' ', 'A2');
         $indexSheet->getColumnDimension('A')->setVisible(false);
@@ -269,100 +269,100 @@ class ProductController extends Controller
         $limit =10;
         $page = 0; 
         $i=0; 
-       while (true) {
-            $limit = $limit + 50;
-            $products = $this->getCategoryProducts($catId, $page, $limit) ;
-            
-            if(empty($products))
-                break;
- 
-            foreach($products as $key=> $product) 
-            {
-                $productsData[$i][]=$product['objectId']; 
-                $productsData[$i][]=$product['name'];  
-                $productsData[$i][]=$product['model_number'];  
-                $productsData[$i][]=$product['images'][0]['src']; 
-                $productsData[$i][]=$product['mrp'];
-                $productsData[$i][]=$product['popularity']; 
-                $productsData[$i][]=$product['brandName']; 
-                $productsData[$i][]=$product['brandId']; 
-                $productsData[$i][]=$product['group']; 
+         while (true) {
+              $limit = $limit + 50;
+              $products = $this->getCategoryProducts($catId, $page, $limit) ;
+              
+              if(empty($products))
+                  break;
+   
+              foreach($products as $key=> $product) 
+              {
+                  $productsData[$i][]=$product['objectId']; 
+                  $productsData[$i][]=$product['name'];  
+                  $productsData[$i][]=$product['model_number'];  
+                  $productsData[$i][]=$product['images'][0]['src']; 
+                  $productsData[$i][]=$product['mrp'];
+                  $productsData[$i][]=$product['popularity']; 
+                  $productsData[$i][]=$product['brandName']; 
+                  $productsData[$i][]=$product['brandId']; 
+                  $productsData[$i][]=$product['group']; 
 
-                foreach($product['attrs'] as $attribute)
-                {
-                    if(isset($productAttributeIds[$attribute['attributeId']]))
-                    {
-                        $productAttributeIds[$attribute['attributeId']]=['value'=>$attribute['attributeValue'],'id'=>$attribute['attributeValueId']];
-                    }
+                  foreach($product['attrs'] as $attribute)
+                  {
+                      if(isset($productAttributeIds[$attribute['attributeId']]))
+                      {
+                          $productAttributeIds[$attribute['attributeId']]=['value'=>$attribute['attributeValue'],'id'=>$attribute['attributeValueId']];
+                      }
 
-                }
+                  }
 
-                foreach ($product['textAttributes'] as $text_attrib_id => $text_attribute_value) {
-                  if(isset($productAttributeIds[$text_attrib_id]))
-                    {
-                      $productAttributeIds[$text_attrib_id]=['value'=>$text_attribute_value,'id'=>$text_attrib_id];
-                    }
-                }
+                  foreach ($product['textAttributes'] as $text_attrib_id => $text_attribute_value) {
+                    if(isset($productAttributeIds[$text_attrib_id]))
+                      {
+                        $productAttributeIds[$text_attrib_id]=['value'=>$text_attribute_value,'id'=>$text_attrib_id];
+                      }
+                  }
 
-                foreach($productAttributeIds as $productAttribute)
-                {
+                  foreach($productAttributeIds as $productAttribute)
+                  {
 
-                    $productsData[$i][] = (isset($productAttribute["value"]))?$productAttribute["value"]:"";
-                    $productsData[$i][] = (isset($productAttribute["id"]))?$productAttribute["id"]:"";
-                }
+                      $productsData[$i][] = (isset($productAttribute["value"]))?$productAttribute["value"]:"";
+                      $productsData[$i][] = (isset($productAttribute["id"]))?$productAttribute["id"]:"";
+                  }
 
-                $i++;
-            }
- 
-            $page++;
-        }
+                  $i++;
+              }
+   
+              $page++;
+          }
         
-        $productSheet->fromArray($productsData, ' ', 'B3');
+          $productSheet->fromArray($productsData, ' ', 'B3');
 
 
-        //freeze pan
-        $productSheet->getStyle('1:1')->getFont()->setBold(true);
-        $productSheet->freezePane('E2');
+          //freeze pan
+          $productSheet->getStyle('1:1')->getFont()->setBold(true);
+          $productSheet->freezePane('E2');
 
-        //Headr row height
-        $productSheet->getRowDimension('1')->setRowHeight(22);
+          //Headr row height
+          $productSheet->getRowDimension('1')->setRowHeight(22);
 
-        //Hide second row
-        $productSheet->getRowDimension(2)->setVisible(false);
+          //Hide second row
+          $productSheet->getRowDimension(2)->setVisible(false);
 
-        //Format sheet
-        FormatPhpExcel::formatSheet($productSheet, 'Products', $headerFlag, $indexSheet);
+          //Format sheet
+          FormatPhpExcel::formatSheet($productSheet, 'Products', $headerFlag, $indexSheet);
 
-        //Format header row
-        FormatPhpExcel::format_header_row($productSheet, array(
-          'background_color'=>'FFFF00',
-          'border_color'=>'000000',
-          'font_size'=>'9',
-          'font_color'=>'000000',
-          'vertical_alignment'=>'VERTICAL_CENTER',
-          'font-weight'=>'bold'
-          ), '1'
-        );
-       
+          //Format header row
+          FormatPhpExcel::format_header_row($productSheet, array(
+            'background_color'=>'FFFF00',
+            'border_color'=>'000000',
+            'font_size'=>'9',
+            'font_color'=>'000000',
+            'vertical_alignment'=>'VERTICAL_CENTER',
+            'font-weight'=>'bold'
+            ), '1'
+          );
          
-      
+           
         
-        $productSheet->protectCells($header, 'PHP');
-        
-        
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="products-export.xls"');
-        header('Cache-Control: max-age=0');
-        // If you're serving to IE 9, then the following may be needed
-        header('Cache-Control: max-age=1');
-        // If you're serving to IE over SSL, then the following may be needed
-        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-        header ('Pragma: public'); // HTTP/1.0
-        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
-        $objWriter->setPreCalculateFormulas(TRUE);
-        $objWriter->save('php://output'); 
+          
+          $productSheet->protectCells($header, 'PHP');
+          
+          
+          header('Content-Type: application/vnd.ms-excel');
+          header('Content-Disposition: attachment;filename="products-export.xls"');
+          header('Cache-Control: max-age=0');
+          // If you're serving to IE 9, then the following may be needed
+          header('Cache-Control: max-age=1');
+          // If you're serving to IE over SSL, then the following may be needed
+          header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+          header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+          header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+          header ('Pragma: public'); // HTTP/1.0
+          $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+          $objWriter->setPreCalculateFormulas(TRUE);
+          $objWriter->save('php://output'); 
     }
 
 
@@ -631,13 +631,14 @@ class ProductController extends Controller
 
 
       $headers = array(
-        array('objectId','Name','Model Number','Price','Price Source'),
-        array('objectId','name','model_number','price','price_source'),
+        array('productId','priceId','Name','Model Number','Price','Price Source'),
+        array('productId','priceId','name','model_number','price','price_source'),
         );
 
       $priceSheet->fromArray($headers, ' ', 'A1');
       $priceSheet->fromArray($categoryProductPrice, ' ', 'A3');
       $priceSheet->getColumnDimension('A')->setVisible(false);
+      $priceSheet->getColumnDimension('B')->setVisible(false);
 
       //Headr row height
         $priceSheet->getRowDimension('1')->setRowHeight(20);
@@ -707,7 +708,8 @@ class ProductController extends Controller
             $onlinePrice = $this->getLatestProductPrice($productId);
 
             $product = array(
-                'objectId' => $parseProduct->getObjectId(), 
+                'productId' => $parseProduct->getObjectId(), 
+                'priceId' => $onlinePrice['id'],
                 'name' => $parseProduct->get("name"),
                 'model_number' => $parseProduct->get("model_number"),
                 'price' => $onlinePrice['value'],
@@ -743,19 +745,81 @@ class ProductController extends Controller
 
       if (!empty($priceResult)) {
       $price = array(
+                'id' => $priceResult->getObjectId(), 
                 'value' => $priceResult->get("value"), 
                 'source' => $priceResult->get("source"), 
                 );
       }
       else {
               $price = array(
-                'value' => "", 
-                'source' => "" 
+                'id' => null, 
+                'value' => null, 
+                'source' => null 
                 );
       }
 
 
       return $price;
+
+    }
+
+    public function importProductPrice(Request $request){
+    
+      $product_file = $request->file('product_price_file')->getRealPath();
+      
+      if ($request->hasFile('product_price_file'))
+      {
+        $inputFileType = \PHPExcel_IOFactory::identify($product_file);
+        $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
+        $objPHPExcel = $objReader->load($product_file);
+        $sheetNames = $objPHPExcel->getSheetNames();
+        
+        $sheet = $objPHPExcel->getSheet(0);
+        $highestRow = $sheet->getHighestRow(); 
+        $highestColumn = $sheet->getHighestColumn();
+
+        $headingsArray = $sheet->rangeToArray('A2:'.$highestColumn.'2',null, true, true, true); 
+        
+        $headingsArray = $headingsArray[2];
+        $headerData =  array_values($headingsArray);
+      }
+
+
+      $r = -1;
+      
+      $namedDataArray = $config =array();
+      
+      for ($row = 3; $row <= $highestRow; ++$row) {
+        $dataRow = $sheet->rangeToArray('A'.$row.':'.$highestColumn.$row,null, true, true, true);
+
+        ++$r;
+        foreach($headingsArray as $columnKey => $columnHeading) {
+
+          if($columnHeading!='Config')
+            $namedDataArray[$r][$columnHeading] = $dataRow[$row][$columnKey];
+          else
+            $config[]=$dataRow[$row][$columnKey];
+
+        }
+      }
+
+      $productPriceArr = [];
+      foreach($namedDataArray as $namedData){
+        
+        if(!(is_null(max( $namedData )))){ 
+          $productPriceArr[] = $namedData;
+        }
+
+      }
+
+      dd($productPriceArr);
+      $this->parseProductPriceImport($productPriceArr);
+
+      return redirect("/admin/attribute/categoryconfiguration");
+
+    }
+
+    public function parseProductPriceImport($productPriceArr){
 
     }
 }
