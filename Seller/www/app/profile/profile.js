@@ -4,8 +4,7 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
       showDelete: false,
       categoryChains: [],
       setCategoryChains: function() {
-        this.categoryChains = CategoryChains;
-        return CategoriesAPI.categoryChains('set', CategoryChains);
+        return this.categoryChains = CategoryChains;
       },
       getBrands: function(brands) {
         var brandNames;
@@ -47,10 +46,25 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
         });
       }
     };
-    return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
+    $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
       if (!viewData.enableBack) {
         return viewData.enableBack = true;
       }
+    });
+    $scope.$on('$ionicView.enter', function() {});
+    return $scope.$on('$ionicView.leave', function() {
+      var categoryChainSet;
+      categoryChainSet = true;
+      return Storage.categoryChains('get').then(function(chains) {
+        if (App.currentState === 'categories' || App.currentState === 'sub-categories' || App.currentState === 'brands') {
+          categoryChainSet = false;
+        } else {
+          categoryChainSet = true;
+        }
+        if (categoryChainSet === true) {
+          return CategoriesAPI.categoryChains('set', chains);
+        }
+      });
     });
   }
 ]).config([
@@ -64,13 +78,9 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
           controller: 'ProfileCtrl',
           templateUrl: 'views/profile/profile.html',
           resolve: {
-            CategoryChains: function($q, Storage) {
-              var defer;
-              defer = $q.defer();
-              Storage.categoryChains('get').then(function(chains) {
-                return defer.resolve(chains);
-              });
-              return defer.promise;
+            CategoryChains: function($q, Storage, CategoriesAPI) {
+              var chains;
+              return chains = CategoriesAPI.categoryChains('get');
             }
           }
         }

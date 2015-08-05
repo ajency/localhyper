@@ -10,14 +10,8 @@ angular.module 'LocalHyper.profile', []
 			categoryChains : []
 
 			setCategoryChains : ->
-				# Storage.categoryChains 'get'
-				# .then (chains) =>
-				# 	if !_.isNull chains
-				# 		@categoryChains = chains
-				# 		CategoriesAPI.categoryChains 'set', chains
 				@categoryChains = CategoryChains
-				CategoriesAPI.categoryChains 'set', CategoryChains
-
+				
 			getBrands : (brands)->
 				brandNames = _.pluck brands, 'name'
 				brandNames.join ', '
@@ -32,9 +26,6 @@ angular.module 'LocalHyper.profile', []
 					chains.subCategory.id is subCategoryId
 				@categoryChains.splice spliceIndex, 1
 				
-				# CategoriesAPI.categoryChains 'set', @categoryChains
-				# Storage.categoryChains 'set', @categoryChains
-
 			saveDetails : ->
 				CSpinner.show '', 'Please wait...'
 				
@@ -56,6 +47,22 @@ angular.module 'LocalHyper.profile', []
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			if !viewData.enableBack
 				viewData.enableBack = true
+				
+		$scope.$on '$ionicView.enter', ->
+			
+		
+
+		$scope.$on '$ionicView.leave', ->
+			categoryChainSet = true
+			Storage.categoryChains 'get'
+			.then (chains) ->
+				if(App.currentState == 'categories' || App.currentState == 'sub-categories' || App.currentState == 'brands')
+					categoryChainSet = false 
+				else 
+				   categoryChainSet = true
+
+				if categoryChainSet == true
+					CategoriesAPI.categoryChains 'set', chains
 			
 ]
 
@@ -73,12 +80,6 @@ angular.module 'LocalHyper.profile', []
 					controller: 'ProfileCtrl'
 					templateUrl: 'views/profile/profile.html'
 					resolve :
-						CategoryChains : ($q, Storage)->
-							defer = $q.defer()
-							Storage.categoryChains 'get'
-							.then (chains) ->
-								defer.resolve chains
-							defer.promise
-
-					
+						CategoryChains : ($q, Storage,CategoriesAPI)->
+						    	chains = CategoriesAPI.categoryChains('get')
 ]
