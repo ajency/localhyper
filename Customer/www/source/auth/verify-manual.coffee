@@ -24,7 +24,8 @@ angular.module 'LocalHyper.auth'
 						if data.userObj[0].get('userType') is 'seller'
 							count = if App.isAndroid() then -2 else -1
 							App.goBack count
-							CToast.show 'Sorry, you are already a registered seller'
+							CToast.showLongBottom 'Sorry, you are already registered as a Seller. '+
+							'You cannot use this number to verify as a Customer.'
 						else @requestSMSCode()
 					else @requestSMSCode()
 				, (error)=>

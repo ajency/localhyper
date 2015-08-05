@@ -54,7 +54,11 @@
       "id": "org.pushandplay.cordova.apprate"
     },
     "cordova-plugin-splashscreen",
-    "com.ionic.keyboard"
+    "com.ionic.keyboard",
+    {
+      "locator": "https://github.com/whiteoctober/cordova-plugin-app-version.git",
+      "id": "uk.co.whiteoctober.cordova.appversion"
+    }
   ],
   "cordovaPlatforms": []
 }

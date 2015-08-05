@@ -10,7 +10,7 @@
 /* Commen css */
 /************************************/
 
-h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider {
+h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider/*, span, div, input, textarea, select, small, big, b, strong, body*/ {
 	font-family: 'source_sans' !important;
 	color: #424242;
 }
@@ -475,9 +475,9 @@ sm{
 }
 .offertxt{
 	  background: @white;
-  	  margin-top: -11px;
+  	  margin-top: -15px !important;
   	  text-align: center;
-  	  text-transform: uppercase;
+  	  // text-transform: uppercase;
 }
 
 
@@ -750,9 +750,13 @@ sm{
 	}
 	.col .item.item-accordion.item-text-wrap {
 		font-size: 14px;
-		line-height: 20px !important;
+		// line-height: 20px !important;
 		padding: 5px 12px;
 		margin-top: 6px;
+		&.com-acc {
+			min-width: 150px;
+			float: right;
+		}
 	}
 	h4 {
 		color: #272727;
@@ -798,6 +802,11 @@ sm{
 			margin-right: 2px;
 			margin-top: -5px;
 		}
+	}
+	label.status-text {
+		color: @balanced;
+		text-transform: uppercase;
+		padding: 0 1px;
 	}
 	.expires {
 		padding-top: 7px;
@@ -940,6 +949,15 @@ sm{
 			height: auto;
 			min-height: 0;
 			line-height: 35px;
+			&.btn-phone {
+				padding: 0 11px;
+				float: right;
+				margin-top: 0;
+				& .icon:before {
+					font-size: 24px;
+					line-height: 27px;
+				}
+			}
 		}
 	}
 }
@@ -991,10 +1009,30 @@ sm{
     margin-bottom: -10px;
 }
 .req-ca {
+	// border: 2px solid #f35a59;
 	&.activated {
 		box-shadow: 0 0 1px 1px @brand-primary;
 	}
-	.item-divider {
-		border-top: 1px solid #949494;
+	.WebRupee {
+		font-size: 20px;
 	}
+	.item-divider {
+		// border-top: 1px solid #949494;
+		padding: 7px 8px;
+		// background: #FFE9E9 !important;
+	}
+}
+
+label.status-label {
+	text-transform: uppercase;
+	padding: 2px 1px;
+	display: block;
+	font-size: 14px;
+	// letter-spacing: 1px;
+}
+.status-assertive {
+	color: @brand-primary;
+}
+.status-balanced {
+	color: @balanced;
 }

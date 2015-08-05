@@ -14,6 +14,10 @@ angular.module 'LocalHyper.common'
 		if webview then $cordovaToast.showLongCenter content
 		else console.log content
 
+	CToast.showLongBottom = (content)->
+		if webview then $cordovaToast.showLongBottom content
+		else console.log content
+
 	CToast
 ]
 

@@ -93,19 +93,22 @@
 }
 
 /*Ionic popover*/
-
-
-.platform-ios .popover {
-   height: 180px !important;
+.platform-android .popover {
+   height: 140px !important;
 }
 
+.platform-ios .popover {
+   height: 140px !important;
+}
+
+
 .aj-btn {
-	  position: absolute;
-	  width: 180px;
-	  left: 0%;
-	  right: 0%;
-	  margin: auto;
-	  font-weight: 600;
+	position: absolute;
+	width: 180px;
+	left: 0%;
+	right: 0%;
+	margin: auto;
+	font-weight: 600;
 }
 
 .aj-text .list{
