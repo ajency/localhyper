@@ -17,6 +17,13 @@ angular.module('LocalHyper.common').factory('CToast', [
         return console.log(content);
       }
     };
+    CToast.showLongBottom = function(content) {
+      if (webview) {
+        return $cordovaToast.showLongBottom(content);
+      } else {
+        return console.log(content);
+      }
+    };
     return CToast;
   }
 ]).factory('CSpinner', [
