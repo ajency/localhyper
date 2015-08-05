@@ -1,0 +1,52 @@
+<ion-pane 
+	class="sort-model sort-popup offer-history-sort"
+	aj-loading-back-drop>
+
+	<ul class="list">
+		<li class="item">SORT BY</li>
+
+		<li class="item"
+			ng-class="(view.sortBy === 'updatedAt') ? 'active' : ''"
+			ng-click="view.onSort('updatedAt', 'Recent Activity', true)">
+
+			Recent Activity
+		</li>
+
+		<li class="item"
+			ng-class="(view.sortBy === 'distance') ? 'active' : ''"
+			ng-click="view.onSort('distance', 'Nearest Distance', true)">
+
+			Nearest Distance
+		</li>
+
+		<li class="item"
+			ng-class="(view.sortBy === 'offerPrice' && view.descending === true) ? 'active' : ''"
+			ng-click="view.onSort('offerPrice', 'Offer Price - high to low', true)">
+
+			<i class="i-price-high"></i>Offer Price - high to low
+		</li>
+
+		<li class="item" 
+			ng-class="(view.sortBy === 'offerPrice' && view.descending === false) ? 'active' : ''"
+			ng-click="view.onSort('offerPrice', 'Offer Price - low to high', false)">
+
+			<i class="i-price-low"></i>Offer Price - low to high
+		</li>
+		
+		<li class="item"
+			ng-class="(view.sortBy === 'expiryTime' && view.descending === true) ? 'active' : ''"
+			ng-click="view.onSort('expiryTime', 'Expiry time - high to low', true)">
+
+			Expiry time - high to low
+		</li>
+
+		<li class="item" 
+			ng-class="(view.sortBy === 'expiryTime' && view.descending === false) ? 'active' : ''"
+			ng-click="view.onSort('expiryTime', 'Expiry time - low to high', false)">
+
+			Expiry time - low to high
+		</li>
+
+	</ul>
+	
+</ion-pane>

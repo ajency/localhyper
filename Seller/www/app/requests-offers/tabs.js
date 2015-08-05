@@ -20,6 +20,46 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
       }
     };
   }
+]).directive('ajLoadingBackDrop', [
+  '$timeout', '$ionicLoading', function($timeout, $ionicLoading) {
+    return {
+      restrict: 'A',
+      scope: {
+        onLoadingHidden: '&'
+      },
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          return $('.loading-container').on('click', function(event) {
+            var isBackdrop;
+            isBackdrop = $(event.target).hasClass('loading-container');
+            if (isBackdrop) {
+              $ionicLoading.hide();
+              return scope.$apply(function() {
+                return scope.onLoadingHidden();
+              });
+            }
+          });
+        });
+      }
+    };
+  }
+]).directive('ajCountDown', [
+  '$timeout', '$parse', function($timeout, $parse) {
+    return {
+      restrict: 'A',
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          var createdAt, total, totalStr;
+          createdAt = $parse(attrs.createdAt)(scope);
+          total = moment(moment(createdAt.iso)).add(24, 'hours');
+          totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
+          return $(el).countdown(totalStr, function(event) {
+            return $(el).html(event.strftime('%-H:%-M:%-S'));
+          });
+        });
+      }
+    };
+  }
 ]).factory('TimeString', [
   function() {
     var TimeString;
@@ -40,39 +80,22 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
         timeStr = 'Just now';
       } else if (minutes < 60) {
         min = minutes === 1 ? 'min' : 'mins';
-        timeStr = "" + minutes + " " + min + " ago";
+        timeStr = minutes + " " + min + " ago";
       } else if (minutes >= 60 && minutes < 1440) {
         hr = hours === 1 ? 'hr' : 'hrs';
-        timeStr = "" + hours + " " + hr + " ago";
+        timeStr = hours + " " + hr + " ago";
       } else if (minutes >= 1440 && days < 7) {
         day = days === 1 ? 'day' : 'days';
-        timeStr = "" + days + " " + day + " ago";
+        timeStr = days + " " + day + " ago";
       } else if (days >= 7 && weeks <= 4) {
         week = weeks === 1 ? 'week' : 'weeks';
-        timeStr = "" + weeks + " " + week + " ago";
+        timeStr = weeks + " " + week + " ago";
       } else {
         timeStr = "On " + (moment(iso).format('DD-MM-YYYY'));
       }
       return timeStr;
     };
     return TimeString;
-  }
-]).directive('ajCountDown', [
-  '$timeout', '$parse', function($timeout, $parse) {
-    return {
-      restrict: 'A',
-      link: function(scope, el, attrs) {
-        return $timeout(function() {
-          var createdAt, total, totalStr;
-          createdAt = $parse(attrs.createdAt)(scope);
-          total = moment(moment(createdAt.iso)).add(24, 'hours');
-          totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
-          return $(el).countdown(totalStr, function(event) {
-            return $(el).html(event.strftime('%-H:%-M:%-S'));
-          });
-        });
-      }
-    };
   }
 ]).controller('EachRequestTimeCtrl', [
   '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
