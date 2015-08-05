@@ -46,11 +46,11 @@
 
 			<ion-list class="aj-menutext">
 
-				<ion-item ng-click="view.menuClose()">
+				<!-- <ion-item ng-click="view.menuClose()">
 					My Settings
 				</ion-item>
 
-				<hr>
+				 <hr>
 
 				<ion-item ng-click="view.menuClose()">
 					<i class="i-location"></i> Change Location
@@ -72,7 +72,7 @@
 
 				<sm class="light">
 					If no offer is made for a request within 10 minutes, your last made offer for requested product will be auto sent
-				</sm>
+				</sm> -->
 
 				<ion-item ng-click="view.menuClose()">
 					<i class="i-history"></i> My credit history
@@ -80,15 +80,15 @@
 				
 				<hr>
 
-				<ion-item ng-click="view.menuClose()">
+				<ion-item ng-click="view.onCallUs()">
 					<i class="i-call"></i> Call us
 				</ion-item>
 
-				<ion-item ng-click="view.menuClose()">
+				<ion-item ng-click="view.onShare()">
 					<i class="i-share"></i> Share
 				</ion-item>
 
-				<ion-item ng-click="view.menuClose()">
+				<ion-item ng-click="view.onRateUs()">
 					<i class="i-rate"></i> Rate us
 				</ion-item>
 
@@ -100,7 +100,7 @@
 					<i class="i-suggest"></i> Suggest a product
 				</ion-item>
 
-				<ion-item ng-click="view.menuClose()">
+				<ion-item ng-click="view.menuClose(); App.navigate('about-us');">
 					<i class="i-about"></i> About us
 				</ion-item>
 

@@ -1,5 +1,5 @@
 angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
-  '$scope', 'App', '$ionicPopover', '$rootScope', '$ionicSideMenuDelegate', 'CSpinner', '$timeout', 'Push', 'User', 'RequestsAPI', function($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, CSpinner, $timeout, Push, User, RequestsAPI) {
+  '$scope', 'App', '$ionicPopover', '$rootScope', '$ionicSideMenuDelegate', 'CSpinner', '$timeout', 'Push', 'User', 'RequestsAPI', '$cordovaSocialSharing', '$cordovaAppRate', function($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, CSpinner, $timeout, Push, User, RequestsAPI, $cordovaSocialSharing, $cordovaAppRate) {
     $scope.view = {
       userPopover: null,
       init: function() {
@@ -42,6 +42,28 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
       },
       menuClose: function() {
         return $ionicSideMenuDelegate.toggleLeft();
+      },
+      onCallUs: function() {
+        var telURI;
+        this.menuClose();
+        telURI = "tel:" + SUPPORT_NUMBER;
+        return document.location.href = telURI;
+      },
+      onShare: function() {
+        var link, msg, subject;
+        this.menuClose();
+        subject = "Hey, have you tried " + APP_NAME;
+        msg = "Now get the best offers from your local sellers. Visit";
+        link = "https://play.google.com/store/apps/details?id=" + PACKAGE_NAME;
+        if (App.isWebView()) {
+          return $cordovaSocialSharing.share(msg, subject, "", link);
+        }
+      },
+      onRateUs: function() {
+        this.menuClose();
+        if (App.isWebView()) {
+          return $cordovaAppRate.promptForRating(true);
+        }
       }
     };
     $rootScope.$on('$user:registration:success', function() {
@@ -77,7 +99,27 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
     });
   }
 ]).config([
-  '$stateProvider', function($stateProvider) {
+  '$stateProvider', '$cordovaAppRateProvider', function($stateProvider, $cordovaAppRateProvider) {
+    if (ionic.Platform.isWebView()) {
+      document.addEventListener("deviceready", function() {
+        var customLocale, preferences;
+        customLocale = {
+          title: "Rate Us",
+          message: ("If you enjoy using " + APP_NAME + ",") + " please take a moment to rate us." + " It won’t take more than a minute. Thanks for your support!",
+          cancelButtonLabel: "No, Thanks",
+          laterButtonLabel: "Remind Me Later",
+          rateButtonLabel: "Rate Now"
+        };
+        preferences = {
+          language: 'en',
+          appName: APP_NAME,
+          iosURL: PACKAGE_NAME,
+          androidURL: "market://details?id=" + PACKAGE_NAME
+        };
+        $cordovaAppRateProvider.setCustomLocale(customLocale);
+        return $cordovaAppRateProvider.setPreferences(preferences);
+      });
+    }
     return $stateProvider.state('main', {
       url: '/main',
       abstract: true,

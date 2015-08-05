@@ -2,7 +2,8 @@ angular.module 'LocalHyper.main', []
 
 
 .controller 'SideMenuCtrl', ['$scope', 'App', '$ionicPopover', '$rootScope'
-	, '$ionicSideMenuDelegate', '$cordovaSocialSharing', '$cordovaAppRate', 'User', 'Push', 'RequestAPI'
+	, '$ionicSideMenuDelegate', '$cordovaSocialSharing', '$cordovaAppRate'
+	, 'User', 'Push', 'RequestAPI'
 	, ($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate
 	, $cordovaSocialSharing, $cordovaAppRate, User, Push, RequestAPI)->
 
