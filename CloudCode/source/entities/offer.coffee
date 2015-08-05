@@ -129,8 +129,14 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
     requestQuery.equalTo("objectId",requestId )
 
     requestQuery.first()
-    .then (requestObj) ->
-        requestingCustomer = requestObj.get("customerId")
+    .then (requestObject) ->
+        requestingCustomer = requestObject.get("customerId")
+
+        createdDateOfReq = requestObject.createdAt
+
+        console.log createdDateOfReq
+        requestGeoPoint = requestObject.get("addressGeoPoint")
+        console.log requestGeoPoint
 
         price = new Price()
 
@@ -145,7 +151,7 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
         
         price.set "value" , priceValue
 
-        product = requestObj.get("product")
+        product = requestObject.get("product")
         price.set "product" , product
 
         price.save()
@@ -158,10 +164,13 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
 
             offer.set "seller" , sellerObj
             offer.set "request", requestObj 
-            offer.set "price", priceObj 
+            offer.set "price", priceObj
             offer.set "status" , status
             offer.set "deliveryTime" , deliveryTime
             offer.set "comments" , comments
+            offer.set "requestDate", requestObject.createdAt #needed for sorting offers based on created date of requests  
+            offer.set "offerPrice", priceValue #needed for sorting by price
+            offer.set "requestGeoPoint", requestObject.get("addressGeoPoint") #needed for sorting by distance
 
             offer.save()
             .then (offerObj) ->
@@ -195,6 +204,7 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
 # API for offer history for sellers
 Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     sellerId = request.params.sellerId
+    sellerGeoPoint = request.params.sellerGeoPoint
     page = parseInt request.params.page
     displayLimit = parseInt request.params.displayLimit    
     acceptedOffers = request.params.acceptedOffers
@@ -224,10 +234,22 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     queryOffers.limit(displayLimit)
     queryOffers.skip(page * displayLimit)  
 
-    if descending is true
-        queryOffers.descending("updatedAt")
+    
+    if sortBy is "distance"
+        queryOffers.near("requestGeoPoint", sellerGeoPoint)  
+
     else
-        queryOffers.ascending("updatedAt")     
+        if sortBy is "offerPrice"
+            sortColumn = "offerPrice"
+        else if sortBy is "expiryTime"
+            sortColumn = "requestDate"
+        else
+            sortColumn = "updatedAt"
+
+        if descending is true
+            queryOffers.descending(sortColumn)
+        else
+            queryOffers.ascending(sortColumn)  
 
     queryOffers.include("price")  
     queryOffers.include("request")  
@@ -304,6 +326,7 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 "offerDeliveryTime" : offerObj.get("deliveryTime")   
                 "offerComments" : offerObj.get("comments")   
                 "createdAt" : offerObj.createdAt  
+                "updatedAt" : offerObj.updatedAt  
                 
             
             sellerOffers.push sellerOffer                

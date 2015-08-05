@@ -858,9 +858,13 @@
     Notification = Parse.Object.extend("Notification");
     requestQuery = new Parse.Query("Request");
     requestQuery.equalTo("objectId", requestId);
-    return requestQuery.first().then(function(requestObj) {
-      var price, product, requestingCustomer, sellerObj;
-      requestingCustomer = requestObj.get("customerId");
+    return requestQuery.first().then(function(requestObject) {
+      var createdDateOfReq, price, product, requestGeoPoint, requestingCustomer, sellerObj;
+      requestingCustomer = requestObject.get("customerId");
+      createdDateOfReq = requestObject.createdAt;
+      console.log(createdDateOfReq);
+      requestGeoPoint = requestObject.get("addressGeoPoint");
+      console.log(requestGeoPoint);
       price = new Price();
       price.set("source", "seller");
       sellerObj = new Parse.User();
@@ -868,10 +872,10 @@
       price.set("seller", sellerObj);
       price.set("type", "open_offer");
       price.set("value", priceValue);
-      product = requestObj.get("product");
+      product = requestObject.get("product");
       price.set("product", product);
       return price.save().then(function(priceObj) {
-        var offer;
+        var offer, requestObj;
         offer = new Offer();
         requestObj = new Request();
         requestObj.id = requestId;
@@ -881,6 +885,9 @@
         offer.set("status", status);
         offer.set("deliveryTime", deliveryTime);
         offer.set("comments", comments);
+        offer.set("requestDate", requestObject.createdAt);
+        offer.set("offerPrice", priceValue);
+        offer.set("requestGeoPoint", requestObject.get("addressGeoPoint"));
         return offer.save().then(function(offerObj) {
           var notification;
           notification = new Notification();
@@ -907,8 +914,9 @@
   });
 
   Parse.Cloud.define('getSellerOffers', function(request, response) {
-    var acceptedOffers, allowedStatuses, descending, displayLimit, innerSellerQuery, page, queryOffers, selectedFilters, sellerId, sortBy;
+    var acceptedOffers, allowedStatuses, descending, displayLimit, innerSellerQuery, page, queryOffers, selectedFilters, sellerGeoPoint, sellerId, sortBy, sortColumn;
     sellerId = request.params.sellerId;
+    sellerGeoPoint = request.params.sellerGeoPoint;
     page = parseInt(request.params.page);
     displayLimit = parseInt(request.params.displayLimit);
     acceptedOffers = request.params.acceptedOffers;
@@ -931,10 +939,21 @@
     queryOffers.containedIn("status", allowedStatuses);
     queryOffers.limit(displayLimit);
     queryOffers.skip(page * displayLimit);
-    if (descending === true) {
-      queryOffers.descending("updatedAt");
+    if (sortBy === "distance") {
+      queryOffers.near("requestGeoPoint", sellerGeoPoint);
     } else {
-      queryOffers.ascending("updatedAt");
+      if (sortBy === "offerPrice") {
+        sortColumn = "offerPrice";
+      } else if (sortBy === "expiryTime") {
+        sortColumn = "requestDate";
+      } else {
+        sortColumn = "updatedAt";
+      }
+      if (descending === true) {
+        queryOffers.descending(sortColumn);
+      } else {
+        queryOffers.ascending(sortColumn);
+      }
     }
     queryOffers.include("price");
     queryOffers.include("request");
@@ -948,7 +967,7 @@
       var sellerOffers;
       sellerOffers = [];
       _.each(offers, function(offerObj) {
-        var brand, brandObj, category, categoryObj, createdDate, currentDate, diff, differenceInDays, priceObj, product, productObj, requestGeoPoint, requestObj, requestStatus, sellerGeoPoint, sellerObj, sellerOffer, sellersDistancFromCustomer;
+        var brand, brandObj, category, categoryObj, createdDate, currentDate, diff, differenceInDays, priceObj, product, productObj, requestGeoPoint, requestObj, requestStatus, sellerObj, sellerOffer, sellersDistancFromCustomer;
         requestObj = offerObj.get("request");
         productObj = requestObj.get("product");
         brandObj = requestObj.get("brand");
@@ -1004,7 +1023,8 @@
           "offerStatus": offerObj.get("status"),
           "offerDeliveryTime": offerObj.get("deliveryTime"),
           "offerComments": offerObj.get("comments"),
-          "createdAt": offerObj.createdAt
+          "createdAt": offerObj.createdAt,
+          "updatedAt": offerObj.updatedAt
         };
         return sellerOffers.push(sellerOffer);
       });
