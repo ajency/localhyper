@@ -53,7 +53,7 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         var link, msg, subject;
         this.menuClose();
         subject = "Hey, have you tried " + APP_NAME;
-        msg = "Now get the best offers from your local sellers. Visit";
+        msg = "Now sell products to your local crowd with just a click. Visit";
         link = "https://play.google.com/store/apps/details?id=" + PACKAGE_NAME;
         if (App.isWebView()) {
           return $cordovaSocialSharing.share(msg, subject, "", link);

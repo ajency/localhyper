@@ -13,6 +13,7 @@ angular.module 'LocalHyper.aboutUs', []
 					.then (version)=>
 						@appVersion = version
 
+		
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			if !viewData.enableBack
 				viewData.enableBack = true
