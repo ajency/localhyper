@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', function($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout', function($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate, $q, $timeout) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -41,15 +41,22 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           }
         },
         loadModal: function() {
-          return $ionicModal.fromTemplateUrl('views/requests-offers/request-details.html', {
-            scope: $scope,
-            animation: 'slide-in-up',
-            hardwareBackButtonClose: true
-          }).then((function(_this) {
-            return function(modal) {
-              return _this.modal = modal;
-            };
-          })(this));
+          var defer;
+          defer = $q.defer();
+          if (_.isNull(this.modal)) {
+            $ionicModal.fromTemplateUrl('views/requests-offers/request-details.html', {
+              scope: $scope,
+              animation: 'slide-in-up',
+              hardwareBackButtonClose: true
+            }).then((function(_this) {
+              return function(modal) {
+                return defer.resolve(_this.modal = modal);
+              };
+            })(this));
+          } else {
+            defer.resolve();
+          }
+          return defer.promise;
         },
         resetModal: function() {
           this.display = 'noError';
@@ -90,27 +97,36 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           index = _.findIndex(requests, function(val) {
             return val.id === requestId;
           });
-          if (index === -1) {
-            $scope.view.pendingRequestIds.push(requestId);
-            this.display = 'loader';
-            this.modal.show();
-            return RequestsAPI.getSingleRequest(requestId).then((function(_this) {
-              return function(request) {
-                _this.display = 'noError';
-                return _this.data = request;
-              };
-            })(this), (function(_this) {
-              return function(type) {
-                _this.display = 'error';
-                return _this.errorType = type;
+          if (index !== -1) {
+            return this.show(requests[index]);
+          } else {
+            return this.loadModal().then((function(_this) {
+              return function() {
+                $scope.view.pendingRequestIds.push(requestId);
+                _this.display = 'loader';
+                _this.modal.show();
+                return RequestsAPI.getSingleRequest(requestId).then(function(request) {
+                  if (request.status === 'cancelled') {
+                    CSpinner.show('', 'Sorry, this request has been cancelled');
+                    return $timeout(function() {
+                      _this.modal.hide();
+                      return CSpinner.hide();
+                    }, 2000);
+                  } else {
+                    _this.display = 'noError';
+                    return _this.data = request;
+                  }
+                }, function(type) {
+                  _this.display = 'error';
+                  return _this.errorType = type;
+                });
               };
             })(this));
-          } else {
-            return this.show(requests[index]);
           }
         },
         makeOffer: function() {
-          var params, priceValue;
+          var params, priceValue, requestId;
+          requestId = this.data.id;
           priceValue = '';
           switch (this.price) {
             case 'localPrice':
@@ -124,7 +140,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           }
           params = {
             "sellerId": User.getId(),
-            "requestId": this.data.id,
+            "requestId": requestId,
             "priceValue": priceValue,
             "deliveryTime": {
               "value": this.deliveryTime.value,
@@ -141,7 +157,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             CSpinner.show('', 'Please wait...');
             return OffersAPI.makeOffer(params).then((function(_this) {
               return function(data) {
-                _this.removeRequestCard();
+                _this.removeRequestCard(requestId);
                 _this.modal.hide();
                 CToast.showLongBottom('Your offer has been made. For more details, please check your offer history.');
                 return $rootScope.$broadcast('make:offer:success');
@@ -155,9 +171,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             });
           }
         },
-        removeRequestCard: function() {
-          var requestId, spliceIndex;
-          requestId = this.data.id;
+        removeRequestCard: function(requestId) {
+          var spliceIndex;
           spliceIndex = _.findIndex($scope.view.requests, function(request) {
             return request.id === requestId;
           });
@@ -195,6 +210,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       },
       onPullToRefresh: function() {
         this.display = 'noError';
+        $rootScope.$broadcast('get:unseen:notifications');
         return this.getRequests();
       },
       onTapToRetry: function() {
@@ -210,8 +226,10 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
               index = _.findIndex(_this.requests, function(val) {
                 return val.id === requestId;
               });
-              App.notification.decrement();
-              return _this.requests[index].notification.hasSeen = true;
+              if (index !== -1) {
+                App.notification.decrement();
+                return _this.requests[index].notification.hasSeen = true;
+              }
             });
           };
         })(this));
@@ -221,15 +239,35 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
     $rootScope.$on('in:app:notification', function(e, obj) {
       var payload;
       payload = obj.payload;
-      if (payload.type === 'new_request') {
-        return $scope.view.getRequests();
+      switch (payload.type) {
+        case 'new_request':
+          return $scope.view.getRequests();
+        case 'cancelled_request':
+          $rootScope.$broadcast('get:unseen:notifications');
+          return $scope.view.requestDetails.removeRequestCard(payload.id);
       }
     });
     $rootScope.$on('push:notification:click', function(e, obj) {
       var payload;
       payload = obj.payload;
-      if (payload.type === 'new_request') {
-        return $scope.view.requestDetails.onNotificationClick(payload.id);
+      switch (payload.type) {
+        case 'new_request':
+          App.navigate('new-requests');
+          return $scope.view.requestDetails.onNotificationClick(payload.id);
+        case 'cancelled_request':
+          App.navigate('my-offer-history');
+          return $timeout(function() {
+            return $rootScope.$broadcast('cancelled:request', {
+              requestId: payload.id
+            });
+          }, 1000);
+        case 'accepted_offer':
+          App.navigate('successful-offers');
+          return $timeout(function() {
+            return $rootScope.$broadcast('accepted:offer', {
+              offerId: payload.id
+            });
+          }, 1000);
       }
     });
     return $scope.$on('$ionicView.afterEnter', function() {

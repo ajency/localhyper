@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -11,6 +11,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         modal: null,
         showExpiry: false,
         data: {},
+        pendingRequestId: "",
         loadModal: function() {
           return $ionicModal.fromTemplateUrl('views/requests-offers/offer-history-details.html', {
             scope: $scope,
@@ -26,6 +27,54 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
           this.data = request;
           this.modal.show();
           return this.showExpiry = true;
+        },
+        onNotificationClick: function(requestId) {
+          var index, requests;
+          requests = $scope.view.requests;
+          index = _.findIndex(requests, (function(_this) {
+            return function(request) {
+              return request.request.id === requestId;
+            };
+          })(this));
+          if (index === -1) {
+            this.pendingRequestId = requestId;
+            return this.modal.show();
+          } else {
+            return this.show(requests[index]);
+          }
+        },
+        handlePendingRequest: function() {
+          var index, requests;
+          if (this.pendingRequestId !== "") {
+            requests = $scope.view.requests;
+            index = _.findIndex(requests, (function(_this) {
+              return function(request) {
+                return request.request.id === _this.pendingRequestId;
+              };
+            })(this));
+            if (index !== -1) {
+              this.data = requests[index];
+              this.showExpiry = true;
+              return this.pendingRequestId = "";
+            } else {
+              this.modal.hide();
+              CSpinner.show('', 'Sorry, this request has been cancelled');
+              return $timeout((function(_this) {
+                return function() {
+                  return CSpinner.hide();
+                };
+              })(this), 2000);
+            }
+          }
+        },
+        removeRequestCard: function(offerId) {
+          var spliceIndex;
+          spliceIndex = _.findIndex($scope.view.requests, function(offer) {
+            return offer.id === offerId;
+          });
+          if (spliceIndex !== -1) {
+            return $scope.view.requests.splice(spliceIndex, 1);
+          }
         }
       },
       init: function() {
@@ -40,10 +89,12 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         var params;
         params = {
           page: this.page,
+          acceptedOffers: false,
           displayLimit: 3
         };
         return OffersAPI.getSellerOffers(params).then((function(_this) {
           return function(data) {
+            console.log(data);
             return _this.onSuccess(data, params.displayLimit);
           };
         })(this), (function(_this) {
@@ -70,13 +121,14 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
             $scope.$broadcast('scroll.infiniteScrollComplete');
           }
           if (this.refresh) {
-            return this.requests = offerData;
+            this.requests = offerData;
           } else {
-            return this.requests = this.requests.concat(offerData);
+            this.requests = this.requests.concat(offerData);
           }
         } else {
-          return this.canLoadMore = false;
+          this.canLoadMore = false;
         }
+        return this.offerDetails.handlePendingRequest();
       },
       onError: function(type) {
         this.display = 'error';
@@ -100,30 +152,29 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       }
     };
     $scope.$on('modal.hidden', function() {
+      $scope.view.offerDetails.pendingRequestId = "";
       return $timeout(function() {
         return $scope.view.offerDetails.showExpiry = false;
       }, 1000);
     });
-    return $rootScope.$on('make:offer:success', function() {
+    $rootScope.$on('make:offer:success', function() {
       App.scrollTop();
       return $scope.view.reFetch();
     });
-  }
-]).directive('ajCountDown', [
-  '$timeout', '$parse', function($timeout, $parse) {
-    return {
-      restrict: 'A',
-      link: function(scope, el, attrs) {
-        return $timeout(function() {
-          var createdAt, total, totalStr;
-          createdAt = $parse(attrs.createdAt)(scope);
-          total = moment(moment(createdAt.iso)).add(24, 'hours');
-          totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
-          return $(el).countdown(totalStr, function(event) {
-            return $(el).html(event.strftime('%-H:%-M:%-S'));
-          });
-        });
+    $rootScope.$on('in:app:notification', function(e, obj) {
+      var offerId, payload;
+      payload = obj.payload;
+      switch (payload.type) {
+        case 'cancelled_request':
+          App.scrollTop();
+          return $scope.view.reFetch();
+        case 'accepted_offer':
+          offerId = payload.id;
+          return $scope.view.offerDetails.removeRequestCard(offerId);
       }
-    };
+    });
+    return $rootScope.$on('cancelled:request', function(e, obj) {
+      return $scope.view.offerDetails.onNotificationClick(obj.requestId);
+    });
   }
 ]);

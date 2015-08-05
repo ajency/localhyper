@@ -1,5 +1,5 @@
 angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
-  '$scope', 'CToast', 'App', 'SmsAPI', 'AuthAPI', 'CSpinner', 'User', '$ionicPlatform', function($scope, CToast, App, SmsAPI, AuthAPI, CSpinner, User, $ionicPlatform) {
+  '$scope', 'CToast', 'App', 'SmsAPI', 'AuthAPI', 'CSpinner', 'User', '$ionicPlatform', '$rootScope', function($scope, CToast, App, SmsAPI, AuthAPI, CSpinner, User, $ionicPlatform, $rootScope) {
     var onDeviceBack;
     $scope.view = {
       display: 'noError',
@@ -80,6 +80,7 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
       },
       register: function() {
         return AuthAPI.register(this.user).then(function(success) {
+          $rootScope.$broadcast('$user:registration:success');
           return App.navigate('verify-success', {}, {
             animate: true,
             back: false

@@ -44,6 +44,10 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         return $ionicSideMenuDelegate.toggleLeft();
       }
     };
+    $rootScope.$on('$user:registration:success', function() {
+      App.notification.icon = true;
+      return $scope.view.getNotifications();
+    });
     $rootScope.$on('get:unseen:notifications', function(e, obj) {
       return $scope.view.getNotifications();
     });
