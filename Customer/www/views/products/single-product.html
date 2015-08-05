@@ -5,37 +5,35 @@
 		<ion-list ng-switch="view.display">
 
 			<ion-spinner
-				class="aj-spinner" 
+				class="aj-spinner"
 				ng-switch-when="loader">
 			</ion-spinner>
-			
+
 			<div ng-switch-when="noError">
 				<img
-					class="aj-sp-img img-responsive" 
+					class="aj-sp-img img-responsive"
 					ng-src="{{view.product.images[0].src}}">
 
 				<div>
 					<div class="row">
 						<div class="col col-100">
-							<h4 class="subdued text-left"> 
+							<h4 class="subdued text-left">
 								<span class="text-danger">In</span> {{view.getPrimaryAttrs()}}
 							</h4>
 							<h3 class="text-left normal margin-none">{{view.product.name}}</h3>
 						</div>
 					</div>
 
-					<br>
-
 					<div class="row">
-						<div class="col col-33">
-							MRP 
-							<h3 class="text-left normal margin-none strike">
+						<div class="col col-33 align-center">
+							MRP
+							<h3 class="text-l eft normal margin-none strike">
 								<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
 							</h3>
 						</div>
 
-						<div class="col border-left">
-							<h4 class="text-left margin-none">
+						<div class="col border-left align-center">
+							<h4 class="text-l eft margin-none">
 								<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
 							</h4>
 							<div class="sm-text">local  <br>
@@ -43,8 +41,8 @@
 							</div>
 						</div>
 
-						<div class="col border-left">
-							<h4 class="text-left margin-none">
+						<div class="col border-left align-center">
+							<h4 class="text-le ft margin-none">
 								<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
 							</h4>
 							<div class="sm-text">Online <img src="./img/flipkart-icon.jpg"/><br>
@@ -52,50 +50,50 @@
 							</div>
 						</div>
 					</div>
-					
+
 				</div>
 			</div>
 
-			<aj-error 
+			<aj-error
 				ng-switch-when="error"
 				error-type="view.errorType"
 				tap-to-retry="view.onTapToRetry()">
 			</aj-error>
 		</ion-list>
 
-		<br>
+		<!-- <br> -->
 
-		<ion-list 
-			class="card-list" 
+		<ion-list
+			class="card-list bg-lightgrey"
 			ng-switch="view.request.display">
 
 			<ion-spinner
-				class="aj-verify-spinner" 
+				class="aj-verify-spinner"
 				ng-switch-when="loader">
 			</ion-spinner>
-			
+
 			<div ng-switch-when="noError">
-				<h4 ng-if="view.request.all.length > 0">
+				<h4 ng-if="view.request.all.length > 0" class="early-head">
 					Your earlier made requests
 				</h4>
 
 		       	<ion-item
-		       		class="card"
+		       		class="card no-shadow p-a-0 req-ca"
 		       		ng-repeat="request in view.request.all | limitTo: view.request.limitTo"
 		       		ng-controller="EachRequestTimeCtrl"
 		       		ng-click="view.request.onCardClick(request);">
 
 					<div class="row item border-none" >
 				        <div class="col  p-t-0">
-				            <sm class="light-gray"> MRP</sm><br>
-				            <h3 class=" item-text-wrap margin-none big-txt ">
+				            <sm class="light-gray"> MRP</sm>
+				            <h1 class=" item-text-wrap margin-none big-txt ">
 				            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.product.mrp)}}
-				            </h3>
+				            </h1><!--this was h3-->
 				        </div>
 				        <div class="col p-t-0">
 				        	<div class="pull-right">
 				            <div class="offer"> {{request.offerCount}} </div>
-				            <h4 class="offertxt light-gray"> No of offers</h4>
+				            <h4 class="offertxt light-gray"> offers</h4>
 				           	</div>
 				        </div>
 				    </div>
@@ -110,14 +108,14 @@
 				    </div>
 				</ion-item>
 
-				<ion-item 
+				<ion-item
 					ng-if="view.request.all.length > 1 && view.request.limitTo == 1"
 					ng-click="view.request.showAllRequests()">
 					Show all requests
 				</ion-item>
 			</div>
 
-			<ion-item 
+			<ion-item
 				class="item-text-wrap"
 				ng-switch-when="error"
 				ng-click="view.request.onTryAgain()">
@@ -128,20 +126,20 @@
 		<ion-infinite-scroll
 			on-infinite="view.request.get()"
 			ng-if="view.request.canLoadMore"
-			distance="1%" 
+			distance="1%"
 			class="aj-refresher">
 		</ion-infinite-scroll>
 
 	</ion-content>
 
 	<ion-footer-bar ng-show="view.footer" class="bar-assertive" >
-		<div 
+		<div
 			class="title"
 			ng-hide="view.request.active"
 			ng-click="view.checkUserLogin()">
 			Get Best Prices
 		</div>
-		<div 
+		<div
 			class="title"
 			ng-show="view.request.active">
 			You currently have an open request

@@ -20,12 +20,13 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
       }
     };
   }
-]).controller('EachRequestTimeCtrl', [
-  '$scope', '$interval', function($scope, $interval) {
-    var interval, setTime;
-    setTime = function() {
+]).factory('TimeString', [
+  function() {
+    var TimeString;
+    TimeString = {};
+    TimeString.get = function(obj) {
       var createdAt, day, days, diff, duration, format, hours, hr, iso, min, minutes, now, timeStr, week, weeks;
-      iso = $scope.request.createdAt.iso;
+      iso = obj.iso;
       format = 'DD/MM/YYYY HH:mm:ss';
       now = moment().format(format);
       createdAt = moment(iso).format(format);
@@ -52,7 +53,32 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
       } else {
         timeStr = "On " + (moment(iso).format('DD-MM-YYYY'));
       }
-      return $scope.request.timeStr = timeStr;
+      return timeStr;
+    };
+    return TimeString;
+  }
+]).directive('ajCountDown', [
+  '$timeout', '$parse', function($timeout, $parse) {
+    return {
+      restrict: 'A',
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          var createdAt, total, totalStr;
+          createdAt = $parse(attrs.createdAt)(scope);
+          total = moment(moment(createdAt.iso)).add(24, 'hours');
+          totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
+          return $(el).countdown(totalStr, function(event) {
+            return $(el).html(event.strftime('%-H:%-M:%-S'));
+          });
+        });
+      }
+    };
+  }
+]).controller('EachRequestTimeCtrl', [
+  '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
+    var interval, setTime;
+    setTime = function() {
+      return $scope.request.timeStr = TimeString.get($scope.request.createdAt);
     };
     setTime();
     interval = $interval(setTime, 60000);

@@ -1,11 +1,12 @@
-angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails) {
+angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner) {
     $scope.view = {
       name: '',
       phone: '',
       businessName: '',
       confirmedAddress: '',
       terms: false,
+      myProfileState: false,
       delivery: {
         radius: 10,
         plus: function() {
@@ -202,11 +203,33 @@ angular.module('LocalHyper.businessDetails', ['ngAutocomplete']).controller('Bus
             longitude: this.longitude,
             deliveryRadius: this.delivery.radius
           }).then(function() {
-            return App.navigate('category-chains');
+            var user;
+            if (App.previousState === 'my-profile') {
+              CSpinner.show('', 'Please wait...');
+              user = User.info('get');
+              return AuthAPI.isExistingUser(user).then((function(_this) {
+                return function(data) {
+                  return AuthAPI.loginExistingUser(data.userObj);
+                };
+              })(this)).then(function(success) {
+                return App.navigate('my-profile');
+              }, (function(_this) {
+                return function(error) {
+                  return CToast.show('Please try again data not saved');
+                };
+              })(this))["finally"](function() {
+                return CSpinner.hide();
+              });
+            } else {
+              return App.navigate('category-chains');
+            }
           });
         }
       }
     };
+    $scope.$on('$ionicView.beforeEnter', function() {
+      return $scope.view.myProfileState = App.previousState === 'my-profile';
+    });
     return $scope.$on('$ionicView.enter', function() {
       return App.hideSplashScreen();
     });

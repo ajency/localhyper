@@ -19,11 +19,12 @@ angular.module 'LocalHyper.requestsOffers', []
 ]
 
 
-.controller 'EachRequestTimeCtrl', ['$scope', '$interval', ($scope, $interval)->
+.factory 'TimeString', [->
 
-	#Request time
-	setTime = ->
-		iso       = $scope.request.createdAt.iso
+	TimeString = {}
+
+	TimeString.get = (obj)->
+		iso       = obj.iso
 		format    = 'DD/MM/YYYY HH:mm:ss'
 		now       = moment().format format
 		createdAt = moment(iso).format format
@@ -50,7 +51,31 @@ angular.module 'LocalHyper.requestsOffers', []
 		else
 			timeStr = "On #{moment(iso).format('DD-MM-YYYY')}"
 
-		$scope.request.timeStr = timeStr
+		timeStr
+
+	TimeString
+]
+
+
+.directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->
+	
+	restrict: 'A'
+	link: (scope, el, attrs)->
+
+		$timeout ->
+			createdAt = $parse(attrs.createdAt)(scope)
+			total = moment(moment(createdAt.iso)).add 24, 'hours'
+			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
+			$(el).countdown totalStr, (event)->
+				$(el).html event.strftime('%-H:%-M:%-S')
+]
+
+
+.controller 'EachRequestTimeCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
+
+	#Request time
+	setTime = ->
+		$scope.request.timeStr = TimeString.get $scope.request.createdAt
 
 	setTime()
 	interval = $interval setTime, 60000
@@ -95,3 +120,4 @@ angular.module 'LocalHyper.requestsOffers', []
 					controller: 'SuccessfulOffersCtrl'
 					templateUrl: 'views/requests-offers/successful-offers.html'
 ]
+

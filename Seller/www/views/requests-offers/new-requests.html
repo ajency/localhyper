@@ -15,21 +15,33 @@
 
 	<ion-content ng-switch="view.display">
 
+		<ion-refresher
+			on-refresh="view.onPullToRefresh()" 
+			class="aj-refresher">
+		</ion-refresher>
+
 		<ion-spinner
-			class="aj-spinner spinner-android"
+			class="aj-spinner"
 			ng-switch-when="loader">
 		</ion-spinner>
 
-		<ion-list ng-switch-when="noError" class="card-list">
+		<ion-list 
+			ng-switch-when="noError" 
+			class="card-list">
+
+			<ion-item 
+				ng-if="view.requests.length == 0;"
+				class="item-text-wrap">
+				You currently do not have new requests.
+			</ion-item>
 
 	       	<ion-item
 	       		class="card"
 	       		ng-repeat="request in view.requests | orderBy:'-createdAt.iso'"
-	       		ng-init="request.new=view.isNew(request.id)"
-	       		ng-click="view.showRequestDetails(request)"
-	       		ng-class="(request.new) ? 'notify-alert' : ''"
+	       		ng-click="view.requestDetails.show(request)"
+	       		ng-class="(request.notification.hasSeen) ? '' : 'notify-alert'"
 	       		ng-controller="EachRequestTimeCtrl">
-
+				
 				<div class="item-wrapper-nr">
 					<div class="item-avatar border-none margin-none">
 				        <img ng-src="{{request.product.image[0].src}}">
@@ -47,12 +59,12 @@
 			        </div>
 			        <div class="col p-t-0">
 			        	<div class="pull-right">
-			            <div class="offer"> 2 </div>
+			            <div class="offer"> {{request.offerCount}} </div>
 			            <h4 class="offertxt light-gray"> No of offers</h4>
 			           	</div>
 			        </div>
 			    </div>
-			      <div class="item item-divider">
+			    <div class="item item-divider">
 			        <div class="pull-right ">
 			            <h3 class="margin-none "> Make an offer &nbsp;<i class="ion ion-log-out btn-danger"></i></h3>
 			        </div>
@@ -61,54 +73,7 @@
 			            <sm class="subdued">{{request.timeStr}}</sm>
 			        </div>
 			    </div>
-<!--
-			    <div
-			    	class="item item-avatar border-none">
 
-			        <img ng-src="{{request.product.image[0].src}}">
-			        <h2>{{request.product.name}}</h2>
-			        <p>{{request.radius.toFixed(1)}} kms radius</p>
-			    </div>
-
-			    <div class="row">
-			        <div class="col ">
-			            <sm class="subdued"> Local Price</sm>
-			            <h3 class=" item-text-wrap margin-none big-txt">
-			            	<span class="WebRupee subdued">&#x20B9;</span> 19,000
-			            </h3>
-			        </div>
-			        <div class="col">
-			            <sm class="subdued"> &nbsp;</sm>
-			            <h4 class="text-left margin-none">
-			            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.product.mrp)}} MRP
-			            </h4>
-			            <h4 class="text-left margin-none">
-			            	<span class="WebRupee subdued">&#x20B9;</span> 19,000 Online
-			            </h4>
-			        </div>
-			        <div class="col">
-			            <div class="offer"> 2 </div>
-			            <h4 class="offertxt"> No of offers</h4>
-			        </div>
-			    </div>
-
-			    <div class="row">
-			        <div class="col col-100">
-			            <span class="label"> {{request.category.parent}}</span>
-			            <span class="label"> {{request.category.name}}</span>
-			            <span class="label"> {{request.brand.name}}</span>
-			        </div>
-			    </div>
-
-			    <div class="item item-divider">
-			        <div class="pull-left ">
-			            <h2 class="margin-none"> Make an offer &nbsp;<i class="ion ion-chevron-right btn-danger"></i></h2>
-			        </div>
-
-			        <div class="pull-right ">
-			            <sm class="subdued">{{request.timeStr}}</sm>
-			        </div>
-			    </div> -->
 			</ion-item>
 		</ion-list>
 

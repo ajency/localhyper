@@ -1,7 +1,8 @@
 angular.module('LocalHyper.requestsOffers').factory('OffersAPI', [
-  '$q', '$http', function($q, $http) {
-    var OffersAPI;
+  '$q', '$http', 'User', function($q, $http, User) {
+    var OffersAPI, acceptedOfferId;
     OffersAPI = {};
+    acceptedOfferId = '';
     OffersAPI.makeOffer = function(params) {
       var defer;
       defer = $q.defer();
@@ -12,22 +13,14 @@ angular.module('LocalHyper.requestsOffers').factory('OffersAPI', [
       });
       return defer.promise;
     };
-    return OffersAPI;
-  }
-]).factory('OfferHistoryAPI', [
-  '$q', '$http', 'User', '$timeout', function($q, $http, User, $timeout) {
-    var OfferHistoryAPI;
-    OfferHistoryAPI = {};
-    OfferHistoryAPI.offerhistory = function(opts) {
-      var defer, params, user;
-      user = User.getCurrent();
+    OffersAPI.getSellerOffers = function(opts) {
+      var defer, params;
       defer = $q.defer();
-      user = User.getCurrent();
       params = {
-        "sellerId": user.id,
+        "sellerId": User.getId(),
         "page": opts.page,
-        "displayLimit": "3",
-        "acceptedOffers": false,
+        "displayLimit": opts.displayLimit,
+        "acceptedOffers": opts.acceptedOffers,
         "selectedFilters": [],
         "sortBy": "updatedAt",
         "descending": true
@@ -39,6 +32,14 @@ angular.module('LocalHyper.requestsOffers').factory('OffersAPI', [
       });
       return defer.promise;
     };
-    return OfferHistoryAPI;
+    OffersAPI.acceptedOfferId = function(action, id) {
+      switch (action) {
+        case 'set':
+          return acceptedOfferId = id;
+        case 'get':
+          return acceptedOfferId;
+      }
+    };
+    return OffersAPI;
   }
 ]);

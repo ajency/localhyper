@@ -4,12 +4,15 @@ angular.module 'LocalHyper.common'
 .factory 'CToast', ['$cordovaToast', 'App', ($cordovaToast, App)->
 
 	CToast = {}
+	webview = App.isWebView()
 
 	CToast.show = (content)->
-		if App.isWebView()
-			$cordovaToast.showShortBottom content
-		else
-			console.log content
+		if webview then $cordovaToast.showShortBottom content
+		else console.log content
+
+	CToast.showLongBottom = (content)->
+		if webview then $cordovaToast.showLongBottom content
+		else console.log content
 
 	CToast
 ]

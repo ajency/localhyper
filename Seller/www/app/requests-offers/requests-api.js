@@ -1,7 +1,8 @@
 angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
   '$q', '$http', 'User', '$timeout', function($q, $http, User, $timeout) {
-    var RequestsAPI;
+    var RequestsAPI, cancelledRequestId;
     RequestsAPI = {};
+    cancelledRequestId = '';
     RequestsAPI.getAll = function() {
       var defer, params, user;
       defer = $q.defer();
@@ -20,22 +21,27 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       });
       return defer.promise;
     };
-    RequestsAPI.getById = function(id) {
-      var defer;
+    RequestsAPI.getSingleRequest = function(requestId) {
+      var defer, params, user;
       defer = $q.defer();
-      $http.get("classes/Request/" + id + "?include=product,brand").then(function(data) {
-        return defer.resolve(data.data);
+      user = User.getCurrent();
+      params = {
+        "requestId": requestId,
+        "sellerId": user.id,
+        "sellerGeoPoint": user.get('addressGeoPoint')
+      };
+      $http.post('functions/getSingleRequest', params).then(function(data) {
+        return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);
       });
       return defer.promise;
     };
     RequestsAPI.getNotifications = function() {
-      var defer, params, user;
+      var defer, params;
       defer = $q.defer();
-      user = User.getCurrent();
       params = {
-        "userId": user.id,
+        "userId": User.getId(),
         "type": "Request"
       };
       $http.post('functions/getUnseenNotifications', params).then(function(data) {
@@ -46,12 +52,11 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       return defer.promise;
     };
     RequestsAPI.updateStatus = function(requestId) {
-      var defer, params, user;
+      var defer, params;
       defer = $q.defer();
-      user = User.getCurrent();
       params = {
-        "notificationTypeId": "" + requestId,
-        "recipientId": "" + user.id,
+        "notificationTypeId": requestId,
+        "recipientId": User.getId(),
         "notificationType": "Request",
         "hasSeen": true
       };
@@ -61,6 +66,14 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
         return defer.reject(error);
       });
       return defer.promise;
+    };
+    RequestsAPI.cancelledRequestId = function(action, id) {
+      switch (action) {
+        case 'set':
+          return cancelledRequestId = id;
+        case 'get':
+          return cancelledRequestId;
+      }
     };
     return RequestsAPI;
   }

@@ -1,10 +1,18 @@
 angular.module('LocalHyper.common').factory('CToast', [
   '$cordovaToast', 'App', function($cordovaToast, App) {
-    var CToast;
+    var CToast, webview;
     CToast = {};
+    webview = App.isWebView();
     CToast.show = function(content) {
-      if (App.isWebView()) {
+      if (webview) {
         return $cordovaToast.showShortBottom(content);
+      } else {
+        return console.log(content);
+      }
+    };
+    CToast.showLongBottom = function(content) {
+      if (webview) {
+        return $cordovaToast.showLongBottom(content);
       } else {
         return console.log(content);
       }

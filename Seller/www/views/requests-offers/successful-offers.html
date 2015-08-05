@@ -1,27 +1,107 @@
-<ion-view aj-remove-box-shadow>
+<ion-view 
+	aj-remove-box-shadow
+	ng-init="view.init()">
 
 	<ion-nav-title>
 		<img src="img/logo.png"/>
     </ion-nav-title>
 
 	<ion-nav-buttons side="left">
-		<button 
-			menu-toggle="left" 
+		<button
+			menu-toggle="left"
 			class="button button-icon icon ion-navicon">
 		</button>
 	</ion-nav-buttons>
 
-	<ion-content>
+	<ion-content ng-switch="view.display">
+
+		<ion-refresher
+			on-refresh="view.onPullToRefresh()" 
+			class="aj-refresher">
+		</ion-refresher>
+
+		<ion-list 
+			class="card-list" 
+			ng-switch-when="noError">
+	       	
+	       	<ion-item
+	       		class="card"
+	       		ng-repeat="request in view.requests"
+	       		ng-click="view.offerDetails.show(request)">
+
+	       		<div class="item-wrapper-nr">
+					<div class="item-avatar border-none margin-none">
+				        <img ng-src="{{request.product.images[0].src}}">
+				    </div>
+				    <h2>{{request.product.name}}</h2> 
+				    <p> {{request.distanceFromCustomer.toFixed(2)}} kms radius </p>
+
+				    <div class="col p-t-0" >
+			            <sm class="light-gray"> Claimed delivery :</sm>
+			            	{{request.offerDeliveryTime.value}} {{request.offerDeliveryTime.unit}}
+			            <br>
+			        </div>
+					
+					<sm 
+						class="light-gray" 
+						ng-if="request.offerStatus != 'unaccepted'"> 
+						Request Status : {{App.humanize(request.request.status)}}
+					</sm>
+				</div>
+
+				<div class="row item border-none" >
+			        <div class="col p-t-0">
+			            <sm class="light-gray">Offer Price</sm><br>
+			            <h3 class=" item-text-wrap margin-none big-txt ">
+			            	<span class="WebRupee subdued">&#x20B9;</span> 
+			            	{{App.toINR(request.offerPrice)}}
+			            </h3>
+			        </div>
+			        <div class="col p-t-0">
+			        	<div class="pull-right">
+				            <div class="offer"> {{request.request.offerCount}} </div>
+				            <h4 class="offertxt light-gray"> No of offers</h4>
+			           	</div>
+			        </div>
+			    </div>
+
+			    <div class="item item-divider">
+			        <div class="pull-right ">
+			            <h3 class="margin-none"> Details &nbsp;<i class="ion ion-log-out btn-danger"></i></h3>
+			        </div>
+
+			        <div class="pull-left ">
+			            Offer status: <b>{{App.humanize(request.offerStatus)}}</b>
+			        </div>
+			    </div>
+			</ion-item>
+		</ion-list>
+
+		<aj-error
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry()">
+		</aj-error>
+
+		<ion-infinite-scroll
+			on-infinite="view.onInfiniteScroll()"
+			ng-if="view.canLoadMore"
+			distance="1%" 
+			class="aj-refresher">
+		</ion-infinite-scroll>
 
 	</ion-content>
-		<ion-footer-bar class="bar-dark">
-			<div class="row">
-				<div class="col col-50 text-center" >
-					<h5 class="margin-none text-light normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
-				</div>
-				<div class="col col-50 text-center border-left">
-					<h5 class="margin-none text-light normal"><i class="ion ion-funnel"></i> FILTER</h5>
-				</div>
+
+	<ion-footer-bar class="bar-dark">
+		<div class="row">
+			<div class="col col-50 text-center" >
+				<h5 class="margin-none text-light normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
 			</div>
+			<div class="col col-50 text-center border-left">
+				<h5 class="margin-none text-light normal"><i class="ion ion-funnel"></i> FILTER</h5>
+			</div>
+		</div>
 	</ion-footer-bar>
+
 </ion-view>
+
