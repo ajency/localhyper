@@ -1,7 +1,8 @@
 angular.module('LocalHyper.storage', []).factory('Storage', [
   function() {
-    var Storage;
+    var Storage, userInfo;
     Storage = {};
+    userInfo = {};
     Storage.slideTutorial = function(action) {
       switch (action) {
         case 'set':

@@ -1,8 +1,9 @@
 angular.module 'LocalHyper.profile', []
 
 
-.controller 'ProfileCtrl', ['$q', '$scope', 'User', 'App', 'CToast', 'Storage', 'CategoriesAPI', 'AuthAPI', 'CSpinner', 'CategoryChains'
-	, ($q, $scope, User, App, CToast, Storage, CategoriesAPI, AuthAPI, CSpinner, CategoryChains)->
+.controller 'ProfileCtrl', ['$q', '$scope', 'User', 'App', 'CToast', 'Storage', 'CategoriesAPI', 'AuthAPI', 'CSpinner'
+	, 'CategoryChains', '$rootScope'
+	, ($q, $scope, User, App, CToast, Storage, CategoriesAPI, AuthAPI, CSpinner, CategoryChains, $rootScope)->
 
 		
 		$scope.view = 
@@ -32,16 +33,22 @@ angular.module 'LocalHyper.profile', []
 				CategoriesAPI.categoryChains 'set', @categoryChains
 				Storage.categoryChains 'set', @categoryChains
 
-				user = User.info 'get'
-				AuthAPI.isExistingUser(user)
-				.then (data)=>
-					AuthAPI.loginExistingUser(data.userObj)
-				.then (success)->
-					App.navigate('new-requests')
-				, (error)=>
-					CToast.show 'Please try again data not saved'
-				.finally ->
-					CSpinner.hide()
+				defer = $q.defer()
+				Storage.bussinessDetails 'get'
+				.then (details)->
+					User.info 'reset', details
+					user = User.info 'get'
+					user = User.info 'get'
+					AuthAPI.isExistingUser(user)
+					.then (data)=>
+						AuthAPI.loginExistingUser(data.userObj)
+					.then (success)->
+						$rootScope.$broadcast 'category:chain:changed'
+						App.navigate('new-requests')
+					, (error)=>
+						CToast.show 'Please try again data not saved'
+					.finally ->
+						CSpinner.hide()
 
 
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
@@ -67,7 +74,7 @@ angular.module 'LocalHyper.profile', []
 ]
 
 
-.config ['$stateProvider', ($stateProvider)->
+.config ['$stateProvider', ($stateProvider,Storage,CategoriesAPI)->
 
 	$stateProvider
 
@@ -82,4 +89,16 @@ angular.module 'LocalHyper.profile', []
 					resolve :
 						CategoryChains : ($q, Storage,CategoriesAPI)->
 						    	chains = CategoriesAPI.categoryChains('get')
+						    	defer = $q.defer()
+						    	if chains.length == 0
+						    		defer = $q.defer()
+						    		Storage.categoryChains 'get'
+						    		.then (chains) ->
+						    			CategoriesAPI.categoryChains 'set', chains
+						    			defer.resolve chains
+						    	else 
+						    		defer.resolve chains
+
+						    	defer.promise
+						  
 ]
