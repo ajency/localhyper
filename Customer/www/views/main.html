@@ -45,14 +45,19 @@
 		<ion-content class="aj-menu-bg">
 
 			<ion-list class="aj-menutext">
+				
+				<ion-item ng-if="view.userProfile.display">
+					<h2 style="color: #FFF">{{view.userProfile.name}}</h2>
+					<h2 style="color: #FFF">+91-{{view.userProfile.phone}}</h2>
+				</ion-item>
 
-				<ion-item ng-click="view.menuClose()">
+				<ion-item ng-click="view.menuClose(); App.navigate('categories');">
 					<i class="i-store"></i> <b>Store</b>
 				</ion-item>
 
 				<hr>
 
-				<ion-item ng-click="view.onCallUs()" >
+				<ion-item ng-click="view.onCallUs()">
 					<i class="i-call"></i> Call us
 				</ion-item>
 				
@@ -68,11 +73,11 @@
 					<i class="i-help"></i> Help
 				</ion-item>
 
-				<ion-item ng-click="view.menuClose();App.navigate('suggest-product')">
+				<ion-item ng-click="view.menuClose(); App.navigate('suggest-product');">
 					<i class="i-suggest"></i> Suggest a product
 				</ion-item>
 
-				<ion-item ng-click="view.menuClose(); App.navigate('about-us')">
+				<ion-item ng-click="view.menuClose(); App.navigate('about-us');">
 					<i class="i-about"></i> About us
 				</ion-item>
 

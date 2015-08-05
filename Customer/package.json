@@ -54,6 +54,10 @@
     {
       "locator": "https://github.com/pushandplay/cordova-plugin-apprate.git",
       "id": "org.pushandplay.cordova.apprate"
+    },
+    {
+      "locator": "https://github.com/whiteoctober/cordova-plugin-app-version.git",
+      "id": "uk.co.whiteoctober.cordova.appversion"
     }
   ],
   "cordovaPlatforms": [

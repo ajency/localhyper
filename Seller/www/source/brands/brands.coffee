@@ -2,8 +2,8 @@ angular.module 'LocalHyper.brands', []
 
 
 .controller 'BrandsCtrl', ['$scope', 'BrandsAPI', '$stateParams', 'SubCategory'
-	, 'CToast', 'CategoriesAPI', 'App', 'CDialog', 'Storage'
-	, ($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog, Storage)->
+	, 'CToast', 'CategoriesAPI', 'App', 'CDialog', 'Storage','User'
+	, ($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog, Storage, User)->
 
 		$scope.view =
 			title: SubCategory.name
@@ -103,17 +103,20 @@ angular.module 'LocalHyper.brands', []
 					else @goBack()
 
 			goBack : ->
-				CategoriesAPI.categoryChains 'set', @categoryChains 
-				Storage.categoryChains 'set', @categoryChains
-				.then =>
-					switch App.previousState
-						when 'categories' then count = -2
-						when 'sub-categories' then count = -3
-						when 'category-chains' then count = -1
-						else count = 0
-					App.goBack count
-					# App.navigate 'category-chains'
-
+				if User.isLoggedIn() #if user is logged it only sets in category api
+					CategoriesAPI.categoryChains 'set', @categoryChains 
+					App.navigate 'my-profile'
+				else
+					CategoriesAPI.categoryChains 'set', @categoryChains 
+					Storage.categoryChains 'set', @categoryChains
+					.then =>
+						switch App.previousState
+							when 'categories' then count = -2
+							when 'sub-categories' then count = -3
+							when 'category-chains' then count = -1
+							when 'my-profile' then count = -1
+							else count = 0
+						App.goBack count
 
 		$scope.$on '$ionicView.beforeEnter', ->
 			if $scope.view.display is 'noError'
