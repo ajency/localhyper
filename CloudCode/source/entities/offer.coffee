@@ -223,13 +223,14 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     if acceptedOffers is true
         allowedStatuses = ["accepted"]
         if selectedFilters.length is 0
-            allowedStatuses = ["pending_delivery","sent_for_delivery", "failed_delivery", "successful"] 
+            allowedReqStatuses = ["pending_delivery","sent_for_delivery", "failed_delivery", "successful"] 
         else
-            allowedStatuses = selectedFilters 
+            allowedReqStatuses = selectedFilters 
             
         innerQueryRequest = new Parse.Query("Request")
-        innerQueryRequest.containedIn("status", allowedStatuses)
+        innerQueryRequest.containedIn("status", allowedReqStatuses)
         queryOffers.matchesQuery("request", innerQueryRequest)
+        queryOffers.containedIn("status", allowedStatuses)
 
     else
         if selectedFilters.length is 0

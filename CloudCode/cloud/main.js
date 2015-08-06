@@ -924,7 +924,7 @@
   });
 
   Parse.Cloud.define('getSellerOffers', function(request, response) {
-    var acceptedOffers, allowedStatuses, descending, displayLimit, innerQueryRequest, innerSellerQuery, page, queryOffers, selectedFilters, sellerGeoPoint, sellerId, sortBy, sortColumn;
+    var acceptedOffers, allowedReqStatuses, allowedStatuses, descending, displayLimit, innerQueryRequest, innerSellerQuery, page, queryOffers, selectedFilters, sellerGeoPoint, sellerId, sortBy, sortColumn;
     sellerId = request.params.sellerId;
     sellerGeoPoint = request.params.sellerGeoPoint;
     page = parseInt(request.params.page);
@@ -940,13 +940,14 @@
     if (acceptedOffers === true) {
       allowedStatuses = ["accepted"];
       if (selectedFilters.length === 0) {
-        allowedStatuses = ["pending_delivery", "sent_for_delivery", "failed_delivery", "successful"];
+        allowedReqStatuses = ["pending_delivery", "sent_for_delivery", "failed_delivery", "successful"];
       } else {
-        allowedStatuses = selectedFilters;
+        allowedReqStatuses = selectedFilters;
       }
       innerQueryRequest = new Parse.Query("Request");
-      innerQueryRequest.containedIn("status", allowedStatuses);
+      innerQueryRequest.containedIn("status", allowedReqStatuses);
       queryOffers.matchesQuery("request", innerQueryRequest);
+      queryOffers.containedIn("status", allowedStatuses);
     } else {
       if (selectedFilters.length === 0) {
         allowedStatuses = ["open", "unaccepted"];
