@@ -5,7 +5,7 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.auth', 'LocalHyper.businessDetails', 'LocalHyper.main'
 	, 'LocalHyper.categories', 'LocalHyper.brands', 'LocalHyper.googleMaps'
 	, 'LocalHyper.requestsOffers', 'LocalHyper.requestsOffers', 'LocalHyper.profile'
-	, 'LocalHyper.aboutUs']
+	, 'LocalHyper.aboutUs','LocalHyper.suggestProduct']
 
 
 .run ['$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps'
@@ -17,6 +17,8 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		#User Notification Icon (Right popover)
 		App.notification = 
 			icon: false
+			newRequests: 0
+			accptedOffers: 0
 			badge: false
 			count: 0
 			increment : ->

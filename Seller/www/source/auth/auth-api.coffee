@@ -151,6 +151,7 @@ angular.module 'LocalHyper.auth'
 			.then (appInstallationId)=>
 				installationId = appInstallationId
 				defaults = new Parse.Query 'Defaults'
+				defaults.equalTo "type", "SellerCredit"
 				defaults.first()
 			.then (defaultObj)=>
 				user = new Parse.User()
@@ -170,7 +171,7 @@ angular.module 'LocalHyper.auth'
 					"supportedCategories": info.supportedCategories
 					"supportedBrands": info.supportedBrands
 					"lastLogin": new Date()
-					"credit": defaultObj.get 'sellerCredit'
+					"credit": parseFloat defaultObj.get('value')
 				
 				user.signUp()
 			.then ->

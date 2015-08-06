@@ -168,6 +168,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           var defaults;
           installationId = appInstallationId;
           defaults = new Parse.Query('Defaults');
+          defaults.equalTo("type", "SellerCredit");
           return defaults.first();
         };
       })(this)).then((function(_this) {
@@ -190,7 +191,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
             "supportedCategories": info.supportedCategories,
             "supportedBrands": info.supportedBrands,
             "lastLogin": new Date(),
-            "credit": defaultObj.get('sellerCredit')
+            "credit": parseFloat(defaultObj.get('value'))
           });
           return user.signUp();
         };

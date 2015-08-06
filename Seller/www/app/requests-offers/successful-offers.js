@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform, DeliveryTime) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -8,6 +8,9 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
       page: 0,
       canLoadMore: true,
       refresh: false,
+      gotAllOffers: false,
+      noAcceptedOffers: false,
+      deliveryTime: DeliveryTime,
       sortBy: 'updatedAt',
       descending: true,
       filter: {
@@ -173,6 +176,8 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
       autoFetch: function() {
         this.page = 0;
         this.requests = [];
+        this.gotAllOffers = false;
+        this.noAcceptedOffers = false;
         return this.showOfferHistory();
       },
       reFetch: function(refresh) {
@@ -183,6 +188,8 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         this.page = 0;
         this.requests = [];
         this.canLoadMore = true;
+        this.gotAllOffers = false;
+        this.noAcceptedOffers = false;
         return $timeout((function(_this) {
           return function() {
             return _this.onScrollComplete();
@@ -234,6 +241,12 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
           }
         } else {
           this.canLoadMore = false;
+          if (_.size(this.requests) === 0) {
+            this.noAcceptedOffers = true;
+          }
+        }
+        if (!this.canLoadMore) {
+          this.gotAllOffers = true;
         }
         return this.offerDetails.handlePendingOffer();
       },
@@ -246,6 +259,8 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         this.refresh = true;
         this.page = 0;
         this.canLoadMore = true;
+        this.gotAllOffers = false;
+        this.noAcceptedOffers = false;
         return this.showOfferHistory();
       },
       onInfiniteScroll: function() {

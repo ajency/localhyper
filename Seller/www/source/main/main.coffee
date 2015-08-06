@@ -3,9 +3,9 @@ angular.module 'LocalHyper.main', []
 
 .controller 'SideMenuCtrl', ['$scope', 'App', '$ionicPopover', '$rootScope'
 	, '$ionicSideMenuDelegate', 'CSpinner', '$timeout', 'Push', 'User', 'RequestsAPI'
-	, '$cordovaSocialSharing', '$cordovaAppRate'
+	, '$cordovaSocialSharing', '$cordovaAppRate', 'OffersAPI'
 	, ($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, CSpinner
-	, $timeout, Push, User, RequestsAPI, $cordovaSocialSharing, $cordovaAppRate)->
+	, $timeout, Push, User, RequestsAPI, $cordovaSocialSharing, $cordovaAppRate, OffersAPI)->
 
 		$scope.view = 
 			userPopover: null
@@ -13,7 +13,9 @@ angular.module 'LocalHyper.main', []
 			init : ->
 				Push.register()
 				@loadPopOver()
-				@getNotifications() if User.isLoggedIn()
+				if User.isLoggedIn()
+					@getNotifications()
+					@getCountOfAcceptedOffers()
 				$ionicSideMenuDelegate.edgeDragThreshold true
 
 			getNotifications : ->
@@ -23,6 +25,11 @@ angular.module 'LocalHyper.main', []
 					if notifications > 0
 						App.notification.badge = true
 						App.notification.count = notifications
+
+			getCountOfAcceptedOffers : ->
+				OffersAPI.getAcceptedOfferCount()
+				.then (count)->
+					App.notification.accptedOffers = count
 
 			loadPopOver : ->
 				$ionicPopover.fromTemplateUrl 'views/user-popover.html',
@@ -58,11 +65,14 @@ angular.module 'LocalHyper.main', []
 				$cordovaAppRate.promptForRating(true) if App.isWebView()
 
 
+		$rootScope.$on 'get:unseen:notifications', (e, obj)->
+			$scope.view.getNotifications()
+
+		$rootScope.$on 'get:accepted:offer:count', (e, obj)->
+			$scope.view.getCountOfAcceptedOffers()
+		
 		$rootScope.$on '$user:registration:success', ->
 			App.notification.icon = true
-			$scope.view.getNotifications()
-		
-		$rootScope.$on 'get:unseen:notifications', (e, obj)->
 			$scope.view.getNotifications()
 
 		$rootScope.$on 'in:app:notification', (e, obj)->

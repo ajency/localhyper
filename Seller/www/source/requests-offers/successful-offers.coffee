@@ -2,8 +2,9 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'SuccessfulOffersCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope', 'CDialog', '$ionicPlatform'
-	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform)->
+	, '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime'
+	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog
+	, $ionicPlatform, DeliveryTime)->
 
 		$scope.view = 
 			display: 'loader'
@@ -12,6 +13,9 @@ angular.module 'LocalHyper.requestsOffers'
 			page: 0
 			canLoadMore: true
 			refresh: false
+			gotAllOffers: false
+			noAcceptedOffers: false
+			deliveryTime: DeliveryTime
 
 			sortBy: 'updatedAt'
 			descending: true
@@ -128,6 +132,8 @@ angular.module 'LocalHyper.requestsOffers'
 			autoFetch : ->
 				@page = 0
 				@requests = []
+				@gotAllOffers = false
+				@noAcceptedOffers = false
 				@showOfferHistory()
 
 			reFetch : (refresh=true)->
@@ -135,6 +141,8 @@ angular.module 'LocalHyper.requestsOffers'
 				@page = 0
 				@requests = []
 				@canLoadMore = true
+				@gotAllOffers = false
+				@noAcceptedOffers = false
 				$timeout =>
 					@onScrollComplete()
 
@@ -172,7 +180,9 @@ angular.module 'LocalHyper.requestsOffers'
 					else @requests = @requests.concat offerData
 				else
 					@canLoadMore = false
+					@noAcceptedOffers = true if _.size(@requests) is 0
 
+				@gotAllOffers = true if !@canLoadMore
 				@offerDetails.handlePendingOffer()
 
 			onError: (type)->
@@ -184,6 +194,8 @@ angular.module 'LocalHyper.requestsOffers'
 				@refresh = true
 				@page = 0
 				@canLoadMore = true
+				@gotAllOffers = false
+				@noAcceptedOffers = false
 				@showOfferHistory()
 
 			onInfiniteScroll : ->

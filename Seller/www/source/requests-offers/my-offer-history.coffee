@@ -14,6 +14,8 @@ angular.module 'LocalHyper.requestsOffers'
 			page: 0
 			canLoadMore: true
 			refresh: false
+			gotAllOffers: false
+			noOffersMade: false
 			deliveryTime: DeliveryTime
 
 			sortBy: 'updatedAt'
@@ -102,7 +104,6 @@ angular.module 'LocalHyper.requestsOffers'
 				
 				show : (request)->
 					@data = request
-					console.log @data
 					@modal.show()
 					@showExpiry = true
 
@@ -147,6 +148,8 @@ angular.module 'LocalHyper.requestsOffers'
 			autoFetch : ->
 				@page = 0
 				@requests = []
+				@gotAllOffers = false
+				@noOffersMade = false
 				@showOfferHistory()
 
 			reFetch : (refresh=true)->
@@ -154,6 +157,8 @@ angular.module 'LocalHyper.requestsOffers'
 				@page = 0
 				@requests = []
 				@canLoadMore = true
+				@gotAllOffers = false
+				@noOffersMade = false
 				$timeout =>
 					@onScrollComplete()
 
@@ -197,7 +202,9 @@ angular.module 'LocalHyper.requestsOffers'
 					else @requests = @requests.concat offerData
 				else
 					@canLoadMore = false
-
+					@noOffersMade = true if _.size(@requests) is 0
+				
+				@gotAllOffers = true if !@canLoadMore
 				@offerDetails.handlePendingRequest()
 
 			onError: (type)->
@@ -209,6 +216,8 @@ angular.module 'LocalHyper.requestsOffers'
 				@refresh = true
 				@page = 0
 				@canLoadMore = true
+				@gotAllOffers = false
+				@noOffersMade = false
 				@showOfferHistory()
 
 			onInfiniteScroll : ->
