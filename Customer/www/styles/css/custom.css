@@ -1087,17 +1087,32 @@ label.status-label {
 .color-greylight {
   color: #999999;
 }
+.filters-white-bg {
+  background-color: #ffffff;
+}
+.filters-white-bg .has-header {
+  background-color: transparent;
+}
+.filter-head button.button {
+  font-size: 15px;
+  margin-left: 5px;
+}
+.filter-head button.button.btn-close {
+  font-size: 32px;
+}
 .products-filter-view {
   margin-top: 9px;
 }
 .products-filter-view label.item-radio {
-  border-color: #666;
+  /* border-color: #666; */
+  font-size: 14px;
+  background-color: transparent;
+  text-align: center;
 }
 .products-filter-view label.item-radio .item-content {
   padding: 14px 10px;
-  background: #262626;
-  color: #ffffff;
-  box-shadow: 0 0 0 #000;
+  background: transparent;
+  color: #444;
 }
 .products-filter-view label.item-radio .item-content .sel-count {
   float: right;
@@ -1106,14 +1121,39 @@ label.status-label {
   line-height: 21px;
   font-size: 14px;
   color: #fff;
-  background-color: #f45152;
+  background-color: #444;
   text-align: center;
   font-weight: bold;
   margin-top: 0px;
 }
 .products-filter-view label.item-radio input:checked ~ .item-content {
-  background-color: #F7F7F7;
-  color: #262626;
+  background-color: #ffffff;
+  color: #f45152;
+}
+.products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before {
+  content: "\f349";
+}
+.products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
+  content: "\f2aa";
+}
+.products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before,
+.products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
+  display: block;
+  width: 25px;
+  height: 25px;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  display: inline-block;
+  font-family: "Ionicons";
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  text-rendering: auto;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 .products-filter-view .item-checkbox {
   padding: 9px 60px;
@@ -1146,8 +1186,9 @@ label.status-label {
 }
 .products-filter-view .col.col-33.p-a-0:before {
   content: '';
-  width: 33.33%;
+  width: 33.6%;
   height: 1000%;
   position: fixed;
-  background-color: #262626;
+  background-color: #F2F1ED;
+  border-right: 1px solid #ddd;
 }
