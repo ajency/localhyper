@@ -96,6 +96,8 @@ angular.module 'LocalHyper.auth'
 				deliveryRadius: parseInt user.delivery.radius
 				supportedCategories: supportedCategories
 				supportedBrands: supportedBrands
+				offDays: user.offDays
+				workTimings: user.workTimings
 				
 			data
 
@@ -129,6 +131,8 @@ angular.module 'LocalHyper.auth'
 						"supportedCategories": info.supportedCategories
 						"supportedBrands": info.supportedBrands
 						"lastLogin": new Date()
+						"offDays": info.offDays
+						"workTimings": info.workTimings
 			.then ->
 				Parse.User.logOut()
 			.then ->
@@ -172,6 +176,8 @@ angular.module 'LocalHyper.auth'
 					"supportedBrands": info.supportedBrands
 					"lastLogin": new Date()
 					"credit": parseFloat defaultObj.get('value')
+					"offDays": info.offDays
+					"workTimings": info.workTimings
 				
 				user.signUp()
 			.then ->
