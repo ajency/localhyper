@@ -12,9 +12,11 @@
 			class="button button-icon icon ion-navicon">
 		</button>
 	</ion-nav-buttons>
-
+<div class="bar bar-subheader bar-dark">
+  <h2 class="title">Make your home beautiful</h2>
+</div>
 	<ion-content ng-switch="view.display">
-
+<br><br><br>
 		<ion-spinner
 			class="aj-spinner"
 			ng-switch-when="loader">
@@ -44,6 +46,7 @@
 						<div
 							class="item item-avatar more-link"
 							ng-click="App.navigate('sub-categories', {parentID: category.id})">
+							<i class="ion-more" ></i>
 							<span class="ico-text">More</span>
 						</div>
 					</div>
