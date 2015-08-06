@@ -1166,7 +1166,7 @@
         sellerOffDays = ["Sunday", "Monday"];
         sellerWorkTimings = ["9:00:00", "18:00:00"];
         deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate();
-        acceptedOffer.set("deilveryDate", deliveryDate);
+        acceptedOffer.set("deliveryDate", deliveryDate);
         return acceptedOffer.save().then(function(offerWithDelivery) {
           requestObj.set("status", "pending_delivery");
           return requestObj.save().then(function(savedReq) {

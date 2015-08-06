@@ -482,7 +482,7 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
             # deliveryDate = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
             deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate()
 
-            acceptedOffer.set("deilveryDate",deliveryDate)
+            acceptedOffer.set("deliveryDate",deliveryDate)
             acceptedOffer.save()
             .then (offerWithDelivery) ->
                 requestObj.set "status" , "pending_delivery"
