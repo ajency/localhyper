@@ -3,9 +3,9 @@ angular.module 'LocalHyper.requestsOffers'
 
 .controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
 	, '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform'
-	, '$ionicLoading', 'CDialog'
+	, '$ionicLoading', 'CDialog', 'DeliveryTime'
 	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner
-	, RequestsAPI, $ionicPlatform, $ionicLoading, CDialog)->
+	, RequestsAPI, $ionicPlatform, $ionicLoading, CDialog, DeliveryTime)->
 
 		$scope.view = 
 			display: 'loader'
@@ -14,6 +14,7 @@ angular.module 'LocalHyper.requestsOffers'
 			page: 0
 			canLoadMore: true
 			refresh: false
+			deliveryTime: DeliveryTime
 
 			sortBy: 'updatedAt'
 			sortName: 'Recent Activity'
@@ -101,6 +102,7 @@ angular.module 'LocalHyper.requestsOffers'
 				
 				show : (request)->
 					@data = request
+					console.log @data
 					@modal.show()
 					@showExpiry = true
 
@@ -217,6 +219,9 @@ angular.module 'LocalHyper.requestsOffers'
 				@display = 'loader'
 				@page = 0
 				@canLoadMore = true
+
+			onRequestExpiry : (request)->
+				request.request.status = 'Expired'
 
 			onSort : (sortBy, sortName, descending)->
 				$ionicLoading.hide()

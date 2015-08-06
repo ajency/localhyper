@@ -44,7 +44,7 @@
 			<div>
 				<h5>Distance from you: {{view.requestDetails.data.radius.toFixed(1)}} kms radius</h5>
 				<h5>MRP: Rs {{App.toINR(view.requestDetails.data.product.mrp)}}</h5>
-				<h5>Number of bids: DUMMY</h5>
+				<h5>Number of bids: {{view.requestDetails.data.offerCount}}</h5>
 				<h5>
 					Category: {{view.requestDetails.data.category.parent}} > {{view.requestDetails.data.category.name}} > {{view.requestDetails.data.brand.name}}
 				</h5>
@@ -133,6 +133,7 @@
 							</span>
 							<span
 								class="change"
+								ng-if="!view.requestDetails.deliveryTime.display"
 								ng-click="view.requestDetails.deliveryTime.display=true; App.resize();">
 								(Change)
 							</span>

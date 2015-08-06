@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform', '$ionicLoading', 'CDialog', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner, RequestsAPI, $ionicPlatform, $ionicLoading, CDialog) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform', '$ionicLoading', 'CDialog', 'DeliveryTime', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner, RequestsAPI, $ionicPlatform, $ionicLoading, CDialog, DeliveryTime) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -8,6 +8,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       page: 0,
       canLoadMore: true,
       refresh: false,
+      deliveryTime: DeliveryTime,
       sortBy: 'updatedAt',
       sortName: 'Recent Activity',
       descending: true,
@@ -123,6 +124,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         },
         show: function(request) {
           this.data = request;
+          console.log(this.data);
           this.modal.show();
           return this.showExpiry = true;
         },
@@ -275,6 +277,9 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         this.display = 'loader';
         this.page = 0;
         return this.canLoadMore = true;
+      },
+      onRequestExpiry: function(request) {
+        return request.request.status = 'Expired';
       },
       onSort: function(sortBy, sortName, descending) {
         $ionicLoading.hide();

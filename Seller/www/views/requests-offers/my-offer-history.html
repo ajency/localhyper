@@ -39,13 +39,14 @@
 
 				    <div class="col p-t-0" >
 			            <sm class="light-gray"> Claimed delivery :</sm>
-			            	 {{request.offerDeliveryTime.value}} {{request.offerDeliveryTime.unit}}
+			            	{{view.deliveryTime.humanize(request.offerDeliveryTime)}}
 			            <br>
 			            <div ng-if="request.request.status == 'open' ">
 				            <sm class="light-gray" > Request expires in  :</sm>
 		            	 	<sm class=""
 								aj-count-down
-								created-at="request.request.createdAt">
+								created-at="request.request.createdAt"
+								count-down-finish="view.onRequestExpiry(request)">
 							</sm>
 					   </div>
 			        </div>

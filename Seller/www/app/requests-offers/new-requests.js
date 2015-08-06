@@ -71,6 +71,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           return $ionicScrollDelegate.$getByHandle('request-details').scrollTop();
         },
         show: function(request) {
+          console.log(request);
           this.data = request;
           this.resetModal();
           this.modal.show();
@@ -275,6 +276,18 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
     });
     return $rootScope.$on('category:chain:changed', function() {
       return $scope.view.reFetch();
+    });
+  }
+]).controller('EachRequestTimeCtrl', [
+  '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
+    var interval, setTime;
+    setTime = function() {
+      return $scope.request.timeStr = TimeString.get($scope.request.createdAt);
+    };
+    setTime();
+    interval = $interval(setTime, 60000);
+    return $scope.$on('$destroy', function() {
+      return $interval.cancel(interval);
     });
   }
 ]);
