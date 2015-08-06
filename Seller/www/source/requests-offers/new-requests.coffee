@@ -179,6 +179,7 @@ angular.module 'LocalHyper.requestsOffers'
 			onSuccess : (data)->
 				@display = 'noError'
 				@requests = data.requests
+				App.notification.newRequests = _.size @requests
 				@markPendingNotificationsAsSeen()
 			
 			onError : (type)->
@@ -216,6 +217,8 @@ angular.module 'LocalHyper.requestsOffers'
 				when 'cancelled_request'
 					$rootScope.$broadcast 'get:unseen:notifications'
 					$scope.view.requestDetails.removeRequestCard payload.id
+				when 'accepted_offer'
+					$rootScope.$broadcast 'get:accepted:offer:count'
 		
 		$rootScope.$on 'push:notification:click', (e, obj)->
 			payload = obj.payload
@@ -232,7 +235,6 @@ angular.module 'LocalHyper.requestsOffers'
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
-
 
 		$rootScope.$on 'category:chain:changed', ->
 			# App.scrollTop()

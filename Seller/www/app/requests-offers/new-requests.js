@@ -211,6 +211,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       onSuccess: function(data) {
         this.display = 'noError';
         this.requests = data.requests;
+        App.notification.newRequests = _.size(this.requests);
         return this.markPendingNotificationsAsSeen();
       },
       onError: function(type) {
@@ -254,6 +255,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         case 'cancelled_request':
           $rootScope.$broadcast('get:unseen:notifications');
           return $scope.view.requestDetails.removeRequestCard(payload.id);
+        case 'accepted_offer':
+          return $rootScope.$broadcast('get:accepted:offer:count');
       }
     });
     $rootScope.$on('push:notification:click', function(e, obj) {
