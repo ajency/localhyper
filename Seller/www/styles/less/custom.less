@@ -10,7 +10,7 @@
 /* Commen css */
 /************************************/
 
-h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider {
+h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider, span, div, input, textarea, select, small, big, b, strong, body {
 	font-family: 'source_sans' !important;
 	color: @black;
 }
@@ -155,7 +155,8 @@ sm{
 /************************************/
 
 .has-header{
-	background:@gray-transperent;
+	// background: @gray-transperent;
+	background-color: #f2f1ed;
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light, .bar.bar-header {
 	background-image: url(../../img/header-bg.jpg) !important;
@@ -1087,3 +1088,33 @@ h5.with-sep {
 		font-weight: bold;
 	}
 }
+
+//Verification
+.verify-first {
+	.verify-step-img {
+		height: 130px;
+	}
+	.item-input {
+		padding: 0;
+	}
+	input {
+		background-color: #fff;
+		height: 40px;
+		border-color: #ccc !important;
+		font-size: 16px;
+		&:active, &:focus {
+			border-color: @brand-primary !important;
+		}
+	}
+	h5 {
+		margin-bottom: 8px;
+		font-size: 16px;
+	}
+	.info-top {
+		padding: 10px 25px;
+		margin-top: 15px;
+	}
+}
+// .verify-setp3 {
+// 	height: 130px;
+// }
