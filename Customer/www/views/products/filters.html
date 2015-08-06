@@ -1,11 +1,24 @@
-<ion-modal-view>
+<ion-modal-view class="filters-white-bg">
 
 	<ion-header-bar style="height:55px;" no-tap-scroll="true">
-		<div class="row row-fluid">
-			<div class="col col-67 sm-text">
+		<div class="row row-fluid filter-head">
+			<div class="col col-25 sm-text">
 				<h4 class="text-left m-t-6">Filter by</h4>
 			</div>
-			<div class="col">
+			<div class="col text-right">
+				<button class="button button-clear button-stable" ng-click="view.filter.clearFilters();">
+					<!-- <i class="ion ion-loop"></i> -->
+					Clear
+				</button>
+				<button class="button button-balanced" ng-click="view.filter.onApply();">
+					<!-- <i class="ion ion-checkmark-round"></i> -->
+					Apply
+				</button>
+				<button ng-click="view.filter.closeModal()" class="button button-clear text-right btn-close">
+					<i class="ion ion-ios-close-outline"></i>
+				</button>
+			</div>
+			<!-- <div class="col">
 				<h2 class="text-right color-greylight" ng-click="view.filter.clearFilters();">
 					<i class="ion ion-loop"></i>
 				</h2>
@@ -19,7 +32,7 @@
 				<h2 ng-click="view.filter.closeModal()" class="text-right">
 					<i class="ion ion-ios-close-outline"></i>
 				</h2>
-			</div>
+			</div> -->
 		</div>
 	</ion-header-bar>
 
@@ -30,7 +43,7 @@
 			<div class="col col-33 p-a-0">
 				<div class="list">
 					<label
-						class="item item-text-wrap item-radio"
+						class="item item-text-wrap item-radio text-center"
 						ng-repeat="attr in view.filter.allAttributes">
 						<input
 							type="radio"

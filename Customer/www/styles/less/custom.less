@@ -102,7 +102,10 @@ sm{
 	text-decoration: underline;
 }
 .m-t-5{
-	margin-top: 5px;
+	margin-top: 5px!important;
+}
+.p-t-10{
+	margin-top: 10px!important;
 }
 .relative{
 	position: relative!important;
@@ -137,11 +140,37 @@ sm{
 	// background: @gray-transperent;
 	background-color: #F2F1ED;
 }
+.tabs-subheader{
+	.tabs{
+	background: #1f1f1f !important;
+	color:@white;
+	}
+	.tab-nav{
+    		i{
+    		color:@white;
+    		}
+    	}
+	.tab-title{
+		font-size: 16px;
+		color:@white;
+    	font-weight: 600;
+
+	}
+	.tab-item-active{
+		border-color: #F7575B !important;
+	}
+}
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light, .bar.bar-header {
-	background-image: url(../../img/header-bg.jpg) !important;
-	// background-color: #262626 !important;
+	/*background-image: url(../../img/header-bg.jpg) !important;*/
+	background-color: #1f1f1f !important;
 	background-repeat: repeat-x !important;
-	border-bottom:1px solid @gray-lighter !important;
+	/*border-bottom:1px solid @gray-lighter !important;*/
+	.button{
+		color:@white;
+	}
+	.nav-bar-title{
+		color:@white;
+	}
 	.notification{
 		  height: 20px;
 		  width: 20px;
@@ -1043,15 +1072,34 @@ label.status-label {
 }
 
 //Filter view
+.filters-white-bg {
+	background-color: @white;
+	.has-header {
+		background-color: transparent;
+	}
+}
+.filter-head {
+	button.button {
+		font-size: 15px;
+		margin-left: 5px;
+		&.btn-close {
+			font-size: 32px;
+		}
+	}
+}
 .products-filter-view {
 	margin-top: 9px;
 	label.item-radio {
-		border-color: #666;
+		/* border-color: #666; */
+		font-size: 14px;
+		background-color: transparent;
+		text-align: center;
 		.item-content {
 			padding: 14px 10px;
-			background: @gray-darker;
-			color: @white;
-			box-shadow: 0 0 0 #000;
+			background: transparent;
+			color: #444;
+			position: relative;
+			// box-shadow: 0 0 0 #000;
 			.sel-count {
 				float: right;
 				width: 19px;
@@ -1059,16 +1107,45 @@ label.status-label {
 				line-height: 21px;
 				font-size: 14px;
 				color: #fff;
-				background-color: #f45152;
+				background-color: #444;
 				// border-radius: 50%;
 				text-align: center;
 				font-weight: bold;
 				margin-top: 0px;
+
+				position: absolute;
+				right: 0;
+				bottom: 0;
 			}
 		}
 		input:checked~.item-content {
-			background-color: #F7F7F7;
-			color: @gray-darker;
+			background-color: @white;
+			color: @brand-primary;
+		}
+		input[value=brand] + .item-content.ng-binding:before {
+			content: "\f349";
+			margin-bottom: 2px !important;
+		}
+		input[value=price] + .item-content.ng-binding:before {
+			content: "\f2aa";
+		}
+		input[value=brand] + .item-content.ng-binding:before,
+		input[value=price] + .item-content.ng-binding:before {
+			display: block;
+			margin: 0 auto;
+			margin-bottom: 5px;
+			// border: 1px solid #ddd;
+
+			font-family: "Ionicons";
+			speak: none;
+			font-style: normal;
+			font-weight: normal;
+			font-variant: normal;
+			text-transform: none;
+			text-rendering: auto;
+			line-height: 1;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
 		}
 	}
 	.item-checkbox {
@@ -1098,10 +1175,81 @@ label.status-label {
 		z-index: 3;
 		&:before {
 			content: '';
-			width: 33.33%;
+			width: 33.6%;
 			height: 1000%;
 			position: fixed;
-			background-color: @gray-darker;
+			background-color: #F2F1ED;
+			border-right: 1px solid #ddd;
 		}
+	}
+}
+
+
+.card-list{
+	.activated{
+		background: @white !important; 
+		background-color: @white !important; 
+		.item{
+		background: @white !important; 
+		background-color: @white !important; 
+	}
+}
+		.card{
+			padding: 0px;
+			.item{
+				padding-bottom: 0px;
+				min-height: 35px !important;
+			    background: #fff;
+
+			}
+			.item-divider{
+				border-top: 1px dashed #ccc;
+			}
+			.big-txt{
+				font-size: 1.8rem;
+				float: left;
+				font-weight: 600;
+				span{
+					font-size: 20px;
+				}
+			}
+		}
+	.btn-danger{
+		color: @brand-primary
+	}
+	.label{
+		  border: 1px solid #ccc;
+		  padding: 0px 5px;
+		  font-size: 11px;
+		  color: @gray;
+		  display: inline-block;
+	}
+	.offer{
+		  width: 42px;
+		  height: 44px;
+		  border-radius: 100%;
+		  border: 1px dashed @black;
+		  text-align: center;
+		  font-size: 1.5rem;
+		  line-height: 39px;
+		  margin: 5px auto;
+		  font-weight: 500;
+	}
+	.offertxt{
+		  background: @white;
+	  	  margin-top: -15px;
+         text-align: center;
+	}
+}
+.item-wrapper-nr {
+	.item-avatar {
+		    padding: 6px;
+    		margin-top: 8px;
+	}
+	h2 {
+		text-overflow: clip;
+		height: auto;
+		white-space: normal;
+		font-weight: bold;
 	}
 }

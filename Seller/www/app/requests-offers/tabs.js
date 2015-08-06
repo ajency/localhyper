@@ -24,19 +24,13 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
   '$timeout', '$ionicLoading', function($timeout, $ionicLoading) {
     return {
       restrict: 'A',
-      scope: {
-        onLoadingHidden: '&'
-      },
       link: function(scope, el, attrs) {
         return $timeout(function() {
           return $('.loading-container').on('click', function(event) {
             var isBackdrop;
             isBackdrop = $(event.target).hasClass('loading-container');
             if (isBackdrop) {
-              $ionicLoading.hide();
-              return scope.$apply(function() {
-                return scope.onLoadingHidden();
-              });
+              return $ionicLoading.hide();
             }
           });
         });
@@ -44,19 +38,47 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
     };
   }
 ]).directive('ajCountDown', [
-  '$timeout', '$parse', function($timeout, $parse) {
+  '$timeout', function($timeout) {
     return {
       restrict: 'A',
+      scope: {
+        createdAt: '=',
+        countDownFinish: '&'
+      },
       link: function(scope, el, attrs) {
         return $timeout(function() {
           var createdAt, total, totalStr;
-          createdAt = $parse(attrs.createdAt)(scope);
-          total = moment(moment(createdAt.iso)).add(24, 'hours');
+          createdAt = moment(scope.createdAt.iso);
+          total = moment(createdAt).add(24, 'hours');
           totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
           return $(el).countdown(totalStr, function(event) {
             return $(el).html(event.strftime('%-H:%-M:%-S'));
+          }).on('finish.countdown', function(event) {
+            return scope.$apply(function() {
+              return scope.countDownFinish();
+            });
           });
         });
+      }
+    };
+  }
+]).factory('DeliveryTime', [
+  function() {
+    var DeliveryTime;
+    return DeliveryTime = {
+      humanize: function(obj) {
+        var unitText, value;
+        if (!_.isUndefined(obj)) {
+          value = obj.value;
+          switch (obj.unit) {
+            case 'hr':
+              unitText = value === 1 ? 'Hour' : 'Hours';
+              break;
+            case 'day':
+              unitText = value === 1 ? 'Day' : 'Days';
+          }
+          return value + " " + unitText;
+        }
       }
     };
   }
@@ -80,34 +102,22 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
         timeStr = 'Just now';
       } else if (minutes < 60) {
         min = minutes === 1 ? 'min' : 'mins';
-        timeStr = "" + minutes + " " + min + " ago";
+        timeStr = minutes + " " + min + " ago";
       } else if (minutes >= 60 && minutes < 1440) {
         hr = hours === 1 ? 'hr' : 'hrs';
-        timeStr = "" + hours + " " + hr + " ago";
+        timeStr = hours + " " + hr + " ago";
       } else if (minutes >= 1440 && days < 7) {
         day = days === 1 ? 'day' : 'days';
-        timeStr = "" + days + " " + day + " ago";
+        timeStr = days + " " + day + " ago";
       } else if (days >= 7 && weeks <= 4) {
         week = weeks === 1 ? 'week' : 'weeks';
-        timeStr = "" + weeks + " " + week + " ago";
+        timeStr = weeks + " " + week + " ago";
       } else {
         timeStr = "On " + (moment(iso).format('DD-MM-YYYY'));
       }
       return timeStr;
     };
     return TimeString;
-  }
-]).controller('EachRequestTimeCtrl', [
-  '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
-    var interval, setTime;
-    setTime = function() {
-      return $scope.request.timeStr = TimeString.get($scope.request.createdAt);
-    };
-    setTime();
-    interval = $interval(setTime, 60000);
-    return $scope.$on('$destroy', function() {
-      return $interval.cancel(interval);
-    });
   }
 ]).config([
   '$stateProvider', function($stateProvider) {

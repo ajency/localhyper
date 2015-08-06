@@ -55,10 +55,10 @@
 					MRP: Rs  {{App.toINR(view.offerDetails.data.product.mrp)}}
 				</h5>
 
-				<h5>Number of bids: DUMMY</h5>
+				<h5>Number of bids: {{view.offerDetails.data.request.offerCount}}</h5>
 
 				<h5>
-					Category: {{view.offerDetails.data.category.parent}} > {{view.offerDetails.data.category.name}} > {{view.offerDetails.data.brand.name}}
+					Category: {{view.offerDetails.data.category.parentCategory}} > {{view.offerDetails.data.category.name}} > {{view.offerDetails.data.brand.name}}
 				</h5>
 
 				<h5>
@@ -95,9 +95,8 @@
 						<p>
 							<span class="ti">Delivery Time</span>
 							<span class="ac-ti">
-								<span 
-									class="big">
-									{{view.offerDetails.data.offerDeliveryTime.value}} {{view.offerDetails.data.offerDeliveryTime.unit}}
+								<span class="big">
+									{{view.deliveryTime.humanize(view.offerDetails.data.offerDeliveryTime)}}
 								</span>
 							</span>
 						</p>
