@@ -207,7 +207,6 @@ angular.module 'LocalHyper.requestsOffers'
 
 				@pendingRequestIds = []
 
-
 		
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
