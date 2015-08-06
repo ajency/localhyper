@@ -151,6 +151,30 @@
 						<div class="spacer-40"></div>
 					</div>
 				</div>
+
+				<!--When expired without offers-->
+				<!--<div
+					class="row"
+					ng-if="view.offers.all.length == 0 && view.request.status === 'open';">-->
+				<div class="row">
+					<div class="col no-offs-det align-center">
+
+						<img ng-src="./img/request-expired.png" alt="Request has been sent!" style="margin-left: 0;">
+
+						<h4>Your request has expired,<br>you can send another request.</h4>
+						<div class="spacer-40"></div>
+					</div>
+				</div>
+				<!--When cancelled without offers-->
+				<div class="row">
+					<div class="col no-offs-det align-center">
+
+						<img ng-src="./img/request-cancelled.png" alt="Request has been sent!" style="margin-left: 0;">
+
+						<h4>You have cancelled this request,<br>you can send another request.</h4>
+						<div class="spacer-40"></div>
+					</div>
+				</div>
 			</div>
 
 			<div
