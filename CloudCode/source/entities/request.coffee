@@ -562,6 +562,7 @@ getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius)
                         "radius" : sellerRadius
                         "location" : sellerLocation
                         "requests" : individualReqResults
+                        "credits" : ""
 
                     promise.resolve requestsResult
 
@@ -589,6 +590,7 @@ getRequestData =  (filteredRequest,seller) ->
         "name":prodObj.get("name")
         "mrp":prodObj.get("mrp")
         "image":prodObj.get("images")
+        "model_number":prodObj.get("model_number")
 
     categoryObj = filteredRequest.get("category")
     category =
@@ -613,7 +615,9 @@ getRequestData =  (filteredRequest,seller) ->
         createdAt: filteredRequest.createdAt
         comments: filteredRequest.get("comments")  
         status: filteredRequest.get("status")            
-        offerCount: filteredRequest.get("offerCount")            
+        offerCount: filteredRequest.get("offerCount")  
+        lastOfferPrice : ""
+        onlinePrice: ""          
 
     
     #  now query notification to get notificaton status
