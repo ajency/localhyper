@@ -103,19 +103,27 @@
     </div>
    </div>
   <!-- END MINI-PROFILE -->
+    <p class="menu-title" onclick="location.href='{{ url('admin/attribute/categoryconfiguration') }}'">Category Configuration <span class="text-right"> <i class="fa fa-check text-success"></i><a href="javascript:;"></a></span></p>
+  <p class="menu-title" onclick="location.href='{{ url('admin/seller') }}'">List of Sellers <span class="pull-right"><a href="javascript:;"></a></span></p>
    
-   <!-- BEGIN SIDEBAR MENU -->	
-	<p class="menu-title">BROWSE <span class="pull-right"><a href="javascript:;"><i class="fa fa-refresh"></i></a></span></p>
-    <ul>	
-      <li class="start active "> <a href="{{ url('admin/attribute/categoryconfiguration') }}"> <i class="fa fa-sitemap"></i> <span class="title">Category Configuration</span> <span class="selected"></span></a> </li>
-      <li class="start active "> <a href="{{ url('admin/customer') }}"> <i class="fa fa-sitemap"></i> <span class="title">Customers</span> <span class="selected"></span></a> </li>
-      <li class="start active "> <a href="{{ url('admin/seller') }}"> <i class="fa fa-sitemap"></i> <span class="title">Sellers</span> <span class="selected"></span></a> </li>    
-    </ul>
-		
-	<div class="clearfix"></div>
+    <!--<li class=""> <a href="javascript:;"> <i class="fa fa fa-adjust"></i> <span class="title">Themes</span> <span class="arrow "></span> </a>
+       <ul class="sub-menu">
+          <li > <a href="#">Coporate </a> </li>
+          <li > <a href="#">Simple</a> </li>
+          <li > <a href="#">Elegant</a> </li>
+        </ul>
+    </li>-->    
+     <p class="menu-title" onclick="location.href='#'">List of Offers <span class="pull-right"><a href="javascript:;"></a></span></p>
+      <p class="menu-title" onclick="location.href='#'">List of Requests <span class="pull-right"><a href="javascript:;"></a></span></p>
+      <p class="menu-title" onclick="location.href='{{ url('admin/customer') }}'">List of Customers &nbsp;<span class="pull-right"> <a href="javascript:;"> </a></span></p>
+       <p class="menu-title" onclick="location.href='#'">List of Ratings <span class="pull-right"><a href="javascript:;"></a></span></p>
+    
+  <div class="clearfix"></div>
+    <!-- END SIDEBAR MENU --> 
     <!-- END SIDEBAR MENU --> 
   </div>
-  </div>
+  </div>    
+  
   <a href="#" class="scrollup">Scroll</a>
   
   <!-- END SIDEBAR --> 
@@ -163,6 +171,9 @@
  
   <script type="text/javascript">
   Parse.initialize(window.APPLICATION_ID, window.JAVASCRIPT_KEY);
-  </script>  
+  </script>
+    <script type="text/javascript">
+        $(".select2").select2();
+        </script>    
 </body>
 </html>

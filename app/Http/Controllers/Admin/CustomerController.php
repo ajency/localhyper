@@ -22,7 +22,7 @@ class CustomerController extends Controller
         $customerData = $customers->find();  
         $customerList =[];
         foreach($customerData as $customer)
-        {
+        {  
             $custId = $customer->getObjectId();
             
             $request = new ParseQuery("Request");
@@ -31,7 +31,7 @@ class CustomerController extends Controller
             $requestMadeCount = count($requestData);
             $deliverStatusCount = $requestSuccessfullCount = $requestCancelledCount = $requestExpiredCount = 0;
             foreach($requestData as $request)
-            {
+            {   
                 $datetime1 = date('Y-m-d H:i:s');
                 $datetime2 = $request->getCreatedAt()->format('Y-m-d H:i:s');
                 $interval = $this->date_diff($datetime1, $datetime2);  
@@ -53,13 +53,13 @@ class CustomerController extends Controller
              $customerList[]= ['id' => $custId,
                               'name' => $customer->get("displayName"),
                               'createdAt' =>$customer->getCreatedAt()->format('d-m-Y'),
-                              'lastLogin' =>'',
+                              'lastLogin' =>$customer->get("lastLogin")->format('d-m-Y'),
                               'numOfRequest' =>$requestMadeCount,
                               'requestExpired' =>$requestExpiredCount,
                               'requestCancelled' =>$requestCancelledCount,
                               'requestSuccessfull' =>$requestSuccessfullCount,
                               'deliveryStatus' =>$deliverStatusCount,
-                              ];   
+                              ];  
  
             
         } 
