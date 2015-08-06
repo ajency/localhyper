@@ -94,7 +94,7 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
                 obj = pendingNotification.get("requestObject")
                 productName = pendingNotification.get("requestObject").get("product").get("name")
                 title = sellerAppName
-                msg = "You have received a request for #{productName}"
+                msg = "New request for #{productName}"
                 otherPushData = 
                     "id": obj.id
                     "type": "new_request"
@@ -103,7 +103,7 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
                 obj = pendingNotification.get("offerObject")
                 productName = pendingNotification.get("offerObject").get("request").get("product").get("name")
                 title = customerAppName
-                msg = "You have received an offer for #{productName}"
+                msg = "New offer for #{productName}"
                 otherPushData = 
                     "id":obj.id
                     "type": "new_offer"
@@ -112,7 +112,7 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
                 obj = pendingNotification.get("offerObject")
                 productName = pendingNotification.get("offerObject").get("request").get("product").get("name")
                 title = sellerAppName
-                msg = "Your offer for #{productName} has been accepted"
+                msg = "Offer accepted for #{productName}"
                 otherPushData = 
                     "id":obj.id
                     "type": "accepted_offer"
@@ -121,10 +121,37 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
                 obj = pendingNotification.get("requestObject")
                 productName = pendingNotification.get("requestObject").get("product").get("name")
                 title = sellerAppName
-                msg = "Request for #{productName} has been cancelled"
+                msg = "Request cancelled for #{productName}"
                 otherPushData = 
                     "id":obj.id
                     "type": "cancelled_request"
+
+            else if type is "SentForDeliveryRequest"
+                obj = pendingNotification.get("requestObject")
+                productName = pendingNotification.get("requestObject").get("product").get("name")
+                title = customerAppName
+                msg = "#{productName} is sent for delivery"
+                otherPushData = 
+                    "id":obj.id
+                    "type": "sent_for_delivery_request" 
+
+            else if type is "FailedDeliveryRequest"
+                obj = pendingNotification.get("requestObject")
+                productName = pendingNotification.get("requestObject").get("product").get("name")
+                title = customerAppName
+                msg = "Delivery failed for #{productName}"
+                otherPushData = 
+                    "id":obj.id
+                    "type": "failed_delivery_request"      
+
+            else if type is "SuccessfulRequest"
+                obj = pendingNotification.get("requestObject")
+                productName = pendingNotification.get("requestObject").get("product").get("name")
+                title = customerAppName
+                msg = "Delivery successful for #{productName}"
+                otherPushData = 
+                    "id":obj.id
+                    "type": "successful_request"                                                         
 
             switch channel
                 when 'push'

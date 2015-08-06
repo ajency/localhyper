@@ -13,7 +13,6 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
     comments = request.params.comments
     
     status = request.params.status # 'open' initially
-    deliveryStatus = request.params.deliveryStatus 
 
     Request = Parse.Object.extend('Request')
 
@@ -25,7 +24,6 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
     request.set "addressGeoPoint", point
     request.set "address", address
     request.set "status", status
-    request.set "deliveryStatus", deliveryStatus
     request.set "city", city
     request.set "area", area
     request.set "comments", comments
@@ -166,7 +164,7 @@ Parse.Cloud.define 'updateRequestStatus' , (request, response) ->
     status = request.params.status
     failedDeliveryReason = request.params.failedDeliveryReason
 
-    validStatuses = ['pending_delivery','failed_delivery','successful','cancelled']
+    validStatuses = ['sent_for_delivery','failed_delivery','successful','cancelled']
     isValidStatus = _.indexOf(validStatuses, status )
 
     if isValidStatus > -1 
@@ -186,6 +184,10 @@ Parse.Cloud.define 'updateRequestStatus' , (request, response) ->
         .then (requestObj) ->
             requestStatus = requestObj.get("status")
             requestId = requestObj.id
+            requestingCustomer = requestObj.get("customerId")
+
+            console.log "requesting customer"
+            console.log requestObj
             
             # send push notiifcations to all sellers to whom a new request notification was sent for this request id
             # get all such sellerObj
@@ -231,6 +233,36 @@ Parse.Cloud.define 'updateRequestStatus' , (request, response) ->
                 , (error) ->
                     response.error error
             
+            else if (requestStatus is "sent_for_delivery") or (requestStatus is 'failed_delivery') or (requestStatus is 'successful')
+                
+                requestObj.fetch()
+                .then (req)->
+                    requestingCustomer = requestObj.get("customerId")
+                    if requestStatus is "sent_for_delivery"
+                        type = "SentForDeliveryRequest"
+                    else if requestStatus is "failed_delivery"
+                        type = "FailedDeliveryRequest"
+                    else if requestStatus is 'successful'
+                        type = "SuccessfulRequest"
+                    
+                    notificationData = 
+                        hasSeen: false
+                        recipientUser: requestingCustomer
+                        channel : 'push'
+                        processed : false
+                        type : type
+                        requestObject : requestObj
+
+                    Notification = Parse.Object.extend("Notification") 
+                    notification = new Notification notificationData 
+                    notification.save()
+                    .then (savedNotification) ->
+                        response.success savedNotification
+                    , (error) ->
+                        response.error error 
+                , (error) ->
+                    response.error error              
+
             else
                 resultObj = 
                     requestId : requestId

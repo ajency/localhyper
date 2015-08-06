@@ -612,7 +612,7 @@
           obj = pendingNotification.get("requestObject");
           productName = pendingNotification.get("requestObject").get("product").get("name");
           title = sellerAppName;
-          msg = "You have received a request for " + productName;
+          msg = "New request for " + productName;
           otherPushData = {
             "id": obj.id,
             "type": "new_request"
@@ -621,7 +621,7 @@
           obj = pendingNotification.get("offerObject");
           productName = pendingNotification.get("offerObject").get("request").get("product").get("name");
           title = customerAppName;
-          msg = "You have received an offer for " + productName;
+          msg = "New offer for " + productName;
           otherPushData = {
             "id": obj.id,
             "type": "new_offer"
@@ -630,7 +630,7 @@
           obj = pendingNotification.get("offerObject");
           productName = pendingNotification.get("offerObject").get("request").get("product").get("name");
           title = sellerAppName;
-          msg = "Your offer for " + productName + " has been accepted";
+          msg = "Offer accepted for " + productName;
           otherPushData = {
             "id": obj.id,
             "type": "accepted_offer"
@@ -639,10 +639,37 @@
           obj = pendingNotification.get("requestObject");
           productName = pendingNotification.get("requestObject").get("product").get("name");
           title = sellerAppName;
-          msg = "Request for " + productName + " has been cancelled";
+          msg = "Request cancelled for " + productName;
           otherPushData = {
             "id": obj.id,
             "type": "cancelled_request"
+          };
+        } else if (type === "SentForDeliveryRequest") {
+          obj = pendingNotification.get("requestObject");
+          productName = pendingNotification.get("requestObject").get("product").get("name");
+          title = customerAppName;
+          msg = productName + " is sent for delivery";
+          otherPushData = {
+            "id": obj.id,
+            "type": "sent_for_delivery_request"
+          };
+        } else if (type === "FailedDeliveryRequest") {
+          obj = pendingNotification.get("requestObject");
+          productName = pendingNotification.get("requestObject").get("product").get("name");
+          title = customerAppName;
+          msg = "Delivery failed for " + productName;
+          otherPushData = {
+            "id": obj.id,
+            "type": "failed_delivery_request"
+          };
+        } else if (type === "SuccessfulRequest") {
+          obj = pendingNotification.get("requestObject");
+          productName = pendingNotification.get("requestObject").get("product").get("name");
+          title = customerAppName;
+          msg = "Delivery successful for " + productName;
+          otherPushData = {
+            "id": obj.id,
+            "type": "successful_request"
           };
         }
         switch (channel) {
@@ -1799,7 +1826,7 @@
   })(this);
 
   Parse.Cloud.define('makeRequest', function(request, response) {
-    var Request, address, area, brandId, brandObj, categoryId, categoryObj, city, comments, customerId, customerObj, deliveryStatus, location, point, productId, productObj, status;
+    var Request, address, area, brandId, brandObj, categoryId, categoryObj, city, comments, customerId, customerObj, location, point, productId, productObj, status;
     customerId = request.params.customerId;
     productId = request.params.productId;
     categoryId = request.params.categoryId;
@@ -1810,14 +1837,12 @@
     area = request.params.area;
     comments = request.params.comments;
     status = request.params.status;
-    deliveryStatus = request.params.deliveryStatus;
     Request = Parse.Object.extend('Request');
     request = new Request();
     point = new Parse.GeoPoint(location);
     request.set("addressGeoPoint", point);
     request.set("address", address);
     request.set("status", status);
-    request.set("deliveryStatus", deliveryStatus);
     request.set("city", city);
     request.set("area", area);
     request.set("comments", comments);
@@ -1928,7 +1953,7 @@
     requestId = request.params.requestId;
     status = request.params.status;
     failedDeliveryReason = request.params.failedDeliveryReason;
-    validStatuses = ['pending_delivery', 'failed_delivery', 'successful', 'cancelled'];
+    validStatuses = ['sent_for_delivery', 'failed_delivery', 'successful', 'cancelled'];
     isValidStatus = _.indexOf(validStatuses, status);
     if (isValidStatus > -1) {
       Request = Parse.Object.extend('Request');
@@ -1939,9 +1964,12 @@
         request.set("failedDeliveryReason", failedDeliveryReason);
       }
       return request.save().then(function(requestObj) {
-        var innerQueryRequest, queryNotification, requestStatus, resultObj;
+        var innerQueryRequest, queryNotification, requestStatus, requestingCustomer, resultObj;
         requestStatus = requestObj.get("status");
         requestId = requestObj.id;
+        requestingCustomer = requestObj.get("customerId");
+        console.log("requesting customer");
+        console.log(requestObj);
         if (requestStatus === "cancelled") {
           queryNotification = new Parse.Query("Notification");
           innerQueryRequest = new Parse.Query("Request");
@@ -1971,6 +1999,35 @@
             });
             return Parse.Object.saveAll(notificationSavedArr).then(function(objs) {
               return response.success(objs);
+            }, function(error) {
+              return response.error(error);
+            });
+          }, function(error) {
+            return response.error(error);
+          });
+        } else if ((requestStatus === "sent_for_delivery") || (requestStatus === 'failed_delivery') || (requestStatus === 'successful')) {
+          return requestObj.fetch().then(function(req) {
+            var Notification, notification, notificationData, type;
+            requestingCustomer = requestObj.get("customerId");
+            if (requestStatus === "sent_for_delivery") {
+              type = "SentForDeliveryRequest";
+            } else if (requestStatus === "failed_delivery") {
+              type = "FailedDeliveryRequest";
+            } else if (requestStatus === 'successful') {
+              type = "SuccessfulRequest";
+            }
+            notificationData = {
+              hasSeen: false,
+              recipientUser: requestingCustomer,
+              channel: 'push',
+              processed: false,
+              type: type,
+              requestObject: requestObj
+            };
+            Notification = Parse.Object.extend("Notification");
+            notification = new Notification(notificationData);
+            return notification.save().then(function(savedNotification) {
+              return response.success(savedNotification);
             }, function(error) {
               return response.error(error);
             });
