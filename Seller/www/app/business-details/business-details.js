@@ -238,7 +238,9 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
       }
     };
     $scope.$on('$ionicView.beforeEnter', function() {
-      return $scope.view.myProfileState = App.previousState === 'my-profile' || App.previousState === '';
+      if (App.previousState === 'my-profile' || (App.previousState === '' && User.getCurrent() !== null)) {
+        return $scope.view.myProfileState = true;
+      }
     });
     return $scope.$on('$ionicView.enter', function() {
       return App.hideSplashScreen();
