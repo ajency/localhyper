@@ -22,18 +22,13 @@ angular.module 'LocalHyper.requestsOffers', []
 .directive 'ajLoadingBackDrop', ['$timeout', '$ionicLoading', ($timeout, $ionicLoading)->
 
 	restrict: 'A'
-	scope:
-		onLoadingHidden: '&'
 
 	link: (scope, el, attrs)->
-		
 		$timeout ->
 			$('.loading-container').on 'click', (event)->
 				isBackdrop = $(event.target).hasClass 'loading-container'
 				if isBackdrop
 					$ionicLoading.hide()
-					scope.$apply ->
-						scope.onLoadingHidden()
 ]
 
 

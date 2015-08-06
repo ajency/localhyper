@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform', '$ionicLoading', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner, RequestsAPI, $ionicPlatform, $ionicLoading) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform', '$ionicLoading', 'CDialog', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner, RequestsAPI, $ionicPlatform, $ionicLoading, CDialog) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -12,7 +12,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       sortName: 'Recent Activity',
       descending: true,
       filter: {
-        open: false,
+        modal: null,
         excerpt: '',
         selected: [],
         originalAttrs: [],
@@ -27,14 +27,68 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
             selected: false
           }
         ],
-        showOptions: function() {
-          this.open = true;
-          this.originalAttrs = JSON.parse(JSON.stringify(this.attributes));
-          return $ionicLoading.show({
+        loadModal: function() {
+          return $ionicModal.fromTemplateUrl('views/requests-offers/offer-history-filter.html', {
             scope: $scope,
-            templateUrl: 'views/requests-offers/offer-history-filter.html',
-            hideOnStateChange: true
+            animation: 'slide-in-up',
+            hardwareBackButtonClose: false
+          }).then((function(_this) {
+            return function(modal) {
+              return _this.modal = modal;
+            };
+          })(this));
+        },
+        noChangeInSelection: function() {
+          return _.isEqual(_.sortBy(this.originalAttrs), _.sortBy(this.attributes));
+        },
+        openModal: function() {
+          this.originalAttrs = JSON.parse(JSON.stringify(this.attributes));
+          return this.modal.show();
+        },
+        closeModal: function() {
+          var msg;
+          if (this.noChangeInSelection()) {
+            return this.modal.hide();
+          } else {
+            msg = 'Your filter selection will go away';
+            return CDialog.confirm('Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']).then((function(_this) {
+              return function(btnIndex) {
+                switch (btnIndex) {
+                  case 1:
+                    _this.attributes = _this.originalAttrs;
+                    return _this.modal.hide();
+                  case 2:
+                    return _this.onApply();
+                }
+              };
+            })(this));
+          }
+        },
+        clearFilters: function() {
+          this.selected = [];
+          return _.each(this.attributes, function(attr) {
+            return attr.selected = false;
           });
+        },
+        onApply: function() {
+          if (this.noChangeInSelection()) {
+            return this.modal.hide();
+          } else {
+            _.each(this.attributes, (function(_this) {
+              return function(attr) {
+                if (attr.selected) {
+                  if (!_.contains(_this.selected, attr.value)) {
+                    return _this.selected.push(attr.value);
+                  }
+                } else {
+                  return _this.selected = _.without(_this.selected, attr.value);
+                }
+              };
+            })(this));
+            this.setExcerpt();
+            this.modal.hide();
+            return $scope.view.reFetch();
+          }
         },
         setExcerpt: function() {
           var filterNames;
@@ -49,32 +103,6 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
             };
           })(this));
           return this.excerpt = filterNames.join(', ');
-        },
-        onApply: function() {
-          this.open = false;
-          $ionicLoading.hide();
-          _.each(this.attributes, (function(_this) {
-            return function(attr) {
-              if (attr.selected) {
-                if (!_.contains(_this.selected, attr.value)) {
-                  return _this.selected.push(attr.value);
-                }
-              } else {
-                return _this.selected = _.without(_this.selected, attr.value);
-              }
-            };
-          })(this));
-          this.setExcerpt();
-          return $scope.view.reFetch();
-        },
-        noChangeInSelection: function() {
-          return _.isEqual(_.sortBy(this.originalAttrs), _.sortBy(this.attributes));
-        },
-        onHide: function() {
-          if (this.open && !this.noChangeInSelection()) {
-            this.attributes = this.originalAttrs;
-          }
-          return this.open = false;
         }
       },
       offerDetails: {
@@ -148,7 +176,8 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         }
       },
       init: function() {
-        return this.offerDetails.loadModal();
+        this.offerDetails.loadModal();
+        return this.filter.loadModal();
       },
       onScrollComplete: function() {
         return $scope.$broadcast('scroll.infiniteScrollComplete');
@@ -295,9 +324,12 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       }
     };
     onDeviceBack = function() {
+      var filter;
+      filter = $scope.view.filter;
       if ($('.loading-container').hasClass('visible')) {
-        $scope.view.filter.open = false;
         return $ionicLoading.hide();
+      } else if (filter.modal.isShown()) {
+        return filter.closeModal();
       } else {
         return App.goBack(-1);
       }
