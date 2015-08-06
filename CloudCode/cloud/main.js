@@ -882,13 +882,15 @@
   });
 
   Parse.Cloud.define('makeOffer', function(request, response) {
-    var Notification, Offer, Price, Request, comments, deliveryTime, priceValue, requestId, requestQuery, sellerId, status;
+    var Notification, Offer, Price, Request, acceptOfferCredits, comments, deliveryTime, makeOfferCredits, priceValue, requestId, requestQuery, sellerId, status;
     requestId = request.params.requestId;
     sellerId = request.params.sellerId;
     priceValue = parseInt(request.params.priceValue);
     deliveryTime = request.params.deliveryTime;
     comments = request.params.comments;
     status = request.params.status;
+    makeOfferCredits = 1;
+    acceptOfferCredits = 5;
     Price = Parse.Object.extend("Price");
     Offer = Parse.Object.extend("Offer");
     Request = Parse.Object.extend("Request");
@@ -899,9 +901,7 @@
       var createdDateOfReq, price, product, requestGeoPoint, requestingCustomer, sellerObj;
       requestingCustomer = requestObject.get("customerId");
       createdDateOfReq = requestObject.createdAt;
-      console.log(createdDateOfReq);
       requestGeoPoint = requestObject.get("addressGeoPoint");
-      console.log(requestGeoPoint);
       price = new Price();
       price.set("source", "seller");
       sellerObj = new Parse.User();
@@ -926,16 +926,28 @@
         offer.set("offerPrice", priceValue);
         offer.set("requestGeoPoint", requestObject.get("addressGeoPoint"));
         return offer.save().then(function(offerObj) {
-          var notification;
-          notification = new Notification();
-          notification.set("hasSeen", false);
-          notification.set("recipientUser", requestingCustomer);
-          notification.set("channel", "push");
-          notification.set("processed", false);
-          notification.set("type", "Offer");
-          notification.set("offerObject", offerObj);
-          return notification.save().then(function(notificationObj) {
-            return response.success(notificationObj);
+          var Transaction, transaction;
+          Transaction = Parse.Object.extend("Transaction");
+          transaction = new Transaction();
+          transaction.set("seller", sellerObj);
+          transaction.set("transactionType", "minus");
+          transaction.set("creditCount", makeOfferCredits);
+          transaction.set("towards", "offer");
+          transaction.set("offer", offerObj);
+          return transaction.save().then(function(savedTransaction) {
+            var notification;
+            notification = new Notification();
+            notification.set("hasSeen", false);
+            notification.set("recipientUser", requestingCustomer);
+            notification.set("channel", "push");
+            notification.set("processed", false);
+            notification.set("type", "Offer");
+            notification.set("offerObject", offerObj);
+            return notification.save().then(function(notificationObj) {
+              return response.success(notificationObj);
+            }, function(error) {
+              return response.error(error);
+            });
           }, function(error) {
             return response.error(error);
           });
@@ -1017,7 +1029,7 @@
       var sellerOffers;
       sellerOffers = [];
       _.each(offers, function(offerObj) {
-        var brand, brandObj, category, categoryObj, createdDate, currentDate, diff, differenceInDays, priceObj, product, productObj, requestGeoPoint, requestObj, requestStatus, sellerObj, sellerOffer, sellersDistancFromCustomer;
+        var brand, brandObj, category, categoryObj, createdDate, currentDate, diff, differenceInDays, failedDeliveryReason, priceObj, product, productObj, requestGeoPoint, requestObj, requestStatus, sellerObj, sellerOffer, sellersDistancFromCustomer;
         requestObj = offerObj.get("request");
         productObj = requestObj.get("product");
         brandObj = requestObj.get("brand");
@@ -1053,6 +1065,10 @@
             requestStatus = "expired";
           }
         }
+        failedDeliveryReason = requestObj.get("failedDeliveryReason");
+        if (_.isNull(failedDeliveryReason)) {
+          failedDeliveryReason = "";
+        }
         request = {
           "id": requestObj.id,
           "address": requestObj.get("address"),
@@ -1060,6 +1076,7 @@
           "differenceInDays": differenceInDays,
           "offerCount": requestObj.get("offerCount"),
           "comments": requestObj.get("comments"),
+          "failedDeliveryReason": failedDeliveryReason,
           "createdAt": requestObj.createdAt
         };
         sellerOffer = {
@@ -1072,6 +1089,8 @@
           "offerPrice": priceObj.get("value"),
           "offerStatus": offerObj.get("status"),
           "offerDeliveryTime": offerObj.get("deliveryTime"),
+          "offerDeliveryDate": offerObj.get("deliveryDate"),
+          "offerDeliveryDate": offerObj.get("deliveryDate"),
           "offerComments": offerObj.get("comments"),
           "createdAt": offerObj.createdAt,
           "updatedAt": offerObj.updatedAt
@@ -2268,7 +2287,8 @@
               "area": area,
               "radius": sellerRadius,
               "location": sellerLocation,
-              "requests": individualReqResults
+              "requests": individualReqResults,
+              "credits": ""
             };
             return promise.resolve(requestsResult);
           });
@@ -2294,7 +2314,8 @@
       "id": prodObj.id,
       "name": prodObj.get("name"),
       "mrp": prodObj.get("mrp"),
-      "image": prodObj.get("images")
+      "image": prodObj.get("images"),
+      "model_number": prodObj.get("model_number")
     };
     categoryObj = filteredRequest.get("category");
     category = {
@@ -2318,7 +2339,9 @@
       createdAt: filteredRequest.createdAt,
       comments: filteredRequest.get("comments"),
       status: filteredRequest.get("status"),
-      offerCount: filteredRequest.get("offerCount")
+      offerCount: filteredRequest.get("offerCount"),
+      lastOfferPrice: "",
+      onlinePrice: ""
     };
     queryNotification = new Parse.Query("Notification");
     innerQuerySeller = new Parse.Query(Parse.User);

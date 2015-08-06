@@ -118,6 +118,9 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
     comments = request.params.comments
     status = request.params.status
 
+    makeOfferCredits = 1
+    acceptOfferCredits = 5
+
     # make an entry in price class
     Price = Parse.Object.extend("Price")
     Offer = Parse.Object.extend("Offer")
@@ -134,9 +137,7 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
 
         createdDateOfReq = requestObject.createdAt
 
-        console.log createdDateOfReq
         requestGeoPoint = requestObject.get("addressGeoPoint")
-        console.log requestGeoPoint
 
         price = new Price()
 
@@ -175,19 +176,34 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
             offer.save()
             .then (offerObj) ->
 
-                notification = new Notification()
+                # make a transaction for the offer i.e deducted at the  time of making offer
+                Transaction = Parse.Object.extend("Transaction")
+                transaction = new Transaction()
+                transaction.set "seller" , sellerObj
+                transaction.set "transactionType" , "minus"
+                transaction.set "creditCount" , makeOfferCredits
+                transaction.set "towards" , "offer"
+                transaction.set "offer" , offerObj
 
-                notification.set "hasSeen" , false
-                notification.set "recipientUser" , requestingCustomer
-                notification.set "channel" , "push"
-                notification.set "processed" , false
-                notification.set "type" , "Offer"
-                notification.set "offerObject" , offerObj
-                
-                notification.save()
-                .then (notificationObj) ->
-                    response.success(notificationObj)
-                
+                transaction.save()
+                .then (savedTransaction) ->
+                    # on successful tranaction
+
+                    notification = new Notification()
+
+                    notification.set "hasSeen" , false
+                    notification.set "recipientUser" , requestingCustomer
+                    notification.set "channel" , "push"
+                    notification.set "processed" , false
+                    notification.set "type" , "Offer"
+                    notification.set "offerObject" , offerObj
+                    
+                    notification.save()
+                    .then (notificationObj) ->
+                        response.success(notificationObj)
+                    , (error) ->
+                        response.error error
+
                 , (error) ->
                     response.error error
 
@@ -319,6 +335,10 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 if requestStatus is "open"
                     requestStatus = "expired"                                
 
+            failedDeliveryReason = requestObj.get("failedDeliveryReason")
+            if _.isNull(failedDeliveryReason)
+                failedDeliveryReason = ""
+
             request = 
                 "id" : requestObj.id
                 "address" : requestObj.get("address")
@@ -326,6 +346,7 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 "differenceInDays" :differenceInDays
                 "offerCount" : requestObj.get("offerCount")
                 "comments" : requestObj.get("comments")
+                "failedDeliveryReason" : failedDeliveryReason
                 "createdAt" : requestObj.createdAt  
 
             sellerOffer = 
@@ -338,6 +359,8 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 "offerPrice" : priceObj.get("value")   
                 "offerStatus" : offerObj.get("status")   
                 "offerDeliveryTime" : offerObj.get("deliveryTime")   
+                "offerDeliveryDate" : offerObj.get("deliveryDate")   
+                "offerDeliveryDate" : offerObj.get("deliveryDate")   
                 "offerComments" : offerObj.get("comments")   
                 "createdAt" : offerObj.createdAt  
                 "updatedAt" : offerObj.updatedAt  
