@@ -1,6 +1,9 @@
 <ion-view
-	view-title="Request Details"
+
 	ng-init="view.init()">
+<ion-nav-title>
+		REQUEST DETIALS
+    </ion-nav-title>
 
 	<ion-content>
 
@@ -32,13 +35,13 @@
 					</div>
 					<div class="row">
 						<div
-							class="col"
+							class="col col-50"
 							ng-if="view.request"
 							ng-click="view.address.toggle()">
 
 							<p class="loca">
-								My Location
-								<span><i class="icon ion-ios-location"></i> {{view.request.address.city}}</span>
+								<i class="icon ion-ios-location"></i> Address :
+								<span>{{view.request.address.city}}</span>
 								<a ng-if="!view.address.show">More</a>
 								<a ng-if="view.address.show">Less</a>
 							</p>
@@ -51,15 +54,15 @@
 						</div>
 
 						<div
-							class="col col-20 pull-right"
+							class="col col-50 "
 							ng-if="view.request.comments !== ''">
-
-							<button
-								class="button button-outline button-dark button-lighter"
+<button class="button icon ion-chatbox-working pull-right button-small button-light" ng-click="view.comments.toggle()"></button>
+							<!-- <button
+								class="button button-outline button-sm button-dark button-lighter"
 								ng-click="view.comments.toggle()">
 
 								<img src="./img/speechbubble.png" alt="Speech Bubble Icon">
-							</button>
+							</button> -->
 
 							<ion-item
 								class="item-text-wrap item-accordion com-acc"
@@ -195,9 +198,9 @@
 									<span class="loc">{{offer.seller.address.city}}</span>
 								</h3>
 								<p
-									class="comment"
+									class="comment subdued"
 									ng-if="offer.comments !== ''">
-									<img src="./img/speechbubble.png" alt="">
+									<i class="icon ion-chatbox-working"> </i>
 									<span class="com">{{offer.comments}}</span>
 								</p>
 							</div>
@@ -208,14 +211,17 @@
 						class="row row-fluid offer-vals"
 						ng-if="offer.status === 'accepted'">
 
-						<div class="col co l-75 p-a-0">
+						<div class="col col-75 p-a-0">
+							
+							<p>{{offer.seller.address.full}}</p>
+						</div>
+						<div class="col-25">
 							<button
 								class="button button-small button-assertive btn-phone"
 								ng-click="view.callSeller(offer.seller.phoneNumber)">
 								<!-- CALL SELLER -->
 								<i class="icon ion-ios-telephone"></i>
 							</button>
-							<p>{{offer.seller.address.full}}</p>
 						</div>
 					</div>
 
@@ -256,7 +262,7 @@
 
 						<div class="col align-center p-a-0 p-r-6">
 							<div class="vert-div pull-left"></div>
-							<p class="info">Delivery time left</p>
+							<p class="info">Delivery in</p>
 							<h2>{{offer.deliveryTimeLeftStr}}</h2>
 						</div>
 						<div class="col align-center p-a-0">
@@ -297,7 +303,7 @@
 
 			<ion-item
 				ng-if="view.offers.limitTo == 1 && view.offers.all.length > 1;"
-				ng-click="view.offers.showAll()">
+				ng-click="view.offers.showAll()" class="text-center">
 				SHOW ALL OFFERS
 			</ion-item>
 
