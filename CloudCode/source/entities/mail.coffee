@@ -6,7 +6,14 @@ Parse.Cloud.define "sendMail", (request, status) ->
 	comments = request.params.comments
 
 
-	text = '<p>Product Name:'+productName+'<br> Category:' + category + '<br> Brand: ' + brand + '<br> Categories: ' + description + '<br> Comments:' + comments+'<p>'
+	text = '<p>Product Name:'+productName+'<br> Category:' + category + '<br> Brand: ' + brand 
+	if description != null
+		text += '<br> Description: ' + description
+	if comments != null
+		text += '<br> Comments: ' + comments
+
+	text += '</p>'
+
 
 	
 	Mandrill = require('mandrill');
@@ -20,7 +27,7 @@ Parse.Cloud.define "sendMail", (request, status) ->
 		subject: "Product suggestions",
 		from_email: "parse@cloudcode.com",
 		from_name: "Cloud Code",
-		to: [{ email: "namrata@ajency.in", name: "Your Name"}]
+		to: [{ email: "namrata@ajency.in", name: "ShopOye"},{ email: "ashika@ajency.in ", "type": "cc"}]
 
 		},async: true
 		},{
