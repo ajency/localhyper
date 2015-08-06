@@ -1,16 +1,16 @@
 <ion-view view-title="Suggest a product">
 
 	<ion-content>
+			<div class="card">
+				<div class="item item-text-wrap">
+					Looking for an item , but don't see it in our store? Tell us about it..
+				</div>
+			</div>
 
-		<form 
-			name="suggestProductForm" 
-			novalidate 
-			ng-submit="suggest.onSuggest()">
-			
 			<div class="card">
 				<label class="item item-input item-stacked-label">
 					<span class="input-label"><i class="icon ion-cube"></i> Product</span>
-					<input type="text" placeholder="Which Product?" ng-model="suggest.productName" required>
+					<input type="text" placeholder="Which Product?" ng-model="suggest.productName" >
 				</label>
 			</div>
 
@@ -19,7 +19,7 @@
 					<span class="input-label item-select"><i class="icon ion-social-buffer"></i> Category
 						&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<br>
 
-						<select class="pull-right" ng-model="suggest.category" ng-options="item as item.name for item in suggest.items" required>
+						<select class="pull-right" ng-model="suggest.category" ng-options="item as item.name for item in suggest.items" >
 			      			<option value="">-- Select Category --</option>
 			   			</select>
 					</span>
@@ -27,7 +27,7 @@
 
 				<label class="item item-input item-stacked-label">
 					<span class="input-label"><i class="icon ion-flash"></i> Brand</span>
-					<input type="text" placeholder="Brand Name" ng-model="suggest.brand" required>
+					<input type="text" placeholder="Brand Name" ng-model="suggest.brand" >
 				</label>
 			</div>
 
@@ -49,15 +49,14 @@
 				<div class="row">
 					<div class="col">
 						<button 
-							class="button button-block button-assertive" 
-							ng-disabled="!suggestProductForm.$valid">
+							class="button button-block button-assertive"
+							ng-click="suggest.onSuggest()">
 							Suggest this product
 						</button>
 					</div>
 				</div>
 			</div>
-		</form>	
-
+		
 	</ion-content>
 
 </ion-view>

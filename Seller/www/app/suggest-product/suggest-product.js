@@ -29,7 +29,7 @@ angular.module('LocalHyper.suggestProduct', []).controller('suggestProductCtrl',
             "comments": this.yourComments
           };
           return $http.post('functions/sendMail', param).then(function(data) {
-            return CToast.show('your product has been suggested');
+            return CToast.showLongBottom('Thank you for your time. We will do our best to accommodate your suggestion at the earliest.');
           }, function(error) {
             return CToast.show('Request failed, please try again');
           })["finally"](function() {

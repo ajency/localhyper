@@ -37,7 +37,7 @@ angular.module 'LocalHyper.suggestProduct', []
 
 					$http.post 'functions/sendMail', param
 					.then (data)->
-						CToast.show('your product has been suggested')	
+						CToast.showLongBottom('Thank you for your time. We will do our best to accommodate your suggestion at the earliest.')
 					, (error)->
 						CToast.show('Request failed, please try again')
 					.finally ->
