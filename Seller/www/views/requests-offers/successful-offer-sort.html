@@ -1,0 +1,31 @@
+<ion-pane 
+	class="sort-model sort-popup successful-offer-sort"
+	aj-loading-back-drop>
+
+	<ul class="list">
+		<li class="item">SORT BY</li>
+
+		<li class="item"
+			ng-class="(view.sortBy === 'updatedAt') ? 'active' : ''"
+			ng-click="view.onSort('updatedAt', 'Recent Offers', true)">
+
+			Recent Offers
+		</li>
+
+		<li class="item"
+			ng-class="(view.sortBy === 'deliveryDate' && view.descending === false) ? 'active' : ''"
+			ng-click="view.onSort('deliveryDate', 'Delivery Time - low to high', false)">
+
+			Delivery Time - low to high
+		</li>
+
+		<li class="item"
+			ng-class="(view.sortBy === 'deliveryDate' && view.descending === true) ? 'active' : ''"
+			ng-click="view.onSort('deliveryDate', 'Delivery Time - high to low', true)">
+
+			Delivery Time - high to low
+		</li>
+
+	</ul>
+	
+</ion-pane>

@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform, DeliveryTime) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime', '$ionicLoading', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform, DeliveryTime, $ionicLoading) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -12,6 +12,7 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
       noAcceptedOffers: false,
       deliveryTime: DeliveryTime,
       sortBy: 'updatedAt',
+      sortName: 'Recent Offers',
       descending: true,
       filter: {
         modal: null,
@@ -196,6 +197,13 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
           };
         })(this));
       },
+      showSortOptions: function() {
+        return $ionicLoading.show({
+          scope: $scope,
+          templateUrl: 'views/requests-offers/successful-offer-sort.html',
+          hideOnStateChange: true
+        });
+      },
       showOfferHistory: function() {
         var params;
         params = {
@@ -271,6 +279,31 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         this.display = 'loader';
         this.page = 0;
         return this.canLoadMore = true;
+      },
+      onSort: function(sortBy, sortName, descending) {
+        $ionicLoading.hide();
+        switch (sortBy) {
+          case 'updatedAt':
+            if (this.sortBy !== 'updatedAt') {
+              this.sortBy = 'updatedAt';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            }
+            break;
+          case 'deliveryDate':
+            if (this.sortBy !== 'deliveryDate') {
+              this.sortBy = 'deliveryDate';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            } else if (this.descending !== descending) {
+              this.sortBy = 'deliveryDate';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            }
+        }
       }
     };
     onDeviceBack = function() {

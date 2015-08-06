@@ -2,9 +2,9 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'SuccessfulOffersCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime'
+	, '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime', '$ionicLoading'
 	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog
-	, $ionicPlatform, DeliveryTime)->
+	, $ionicPlatform, DeliveryTime, $ionicLoading)->
 
 		$scope.view = 
 			display: 'loader'
@@ -18,6 +18,7 @@ angular.module 'LocalHyper.requestsOffers'
 			deliveryTime: DeliveryTime
 
 			sortBy: 'updatedAt'
+			sortName: 'Recent Offers'
 			descending: true
 
 			filter:
@@ -146,6 +147,12 @@ angular.module 'LocalHyper.requestsOffers'
 				$timeout =>
 					@onScrollComplete()
 
+			showSortOptions : ->
+				$ionicLoading.show
+					scope: $scope
+					templateUrl: 'views/requests-offers/successful-offer-sort.html'
+					hideOnStateChange: true
+
 			showOfferHistory : ->
 				params = 
 					page: @page
@@ -206,6 +213,28 @@ angular.module 'LocalHyper.requestsOffers'
 				@display = 'loader'
 				@page = 0
 				@canLoadMore = true
+
+			onSort : (sortBy, sortName, descending)->
+				$ionicLoading.hide()
+
+				switch sortBy
+					when 'updatedAt'
+						if @sortBy isnt 'updatedAt'
+							@sortBy = 'updatedAt'
+							@sortName = sortName
+							@descending = descending
+							@reFetch()
+					when 'deliveryDate'
+						if @sortBy isnt 'deliveryDate'
+							@sortBy = 'deliveryDate'
+							@sortName = sortName
+							@descending = descending
+							@reFetch()
+						else if @descending isnt descending
+							@sortBy = 'deliveryDate'
+							@sortName = sortName
+							@descending = descending
+							@reFetch()
 
 
 		onDeviceBack = ->
