@@ -185,7 +185,9 @@ angular.module 'LocalHyper.businessDetails', []
 							App.navigate 'category-chains'
 						
 		$scope.$on '$ionicView.beforeEnter', ->
-			$scope.view.myProfileState =  App.previousState is 'my-profile' or  App.previousState is ''
+			if App.previousState == 'my-profile' || (App.previousState == '' && User.getCurrent() != null )
+				$scope.view.myProfileState = true 
+
 		
 		$scope.$on '$ionicView.enter', ->
 			App.hideSplashScreen()

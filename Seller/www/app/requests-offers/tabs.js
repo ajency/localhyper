@@ -24,19 +24,13 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
   '$timeout', '$ionicLoading', function($timeout, $ionicLoading) {
     return {
       restrict: 'A',
-      scope: {
-        onLoadingHidden: '&'
-      },
       link: function(scope, el, attrs) {
         return $timeout(function() {
           return $('.loading-container').on('click', function(event) {
             var isBackdrop;
             isBackdrop = $(event.target).hasClass('loading-container');
             if (isBackdrop) {
-              $ionicLoading.hide();
-              return scope.$apply(function() {
-                return scope.onLoadingHidden();
-              });
+              return $ionicLoading.hide();
             }
           });
         });
