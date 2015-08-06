@@ -8,6 +8,8 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       page: 0,
       canLoadMore: true,
       refresh: false,
+      gotAllOffers: false,
+      noOffersMade: false,
       deliveryTime: DeliveryTime,
       sortBy: 'updatedAt',
       sortName: 'Recent Activity',
@@ -124,7 +126,6 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         },
         show: function(request) {
           this.data = request;
-          console.log(this.data);
           this.modal.show();
           return this.showExpiry = true;
         },
@@ -187,6 +188,8 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
       autoFetch: function() {
         this.page = 0;
         this.requests = [];
+        this.gotAllOffers = false;
+        this.noOffersMade = false;
         return this.showOfferHistory();
       },
       reFetch: function(refresh) {
@@ -197,6 +200,8 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         this.page = 0;
         this.requests = [];
         this.canLoadMore = true;
+        this.gotAllOffers = false;
+        this.noOffersMade = false;
         return $timeout((function(_this) {
           return function() {
             return _this.onScrollComplete();
@@ -255,6 +260,12 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
           }
         } else {
           this.canLoadMore = false;
+          if (_.size(this.requests) === 0) {
+            this.noOffersMade = true;
+          }
+        }
+        if (!this.canLoadMore) {
+          this.gotAllOffers = true;
         }
         return this.offerDetails.handlePendingRequest();
       },
@@ -267,6 +278,8 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         this.refresh = true;
         this.page = 0;
         this.canLoadMore = true;
+        this.gotAllOffers = false;
+        this.noOffersMade = false;
         return this.showOfferHistory();
       },
       onInfiniteScroll: function() {

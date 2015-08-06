@@ -23,6 +23,12 @@
 		<ion-list 
 			class="card-list" 
 			ng-switch-when="noError">
+
+			<ion-item 
+				ng-if="view.noAcceptedOffers"
+				class="item-text-wrap">
+				You have no accepted offers.
+			</ion-item>
 	       	
 	       	<ion-item
 	       		class="card"
@@ -38,7 +44,7 @@
 
 				    <div class="col p-t-0" >
 			            <sm class="light-gray"> Claimed delivery :</sm>
-			            	{{request.offerDeliveryTime.value}} {{request.offerDeliveryTime.unit}}
+			            	{{view.deliveryTime.humanize(request.offerDeliveryTime)}}
 			            <br>
 			        </div>
 					
@@ -82,6 +88,10 @@
 			error-type="view.errorType"
 			tap-to-retry="view.onTapToRetry()">
 		</aj-error>
+
+		<ion-item ng-if="view.gotAllOffers && view.requests.length !== 0">
+			That's all folks, no more offers to display.
+		</ion-item>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
