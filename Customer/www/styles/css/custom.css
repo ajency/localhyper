@@ -1113,6 +1113,7 @@ label.status-label {
   padding: 14px 10px;
   background: transparent;
   color: #444;
+  position: relative;
 }
 .products-filter-view label.item-radio .item-content .sel-count {
   float: right;
@@ -1125,6 +1126,9 @@ label.status-label {
   text-align: center;
   font-weight: bold;
   margin-top: 0px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 .products-filter-view label.item-radio input:checked ~ .item-content {
   background-color: #ffffff;
@@ -1132,6 +1136,7 @@ label.status-label {
 }
 .products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before {
   content: "\f349";
+  margin-bottom: 2px !important;
 }
 .products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
   content: "\f2aa";
@@ -1139,11 +1144,8 @@ label.status-label {
 .products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before,
 .products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
   display: block;
-  width: 25px;
-  height: 25px;
   margin: 0 auto;
-  margin-bottom: 10px;
-  display: inline-block;
+  margin-bottom: 5px;
   font-family: "Ionicons";
   speak: none;
   font-style: normal;
