@@ -22,7 +22,7 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
               if (data.userObj[0].get('userType') === 'seller') {
                 count = App.isAndroid() ? -2 : -1;
                 App.goBack(count);
-                return CToast.show('Sorry, you are already a registered seller');
+                return CToast.showLongBottom('Sorry, you are already registered as a Seller. ' + 'You cannot use this number to verify as a Customer.');
               } else {
                 return _this.requestSMSCode();
               }

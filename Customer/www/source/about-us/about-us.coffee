@@ -1,10 +1,22 @@
 angular.module 'LocalHyper.aboutUs', []
 
 
-.controller 'AboutUsCtrl', ['$scope', ($scope)->
+.controller 'AboutUsCtrl', ['$scope', '$cordovaAppVersion', 'App'
+	, ($scope, $cordovaAppVersion, App)->
 
+		$scope.view = 
+			appVersion: 'Loading...'
 
+			init : ->
+				if App.isWebView()
+					$cordovaAppVersion.getAppVersion()
+					.then (version)=>
+						@appVersion = version
 
+		
+		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
+			if !viewData.enableBack
+				viewData.enableBack = true
 ]
 
 

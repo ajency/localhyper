@@ -1,60 +1,73 @@
-<ion-modal-view>
+<ion-modal-view class="filters-white-bg">
 
 	<ion-header-bar style="height:55px;" no-tap-scroll="true">
-		<div class="row row-fluid">
-			<div class="col col-67 sm-text"> 
-				<h5 class="text-left">Filter by</h5> 
+		<div class="row row-fluid filter-head">
+			<div class="col col-25 sm-text">
+				<h4 class="text-left m-t-6">Filter by</h4>
 			</div>
-			<div class="col">
-				<h2 class="text-right" ng-click="view.filter.clearFilters();">
-					<i class="ion ion-minus-circled"></i>
+			<div class="col text-right">
+				<button class="button button-clear button-stable" ng-click="view.filter.clearFilters();">
+					<!-- <i class="ion ion-loop"></i> -->
+					Clear
+				</button>
+				<button class="button button-balanced" ng-click="view.filter.onApply();">
+					<!-- <i class="ion ion-checkmark-round"></i> -->
+					Apply
+				</button>
+				<button ng-click="view.filter.closeModal()" class="button button-clear text-right btn-close">
+					<i class="ion ion-ios-close-outline"></i>
+				</button>
+			</div>
+			<!-- <div class="col">
+				<h2 class="text-right color-greylight" ng-click="view.filter.clearFilters();">
+					<i class="ion ion-loop"></i>
 				</h2>
 			</div>
 			<div class="col">
-				<h2 class="text-right" ng-click="view.filter.onApply();">
-					<i class="ion ion-checkmark-round"></i> 
+				<h2 class="text-right color-balanced" ng-click="view.filter.onApply();">
+					<i class="ion ion-checkmark-round"></i>
 				</h2>
 			</div>
 			<div class="col">
 				<h2 ng-click="view.filter.closeModal()" class="text-right">
-					<i class="ion ion-ios-close-outline"></i> 
+					<i class="ion ion-ios-close-outline"></i>
 				</h2>
-			</div>
+			</div> -->
 		</div>
 	</ion-header-bar>
 
 	<ion-content>
 
-		<div class="row">
+		<div class="row row-fluid products-filter-view">
 
-			<div class="col col-33">
+			<div class="col col-33 p-a-0">
 				<div class="list">
-					<label 
-						class="item item-text-wrap item-radio"
+					<label
+						class="item item-text-wrap item-radio text-center"
 						ng-repeat="attr in view.filter.allAttributes">
-						<i ng-if="attr.selected !== 0">{{attr.selected}}</i>
-						<input 
-							type="radio" 
+						<input
+							type="radio"
 							name="group"
 							value="{{attr.value}}"
 							ng-model="view.filter.attribute">
 						<div class="item-content">
 							{{attr.name}}
+							<i class="sel-count" ng-if="attr.selected !== 0">{{attr.selected}}</i>
 						</div>
 					</label>
 				</div>
 			</div>
 
-			<div class="col col-67">
+			<div class="col col-67 p-a-0">
 
 				<ul class="list">
-					<li 
+					<li
 						class="item item-text-wrap item-checkbox"
 						ng-repeat="value in view.filter.attrValues[view.filter.attribute] track by $index">
 
 						<label class="checkbox">
-							<input 
-								type="checkbox" 
+							<input
+								type="checkbox"
 								ng-model="value.selected"
 								ng-change="view.filter.showAttrCount()">
 						</label>
@@ -65,7 +78,7 @@
 			</div>
 
 		</div>
-		
+
 	</ion-content>
 
 </ion-modal-view>

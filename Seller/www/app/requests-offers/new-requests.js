@@ -44,7 +44,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           var defer;
           defer = $q.defer();
           if (_.isNull(this.modal)) {
-            $ionicModal.fromTemplateUrl('views/requests-offers/request-details.html', {
+            $ionicModal.fromTemplateUrl('views/requests-offers/new-request-details.html', {
               scope: $scope,
               animation: 'slide-in-up',
               hardwareBackButtonClose: true
@@ -71,6 +71,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           return $ionicScrollDelegate.$getByHandle('request-details').scrollTop();
         },
         show: function(request) {
+          console.log(request);
           this.data = request;
           this.resetModal();
           this.modal.show();
@@ -185,6 +186,14 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         this.getRequests();
         return this.requestDetails.loadModal();
       },
+      reFetch: function() {
+        this.page = 0;
+        this.requests = [];
+        this.display = 'loader';
+        this.errorType = '';
+        this.getRequests();
+        return this.requestDetails.loadModal();
+      },
       getRequests: function() {
         return RequestsAPI.getAll().then((function(_this) {
           return function(data) {
@@ -255,23 +264,30 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           App.navigate('new-requests');
           return $scope.view.requestDetails.onNotificationClick(payload.id);
         case 'cancelled_request':
-          App.navigate('my-offer-history');
-          return $timeout(function() {
-            return $rootScope.$broadcast('cancelled:request', {
-              requestId: payload.id
-            });
-          }, 1000);
+          RequestsAPI.cancelledRequestId('set', payload.id);
+          return App.navigate('my-offer-history');
         case 'accepted_offer':
-          App.navigate('successful-offers');
-          return $timeout(function() {
-            return $rootScope.$broadcast('accepted:offer', {
-              offerId: payload.id
-            });
-          }, 1000);
+          OffersAPI.acceptedOfferId('set', payload.id);
+          return App.navigate('successful-offers');
       }
     });
-    return $scope.$on('$ionicView.afterEnter', function() {
+    $scope.$on('$ionicView.afterEnter', function() {
       return App.hideSplashScreen();
+    });
+    return $rootScope.$on('category:chain:changed', function() {
+      return $scope.view.reFetch();
+    });
+  }
+]).controller('EachRequestTimeCtrl', [
+  '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
+    var interval, setTime;
+    setTime = function() {
+      return $scope.request.timeStr = TimeString.get($scope.request.createdAt);
+    };
+    setTime();
+    interval = $interval(setTime, 60000);
+    return $scope.$on('$destroy', function() {
+      return $interval.cancel(interval);
     });
   }
 ]);

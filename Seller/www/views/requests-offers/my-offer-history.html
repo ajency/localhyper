@@ -39,13 +39,14 @@
 
 				    <div class="col p-t-0" >
 			            <sm class="light-gray"> Claimed delivery :</sm>
-			            	 {{request.offerDeliveryTime.value}} {{request.offerDeliveryTime.unit}}
+			            	{{view.deliveryTime.humanize(request.offerDeliveryTime)}}
 			            <br>
 			            <div ng-if="request.request.status == 'open' ">
 				            <sm class="light-gray" > Request expires in  :</sm>
 		            	 	<sm class=""
 								aj-count-down
-								created-at="request.request.createdAt">
+								created-at="request.request.createdAt"
+								count-down-finish="view.onRequestExpiry(request)">
 							</sm>
 					   </div>
 			        </div>
@@ -102,11 +103,22 @@
 
 	<ion-footer-bar class="bar-dark">
 		<div class="row">
-			<div class="col col-50 text-center" >
-				<h5 class="margin-none text-light normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
+			<div class="col col-50 text-center" ng-click="view.showSortOptions()">
+				<h5 class="margin-none text-light normal">
+					{{view.sortName}}
+				</h5>
+				<h5 class="margin-none text-light normal">
+					<i class="ion ion-arrow-swap"></i> SORT
+				</h5>
 			</div>
-			<div class="col col-50 text-center border-left">
-				<h5 class="margin-none text-light normal"><i class="ion ion-funnel"></i> FILTER</h5>
+
+			<div class="col col-50 text-center border-left" ng-click="view.filter.openModal()">
+				<h5 class="margin-none text-light normal">
+					{{view.filter.excerpt}}
+				</h5>
+				<h5 class="margin-none text-light normal">
+					<i class="ion ion-funnel"></i> FILTER
+				</h5>
 			</div>
 		</div>
 	</ion-footer-bar>

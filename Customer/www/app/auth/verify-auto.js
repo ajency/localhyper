@@ -29,7 +29,7 @@ angular.module('LocalHyper.auth').controller('VerifyAutoCtrl', [
             if (data.existing) {
               if (data.userObj[0].get('userType') === 'seller') {
                 App.goBack(-1);
-                return CToast.show('Sorry, you are already a registered seller');
+                return CToast.showLongBottom('Sorry, you are already registered as a Seller. ' + 'You cannot use this number to verify as a Customer.');
               } else {
                 return _this.requestSMSCode();
               }

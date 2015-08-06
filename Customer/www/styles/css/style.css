@@ -93,19 +93,22 @@
 }
 
 /*Ionic popover*/
-
-
-.platform-ios .popover {
-   height: 180px !important;
+.platform-android .popover {
+   height: 140px !important;
 }
 
+.platform-ios .popover {
+   height: 140px !important;
+}
+
+
 .aj-btn {
-	  position: absolute;
-	  width: 180px;
-	  left: 0%;
-	  right: 0%;
-	  margin: auto;
-	  font-weight: 600;
+	position: absolute;
+	width: 180px;
+	left: 0%;
+	right: 0%;
+	margin: auto;
+	font-weight: 600;
 }
 
 .aj-text .list{
@@ -170,13 +173,13 @@
 /* map css */
 .aj-big-map {
 	height: 200px;
-	margin: 0; 
+	margin: 0;
 	padding: 0;
 }
 
 .aj-very-big-map {
 	height: 250px;
-	margin: 0; 
+	margin: 0;
 	padding: 0;
 }
 
@@ -198,7 +201,7 @@
 
 /* accordion */
 .col .item.item-accordion {
-  line-height: 38px !important;
+  line-height: 22px !important;
   padding-top: 0;
   padding-bottom: 0;
   transition: 0.25s all linear;

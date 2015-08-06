@@ -1,5 +1,5 @@
 angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
-  '$scope', 'BrandsAPI', '$stateParams', 'SubCategory', 'CToast', 'CategoriesAPI', 'App', 'CDialog', 'Storage', function($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog, Storage) {
+  '$scope', 'BrandsAPI', '$stateParams', 'SubCategory', 'CToast', 'CategoriesAPI', 'App', 'CDialog', 'Storage', 'User', function($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog, Storage, User) {
     $scope.view = {
       title: SubCategory.name,
       brands: [],
@@ -129,26 +129,34 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
         })(this));
       },
       goBack: function() {
-        CategoriesAPI.categoryChains('set', this.categoryChains);
-        return Storage.categoryChains('set', this.categoryChains).then((function(_this) {
-          return function() {
-            var count;
-            switch (App.previousState) {
-              case 'categories':
-                count = -2;
-                break;
-              case 'sub-categories':
-                count = -3;
-                break;
-              case 'category-chains':
-                count = -1;
-                break;
-              default:
-                count = 0;
-            }
-            return App.goBack(count);
-          };
-        })(this));
+        if (User.isLoggedIn()) {
+          CategoriesAPI.categoryChains('set', this.categoryChains);
+          return App.navigate('my-profile');
+        } else {
+          CategoriesAPI.categoryChains('set', this.categoryChains);
+          return Storage.categoryChains('set', this.categoryChains).then((function(_this) {
+            return function() {
+              var count;
+              switch (App.previousState) {
+                case 'categories':
+                  count = -2;
+                  break;
+                case 'sub-categories':
+                  count = -3;
+                  break;
+                case 'category-chains':
+                  count = -1;
+                  break;
+                case 'my-profile':
+                  count = -1;
+                  break;
+                default:
+                  count = 0;
+              }
+              return App.goBack(count);
+            };
+          })(this));
+        }
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function() {

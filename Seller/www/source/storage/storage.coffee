@@ -4,6 +4,7 @@ angular.module 'LocalHyper.storage', []
 .factory 'Storage', [->
 
 	Storage = {}
+	userInfo = {}
 
 	Storage.slideTutorial = (action)->
 		switch action

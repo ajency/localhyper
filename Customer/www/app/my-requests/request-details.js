@@ -1,5 +1,5 @@
 angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
-  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope) {
+  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog) {
     var inAppNotificationEvent;
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
@@ -179,23 +179,27 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         });
       },
       onCancelRequest: function() {
-        CSpinner.show('', 'Please wait...');
-        return RequestAPI.updateRequestStatus({
-          "requestId": this.request.id,
-          "status": "cancelled"
-        }).then((function(_this) {
-          return function() {
-            _this.request.status = 'cancelled';
-            _this.cancelRequest.set();
-            $rootScope.$broadcast('request:cancelled');
-            return CToast.show('Your request has been cancelled');
+        return CDialog.confirm('Cancel Request', 'Are you sure you wish to cancel this request?', ['Yes', 'No']).then((function(_this) {
+          return function(btnIndex) {
+            if (btnIndex === 1) {
+              CSpinner.show('', 'Please wait...');
+              return RequestAPI.updateRequestStatus({
+                "requestId": _this.request.id,
+                "status": "cancelled"
+              }).then(function() {
+                _this.request.status = 'cancelled';
+                _this.cancelRequest.set();
+                $rootScope.$broadcast('request:cancelled');
+                return CToast.show('Your request has been cancelled');
+              }, function(error) {
+                return CToast.show('Cancellation failed, please try again');
+              })["finally"](function() {
+                CSpinner.hide();
+                return App.resize();
+              });
+            }
           };
-        })(this), function(error) {
-          return CToast.show('Cancellation failed, please try again');
-        })["finally"](function() {
-          CSpinner.hide();
-          return App.resize();
-        });
+        })(this));
       },
       callSeller: function(sellerNumber) {
         var telURI;

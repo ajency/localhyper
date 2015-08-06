@@ -2,10 +2,23 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
   '$scope', 'App', '$ionicPopover', '$rootScope', '$ionicSideMenuDelegate', '$cordovaSocialSharing', '$cordovaAppRate', 'User', 'Push', 'RequestAPI', function($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, $cordovaSocialSharing, $cordovaAppRate, User, Push, RequestAPI) {
     $scope.view = {
       userPopover: null,
+      userProfile: {
+        display: false,
+        name: '',
+        phone: '',
+        set: function() {
+          var user;
+          user = User.getCurrent();
+          this.name = user.get('displayName');
+          this.phone = user.get('username');
+          return this.display = true;
+        }
+      },
       init: function() {
         Push.register();
         this.loadPopOver();
         if (User.isLoggedIn()) {
+          this.userProfile.set();
           this.getNotifications();
         }
         return $ionicSideMenuDelegate.edgeDragThreshold(true);
@@ -32,11 +45,18 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         })(this));
       },
       onBackClick: function() {
-        var count;
-        if (App.currentState === 'verify-manual') {
-          count = App.isAndroid() ? -2 : -1;
-        } else {
-          count = -1;
+        var count, forAndroid, forIOS;
+        switch (App.currentState) {
+          case 'verify-manual':
+            count = App.isAndroid() ? -2 : -1;
+            break;
+          case 'verify-success':
+            forAndroid = App.previousState === 'verify-manual' ? -4 : -3;
+            forIOS = -3;
+            count = App.isAndroid() ? forAndroid : forIOS;
+            break;
+          default:
+            count = -1;
         }
         return App.goBack(count);
       },
@@ -68,7 +88,9 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
     };
     $rootScope.$on('$user:registration:success', function() {
       App.notification.icon = true;
-      return $scope.view.getNotifications();
+      $scope.view.userProfile.set();
+      $scope.view.getNotifications();
+      return App.resize();
     });
     $rootScope.$on('in:app:notification', function(e, obj) {
       var payload;
@@ -93,8 +115,10 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
     });
     return $rootScope.$on('on:session:expiry', function() {
       Parse.User.logOut();
+      $scope.view.userProfile.display = false;
       App.notification.icon = false;
-      return App.notification.badge = false;
+      App.notification.badge = false;
+      return App.resize();
     });
   }
 ]).config([
