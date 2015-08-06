@@ -2,8 +2,8 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'SuccessfulOffersCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope'
-	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope)->
+	, '$timeout', '$rootScope', 'CDialog', '$ionicPlatform'
+	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform)->
 
 		$scope.view = 
 			display: 'loader'
@@ -12,6 +12,75 @@ angular.module 'LocalHyper.requestsOffers'
 			page: 0
 			canLoadMore: true
 			refresh: false
+
+			sortBy: 'updatedAt'
+			descending: true
+
+			filter:
+				modal: null
+				excerpt: ''
+				selected: []
+				originalAttrs: []
+				attributes: [
+					{name: 'Pending delivery', value: 'pending_delivery', selected: false}
+					{name: 'Sent for delivery', value: 'sent_for_delivery', selected: false}
+					{name: 'Failed delivery', value: 'failed_delivery', selected: false}
+					{name: 'Successful delivery', value: 'successful', selected: false}]
+
+				loadModal : ->
+					$ionicModal.fromTemplateUrl 'views/requests-offers/successful-offer-filter.html', 
+						scope: $scope,
+						animation: 'slide-in-up'
+						hardwareBackButtonClose: false
+					.then (modal)=>
+						@modal = modal
+
+				noChangeInSelection : ->
+					_.isEqual _.sortBy(@originalAttrs), _.sortBy(@attributes)
+
+				openModal : ->
+					@originalAttrs = JSON.parse JSON.stringify(@attributes)
+					@modal.show()
+
+				closeModal : ->
+					if @noChangeInSelection()
+						@modal.hide()
+					else
+						msg = 'Your filter selection will go away'
+						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']
+						.then (btnIndex)=>
+							switch btnIndex
+								when 1
+									@attributes = @originalAttrs
+									@modal.hide()
+								when 2
+									@onApply()
+
+				clearFilters : ->
+					@selected = []
+					_.each @attributes, (attr)-> attr.selected = false
+
+				onApply : ->
+					if @noChangeInSelection()
+						@modal.hide()
+					else
+						_.each @attributes, (attr)=>
+							if attr.selected
+								if !_.contains @selected, attr.value
+									@selected.push attr.value
+							else
+								@selected = _.without @selected, attr.value
+						
+						@setExcerpt()
+						@modal.hide()
+						$scope.view.reFetch()
+
+				setExcerpt : ->
+					filterNames = []
+					_.each @selected, (val)=>
+						attribute = _.filter @attributes, (attr)-> attr.value is val
+						filterNames.push attribute[0].name
+					@excerpt = filterNames.join ', '
 
 			offerDetails:
 				modal: null
@@ -51,17 +120,32 @@ angular.module 'LocalHyper.requestsOffers'
 
 			init : ->
 				@offerDetails.loadModal()
+				@filter.loadModal()
 
-			reFetch : ->
+			onScrollComplete : ->
+				$scope.$broadcast 'scroll.infiniteScrollComplete'
+
+			autoFetch : ->
 				@page = 0
 				@requests = []
 				@showOfferHistory()
+
+			reFetch : (refresh=true)->
+				@refresh = refresh
+				@page = 0
+				@requests = []
+				@canLoadMore = true
+				$timeout =>
+					@onScrollComplete()
 
 			showOfferHistory : ->
 				params = 
 					page: @page
 					acceptedOffers: true
 					displayLimit: 3
+					sortBy: @sortBy
+					descending: @descending
+					selectedFilters: @filter.selected
 
 				OffersAPI.getSellerOffers params
 				.then (data)=>
@@ -82,7 +166,7 @@ angular.module 'LocalHyper.requestsOffers'
 						@canLoadMore = false
 					else
 						@canLoadMore = true 
-						$scope.$broadcast 'scroll.infiniteScrollComplete'
+						@onScrollComplete()
 
 					if @refresh then @requests = offerData
 					else @requests = @requests.concat offerData
@@ -110,7 +194,22 @@ angular.module 'LocalHyper.requestsOffers'
 				@display = 'loader'
 				@page = 0
 				@canLoadMore = true
-		
+
+
+		onDeviceBack = ->
+			filter = $scope.view.filter
+			if $('.loading-container').hasClass 'visible'
+				$ionicLoading.hide()
+			else if filter.modal.isShown()
+				filter.closeModal()
+			else
+				App.goBack -1
+
+		$scope.$on '$ionicView.enter', ->
+			$ionicPlatform.onHardwareBackButton onDeviceBack
+
+		$scope.$on '$ionicView.leave', ->
+			$ionicPlatform.offHardwareBackButton onDeviceBack
 		
 		$scope.$on 'modal.hidden', ->
 			$scope.view.offerDetails.pendingOfferId = ""
@@ -122,7 +221,7 @@ angular.module 'LocalHyper.requestsOffers'
 			payload = obj.payload
 			if payload.type is 'accepted_offer'
 				App.scrollTop()
-				$scope.view.reFetch()
+				$scope.view.autoFetch()
 
 		$scope.$on '$ionicView.enter', ->
 			#Handle notification click for accepted offer

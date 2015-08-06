@@ -44,7 +44,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           var defer;
           defer = $q.defer();
           if (_.isNull(this.modal)) {
-            $ionicModal.fromTemplateUrl('views/requests-offers/request-details.html', {
+            $ionicModal.fromTemplateUrl('views/requests-offers/new-request-details.html', {
               scope: $scope,
               animation: 'slide-in-up',
               hardwareBackButtonClose: true

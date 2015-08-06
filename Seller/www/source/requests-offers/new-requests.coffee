@@ -44,7 +44,7 @@ angular.module 'LocalHyper.requestsOffers'
 				loadModal : ->
 					defer = $q.defer()
 					if _.isNull @modal
-						$ionicModal.fromTemplateUrl 'views/requests-offers/request-details.html', 
+						$ionicModal.fromTemplateUrl 'views/requests-offers/new-request-details.html', 
 							scope: $scope,
 							animation: 'slide-in-up'
 							hardwareBackButtonClose: true
