@@ -1,0 +1,59 @@
+<ion-view view-title="Suggest a product">
+
+	<ion-content>
+
+		
+			
+			<div class="card">
+				<label class="item item-input item-stacked-label">
+					<span class="input-label"><i class="icon ion-cube"></i> Product</span>
+					<input type="text" placeholder="Which Product?" ng-model="suggest.productName" >
+				</label>
+			</div>
+
+			<div class="card category">
+				<label class="item item-input item-stacked-label">
+					<span class="input-label item-select"><i class="icon ion-social-buffer"></i> Category
+						&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<br>
+
+						<select class="pull-right" ng-model="suggest.category" ng-options="item as item.name for item in suggest.items" >
+			      			<option value="">-- Select Category --</option>
+			   			</select>
+					</span>
+				</label>
+
+				<label class="item item-input item-stacked-label">
+					<span class="input-label"><i class="icon ion-flash"></i> Brand</span>
+					<input type="text" placeholder="Brand Name" ng-model="suggest.brand" >
+				</label>
+			</div>
+
+			<div class="card">
+				<label class="item item-input item-stacked-label">
+					<span class="input-label"><i class="icon ion-edit"></i> Description</span>
+					<textarea type="text" rows="3" placeholder="A few lines explaining the product" ng-model="suggest.productDescription"></textarea>
+				</label>
+			</div>
+
+			<div class="card">
+				<label class="item item-input item-stacked-label">
+					<span class="input-label"><i class="icon ion-android-textsms"></i> Comments</span>
+					<textarea placeholder="Your thoughts" rows="3" ng-model="suggest.yourComments" ></textarea>
+				</label>
+			</div>
+
+			<div class="list suggest-btn">
+				<div class="row">
+					<div class="col">
+						<button 
+							class="button button-block button-assertive"
+							ng-click="suggest.onSuggest()">
+							Suggest this product
+						</button>
+					</div>
+				</div>
+			</div>
+		
+	</ion-content>
+
+</ion-view>
