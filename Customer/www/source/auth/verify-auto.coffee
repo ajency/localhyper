@@ -34,7 +34,8 @@ angular.module 'LocalHyper.auth'
 					if data.existing
 						if data.userObj[0].get('userType') is 'seller'
 							App.goBack -1
-							CToast.show 'Sorry, you are already a registered seller'
+							CToast.showLongBottom 'Sorry, you are already registered as a Seller. '+
+							'You cannot use this number to verify as a Customer.'
 						else @requestSMSCode()
 					else @requestSMSCode()
 				, (error)=>

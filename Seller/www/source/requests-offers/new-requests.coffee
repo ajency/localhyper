@@ -44,7 +44,7 @@ angular.module 'LocalHyper.requestsOffers'
 				loadModal : ->
 					defer = $q.defer()
 					if _.isNull @modal
-						$ionicModal.fromTemplateUrl 'views/requests-offers/request-details.html', 
+						$ionicModal.fromTemplateUrl 'views/requests-offers/new-request-details.html', 
 							scope: $scope,
 							animation: 'slide-in-up'
 							hardwareBackButtonClose: true
@@ -68,6 +68,7 @@ angular.module 'LocalHyper.requestsOffers'
 						.scrollTop()
 
 				show : (request)->
+					console.log request
 					@data = request
 					@resetModal()
 					@modal.show()
@@ -157,6 +158,14 @@ angular.module 'LocalHyper.requestsOffers'
 				@getRequests()
 				@requestDetails.loadModal()
 
+			reFetch : ->
+				@page = 0
+				@requests = []
+				@display = 'loader'
+				@errorType = ''
+				@getRequests()
+				@requestDetails.loadModal()
+
 			getRequests : ->
 				RequestsAPI.getAll()
 				.then (data)=>
@@ -207,7 +216,6 @@ angular.module 'LocalHyper.requestsOffers'
 				when 'cancelled_request'
 					$rootScope.$broadcast 'get:unseen:notifications'
 					$scope.view.requestDetails.removeRequestCard payload.id
-
 		
 		$rootScope.$on 'push:notification:click', (e, obj)->
 			payload = obj.payload
@@ -216,18 +224,31 @@ angular.module 'LocalHyper.requestsOffers'
 					App.navigate 'new-requests'
 					$scope.view.requestDetails.onNotificationClick payload.id
 				when 'cancelled_request'
+					RequestsAPI.cancelledRequestId 'set', payload.id
 					App.navigate 'my-offer-history'
-					$timeout ->
-						$rootScope.$broadcast 'cancelled:request', requestId: payload.id
-					, 1000
 				when 'accepted_offer'
+					OffersAPI.acceptedOfferId 'set', payload.id
 					App.navigate 'successful-offers'
-					$timeout ->
-						$rootScope.$broadcast 'accepted:offer', offerId: payload.id
-					, 1000
-
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
+
+
+		$rootScope.$on 'category:chain:changed', ->
+			# App.scrollTop()
+			$scope.view.reFetch()
+]
+
+
+.controller 'EachRequestTimeCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
+
+	#Request time
+	setTime = ->
+		$scope.request.timeStr = TimeString.get $scope.request.createdAt
+
+	setTime()
+	interval = $interval setTime, 60000
+	$scope.$on '$destroy', ->
+		$interval.cancel interval
 ]
 

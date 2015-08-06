@@ -19,6 +19,61 @@ angular.module 'LocalHyper.requestsOffers', []
 ]
 
 
+.directive 'ajLoadingBackDrop', ['$timeout', '$ionicLoading', ($timeout, $ionicLoading)->
+
+	restrict: 'A'
+
+	link: (scope, el, attrs)->
+		$timeout ->
+			$('.loading-container').on 'click', (event)->
+				isBackdrop = $(event.target).hasClass 'loading-container'
+				if isBackdrop
+					$ionicLoading.hide()
+]
+
+
+.directive 'ajCountDown', ['$timeout', ($timeout)->
+
+	restrict: 'A'
+	scope:
+		createdAt : '='
+		countDownFinish: '&'
+
+	link: (scope, el, attrs)->
+		
+		$timeout ->
+			createdAt = moment(scope.createdAt.iso)
+			total = moment(createdAt).add 24, 'hours'
+			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
+
+			# totalStr = '2015/08/06 12:20:00'
+
+			$(el).countdown totalStr, (event)->
+				$(el).html event.strftime('%-H:%-M:%-S')
+
+			.on 'finish.countdown', (event)->
+				scope.$apply ->
+					scope.countDownFinish()
+]
+
+
+.factory 'DeliveryTime', [->
+
+	DeliveryTime = 
+
+		humanize : (obj)->
+			if !_.isUndefined obj
+				value = obj.value
+				switch obj.unit
+					when 'hr'
+						unitText = if value is 1 then 'Hour' else 'Hours'
+					when 'day'
+						unitText = if value is 1 then 'Day' else 'Days'
+
+				"#{value} #{unitText}"
+]
+
+
 .factory 'TimeString', [->
 
 	TimeString = {}
@@ -54,33 +109,6 @@ angular.module 'LocalHyper.requestsOffers', []
 		timeStr
 
 	TimeString
-]
-
-
-.directive 'ajCountDown', ['$timeout', '$parse', ($timeout, $parse)->
-	
-	restrict: 'A'
-	link: (scope, el, attrs)->
-
-		$timeout ->
-			createdAt = $parse(attrs.createdAt)(scope)
-			total = moment(moment(createdAt.iso)).add 24, 'hours'
-			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
-			$(el).countdown totalStr, (event)->
-				$(el).html event.strftime('%-H:%-M:%-S')
-]
-
-
-.controller 'EachRequestTimeCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
-
-	#Request time
-	setTime = ->
-		$scope.request.timeStr = TimeString.get $scope.request.createdAt
-
-	setTime()
-	interval = $interval setTime, 60000
-	$scope.$on '$destroy', ->
-		$interval.cancel interval
 ]
 
 

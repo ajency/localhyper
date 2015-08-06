@@ -138,7 +138,8 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
               "area": info.city,
               "deliveryRadius": info.deliveryRadius,
               "supportedCategories": info.supportedCategories,
-              "supportedBrands": info.supportedBrands
+              "supportedBrands": info.supportedBrands,
+              "lastLogin": new Date()
             });
           });
         };
@@ -156,13 +157,21 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       return defer.promise;
     };
     AuthAPI.signUpNewUser = function() {
-      var defer, info, password, phone;
+      var defer, info, installationId, password, phone;
       defer = $q.defer();
       info = this.getUserDetails();
       phone = info.phone;
       password = "" + phone + UUID;
+      installationId = '';
       App.getInstallationId().then((function(_this) {
-        return function(installationId) {
+        return function(appInstallationId) {
+          var defaults;
+          installationId = appInstallationId;
+          defaults = new Parse.Query('Defaults');
+          return defaults.first();
+        };
+      })(this)).then((function(_this) {
+        return function(defaultObj) {
           var user;
           user = new Parse.User();
           user.set({
@@ -179,11 +188,23 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
             "area": info.city,
             "deliveryRadius": info.deliveryRadius,
             "supportedCategories": info.supportedCategories,
-            "supportedBrands": info.supportedBrands
+            "supportedBrands": info.supportedBrands,
+            "lastLogin": new Date(),
+            "credit": defaultObj.get('sellerCredit')
           });
           return user.signUp();
         };
-      })(this)).then(function(success) {
+      })(this)).then(function() {
+        var user;
+        user = User.getCurrent();
+        return Parse.Cloud.run('getNewRequests', {
+          "sellerId": user.id,
+          "city": user.get('city'),
+          "area": user.get('area'),
+          "sellerLocation": "default",
+          "sellerRadius": "default"
+        });
+      }).then(function(success) {
         return defer.resolve(success);
       }, (function(_this) {
         return function(error) {

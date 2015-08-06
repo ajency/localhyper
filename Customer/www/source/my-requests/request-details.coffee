@@ -2,8 +2,9 @@ angular.module 'LocalHyper.myRequests'
 
 
 .controller 'RequestDetailsCtrl', ['$scope', 'RequestAPI', '$interval', 'TimeString'
-	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope'
-	, ($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope)->
+	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog'
+	, ($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner
+	, CToast, $rootScope, CDialog)->
 
 		$scope.view = 
 			request: RequestAPI.requestDetails 'get'
@@ -156,20 +157,23 @@ angular.module 'LocalHyper.myRequests'
 					App.resize()
 
 			onCancelRequest : ->
-				CSpinner.show '', 'Please wait...'
-				RequestAPI.updateRequestStatus
-					"requestId": @request.id
-					"status": "cancelled"
-				.then =>
-					@request.status = 'cancelled'
-					@cancelRequest.set()
-					$rootScope.$broadcast 'request:cancelled'
-					CToast.show 'Your request has been cancelled'
-				, (error)->
-					CToast.show 'Cancellation failed, please try again'
-				.finally ->
-					CSpinner.hide()
-					App.resize()
+				CDialog.confirm 'Cancel Request', 'Are you sure you wish to cancel this request?', ['Yes', 'No']
+				.then (btnIndex)=>
+					if btnIndex is 1
+						CSpinner.show '', 'Please wait...'
+						RequestAPI.updateRequestStatus
+							"requestId": @request.id
+							"status": "cancelled"
+						.then =>
+							@request.status = 'cancelled'
+							@cancelRequest.set()
+							$rootScope.$broadcast 'request:cancelled'
+							CToast.show 'Your request has been cancelled'
+						, (error)->
+							CToast.show 'Cancellation failed, please try again'
+						.finally ->
+							CSpinner.hide()
+							App.resize()
 
 			callSeller : (sellerNumber)->
 				telURI = "tel:#{sellerNumber}"

@@ -2,9 +2,9 @@ angular.module 'LocalHyper.businessDetails', []
 
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
-	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails'
+	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner'
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout
-	, Storage, BusinessDetails)->
+	, Storage, BusinessDetails, AuthAPI, CSpinner)->
 	
 		$scope.view = 
 			name:''
@@ -12,6 +12,7 @@ angular.module 'LocalHyper.businessDetails', []
 			businessName:''
 			confirmedAddress: ''
 			terms: false
+			myProfileState : false
 
 			delivery:
 				radius: 10
@@ -158,9 +159,35 @@ angular.module 'LocalHyper.businessDetails', []
 						latitude: @latitude
 						longitude: @longitude
 						deliveryRadius: @delivery.radius
+						location:
+							address:@location.address
+						delivery:
+							radius: @delivery.radius
 					.then ->
-						App.navigate 'category-chains'
-		
+						if App.previousState == 'my-profile' || App.previousState == ''
+							CSpinner.show '', 'Please wait...'
+							Storage.bussinessDetails 'get'
+							.then (details)->
+								User.info 'reset', details
+								user = User.info 'get'
+								user = User.info 'get'
+								AuthAPI.isExistingUser(user)
+								.then (data)=>
+									AuthAPI.loginExistingUser(data.userObj)
+								.then (success)->
+									App.navigate('my-profile')
+								, (error)=>
+									CToast.show 'Please try again data not saved'
+								.finally ->
+									CSpinner.hide()
+							
+						else
+							App.navigate 'category-chains'
+						
+		$scope.$on '$ionicView.beforeEnter', ->
+			if App.previousState == 'my-profile' || (App.previousState == '' && User.getCurrent() != null )
+				$scope.view.myProfileState = true 
+
 		
 		$scope.$on '$ionicView.enter', ->
 			App.hideSplashScreen()

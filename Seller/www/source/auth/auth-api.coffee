@@ -128,6 +128,7 @@ angular.module 'LocalHyper.auth'
 						"deliveryRadius": info.deliveryRadius
 						"supportedCategories": info.supportedCategories
 						"supportedBrands": info.supportedBrands
+						"lastLogin": new Date()
 			.then ->
 				Parse.User.logOut()
 			.then ->
@@ -144,9 +145,14 @@ angular.module 'LocalHyper.auth'
 			info = @getUserDetails()
 			phone = info.phone
 			password = "#{phone}#{UUID}"
+			installationId = ''
 
 			App.getInstallationId()
-			.then (installationId)=>
+			.then (appInstallationId)=>
+				installationId = appInstallationId
+				defaults = new Parse.Query 'Defaults'
+				defaults.first()
+			.then (defaultObj)=>
 				user = new Parse.User()
 				user.set 
 					"userType": "seller"
@@ -163,8 +169,20 @@ angular.module 'LocalHyper.auth'
 					"deliveryRadius": info.deliveryRadius
 					"supportedCategories": info.supportedCategories
 					"supportedBrands": info.supportedBrands
+					"lastLogin": new Date()
+					"credit": defaultObj.get 'sellerCredit'
 				
 				user.signUp()
+			.then ->
+				#This function is called to make sure that notification entries 
+				#are made for existing requests for a new seller to maintain consistency.
+				user = User.getCurrent()
+				Parse.Cloud.run 'getNewRequests',
+					"sellerId": user.id
+					"city": user.get 'city'
+					"area": user.get 'area'
+					"sellerLocation": "default"
+					"sellerRadius": "default"
 			.then (success)->
 				defer.resolve success
 			, (error)=>

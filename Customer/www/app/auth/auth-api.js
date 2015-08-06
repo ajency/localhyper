@@ -95,7 +95,8 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
               "displayName": info.displayName,
               "password": newPassword,
               "passwordHash": newPasswordHash,
-              "installationId": installationId
+              "installationId": installationId,
+              "lastLogin": new Date()
             });
           });
         };
@@ -128,7 +129,8 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
             "displayName": info.displayName,
             "password": password,
             "passwordHash": _this.encryptPassword(password, phone),
-            "installationId": installationId
+            "installationId": installationId,
+            "lastLogin": new Date()
           });
           return user.signUp();
         };

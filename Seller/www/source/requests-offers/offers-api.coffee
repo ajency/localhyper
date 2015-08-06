@@ -4,6 +4,7 @@ angular.module 'LocalHyper.requestsOffers'
 .factory 'OffersAPI', ['$q', '$http', 'User', ($q, $http, User)->
 
 	OffersAPI = {}
+	acceptedOfferId = ''
 
 	OffersAPI.makeOffer = (params)->
 		defer = $q.defer()
@@ -18,15 +19,17 @@ angular.module 'LocalHyper.requestsOffers'
 
 	OffersAPI.getSellerOffers = (opts)->
 		defer = $q.defer()
+		user = User.getCurrent()
 
 		params = 
-			"sellerId": User.getId()
+			"sellerId": user.id
+			"sellerGeoPoint": user.get 'addressGeoPoint'
 			"page": opts.page
 			"displayLimit" : opts.displayLimit
 			"acceptedOffers": opts.acceptedOffers
-			"selectedFilters" : []
-			"sortBy" : "updatedAt"
-			"descending" : true
+			"selectedFilters" : opts.selectedFilters
+			"sortBy" : opts.sortBy
+			"descending" : opts.descending
 			
 		$http.post 'functions/getSellerOffers', params
 		.then (data)->
@@ -35,6 +38,13 @@ angular.module 'LocalHyper.requestsOffers'
 			defer.reject error
 
 		defer.promise
+
+	OffersAPI.acceptedOfferId = (action, id)->
+		switch action
+			when 'set'
+				acceptedOfferId = id
+			when 'get'
+				acceptedOfferId
 
 	OffersAPI
 ]

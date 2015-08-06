@@ -2,17 +2,32 @@ angular.module 'LocalHyper.main', []
 
 
 .controller 'SideMenuCtrl', ['$scope', 'App', '$ionicPopover', '$rootScope'
-	, '$ionicSideMenuDelegate', '$cordovaSocialSharing', '$cordovaAppRate', 'User', 'Push', 'RequestAPI'
+	, '$ionicSideMenuDelegate', '$cordovaSocialSharing', '$cordovaAppRate'
+	, 'User', 'Push', 'RequestAPI'
 	, ($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate
 	, $cordovaSocialSharing, $cordovaAppRate, User, Push, RequestAPI)->
 
 		$scope.view =
 			userPopover: null
+			
+			userProfile: 
+				display: false
+				name: ''
+				phone: ''
+
+				set : ->
+					user     = User.getCurrent()
+					@name    = user.get 'displayName'
+					@phone   = user.get 'username'
+					@display = true
+
 
 			init : ->
 				Push.register()
 				@loadPopOver()
-				@getNotifications() if User.isLoggedIn()
+				if User.isLoggedIn()
+					@userProfile.set()
+					@getNotifications()
 				$ionicSideMenuDelegate.edgeDragThreshold true
 
 			getNotifications : ->
@@ -30,9 +45,16 @@ angular.module 'LocalHyper.main', []
 					@userPopover = popover
 
 			onBackClick : ->
-				if App.currentState is 'verify-manual'
-					count = if App.isAndroid() then -2 else -1
-				else count = -1
+				switch App.currentState
+					when 'verify-manual'
+						count = if App.isAndroid() then -2 else -1
+					when 'verify-success'
+						forAndroid = if App.previousState is 'verify-manual' then -4 else -3
+						forIOS     = -3
+						count = if App.isAndroid() then forAndroid else forIOS
+					else
+						count = -1
+
 				App.goBack count
 
 			menuClose : ->
@@ -57,7 +79,9 @@ angular.module 'LocalHyper.main', []
 
 		$rootScope.$on '$user:registration:success', ->
 			App.notification.icon = true
+			$scope.view.userProfile.set()
 			$scope.view.getNotifications()
+			App.resize()
 
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
@@ -74,8 +98,10 @@ angular.module 'LocalHyper.main', []
 		
 		$rootScope.$on 'on:session:expiry', ->
 			Parse.User.logOut()
-			App.notification.icon = false
-			App.notification.badge = false
+			$scope.view.userProfile.display = false
+			App.notification.icon   = false
+			App.notification.badge  = false
+			App.resize()
 ]
 
 

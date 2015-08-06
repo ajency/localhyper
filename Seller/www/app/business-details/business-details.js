@@ -1,11 +1,12 @@
 angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner) {
     $scope.view = {
       name: '',
       phone: '',
       businessName: '',
       confirmedAddress: '',
       terms: false,
+      myProfileState: false,
       delivery: {
         radius: 10,
         plus: function() {
@@ -200,13 +201,47 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
             confirmedAddress: this.confirmedAddress,
             latitude: this.latitude,
             longitude: this.longitude,
-            deliveryRadius: this.delivery.radius
+            deliveryRadius: this.delivery.radius,
+            location: {
+              address: this.location.address
+            },
+            delivery: {
+              radius: this.delivery.radius
+            }
           }).then(function() {
-            return App.navigate('category-chains');
+            if (App.previousState === 'my-profile' || App.previousState === '') {
+              CSpinner.show('', 'Please wait...');
+              return Storage.bussinessDetails('get').then(function(details) {
+                var user;
+                User.info('reset', details);
+                user = User.info('get');
+                user = User.info('get');
+                return AuthAPI.isExistingUser(user).then((function(_this) {
+                  return function(data) {
+                    return AuthAPI.loginExistingUser(data.userObj);
+                  };
+                })(this)).then(function(success) {
+                  return App.navigate('my-profile');
+                }, (function(_this) {
+                  return function(error) {
+                    return CToast.show('Please try again data not saved');
+                  };
+                })(this))["finally"](function() {
+                  return CSpinner.hide();
+                });
+              });
+            } else {
+              return App.navigate('category-chains');
+            }
           });
         }
       }
     };
+    $scope.$on('$ionicView.beforeEnter', function() {
+      if (App.previousState === 'my-profile' || (App.previousState === '' && User.getCurrent() !== null)) {
+        return $scope.view.myProfileState = true;
+      }
+    });
     return $scope.$on('$ionicView.enter', function() {
       return App.hideSplashScreen();
     });

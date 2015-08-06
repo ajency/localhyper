@@ -20,6 +20,68 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
       }
     };
   }
+]).directive('ajLoadingBackDrop', [
+  '$timeout', '$ionicLoading', function($timeout, $ionicLoading) {
+    return {
+      restrict: 'A',
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          return $('.loading-container').on('click', function(event) {
+            var isBackdrop;
+            isBackdrop = $(event.target).hasClass('loading-container');
+            if (isBackdrop) {
+              return $ionicLoading.hide();
+            }
+          });
+        });
+      }
+    };
+  }
+]).directive('ajCountDown', [
+  '$timeout', function($timeout) {
+    return {
+      restrict: 'A',
+      scope: {
+        createdAt: '=',
+        countDownFinish: '&'
+      },
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          var createdAt, total, totalStr;
+          createdAt = moment(scope.createdAt.iso);
+          total = moment(createdAt).add(24, 'hours');
+          totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
+          return $(el).countdown(totalStr, function(event) {
+            return $(el).html(event.strftime('%-H:%-M:%-S'));
+          }).on('finish.countdown', function(event) {
+            return scope.$apply(function() {
+              return scope.countDownFinish();
+            });
+          });
+        });
+      }
+    };
+  }
+]).factory('DeliveryTime', [
+  function() {
+    var DeliveryTime;
+    return DeliveryTime = {
+      humanize: function(obj) {
+        var unitText, value;
+        if (!_.isUndefined(obj)) {
+          value = obj.value;
+          switch (obj.unit) {
+            case 'hr':
+              unitText = value === 1 ? 'Hour' : 'Hours';
+              break;
+            case 'day':
+              unitText = value === 1 ? 'Day' : 'Days';
+          }
+          return value + " " + unitText;
+        }
+      }
+    };
+  }
 ]).factory('TimeString', [
   function() {
     var TimeString;
@@ -56,35 +118,6 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
       return timeStr;
     };
     return TimeString;
-  }
-]).directive('ajCountDown', [
-  '$timeout', '$parse', function($timeout, $parse) {
-    return {
-      restrict: 'A',
-      link: function(scope, el, attrs) {
-        return $timeout(function() {
-          var createdAt, total, totalStr;
-          createdAt = $parse(attrs.createdAt)(scope);
-          total = moment(moment(createdAt.iso)).add(24, 'hours');
-          totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
-          return $(el).countdown(totalStr, function(event) {
-            return $(el).html(event.strftime('%-H:%-M:%-S'));
-          });
-        });
-      }
-    };
-  }
-]).controller('EachRequestTimeCtrl', [
-  '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
-    var interval, setTime;
-    setTime = function() {
-      return $scope.request.timeStr = TimeString.get($scope.request.createdAt);
-    };
-    setTime();
-    interval = $interval(setTime, 60000);
-    return $scope.$on('$destroy', function() {
-      return $interval.cancel(interval);
-    });
   }
 ]).config([
   '$stateProvider', function($stateProvider) {
