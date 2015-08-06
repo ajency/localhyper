@@ -102,7 +102,10 @@ sm{
 	text-decoration: underline;
 }
 .m-t-5{
-	margin-top: 5px;
+	margin-top: 5px!important;
+}
+.p-t-10{
+	margin-top: 10px!important;
 }
 .relative{
 	position: relative!important;
@@ -137,11 +140,37 @@ sm{
 	// background: @gray-transperent;
 	background-color: #F2F1ED;
 }
+.tabs-subheader{
+	.tabs{
+	background: #1f1f1f !important;
+	color:@white;
+	}
+	.tab-nav{
+    		i{
+    		color:@white;
+    		}
+    	}
+	.tab-title{
+		font-size: 16px;
+		color:@white;
+    	font-weight: 600;
+
+	}
+	.tab-item-active{
+		border-color: #F7575B !important;
+	}
+}
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light, .bar.bar-header {
-	background-image: url(../../img/header-bg.jpg) !important;
-	// background-color: #262626 !important;
+	/*background-image: url(../../img/header-bg.jpg) !important;*/
+	background-color: #1f1f1f !important;
 	background-repeat: repeat-x !important;
-	border-bottom:1px solid @gray-lighter !important;
+	/*border-bottom:1px solid @gray-lighter !important;*/
+	.button{
+		color:@white;
+	}
+	.nav-bar-title{
+		color:@white;
+	}
 	.notification{
 		  height: 20px;
 		  width: 20px;
@@ -1103,5 +1132,75 @@ label.status-label {
 			position: fixed;
 			background-color: @gray-darker;
 		}
+	}
+}
+
+
+.card-list{
+	.activated{
+		background: @white !important; 
+		background-color: @white !important; 
+		.item{
+		background: @white !important; 
+		background-color: @white !important; 
+	}
+}
+		.card{
+			padding: 0px;
+			.item{
+				padding-bottom: 0px;
+				min-height: 35px !important;
+			    background: #fff;
+
+			}
+			.item-divider{
+				border-top: 1px dashed #ccc;
+			}
+			.big-txt{
+				font-size: 1.8rem;
+				float: left;
+				font-weight: 600;
+				span{
+					font-size: 20px;
+				}
+			}
+		}
+	.btn-danger{
+		color: @brand-primary
+	}
+	.label{
+		  border: 1px solid #ccc;
+		  padding: 0px 5px;
+		  font-size: 11px;
+		  color: @gray;
+		  display: inline-block;
+	}
+	.offer{
+		  width: 42px;
+		  height: 44px;
+		  border-radius: 100%;
+		  border: 1px dashed @black;
+		  text-align: center;
+		  font-size: 1.5rem;
+		  line-height: 39px;
+		  margin: 5px auto;
+		  font-weight: 500;
+	}
+	.offertxt{
+		  background: @white;
+	  	  margin-top: -15px;
+         text-align: center;
+	}
+}
+.item-wrapper-nr {
+	.item-avatar {
+		    padding: 6px;
+    		margin-top: 8px;
+	}
+	h2 {
+		text-overflow: clip;
+		height: auto;
+		white-space: normal;
+		font-weight: bold;
 	}
 }
