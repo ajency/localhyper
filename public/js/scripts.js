@@ -11,8 +11,8 @@ $( document ).ready(function() {
         url: "https://api.parse.com/1/functions/getCategories",
         type: "POST",
         headers: {
-                    "x-parse-application-id": "837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7",
-                    "x-parse-rest-api-key": "zdoU2CuhK5S1Dbi2WDb6Rcs4EgprFrrpiWx3fUBy"
+                    "x-parse-application-id": window.APPLICATION_ID,
+                    "x-parse-rest-api-key": window.REST_API_KEY
                   },
         data: {
             "sort_by": "popularity",
