@@ -2,9 +2,10 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform', '$ionicLoading'
+	, '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform'
+	, '$ionicLoading', 'CDialog', 'DeliveryTime'
 	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner
-	, RequestsAPI, $ionicPlatform, $ionicLoading)->
+	, RequestsAPI, $ionicPlatform, $ionicLoading, CDialog, DeliveryTime)->
 
 		$scope.view = 
 			display: 'loader'
@@ -13,13 +14,14 @@ angular.module 'LocalHyper.requestsOffers'
 			page: 0
 			canLoadMore: true
 			refresh: false
+			deliveryTime: DeliveryTime
 
 			sortBy: 'updatedAt'
 			sortName: 'Recent Activity'
 			descending: true
 
 			filter:
-				open: false
+				modal: null
 				excerpt: ''
 				selected: []
 				originalAttrs: []
@@ -27,13 +29,53 @@ angular.module 'LocalHyper.requestsOffers'
 					{name: 'Open offers', value: 'open', selected: false}
 					{name: 'Unaccepted offers', value: 'unaccepted', selected: false}]
 
-				showOptions : ->
-					@open = true
+				loadModal : ->
+					$ionicModal.fromTemplateUrl 'views/requests-offers/offer-history-filter.html', 
+						scope: $scope,
+						animation: 'slide-in-up'
+						hardwareBackButtonClose: false
+					.then (modal)=>
+						@modal = modal
+
+				noChangeInSelection : ->
+					_.isEqual _.sortBy(@originalAttrs), _.sortBy(@attributes)
+
+				openModal : ->
 					@originalAttrs = JSON.parse JSON.stringify(@attributes)
-					$ionicLoading.show
-						scope: $scope
-						templateUrl: 'views/requests-offers/offer-history-filter.html'
-						hideOnStateChange: true
+					@modal.show()
+
+				closeModal : ->
+					if @noChangeInSelection()
+						@modal.hide()
+					else
+						msg = 'Your filter selection will go away'
+						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']
+						.then (btnIndex)=>
+							switch btnIndex
+								when 1
+									@attributes = @originalAttrs
+									@modal.hide()
+								when 2
+									@onApply()
+
+				clearFilters : ->
+					@selected = []
+					_.each @attributes, (attr)-> attr.selected = false
+
+				onApply : ->
+					if @noChangeInSelection()
+						@modal.hide()
+					else
+						_.each @attributes, (attr)=>
+							if attr.selected
+								if !_.contains @selected, attr.value
+									@selected.push attr.value
+							else
+								@selected = _.without @selected, attr.value
+						
+						@setExcerpt()
+						@modal.hide()
+						$scope.view.reFetch()
 
 				setExcerpt : ->
 					filterNames = []
@@ -42,27 +84,6 @@ angular.module 'LocalHyper.requestsOffers'
 						filterNames.push attribute[0].name
 					@excerpt = filterNames.join ', '
 
-				onApply : ->
-					@open = false
-					$ionicLoading.hide()
-
-					_.each @attributes, (attr)=>
-						if attr.selected
-							if !_.contains @selected, attr.value
-								@selected.push attr.value
-						else
-							@selected = _.without @selected, attr.value
-					
-					@setExcerpt()
-					$scope.view.reFetch()
-
-				noChangeInSelection : ->
-					_.isEqual _.sortBy(@originalAttrs), _.sortBy(@attributes)
-
-				onHide : ->
-					if @open and !@noChangeInSelection()
-						@attributes = @originalAttrs
-					@open = false
 
 
 			offerDetails:
@@ -81,6 +102,7 @@ angular.module 'LocalHyper.requestsOffers'
 				
 				show : (request)->
 					@data = request
+					console.log @data
 					@modal.show()
 					@showExpiry = true
 
@@ -117,6 +139,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 			init : ->
 				@offerDetails.loadModal()
+				@filter.loadModal()
 
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
@@ -197,6 +220,9 @@ angular.module 'LocalHyper.requestsOffers'
 				@page = 0
 				@canLoadMore = true
 
+			onRequestExpiry : (request)->
+				request.request.status = 'Expired'
+
 			onSort : (sortBy, sortName, descending)->
 				$ionicLoading.hide()
 
@@ -238,9 +264,11 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 		onDeviceBack = ->
+			filter = $scope.view.filter
 			if $('.loading-container').hasClass 'visible'
-				$scope.view.filter.open = false
 				$ionicLoading.hide()
+			else if filter.modal.isShown()
+				filter.closeModal()
 			else
 				App.goBack -1
 

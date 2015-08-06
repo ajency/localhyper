@@ -1072,15 +1072,34 @@ label.status-label {
 }
 
 //Filter view
+.filters-white-bg {
+	background-color: @white;
+	.has-header {
+		background-color: transparent;
+	}
+}
+.filter-head {
+	button.button {
+		font-size: 15px;
+		margin-left: 5px;
+		&.btn-close {
+			font-size: 32px;
+		}
+	}
+}
 .products-filter-view {
 	margin-top: 9px;
 	label.item-radio {
-		border-color: #666;
+		/* border-color: #666; */
+		font-size: 14px;
+		background-color: transparent;
+		text-align: center;
 		.item-content {
 			padding: 14px 10px;
-			background: @gray-darker;
-			color: @white;
-			box-shadow: 0 0 0 #000;
+			background: transparent;
+			color: #444;
+			position: relative;
+			// box-shadow: 0 0 0 #000;
 			.sel-count {
 				float: right;
 				width: 19px;
@@ -1088,16 +1107,45 @@ label.status-label {
 				line-height: 21px;
 				font-size: 14px;
 				color: #fff;
-				background-color: #f45152;
+				background-color: #444;
 				// border-radius: 50%;
 				text-align: center;
 				font-weight: bold;
 				margin-top: 0px;
+
+				position: absolute;
+				right: 0;
+				bottom: 0;
 			}
 		}
 		input:checked~.item-content {
-			background-color: #F7F7F7;
-			color: @gray-darker;
+			background-color: @white;
+			color: @brand-primary;
+		}
+		input[value=brand] + .item-content.ng-binding:before {
+			content: "\f349";
+			margin-bottom: 2px !important;
+		}
+		input[value=price] + .item-content.ng-binding:before {
+			content: "\f2aa";
+		}
+		input[value=brand] + .item-content.ng-binding:before,
+		input[value=price] + .item-content.ng-binding:before {
+			display: block;
+			margin: 0 auto;
+			margin-bottom: 5px;
+			// border: 1px solid #ddd;
+
+			font-family: "Ionicons";
+			speak: none;
+			font-style: normal;
+			font-weight: normal;
+			font-variant: normal;
+			text-transform: none;
+			text-rendering: auto;
+			line-height: 1;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
 		}
 	}
 	.item-checkbox {
@@ -1127,10 +1175,11 @@ label.status-label {
 		z-index: 3;
 		&:before {
 			content: '';
-			width: 33.33%;
+			width: 33.6%;
 			height: 1000%;
 			position: fixed;
-			background-color: @gray-darker;
+			background-color: #F2F1ED;
+			border-right: 1px solid #ddd;
 		}
 	}
 }

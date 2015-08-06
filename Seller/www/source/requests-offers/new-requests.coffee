@@ -44,7 +44,7 @@ angular.module 'LocalHyper.requestsOffers'
 				loadModal : ->
 					defer = $q.defer()
 					if _.isNull @modal
-						$ionicModal.fromTemplateUrl 'views/requests-offers/request-details.html', 
+						$ionicModal.fromTemplateUrl 'views/requests-offers/new-request-details.html', 
 							scope: $scope,
 							animation: 'slide-in-up'
 							hardwareBackButtonClose: true
@@ -68,6 +68,7 @@ angular.module 'LocalHyper.requestsOffers'
 						.scrollTop()
 
 				show : (request)->
+					console.log request
 					@data = request
 					@resetModal()
 					@modal.show()
@@ -236,5 +237,18 @@ angular.module 'LocalHyper.requestsOffers'
 		$rootScope.$on 'category:chain:changed', ->
 			# App.scrollTop()
 			$scope.view.reFetch()
+]
+
+
+.controller 'EachRequestTimeCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
+
+	#Request time
+	setTime = ->
+		$scope.request.timeStr = TimeString.get $scope.request.createdAt
+
+	setTime()
+	interval = $interval setTime, 60000
+	$scope.$on '$destroy', ->
+		$interval.cancel interval
 ]
 
