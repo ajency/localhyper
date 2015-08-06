@@ -105,7 +105,9 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
         area: address.city,
         deliveryRadius: parseInt(user.delivery.radius),
         supportedCategories: supportedCategories,
-        supportedBrands: supportedBrands
+        supportedBrands: supportedBrands,
+        offDays: user.offDays,
+        workTimings: user.workTimings
       };
       return data;
     };
@@ -139,7 +141,9 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
               "deliveryRadius": info.deliveryRadius,
               "supportedCategories": info.supportedCategories,
               "supportedBrands": info.supportedBrands,
-              "lastLogin": new Date()
+              "lastLogin": new Date(),
+              "offDays": info.offDays,
+              "workTimings": info.workTimings
             });
           });
         };
@@ -191,7 +195,9 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
             "supportedCategories": info.supportedCategories,
             "supportedBrands": info.supportedBrands,
             "lastLogin": new Date(),
-            "credit": parseFloat(defaultObj.get('value'))
+            "credit": parseFloat(defaultObj.get('value')),
+            "offDays": info.offDays,
+            "workTimings": info.workTimings
           });
           return user.signUp();
         };

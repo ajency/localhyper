@@ -1,5 +1,5 @@
 angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker) {
     $scope.view = {
       name: '',
       phone: '',
@@ -19,6 +19,41 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
             return this.radius--;
           }
         }
+      },
+      workingDays: [
+        {
+          name: 'Mon',
+          value: 'Monday',
+          selected: false
+        }, {
+          name: 'Tue',
+          value: 'Tuesday',
+          selected: false
+        }, {
+          name: 'Wed',
+          value: 'Wednesday',
+          selected: false
+        }, {
+          name: 'Thur',
+          value: 'Thursday',
+          selected: false
+        }, {
+          name: 'Fri',
+          value: 'Friday',
+          selected: false
+        }, {
+          name: 'Sat',
+          value: 'Saturday',
+          selected: false
+        }, {
+          name: 'Sun',
+          value: 'Sunday',
+          selected: false
+        }
+      ],
+      workTimings: {
+        start: '',
+        end: ''
       },
       location: {
         modal: null,
@@ -133,6 +168,43 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           };
         })(this));
       },
+      areWorkingDaysSelected: function() {
+        var selected;
+        selected = _.pluck(this.workingDays, 'selected');
+        return _.contains(selected, true);
+      },
+      getNonWorkingDays: function() {
+        var offDays;
+        offDays = [];
+        _.each(this.workingDays, (function(_this) {
+          return function(days) {
+            if (!days.selected) {
+              return offDays.push(days.value);
+            }
+          };
+        })(this));
+        return offDays;
+      },
+      addWorkTimings: function(type) {
+        var options;
+        if (App.isWebView()) {
+          options = {
+            date: new Date(),
+            mode: 'time',
+            is24Hour: true,
+            okText: 'Set',
+            androidTheme: 5
+          };
+          return $cordovaDatePicker.show(options).then((function(_this) {
+            return function(date) {
+              return _this.workTimings[type] = moment(date).format('HH:mm:ss');
+            };
+          })(this));
+        } else {
+          this.workTimings.start = '9:00:00';
+          return this.workTimings.end = '18:00:00';
+        }
+      },
       onChangeLocation: function() {
         var mapHeight;
         this.location.modal.show();
@@ -189,9 +261,14 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           return CToast.show('Please enter valid phone number');
         } else if (this.confirmedAddress === '') {
           return CToast.show('Please select your location');
+        } else if (!this.areWorkingDaysSelected()) {
+          return CToast.show('Please select your working days');
+        } else if (_.contains([this.workTimings.start, this.workTimings.end], '')) {
+          return CToast.show('Please select your work timings');
         } else {
           this.latitude = this.location.latLng.lat();
           this.longitude = this.location.latLng.lng();
+          this.offDays = this.getNonWorkingDays();
           User.info('set', $scope.view);
           return Storage.bussinessDetails('set', {
             name: this.name,
