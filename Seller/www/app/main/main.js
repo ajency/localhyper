@@ -33,10 +33,12 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
       },
       onBackClick: function() {
         var count;
-        if (App.currentState === 'verify-manual') {
-          count = App.isAndroid() ? -2 : -1;
-        } else {
-          count = -1;
+        switch (App.currentState) {
+          case 'verify-manual':
+            count = App.isAndroid() ? -2 : -1;
+            break;
+          default:
+            count = -1;
         }
         return App.goBack(count);
       },
