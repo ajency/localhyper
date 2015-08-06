@@ -3,8 +3,7 @@
 	ng-init="view.init()">
 
 	<ion-nav-title>
-	MY REQUEST
-		<!-- <img src="img/logo.png"/> -->
+		MY REQUEST
     </ion-nav-title>
 
 	<ion-content ng-switch="view.display">
@@ -38,33 +37,33 @@
 						
 					</div>
 					<div class="row item border-none p-t-10" >
-			        <div class="col  p-t-0">
-			            <sm class="light-gray"> Local Price</sm><br>
-			            <h3 class=" item-text-wrap margin-none big-txt ">
-			            	<span class="WebRupee subdued">&#x20B9;</span> {{request.product.mrp.toLocaleString()}}
-			            </h3>
-			        </div>
-			        <div class="col p-t-0">
-			        	<div class="pull-right">
-			            <div class="offer"> {{request.offerCount}} </div>
-			            <h4 class="offertxt light-gray"> No of offers</h4>
-			           	</div>
-			        </div>
-			    </div>
+				        <div class="col  p-t-0">
+				            <sm class="light-gray"> Local Price</sm><br>
+				            <h3 class=" item-text-wrap margin-none big-txt ">
+				            	<span class="WebRupee subdued">&#x20B9;</span> {{request.product.mrp.toLocaleString()}}
+				            </h3>
+				        </div>
+				        <div class="col p-t-0">
+				        	<div class="pull-right">
+				            <div class="offer"> {{request.offerCount}} </div>
+				            <h4 class="offertxt light-gray"> No of offers</h4>
+				           	</div>
+				        </div>
+			    	</div>
 			    <div class="row item item-divider" >
 			        <div class="col  col-25 ">
 			           <sm class="subdued "><i class="ion-ios-clock-outline"> </i>{{request.timeStr}}</sm>
 			        </div>
 			        <div class="col col-75">
-			         	<h3 class="margin-none status text-right m-t-5"> Status: <b> {{request.status}}</b></h3>
+			         	<h3 class="margin-none status text-right m-t-5">  <b> {{request.status}}</b></h3>
 			        </div>
 			    </div>
 			     
 			</ion-item>
 		</ion-list>	
-		<ion-item ng-if="view.getOpenProducts">
-			<h3 class="text-center ">No more products to display.</h3>
-		</ion-item>
+		<div ng-if="view.getOpenProducts">
+			<h4 class="text-center ">No more requests to display.</h4>
+		</div>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
