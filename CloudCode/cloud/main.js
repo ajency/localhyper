@@ -1286,6 +1286,21 @@
     });
   });
 
+  Parse.Cloud.define('getAcceptedOfferCount', function(request, response) {
+    var innerQuerySeller, queryOffers, sellerId;
+    sellerId = request.params.sellerId;
+    queryOffers = new Parse.Query("Offer");
+    innerQuerySeller = new Parse.Query(Parse.User);
+    innerQuerySeller.equalTo("objectId", sellerId);
+    queryOffers.matchesQuery("seller", innerQuerySeller);
+    queryOffers.equalTo("status", "accepted");
+    return queryOffers.count().then(function(count) {
+      return response.success(count);
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   Parse.Cloud.define('testDeliveryDate', function(request, response) {
     var claimedDelivery, offerAcceptedDate, result, sellerOffDays, sellerWorkTimings;
     claimedDelivery = request.params.claimedDelivery;

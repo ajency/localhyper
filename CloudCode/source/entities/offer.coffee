@@ -613,6 +613,25 @@ Parse.Cloud.define 'isOfferNotificationSeen', (request, response) ->
     , (error) ->
         response.error "2"+error
 
+Parse.Cloud.define 'getAcceptedOfferCount', (request, response) ->
+    sellerId = request.params.sellerId
+
+    # find all offers made by seller id with status "accepted"
+    queryOffers = new Parse.Query("Offer")
+
+    innerQuerySeller = new Parse.Query(Parse.User)
+    innerQuerySeller.equalTo("objectId", sellerId)
+
+    queryOffers.matchesQuery("seller",innerQuerySeller)
+    queryOffers.equalTo("status","accepted")
+
+    queryOffers.count()
+    .then (count)->
+        response.success count
+    , (error) ->
+        response.error error
+
+
 
 Parse.Cloud.define 'testDeliveryDate', (request, response) ->   
     
