@@ -1229,6 +1229,11 @@ label.status-label {
   background: #ffffff !important;
   background-color: #ffffff !important;
 }
+.card-list .status b {
+  color: #f45152;
+  font-weight: 400;
+  text-transform: uppercase;
+}
 .card-list .card {
   padding: 0px;
 }
@@ -1241,7 +1246,7 @@ label.status-label {
   border-top: 1px dashed #ccc;
 }
 .card-list .card .big-txt {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   float: left;
   font-weight: 600;
 }
@@ -1282,5 +1287,25 @@ label.status-label {
   text-overflow: clip;
   height: auto;
   white-space: normal;
-  font-weight: bold;
+  font-weight: 400;
+}
+.bar-footer {
+  box-shadow: 0px 5px 19px #000;
+}
+.request {
+  background: url(../../img/request.png) no-repeat;
+  width: 30px;
+  height: 30px !important;
+  background-size: 100%;
+  margin-top: 8px !important;
+}
+.expire {
+  background: url(../../img/expired.png) no-repeat;
+  width: 34px;
+  height: 30px !important;
+  background-size: 100%;
+  margin-top: 8px !important;
+}
+.sort-box li:first-child {
+  border-bottom: 3px solid #ccc;
 }
