@@ -78,7 +78,7 @@ angular.module 'LocalHyper.requestsOffers'
 					if !request.notification.hasSeen
 						requests = $scope.view.requests
 						index = _.findIndex requests, (val)-> val.id is request.id
-						RequestsAPI.updateStatus request.id
+						RequestsAPI.updateNotificationStatus request.id
 						.then (data)=>
 							App.notification.decrement()
 							requests[index].notification.hasSeen = true
@@ -198,7 +198,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 			markPendingNotificationsAsSeen : ->
 				_.each @pendingRequestIds, (requestId)=>
-					RequestsAPI.updateStatus requestId
+					RequestsAPI.updateNotificationStatus requestId
 					.then (data)=>
 						index = _.findIndex @requests, (val)-> val.id is requestId
 						if index isnt -1

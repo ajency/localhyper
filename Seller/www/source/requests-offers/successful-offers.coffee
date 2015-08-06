@@ -2,9 +2,10 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'SuccessfulOffersCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime', '$ionicLoading'
+	, '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime'
+	, '$ionicLoading', 'CToast', 'CSpinner', 'RequestsAPI'
 	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog
-	, $ionicPlatform, DeliveryTime, $ionicLoading)->
+	, $ionicPlatform, DeliveryTime, $ionicLoading, CToast, CSpinner, RequestsAPI)->
 
 		$scope.view = 
 			display: 'loader'
@@ -87,11 +88,16 @@ angular.module 'LocalHyper.requestsOffers'
 						filterNames.push attribute[0].name
 					@excerpt = filterNames.join ', '
 
+			
 			offerDetails:
 				modal: null
 				showExpiry : false
 				data: {}
 				pendingOfferId: ""
+				showChange: true
+				failedDelivery: 
+					display: false
+					reason: ''
 
 				loadModal : ->
 					$ionicModal.fromTemplateUrl 'views/requests-offers/successful-offer-details.html', 
@@ -101,9 +107,12 @@ angular.module 'LocalHyper.requestsOffers'
 					.then (modal)=>
 						@modal = modal
 				
-				show : (request)->
+				show : (request, show=true)->
 					@data = request
-					@modal.show()
+					@data.deliveryStatus = request.request.status
+					@showChange = true
+					@checkIfFailedDelivery()
+					@modal.show() if show
 					@showExpiry = true
 
 				onNotificationClick : (offerId)->
@@ -119,10 +128,50 @@ angular.module 'LocalHyper.requestsOffers'
 					if @pendingOfferId isnt ""
 						requests = $scope.view.requests
 						index = _.findIndex requests, (offer)=> offer.id is @pendingOfferId
-						@data = requests[index]
-						@showExpiry = true
+						@show requests[index], false
 						@pendingOfferId = ""
 
+				onDeliveryStatusChange : ->
+					@failedDelivery.display = @data.deliveryStatus is 'failed_delivery'
+
+				checkIfFailedDelivery : ->
+					if @data.deliveryStatus is 'failed_delivery'
+						@failedDelivery.display = true
+						@failedDelivery.reason = @data.request.failedDeliveryReason
+					else
+						@failedDelivery.display = false
+						@failedDelivery.reason = ''
+
+				onUpdateCancel : ->
+					@data.deliveryStatus = @data.request.status
+					@checkIfFailedDelivery()
+					@showChange = true
+
+				updateDeliveryStatus : ->
+					if @data.deliveryStatus is 'failed_delivery'
+						if @failedDelivery.reason is ''
+							CToast.show 'Please provide reason for delivery failure'
+							return
+
+					params = 
+						"requestId": @data.request.id
+						"status": @data.deliveryStatus
+						"failedDeliveryReason": @failedDelivery.reason
+
+					CSpinner.show '', 'Please wait...'
+					RequestsAPI.updateRequestStatus params
+					.then =>
+						@data.request.status = @data.deliveryStatus
+						@data.request.failedDeliveryReason = @failedDelivery.reason
+						@showChange = true
+						CToast.showLongBottom 'Delivery status has been updated. '+
+						'Customer will be notified about the status update.'
+					, (error)->
+						CToast.show 'Failed to update status, please try again'
+					.finally ->
+						CSpinner.hide()
+
+			
 			init : ->
 				@offerDetails.loadModal()
 				@filter.loadModal()

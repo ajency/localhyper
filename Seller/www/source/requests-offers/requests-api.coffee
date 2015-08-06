@@ -55,7 +55,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 		defer.promise
 
-	RequestsAPI.updateStatus = (requestId)->
+	RequestsAPI.updateNotificationStatus = (requestId)->
 		defer = $q.defer()
 
 		params = 
@@ -65,6 +65,17 @@ angular.module 'LocalHyper.requestsOffers'
 			"hasSeen": true
 
 		$http.post 'functions/updateNotificationStatus', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
+	RequestsAPI.updateRequestStatus = (params)->
+		defer = $q.defer()
+
+		$http.post 'functions/updateRequestStatus', params
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->

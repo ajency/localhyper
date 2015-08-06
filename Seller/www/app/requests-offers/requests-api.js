@@ -51,7 +51,7 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
       });
       return defer.promise;
     };
-    RequestsAPI.updateStatus = function(requestId) {
+    RequestsAPI.updateNotificationStatus = function(requestId) {
       var defer, params;
       defer = $q.defer();
       params = {
@@ -61,6 +61,16 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
         "hasSeen": true
       };
       $http.post('functions/updateNotificationStatus', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
+    RequestsAPI.updateRequestStatus = function(params) {
+      var defer;
+      defer = $q.defer();
+      $http.post('functions/updateRequestStatus', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);

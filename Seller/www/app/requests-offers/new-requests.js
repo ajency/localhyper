@@ -84,7 +84,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             index = _.findIndex(requests, function(val) {
               return val.id === request.id;
             });
-            return RequestsAPI.updateStatus(request.id).then((function(_this) {
+            return RequestsAPI.updateNotificationStatus(request.id).then((function(_this) {
               return function(data) {
                 App.notification.decrement();
                 return requests[index].notification.hasSeen = true;
@@ -231,7 +231,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       markPendingNotificationsAsSeen: function() {
         _.each(this.pendingRequestIds, (function(_this) {
           return function(requestId) {
-            return RequestsAPI.updateStatus(requestId).then(function(data) {
+            return RequestsAPI.updateNotificationStatus(requestId).then(function(data) {
               var index;
               index = _.findIndex(_this.requests, function(val) {
                 return val.id === requestId;
