@@ -369,7 +369,7 @@ class ProductController extends Controller
 		public function importProduct(Request $request)
 		{
 			$data = [];
-
+			$amazon_buket_url = config("constants.amazon_bucket_url");
 
 			$product_file = $request->file('product_file')->getRealPath();
 			if ($request->hasFile('product_file'))
@@ -486,7 +486,7 @@ class ProductController extends Controller
 									$products[$i]['objectId'] = $data['ProductID'];
 									$products[$i]['name'] = $data['ProductName'];
 									$products[$i]['model_number'] = $data['ModelNumber'];
-									$products[$i]['images'][] = ['src'=>$data['Image']];
+									$products[$i]['images'][] = ['src'=> $amazon_buket_url."".$data['Image'].".jpeg"];
 									$products[$i]['attrs']= $attributeIds;
 									$products[$i]['text_attributes']= $text_attributes;
 									$products[$i]['mrp'] = $data['MRP'];
@@ -510,7 +510,6 @@ class ProductController extends Controller
 							$productData['categoryId'] =$config[0];
 							$productData['priceRange'] =$priceRange;
 							$productData['products'] =$products;
-							
 							$this->parseProductImport($productData);
 
 						}
@@ -533,7 +532,7 @@ class ProductController extends Controller
 				$productQuery->includeKey("primaryAttributes.attribute");
 				$productQuery->includeKey("attrs");
 				$productQuery->includeKey("attrs.attribute");
-
+				$productQuery->descending("createdAt");
 				# pagination
 				$productQuery->limit($displayLimit);
 				$productQuery->skip($page * $displayLimit);
