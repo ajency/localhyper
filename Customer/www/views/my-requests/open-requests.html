@@ -3,7 +3,8 @@
 	ng-init="view.init()">
 
 	<ion-nav-title>
-		<img src="img/logo.png"/>
+	MY REQUEST
+		<!-- <img src="img/logo.png"/> -->
     </ion-nav-title>
 
 	<ion-content ng-switch="view.display">
@@ -23,34 +24,42 @@
 				ng-controller="EachRequestTimeCtrl"
 				ng-click="view.onClick(request)">
 
-					<div class="item-wrapper-nr">
-						<div class="item-avatar border-none margin-none">
-						<img ng-src="{{request.product.images[0].src}}">
-						</div>
-						<h2>{{request.product.name}}</h2>
+					<div class=" row item border-none item-wrapper-nr">
+						
+  							<div class="col col-25">
+  								<div class="item-avatar border-none margin-none">
+									<img ng-src="{{request.product.images[0].src}}">
+								</div>
+  							</div>
+  							<div class="col col-75">
+  								<h2>{{request.product.name}}</h2>
+  							</div>
+  						
+						
 					</div>
-					<br>
-					<div class="row item border-none" >
-						<div class="col  p-t-0">
-							<h3 class=" item-text-wrap margin-none big-txt ">
-							Local Price :{{request.product.mrp.toLocaleString()}}
-							</h3>
-						</div>
-						<div class="col p-t-0">
-							<div class="pull-right">
-							<div class="offer">{{request.offerCount}} </div>
-							<h4 class="offertxt light-gray"> No of offers</h4>
-							</div>
-						</div>
-					</div>
-					<div class="item ">
-						<div class="pull-right ">
-							<h3 class="margin-none "> Status:{{request.status}}</h3>
-						</div>
-						<div class="pull-left ">
-							<sm class="subdued">{{request.timeStr}}</sm>
-						</div>
-					</div>
+					<div class="row item border-none p-t-10" >
+			        <div class="col  p-t-0">
+			            <sm class="light-gray"> Local Price</sm><br>
+			            <h3 class=" item-text-wrap margin-none big-txt ">
+			            	<span class="WebRupee subdued">&#x20B9;</span> {{request.product.mrp.toLocaleString()}}
+			            </h3>
+			        </div>
+			        <div class="col p-t-0">
+			        	<div class="pull-right">
+			            <div class="offer"> {{request.offerCount}} </div>
+			            <h4 class="offertxt light-gray"> No of offers</h4>
+			           	</div>
+			        </div>
+			    </div>
+			        <div class="item item-divider">
+			        <div class="pull-right ">
+			           <h3 class="margin-none "> Status: {{request.status}}</h3>
+			        </div>
+
+			        <div class="pull-left ">
+			            <sm class="subdued"><i class="ion-ios-clock-outline"> </i>{{request.timeStr}}</sm>
+			        </div>
+			    </div>
 			</ion-item>
 		</ion-list>	
 		<ion-item ng-if="view.getOpenProducts">

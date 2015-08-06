@@ -68,6 +68,7 @@ angular.module 'LocalHyper.requestsOffers'
 						.scrollTop()
 
 				show : (request)->
+					console.log request
 					@data = request
 					@resetModal()
 					@modal.show()
@@ -236,5 +237,18 @@ angular.module 'LocalHyper.requestsOffers'
 		$rootScope.$on 'category:chain:changed', ->
 			# App.scrollTop()
 			$scope.view.reFetch()
+]
+
+
+.controller 'EachRequestTimeCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
+
+	#Request time
+	setTime = ->
+		$scope.request.timeStr = TimeString.get $scope.request.createdAt
+
+	setTime()
+	interval = $interval setTime, 60000
+	$scope.$on '$destroy', ->
+		$interval.cancel interval
 ]
 

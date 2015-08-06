@@ -1,7 +1,8 @@
 angular.module 'LocalHyper.suggestProduct', []
 
 
-.controller 'suggestProductCtrl', ['$q', '$scope', '$http', '$location', 'CToast', 'CategoriesAPI', 'CSpinner'
+.controller 'suggestProductCtrl', ['$q', '$scope', '$http', '$location', 'CToast', 'CategoriesAPI'
+	, 'CSpinner'
 	, ($q, $scope, $http, $location, CToast, CategoriesAPI, CSpinner)->
 
 		$scope.suggest = {}
