@@ -1,5 +1,5 @@
 (function() {
-  var _, findAttribValues, getAreaBoundSellers, getCategoryBasedSellers, getNewRequestsForSeller, getNotificationData, getRequestData, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, treeify;
+  var _, findAttribValues, getAreaBoundSellers, getCategoryBasedSellers, getDayFromMoment, getDeliveryDate, getNewRequestsForSeller, getNotificationData, getRequestData, getTimeFromMoment, isTimeInRange, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -914,7 +914,7 @@
   });
 
   Parse.Cloud.define('getSellerOffers', function(request, response) {
-    var acceptedOffers, allowedStatuses, descending, displayLimit, innerSellerQuery, page, queryOffers, selectedFilters, sellerGeoPoint, sellerId, sortBy, sortColumn;
+    var acceptedOffers, allowedStatuses, descending, displayLimit, innerQueryRequest, innerSellerQuery, page, queryOffers, selectedFilters, sellerGeoPoint, sellerId, sortBy, sortColumn;
     sellerId = request.params.sellerId;
     sellerGeoPoint = request.params.sellerGeoPoint;
     page = parseInt(request.params.page);
@@ -929,14 +929,22 @@
     queryOffers.matchesQuery("seller", innerSellerQuery);
     if (acceptedOffers === true) {
       allowedStatuses = ["accepted"];
+      if (selectedFilters.length === 0) {
+        allowedStatuses = ["pending_delivery", "sent_for_delivery", "failed_delivery", "successful"];
+      } else {
+        allowedStatuses = selectedFilters;
+      }
+      innerQueryRequest = new Parse.Query("Request");
+      innerQueryRequest.containedIn("status", allowedStatuses);
+      queryOffers.matchesQuery("request", innerQueryRequest);
     } else {
       if (selectedFilters.length === 0) {
         allowedStatuses = ["open", "unaccepted"];
       } else {
         allowedStatuses = _.without(selectedFilters, "expired");
       }
+      queryOffers.containedIn("status", allowedStatuses);
     }
-    queryOffers.containedIn("status", allowedStatuses);
     queryOffers.limit(displayLimit);
     queryOffers.skip(page * displayLimit);
     if (sortBy === "distance") {
@@ -946,6 +954,10 @@
         sortColumn = "offerPrice";
       } else if (sortBy === "expiryTime") {
         sortColumn = "requestDate";
+      } else if (sortBy === "updatedAt") {
+        sortColumn = "updatedAt";
+      } else if (sortBy === "deliveryDate") {
+        sortColumn = "deliveryDate";
       } else {
         sortColumn = "updatedAt";
       }
@@ -1135,32 +1147,43 @@
       queryOffer.include("request");
       queryOffer.include("seller");
       return queryOffer.first().then(function(acceptedOffer) {
-        var requestObj, sellerObj;
+        var claimedDelivery, deliveryDate, deliveryDuration, offerAcceptedDate, requestObj, sellerObj, sellerOffDays, sellerWorkTimings;
         sellerObj = acceptedOffer.get("seller");
         requestObj = acceptedOffer.get("request");
-        requestObj.set("status", "pending_delivery");
-        return requestObj.save().then(function(savedReq) {
-          var Notification, notification, notificationData;
-          notificationData = {
-            hasSeen: false,
-            recipientUser: sellerObj,
-            channel: 'push',
-            processed: false,
-            type: "AcceptedOffer",
-            offerObject: acceptedOffer
-          };
-          Notification = Parse.Object.extend("Notification");
-          notification = new Notification(notificationData);
-          return notification.save().then(function(notifObj) {
-            var resultObj;
-            resultObj = {
-              offerId: acceptedOffer.id,
-              offerStatus: acceptedOffer.get("status"),
-              offerUpdatedAt: acceptedOffer.updatedAt,
-              requestId: acceptedOffer.get("request").id,
-              requestStatus: acceptedOffer.get("request").get("status")
+        claimedDelivery = acceptedOffer.get("deliveryTime");
+        deliveryDuration = parseInt(claimedDelivery.value);
+        offerAcceptedDate = acceptedOffer.updatedAt;
+        sellerOffDays = ["Sunday", "Monday"];
+        sellerWorkTimings = ["9:00:00", "18:00:00"];
+        deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate();
+        acceptedOffer.set("deilveryDate", deliveryDate);
+        return acceptedOffer.save().then(function(offerWithDelivery) {
+          requestObj.set("status", "pending_delivery");
+          return requestObj.save().then(function(savedReq) {
+            var Notification, notification, notificationData;
+            notificationData = {
+              hasSeen: false,
+              recipientUser: sellerObj,
+              channel: 'push',
+              processed: false,
+              type: "AcceptedOffer",
+              offerObject: acceptedOffer
             };
-            return response.success(resultObj);
+            Notification = Parse.Object.extend("Notification");
+            notification = new Notification(notificationData);
+            return notification.save().then(function(notifObj) {
+              var resultObj;
+              resultObj = {
+                offerId: acceptedOffer.id,
+                offerStatus: acceptedOffer.get("status"),
+                offerUpdatedAt: acceptedOffer.updatedAt,
+                requestId: acceptedOffer.get("request").id,
+                requestStatus: acceptedOffer.get("request").get("status")
+              };
+              return response.success(resultObj);
+            }, function(error) {
+              return response.error(error);
+            });
           }, function(error) {
             return response.error(error);
           });
@@ -1251,6 +1274,101 @@
       return response.error("2" + error);
     });
   });
+
+  Parse.Cloud.define('testDeliveryDate', function(request, response) {
+    var claimedDelivery, offerAcceptedDate, result, sellerOffDays, sellerWorkTimings;
+    claimedDelivery = request.params.claimedDelivery;
+    offerAcceptedDate = request.params.offerAcceptedDate;
+    sellerOffDays = request.params.sellerOffDays;
+    sellerWorkTimings = request.params.sellerWorkTimings;
+    result = getDeliveryDate(claimedDelivery, offerAcceptedDate, sellerOffDays, sellerWorkTimings);
+    return response.success(result);
+  });
+
+  getDeliveryDate = function(claimedDelivery, offerAcceptedDate, sellerOffDays, sellerWorkTimings) {
+    var acceptedDateObj, addDuration, deliveryDate, deliveryDateComplete, deliveryDateMoment, deliveryDay, deliveryDuration, deliveryTime, deliveryUnit, isDeliveryDayOffDay, isDeliveryTimeInWkHrs, isNewDeliveryDayOffDay, newDeliveryDate, newDeliveryDateComplete, newDeliveryDateMoment, newDeliveryDay, newDeliveryTime, startTime;
+    deliveryDuration = parseInt(claimedDelivery.value);
+    deliveryUnit = claimedDelivery.unit;
+    if (deliveryUnit === "hrs") {
+      addDuration = "hours";
+    } else if (deliveryUnit === "days") {
+      addDuration = "days";
+    }
+    acceptedDateObj = offerAcceptedDate;
+    deliveryDateMoment = moment(acceptedDateObj).add(addDuration, deliveryDuration);
+    deliveryDateComplete = moment(acceptedDateObj).add(addDuration, deliveryDuration).format("DD-MM-YYYY HH:mm:ss");
+    deliveryTime = getTimeFromMoment(deliveryDateMoment);
+    isDeliveryTimeInWkHrs = isTimeInRange(deliveryTime, sellerWorkTimings);
+    if (isDeliveryTimeInWkHrs) {
+      deliveryDay = getDayFromMoment(deliveryDateMoment);
+      isDeliveryDayOffDay = _.indexOf(sellerOffDays, deliveryDay);
+      if (isDeliveryDayOffDay > -1) {
+        newDeliveryDateMoment = moment(deliveryDateComplete).add('days', 1);
+        newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss");
+        newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY");
+        newDeliveryTime = sellerWorkTimings[0];
+        newDeliveryDay = getDayFromMoment(newDeliveryDateMoment);
+        isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay);
+        while (isNewDeliveryDayOffDay > -1) {
+          newDeliveryDateMoment = moment(newDeliveryDateComplete).add('days', 1);
+          newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss");
+          newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY");
+          newDeliveryTime = sellerWorkTimings[0];
+          newDeliveryDay = getDayFromMoment(newDeliveryDateMoment);
+          isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay);
+        }
+        deliveryDateComplete = newDeliveryDate + " " + newDeliveryTime;
+      }
+    } else {
+      if (deliveryDuration === "hrs") {
+        newDeliveryDateMoment = moment(acceptedDateObj).add('days', 1);
+      } else {
+        newDeliveryDateMoment = moment(deliveryDateComplete).add('days', 1);
+      }
+      deliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss");
+      startTime = sellerWorkTimings[0].split(':');
+      deliveryTime = moment().hour(startTime[0]).minute(startTime[1]).seconds(startTime[2]).add(deliveryDuration, 'hours').format("HH:mm:ss");
+      deliveryDay = getDayFromMoment(newDeliveryDateMoment);
+      isDeliveryDayOffDay = _.indexOf(sellerOffDays, deliveryDay);
+      if (isDeliveryDayOffDay > -1) {
+        newDeliveryDateMoment = moment(deliveryDateComplete).add('days', 1);
+        newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss");
+        newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY");
+        newDeliveryDay = getDayFromMoment(newDeliveryDateMoment);
+        isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay);
+        while (isNewDeliveryDayOffDay > -1) {
+          newDeliveryDateMoment = moment(newDeliveryDateComplete).add('days', 1);
+          newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss");
+          newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY");
+          newDeliveryDay = getDayFromMoment(newDeliveryDateMoment);
+          isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay);
+        }
+        deliveryDateComplete = newDeliveryDate + " " + newDeliveryTime;
+      }
+    }
+    deliveryDate = moment(deliveryDateComplete).toDate();
+    return deliveryDate;
+  };
+
+  getDayFromMoment = function(momentDate) {
+    return momentDate.format('dddd');
+  };
+
+  getTimeFromMoment = function(momentDate) {
+    return momentDate.format('HH:mm:ss');
+  };
+
+  isTimeInRange = function(deliveryTime, sellerWorkTimings) {
+    var endTime, startTime;
+    deliveryTime = deliveryTime.split(':');
+    startTime = sellerWorkTimings[0].split(':');
+    endTime = sellerWorkTimings[1].split(':');
+    if (deliveryTime[0] >= startTime[0] || deliveryTime[0] <= endTime[0]) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   Parse.Cloud.job('productImport', function(request, response) {
     var ProductItem, categoryId, priceRange, productSavedArr, products, queryCategory;

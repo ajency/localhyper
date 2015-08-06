@@ -209,7 +209,7 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     displayLimit = parseInt request.params.displayLimit    
     acceptedOffers = request.params.acceptedOffers
 
-    selectedFilters = request.params.selectedFilters # ["open","unaccepted"] 
+    selectedFilters = request.params.selectedFilters # ["open","unaccepted"] or ["pending_delivery","sent_for_delivery", "failed_delivery", "successful"]
     sortBy =  request.params.sortBy # "updatedAt"
     descending = request.params.descending   # "true" - if latest first or "false" - if oldest first    
 
@@ -222,13 +222,22 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
     
     if acceptedOffers is true
         allowedStatuses = ["accepted"]
+        if selectedFilters.length is 0
+            allowedStatuses = ["pending_delivery","sent_for_delivery", "failed_delivery", "successful"] 
+        else
+            allowedStatuses = selectedFilters 
+            
+        innerQueryRequest = new Parse.Query("Request")
+        innerQueryRequest.containedIn("status", allowedStatuses)
+        queryOffers.matchesQuery("request", innerQueryRequest)
+
     else
         if selectedFilters.length is 0
             allowedStatuses = ["open", "unaccepted"]  
         else
             allowedStatuses = _.without(selectedFilters, "expired")
     
-    queryOffers.containedIn("status", allowedStatuses)
+        queryOffers.containedIn("status", allowedStatuses)
 
     # pagination
     queryOffers.limit(displayLimit)
@@ -243,6 +252,10 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
             sortColumn = "offerPrice"
         else if sortBy is "expiryTime"
             sortColumn = "requestDate"
+        else if sortBy is "updatedAt"
+            sortColumn = "updatedAt"
+        else if sortBy is "deliveryDate"
+            sortColumn = "deliveryDate"
         else
             sortColumn = "updatedAt"
 
@@ -456,31 +469,48 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
             sellerObj = acceptedOffer.get "seller"
             requestObj = acceptedOffer.get "request"
 
+            # @todo save delivery date correctly
+            claimedDelivery = acceptedOffer.get "deliveryTime"
+            deliveryDuration = parseInt claimedDelivery.value
 
-            requestObj.set "status" , "pending_delivery"
-            requestObj.save()
-            .then (savedReq)->
-                # make entry in notification class
-                # create entry in notification class with recipient as the seller
-                notificationData = 
-                    hasSeen: false
-                    recipientUser: sellerObj
-                    channel : 'push'
-                    processed : false
-                    type : "AcceptedOffer"
-                    offerObject : acceptedOffer
+            offerAcceptedDate = acceptedOffer.updatedAt
 
-                Notification = Parse.Object.extend("Notification") 
-                notification = new Notification notificationData
-                notification.save()
-                .then (notifObj) ->
-                    resultObj =
-                        offerId : acceptedOffer.id 
-                        offerStatus : acceptedOffer.get("status")
-                        offerUpdatedAt : acceptedOffer.updatedAt
-                        requestId : acceptedOffer.get("request").id
-                        requestStatus : acceptedOffer.get("request").get("status")
-                    response.success resultObj    
+            sellerOffDays = ["Sunday","Monday"]
+
+            sellerWorkTimings  = ["9:00:00", "18:00:00"]
+
+            # deliveryDate = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
+            deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate()
+
+            acceptedOffer.set("deilveryDate",deliveryDate)
+            acceptedOffer.save()
+            .then (offerWithDelivery) ->
+                requestObj.set "status" , "pending_delivery"
+                requestObj.save()
+                .then (savedReq)->
+                    # make entry in notification class
+                    # create entry in notification class with recipient as the seller
+                    notificationData = 
+                        hasSeen: false
+                        recipientUser: sellerObj
+                        channel : 'push'
+                        processed : false
+                        type : "AcceptedOffer"
+                        offerObject : acceptedOffer
+
+                    Notification = Parse.Object.extend("Notification") 
+                    notification = new Notification notificationData
+                    notification.save()
+                    .then (notifObj) ->
+                        resultObj =
+                            offerId : acceptedOffer.id 
+                            offerStatus : acceptedOffer.get("status")
+                            offerUpdatedAt : acceptedOffer.updatedAt
+                            requestId : acceptedOffer.get("request").id
+                            requestStatus : acceptedOffer.get("request").get("status")
+                        response.success resultObj    
+                    , (error) ->
+                        response.error error 
                 , (error) ->
                     response.error error 
         , (error) ->
@@ -581,3 +611,121 @@ Parse.Cloud.define 'isOfferNotificationSeen', (request, response) ->
 
     , (error) ->
         response.error "2"+error
+
+
+Parse.Cloud.define 'testDeliveryDate', (request, response) ->   
+    
+    claimedDelivery = request.params.claimedDelivery
+    offerAcceptedDate = request.params.offerAcceptedDate
+    sellerOffDays = request.params.sellerOffDays
+    sellerWorkTimings = request.params.sellerWorkTimings
+
+    result = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
+    response.success result
+
+getDeliveryDate = (claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings) ->
+
+    deliveryDuration = parseInt claimedDelivery.value
+    deliveryUnit = claimedDelivery.unit
+
+    if deliveryUnit is "hrs"
+        addDuration = "hours"
+    else if deliveryUnit is "days"
+        addDuration = "days"
+
+    
+    acceptedDateObj = offerAcceptedDate
+
+    deliveryDateMoment = moment(acceptedDateObj).add(addDuration,deliveryDuration)
+    deliveryDateComplete = moment(acceptedDateObj).add(addDuration,deliveryDuration).format("DD-MM-YYYY HH:mm:ss")
+
+    
+
+    
+    deliveryTime = getTimeFromMoment(deliveryDateMoment)
+
+    isDeliveryTimeInWkHrs = isTimeInRange(deliveryTime, sellerWorkTimings)
+
+    if isDeliveryTimeInWkHrs
+        deliveryDay = getDayFromMoment(deliveryDateMoment)
+
+        isDeliveryDayOffDay = _.indexOf(sellerOffDays, deliveryDay)
+
+        if isDeliveryDayOffDay > -1
+            newDeliveryDateMoment = moment(deliveryDateComplete).add('days',1)
+            newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss")
+            newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY")
+            newDeliveryTime = sellerWorkTimings[0]
+            
+            newDeliveryDay = getDayFromMoment(newDeliveryDateMoment)
+
+            isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay)
+            
+            while isNewDeliveryDayOffDay > -1
+                newDeliveryDateMoment = moment(newDeliveryDateComplete).add('days',1)
+                newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss")
+                newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY")
+                newDeliveryTime = sellerWorkTimings[0] 
+                
+                newDeliveryDay = getDayFromMoment(newDeliveryDateMoment)
+                isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay)                               
+        
+
+            deliveryDateComplete = newDeliveryDate+" "+newDeliveryTime
+
+    else
+        if deliveryDuration is "hrs"  
+            newDeliveryDateMoment = moment(acceptedDateObj).add('days',1)  
+        else
+            newDeliveryDateMoment = moment(deliveryDateComplete).add('days',1) 
+
+        deliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss")
+
+        startTime = sellerWorkTimings[0].split(':')
+        deliveryTime = moment().hour(startTime[0]).minute(startTime[1]).seconds(startTime[2]).add(deliveryDuration,'hours').format("HH:mm:ss")
+
+        deliveryDay = getDayFromMoment(newDeliveryDateMoment)
+
+        isDeliveryDayOffDay = _.indexOf(sellerOffDays, deliveryDay)
+
+        if isDeliveryDayOffDay > -1
+            newDeliveryDateMoment = moment(deliveryDateComplete).add('days',1)
+            newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss")
+            newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY")
+            
+            newDeliveryDay = getDayFromMoment(newDeliveryDateMoment)
+
+            isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay)
+            
+            while isNewDeliveryDayOffDay > -1
+                newDeliveryDateMoment = moment(newDeliveryDateComplete).add('days',1)
+                newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss")
+                newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY")
+                
+                newDeliveryDay = getDayFromMoment(newDeliveryDateMoment)
+                isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay)                               
+        
+
+            deliveryDateComplete = newDeliveryDate+" "+newDeliveryTime        
+
+    # convert delivery date moment object tot date object and return
+    deliveryDate = moment(deliveryDateComplete).toDate()
+
+    return deliveryDate
+     
+getDayFromMoment = (momentDate) ->
+    return momentDate.format('dddd')
+
+getTimeFromMoment = (momentDate) ->
+    return momentDate.format('HH:mm:ss')
+
+isTimeInRange = (deliveryTime, sellerWorkTimings)->
+    deliveryTime = deliveryTime.split(':')
+    startTime = sellerWorkTimings[0].split(':')
+    endTime = sellerWorkTimings[1].split(':')
+    
+    if deliveryTime[0] >= startTime[0] or deliveryTime[0] <= endTime[0]
+      return true
+    else
+      return false
+
