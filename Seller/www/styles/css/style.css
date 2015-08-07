@@ -178,6 +178,10 @@
 }
 
 /* sort */
+.new-requests-sort {
+	height: 435px !important;
+}
+
 .offer-history-sort {
 	height: 380px !important;
 }

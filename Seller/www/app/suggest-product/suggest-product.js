@@ -5,7 +5,7 @@ angular.module('LocalHyper.suggestProduct', []).controller('suggestProductCtrl',
       console.log(categories);
       return $scope.suggest.items = categories;
     });
-    return $scope.suggest = {
+    $scope.suggest = {
       productName: null,
       category: null,
       brand: null,
@@ -38,6 +38,11 @@ angular.module('LocalHyper.suggestProduct', []).controller('suggestProductCtrl',
         }
       }
     };
+    return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
+      if (!viewData.enableBack) {
+        return viewData.enableBack = true;
+      }
+    });
   }
 ]).config([
   '$stateProvider', function($stateProvider) {

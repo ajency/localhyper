@@ -1,10 +1,13 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout', function($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate, $q, $timeout) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout', '$ionicLoading', '$ionicPlatform', function($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform) {
+    var onDeviceBack;
     $scope.view = {
       display: 'loader',
       errorType: '',
       requests: [],
       pendingRequestIds: [],
+      sortBy: '-createdAt.iso',
+      sortName: 'Most Recent',
       requestDetails: {
         modal: null,
         data: {},
@@ -186,7 +189,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         this.getRequests();
         return this.requestDetails.loadModal();
       },
-      reFetch: function() {
+      autoFetch: function() {
         this.page = 0;
         this.requests = [];
         this.display = 'loader';
@@ -243,8 +246,91 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           };
         })(this));
         return this.pendingRequestIds = [];
+      },
+      showSortOptions: function() {
+        return $ionicLoading.show({
+          scope: $scope,
+          templateUrl: 'views/requests-offers/new-request-sort.html',
+          hideOnStateChange: true
+        });
+      },
+      simulateFetch: function() {
+        App.scrollTop();
+        this.display = 'loader';
+        return $timeout((function(_this) {
+          return function() {
+            _this.display = 'noError';
+            return App.resize();
+          };
+        })(this), 500);
+      },
+      onSort: function(sortBy, sortName) {
+        $ionicLoading.hide();
+        switch (sortBy) {
+          case '-createdAt.iso':
+            if (this.sortBy !== '-createdAt.iso') {
+              this.sortBy = '-createdAt.iso';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case '-product.mrp':
+            if (this.sortBy !== '-product.mrp') {
+              this.sortBy = '-product.mrp';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case 'product.mrp':
+            if (this.sortBy !== 'product.mrp') {
+              this.sortBy = 'product.mrp';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case '-radius':
+            if (this.sortBy !== '-radius') {
+              this.sortBy = '-radius';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case 'radius':
+            if (this.sortBy !== 'radius') {
+              this.sortBy = 'radius';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case '-offerCount':
+            if (this.sortBy !== '-offerCount') {
+              this.sortBy = '-offerCount';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case 'offerCount':
+            if (this.sortBy !== 'offerCount') {
+              this.sortBy = 'offerCount';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+        }
       }
     };
+    onDeviceBack = function() {
+      if ($('.loading-container').hasClass('visible')) {
+        return $ionicLoading.hide();
+      } else {
+        return App.goBack(-1);
+      }
+    };
+    $scope.$on('$ionicView.enter', function() {
+      return $ionicPlatform.onHardwareBackButton(onDeviceBack);
+    });
+    $scope.$on('$ionicView.leave', function() {
+      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
+    });
     $rootScope.$on('in:app:notification', function(e, obj) {
       var payload;
       payload = obj.payload;
@@ -277,7 +363,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       return App.hideSplashScreen();
     });
     return $rootScope.$on('category:chain:changed', function() {
-      return $scope.view.reFetch();
+      return $scope.view.autoFetch();
     });
   }
 ]).controller('EachRequestTimeCtrl', [
