@@ -1047,16 +1047,28 @@
           transaction.set("towards", "make_offer");
           transaction.set("offer", offerObj);
           return transaction.save().then(function(savedTransaction) {
-            var notification;
-            notification = new Notification();
-            notification.set("hasSeen", false);
-            notification.set("recipientUser", requestingCustomer);
-            notification.set("channel", "push");
-            notification.set("processed", false);
-            notification.set("type", "Offer");
-            notification.set("offerObject", offerObj);
-            return notification.save().then(function(notificationObj) {
-              return response.success(notificationObj);
+            return sellerObj.fetch().then(function(sellerFetchedObj) {
+              var newSubtractedCredit, sellersCurrentSubtractedCredit;
+              sellersCurrentSubtractedCredit = sellerFetchedObj.get("subtractedCredit");
+              newSubtractedCredit = sellersCurrentSubtractedCredit + savedTransaction.get("creditCount");
+              sellerObj.set("subtractedCredit", newSubtractedCredit);
+              return sellerFetchedObj.save().then(function(updatedSellerCredit) {
+                var notification;
+                notification = new Notification();
+                notification.set("hasSeen", false);
+                notification.set("recipientUser", requestingCustomer);
+                notification.set("channel", "push");
+                notification.set("processed", false);
+                notification.set("type", "Offer");
+                notification.set("offerObject", offerObj);
+                return notification.save().then(function(notificationObj) {
+                  return response.success(notificationObj);
+                }, function(error) {
+                  return response.error(error);
+                });
+              }, function(error) {
+                return response.error(error);
+              });
             }, function(error) {
               return response.error(error);
             });
@@ -1327,39 +1339,47 @@
         transaction.set("towards", "accept_offer");
         transaction.set("offer", acceptedOffer);
         return transaction.save().then(function(savedTransaction) {
-          var claimedDelivery, deliveryDate, deliveryDuration, offerAcceptedDate, requestObj, sellerOffDays, sellerWorkTimings;
-          requestObj = acceptedOffer.get("request");
-          claimedDelivery = acceptedOffer.get("deliveryTime");
-          deliveryDuration = parseInt(claimedDelivery.value);
-          offerAcceptedDate = acceptedOffer.updatedAt;
-          sellerOffDays = ["Sunday", "Monday"];
-          sellerWorkTimings = ["9:00:00", "18:00:00"];
-          deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate();
-          acceptedOffer.set("deliveryDate", deliveryDate);
-          return acceptedOffer.save().then(function(offerWithDelivery) {
-            requestObj.set("status", "pending_delivery");
-            return requestObj.save().then(function(savedReq) {
-              var Notification, notification, notificationData;
-              notificationData = {
-                hasSeen: false,
-                recipientUser: sellerObj,
-                channel: 'push',
-                processed: false,
-                type: "AcceptedOffer",
-                offerObject: acceptedOffer
-              };
-              Notification = Parse.Object.extend("Notification");
-              notification = new Notification(notificationData);
-              return notification.save().then(function(notifObj) {
-                var resultObj;
-                resultObj = {
-                  offerId: acceptedOffer.id,
-                  offerStatus: acceptedOffer.get("status"),
-                  offerUpdatedAt: acceptedOffer.updatedAt,
-                  requestId: acceptedOffer.get("request").id,
-                  requestStatus: acceptedOffer.get("request").get("status")
+          var newSubtractedCredit, sellersCurrentSubtractedCredit;
+          sellersCurrentSubtractedCredit = sellerObj.get("subtractedCredit");
+          newSubtractedCredit = sellersCurrentSubtractedCredit + savedTransaction.get("creditCount");
+          sellerObj.set("subtractedCredit", newSubtractedCredit);
+          return sellerObj.save().then(function(updatedSellerCredit) {
+            var claimedDelivery, deliveryDate, deliveryDuration, offerAcceptedDate, requestObj, sellerOffDays, sellerWorkTimings;
+            requestObj = acceptedOffer.get("request");
+            claimedDelivery = acceptedOffer.get("deliveryTime");
+            deliveryDuration = parseInt(claimedDelivery.value);
+            offerAcceptedDate = acceptedOffer.updatedAt;
+            sellerOffDays = ["Sunday", "Monday"];
+            sellerWorkTimings = ["9:00:00", "18:00:00"];
+            deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate();
+            acceptedOffer.set("deliveryDate", deliveryDate);
+            return acceptedOffer.save().then(function(offerWithDelivery) {
+              requestObj.set("status", "pending_delivery");
+              return requestObj.save().then(function(savedReq) {
+                var Notification, notification, notificationData;
+                notificationData = {
+                  hasSeen: false,
+                  recipientUser: sellerObj,
+                  channel: 'push',
+                  processed: false,
+                  type: "AcceptedOffer",
+                  offerObject: acceptedOffer
                 };
-                return response.success(resultObj);
+                Notification = Parse.Object.extend("Notification");
+                notification = new Notification(notificationData);
+                return notification.save().then(function(notifObj) {
+                  var resultObj;
+                  resultObj = {
+                    offerId: acceptedOffer.id,
+                    offerStatus: acceptedOffer.get("status"),
+                    offerUpdatedAt: acceptedOffer.updatedAt,
+                    requestId: acceptedOffer.get("request").id,
+                    requestStatus: acceptedOffer.get("request").get("status")
+                  };
+                  return response.success(resultObj);
+                }, function(error) {
+                  return response.error(error);
+                });
               }, function(error) {
                 return response.error(error);
               });
@@ -2672,9 +2692,11 @@
   Parse.Cloud.useMasterKey();
 
   Parse.Cloud.define("sendSMSCode", function(request, response) {
-    var code, onError, phone, query, save;
+    var code, displayName, onError, phone, query, save, userType;
     phone = request.params.phone;
     code = (Math.floor(Math.random() * 900000) + 100000).toString();
+    displayName = request.params.displayName;
+    userType = request.params.userType;
     onError = function(error) {
       return response.error(error);
     };
@@ -2687,7 +2709,9 @@
         return obj.save({
           'phone': phone,
           'verificationCode': code,
-          'attempts': attempts
+          'attempts': attempts,
+          'displayName': displayName,
+          'userType': userType
         }).then(function() {
           return response.success({
             code: code,

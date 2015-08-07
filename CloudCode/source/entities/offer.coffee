@@ -187,20 +187,36 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
 
                 transaction.save()
                 .then (savedTransaction) ->
-                    # on successful tranaction
+                    # on successful transaction
 
-                    notification = new Notification()
+                    # update seller creditBalance
+                    sellerObj.fetch()
+                    .then (sellerFetchedObj) ->
 
-                    notification.set "hasSeen" , false
-                    notification.set "recipientUser" , requestingCustomer
-                    notification.set "channel" , "push"
-                    notification.set "processed" , false
-                    notification.set "type" , "Offer"
-                    notification.set "offerObject" , offerObj
-                    
-                    notification.save()
-                    .then (notificationObj) ->
-                        response.success(notificationObj)
+                        sellersCurrentSubtractedCredit = sellerFetchedObj.get("subtractedCredit")
+                        newSubtractedCredit = sellersCurrentSubtractedCredit + savedTransaction.get("creditCount")
+                        sellerObj.set "subtractedCredit" , newSubtractedCredit 
+
+                        sellerFetchedObj.save()
+                        .then (updatedSellerCredit) ->
+
+                            notification = new Notification()
+
+                            notification.set "hasSeen" , false
+                            notification.set "recipientUser" , requestingCustomer
+                            notification.set "channel" , "push"
+                            notification.set "processed" , false
+                            notification.set "type" , "Offer"
+                            notification.set "offerObject" , offerObj
+                            
+                            notification.save()
+                            .then (notificationObj) ->
+                                response.success(notificationObj)
+                            , (error) ->
+                                response.error error
+                        , (error) ->
+                            response.error error
+
                     , (error) ->
                         response.error error
 
@@ -504,52 +520,61 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
 
             transaction.save()
             .then (savedTransaction) ->
-                requestObj = acceptedOffer.get "request"
+                
+                sellersCurrentSubtractedCredit = sellerObj.get("subtractedCredit")
+                newSubtractedCredit = sellersCurrentSubtractedCredit + savedTransaction.get("creditCount")
+                sellerObj.set "subtractedCredit" , newSubtractedCredit 
 
-                # @todo save delivery date correctly
-                claimedDelivery = acceptedOffer.get "deliveryTime"
-                deliveryDuration = parseInt claimedDelivery.value
+                sellerObj.save() 
+                .then (updatedSellerCredit) ->
+                    requestObj = acceptedOffer.get "request"
 
-                offerAcceptedDate = acceptedOffer.updatedAt
+                    # @todo save delivery date correctly
+                    claimedDelivery = acceptedOffer.get "deliveryTime"
+                    deliveryDuration = parseInt claimedDelivery.value
 
-                sellerOffDays = ["Sunday","Monday"]
+                    offerAcceptedDate = acceptedOffer.updatedAt
 
-                sellerWorkTimings  = ["9:00:00", "18:00:00"]
+                    sellerOffDays = ["Sunday","Monday"]
 
-                # deliveryDate = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
-                deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate()
+                    sellerWorkTimings  = ["9:00:00", "18:00:00"]
 
-                acceptedOffer.set("deliveryDate",deliveryDate)
-                acceptedOffer.save()
-                .then (offerWithDelivery) ->
-                    requestObj.set "status" , "pending_delivery"
-                    requestObj.save()
-                    .then (savedReq)->
-                        # make entry in notification class
-                        # create entry in notification class with recipient as the seller
-                        notificationData = 
-                            hasSeen: false
-                            recipientUser: sellerObj
-                            channel : 'push'
-                            processed : false
-                            type : "AcceptedOffer"
-                            offerObject : acceptedOffer
+                    # deliveryDate = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
+                    deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate()
 
-                        Notification = Parse.Object.extend("Notification") 
-                        notification = new Notification notificationData
-                        notification.save()
-                        .then (notifObj) ->
-                            resultObj =
-                                offerId : acceptedOffer.id 
-                                offerStatus : acceptedOffer.get("status")
-                                offerUpdatedAt : acceptedOffer.updatedAt
-                                requestId : acceptedOffer.get("request").id
-                                requestStatus : acceptedOffer.get("request").get("status")
-                            response.success resultObj    
+                    acceptedOffer.set("deliveryDate",deliveryDate)
+                    acceptedOffer.save()
+                    .then (offerWithDelivery) ->
+                        requestObj.set "status" , "pending_delivery"
+                        requestObj.save()
+                        .then (savedReq)->
+                            # make entry in notification class
+                            # create entry in notification class with recipient as the seller
+                            notificationData = 
+                                hasSeen: false
+                                recipientUser: sellerObj
+                                channel : 'push'
+                                processed : false
+                                type : "AcceptedOffer"
+                                offerObject : acceptedOffer
+
+                            Notification = Parse.Object.extend("Notification") 
+                            notification = new Notification notificationData
+                            notification.save()
+                            .then (notifObj) ->
+                                resultObj =
+                                    offerId : acceptedOffer.id 
+                                    offerStatus : acceptedOffer.get("status")
+                                    offerUpdatedAt : acceptedOffer.updatedAt
+                                    requestId : acceptedOffer.get("request").id
+                                    requestStatus : acceptedOffer.get("request").get("status")
+                                response.success resultObj    
+                            , (error) ->
+                                response.error error 
                         , (error) ->
                             response.error error 
                     , (error) ->
-                        response.error error 
+                        response.error error
                 , (error) ->
                     response.error error
             , (error) ->
