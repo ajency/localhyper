@@ -423,6 +423,54 @@
     })(this));
   });
 
+  Parse.Cloud.define('getCreditBalance', function(request, response) {
+    var creditValueForSingleAcceptOffer, creditValueForSingleAdd, creditValueForSingleMakeOffer, innerQuerySeller, queryAddTransaction, sellerId;
+    sellerId = request.params.sellerId;
+    creditValueForSingleAdd = 100;
+    creditValueForSingleMakeOffer = 1;
+    creditValueForSingleAcceptOffer = 5;
+    innerQuerySeller = new Parse.Query(Parse.User);
+    innerQuerySeller.equalTo("objectId", sellerId);
+    queryAddTransaction = new Parse.Query("Transaction");
+    queryAddTransaction.matchesQuery("seller", innerQuerySeller);
+    queryAddTransaction.equalTo("transactionType", "add");
+    return queryAddTransaction.count().then(function(addCount) {
+      var countOfAddTransactions, queryMinusMakeOfferTransaction;
+      countOfAddTransactions = addCount;
+      queryMinusMakeOfferTransaction = new Parse.Query("Transaction");
+      queryMinusMakeOfferTransaction.matchesQuery("seller", innerQuerySeller);
+      queryMinusMakeOfferTransaction.equalTo("transactionType", "minus");
+      queryMinusMakeOfferTransaction.equalTo("towards", "make_offer");
+      return queryMinusMakeOfferTransaction.count().then(function(minusMakeOfferCount) {
+        var countMakeOfferTransactions, queryMinusAcceptOfferTransaction;
+        countMakeOfferTransactions = minusMakeOfferCount;
+        queryMinusAcceptOfferTransaction = new Parse.Query("Transaction");
+        queryMinusAcceptOfferTransaction.matchesQuery("seller", innerQuerySeller);
+        queryMinusAcceptOfferTransaction.equalTo("transactionType", "minus");
+        queryMinusAcceptOfferTransaction.equalTo("towards", "make_offer");
+        return queryMinusMakeOfferTransaction.count().then(function(minusAcceptOfferCount) {
+          var balance, countAcceptOfferTransactions, result, totalAddCredits, totalMinusCredits;
+          countAcceptOfferTransactions = minusAcceptOfferCount;
+          totalAddCredits = creditValueForSingleAdd * countOfAddTransactions;
+          totalMinusCredits = (creditValueForSingleMakeOffer * countMakeOfferTransactions) + (creditValueForSingleAcceptOffer * minusAcceptOfferCount);
+          balance = totalAddCredits - totalMinusCredits;
+          result = {
+            totalCredits: totalAddCredits,
+            usedCredits: totalMinusCredits,
+            balanceCredits: balance
+          };
+          return response.success(result);
+        }, function(error) {
+          return response.error(error);
+        });
+      }, function(error) {
+        return response.error(error);
+      });
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   resetRequestOfferCount = function(requestId) {
     var innerQueryRequest, promise, queryOffer;
     promise = new Parse.Promise();
