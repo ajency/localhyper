@@ -118,9 +118,9 @@ angular.module 'LocalHyper.requestsOffers'
 					priceValue = ''
 					switch @price
 						when 'localPrice'
-							priceValue = '9000'
+							priceValue = @data.platformPrice
 						when 'onlinePrice'
-							priceValue = '9000'
+							priceValue = @data.onlinePrice
 						when 'yourPrice'
 							priceValue = @offerPrice
 

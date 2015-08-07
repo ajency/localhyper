@@ -1,5 +1,5 @@
 angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.businessDetails', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.brands', 'LocalHyper.googleMaps', 'LocalHyper.requestsOffers', 'LocalHyper.requestsOffers', 'LocalHyper.profile', 'LocalHyper.aboutUs', 'LocalHyper.suggestProduct', 'LocalHyper.creditHistory']).run([
-  '$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps', function($rootScope, App, Push, $timeout, GoogleMaps) {
+  '$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps', 'User', function($rootScope, App, Push, $timeout, GoogleMaps, User) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
     App.notification = {

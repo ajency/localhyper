@@ -134,10 +134,10 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           priceValue = '';
           switch (this.price) {
             case 'localPrice':
-              priceValue = '9000';
+              priceValue = this.data.platformPrice;
               break;
             case 'onlinePrice':
-              priceValue = '9000';
+              priceValue = this.data.onlinePrice;
               break;
             case 'yourPrice':
               priceValue = this.offerPrice;

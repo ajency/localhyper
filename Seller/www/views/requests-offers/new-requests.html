@@ -54,14 +54,21 @@
 				<div class="row item border-none" >
 			        <div class="col  p-t-0">
 			            <sm class="light-gray"> Local Price</sm><br>
-			            <h3 class=" item-text-wrap margin-none big-txt ">
-			            	<span class="WebRupee subdued">&#x20B9;</span> 19,000
+			            <h3 
+			            	class="item-text-wrap margin-none big-txt"
+			            	ng-if="request.platformPrice !== ''">
+			            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.platformPrice)}}
+			            </h3>
+			            <h3 
+			            	class="item-text-wrap margin-none big-txt"
+			            	ng-if="request.platformPrice === ''">
+			            	N/A
 			            </h3>
 			        </div>
 			        <div class="col p-t-0">
 			        	<div class="pull-right">
-			            <div class="offer"> {{request.offerCount}} </div>
-			            <h4 class="offertxt light-gray"> No of offers</h4>
+				            <div class="offer"> {{request.offerCount}} </div>
+				            <h4 class="offertxt light-gray"> No of offers</h4>
 			           	</div>
 			        </div>
 			    </div>
