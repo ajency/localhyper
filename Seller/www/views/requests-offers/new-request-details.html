@@ -42,14 +42,37 @@
 			</div>
 
 			<div>
-				<h5>Distance from you: {{view.requestDetails.data.radius.toFixed(1)}} kms radius</h5>
-				<h5>MRP: Rs {{App.toINR(view.requestDetails.data.product.mrp)}}</h5>
-				<h5>Number of bids: {{view.requestDetails.data.offerCount}}</h5>
+				<h5>
+					Model No : {{view.requestDetails.data.product.model_number}}
+				</h5>
+
+				<h5>
+					Distance from you: {{view.requestDetails.data.radius.toFixed(1)}} kms radius
+				</h5>
+
+				<h5>
+					MRP: Rs {{App.toINR(view.requestDetails.data.product.mrp)}}
+				</h5>
+
+				<h5>
+					Number of bids: {{view.requestDetails.data.offerCount}}
+				</h5>
+
 				<h5>
 					Category: {{view.requestDetails.data.category.parent}} > {{view.requestDetails.data.category.name}} > {{view.requestDetails.data.brand.name}}
 				</h5>
-				<h5>Your last price: DUMMY</h5>
-				<h5>Platform price: DUMMY</h5>
+
+				<h5>
+					Your last price: {{view.requestDetails.data.lastOfferPrice}}
+				</h5>
+
+				<h5>
+					Online price: {{view.requestDetails.data.onlinePrice}}
+				</h5>
+
+				<h5>
+					Platform price: DUMMY
+				</h5>
 			</div>
 
 			<br>

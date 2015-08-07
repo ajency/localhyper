@@ -12,7 +12,6 @@ angular.module 'LocalHyper.products', []
 			products: []
 			other: []
 			page: 0
-			footer: false
 			canLoadMore: true
 			refresh: false
 			sortBy: 'popularity'
@@ -149,7 +148,6 @@ angular.module 'LocalHyper.products', []
 				@loadFiltersModal()
 
 			reset : ->
-				@footer = false
 				@sortBy = 'popularity'
 				@ascending = true
 				@filter.resetFilters()
@@ -211,7 +209,6 @@ angular.module 'LocalHyper.products', []
 				, (error)=>
 					@onError error
 				.finally =>
-					@footer = true
 					@page = @page + 1
 					@onRefreshComplete()
 
