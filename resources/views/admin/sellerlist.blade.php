@@ -15,7 +15,6 @@
               <th>Seller Name</th>
               <th>Area</th>
               <th>Category</th>
-              <th>Avg Response Time</th>
               <th>Response Ratio</th>
               <th>No. of Successfull Offers</th>
               <th>Avg Ratings</th>
@@ -30,13 +29,12 @@
                 <td>{{ $seller['name'] }}</td>
                 <td>{{ $seller['area'] }}</td>
                 <td>{{ $seller['categories'] }}</td>
-                <td>-</td>
-                <td>{{ $seller['offersCount'] }}/-</td>
+                <td>{{ $seller['offersCount'] }}</td>
                 <td>{{ $seller['successfullCount'] }}</td>
-                <td>-</td>
-                <td>-</td>
+                <td>{{ $seller['avgRating'] }}</td>
+                <td>{{ $seller['balanceCredit'] }}</td>
                 <td>{{ $seller['createdAt'] }}</td>
-                <td>-</td>
+                <td>{{ $seller['lastLogin'] }}</td>
               </tr>
            @endforeach
           </tbody>

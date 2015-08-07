@@ -46,7 +46,7 @@ class RequestController extends Controller
                         $priceArray[] = $price->get("value");
                     }
                 }
-                $platformPrice = (!empty($priceArray))? array_sum($priceArray) / count($priceArray) .'/-' :'N/A'; 
+                $platformPrice = (!empty($priceArray))? min($priceArray).'/-' :'N/A'; 
                 
                 $productPriceArray[$productId]['OnlinePrice'] = $onlinePrice; 
                 $productPriceArray[$productId]['PlatformPrice'] = $platformPrice; 

@@ -20,10 +20,10 @@ class SellerController extends Controller
         $sellers = new ParseQuery("_User");
         $sellers->equalTo("userType", "seller");
         $sellers->includeKey('supportedCategories');
-        $sellerData = $sellers->find();   //dd($sellerData);
+        $sellerData = $sellers->find();   
         $sellerList =[];
         foreach($sellerData as $seller)
-        {
+        {  
              $categories =[];
              $supportedCategories =$seller->get("supportedCategories");
              foreach($supportedCategories as $supportedCategory)
@@ -32,6 +32,11 @@ class SellerController extends Controller
              }
             
             $sellerId = $seller->getObjectId();
+            
+            $sellerRequests = new ParseQuery("Notification"); 
+            $sellerRequests->equalTo("recipientUser", $seller);
+            $sellerRequests->equalTo("type", "Request");
+            $sellerRequestCount = $sellerRequests->count();
             
             $offer = new ParseQuery("Offer");
             $offer->equalTo("seller", $seller);
@@ -46,12 +51,17 @@ class SellerController extends Controller
  
             }
             
+             $balanceCredit = $seller->get("addedCredit") - $seller->get("subtractedCredit");
+            
              $sellerList[]= ['id' => $seller->getObjectId(),
                               'name' => $seller->get("displayName"),
                               'area' => $seller->get("area"),
                               'categories' => implode(", ",$categories),
-                              'offersCount' => $offerCount,
+                              'offersCount' => $offerCount .'/'.$sellerRequestCount,
                               'successfullCount' => $offerSuccessfullCount,
+                              'avgRating' => 'N/A',
+                              'balanceCredit' => $balanceCredit,
+                              'lastLogin' =>$seller->get("lastLogin")->format('d-m-Y'),
                               'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
                               ];
         }  
