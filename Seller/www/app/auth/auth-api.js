@@ -197,7 +197,8 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
             "lastLogin": new Date(),
             "offDays": info.offDays,
             "workTimings": info.workTimings,
-            "creditBalance": parseFloat(defaultObj.get('value'))
+            "addedCredit": parseFloat(defaultObj.get('value')),
+            "subtractedCredit": 0
           });
           return user.signUp();
         };
@@ -214,12 +215,12 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
       }).then(function() {
         var Transaction, transaction, user;
         user = User.getCurrent();
-        Transaction = new Parse.Object.Extend('Transaction');
+        Transaction = Parse.Object.extend('Transaction');
         transaction = new Transaction();
         return transaction.save({
           "seller": user,
           "transactionType": 'add',
-          "creditCount": user.get('creditBalance')
+          "creditCount": user.get('addedCredit')
         });
       }).then(function(success) {
         return defer.resolve(success);

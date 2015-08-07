@@ -177,7 +177,8 @@ angular.module 'LocalHyper.auth'
 					"lastLogin": new Date()
 					"offDays": info.offDays
 					"workTimings": info.workTimings
-					"creditBalance": parseFloat defaultObj.get('value')
+					"addedCredit": parseFloat defaultObj.get('value')
+					"subtractedCredit": 0
 				
 				user.signUp()
 			.then ->
@@ -192,12 +193,12 @@ angular.module 'LocalHyper.auth'
 					"sellerRadius": "default"
 			.then ->
 				user = User.getCurrent()
-				Transaction = new Parse.Object.Extend 'Transaction'
+				Transaction = Parse.Object.extend 'Transaction'
 				transaction = new Transaction()
 				transaction.save
 					"seller": user
 					"transactionType": 'add'
-					"creditCount": user.get 'creditBalance'
+					"creditCount": user.get 'addedCredit'
 			.then (success)->
 				defer.resolve success
 			, (error)=>
