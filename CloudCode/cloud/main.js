@@ -2194,7 +2194,6 @@
     };
     queryRequest = new Parse.Query("Request");
     queryRequest.equalTo("objectId", requestId);
-    queryRequest.select("address,addressGeoPoint,category,brand,product,comments,customerId,status");
     queryRequest.include("product");
     queryRequest.include("category");
     queryRequest.include("category.parent_category");
@@ -2263,7 +2262,6 @@
         sellerGeoPoint = new Parse.GeoPoint(sellerLocation);
         requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
         requestQuery.notContainedIn("objectId", requestsWhereOfferMade);
-        requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId,offerCount");
         requestQuery.include("product");
         requestQuery.include("category");
         requestQuery.include("category.parent_category");

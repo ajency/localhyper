@@ -433,7 +433,7 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
     queryRequest = new Parse.Query("Request")
     queryRequest.equalTo("objectId", requestId)
 
-    queryRequest.select("address,addressGeoPoint,category,brand,product,comments,customerId,status")
+    # queryRequest.select("address,addressGeoPoint,category,brand,product,comments,customerId,status")
 
     queryRequest.include("product")
     queryRequest.include("category")
@@ -526,7 +526,7 @@ getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius)
 
             requestQuery.notContainedIn("objectId", requestsWhereOfferMade)
 
-            requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId,offerCount")
+            # requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId,offerCount,status")
 
             requestQuery.include("product")
             requestQuery.include("category")
