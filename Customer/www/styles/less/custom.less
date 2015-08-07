@@ -17,6 +17,16 @@ h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, 
 h1, h2, h3, h4, h5, h6{
 	/*font-weight: 800;*/
 }
+.icon-input{
+	 font-size: 20px;
+    line-height: 12px;
+}
+.button {
+	font-weight: 600 !important;
+}
+.bar-footer .title{
+	margin:0px;
+}
 .row-fluid{
 	padding: 0px;
 }
@@ -100,6 +110,9 @@ sm{
 	}
 .button-border{
 	text-decoration: underline;
+}
+.comment{
+	background-color:#F2F1ED !important;
 }
 .m-t-5{
 	margin-top: 5px!important;
@@ -1289,5 +1302,24 @@ label.status-label {
 .sort-box{
 	li:first-child{
 		border-bottom:3px solid #ccc;
+	}
+}
+
+/* Comment box */
+.popup-container {
+	.popup-head{	
+		border-bottom: 2px solid #ccc;
+		.popup-title{
+				    font-weight: bold;
+    				text-transform: uppercase;
+    				font-size: 18px;
+		}
+	}
+	.button-positive{
+		background: @brand-primary;
+		border: 1px solid @brand-primary;
+		b{
+						color: @white;
+		}
 	}
 }
