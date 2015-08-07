@@ -43,33 +43,5 @@
          </table>
                         </div>
 		</div>
-    </div>
-
-<script type="text/javascript">
-   /* $( document ).ready(function() {
-         var str='';
-        var customerList = getCustomers().then(function(results) {
-                            _.each(results, function(customer) {
-  //return console.log(customer.get("displayName"));
-                                 str = '<tr>';
-                                  str += '<td>'+customer.get("displayName")+'</td>'; 
-                                  str += '<td>23-04-2014</td>';  
-                                  str += '</tr>';    
-                                  $('.customerList tbody').append(str);
-});
-                             //console.log(results);
-                          }, function(error) {
-                            return error;
-                          });
-       
-       
-       /* $.each(customerList, function( index, user ) { //alert(index);
-          str = '<tr>';
-          str += '<td></td>'; 
-          str += '<td>23-04-2014</td>';  
-          str += '</tr>';    
-          $('.customerList tbody').append(str);
-        });
-    });*/
-</script> 
+    </div> 
 @endsection

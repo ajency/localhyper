@@ -28,6 +28,8 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get( '/', 'Admin\AdminController@index' );
     Route::resource( 'customer', 'Admin\CustomerController' );
     Route::resource( 'seller', 'Admin\SellerController' );
+    Route::resource( 'requests', 'Admin\RequestController' );
+    Route::resource( 'offers', 'Admin\OfferController' );
     
     Route::get( 'attribute/categoryconfiguration', 'Admin\AttributeController@categoryConfiguration' );
     Route::get( 'attribute/exportattributes/{categoryid}', 'Admin\AttributeController@exportAttributes' );
