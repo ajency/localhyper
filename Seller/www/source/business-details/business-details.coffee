@@ -169,12 +169,12 @@ angular.module 'LocalHyper.businessDetails', []
 
 			onConfirmLocation : ->
 				if !_.isNull(@location.latLng) and @location.addressFetch
-					CDialog.confirm 'Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']
-					.then (btnIndex)=>
-						if btnIndex is 1
-							@location.address.full = GoogleMaps.fullAddress(@location.address)
-							@confirmedAddress = @location.address.full
-							@location.modal.hide()
+					# CDialog.confirm 'Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']
+					# .then (btnIndex)=>
+					# 	if btnIndex is 1
+					@location.address.full = GoogleMaps.fullAddress(@location.address)
+					@confirmedAddress = @location.address.full
+					@location.modal.hide()
 				else
 					CToast.show 'Please wait, getting location details...'
 

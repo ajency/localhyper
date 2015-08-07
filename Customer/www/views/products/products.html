@@ -58,7 +58,10 @@
 
 	</ion-content>
 
-	<ion-footer-bar ng-show="view.footer" class="bar-light">
+	<ion-footer-bar 
+		ng-show="view.products.length > 0" 
+		class="bar-light">
+		
 		<div class="row">
 			<div class="col col-50 text-center" ng-click="view.showSortOptions()">
 				<h5 class="margin-none  normal"><i class="ion ion-arrow-swap"></i> SORT</h5>

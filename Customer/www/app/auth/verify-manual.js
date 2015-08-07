@@ -38,7 +38,7 @@ angular.module('LocalHyper.auth').controller('VerifyManualCtrl', [
       },
       requestSMSCode: function() {
         CSpinner.show('', 'Please wait...');
-        return SmsAPI.requestSMSCode(this.user.phone).then((function(_this) {
+        return SmsAPI.requestSMSCode(this.user.phone, this.user.name, 'customer').then((function(_this) {
           return function(data) {
             console.log(data);
             if (data.attemptsExceeded) {
