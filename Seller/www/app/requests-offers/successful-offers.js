@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime', '$ionicLoading', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform, DeliveryTime, $ionicLoading) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime', '$ionicLoading', 'CToast', 'CSpinner', 'RequestsAPI', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform, DeliveryTime, $ionicLoading, CToast, CSpinner, RequestsAPI) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -121,6 +121,11 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         showExpiry: false,
         data: {},
         pendingOfferId: "",
+        showChange: true,
+        failedDelivery: {
+          display: false,
+          reason: ''
+        },
         loadModal: function() {
           return $ionicModal.fromTemplateUrl('views/requests-offers/successful-offer-details.html', {
             scope: $scope,
@@ -132,9 +137,17 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
             };
           })(this));
         },
-        show: function(request) {
+        show: function(request, show) {
+          if (show == null) {
+            show = true;
+          }
           this.data = request;
-          this.modal.show();
+          this.data.deliveryStatus = request.request.status;
+          this.showChange = true;
+          this.checkIfFailedDelivery();
+          if (show) {
+            this.modal.show();
+          }
           return this.showExpiry = true;
         },
         onNotificationClick: function(offerId) {
@@ -161,10 +174,53 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
                 return offer.id === _this.pendingOfferId;
               };
             })(this));
-            this.data = requests[index];
-            this.showExpiry = true;
+            this.show(requests[index], false);
             return this.pendingOfferId = "";
           }
+        },
+        onDeliveryStatusChange: function() {
+          return this.failedDelivery.display = this.data.deliveryStatus === 'failed_delivery';
+        },
+        checkIfFailedDelivery: function() {
+          if (this.data.deliveryStatus === 'failed_delivery') {
+            this.failedDelivery.display = true;
+            return this.failedDelivery.reason = this.data.request.failedDeliveryReason;
+          } else {
+            this.failedDelivery.display = false;
+            return this.failedDelivery.reason = '';
+          }
+        },
+        onUpdateCancel: function() {
+          this.data.deliveryStatus = this.data.request.status;
+          this.checkIfFailedDelivery();
+          return this.showChange = true;
+        },
+        updateDeliveryStatus: function() {
+          var params;
+          if (this.data.deliveryStatus === 'failed_delivery') {
+            if (this.failedDelivery.reason === '') {
+              CToast.show('Please provide reason for delivery failure');
+              return;
+            }
+          }
+          params = {
+            "requestId": this.data.request.id,
+            "status": this.data.deliveryStatus,
+            "failedDeliveryReason": this.failedDelivery.reason
+          };
+          CSpinner.show('', 'Please wait...');
+          return RequestsAPI.updateRequestStatus(params).then((function(_this) {
+            return function() {
+              _this.data.request.status = _this.data.deliveryStatus;
+              _this.data.request.failedDeliveryReason = _this.failedDelivery.reason;
+              _this.showChange = true;
+              return CToast.showLongBottom('Delivery status has been updated. ' + 'Customer will be notified about the status update.');
+            };
+          })(this), function(error) {
+            return CToast.show('Failed to update status, please try again');
+          })["finally"](function() {
+            return CSpinner.hide();
+          });
         }
       },
       init: function() {
