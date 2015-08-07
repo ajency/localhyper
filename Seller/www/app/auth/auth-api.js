@@ -195,9 +195,9 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
             "supportedCategories": info.supportedCategories,
             "supportedBrands": info.supportedBrands,
             "lastLogin": new Date(),
-            "credit": parseFloat(defaultObj.get('value')),
             "offDays": info.offDays,
-            "workTimings": info.workTimings
+            "workTimings": info.workTimings,
+            "creditBalance": parseFloat(defaultObj.get('value'))
           });
           return user.signUp();
         };
@@ -210,6 +210,16 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           "area": user.get('area'),
           "sellerLocation": "default",
           "sellerRadius": "default"
+        });
+      }).then(function() {
+        var Transaction, transaction, user;
+        user = User.getCurrent();
+        Transaction = new Parse.Object.Extend('Transaction');
+        transaction = new Transaction();
+        return transaction.save({
+          "seller": user,
+          "transactionType": 'add',
+          "creditCount": user.get('creditBalance')
         });
       }).then(function(success) {
         return defer.resolve(success);
