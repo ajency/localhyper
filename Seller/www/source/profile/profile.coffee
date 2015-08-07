@@ -2,17 +2,21 @@ angular.module 'LocalHyper.profile', []
 
 
 .controller 'ProfileCtrl', ['$q', '$scope', 'User', 'App', 'CToast', 'Storage'
-	, 'CategoriesAPI', 'AuthAPI', 'CSpinner', 'CategoryChains', '$rootScope'
+	, 'CategoriesAPI', 'AuthAPI', 'CSpinner', 'CategoryChains', '$rootScope', 'BussinessDetails'
 	, ($q, $scope, User, App, CToast, Storage, CategoriesAPI, AuthAPI, CSpinner
-	, CategoryChains, $rootScope)->
+	, CategoryChains, $rootScope, BussinessDetails)->
 
 		
 		$scope.view = 
 			showDelete: false
+			businessName : ''
+			phone :	''
 			categoryChains : []
 
 			setCategoryChains : ->
 				@categoryChains = CategoryChains
+				@businessName = BussinessDetails.businessName
+				@phone = BussinessDetails.phone
 				
 			getBrands : (brands)->
 				brandNames = _.pluck brands, 'name'
@@ -32,30 +36,23 @@ angular.module 'LocalHyper.profile', []
 				Storage.bussinessDetails 'get'
 				.then (details)=>
 					User.info 'reset', details
-					
 					user = User.info 'get'
 
 					CSpinner.show '', 'Please wait...'
 					AuthAPI.isExistingUser(user)
 					.then (data)=>
-						console.log(data)
+						CSpinner.hide()
 						AuthAPI.loginExistingUser(data.userObj)
 					.then (success)=>
-						console.log(sucess)
-						CategoriesAPI.categoryChains 'set', @categoryChains
-						Storage.categoryChains 'set', @categoryChains
-
-						$rootScope.$broadcast 'category:chain:changed'
-						CSpinner.hide()
-						App.navigate('new-requests')
+							CategoriesAPI.categoryChains 'set', @categoryChains
+							Storage.categoryChains 'set', @categoryChains
+							$rootScope.$broadcast 'category:chain:changed'
+							CToast.show 'Details saved'
 					, (error)->
-						console.log(error)
-						CSpinner.hide()
 						CToast.show 'Please try again data not saved'
+					.finally ->
+						CSpinner.hide()
 					
-						
-
-
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			if !viewData.enableBack
 				viewData.enableBack = true
@@ -103,7 +100,18 @@ angular.module 'LocalHyper.profile', []
 						    			defer.resolve chains
 						    	else 
 						    		defer.resolve chains
-
 						    	defer.promise
+
+						BussinessDetails : ($q, Storage)->
+							defer = $q.defer()
+							Storage.bussinessDetails 'get'
+							.then (details) ->
+				    			defer.resolve details
+
+				    		defer.promise	
+
+
+
+
 						  
 ]
