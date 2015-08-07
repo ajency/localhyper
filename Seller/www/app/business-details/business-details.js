@@ -251,7 +251,6 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         }
       },
       saveBussinessDetails: function() {
-        User.info('set', $scope.view);
         return Storage.bussinessDetails('set', {
           name: this.name,
           phone: this.phone,
@@ -268,10 +267,12 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
             radius: this.delivery.radius
           },
           workTimings: this.workTimings,
-          workingDays: this.workingDays
+          workingDays: this.workingDays,
+          offDays: this.getNonWorkingDays()
         });
       },
       onNext: function() {
+        var user;
         if (_.contains([this.businessName, this.name, this.phone], '')) {
           return CToast.show('Fill up all fields');
         } else if (_.isUndefined(this.phone)) {
@@ -287,25 +288,27 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           this.longitude = this.location.latLng.lng();
           this.offDays = this.getNonWorkingDays();
           if (App.previousState === 'my-profile' || (App.previousState === '' && User.getCurrent() !== null)) {
+            User.info('set', $scope.view);
             CSpinner.show('', 'Please wait...');
-            return Storage.bussinessDetails('get').then((function(_this) {
-              return function(details) {
-                var user;
-                User.info('reset', details);
-                user = User.info('get');
-                user = User.info('get');
-                return AuthAPI.isExistingUser(user).then(function(data) {
-                  return AuthAPI.loginExistingUser(data.userObj);
-                }).then(function(success) {
-                  return _this.saveBussinessDetails().then(App.navigate('my-profile'));
-                }, function(error) {
-                  return CToast.show('Please try again data not saved');
-                })["finally"](function() {
-                  return CSpinner.hide();
-                });
+            user = User.info('get');
+            return AuthAPI.isExistingUser(user).then((function(_this) {
+              return function(data) {
+                return AuthAPI.loginExistingUser(data.userObj);
               };
-            })(this));
+            })(this)).then((function(_this) {
+              return function(success) {
+                _this.saveBussinessDetails();
+                return App.navigate('my-profile');
+              };
+            })(this), (function(_this) {
+              return function(error) {
+                return CToast.show('Please try again data not saved');
+              };
+            })(this))["finally"](function() {
+              return CSpinner.hide();
+            });
           } else {
+            User.info('set', $scope.view);
             this.saveBussinessDetails();
             return App.navigate('category-chains');
           }
@@ -326,6 +329,7 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
     return $stateProvider.state('business-details', {
       url: '/business-details',
       parent: 'main',
+      cache: false,
       views: {
         "appContent": {
           controller: 'BusinessDetailsCtrl',

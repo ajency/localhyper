@@ -182,7 +182,6 @@ angular.module 'LocalHyper.businessDetails', []
 					CToast.show 'Please wait, getting location details...'
 
 			saveBussinessDetails :->
-				User.info 'set', $scope.view
 				Storage.bussinessDetails 'set',
 					name: @name
 					phone: @phone
@@ -197,7 +196,9 @@ angular.module 'LocalHyper.businessDetails', []
 					delivery:
 						radius: @delivery.radius
 					workTimings: @workTimings
-					workingDays : @workingDays	
+					workingDays : @workingDays
+					offDays : @getNonWorkingDays()
+
 
 			onNext : ->
 				if _.contains [@businessName, @name, @phone], ''
@@ -216,23 +217,21 @@ angular.module 'LocalHyper.businessDetails', []
 					@offDays = @getNonWorkingDays()
 					
 					if App.previousState == 'my-profile' || (App.previousState == '' && User.getCurrent() != null )
+						User.info 'set', $scope.view
 						CSpinner.show '', 'Please wait...'
-						Storage.bussinessDetails 'get'
-						.then (details)=>
-							User.info 'reset', details
-							user = User.info 'get'
-							user = User.info 'get'
-							AuthAPI.isExistingUser(user)
-							.then (data)=>
-								AuthAPI.loginExistingUser(data.userObj)
-							.then (success)=>
-								@saveBussinessDetails()
-								.then App.navigate('my-profile')
-							, (error)=>
-								CToast.show 'Please try again data not saved'
-							.finally ->
-								CSpinner.hide()
+						user = User.info 'get'
+						AuthAPI.isExistingUser(user)
+						.then (data)=>
+							AuthAPI.loginExistingUser(data.userObj)
+						.then (success)=>
+							@saveBussinessDetails() 
+							App.navigate('my-profile')
+						, (error)=>
+							CToast.show 'Please try again data not saved'
+						.finally ->
+							CSpinner.hide()
 					else
+						User.info 'set', $scope.view
 						@saveBussinessDetails()
 						App.navigate 'category-chains'
 						
@@ -252,6 +251,7 @@ angular.module 'LocalHyper.businessDetails', []
 		.state 'business-details',
 			url: '/business-details'
 			parent: 'main'
+			cache: false
 			views: 
 				"appContent":
 					controller: 'BusinessDetailsCtrl'
