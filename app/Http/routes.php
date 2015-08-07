@@ -13,6 +13,8 @@
 
 Route::get( '/', 'WelcomeController@index' );
 
+Route::get( 'process-image', 'ProcessImageController@index' );
+
 /**
  * Auth and forgot password route
  */

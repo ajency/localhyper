@@ -9,7 +9,9 @@
         "laravel/framework": "5.1.*",
         "parse/php-sdk" : "1.1.*",
         "phpoffice/phpexcel": "dev-master",
-        "anahkiasen/underscore-php": "~2.0"
+        "anahkiasen/underscore-php": "~2.0",
+        "aws/aws-sdk-php-laravel": "~3.0",
+        "intervention/image": "^2.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
