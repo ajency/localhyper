@@ -1,0 +1,59 @@
+<ion-pane 
+	class="sort-model sort-popup new-requests-sort"
+	aj-loading-back-drop>
+
+	<ul class="list">
+		<li class="item">SORT BY</li>
+
+		<li class="item"
+			ng-class="(view.sortBy === '-createdAt.iso') ? 'active' : ''"
+			ng-click="view.onSort('-createdAt.iso', 'Most Recent')">
+
+			Most Recent
+		</li>
+
+		<li class="item"
+			ng-class="(view.sortBy === '-product.mrp') ? 'active' : ''"
+			ng-click="view.onSort('-product.mrp', 'MRP - high to low')">
+
+			<i class="i-price-high"></i>MRP - high to low
+		</li>
+
+		<li class="item" 
+			ng-class="(view.sortBy === 'product.mrp') ? 'active' : ''"
+			ng-click="view.onSort('product.mrp', 'MRP - low to high')">
+
+			<i class="i-price-low"></i>MRP - low to high
+		</li>
+
+		<li class="item"
+			ng-class="(view.sortBy === '-radius') ? 'active' : ''"
+			ng-click="view.onSort('-radius', 'Distance - high to low')">
+
+			Distance - high to low
+		</li>
+
+		<li class="item" 
+			ng-class="(view.sortBy === 'radius') ? 'active' : ''"
+			ng-click="view.onSort('radius', 'Distance - low to high')">
+
+			Distance - low to high
+		</li>
+
+		<li class="item"
+			ng-class="(view.sortBy === '-offerCount') ? 'active' : ''"
+			ng-click="view.onSort('-offerCount', 'Number of Offers - high to low')">
+
+			Number of Offers - high to low
+		</li>
+
+		<li class="item" 
+			ng-class="(view.sortBy === 'offerCount') ? 'active' : ''"
+			ng-click="view.onSort('offerCount', 'Number of Offers - low to high')">
+
+			Number of Offers - low to high
+		</li>
+
+	</ul>
+	
+</ion-pane>

@@ -85,28 +85,38 @@
 		       		ng-click="view.request.onCardClick(request);">
 
 					<div class="row item border-none" >
-				        <div class="col  p-t-0">
+				        <!-- <div class="col  p-t-0">
 				            <sm class="light-gray"> MRP</sm>
 				            <h1 class=" item-text-wrap margin-none big-txt ">
 				            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.product.mrp)}}
-				            </h1><!--this was h3-->
-				        </div>
-				        <div class="col p-t-0">
-				        	<div class="pull-right">
-				            <div class="offer"> {{request.offerCount}} </div>
-				            <h4 class="offertxt light-gray subdued"> No. of offers</h4>
+				            </h1>
+				        </div> -->
+				        <div class="col p-b-7">
+				        	<div>
+					            <div class="offer"> {{request.offerCount}} </div>
+					            <h4 class="offertxt light-gray subdued"> No. of offers</h4>
 				           	</div>
 				        </div>
+				        <div class="col text-center">
+				        	<div class="vert-div pull-left"></div>
+				        	<p>Status</p>
+				        	<label class="status-label status-balanced"> {{App.humanize(request.status)}}</label>
+				        </div>
+				        <div class="col text-center">
+				        	<div class="vert-div pull-left"></div>
+				        	<p class="m-t-6"><i class="icon ion-clock"></i></p>
+				        	<label class="status-label status-dark small-let">{{request.timeStr}}</label>
+				        </div>
 				    </div>
-				      <div class="item item-divider">
+				      <!-- <div class="item item-divider">
 				        <div class="pull-right ">
-				            <h3 class="margin-none"> {{App.humanize(request.status)}} &nbsp;</h3>
+
 				        </div>
 
 				        <div class="pull-left ">
-				            <sm class="subdued">{{request.timeStr}}</sm>
+
 				        </div>
-				    </div>
+				    </div> -->
 				</ion-item>
 
 				<ion-item

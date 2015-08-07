@@ -117,7 +117,6 @@ angular.module 'LocalHyper.businessDetails', []
 					@location.address = details.address
 					@workTimings = details.workTimings
 					@workingDays = details.workingDays
-							
 						
 			loadLocationModal : ->
 				$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
@@ -191,14 +190,11 @@ angular.module 'LocalHyper.businessDetails', []
 					latitude: @latitude
 					longitude: @longitude
 					deliveryRadius: @delivery.radius
-					location:
-						address:@location.address
-					delivery:
-						radius: @delivery.radius
+					location: address:@location.address
+					delivery: radius: @delivery.radius
 					workTimings: @workTimings
 					workingDays : @workingDays
 					offDays : @getNonWorkingDays()
-
 
 			onNext : ->
 				if _.contains [@businessName, @name, @phone], ''
