@@ -1109,6 +1109,12 @@ h5.with-sep span {
   /* color: @brand-primary; */
   font-weight: bold;
 }
+.verify-first.has-header {
+  background-color: #fff;
+}
+.verify-first.has-header input {
+  background-color: #EFEFEF;
+}
 .verify-first .verify-step-img {
   height: 130px;
 }
@@ -1120,6 +1126,8 @@ h5.with-sep span {
   height: 40px;
   border-color: #ccc !important;
   font-size: 16px;
+  padding: 0;
+  line-height: 43px;
 }
 .verify-first input:active,
 .verify-first input:focus {

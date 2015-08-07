@@ -1,42 +1,52 @@
 <ion-view view-title="Verify your phone number">
 
 	<ion-nav-buttons side="right">
-		<button
+		<!-- <button
 			class="button button-assertive"
 			ng-click="view.onNext()">
 			Next
-		</button>
+		</button> -->
 	</ion-nav-buttons>
 
 	<ion-content class="aj-text verify-first">
 
-		</br></br>
-		<img src="./img/verify_4.png" class="center-img verify-step-img"/>
+		</br>
+
 		<div class="list" ng-switch="view.display">
 
 			<div ng-switch-when="noError">
+
+				<img src="./img/verify_4.png" class="center-img verify-step-img"/>
+
 				<div class="row">
 					<div class="center sm-text col subdued info-text">
 					To complete your phone number verification, please enter the 6 digit activation code sent to +91{{view.user.phone}}
 					</div>
-			</div>
+				</div>
 				</br>
 				<label class=" item-input">
 					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode" class="input-border">
 				</label>
+				<div class="padding">
+					<button
+						class="button button-assertive aj-btn"
+						ng-click="view.onNext()">
+						Next
+					</button>
+				</div>
 
 				</br></br>
 				<h4 ng-click="view.isExistingUser()" class="button-border">Resend the code?</h4>
 
 			</div>
 
-			<div ng-switch-when="maxAttempts">
+			<div ng-switch-when="maxAttempts" class="maxAttempts-div">
 				<img src="./img/verify_5.png" class="center-img verify-step-img"/>
 
 				<h3>Sorry...</h3>
 				<div class="row">
 					<div class="center sm-text col subdued">
-					Exceeded maximum number of attempts. Please contact our support and enter code manually.
+						<span class="info-top m-t-0">Exceeded maximum number of attempts. Please contact our support and enter code manually.</span>
 					</div>
 				</div>
 				<br>
@@ -53,8 +63,16 @@
 
 				</br>
 				<label class=" item-input">
-					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode" class="input-border">
+					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode" class="input-border" placeholder="Code">
 				</label>
+				</br>
+				<div class="padding">
+					<button
+						class="button button-assertive aj-btn"
+						ng-click="view.onNext()">
+						Next
+					</button>
+				</div>
 			</div>
 
 			<aj-error
