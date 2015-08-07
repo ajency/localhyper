@@ -2,9 +2,10 @@ angular.module 'LocalHyper.businessDetails', []
 
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
-	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner'
+	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails'
+	, 'AuthAPI', 'CSpinner', '$cordovaDatePicker'
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout
-	, Storage, BusinessDetails, AuthAPI, CSpinner)->
+	, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker)->
 	
 		$scope.view = 
 			name:''
@@ -20,6 +21,19 @@ angular.module 'LocalHyper.businessDetails', []
 					@radius++ if @radius < 100
 				minus : ->
 					@radius-- if @radius > 1
+
+			workingDays:[
+				{name: 'Mon', value: 'Monday', selected: false}
+				{name: 'Tue', value: 'Tuesday', selected: false}
+				{name: 'Wed', value: 'Wednesday', selected: false}
+				{name: 'Thur', value: 'Thursday', selected: false}
+				{name: 'Fri', value: 'Friday', selected: false}
+				{name: 'Sat', value: 'Saturday', selected: false}
+				{name: 'Sun', value: 'Sunday', selected: false}]
+
+			workTimings: 
+				start: ''
+				end: ''
 
 			location:
 				modal: null
@@ -110,6 +124,31 @@ angular.module 'LocalHyper.businessDetails', []
 				.then (modal)=>
 					@location.modal = modal
 
+			areWorkingDaysSelected : ->
+				selected = _.pluck @workingDays, 'selected'
+				_.contains selected, true
+
+			getNonWorkingDays : ->
+				offDays = []
+				_.each @workingDays, (days)=>
+					offDays.push(days.value) if !days.selected
+				offDays
+
+			addWorkTimings : (type)->
+				if App.isWebView()
+					options = 
+						date: new Date()
+						mode: 'time'
+						is24Hour: true
+						okText: 'Set'
+						androidTheme: 5
+					$cordovaDatePicker.show options
+					.then (date)=>
+						@workTimings[type] = moment(date).format 'HH:mm:ss'
+				else
+					@workTimings.start = '9:00:00'
+					@workTimings.end = '18:00:00'
+
 			onChangeLocation : ->
 				@location.modal.show()
 				mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
@@ -146,9 +185,14 @@ angular.module 'LocalHyper.businessDetails', []
 					CToast.show 'Please enter valid phone number'
 				else if @confirmedAddress is ''
 					CToast.show 'Please select your location'
+				else if !@areWorkingDaysSelected()
+					CToast.show 'Please select your working days'
+				else if _.contains [@workTimings.start, @workTimings.end], ''
+					CToast.show 'Please select your work timings'
 				else
 					@latitude = @location.latLng.lat()
 					@longitude = @location.latLng.lng()
+					@offDays = @getNonWorkingDays()
 					User.info 'set', $scope.view
 					Storage.bussinessDetails 'set',
 						name: @name
@@ -187,7 +231,6 @@ angular.module 'LocalHyper.businessDetails', []
 		$scope.$on '$ionicView.beforeEnter', ->
 			if App.previousState == 'my-profile' || (App.previousState == '' && User.getCurrent() != null )
 				$scope.view.myProfileState = true 
-
 		
 		$scope.$on '$ionicView.enter', ->
 			App.hideSplashScreen()

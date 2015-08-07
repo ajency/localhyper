@@ -21,7 +21,17 @@ textarea,
 .h4,
 .h5,
 .h6 .item,
-.item-divider {
+.item-divider,
+span,
+div,
+input,
+textarea,
+select,
+small,
+big,
+b,
+strong,
+body {
   font-family: 'source_sans' !important;
   color: #000000;
 }
@@ -43,7 +53,6 @@ h6 {
   font-weight: 600;
 }
 .bar-light {
-  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 .bar-assertive {
@@ -166,7 +175,7 @@ sm {
 /* HEADER */
 /************************************/
 .has-header {
-  background: #e8e8e8;
+  background-color: #f2f1ed;
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light,
 .bar.bar-header {
@@ -202,7 +211,6 @@ sm {
 }
 .Categories {
   background: url(../../img/gray-bg.png) no-repeat;
-  -webkit-background-size: 100%;
   background-size: 100%;
 }
 /************************************/
@@ -390,7 +398,6 @@ sm {
   height: 8rem;
   float: left;
   background: url(../../img/gray-bg.png) no-repeat;
-  -webkit-background-size: 100%;
   background-size: 100%;
 }
 .sub-categories .border-card .aj-title {
@@ -563,14 +570,12 @@ sm {
   background: none !important;
 }
 .brands .border-card img {
-  -webkit-filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
   filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#grayscale");
   /* Firefox 10+ */
   filter: gray;
   /* IE6-9 */
   -webkit-filter: grayscale(100%);
   filter: grayscale(100%);
-  -webkit-filter: url(desaturate.svg#greyscale);
   filter: url(desaturate.svg#greyscale);
   opacity: 0.6;
 }
@@ -656,7 +661,6 @@ sm {
   margin-bottom: 5px;
 }
 .business-details .card .platop.row {
-  -webkit-box-shadow: 0 -2px 1px rgba(0, 0, 0, 0.1);
   box-shadow: 0 -2px 1px rgba(0, 0, 0, 0.1);
   position: relative;
 }
@@ -690,7 +694,6 @@ sm {
 }
 .the-loation {
   background-image: url(../../img/mapbg.jpg);
-  -webkit-background-size: cover;
   background-size: cover;
   background-position: center;
   position: relative;
@@ -951,6 +954,9 @@ h5.with-sep span {
   border-top-right-radius: 50%;
   border-bottom-left-radius: 50%;
   border-bottom-right-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
   -o-border-radius: 50%;
   border-radius: 50%;
   overflow-x: hidden;
@@ -961,6 +967,7 @@ h5.with-sep span {
   text-align: center;
   line-height: 50px;
   position: static;
+  -moz-box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
   -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
 }
@@ -991,6 +998,7 @@ h5.with-sep span {
   background: #fff;
   border-color: #f35a59;
   color: #f35a59;
+  -moz-box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
   -webkit-box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
   box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
 }
@@ -1036,7 +1044,6 @@ h5.with-sep span {
 .item-wrapper-nr .item-avatar {
   float: left;
   margin-right: 8px !important;
-  -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
   margin-bottom: 1px !important;
 }
@@ -1102,4 +1109,27 @@ h5.with-sep span {
   /* color: @brand-primary; */
   font-weight: bold;
 }
-/*# sourceMappingURL=custom.css.map */
+.verify-first .verify-step-img {
+  height: 130px;
+}
+.verify-first .item-input {
+  padding: 0;
+}
+.verify-first input {
+  background-color: #fff;
+  height: 40px;
+  border-color: #ccc !important;
+  font-size: 16px;
+}
+.verify-first input:active,
+.verify-first input:focus {
+  border-color: #f35a59 !important;
+}
+.verify-first h5 {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+.verify-first .info-top {
+  padding: 10px 25px;
+  margin-top: 15px;
+}

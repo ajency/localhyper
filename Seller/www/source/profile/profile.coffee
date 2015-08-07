@@ -1,9 +1,10 @@
 angular.module 'LocalHyper.profile', []
 
 
-.controller 'ProfileCtrl', ['$q', '$scope', 'User', 'App', 'CToast', 'Storage', 'CategoriesAPI', 'AuthAPI', 'CSpinner'
-	, 'CategoryChains', '$rootScope'
-	, ($q, $scope, User, App, CToast, Storage, CategoriesAPI, AuthAPI, CSpinner, CategoryChains, $rootScope)->
+.controller 'ProfileCtrl', ['$q', '$scope', 'User', 'App', 'CToast', 'Storage'
+	, 'CategoriesAPI', 'AuthAPI', 'CSpinner', 'CategoryChains', '$rootScope'
+	, ($q, $scope, User, App, CToast, Storage, CategoriesAPI, AuthAPI, CSpinner
+	, CategoryChains, $rootScope)->
 
 		
 		$scope.view = 

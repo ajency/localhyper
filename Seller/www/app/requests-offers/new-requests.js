@@ -84,7 +84,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             index = _.findIndex(requests, function(val) {
               return val.id === request.id;
             });
-            return RequestsAPI.updateStatus(request.id).then((function(_this) {
+            return RequestsAPI.updateNotificationStatus(request.id).then((function(_this) {
               return function(data) {
                 App.notification.decrement();
                 return requests[index].notification.hasSeen = true;
@@ -211,6 +211,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       onSuccess: function(data) {
         this.display = 'noError';
         this.requests = data.requests;
+        App.notification.newRequests = _.size(this.requests);
         return this.markPendingNotificationsAsSeen();
       },
       onError: function(type) {
@@ -230,7 +231,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       markPendingNotificationsAsSeen: function() {
         _.each(this.pendingRequestIds, (function(_this) {
           return function(requestId) {
-            return RequestsAPI.updateStatus(requestId).then(function(data) {
+            return RequestsAPI.updateNotificationStatus(requestId).then(function(data) {
               var index;
               index = _.findIndex(_this.requests, function(val) {
                 return val.id === requestId;
@@ -254,6 +255,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         case 'cancelled_request':
           $rootScope.$broadcast('get:unseen:notifications');
           return $scope.view.requestDetails.removeRequestCard(payload.id);
+        case 'accepted_offer':
+          return $rootScope.$broadcast('get:accepted:offer:count');
       }
     });
     $rootScope.$on('push:notification:click', function(e, obj) {

@@ -23,6 +23,12 @@
 		<ion-list 
 			class="card-list" 
 			ng-switch-when="noError">
+
+			<ion-item 
+				ng-if="view.noOffersMade"
+				class="item-text-wrap">
+				You have not made any offers.
+			</ion-item>
 	       	
 	       	<ion-item
 	       		class="card"
@@ -91,6 +97,10 @@
 			error-type="view.errorType"
 			tap-to-retry="view.onTapToRetry()">
 		</aj-error>
+
+		<ion-item ng-if="view.gotAllOffers && view.requests.length !== 0">
+			That's all folks, no more offers to display.
+		</ion-item>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"

@@ -23,6 +23,12 @@
 		<ion-list 
 			class="card-list" 
 			ng-switch-when="noError">
+
+			<ion-item 
+				ng-if="view.noAcceptedOffers"
+				class="item-text-wrap">
+				You have no accepted offers.
+			</ion-item>
 	       	
 	       	<ion-item
 	       		class="card"
@@ -38,14 +44,14 @@
 
 				    <div class="col p-t-0" >
 			            <sm class="light-gray"> Claimed delivery :</sm>
-			            	{{request.offerDeliveryTime.value}} {{request.offerDeliveryTime.unit}}
+			            	{{view.deliveryTime.humanize(request.offerDeliveryTime)}}
 			            <br>
 			        </div>
 					
 					<sm 
 						class="light-gray" 
 						ng-if="request.offerStatus != 'unaccepted'"> 
-						Request Status : {{App.humanize(request.request.status)}}
+						Delivery Status : {{App.humanize(request.request.status)}}
 					</sm>
 				</div>
 
@@ -83,6 +89,10 @@
 			tap-to-retry="view.onTapToRetry()">
 		</aj-error>
 
+		<ion-item ng-if="view.gotAllOffers && view.requests.length !== 0">
+			That's all folks, no more offers to display.
+		</ion-item>
+
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
 			ng-if="view.canLoadMore"
@@ -94,8 +104,13 @@
 
 	<ion-footer-bar class="bar-dark">
 		<div class="row">
-			<div class="col col-50 text-center" >
-				<h5 class="margin-none text-light normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
+			<div class="col col-50 text-center" ng-click="view.showSortOptions()">
+				<h5 class="margin-none text-light normal">
+					{{view.sortName}}
+				</h5>
+				<h5 class="margin-none text-light normal">
+					<i class="ion ion-arrow-swap"></i> SORT
+				</h5>
 			</div>
 			
 			<div class="col col-50 text-center border-left" ng-click="view.filter.openModal()">

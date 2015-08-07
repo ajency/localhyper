@@ -34,6 +34,19 @@ angular.module('LocalHyper.requestsOffers').factory('OffersAPI', [
       });
       return defer.promise;
     };
+    OffersAPI.getAcceptedOfferCount = function() {
+      var defer, params;
+      defer = $q.defer();
+      params = {
+        "sellerId": User.getId()
+      };
+      $http.post('functions/getAcceptedOfferCount', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
     OffersAPI.acceptedOfferId = function(action, id) {
       switch (action) {
         case 'set':

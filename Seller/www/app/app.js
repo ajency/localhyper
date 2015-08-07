@@ -4,6 +4,8 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
     $rootScope.App = App;
     App.notification = {
       icon: false,
+      newRequests: 0,
+      accptedOffers: 0,
       badge: false,
       count: 0,
       increment: function() {

@@ -47,6 +47,14 @@
 					Model No : {{view.offerDetails.data.product.modelNumber}}
 				</h5>
 
+				<h5 ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
+					Request Status : {{App.humanize(view.offerDetails.data.request.status)}}
+				</h5>
+
+				<h5>
+					Offer Status : {{App.humanize(view.offerDetails.data.offerStatus)}}
+				</h5>
+
 				<h5>
 					Distance from you: {{view.offerDetails.data.distanceFromCustomer.toFixed(2)}} kms radius
 				</h5>

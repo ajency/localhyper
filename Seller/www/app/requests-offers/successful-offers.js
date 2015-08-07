@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime', '$ionicLoading', 'CToast', 'CSpinner', 'RequestsAPI', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform, DeliveryTime, $ionicLoading, CToast, CSpinner, RequestsAPI) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -8,7 +8,11 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
       page: 0,
       canLoadMore: true,
       refresh: false,
+      gotAllOffers: false,
+      noAcceptedOffers: false,
+      deliveryTime: DeliveryTime,
       sortBy: 'updatedAt',
+      sortName: 'Recent Offers',
       descending: true,
       filter: {
         modal: null,
@@ -117,6 +121,11 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         showExpiry: false,
         data: {},
         pendingOfferId: "",
+        showChange: true,
+        failedDelivery: {
+          display: false,
+          reason: ''
+        },
         loadModal: function() {
           return $ionicModal.fromTemplateUrl('views/requests-offers/successful-offer-details.html', {
             scope: $scope,
@@ -128,9 +137,17 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
             };
           })(this));
         },
-        show: function(request) {
+        show: function(request, show) {
+          if (show == null) {
+            show = true;
+          }
           this.data = request;
-          this.modal.show();
+          this.data.deliveryStatus = request.request.status;
+          this.showChange = true;
+          this.checkIfFailedDelivery();
+          if (show) {
+            this.modal.show();
+          }
           return this.showExpiry = true;
         },
         onNotificationClick: function(offerId) {
@@ -157,10 +174,53 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
                 return offer.id === _this.pendingOfferId;
               };
             })(this));
-            this.data = requests[index];
-            this.showExpiry = true;
+            this.show(requests[index], false);
             return this.pendingOfferId = "";
           }
+        },
+        onDeliveryStatusChange: function() {
+          return this.failedDelivery.display = this.data.deliveryStatus === 'failed_delivery';
+        },
+        checkIfFailedDelivery: function() {
+          if (this.data.deliveryStatus === 'failed_delivery') {
+            this.failedDelivery.display = true;
+            return this.failedDelivery.reason = this.data.request.failedDeliveryReason;
+          } else {
+            this.failedDelivery.display = false;
+            return this.failedDelivery.reason = '';
+          }
+        },
+        onUpdateCancel: function() {
+          this.data.deliveryStatus = this.data.request.status;
+          this.checkIfFailedDelivery();
+          return this.showChange = true;
+        },
+        updateDeliveryStatus: function() {
+          var params;
+          if (this.data.deliveryStatus === 'failed_delivery') {
+            if (this.failedDelivery.reason === '') {
+              CToast.show('Please provide reason for delivery failure');
+              return;
+            }
+          }
+          params = {
+            "requestId": this.data.request.id,
+            "status": this.data.deliveryStatus,
+            "failedDeliveryReason": this.failedDelivery.reason
+          };
+          CSpinner.show('', 'Please wait...');
+          return RequestsAPI.updateRequestStatus(params).then((function(_this) {
+            return function() {
+              _this.data.request.status = _this.data.deliveryStatus;
+              _this.data.request.failedDeliveryReason = _this.failedDelivery.reason;
+              _this.showChange = true;
+              return CToast.showLongBottom('Delivery status has been updated. ' + 'Customer will be notified about the status update.');
+            };
+          })(this), function(error) {
+            return CToast.show('Failed to update status, please try again');
+          })["finally"](function() {
+            return CSpinner.hide();
+          });
         }
       },
       init: function() {
@@ -173,6 +233,8 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
       autoFetch: function() {
         this.page = 0;
         this.requests = [];
+        this.gotAllOffers = false;
+        this.noAcceptedOffers = false;
         return this.showOfferHistory();
       },
       reFetch: function(refresh) {
@@ -183,11 +245,20 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         this.page = 0;
         this.requests = [];
         this.canLoadMore = true;
+        this.gotAllOffers = false;
+        this.noAcceptedOffers = false;
         return $timeout((function(_this) {
           return function() {
             return _this.onScrollComplete();
           };
         })(this));
+      },
+      showSortOptions: function() {
+        return $ionicLoading.show({
+          scope: $scope,
+          templateUrl: 'views/requests-offers/successful-offer-sort.html',
+          hideOnStateChange: true
+        });
       },
       showOfferHistory: function() {
         var params;
@@ -234,6 +305,12 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
           }
         } else {
           this.canLoadMore = false;
+          if (_.size(this.requests) === 0) {
+            this.noAcceptedOffers = true;
+          }
+        }
+        if (!this.canLoadMore) {
+          this.gotAllOffers = true;
         }
         return this.offerDetails.handlePendingOffer();
       },
@@ -246,6 +323,8 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         this.refresh = true;
         this.page = 0;
         this.canLoadMore = true;
+        this.gotAllOffers = false;
+        this.noAcceptedOffers = false;
         return this.showOfferHistory();
       },
       onInfiniteScroll: function() {
@@ -256,6 +335,31 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         this.display = 'loader';
         this.page = 0;
         return this.canLoadMore = true;
+      },
+      onSort: function(sortBy, sortName, descending) {
+        $ionicLoading.hide();
+        switch (sortBy) {
+          case 'updatedAt':
+            if (this.sortBy !== 'updatedAt') {
+              this.sortBy = 'updatedAt';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            }
+            break;
+          case 'deliveryDate':
+            if (this.sortBy !== 'deliveryDate') {
+              this.sortBy = 'deliveryDate';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            } else if (this.descending !== descending) {
+              this.sortBy = 'deliveryDate';
+              this.sortName = sortName;
+              this.descending = descending;
+              return this.reFetch();
+            }
+        }
       }
     };
     onDeviceBack = function() {

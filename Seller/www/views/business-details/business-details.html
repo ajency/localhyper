@@ -93,6 +93,102 @@
 			<div class="col p-b-0">
 				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
 					<i class="icon ion-arrow-graph-up-right"></i>
+					Working Days
+				</h5>
+			</div>
+		</div>
+
+		<div class="card m-red">
+			<div class="row platop">
+				<div class="col">
+					<li class="item item-checkbox">
+						<label class="checkbox">
+							<input type="checkbox" ng-model="view.workingDays[0].selected">
+						</label>
+						Mon
+					</li>
+				</div>
+				<div class="col">
+					<li class="item item-checkbox">
+						<label class="checkbox">
+							<input type="checkbox" ng-model="view.workingDays[1].selected">
+						</label>
+						Tue
+					</li>
+				</div>
+				<div class="col">
+					<li class="item item-checkbox">
+						<label class="checkbox">
+							<input type="checkbox" ng-model="view.workingDays[2].selected">
+						</label>
+						Wed
+					</li>
+				</div>
+			</div>
+			<div class="row platop">
+				<div class="col">
+					<li class="item item-checkbox">
+						<label class="checkbox">
+							<input type="checkbox" ng-model="view.workingDays[3].selected">
+						</label>
+						Thur
+					</li>
+				</div>
+				<div class="col">
+					<li class="item item-checkbox">
+						<label class="checkbox">
+							<input type="checkbox" ng-model="view.workingDays[4].selected">
+						</label>
+						Fri
+					</li>
+				</div>
+				<div class="col">
+					<li class="item item-checkbox">
+						<label class="checkbox">
+							<input type="checkbox" ng-model="view.workingDays[5].selected">
+						</label>
+						Sat
+					</li>
+				</div>
+			</div>
+			<div class="row platop">
+				<div class="col">
+					<li class="item item-checkbox">
+						<label class="checkbox">
+							<input type="checkbox" ng-model="view.workingDays[6].selected">
+						</label>
+						Sun
+					</li>
+				</div>
+			</div>
+		</div>
+
+		<div class="row row-fluid">
+			<div class="col p-b-0">
+				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<i class="icon ion-arrow-graph-up-right"></i>
+					Work Timings
+				</h5>
+			</div>
+		</div>
+
+		<div class="card m-red">
+			<div class="row platop">
+				<div class="col">
+					<ion-item ng-click="view.addWorkTimings('start')">
+						Start Time: {{view.workTimings.start}}
+					</ion-item>
+					<ion-item ng-click="view.addWorkTimings('end')">
+						End Time: {{view.workTimings.end}}
+					</ion-item>
+				</div>
+			</div>
+		</div>
+
+		<div class="row row-fluid">
+			<div class="col p-b-0">
+				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<i class="icon ion-arrow-graph-up-right"></i>
 					Deliverable Area
 				</h5>
 			</div>

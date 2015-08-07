@@ -78,7 +78,7 @@ angular.module 'LocalHyper.requestsOffers'
 					if !request.notification.hasSeen
 						requests = $scope.view.requests
 						index = _.findIndex requests, (val)-> val.id is request.id
-						RequestsAPI.updateStatus request.id
+						RequestsAPI.updateNotificationStatus request.id
 						.then (data)=>
 							App.notification.decrement()
 							requests[index].notification.hasSeen = true
@@ -179,6 +179,7 @@ angular.module 'LocalHyper.requestsOffers'
 			onSuccess : (data)->
 				@display = 'noError'
 				@requests = data.requests
+				App.notification.newRequests = _.size @requests
 				@markPendingNotificationsAsSeen()
 			
 			onError : (type)->
@@ -197,7 +198,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 			markPendingNotificationsAsSeen : ->
 				_.each @pendingRequestIds, (requestId)=>
-					RequestsAPI.updateStatus requestId
+					RequestsAPI.updateNotificationStatus requestId
 					.then (data)=>
 						index = _.findIndex @requests, (val)-> val.id is requestId
 						if index isnt -1
@@ -205,7 +206,6 @@ angular.module 'LocalHyper.requestsOffers'
 							@requests[index].notification.hasSeen = true
 
 				@pendingRequestIds = []
-
 
 		
 		$rootScope.$on 'in:app:notification', (e, obj)->
@@ -216,6 +216,8 @@ angular.module 'LocalHyper.requestsOffers'
 				when 'cancelled_request'
 					$rootScope.$broadcast 'get:unseen:notifications'
 					$scope.view.requestDetails.removeRequestCard payload.id
+				when 'accepted_offer'
+					$rootScope.$broadcast 'get:accepted:offer:count'
 		
 		$rootScope.$on 'push:notification:click', (e, obj)->
 			payload = obj.payload
@@ -232,7 +234,6 @@ angular.module 'LocalHyper.requestsOffers'
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
-
 
 		$rootScope.$on 'category:chain:changed', ->
 			# App.scrollTop()
