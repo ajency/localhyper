@@ -1,17 +1,26 @@
-<ion-view view-title="Verification Complete">
+<ion-view view-title="Verification Complete" class="filters-white-bg">
+
 	<ion-content class="aj-text">
+
 		<div class="list">
-			<div class="item item-text-wrap cardTop">
+			<div class="item item-text-wrap ca rdTop no-border">
+				<div class="row">
+					<div class="col text-center">
+						<img src="./img/verify_6.png" alt="" class="verify-step-img">
+					</div>
+				</div>
 				<div class="row">
 					<div class="center sm-text col subdued">
-						<h2 class=" info-top">Congratulation ! <br>
-							Your phone number is successfully verified as a seller .
+						<h2 class=" info-top" style="margin-top: 0;">Congratulations! <br>
+							Your phone number has been successfully verified.
 						</h2>
 					</div>
 				</div>
 				<div class="list" ng-switch="view.display">
 					<div class="row">
-						<button class="button button-outline button-assertive center col subdued" ng-click="onProceed()">
+						<button
+							class="button button-assertive center col subdued"
+							ng-click="onProceed()">
 							Proceed
 						</button>
 					</div>

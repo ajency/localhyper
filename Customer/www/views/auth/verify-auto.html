@@ -8,9 +8,9 @@
 			<div ng-switch-when="noError">
 				<h3 class="normal">Please Wait...</h3>
 
-				</br>
+				<!-- </br> -->
 				 <div class="row">
-					<div class="center sm-text col subdued">
+					<div class="center sm-text col subdued info-top">
 						We are trying to auto verify your number with the SMS sent to +91{{view.user.phone}}</h5>
 					</div>
 				</div>
@@ -23,12 +23,12 @@
 
 			<div ng-switch-when="maxAttempts" class="maxAttempts-div">
 
-				<img src="./img/verify_5.png" class="center-img verify-step-img"/>
+				<img src="./img/verify_5.png" class="center-img verify-step-img" style="position: relative; right: -15px;" />
 
 				<h3 class="normal">Sorry...</h3>
 
  				<div class="row">
-					<div class="center sm-text col subdued">
+					<div class="center sm-text col subdued info-top">
 						Exceeded maximum number of attempts. Please contact our support and enter code manually.</h5>
 					</div>
 				</div>
