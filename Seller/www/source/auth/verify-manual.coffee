@@ -33,7 +33,7 @@ angular.module 'LocalHyper.auth'
 
 			requestSMSCode : ->
 				CSpinner.show '', 'Please wait...'
-				SmsAPI.requestSMSCode @user.phone
+				SmsAPI.requestSMSCode @user.phone, @user.name, 'seller'
 				.then (data)=>
 					console.log data
 					@display = 'maxAttempts' if data.attemptsExceeded

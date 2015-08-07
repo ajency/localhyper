@@ -154,7 +154,9 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           this.latitude = details.latitude;
           this.longitude = details.longitude;
           this.location.latLng = new google.maps.LatLng(details.latitude, details.longitude);
-          return this.location.address = details.address;
+          this.location.address = details.address;
+          this.workTimings = details.workTimings;
+          return this.workingDays = details.workingDays;
         }
       },
       loadLocationModal: function() {
@@ -241,20 +243,36 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
       },
       onConfirmLocation: function() {
         if (!_.isNull(this.location.latLng) && this.location.addressFetch) {
-          return CDialog.confirm('Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']).then((function(_this) {
-            return function(btnIndex) {
-              if (btnIndex === 1) {
-                _this.location.address.full = GoogleMaps.fullAddress(_this.location.address);
-                _this.confirmedAddress = _this.location.address.full;
-                return _this.location.modal.hide();
-              }
-            };
-          })(this));
+          this.location.address.full = GoogleMaps.fullAddress(this.location.address);
+          this.confirmedAddress = this.location.address.full;
+          return this.location.modal.hide();
         } else {
           return CToast.show('Please wait, getting location details...');
         }
       },
+      saveBussinessDetails: function() {
+        return Storage.bussinessDetails('set', {
+          name: this.name,
+          phone: this.phone,
+          businessName: this.businessName,
+          address: this.location.address,
+          confirmedAddress: this.confirmedAddress,
+          latitude: this.latitude,
+          longitude: this.longitude,
+          deliveryRadius: this.delivery.radius,
+          location: {
+            address: this.location.address
+          },
+          delivery: {
+            radius: this.delivery.radius
+          },
+          workTimings: this.workTimings,
+          workingDays: this.workingDays,
+          offDays: this.getNonWorkingDays()
+        });
+      },
       onNext: function() {
+        var user;
         if (_.contains([this.businessName, this.name, this.phone], '')) {
           return CToast.show('Fill up all fields');
         } else if (_.isUndefined(this.phone)) {
@@ -269,48 +287,31 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           this.latitude = this.location.latLng.lat();
           this.longitude = this.location.latLng.lng();
           this.offDays = this.getNonWorkingDays();
-          User.info('set', $scope.view);
-          return Storage.bussinessDetails('set', {
-            name: this.name,
-            phone: this.phone,
-            businessName: this.businessName,
-            address: this.location.address,
-            confirmedAddress: this.confirmedAddress,
-            latitude: this.latitude,
-            longitude: this.longitude,
-            deliveryRadius: this.delivery.radius,
-            location: {
-              address: this.location.address
-            },
-            delivery: {
-              radius: this.delivery.radius
-            }
-          }).then(function() {
-            if (App.previousState === 'my-profile' || App.previousState === '') {
-              CSpinner.show('', 'Please wait...');
-              return Storage.bussinessDetails('get').then(function(details) {
-                var user;
-                User.info('reset', details);
-                user = User.info('get');
-                user = User.info('get');
-                return AuthAPI.isExistingUser(user).then((function(_this) {
-                  return function(data) {
-                    return AuthAPI.loginExistingUser(data.userObj);
-                  };
-                })(this)).then(function(success) {
-                  return App.navigate('my-profile');
-                }, (function(_this) {
-                  return function(error) {
-                    return CToast.show('Please try again data not saved');
-                  };
-                })(this))["finally"](function() {
-                  return CSpinner.hide();
-                });
-              });
-            } else {
-              return App.navigate('category-chains');
-            }
-          });
+          if (App.previousState === 'my-profile' || (App.previousState === '' && User.getCurrent() !== null)) {
+            User.info('set', $scope.view);
+            CSpinner.show('', 'Please wait...');
+            user = User.info('get');
+            return AuthAPI.isExistingUser(user).then((function(_this) {
+              return function(data) {
+                return AuthAPI.loginExistingUser(data.userObj);
+              };
+            })(this)).then((function(_this) {
+              return function(success) {
+                _this.saveBussinessDetails();
+                return App.navigate('my-profile');
+              };
+            })(this), (function(_this) {
+              return function(error) {
+                return CToast.show('Please try again data not saved');
+              };
+            })(this))["finally"](function() {
+              return CSpinner.hide();
+            });
+          } else {
+            User.info('set', $scope.view);
+            this.saveBussinessDetails();
+            return App.navigate('category-chains');
+          }
         }
       }
     };
@@ -328,6 +329,7 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
     return $stateProvider.state('business-details', {
       url: '/business-details',
       parent: 'main',
+      cache: false,
       views: {
         "appContent": {
           controller: 'BusinessDetailsCtrl',

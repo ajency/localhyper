@@ -43,7 +43,7 @@ angular.module 'LocalHyper.auth'
 
 			requestSMSCode : ->
 				@startTimeout()
-				SmsAPI.requestSMSCode @user.phone
+				SmsAPI.requestSMSCode @user.phone, @user.name, 'customer'
 				.then (data)=>
 					console.log data
 					if data.attemptsExceeded

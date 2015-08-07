@@ -164,7 +164,6 @@ angular.module 'LocalHyper.requestsOffers'
 				@display = 'loader'
 				@errorType = ''
 				@getRequests()
-				@requestDetails.loadModal()
 
 			getRequests : ->
 				RequestsAPI.getAll()

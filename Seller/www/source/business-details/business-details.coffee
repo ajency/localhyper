@@ -115,6 +115,9 @@ angular.module 'LocalHyper.businessDetails', []
 					@longitude =  details.longitude
 					@location.latLng = new google.maps.LatLng details.latitude, details.longitude
 					@location.address = details.address
+					@workTimings = details.workTimings
+					@workingDays = details.workingDays
+							
 						
 			loadLocationModal : ->
 				$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
@@ -169,14 +172,33 @@ angular.module 'LocalHyper.businessDetails', []
 
 			onConfirmLocation : ->
 				if !_.isNull(@location.latLng) and @location.addressFetch
-					CDialog.confirm 'Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']
-					.then (btnIndex)=>
-						if btnIndex is 1
-							@location.address.full = GoogleMaps.fullAddress(@location.address)
-							@confirmedAddress = @location.address.full
-							@location.modal.hide()
+					# CDialog.confirm 'Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']
+					# .then (btnIndex)=>
+					# 	if btnIndex is 1
+					@location.address.full = GoogleMaps.fullAddress(@location.address)
+					@confirmedAddress = @location.address.full
+					@location.modal.hide()
 				else
 					CToast.show 'Please wait, getting location details...'
+
+			saveBussinessDetails :->
+				Storage.bussinessDetails 'set',
+					name: @name
+					phone: @phone
+					businessName: @businessName
+					address: @location.address
+					confirmedAddress: @confirmedAddress
+					latitude: @latitude
+					longitude: @longitude
+					deliveryRadius: @delivery.radius
+					location:
+						address:@location.address
+					delivery:
+						radius: @delivery.radius
+					workTimings: @workTimings
+					workingDays : @workingDays
+					offDays : @getNonWorkingDays()
+
 
 			onNext : ->
 				if _.contains [@businessName, @name, @phone], ''
@@ -193,40 +215,25 @@ angular.module 'LocalHyper.businessDetails', []
 					@latitude = @location.latLng.lat()
 					@longitude = @location.latLng.lng()
 					@offDays = @getNonWorkingDays()
-					User.info 'set', $scope.view
-					Storage.bussinessDetails 'set',
-						name: @name
-						phone: @phone
-						businessName: @businessName
-						address: @location.address
-						confirmedAddress: @confirmedAddress
-						latitude: @latitude
-						longitude: @longitude
-						deliveryRadius: @delivery.radius
-						location:
-							address:@location.address
-						delivery:
-							radius: @delivery.radius
-					.then ->
-						if App.previousState == 'my-profile' || App.previousState == ''
-							CSpinner.show '', 'Please wait...'
-							Storage.bussinessDetails 'get'
-							.then (details)->
-								User.info 'reset', details
-								user = User.info 'get'
-								user = User.info 'get'
-								AuthAPI.isExistingUser(user)
-								.then (data)=>
-									AuthAPI.loginExistingUser(data.userObj)
-								.then (success)->
-									App.navigate('my-profile')
-								, (error)=>
-									CToast.show 'Please try again data not saved'
-								.finally ->
-									CSpinner.hide()
-							
-						else
-							App.navigate 'category-chains'
+					
+					if App.previousState == 'my-profile' || (App.previousState == '' && User.getCurrent() != null )
+						User.info 'set', $scope.view
+						CSpinner.show '', 'Please wait...'
+						user = User.info 'get'
+						AuthAPI.isExistingUser(user)
+						.then (data)=>
+							AuthAPI.loginExistingUser(data.userObj)
+						.then (success)=>
+							@saveBussinessDetails() 
+							App.navigate('my-profile')
+						, (error)=>
+							CToast.show 'Please try again data not saved'
+						.finally ->
+							CSpinner.hide()
+					else
+						User.info 'set', $scope.view
+						@saveBussinessDetails()
+						App.navigate 'category-chains'
 						
 		$scope.$on '$ionicView.beforeEnter', ->
 			if App.previousState == 'my-profile' || (App.previousState == '' && User.getCurrent() != null )
@@ -244,6 +251,7 @@ angular.module 'LocalHyper.businessDetails', []
 		.state 'business-details',
 			url: '/business-details'
 			parent: 'main'
+			cache: false
 			views: 
 				"appContent":
 					controller: 'BusinessDetailsCtrl'

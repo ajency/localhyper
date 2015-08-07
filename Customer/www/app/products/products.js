@@ -7,7 +7,6 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       products: [],
       other: [],
       page: 0,
-      footer: false,
       canLoadMore: true,
       refresh: false,
       sortBy: 'popularity',
@@ -201,7 +200,6 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         return this.loadFiltersModal();
       },
       reset: function() {
-        this.footer = false;
         this.sortBy = 'popularity';
         this.ascending = true;
         this.filter.resetFilters();
@@ -276,7 +274,6 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           };
         })(this))["finally"]((function(_this) {
           return function() {
-            _this.footer = true;
             _this.page = _this.page + 1;
             return _this.onRefreshComplete();
           };

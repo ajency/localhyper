@@ -191,8 +191,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         this.requests = [];
         this.display = 'loader';
         this.errorType = '';
-        this.getRequests();
-        return this.requestDetails.loadModal();
+        return this.getRequests();
       },
       getRequests: function() {
         return RequestsAPI.getAll().then((function(_this) {
