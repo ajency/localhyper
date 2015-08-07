@@ -28,27 +28,31 @@ angular.module 'LocalHyper.profile', []
 				@categoryChains.splice spliceIndex, 1
 				
 			saveDetails : ->
-				CSpinner.show '', 'Please wait...'
-				
-				CategoriesAPI.categoryChains 'set', @categoryChains
-				Storage.categoryChains 'set', @categoryChains
-
-				defer = $q.defer()
 				Storage.bussinessDetails 'get'
-				.then (details)->
+				.then (details)=>
 					User.info 'reset', details
+					
 					user = User.info 'get'
-					user = User.info 'get'
+
+					CSpinner.show '', 'Please wait...'
 					AuthAPI.isExistingUser(user)
 					.then (data)=>
+						console.log(data)
 						AuthAPI.loginExistingUser(data.userObj)
-					.then (success)->
+					.then (success)=>
+						console.log(sucess)
+						CategoriesAPI.categoryChains 'set', @categoryChains
+						Storage.categoryChains 'set', @categoryChains
+
 						$rootScope.$broadcast 'category:chain:changed'
-						App.navigate('new-requests')
-					, (error)=>
-						CToast.show 'Please try again data not saved'
-					.finally ->
 						CSpinner.hide()
+						App.navigate('new-requests')
+					, (error)->
+						console.log(error)
+						CSpinner.hide()
+						CToast.show 'Please try again data not saved'
+					
+						
 
 
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->

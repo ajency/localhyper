@@ -26,31 +26,29 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
         return this.categoryChains.splice(spliceIndex, 1);
       },
       saveDetails: function() {
-        var defer;
-        CSpinner.show('', 'Please wait...');
-        CategoriesAPI.categoryChains('set', this.categoryChains);
-        Storage.categoryChains('set', this.categoryChains);
-        defer = $q.defer();
-        return Storage.bussinessDetails('get').then(function(details) {
-          var user;
-          User.info('reset', details);
-          user = User.info('get');
-          user = User.info('get');
-          return AuthAPI.isExistingUser(user).then((function(_this) {
-            return function(data) {
+        return Storage.bussinessDetails('get').then((function(_this) {
+          return function(details) {
+            var user;
+            User.info('reset', details);
+            user = User.info('get');
+            CSpinner.show('', 'Please wait...');
+            return AuthAPI.isExistingUser(user).then(function(data) {
+              console.log(data);
               return AuthAPI.loginExistingUser(data.userObj);
-            };
-          })(this)).then(function(success) {
-            $rootScope.$broadcast('category:chain:changed');
-            return App.navigate('new-requests');
-          }, (function(_this) {
-            return function(error) {
+            }).then(function(success) {
+              console.log(sucess);
+              CategoriesAPI.categoryChains('set', _this.categoryChains);
+              Storage.categoryChains('set', _this.categoryChains);
+              $rootScope.$broadcast('category:chain:changed');
+              CSpinner.hide();
+              return App.navigate('new-requests');
+            }, function(error) {
+              console.log(error);
+              CSpinner.hide();
               return CToast.show('Please try again data not saved');
-            };
-          })(this))["finally"](function() {
-            return CSpinner.hide();
-          });
-        });
+            });
+          };
+        })(this));
       }
     };
     $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
