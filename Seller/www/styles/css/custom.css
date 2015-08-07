@@ -175,14 +175,27 @@ sm {
 /************************************/
 /* HEADER */
 /************************************/
+.nav-bar-title img {
+  width: 40%;
+  margin-top: 5px;
+}
 .has-header {
   background-color: #f2f1ed;
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light,
 .bar.bar-header {
-  background-image: url(../../img/header-bg.jpg) !important;
+  /*background-image: url(../../img/header-bg.jpg) !important;*/
+  background-color: #1f1f1f !important;
   background-repeat: repeat-x !important;
-  border-bottom: 1px solid #cccccc !important;
+  /*border-bottom:1px solid @gray-lighter !important;*/
+}
+[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light .button,
+.bar.bar-header .button {
+  color: #ffffff;
+}
+[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light .nav-bar-title,
+.bar.bar-header .nav-bar-title {
+  color: #ffffff;
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light .notification,
 .bar.bar-header .notification {
