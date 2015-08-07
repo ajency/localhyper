@@ -43,6 +43,19 @@ h5,
 h6 {
   /*font-weight: 800;*/
 }
+.bold {
+  font-weight: bold;
+}
+.icon-input {
+  font-size: 20px;
+  line-height: 12px;
+}
+.button {
+  font-weight: 600 !important;
+}
+.bar-footer .title {
+  margin: 0px;
+}
 .row-fluid {
   padding: 0px;
 }
@@ -125,6 +138,9 @@ sm {
 }
 .button-border {
   text-decoration: underline;
+}
+.comment {
+  background-color: #F2F1ED !important;
 }
 .m-t-5 {
   margin-top: 5px!important;
@@ -1289,7 +1305,7 @@ label.status-label {
   font-weight: 400;
 }
 .bar-footer {
-  box-shadow: 0px 5px 19px #000;
+  box-shadow: 0px 5px 15px #000;
 }
 .request {
   background: url(../../img/request.png) no-repeat;
@@ -1307,6 +1323,22 @@ label.status-label {
 }
 .sort-box li:first-child {
   border-bottom: 3px solid #ccc;
+}
+/* Comment box */
+.popup-container .popup-head {
+  border-bottom: 2px solid #ccc;
+}
+.popup-container .popup-head .popup-title {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 18px;
+}
+.popup-container .button-positive {
+  background: #f45152;
+  border: 1px solid #f45152;
+}
+.popup-container .button-positive b {
+  color: #ffffff;
 }
 .verify-first.has-header {
   background-color: #fff;

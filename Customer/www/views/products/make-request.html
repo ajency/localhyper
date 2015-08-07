@@ -1,13 +1,15 @@
 <ion-view google-search-tap-disable>
-
-	<div class="bar bar-subheader">
+<ion-nav-title>
+	Make Request
+    </ion-nav-title>
+<!--  	<div class="bar bar-subheader">
 		<div class="row">
-			<div class="col col-10" ng-click="view.getCurrent()">
+		<div class="col col-10" ng-click="view.getCurrent()">
 				<img 
 					src="./img/gps.png" 
 					style="width: 25px;"/>
-			</div>
-			<div class="col col-80">
+			</div> 
+			<div class="col col-100">
 				<input 
 					id="locationSearch"
 					type="text" 
@@ -18,25 +20,45 @@
 					on-place-change="view.onPlaceChange(location)"
 					ng-model="view.searchText">
 			</div>
-			<div class="col col-10">
+			 <div class="col col-10">
 				<button 
 					class="button button-clear icon ion-ios-close-outline"
 					ng-click="view.searchText = ''">
 				</button>
-			</div>
+			</div> 
 		</div>
-	</div>
-	
+	</div>  -->
+	<div class="bar bar-subheader item-input-inset">
+  <label class="item-input-wrapper">
+    <i class="icon ion-android-locate placeholder-icon icon-input" ng-click="view.getCurrent()"></i>
+    <input id="locationSearch"
+					type="text" 
+					placeholder="Search for location"
+					data-tap-disabled="true"
+					google-map-search
+					on-place-change="view.onPlaceChange(location)"
+					ng-model="view.searchText">
+  </label>
+  <button class="button button-clear" ng-click="view.searchText = ''">
+    Clear
+  </button>
+</div>
     <ion-content class="has-subheader map-content">
 
     	<google-map
 			class="aj-very-big-map"
 			on-create="view.onMapCreated(map)">
 		</google-map>
-
+		<br>
+	<div class="row row-fluid">
+			<div class="col p-b-0">
+				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<i class="icon ion-ios-location"></i>
+					Delivery Details
+				</h5>
+			</div>
+		</div>
 		<div class="address-inputs">
-			<h3>Delivery Address</h3>
-
 			<div class="row p-b-0">
 				<div class="col p-b-0">
 					<label class="item item-input">
@@ -94,18 +116,34 @@
 				</div>
 			</div>
 		</div>
-
-		<div class="list">
-			<label class="item item-input item-stacked-label">
-				<span class="input-label">Add comments</span>
-				<input 
-					readonly
-					type="text" 
-					placeholder="Enter comments if any"
-					ng-model="view.comments.text"
-					ng-click="view.addComments();">
-			</label>
+		<br>
+			<div class="row row-fluid">
+			<div class="col ">
+				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<i class="icon ion-chatbox-working"></i>
+					Add comments
+				</h5>
+			</div>
 		</div>
+		<div class="row">
+			<div class="col col-80">
+			<div class="list">
+					<label class="item item-input item-stacked-label">
+						
+						<input  class="comment"
+							readonly
+							type="text" 
+							placeholder="Enter comments if any"
+							ng-model="view.comments.text"
+							>
+					</label>
+				</div>
+			</div>
+			<div class="col col-20">
+				<h2 class="p-t-10 text-center"><i class="icon ion-chatbox-working" ng-click="view.addComments();"></i></h2>
+			</div>
+		</div>
+	
 		
 		<div ng-if="view.sellers.displayCount">
 			<h4 ng-show="view.sellers.count == 0;">
@@ -117,21 +155,24 @@
 			</h4>
 		</div>
 
-		<button 
-			class="button button-block button-dark"
+		<br>
+		<br>
+		
+    </ion-content>
+<div class="bar bar-footer bar-assertive">
+	<button 
+			class="title  button-block  button-clear"
 			ng-hide="view.sellers.found"
 			ng-click="view.findSellers();">
 			Find sellers
 		</button>
 
 		<button 
-			class="button button-block button-assertive"
+			class="title  button-block   button-clear"
 			ng-show="view.sellers.found"
 			ng-click="view.makeRequest();">
 			Make Request
 		</button>
-		
-    </ion-content>
-
+</div>
 </ion-view>
 
