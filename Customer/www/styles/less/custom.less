@@ -1194,11 +1194,11 @@ label.status-label {
 
 .card-list{
 	.activated{
-		background: @white !important; 
-		background-color: @white !important; 
+		background: @white !important;
+		background-color: @white !important;
 		.item{
-		background: @white !important; 
-		background-color: @white !important; 
+		background: @white !important;
+		background-color: @white !important;
 	}
 }
 .status{
@@ -1289,5 +1289,81 @@ label.status-label {
 .sort-box{
 	li:first-child{
 		border-bottom:3px solid #ccc;
+	}
+}
+
+//Verification
+.verify-first {
+	.verify-step-img {
+		height: 130px;
+	}
+	.item-input {
+		padding: 0;
+	}
+	input {
+		background-color: #fff;
+		height: 40px;
+		border-color: #ccc !important;
+		font-size: 16px;
+		&:active, &:focus {
+			border-color: @brand-primary !important;
+		}
+	}
+	h5 {
+		margin-bottom: 8px;
+		font-size: 16px;
+	}
+	.info-top {
+		padding: 10px 25px;
+		margin-top: 15px;
+		font-size: 14px;
+		line-height: 17px;
+	}
+}
+.info-top {
+		padding: 10px 25px;
+		margin-top: 15px;
+		font-size: 14px;
+		line-height: 17px;
+	}
+// .verify-setp3 {
+// 	height: 130px;
+// }
+.maxAttempts-div {
+	.verify-step-img {
+		height: 130px;
+	}
+	.btn-casup {
+		line-height: normal;
+		padding: 10px 8px;
+		padding-left: 72px;
+		position: relative;
+		text-align: left;
+		i {
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			background-color: @brand-primary;
+			color: #fff;
+			padding: 13px 20px;
+		}
+		span {
+			display: block;
+			margin-top: 3px;
+			font-size: 20px;
+			font-weight: bold;
+			color: #444;
+		}
+		&.activated {
+			i {
+				background-color: desaturate(darken(@brand-primary, 25%), 25%);
+				// color: @brand-primary;
+			}
+			span {
+				color: #fff;
+			}
+		}
 	}
 }

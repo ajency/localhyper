@@ -1132,4 +1132,45 @@ h5.with-sep span {
 .verify-first .info-top {
   padding: 10px 25px;
   margin-top: 15px;
+  font-size: 14px;
+  line-height: 17px;
+}
+.info-top {
+  padding: 10px 25px;
+  margin-top: 15px;
+  font-size: 14px;
+  line-height: 17px;
+}
+.maxAttempts-div .verify-step-img {
+  height: 130px;
+}
+.maxAttempts-div .btn-casup {
+  line-height: normal;
+  padding: 10px 8px;
+  padding-left: 72px;
+  position: relative;
+  text-align: left;
+}
+.maxAttempts-div .btn-casup i {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #f35a59;
+  color: #fff;
+  padding: 13px 20px;
+}
+.maxAttempts-div .btn-casup span {
+  display: block;
+  margin-top: 3px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #444;
+}
+.maxAttempts-div .btn-casup.activated i {
+  background-color: #a52827;
+}
+.maxAttempts-div .btn-casup.activated span {
+  color: #fff;
 }

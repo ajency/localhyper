@@ -1,27 +1,25 @@
 <ion-view view-title="Verify your phone number">
-	
+
 	<ion-nav-buttons side="right">
-		<button 
-			class="button"
+		<button
+			class="button button-assertive"
 			ng-click="view.onNext()">
 			Next
 		</button>
 	</ion-nav-buttons>
 
-	<ion-content class="aj-text">
+	<ion-content class="aj-text verify-first">
 
 		</br></br>
-		<img src="./img/verify2.png" class="center-img"/>
+		<img src="./img/verify_4.png" class="center-img verify-step-img"/>
 		<div class="list" ng-switch="view.display">
-		
+
 			<div ng-switch-when="noError">
 				<div class="row">
-					<div class="center sm-text col subdued">
+					<div class="center sm-text col subdued info-text">
 					To complete your phone number verification, please enter the 6 digit activation code sent to +91{{view.user.phone}}
 					</div>
 			</div>
-				
-
 				</br>
 				<label class=" item-input">
 					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode" class="input-border">
@@ -33,25 +31,23 @@
 			</div>
 
 			<div ng-switch-when="maxAttempts">
-				<br>
-				<h3 class="normal">Sorry...</h3>
-				</br>
+				<img src="./img/verify_5.png" class="center-img verify-step-img"/>
 
-				<br>
+				<h3>Sorry...</h3>
 				<div class="row">
 					<div class="center sm-text col subdued">
 					Exceeded maximum number of attempts. Please contact our support and enter code manually.
 					</div>
 				</div>
+				<br>
 				<div class="row">
-						<button class="button button-outline button-assertive center col subdued" ng-click="view.callSupport()">
+						<button class="button button-outline button-assertive center col subdued btn-casup" ng-click="view.callSupport()">
 							Call Support
-							<div>
-							<h4>{{view.phone.SUPPORT_NUMBER}}</h4>
-							<div>
+							<i class="icon ion-android-call"></i>
+							<span>{{view.phone.SUPPORT_NUMBER}}</span>
 						</button>
 				</div>
-				
+
 
 				</br>
 
@@ -61,7 +57,7 @@
 				</label>
 			</div>
 
-			<aj-error 
+			<aj-error
 				ng-switch-when="error"
 				error-type="view.errorType"
 				tap-to-retry="view.onTapToRetry()">
