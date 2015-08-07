@@ -182,7 +182,7 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
                 transaction.set "seller" , sellerObj
                 transaction.set "transactionType" , "minus"
                 transaction.set "creditCount" , makeOfferCredits
-                transaction.set "towards" , "offer"
+                transaction.set "towards" , "make_offer"
                 transaction.set "offer" , offerObj
 
                 transaction.save()
@@ -452,6 +452,8 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
 Parse.Cloud.define 'acceptOffer', (request, response) ->
     offerId = request.params.offerId
     unacceptedOfferIds = request.params.unacceptedOfferIds
+
+    acceptOfferCredits = 5
     
     Offer = Parse.Object.extend('Offer')
 
@@ -489,54 +491,69 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
         queryOffer.include("seller")
 
         queryOffer.first()
-        .then (acceptedOffer)->
+        .then (acceptedOffer)->            
             sellerObj = acceptedOffer.get "seller"
-            requestObj = acceptedOffer.get "request"
+            # make a transaction for the offer i.e deducted at the  time of making offer
+            Transaction = Parse.Object.extend("Transaction")
+            transaction = new Transaction()
+            transaction.set "seller" , sellerObj
+            transaction.set "transactionType" , "minus"
+            transaction.set "creditCount" , acceptOfferCredits
+            transaction.set "towards" , "accept_offer"
+            transaction.set "offer" , acceptedOffer
 
-            # @todo save delivery date correctly
-            claimedDelivery = acceptedOffer.get "deliveryTime"
-            deliveryDuration = parseInt claimedDelivery.value
+            transaction.save()
+            .then (savedTransaction) ->
+                requestObj = acceptedOffer.get "request"
 
-            offerAcceptedDate = acceptedOffer.updatedAt
+                # @todo save delivery date correctly
+                claimedDelivery = acceptedOffer.get "deliveryTime"
+                deliveryDuration = parseInt claimedDelivery.value
 
-            sellerOffDays = ["Sunday","Monday"]
+                offerAcceptedDate = acceptedOffer.updatedAt
 
-            sellerWorkTimings  = ["9:00:00", "18:00:00"]
+                sellerOffDays = ["Sunday","Monday"]
 
-            # deliveryDate = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
-            deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate()
+                sellerWorkTimings  = ["9:00:00", "18:00:00"]
 
-            acceptedOffer.set("deliveryDate",deliveryDate)
-            acceptedOffer.save()
-            .then (offerWithDelivery) ->
-                requestObj.set "status" , "pending_delivery"
-                requestObj.save()
-                .then (savedReq)->
-                    # make entry in notification class
-                    # create entry in notification class with recipient as the seller
-                    notificationData = 
-                        hasSeen: false
-                        recipientUser: sellerObj
-                        channel : 'push'
-                        processed : false
-                        type : "AcceptedOffer"
-                        offerObject : acceptedOffer
+                # deliveryDate = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
+                deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate()
 
-                    Notification = Parse.Object.extend("Notification") 
-                    notification = new Notification notificationData
-                    notification.save()
-                    .then (notifObj) ->
-                        resultObj =
-                            offerId : acceptedOffer.id 
-                            offerStatus : acceptedOffer.get("status")
-                            offerUpdatedAt : acceptedOffer.updatedAt
-                            requestId : acceptedOffer.get("request").id
-                            requestStatus : acceptedOffer.get("request").get("status")
-                        response.success resultObj    
+                acceptedOffer.set("deliveryDate",deliveryDate)
+                acceptedOffer.save()
+                .then (offerWithDelivery) ->
+                    requestObj.set "status" , "pending_delivery"
+                    requestObj.save()
+                    .then (savedReq)->
+                        # make entry in notification class
+                        # create entry in notification class with recipient as the seller
+                        notificationData = 
+                            hasSeen: false
+                            recipientUser: sellerObj
+                            channel : 'push'
+                            processed : false
+                            type : "AcceptedOffer"
+                            offerObject : acceptedOffer
+
+                        Notification = Parse.Object.extend("Notification") 
+                        notification = new Notification notificationData
+                        notification.save()
+                        .then (notifObj) ->
+                            resultObj =
+                                offerId : acceptedOffer.id 
+                                offerStatus : acceptedOffer.get("status")
+                                offerUpdatedAt : acceptedOffer.updatedAt
+                                requestId : acceptedOffer.get("request").id
+                                requestStatus : acceptedOffer.get("request").get("status")
+                            response.success resultObj    
+                        , (error) ->
+                            response.error error 
                     , (error) ->
                         response.error error 
                 , (error) ->
-                    response.error error 
+                    response.error error
+            , (error) ->
+                response.error error
         , (error) ->
             response.error error                               
     , (error) ->

@@ -932,7 +932,7 @@
           transaction.set("seller", sellerObj);
           transaction.set("transactionType", "minus");
           transaction.set("creditCount", makeOfferCredits);
-          transaction.set("towards", "offer");
+          transaction.set("towards", "make_offer");
           transaction.set("offer", offerObj);
           return transaction.save().then(function(savedTransaction) {
             var notification;
@@ -1169,9 +1169,10 @@
   });
 
   Parse.Cloud.define('acceptOffer', function(request, response) {
-    var Offer, acceptedOffer, offerId, offerSavedArr, offersToBeUpdated, unacceptedOfferIds;
+    var Offer, acceptOfferCredits, acceptedOffer, offerId, offerSavedArr, offersToBeUpdated, unacceptedOfferIds;
     offerId = request.params.offerId;
     unacceptedOfferIds = request.params.unacceptedOfferIds;
+    acceptOfferCredits = 5;
     Offer = Parse.Object.extend('Offer');
     offersToBeUpdated = [];
     acceptedOffer = {
@@ -1204,46 +1205,60 @@
       queryOffer.include("request");
       queryOffer.include("seller");
       return queryOffer.first().then(function(acceptedOffer) {
-        var claimedDelivery, deliveryDate, deliveryDuration, offerAcceptedDate, requestObj, sellerObj, sellerOffDays, sellerWorkTimings;
+        var Transaction, sellerObj, transaction;
         sellerObj = acceptedOffer.get("seller");
-        requestObj = acceptedOffer.get("request");
-        claimedDelivery = acceptedOffer.get("deliveryTime");
-        deliveryDuration = parseInt(claimedDelivery.value);
-        offerAcceptedDate = acceptedOffer.updatedAt;
-        sellerOffDays = ["Sunday", "Monday"];
-        sellerWorkTimings = ["9:00:00", "18:00:00"];
-        deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate();
-        acceptedOffer.set("deliveryDate", deliveryDate);
-        return acceptedOffer.save().then(function(offerWithDelivery) {
-          requestObj.set("status", "pending_delivery");
-          return requestObj.save().then(function(savedReq) {
-            var Notification, notification, notificationData;
-            notificationData = {
-              hasSeen: false,
-              recipientUser: sellerObj,
-              channel: 'push',
-              processed: false,
-              type: "AcceptedOffer",
-              offerObject: acceptedOffer
-            };
-            Notification = Parse.Object.extend("Notification");
-            notification = new Notification(notificationData);
-            return notification.save().then(function(notifObj) {
-              var resultObj;
-              resultObj = {
-                offerId: acceptedOffer.id,
-                offerStatus: acceptedOffer.get("status"),
-                offerUpdatedAt: acceptedOffer.updatedAt,
-                requestId: acceptedOffer.get("request").id,
-                requestStatus: acceptedOffer.get("request").get("status")
+        Transaction = Parse.Object.extend("Transaction");
+        transaction = new Transaction();
+        transaction.set("seller", sellerObj);
+        transaction.set("transactionType", "minus");
+        transaction.set("creditCount", acceptOfferCredits);
+        transaction.set("towards", "accept_offer");
+        transaction.set("offer", acceptedOffer);
+        return transaction.save().then(function(savedTransaction) {
+          var claimedDelivery, deliveryDate, deliveryDuration, offerAcceptedDate, requestObj, sellerOffDays, sellerWorkTimings;
+          requestObj = acceptedOffer.get("request");
+          claimedDelivery = acceptedOffer.get("deliveryTime");
+          deliveryDuration = parseInt(claimedDelivery.value);
+          offerAcceptedDate = acceptedOffer.updatedAt;
+          sellerOffDays = ["Sunday", "Monday"];
+          sellerWorkTimings = ["9:00:00", "18:00:00"];
+          deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate();
+          acceptedOffer.set("deliveryDate", deliveryDate);
+          return acceptedOffer.save().then(function(offerWithDelivery) {
+            requestObj.set("status", "pending_delivery");
+            return requestObj.save().then(function(savedReq) {
+              var Notification, notification, notificationData;
+              notificationData = {
+                hasSeen: false,
+                recipientUser: sellerObj,
+                channel: 'push',
+                processed: false,
+                type: "AcceptedOffer",
+                offerObject: acceptedOffer
               };
-              return response.success(resultObj);
+              Notification = Parse.Object.extend("Notification");
+              notification = new Notification(notificationData);
+              return notification.save().then(function(notifObj) {
+                var resultObj;
+                resultObj = {
+                  offerId: acceptedOffer.id,
+                  offerStatus: acceptedOffer.get("status"),
+                  offerUpdatedAt: acceptedOffer.updatedAt,
+                  requestId: acceptedOffer.get("request").id,
+                  requestStatus: acceptedOffer.get("request").get("status")
+                };
+                return response.success(resultObj);
+              }, function(error) {
+                return response.error(error);
+              });
             }, function(error) {
               return response.error(error);
             });
           }, function(error) {
             return response.error(error);
           });
+        }, function(error) {
+          return response.error(error);
         });
       }, function(error) {
         return response.error(error);
