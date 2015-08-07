@@ -471,6 +471,70 @@
     });
   });
 
+  Parse.Cloud.define('getCreditHistory', function(request, response) {
+    var displayLimit, innerQuerySeller, page, queryTransaction, sellerId;
+    sellerId = request.params.sellerId;
+    displayLimit = request.params.displayLimit;
+    page = request.params.page;
+    innerQuerySeller = new Parse.Query(Parse.User);
+    innerQuerySeller.equalTo("objectId", sellerId);
+    queryTransaction = new Parse.Query("Transaction");
+    queryTransaction.matchesQuery("seller", innerQuerySeller);
+    queryTransaction.descending("createdAt");
+    queryTransaction.include("offer");
+    queryTransaction.include("offer.request");
+    queryTransaction.include("offer.request.product");
+    queryTransaction.limit(displayLimit);
+    queryTransaction.skip(page * displayLimit);
+    return queryTransaction.find().then(function(transactions) {
+      var result;
+      if (transactions.length === 0) {
+        return response.success(transactions);
+      } else {
+        result = [];
+        _.each(transactions, function(transaction) {
+          var offer, offerObj, product, productObj, requestObj, towards, transactionResult;
+          if (!_.isUndefined(transaction.get("offer"))) {
+            offerObj = transaction.get("offer");
+            requestObj = offerObj.get("request");
+            productObj = requestObj.get("product");
+            offer = {
+              "id": offerObj.id,
+              "status": offerObj.get("status"),
+              "createdAt": offerObj.createdAt,
+              "updatedAt": offerObj.updatedAt
+            };
+            product = {
+              "name": productObj.get("name"),
+              "model_number": productObj.get("model_number")
+            };
+          } else {
+            offer = {};
+            product = {};
+          }
+          if (_.isUndefined(transaction.get("towards"))) {
+            towards = "";
+          } else {
+            towards = transaction.get("towards");
+          }
+          transactionResult = {
+            "id": transaction.id,
+            "createdAt": transaction.createdAt,
+            "transactionType": transaction.get("transactionType"),
+            "transactionTowards": towards,
+            "creditCount": transaction.get("creditCount"),
+            "offer": offer,
+            "product": product
+          };
+          return result.push(transactionResult);
+        });
+        return response.success(result);
+      }
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   resetRequestOfferCount = function(requestId) {
     var innerQueryRequest, promise, queryOffer;
     promise = new Parse.Promise();
