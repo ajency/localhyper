@@ -3,6 +3,8 @@ Parse.Cloud.useMasterKey()
 Parse.Cloud.define "sendSMSCode", (request, response)->
 	phone = request.params.phone
 	code  = (Math.floor(Math.random()*900000)+100000).toString()
+	displayName  = request.params.displayName
+	userType  = request.params.userType
 
 	onError = (error)->
 		response.error error
@@ -15,6 +17,8 @@ Parse.Cloud.define "sendSMSCode", (request, response)->
 				'phone': phone
 				'verificationCode': code
 				'attempts': attempts
+				'displayName': displayName
+				'userType': userType
 			.then ->
 				response.success code: code, attemptsExceeded: false
 			, onError
