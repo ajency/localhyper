@@ -1,18 +1,20 @@
 angular.module 'LocalHyper.creditHistory', []
 
 
-.controller 'creditHistoryCtrl', ['$scope', 'App', 'creditHistoryAPI'
-	, ($scope, App, creditHistoryAPI)->
+.controller 'creditHistoryCtrl', ['$scope', 'App', 'creditHistoryAPI', 'User'
+	, ($scope, App, creditHistoryAPI, User)->
 
 		# creditHistoryAPI.getCreditBalance()
 
 		$scope.view = 
 			display: 'loader'
 			errorType: ''
-			requests: []
 			page: 0
 			canLoadMore: true
 			refresh: false
+			availableCredit :''
+			creditHistoryData : []
+			getAllCreditHistory: false
 
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'
@@ -20,77 +22,79 @@ angular.module 'LocalHyper.creditHistory', []
 			onInfiniteScroll : ->
 				@getTotalCredit()
 				@refresh = false
-				# @creditHistory()
+				@creditHistory()
 
 			onPullToRefresh : ->
+				@getAllHistory  = false
 				@refresh = true
 				@page = 0
 				@canLoadMore = true
-				# @creditHistory()
+				@creditHistory()
+
 
 			getTotalCredit :->
-				creditHistoryAPI.getCreditBalance()
+				user = User.getCurrent()
+				@availableCredit = parseInt(user._serverData.addedCredit) - parseInt(user._serverData.subtractedCredit)
+				@creditUsed = user._serverData.subtractedCredit 
 
 
-			onSuccess : (data)->
-				console.log(data)
+			onSuccess : (data, displayLimit)->
+				console.log '--creditr history details'
+				console.log data 
 				@display = 'noError'
-				offerDataSize = _.size(offerData)
-				if offerDataSize > 0
-					if offerDataSize < displayLimit
+				creditHistory = _.size(data)
+				if creditHistory > 0
+					if creditHistory < displayLimit
 						@canLoadMore = false
 					else
 						@canLoadMore = true
 						@onScrollComplete() 
 
-					if @refresh then @requests = offerData
-					else @requests = @requests.concat offerData
+					if @refresh then @creditHistoryData = data
+					else @creditHistoryData = @creditHistoryData.concat data
 				else
 					@canLoadMore = false
 
+				@getAllHistory = true if !@canLoadMore	
+
 			onError: (type)->
+				@creditHistoryData = []
 				@display = 'error'
 				@errorType = type
 				@canLoadMore = false
 
+			creditHistory : ->
+				params = 
+					page: @page
+					displayLimit: 3
+					
+				creditHistoryAPI.getCreditHistory params
+				.then (data)=>
+					@onSuccess data, params.displayLimit
+				, (error)=>
+					@onError error
+				.finally =>
+					App.resize()
+					@page = @page + 1
+					$scope.$broadcast 'scroll.refreshComplete'
 
-			# creditHistory : ->
-				
-				# params = 
-				# 	page: @page
-				# 	acceptedOffers: false
-				# 	displayLimit: 3
-				# 	sortBy: @sortBy
-				# 	descending: @descending
-				# 	selectedFilters: @filter.selected
-
-				# OffersAPI.getSellerOffers params
-				# .then (data)=>
-				# 	console.log data
-				# 	@onSuccess data, params.displayLimit
-				# , (error)=>
-				# 	@onError error
-				# .finally =>
-				# 	App.resize()
-				# 	@page = @page + 1
-				# 	$scope.$broadcast 'scroll.refreshComplete'
-
-				# RequestsAPI.getAll()
-				# .then (data)=>
-				# 	console.log data
-				# 	@onSuccess data
-				# , (error)=>
-				# 	@onError error
-				# .finally ->
-				# 	$scope.$broadcast 'scroll.refreshComplete'
-				
+			onTapToRetry : ->
+				@display = 'loader'
+				@page = 0
+				@canLoadMore = true
 
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			if !viewData.enableBack
 				viewData.enableBack = true		
 
+]
 
-
+.controller 'EachDisplayDateCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
+	iso       = $scope.request.createdAt.iso
+	format    = 'DD/MM/YYYY HH:mm:ss'
+	now       = moment().format format
+	date = now.split(" ")
+	$scope.request.timeStr = date[0]
 ]
 
 
