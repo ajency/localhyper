@@ -211,6 +211,7 @@ angular.module 'LocalHyper.products', []
 				.finally =>
 					@page = @page + 1
 					@onRefreshComplete()
+					App.resize()
 
 			onError : (error)->
 				console.log error

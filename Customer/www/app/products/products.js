@@ -275,7 +275,8 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         })(this))["finally"]((function(_this) {
           return function() {
             _this.page = _this.page + 1;
-            return _this.onRefreshComplete();
+            _this.onRefreshComplete();
+            return App.resize();
           };
         })(this));
       },
