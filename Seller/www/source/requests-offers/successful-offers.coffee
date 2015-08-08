@@ -319,3 +319,16 @@ angular.module 'LocalHyper.requestsOffers'
 			$scope.view.offerDetails.onNotificationClick(offerId) if offerId isnt ''
 			OffersAPI.acceptedOfferId 'set', ''
 ]
+
+
+.controller 'EachSuccessfulOfferCtrl', ['$scope', '$interval', 'DeliveryTime', ($scope, $interval, DeliveryTime)->
+
+	#Left delivery time
+	setTime = ->
+		$scope.request.leftDeliveryTimeStr = DeliveryTime.left $scope.request.offerDeliveryDate
+
+	setTime()
+	interval = $interval setTime, 60000
+	$scope.$on '$destroy', ->
+		$interval.cancel interval
+]

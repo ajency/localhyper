@@ -71,6 +71,25 @@ angular.module 'LocalHyper.requestsOffers', []
 						unitText = if value is 1 then 'Day' else 'Days'
 
 				"#{value} #{unitText}"
+
+		left : (timeObj)->
+			format    = 'DD/MM/YYYY HH:mm:ss'
+			deliveryDate = moment(timeObj.iso).format format
+			timeLeft  = moment(deliveryDate, format).diff moment()
+			duration  = moment.duration timeLeft
+			daysLeft  = parseInt duration.asDays().toFixed(0)
+			hoursLeft = parseInt duration.asHours().toFixed(0)
+			minsLeft  = parseInt duration.asMinutes().toFixed(0)
+			if minsLeft < 60
+				min = if minsLeft is 1 then 'min' else 'mins'
+				str = if minsLeft >= 0 then "#{minsLeft} #{min}" else "0"
+			else if hoursLeft < 24
+				hr = if hoursLeft is 1 then 'hr' else 'hrs'
+				str = "#{hoursLeft} #{hr}"
+			else
+				day = if daysLeft is 1 then 'day' else 'days'
+				str = "#{daysLeft} #{day}"
+			str
 ]
 
 

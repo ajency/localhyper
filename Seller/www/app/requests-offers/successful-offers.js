@@ -402,4 +402,16 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
       return OffersAPI.acceptedOfferId('set', '');
     });
   }
+]).controller('EachSuccessfulOfferCtrl', [
+  '$scope', '$interval', 'DeliveryTime', function($scope, $interval, DeliveryTime) {
+    var interval, setTime;
+    setTime = function() {
+      return $scope.request.leftDeliveryTimeStr = DeliveryTime.left($scope.request.offerDeliveryDate);
+    };
+    setTime();
+    interval = $interval(setTime, 60000);
+    return $scope.$on('$destroy', function() {
+      return $interval.cancel(interval);
+    });
+  }
 ]);
