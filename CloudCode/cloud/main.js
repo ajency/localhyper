@@ -2333,12 +2333,34 @@
     status = "open";
     sellerQuery = new Parse.Query(Parse.User);
     sellerQuery.equalTo("objectId", sellerId);
+    sellerQuery.include("supportedCategories");
+    sellerQuery.include("supportedBrands");
     sellerQuery.first().then(function(sellerObject) {
-      var Brand, Category, innerQuerySellers, offerQuery, sellerBrands, sellerCategories;
+      var Brand, Category, filterBrands, filterCategories, innerQuerySellers, offerQuery, sellerBrands, sellerCategories, supportedBrands, supportedCategories;
       Category = Parse.Object.extend("Category");
       Brand = Parse.Object.extend("Brand");
+      supportedCategories = sellerObject.get("supportedCategories");
+      supportedBrands = sellerObject.get("supportedBrands");
+      filterCategories = [];
+      _.each(supportedCategories, function(supportedCategory) {
+        var cat;
+        cat = {
+          "id": supportedCategory.id,
+          "name": supportedCategory.get("name")
+        };
+        return filterCategories.push(cat);
+      });
+      filterBrands = [];
+      _.each(supportedBrands, function(supportedBrand) {
+        var brand;
+        brand = {
+          "id": supportedBrand.id,
+          "name": supportedBrand.get("name")
+        };
+        return filterBrands.push(brand);
+      });
       if (categories === "default") {
-        sellerCategories = sellerObject.get("supportedCategories");
+        sellerCategories = supportedCategories;
       } else {
         sellerCategories = [];
         _.each(categories, function(categoryId) {
@@ -2349,7 +2371,7 @@
         });
       }
       if (brands === "default") {
-        sellerBrands = sellerObject.get("supportedBrands");
+        sellerBrands = supportedBrands;
       } else {
         sellerBrands = [];
         _.each(brands, function(brandId) {
@@ -2451,7 +2473,8 @@
               "radius": sellerRadius,
               "location": sellerLocation,
               "requests": individualReqResults,
-              "credits": ""
+              "sellerCategories": filterCategories,
+              "sellerBrands": filterBrands
             };
             return promise.resolve(requestsResult);
           });

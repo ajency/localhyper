@@ -482,6 +482,8 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
     # find categories and brands supported by the seller
     sellerQuery = new Parse.Query(Parse.User)
     sellerQuery.equalTo("objectId", sellerId)
+    sellerQuery.include("supportedCategories")
+    sellerQuery.include("supportedBrands")
 
     sellerQuery.first()
     .then (sellerObject) ->
@@ -489,8 +491,25 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
         Category = Parse.Object.extend("Category")
         Brand = Parse.Object.extend("Brand")
 
+        supportedCategories = sellerObject.get("supportedCategories")
+        supportedBrands = sellerObject.get("supportedBrands")
+
+        filterCategories = []
+        _.each supportedCategories , (supportedCategory) ->
+            cat =
+                "id" : supportedCategory.id
+                "name" : supportedCategory.get("name")
+            filterCategories.push cat
+
+        filterBrands = []
+        _.each supportedBrands , (supportedBrand) ->
+            brand =
+                "id" : supportedBrand.id
+                "name" : supportedBrand.get("name")
+            filterBrands.push brand            
+
         if categories is "default"
-            sellerCategories = sellerObject.get("supportedCategories")
+            sellerCategories = supportedCategories
         else
             sellerCategories = []
             _.each categories, (categoryId ) ->
@@ -501,7 +520,7 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
         
 
         if brands is "default"
-            sellerBrands = sellerObject.get("supportedBrands")
+            sellerBrands = supportedBrands
         else
             sellerBrands = []
             _.each brands, (brandId) ->
@@ -638,7 +657,8 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
                         "radius" : sellerRadius
                         "location" : sellerLocation
                         "requests" : individualReqResults
-                        "credits" : ""
+                        "sellerCategories" : filterCategories
+                        "sellerBrands" : filterBrands
 
                     promise.resolve requestsResult
 
