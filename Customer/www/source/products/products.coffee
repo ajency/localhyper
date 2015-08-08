@@ -28,6 +28,14 @@ angular.module 'LocalHyper.products', []
 					price: []
 					otherFilters: {}
 
+				loadModal : ->
+					$ionicModal.fromTemplateUrl 'views/products/filters.html', 
+						scope: $scope,
+						animation: 'slide-in-up'
+						hardwareBackButtonClose: false
+					.then (modal)=>
+						@modal = modal
+
 				getPriceRange : (priceRange)->
 					prices = []
 					min = priceRange[0]
@@ -145,7 +153,7 @@ angular.module 'LocalHyper.products', []
 
 
 			init : ->
-				@loadFiltersModal()
+				@filter.loadModal()
 
 			reset : ->
 				@sortBy = 'popularity'
@@ -166,14 +174,6 @@ angular.module 'LocalHyper.products', []
 					scope: $scope
 					templateUrl: 'views/products/sort.html'
 					hideOnStateChange: true
-
-			loadFiltersModal : ->
-				$ionicModal.fromTemplateUrl 'views/products/filters.html', 
-					scope: $scope,
-					animation: 'slide-in-up'
-					hardwareBackButtonClose: false
-				.then (modal)=>
-					@filter.modal = modal
 
 			onScrollComplete : ->
 				$scope.$broadcast 'scroll.infiniteScrollComplete'

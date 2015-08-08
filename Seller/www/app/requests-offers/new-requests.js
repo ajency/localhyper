@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout', '$ionicLoading', '$ionicPlatform', function($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout', '$ionicLoading', '$ionicPlatform', 'CDialog', function($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform, CDialog) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -8,6 +8,218 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       pendingRequestIds: [],
       sortBy: '-createdAt.iso',
       sortName: 'Most Recent',
+      filter: {
+        modal: null,
+        attribute: 'category',
+        allAttributes: [],
+        attrValues: {},
+        originalValues: {},
+        defaultRadius: User.getCurrent().get('deliveryRadius'),
+        selectedFilters: {
+          categories: [],
+          brands: [],
+          mrp: [],
+          radius: this.defaultRadius
+        },
+        plus: function() {
+          if (this.attrValues['radius'] < 100) {
+            return this.attrValues['radius']++;
+          }
+        },
+        minus: function() {
+          if (this.attrValues['radius'] > 1) {
+            return this.attrValues['radius']--;
+          }
+        },
+        loadModal: function() {
+          return $ionicModal.fromTemplateUrl('views/requests-offers/new-request-filter.html', {
+            scope: $scope,
+            animation: 'slide-in-up',
+            hardwareBackButtonClose: false
+          }).then((function(_this) {
+            return function(modal) {
+              return _this.modal = modal;
+            };
+          })(this));
+        },
+        getPriceRange: function(priceRange) {
+          var increment, max, min, prices;
+          prices = [];
+          min = priceRange[0];
+          max = priceRange[1];
+          if (max <= 1000) {
+            increment = 100;
+          } else if (max <= 5000) {
+            increment = 1000;
+          } else if (max <= 25000) {
+            increment = 5000;
+          } else if (max <= 50000) {
+            increment = 10000;
+          } else if (max <= 75000) {
+            increment = 15000;
+          } else if (max <= 100000) {
+            increment = 20000;
+          } else {
+            increment = 25000;
+          }
+          priceRange = _.range(min, max, increment);
+          _.each(priceRange, function(start, index) {
+            var end;
+            end = priceRange[index + 1];
+            if (_.isUndefined(end)) {
+              end = max;
+            }
+            return prices.push({
+              start: start,
+              end: end,
+              name: "Rs " + start + " - Rs " + end
+            });
+          });
+          return prices;
+        },
+        setAttrValues: function() {
+          var allMRPs, priceRange, requests;
+          this.allAttributes.push({
+            value: 'category',
+            name: 'Category',
+            selected: 0
+          });
+          this.allAttributes.push({
+            value: 'brand',
+            name: 'Brand',
+            selected: 0
+          });
+          this.allAttributes.push({
+            value: 'mrp',
+            name: 'MRP',
+            selected: 0
+          });
+          this.allAttributes.push({
+            value: 'distance',
+            name: 'Distance',
+            selected: 0
+          });
+          requests = $scope.view.requests;
+          this.attrValues['category'] = _.uniq(_.pluck(requests, 'category'), function(val) {
+            return val.id;
+          });
+          this.attrValues['brand'] = _.uniq(_.pluck(requests, 'brand'), function(val) {
+            return val.id;
+          });
+          allMRPs = _.pluck(_.pluck(requests, 'product'), 'mrp');
+          priceRange = [_.min(allMRPs), _.max(allMRPs)];
+          this.attrValues['mrp'] = this.getPriceRange([_.min(allMRPs), _.max(allMRPs)]);
+          this.attrValues['radius'] = this.defaultRadius;
+          return _.each(this.attrValues, function(values) {
+            return _.each(values, function(val) {
+              return val.selected = false;
+            });
+          });
+        },
+        showAttrCount: function() {
+          return _.each(this.attrValues, (function(_this) {
+            return function(values, index) {
+              var attrIndex, count;
+              if (_.isObject(values)) {
+                count = 0;
+                _.each(values, function(val) {
+                  if (val.selected) {
+                    return count++;
+                  }
+                });
+                attrIndex = _.findIndex(_this.allAttributes, function(attrs) {
+                  return attrs.value === index;
+                });
+                return _this.allAttributes[attrIndex].selected = count;
+              }
+            };
+          })(this));
+        },
+        onRadiusChange: function() {
+          return this.allAttributes[3].selected = 1;
+        },
+        clearFilters: function() {
+          _.each(this.attrValues, function(values) {
+            return _.each(values, function(val) {
+              return val.selected = false;
+            });
+          });
+          _.each(this.allAttributes, function(attrs) {
+            return attrs.selected = 0;
+          });
+          return this.selectedFilters = {
+            categories: [],
+            brands: [],
+            mrp: [],
+            radius: this.defaultRadius
+          };
+        },
+        resetFilters: function() {
+          this.attribute = 'category';
+          return this.clearFilters();
+        },
+        noChangeInSelection: function() {
+          return _.isEqual(_.sortBy(this.originalValues), _.sortBy(this.attrValues));
+        },
+        openModal: function() {
+          this.originalValues = JSON.parse(JSON.stringify(this.attrValues));
+          return this.modal.show();
+        },
+        closeModal: function() {
+          var msg;
+          if (this.noChangeInSelection()) {
+            return this.modal.hide();
+          } else {
+            msg = 'Your filter selection will go away';
+            return CDialog.confirm('Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']).then((function(_this) {
+              return function(btnIndex) {
+                switch (btnIndex) {
+                  case 1:
+                    _this.attrValues = _this.originalValues;
+                    _this.showAttrCount();
+                    return _this.modal.hide();
+                  case 2:
+                    return _this.onApply();
+                }
+              };
+            })(this));
+          }
+        },
+        onApply: function() {
+          _.each(this.attrValues, (function(_this) {
+            return function(_values, attribute) {
+              var end, selected, start;
+              switch (attribute) {
+                case 'price':
+                  start = [];
+                  end = [];
+                  _.each(_values, function(price) {
+                    if (price.selected) {
+                      start.push(price.start);
+                      return end.push(price.end);
+                    }
+                  });
+                  if (_.isEmpty(start)) {
+                    return _this.selectedFilters.price = [];
+                  } else {
+                    return _this.selectedFilters.price = [_.min(start), _.max(end)];
+                  }
+                  break;
+                case 'brand':
+                  selected = [];
+                  _.each(_values, function(brand) {
+                    if (brand.selected) {
+                      return selected.push(brand.id);
+                    }
+                  });
+                  return _this.selectedFilters.brands = selected;
+              }
+            };
+          })(this));
+          this.modal.hide();
+          return $scope.view.reFetch();
+        }
+      },
       requestDetails: {
         modal: null,
         data: {},
@@ -187,6 +399,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       },
       init: function() {
         this.getRequests();
+        this.filter.loadModal();
         return this.requestDetails.loadModal();
       },
       autoFetch: function() {
@@ -213,6 +426,9 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       onSuccess: function(data) {
         this.display = 'noError';
         this.requests = data.requests;
+        if (_.isEmpty(this.filter.attrValues['category'])) {
+          this.filter.setAttrValues();
+        }
         App.notification.newRequests = _.size(this.requests);
         return this.markPendingNotificationsAsSeen();
       },
@@ -319,8 +535,12 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       }
     };
     onDeviceBack = function() {
+      var filter;
+      filter = $scope.view.filter;
       if ($('.loading-container').hasClass('visible')) {
         return $ionicLoading.hide();
+      } else if (filter.modal.isShown()) {
+        return filter.closeModal();
       } else {
         return App.goBack(-1);
       }

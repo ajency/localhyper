@@ -15,6 +15,8 @@ angular.module 'LocalHyper.requestsOffers'
 			"area": user.get 'area'
 			"sellerLocation": "default"
 			"sellerRadius": "default"
+			"categories" : "default"
+			"brands" : "default"
 
 		$http.post 'functions/getNewRequests', params
 		.then (data)->

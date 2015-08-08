@@ -12,7 +12,9 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
         "city": user.get('city'),
         "area": user.get('area'),
         "sellerLocation": "default",
-        "sellerRadius": "default"
+        "sellerRadius": "default",
+        "categories": "default",
+        "brands": "default"
       };
       $http.post('functions/getNewRequests', params).then(function(data) {
         return defer.resolve(data.data.result);

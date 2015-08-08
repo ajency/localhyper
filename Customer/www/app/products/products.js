@@ -22,6 +22,17 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           price: [],
           otherFilters: {}
         },
+        loadModal: function() {
+          return $ionicModal.fromTemplateUrl('views/products/filters.html', {
+            scope: $scope,
+            animation: 'slide-in-up',
+            hardwareBackButtonClose: false
+          }).then((function(_this) {
+            return function(modal) {
+              return _this.modal = modal;
+            };
+          })(this));
+        },
         getPriceRange: function(priceRange) {
           var increment, max, min, prices;
           prices = [];
@@ -197,7 +208,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         }
       },
       init: function() {
-        return this.loadFiltersModal();
+        return this.filter.loadModal();
       },
       reset: function() {
         this.sortBy = 'popularity';
@@ -222,17 +233,6 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           templateUrl: 'views/products/sort.html',
           hideOnStateChange: true
         });
-      },
-      loadFiltersModal: function() {
-        return $ionicModal.fromTemplateUrl('views/products/filters.html', {
-          scope: $scope,
-          animation: 'slide-in-up',
-          hardwareBackButtonClose: false
-        }).then((function(_this) {
-          return function(modal) {
-            return _this.filter.modal = modal;
-          };
-        })(this));
       },
       onScrollComplete: function() {
         return $scope.$broadcast('scroll.infiniteScrollComplete');

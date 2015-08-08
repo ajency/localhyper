@@ -3,9 +3,9 @@ angular.module 'LocalHyper.requestsOffers'
 
 .controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope'
 	, '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate'
-	, '$q', '$timeout', '$ionicLoading', '$ionicPlatform'
+	, '$q', '$timeout', '$ionicLoading', '$ionicPlatform', 'CDialog'
 	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI
-	, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform)->
+	, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform, CDialog)->
 
 		$scope.view = 
 			display: 'loader'
@@ -16,6 +16,144 @@ angular.module 'LocalHyper.requestsOffers'
 			sortBy: '-createdAt.iso'
 			sortName: 'Most Recent'
 
+			filter:
+				modal: null
+				attribute: 'category'
+				allAttributes: []
+				attrValues: {}
+				originalValues: {}
+				defaultRadius: User.getCurrent().get 'deliveryRadius'
+				selectedFilters: 
+					categories: []
+					brands: []
+					mrp: []
+					radius: @defaultRadius
+
+				plus : ->
+					@attrValues['radius']++ if @attrValues['radius'] < 100
+				minus : ->
+					@attrValues['radius']-- if @attrValues['radius'] > 1
+
+				loadModal : ->
+					$ionicModal.fromTemplateUrl 'views/requests-offers/new-request-filter.html', 
+						scope: $scope,
+						animation: 'slide-in-up'
+						hardwareBackButtonClose: false
+					.then (modal)=>
+						@modal = modal
+
+				getPriceRange : (priceRange)->
+					prices = []
+					min = priceRange[0]
+					max = priceRange[1]
+					if max <= 1000 then increment = 100
+					else if max <= 5000 then increment = 1000
+					else if max <= 25000 then increment = 5000
+					else if max <= 50000 then increment = 10000
+					else if max <= 75000 then increment = 15000
+					else if max <= 100000 then increment = 20000
+					else increment = 25000
+					priceRange = _.range min, max, increment
+					_.each priceRange, (start, index)->
+						end = priceRange[index+1]
+						end = max if _.isUndefined(end)
+						prices.push 
+							start: start
+							end: end
+							name: "Rs #{start} - Rs #{end}"
+					prices
+
+				setAttrValues: ->
+					@allAttributes.push value: 'category', name: 'Category', selected: 0
+					@allAttributes.push value: 'brand', name: 'Brand', selected: 0
+					@allAttributes.push value: 'mrp', name: 'MRP', selected: 0
+					@allAttributes.push value: 'distance', name: 'Distance', selected: 0
+
+					requests = $scope.view.requests
+					@attrValues['category'] = _.uniq _.pluck(requests, 'category'), (val)-> val.id
+					@attrValues['brand']    = _.uniq _.pluck(requests, 'brand'), (val)-> val.id
+					allMRPs = _.pluck _.pluck(requests, 'product'), 'mrp'
+					priceRange = [_.min(allMRPs), _.max(allMRPs)]
+					@attrValues['mrp'] = @getPriceRange [_.min(allMRPs), _.max(allMRPs)]
+					@attrValues['radius'] = @defaultRadius
+
+					# De-select all attr values
+					_.each @attrValues, (values)->
+						_.each values, (val)-> val.selected = false
+
+				showAttrCount : ->
+					_.each @attrValues, (values, index)=>
+						if _.isObject values
+							count = 0
+							_.each values, (val)-> count++ if val.selected
+							attrIndex = _.findIndex @allAttributes, (attrs)-> attrs.value is index
+							@allAttributes[attrIndex].selected = count
+
+				onRadiusChange : ->
+					@allAttributes[3].selected = 1
+
+				clearFilters : ->
+					_.each @attrValues, (values)->
+						_.each values, (val)-> val.selected = false
+
+					_.each @allAttributes, (attrs)-> attrs.selected = 0
+
+					@selectedFilters = 
+						categories: []
+						brands:[]
+						mrp:[]
+						radius: @defaultRadius
+
+				resetFilters : ->
+					@attribute = 'category'
+					@clearFilters()
+
+				noChangeInSelection : ->
+					_.isEqual _.sortBy(@originalValues), _.sortBy(@attrValues)
+
+				openModal : ->
+					@originalValues = JSON.parse JSON.stringify(@attrValues)
+					@modal.show()
+
+				closeModal : ->
+					if @noChangeInSelection()
+						@modal.hide()
+					else
+						msg = 'Your filter selection will go away'
+						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']
+						.then (btnIndex)=>
+							switch btnIndex
+								when 1
+									@attrValues = @originalValues
+									@showAttrCount()
+									@modal.hide()
+								when 2
+									@onApply()
+
+				onApply : ->
+					_.each @attrValues, (_values, attribute)=>
+						switch attribute
+							when 'price'
+								start = []
+								end = []
+								_.each _values, (price)=>
+									if price.selected
+										start.push price.start
+										end.push price.end
+								
+								if _.isEmpty(start) then @selectedFilters.price = []
+								else @selectedFilters.price = [_.min(start), _.max(end)]
+
+							when 'brand'
+								selected = []
+								_.each _values, (brand)=>
+									selected.push(brand.id) if brand.selected
+								@selectedFilters.brands = selected
+					
+					@modal.hide()
+					$scope.view.reFetch()
+
+			
 			requestDetails:
 				modal: null
 				data: {}
@@ -160,6 +298,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 			init : ->
 				@getRequests()
+				@filter.loadModal()
 				@requestDetails.loadModal()
 
 			autoFetch : ->
@@ -182,6 +321,8 @@ angular.module 'LocalHyper.requestsOffers'
 			onSuccess : (data)->
 				@display = 'noError'
 				@requests = data.requests
+				if _.isEmpty @filter.attrValues['category']
+					@filter.setAttrValues()
 				App.notification.newRequests = _.size @requests
 				@markPendingNotificationsAsSeen()
 			
@@ -265,12 +406,13 @@ angular.module 'LocalHyper.requestsOffers'
 							@simulateFetch()
 
 
+		
 		onDeviceBack = ->
-			# filter = $scope.view.filter
+			filter = $scope.view.filter
 			if $('.loading-container').hasClass 'visible'
 				$ionicLoading.hide()
-			# else if filter.modal.isShown()
-			# 	filter.closeModal()
+			else if filter.modal.isShown()
+				filter.closeModal()
 			else
 				App.goBack -1
 
@@ -279,7 +421,6 @@ angular.module 'LocalHyper.requestsOffers'
 
 		$scope.$on '$ionicView.leave', ->
 			$ionicPlatform.offHardwareBackButton onDeviceBack
-
 		
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
