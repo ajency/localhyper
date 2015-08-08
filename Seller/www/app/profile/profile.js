@@ -37,7 +37,6 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
             user = User.info('get');
             CSpinner.show('', 'Please wait...');
             return AuthAPI.isExistingUser(user).then(function(data) {
-              CSpinner.hide();
               return AuthAPI.loginExistingUser(data.userObj);
             }).then(function(success) {
               CategoriesAPI.categoryChains('set', _this.categoryChains);
