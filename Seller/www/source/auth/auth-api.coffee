@@ -195,6 +195,7 @@ angular.module 'LocalHyper.auth'
 					"sellerRadius": "default"
 					"categories" : "default"
 					"brands" : "default"
+					"productMrp": "default"
 			.then ->
 				user = User.getCurrent()
 				Transaction = Parse.Object.extend 'Transaction'

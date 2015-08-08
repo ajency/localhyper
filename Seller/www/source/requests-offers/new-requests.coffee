@@ -22,12 +22,12 @@ angular.module 'LocalHyper.requestsOffers'
 				allAttributes: []
 				attrValues: {}
 				originalValues: {}
-				defaultRadius: User.getCurrent().get 'deliveryRadius'
-				selectedFilters: 
-					categories: []
-					brands: []
-					mrp: []
-					radius: @defaultRadius
+				other: {}
+				defaultRadius: User.getCurrent().get('deliveryRadius')
+				selectedCategories: 'default'
+				selectedBrands: 'default'
+				selectedMrp: 'default'
+				selectedRadius: 'default'
 
 				plus : ->
 					@attrValues['radius']++ if @attrValues['radius'] < 100
@@ -42,40 +42,31 @@ angular.module 'LocalHyper.requestsOffers'
 					.then (modal)=>
 						@modal = modal
 
-				getPriceRange : (priceRange)->
-					prices = []
-					min = priceRange[0]
-					max = priceRange[1]
-					if max <= 1000 then increment = 100
-					else if max <= 5000 then increment = 1000
-					else if max <= 25000 then increment = 5000
-					else if max <= 50000 then increment = 10000
-					else if max <= 75000 then increment = 15000
-					else if max <= 100000 then increment = 20000
-					else increment = 25000
-					priceRange = _.range min, max, increment
-					_.each priceRange, (start, index)->
-						end = priceRange[index+1]
-						end = max if _.isUndefined(end)
-						prices.push 
-							start: start
-							end: end
-							name: "Rs #{start} - Rs #{end}"
-					prices
+				getPriceRange : ->
+					prices = [
+						{start: -1,    end: 1000,  name: "Rs 1000 & Below"}
+						{start: 1000,  end: 5000,  name: "Rs 1000 - Rs 5000"}
+						{start: 5000,  end: 10000, name: "Rs 5000 - Rs 10000"}
+						{start: 10000, end: 15000, name: "Rs 10000 - Rs 15000"}
+						{start: 15000, end: 20000, name: "Rs 15000 - Rs 20000"}
+						{start: 20000, end: 25000, name: "Rs 20000 - Rs 25000"}
+						{start: 25000, end: 30000, name: "Rs 25000 - Rs 30000"}
+						{start: 30000, end: 35000, name: "Rs 30000 - Rs 35000"}
+						{start: 35000, end: 40000, name: "Rs 35000 - Rs 40000"}
+						{start: 40000, end: 45000, name: "Rs 40000 - Rs 45000"}
+						{start: 45000, end: 50000, name: "Rs 45000 - Rs 50000"}
+						{start: 50000, end: -1,    name: "Rs 50000 & Above"}]
 
 				setAttrValues: ->
+					@attrValues['category'] = @other.sellerCategories
+					@attrValues['brand']    = @other.sellerBrands
+					@attrValues['mrp']      = @getPriceRange()
+					@attrValues['radius']   = @defaultRadius
+
 					@allAttributes.push value: 'category', name: 'Category', selected: 0
 					@allAttributes.push value: 'brand', name: 'Brand', selected: 0
 					@allAttributes.push value: 'mrp', name: 'MRP', selected: 0
-					@allAttributes.push value: 'distance', name: 'Distance', selected: 0
-
-					requests = $scope.view.requests
-					@attrValues['category'] = _.uniq _.pluck(requests, 'category'), (val)-> val.id
-					@attrValues['brand']    = _.uniq _.pluck(requests, 'brand'), (val)-> val.id
-					allMRPs = _.pluck _.pluck(requests, 'product'), 'mrp'
-					priceRange = [_.min(allMRPs), _.max(allMRPs)]
-					@attrValues['mrp'] = @getPriceRange [_.min(allMRPs), _.max(allMRPs)]
-					@attrValues['radius'] = @defaultRadius
+					@allAttributes.push value: 'radius', name: 'Distance'
 
 					# De-select all attr values
 					_.each @attrValues, (values)->
@@ -89,26 +80,25 @@ angular.module 'LocalHyper.requestsOffers'
 							attrIndex = _.findIndex @allAttributes, (attrs)-> attrs.value is index
 							@allAttributes[attrIndex].selected = count
 
-				onRadiusChange : ->
-					@allAttributes[3].selected = 1
-
 				clearFilters : ->
 					_.each @attrValues, (values)->
 						_.each values, (val)-> val.selected = false
-
+					@attrValues['radius']   = @defaultRadius
+					
 					_.each @allAttributes, (attrs)-> attrs.selected = 0
 
-					@selectedFilters = 
-						categories: []
-						brands:[]
-						mrp:[]
-						radius: @defaultRadius
+					@selectedCategories = 'default'
+					@selectedBrands = 'default'
+					@selectedMrp = 'default'
+					@selectedRadius = 'default' 
 
 				resetFilters : ->
 					@attribute = 'category'
 					@clearFilters()
 
 				noChangeInSelection : ->
+					@attrValues['radius'] = parseInt @attrValues['radius']
+					@originalValues['radius'] = parseInt @originalValues['radius']
 					_.isEqual _.sortBy(@originalValues), _.sortBy(@attrValues)
 
 				openModal : ->
@@ -133,26 +123,46 @@ angular.module 'LocalHyper.requestsOffers'
 				onApply : ->
 					_.each @attrValues, (_values, attribute)=>
 						switch attribute
-							when 'price'
-								start = []
-								end = []
-								_.each _values, (price)=>
-									if price.selected
-										start.push price.start
-										end.push price.end
-								
-								if _.isEmpty(start) then @selectedFilters.price = []
-								else @selectedFilters.price = [_.min(start), _.max(end)]
+							when 'category'
+								selected = []
+								_.each _values, (category)->
+									selected.push(category.id) if category.selected
+								@selectedCategories = if _.isEmpty(selected) then 'default' else selected
 
 							when 'brand'
 								selected = []
 								_.each _values, (brand)=>
 									selected.push(brand.id) if brand.selected
-								@selectedFilters.brands = selected
+								@selectedBrands = if _.isEmpty(selected) then 'default' else selected
+
+							when 'mrp'
+								start = []
+								end = []
+								_.each _values, (mrp)=>
+									if mrp.selected
+										start.push mrp.start
+										end.push mrp.end
+
+								@selectedMrp = if _.isEmpty(start) then 'default' else [_.min(start), _.max(end)]
+
+							when 'radius'
+								radius = parseInt _values
+								@selectedRadius = if radius is @defaultRadius then 'default' else radius
 					
+					@setExcerpt()
 					@modal.hide()
 					$scope.view.reFetch()
 
+				setExcerpt : ->
+					filterNames = []
+					_.each @allAttributes, (attr, index)=>
+						if attr.name is 'Distance'
+							if parseInt(@attrValues['radius']) isnt parseInt(@defaultRadius)
+								filterNames.push(attr.name)
+						else filterNames.push(attr.name) if attr.selected > 0
+					@excerpt = filterNames.join ', '
+
+			
 			
 			requestDetails:
 				modal: null
@@ -293,6 +303,7 @@ angular.module 'LocalHyper.requestsOffers'
 					spliceIndex = _.findIndex $scope.view.requests, (request)->
 						request.id is requestId
 					$scope.view.requests.splice(spliceIndex, 1) if spliceIndex isnt -1
+					$scope.view.setRequestsCount()
 
 
 
@@ -301,15 +312,23 @@ angular.module 'LocalHyper.requestsOffers'
 				@filter.loadModal()
 				@requestDetails.loadModal()
 
-			autoFetch : ->
-				@page = 0
+			reFetch : ->
+				App.scrollTop()
 				@requests = []
 				@display = 'loader'
-				@errorType = ''
 				@getRequests()
 
+			setRequestsCount : ->
+				App.notification.newRequests = _.size @requests
+
 			getRequests : ->
-				RequestsAPI.getAll()
+				options = 
+					sellerRadius: @filter.selectedRadius
+					categories: @filter.selectedCategories
+					brands: @filter.selectedBrands
+					productMrp: @filter.selectedMrp
+
+				RequestsAPI.getAll options
 				.then (data)=>
 					console.log data
 					@onSuccess data
@@ -317,13 +336,16 @@ angular.module 'LocalHyper.requestsOffers'
 					@onError error
 				.finally ->
 					$scope.$broadcast 'scroll.refreshComplete'
+					App.resize()
 
 			onSuccess : (data)->
 				@display = 'noError'
 				@requests = data.requests
+				@filter.other['sellerBrands']     = data.sellerBrands
+				@filter.other['sellerCategories'] = data.sellerCategories
 				if _.isEmpty @filter.attrValues['category']
 					@filter.setAttrValues()
-				App.notification.newRequests = _.size @requests
+				@setRequestsCount()
 				@markPendingNotificationsAsSeen()
 			
 			onError : (type)->
@@ -451,7 +473,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 		$rootScope.$on 'category:chain:changed', ->
 			# App.scrollTop()
-			$scope.view.autoFetch()
+			$scope.view.reFetch()
 ]
 
 

@@ -214,7 +214,8 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           "sellerLocation": "default",
           "sellerRadius": "default",
           "categories": "default",
-          "brands": "default"
+          "brands": "default",
+          "productMrp": "default"
         });
       }).then(function() {
         var Transaction, transaction, user;

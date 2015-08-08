@@ -3,7 +3,7 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
     var RequestsAPI, cancelledRequestId;
     RequestsAPI = {};
     cancelledRequestId = '';
-    RequestsAPI.getAll = function() {
+    RequestsAPI.getAll = function(opts) {
       var defer, params, user;
       defer = $q.defer();
       user = User.getCurrent();
@@ -12,9 +12,10 @@ angular.module('LocalHyper.requestsOffers').factory('RequestsAPI', [
         "city": user.get('city'),
         "area": user.get('area'),
         "sellerLocation": "default",
-        "sellerRadius": "default",
-        "categories": "default",
-        "brands": "default"
+        "sellerRadius": opts.sellerRadius,
+        "categories": opts.categories,
+        "brands": opts.brands,
+        "productMrp": opts.productMrp
       };
       $http.post('functions/getNewRequests', params).then(function(data) {
         return defer.resolve(data.data.result);

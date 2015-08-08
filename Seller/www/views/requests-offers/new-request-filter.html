@@ -35,7 +35,8 @@
 							ng-model="view.filter.attribute">
 						<div class="item-content">
 							{{attr.name}}
-							<i class="sel-count" ng-if="attr.selected !== 0">{{attr.selected}}</i>
+							<i class="sel-count" ng-if="attr.selected !== 0 && attr.value !== 'radius'">{{attr.selected}}</i>
+							<i class="sel-count" ng-if="attr.value === 'radius'">{{view.filter.attrValues['radius']}} kms</i>
 						</div>
 					</label>
 				</div>
@@ -43,7 +44,7 @@
 
 			<div 
 				class="col col-67 p-a-0"
-				ng-if="view.filter.attribute !== 'distance'">
+				ng-if="view.filter.attribute !== 'radius'">
 
 				<ul class="list">
 					<li
@@ -65,7 +66,11 @@
 
 			<div 
 				class="col col-67 p-a-0"
-				ng-if="view.filter.attribute === 'distance'">
+				ng-if="view.filter.attribute === 'radius'">
+
+				<ion-item>
+					Delivery radius: {{view.filter.attrValues['radius']}} kms
+				</ion-item>
 
 				<div class="item range range-assertive range-with-incdec">
 					<i class="icon ion-minus-round" ng-click="view.filter.minus();"></i>
@@ -73,8 +78,7 @@
 						type="range"
 						min="1"
 						max="100"
-						ng-model="view.filter.attrValues['radius']"
-						ng-change="view.filter.onRadiusChange()">
+						ng-model="view.filter.attrValues['radius']">
 					<i class="icon ion-plus-round" ng-click="view.filter.plus();">
 					</i>
 				</div>
