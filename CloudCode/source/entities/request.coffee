@@ -153,6 +153,7 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
     sellerRadius = request.params.sellerRadius
     categories = request.params.categories
     brands = request.params.brands
+    productMrp = request.params.productMrp
 
     requestFilters = 
         "city" : city
@@ -161,6 +162,7 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
         "sellerRadius" : sellerRadius
         "categories" : categories
         "brands" : brands
+        "productMrp" : productMrp
 
     getNewRequestsForSeller(sellerId, requestFilters)
     .then (newRequestResult) ->
@@ -473,6 +475,7 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
     sellerRadius = requestFilters["sellerRadius"]
     categories = requestFilters["categories"]
     brands = requestFilters["brands"]
+    productMrp = requestFilters["productMrp"]
 
     status = "open"
 
@@ -586,6 +589,20 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
             requestQuery.notContainedIn("objectId", requestsWhereOfferMade)
 
             # requestQuery.select("address,addressGeoPoint,category,brand,product,comments,customerId,offerCount,status")
+            if productMrp isnt "default"
+                startPrice = parseFloat productMrp[0]
+                endPrice = parseFloat productMrp[1]
+                innerQueryProduct = new Parse.Query("ProductItem")
+
+                if startPrice is -1
+                    innerQueryProduct.lessThanOrEqualTo("mrp", endPrice)
+                else if endPrice is -1
+                    innerQueryProduct.greaterThanOrEqualTo("mrp", startPrice)
+                else
+                    innerQueryProduct.lessThanOrEqualTo("mrp", endPrice)
+                    innerQueryProduct.greaterThanOrEqualTo("mrp", startPrice)
+                
+                requestQuery.matchesQuery("product", innerQueryProduct)
 
             requestQuery.include("product")
             requestQuery.include("category")

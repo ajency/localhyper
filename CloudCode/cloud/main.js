@@ -2053,7 +2053,7 @@
   });
 
   Parse.Cloud.define('getNewRequests', function(request, response) {
-    var area, brands, categories, city, requestFilters, sellerId, sellerLocation, sellerRadius;
+    var area, brands, categories, city, productMrp, requestFilters, sellerId, sellerLocation, sellerRadius;
     sellerId = request.params.sellerId;
     city = request.params.city;
     area = request.params.area;
@@ -2061,13 +2061,15 @@
     sellerRadius = request.params.sellerRadius;
     categories = request.params.categories;
     brands = request.params.brands;
+    productMrp = request.params.productMrp;
     requestFilters = {
       "city": city,
       "area": area,
       "sellerLocation": sellerLocation,
       "sellerRadius": sellerRadius,
       "categories": categories,
-      "brands": brands
+      "brands": brands,
+      "productMrp": productMrp
     };
     return getNewRequestsForSeller(sellerId, requestFilters).then(function(newRequestResult) {
       return response.success(newRequestResult);
@@ -2319,7 +2321,7 @@
   });
 
   getNewRequestsForSeller = function(sellerId, requestFilters) {
-    var area, brands, categories, city, promise, sellerLocation, sellerQuery, sellerRadius, status;
+    var area, brands, categories, city, productMrp, promise, sellerLocation, sellerQuery, sellerRadius, status;
     promise = new Parse.Promise();
     city = requestFilters["city"];
     area = requestFilters["area"];
@@ -2327,6 +2329,7 @@
     sellerRadius = requestFilters["sellerRadius"];
     categories = requestFilters["categories"];
     brands = requestFilters["brands"];
+    productMrp = requestFilters["productMrp"];
     status = "open";
     sellerQuery = new Parse.Query(Parse.User);
     sellerQuery.equalTo("objectId", sellerId);
@@ -2381,7 +2384,7 @@
       offerQuery.include("price");
       offerQuery.descending("createdAt");
       return offerQuery.find().then(function(offersMadeBySeller) {
-        var currentDate, currentTimeStamp, expiryValueInHrs, productLastOfferedPrices, queryDate, requestQuery, requestsWhereOfferMade, sellerGeoPoint, time24HoursAgo;
+        var currentDate, currentTimeStamp, endPrice, expiryValueInHrs, innerQueryProduct, productLastOfferedPrices, queryDate, requestQuery, requestsWhereOfferMade, sellerGeoPoint, startPrice, time24HoursAgo;
         productLastOfferedPrices = {};
         requestsWhereOfferMade = [];
         _.each(offersMadeBySeller, function(offerMadeBySeller) {
@@ -2410,6 +2413,20 @@
         sellerGeoPoint = new Parse.GeoPoint(sellerLocation);
         requestQuery.withinKilometers("addressGeoPoint", sellerGeoPoint, sellerRadius);
         requestQuery.notContainedIn("objectId", requestsWhereOfferMade);
+        if (productMrp !== "default") {
+          startPrice = parseFloat(productMrp[0]);
+          endPrice = parseFloat(productMrp[1]);
+          innerQueryProduct = new Parse.Query("ProductItem");
+          if (startPrice === -1) {
+            innerQueryProduct.lessThanOrEqualTo("mrp", endPrice);
+          } else if (endPrice === -1) {
+            innerQueryProduct.greaterThanOrEqualTo("mrp", startPrice);
+          } else {
+            innerQueryProduct.lessThanOrEqualTo("mrp", endPrice);
+            innerQueryProduct.greaterThanOrEqualTo("mrp", startPrice);
+          }
+          requestQuery.matchesQuery("product", innerQueryProduct);
+        }
         requestQuery.include("product");
         requestQuery.include("category");
         requestQuery.include("category.parent_category");
