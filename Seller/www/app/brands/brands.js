@@ -40,7 +40,7 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
         return empty;
       },
       brandSelection: function(brandID) {
-        var chain, selected, _brandIds, _brands;
+        var _brandIds, _brands, chain, selected;
         selected = false;
         if (this.isCategoryChainsEmpty()) {
           selected = false;
@@ -59,7 +59,7 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
         return selected;
       },
       setBrandSelection: function() {
-        var chain, _brandIds, _brands;
+        var _brandIds, _brands, chain;
         if (this.isCategoryChainsEmpty()) {
           return _.each(this.brands, function(brand) {
             return brand.selected = false;
