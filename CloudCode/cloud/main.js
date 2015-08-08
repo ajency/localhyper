@@ -2053,13 +2053,23 @@
   });
 
   Parse.Cloud.define('getNewRequests', function(request, response) {
-    var area, city, sellerId, sellerLocation, sellerRadius;
+    var area, brands, categories, city, requestFilters, sellerId, sellerLocation, sellerRadius;
     sellerId = request.params.sellerId;
     city = request.params.city;
     area = request.params.area;
     sellerLocation = request.params.sellerLocation;
     sellerRadius = request.params.sellerRadius;
-    return getNewRequestsForSeller(sellerId, city, area, sellerLocation, sellerRadius).then(function(newRequestResult) {
+    categories = request.params.categories;
+    brands = request.params.brands;
+    requestFilters = {
+      "city": city,
+      "area": area,
+      "sellerLocation": sellerLocation,
+      "sellerRadius": sellerRadius,
+      "categories": categories,
+      "brands": brands
+    };
+    return getNewRequestsForSeller(sellerId, requestFilters).then(function(newRequestResult) {
       return response.success(newRequestResult);
     }, function(error) {
       return response.error(error);
@@ -2308,17 +2318,44 @@
     });
   });
 
-  getNewRequestsForSeller = function(sellerId, city, area, sellerLocation, sellerRadius) {
-    var promise, sellerQuery, status;
+  getNewRequestsForSeller = function(sellerId, requestFilters) {
+    var area, brands, categories, city, promise, sellerLocation, sellerQuery, sellerRadius, status;
     promise = new Parse.Promise();
+    city = requestFilters["city"];
+    area = requestFilters["area"];
+    sellerLocation = requestFilters["sellerLocation"];
+    sellerRadius = requestFilters["sellerRadius"];
+    categories = requestFilters["categories"];
+    brands = requestFilters["brands"];
     status = "open";
     sellerQuery = new Parse.Query(Parse.User);
     sellerQuery.equalTo("objectId", sellerId);
     sellerQuery.first().then(function(sellerObject) {
-      var innerQuerySellers, offerQuery, sellerBrands, sellerCategories;
-      sellerCategories = sellerObject.get("supportedCategories");
-      console.log(sellerCategories);
-      sellerBrands = sellerObject.get("supportedBrands");
+      var Brand, Category, innerQuerySellers, offerQuery, sellerBrands, sellerCategories;
+      Category = Parse.Object.extend("Category");
+      Brand = Parse.Object.extend("Brand");
+      if (categories === "default") {
+        sellerCategories = sellerObject.get("supportedCategories");
+      } else {
+        sellerCategories = [];
+        _.each(categories, function(categoryId) {
+          var catPointer;
+          catPointer = new Category();
+          catPointer.id = categoryId;
+          return sellerCategories.push(catPointer);
+        });
+      }
+      if (brands === "default") {
+        sellerBrands = sellerObject.get("supportedBrands");
+      } else {
+        sellerBrands = [];
+        _.each(brands, function(brandId) {
+          var brandPointer;
+          brandPointer = new Brand();
+          brandPointer.id = brandId;
+          return sellerBrands.push(brandPointer);
+        });
+      }
       if (city === 'default') {
         city = sellerObject.get("city");
       }
@@ -2328,12 +2365,12 @@
       if (sellerLocation === 'default') {
         sellerLocation = sellerObject.get("addressGeoPoint");
       } else {
-        sellerLocation = request.params.sellerLocation;
+        sellerLocation = sellerLocation;
       }
       if (sellerRadius === 'default') {
         sellerRadius = sellerObject.get("deliveryRadius");
       } else {
-        sellerRadius = parseInt(request.params.sellerRadius);
+        sellerRadius = parseInt(sellerRadius);
       }
       innerQuerySellers = new Parse.Query(Parse.User);
       innerQuerySellers.equalTo("objectId", sellerId);
@@ -2443,11 +2480,6 @@
       reuqestGeoPoint = filteredRequest.get("addressGeoPoint");
       radiusDiffInKm = reuqestGeoPoint.kilometersTo(sellerGeoPoint);
       productsWithLastOffered = _.keys(productLastOfferedPrices);
-      console.log("product id is");
-      console.log(productLastOfferedPrices);
-      console.log("products with last offered");
-      console.log(productsWithLastOffered);
-      console.log(productLastOfferedPrices);
       if (_.indexOf(productsWithLastOffered, productId) > -1) {
         lastOffered = productLastOfferedPrices[productId];
       } else {

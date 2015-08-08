@@ -151,8 +151,18 @@ Parse.Cloud.define 'getNewRequests' ,(request, response) ->
     area = request.params.area
     sellerLocation =  request.params.sellerLocation
     sellerRadius = request.params.sellerRadius
+    categories = request.params.categories
+    brands = request.params.brands
 
-    getNewRequestsForSeller(sellerId, city , area , sellerLocation ,sellerRadius)
+    requestFilters = 
+        "city" : city
+        "area" : area
+        "sellerLocation" : sellerLocation
+        "sellerRadius" : sellerRadius
+        "categories" : categories
+        "brands" : brands
+
+    getNewRequestsForSeller(sellerId, requestFilters)
     .then (newRequestResult) ->
         response.success newRequestResult
     , (error) ->
@@ -454,8 +464,15 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
         response.error error
 
 
-getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius) ->
+getNewRequestsForSeller = (sellerId,requestFilters) ->
     promise = new Parse.Promise()
+
+    city = requestFilters["city"]
+    area = requestFilters["area"]
+    sellerLocation = requestFilters["sellerLocation"]
+    sellerRadius = requestFilters["sellerRadius"]
+    categories = requestFilters["categories"]
+    brands = requestFilters["brands"]
 
     status = "open"
 
@@ -465,9 +482,30 @@ getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius)
 
     sellerQuery.first()
     .then (sellerObject) ->
-        sellerCategories = sellerObject.get("supportedCategories")
-        console.log sellerCategories
-        sellerBrands = sellerObject.get("supportedBrands")
+
+        Category = Parse.Object.extend("Category")
+        Brand = Parse.Object.extend("Brand")
+
+        if categories is "default"
+            sellerCategories = sellerObject.get("supportedCategories")
+        else
+            sellerCategories = []
+            _.each categories, (categoryId ) ->
+                catPointer = new Category()
+                catPointer.id = categoryId
+
+                sellerCategories.push catPointer
+        
+
+        if brands is "default"
+            sellerBrands = sellerObject.get("supportedBrands")
+        else
+            sellerBrands = []
+            _.each brands, (brandId) ->
+                brandPointer = new Brand()
+                brandPointer.id = brandId
+
+                sellerBrands.push brandPointer 
 
         if city is 'default'
             city = sellerObject.get("city")
@@ -478,13 +516,14 @@ getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius)
         if  sellerLocation is 'default'
             sellerLocation =  sellerObject.get("addressGeoPoint")
         else
-            sellerLocation =  request.params.sellerLocation
+            sellerLocation =  sellerLocation
 
         if sellerRadius is 'default'
             sellerRadius = sellerObject.get("deliveryRadius")
         else
-            sellerRadius = parseInt request.params.sellerRadius
-        
+            sellerRadius = parseInt sellerRadius
+
+      
         # find all requests for which seller has made offer
         innerQuerySellers = new Parse.Query(Parse.User)
         innerQuerySellers.equalTo("objectId" , sellerId )
@@ -632,12 +671,6 @@ getRequestData =  (filteredRequest,seller,productLastOfferedPrices) ->
         radiusDiffInKm =   reuqestGeoPoint.kilometersTo(sellerGeoPoint) 
 
         productsWithLastOffered = _.keys(productLastOfferedPrices)
-
-        console.log "product id is"
-        console.log productLastOfferedPrices
-        console.log "products with last offered"
-        console.log productsWithLastOffered
-        console.log productLastOfferedPrices
 
         if _.indexOf(productsWithLastOffered, productId) > -1
             lastOffered = productLastOfferedPrices[productId]
