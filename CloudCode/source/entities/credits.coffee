@@ -1,59 +1,59 @@
-Parse.Cloud.define 'getCreditBalance' , (request, response) ->
-    sellerId = request.params.sellerId
+# Parse.Cloud.define 'getCreditBalance' , (request, response) ->
+#     sellerId = request.params.sellerId
 
-    creditValueForSingleAdd = 100    
-    creditValueForSingleMakeOffer = 1    
-    creditValueForSingleAcceptOffer = 5 
+#     creditValueForSingleAdd = 100    
+#     creditValueForSingleMakeOffer = 1    
+#     creditValueForSingleAcceptOffer = 5 
 
-    innerQuerySeller = new Parse.Query(Parse.User)
-    innerQuerySeller.equalTo("objectId" , sellerId)    
+#     innerQuerySeller = new Parse.Query(Parse.User)
+#     innerQuerySeller.equalTo("objectId" , sellerId)    
 
-    queryAddTransaction = new Parse.Query("Transaction")
-    queryAddTransaction.matchesQuery("seller",innerQuerySeller)
-    queryAddTransaction.equalTo("transactionType","add")
+#     queryAddTransaction = new Parse.Query("Transaction")
+#     queryAddTransaction.matchesQuery("seller",innerQuerySeller)
+#     queryAddTransaction.equalTo("transactionType","add")
 
-    queryAddTransaction.count()
-    .then (addCount) ->
-        countOfAddTransactions  = addCount
+#     queryAddTransaction.count()
+#     .then (addCount) ->
+#         countOfAddTransactions  = addCount
 
-        queryMinusMakeOfferTransaction = new Parse.Query("Transaction")
-        queryMinusMakeOfferTransaction.matchesQuery("seller",innerQuerySeller)
-        queryMinusMakeOfferTransaction.equalTo("transactionType","minus") 
-        queryMinusMakeOfferTransaction.equalTo("towards","make_offer") 
+#         queryMinusMakeOfferTransaction = new Parse.Query("Transaction")
+#         queryMinusMakeOfferTransaction.matchesQuery("seller",innerQuerySeller)
+#         queryMinusMakeOfferTransaction.equalTo("transactionType","minus") 
+#         queryMinusMakeOfferTransaction.equalTo("towards","make_offer") 
 
-        queryMinusMakeOfferTransaction.count()
-        .then (minusMakeOfferCount) ->
-            countMakeOfferTransactions = minusMakeOfferCount
+#         queryMinusMakeOfferTransaction.count()
+#         .then (minusMakeOfferCount) ->
+#             countMakeOfferTransactions = minusMakeOfferCount
 
-            queryMinusAcceptOfferTransaction = new Parse.Query("Transaction")
-            queryMinusAcceptOfferTransaction.matchesQuery("seller",innerQuerySeller)
-            queryMinusAcceptOfferTransaction.equalTo("transactionType","minus") 
-            queryMinusAcceptOfferTransaction.equalTo("towards","make_offer") 
+#             queryMinusAcceptOfferTransaction = new Parse.Query("Transaction")
+#             queryMinusAcceptOfferTransaction.matchesQuery("seller",innerQuerySeller)
+#             queryMinusAcceptOfferTransaction.equalTo("transactionType","minus") 
+#             queryMinusAcceptOfferTransaction.equalTo("towards","make_offer") 
 
-            queryMinusMakeOfferTransaction.count()
-            .then (minusAcceptOfferCount) ->
-               countAcceptOfferTransactions = minusAcceptOfferCount
+#             queryMinusMakeOfferTransaction.count()
+#             .then (minusAcceptOfferCount) ->
+#                countAcceptOfferTransactions = minusAcceptOfferCount
 
-               totalAddCredits = creditValueForSingleAdd * countOfAddTransactions
-               totalMinusCredits = (creditValueForSingleMakeOffer * countMakeOfferTransactions) + (creditValueForSingleAcceptOffer * minusAcceptOfferCount)
+#                totalAddCredits = creditValueForSingleAdd * countOfAddTransactions
+#                totalMinusCredits = (creditValueForSingleMakeOffer * countMakeOfferTransactions) + (creditValueForSingleAcceptOffer * minusAcceptOfferCount)
 
-               balance = totalAddCredits - totalMinusCredits
+#                balance = totalAddCredits - totalMinusCredits
 
-               result =
-                    totalCredits : totalAddCredits
-                    usedCredits : totalMinusCredits
-                    balanceCredits : balance
+#                result =
+#                     totalCredits : totalAddCredits
+#                     usedCredits : totalMinusCredits
+#                     balanceCredits : balance
 
-               response.success result 
+#                response.success result 
 
-            , (error) ->
-                response.error error
+#             , (error) ->
+#                 response.error error
 
-        , (error) ->
-            response.error error
+#         , (error) ->
+#             response.error error
 
-    , (error) ->
-        response.error error
+#     , (error) ->
+#         response.error error
 
 Parse.Cloud.define 'getCreditHistory' , (request, response) ->  
     sellerId = request.params.sellerId

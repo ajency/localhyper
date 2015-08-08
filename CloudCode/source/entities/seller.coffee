@@ -183,6 +183,38 @@ Parse.Cloud.define 'createTestSeller', (request, response) ->
         .fail (error) =>
             response.error "Failed to create user #{error.message}"     
 
+Parse.Cloud.define 'updateSellerRating', (request, response) ->
+    sellerId = request.params.sellerId
+    ratingInStars = request.params.ratingInStars
+
+    querySeller = new Parse.Query(Parse.User)
+    querySeller.equalTo("objectId", sellerId)
+
+    querySeller.first()
+    .then (sellerObj) ->
+        # get current rating sum and rating count
+
+        currentRatingSum = sellerObj.get("ratingSum")
+        currentRatingCount = sellerObj.get("ratingCount")
+
+        newRatings = currentRatingSum + ratingInStars
+
+        sellerObj.set "ratingSum" , newRatings
+        sellerObj.increment("ratingCount")
+
+        sellerObj.save() 
+        .then (updatedSeller) ->
+            ratingSum = updatedSeller.get("ratingSum")
+            ratingCount = updatedSeller.get("ratingCount")
+            avgRatings = ratingSum/ratingCount
+
+            result =
+                "sellerId" : sellerId
+                "avgRatings" : avgRatings
+            
+            response.success result
+        
+
 
 
 

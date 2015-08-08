@@ -1,5 +1,5 @@
 (function() {
-  var _, findAttribValues, getAreaBoundSellers, getCategoryBasedSellers, getDayFromMoment, getDeliveryDate, getNewRequestsForSeller, getNotificationData, getRequestData, getTimeFromMoment, isTimeInRange, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, treeify;
+  var _, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDayFromMoment, getDeliveryDate, getNewRequestsForSeller, getNotificationData, getOtherPricesForProduct, getRequestData, getTimeFromMoment, isTimeInRange, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -421,54 +421,6 @@
         return response.error(responseData);
       };
     })(this));
-  });
-
-  Parse.Cloud.define('getCreditBalance', function(request, response) {
-    var creditValueForSingleAcceptOffer, creditValueForSingleAdd, creditValueForSingleMakeOffer, innerQuerySeller, queryAddTransaction, sellerId;
-    sellerId = request.params.sellerId;
-    creditValueForSingleAdd = 100;
-    creditValueForSingleMakeOffer = 1;
-    creditValueForSingleAcceptOffer = 5;
-    innerQuerySeller = new Parse.Query(Parse.User);
-    innerQuerySeller.equalTo("objectId", sellerId);
-    queryAddTransaction = new Parse.Query("Transaction");
-    queryAddTransaction.matchesQuery("seller", innerQuerySeller);
-    queryAddTransaction.equalTo("transactionType", "add");
-    return queryAddTransaction.count().then(function(addCount) {
-      var countOfAddTransactions, queryMinusMakeOfferTransaction;
-      countOfAddTransactions = addCount;
-      queryMinusMakeOfferTransaction = new Parse.Query("Transaction");
-      queryMinusMakeOfferTransaction.matchesQuery("seller", innerQuerySeller);
-      queryMinusMakeOfferTransaction.equalTo("transactionType", "minus");
-      queryMinusMakeOfferTransaction.equalTo("towards", "make_offer");
-      return queryMinusMakeOfferTransaction.count().then(function(minusMakeOfferCount) {
-        var countMakeOfferTransactions, queryMinusAcceptOfferTransaction;
-        countMakeOfferTransactions = minusMakeOfferCount;
-        queryMinusAcceptOfferTransaction = new Parse.Query("Transaction");
-        queryMinusAcceptOfferTransaction.matchesQuery("seller", innerQuerySeller);
-        queryMinusAcceptOfferTransaction.equalTo("transactionType", "minus");
-        queryMinusAcceptOfferTransaction.equalTo("towards", "make_offer");
-        return queryMinusMakeOfferTransaction.count().then(function(minusAcceptOfferCount) {
-          var balance, countAcceptOfferTransactions, result, totalAddCredits, totalMinusCredits;
-          countAcceptOfferTransactions = minusAcceptOfferCount;
-          totalAddCredits = creditValueForSingleAdd * countOfAddTransactions;
-          totalMinusCredits = (creditValueForSingleMakeOffer * countMakeOfferTransactions) + (creditValueForSingleAcceptOffer * minusAcceptOfferCount);
-          balance = totalAddCredits - totalMinusCredits;
-          result = {
-            totalCredits: totalAddCredits,
-            usedCredits: totalMinusCredits,
-            balanceCredits: balance
-          };
-          return response.success(result);
-        }, function(error) {
-          return response.error(error);
-        });
-      }, function(error) {
-        return response.error(error);
-      });
-    }, function(error) {
-      return response.error(error);
-    });
   });
 
   Parse.Cloud.define('getCreditHistory', function(request, response) {
@@ -2365,6 +2317,7 @@
     sellerQuery.first().then(function(sellerObject) {
       var innerQuerySellers, offerQuery, sellerBrands, sellerCategories;
       sellerCategories = sellerObject.get("supportedCategories");
+      console.log(sellerCategories);
       sellerBrands = sellerObject.get("supportedBrands");
       if (city === 'default') {
         city = sellerObject.get("city");
@@ -2386,12 +2339,23 @@
       innerQuerySellers.equalTo("objectId", sellerId);
       offerQuery = new Parse.Query("Offer");
       offerQuery.matchesQuery("seller", innerQuerySellers);
-      offerQuery.select("request");
       offerQuery.include("request");
+      offerQuery.include("request.product");
+      offerQuery.include("price");
+      offerQuery.descending("createdAt");
       return offerQuery.find().then(function(offersMadeBySeller) {
-        var currentDate, currentTimeStamp, expiryValueInHrs, queryDate, requestQuery, requestsWhereOfferMade, sellerGeoPoint, time24HoursAgo;
-        requestsWhereOfferMade = _.map(offersMadeBySeller, function(offerMade) {
-          return offerMade.get("request").id;
+        var currentDate, currentTimeStamp, expiryValueInHrs, productLastOfferedPrices, queryDate, requestQuery, requestsWhereOfferMade, sellerGeoPoint, time24HoursAgo;
+        productLastOfferedPrices = {};
+        requestsWhereOfferMade = [];
+        _.each(offersMadeBySeller, function(offerMadeBySeller) {
+          var offerPrice, priceObj, productId, productObj, requestObj;
+          requestObj = offerMadeBySeller.get("request");
+          productObj = requestObj.get("product");
+          productId = productObj.id;
+          priceObj = offerMadeBySeller.get("price");
+          offerPrice = priceObj.get("value");
+          productLastOfferedPrices[productId] = offerPrice;
+          return requestsWhereOfferMade.push(offerMadeBySeller.get("request").id);
         });
         requestQuery = new Parse.Query("Request");
         requestQuery.containedIn("category", sellerCategories);
@@ -2422,7 +2386,7 @@
           };
           requestsQs = _.map(filteredRequests, function(filteredRequest) {
             var requestPromise;
-            return requestPromise = getRequestData(filteredRequest, sellerDetails);
+            return requestPromise = getRequestData(filteredRequest, sellerDetails, productLastOfferedPrices);
           });
           return Parse.Promise.when(requestsQs).then(function() {
             var individualReqResults, requestsResult;
@@ -2449,12 +2413,13 @@
     return promise;
   };
 
-  getRequestData = function(filteredRequest, seller) {
-    var brand, brandObj, category, categoryObj, innerQueryRequest, innerQuerySeller, prodObj, product, promise, queryNotification, radiusDiffInKm, requestObj, reuqestGeoPoint, sellerGeoPoint, sellerId;
+  getRequestData = function(filteredRequest, seller, productLastOfferedPrices) {
+    var prodObj, product, productId, promise, sellerGeoPoint, sellerId;
     promise = new Parse.Promise();
     sellerId = seller.id;
     sellerGeoPoint = seller.geoPoint;
     prodObj = filteredRequest.get("product");
+    productId = prodObj.id;
     product = {
       "id": prodObj.id,
       "name": prodObj.get("name"),
@@ -2462,70 +2427,142 @@
       "image": prodObj.get("images"),
       "model_number": prodObj.get("model_number")
     };
-    categoryObj = filteredRequest.get("category");
-    category = {
-      "id": categoryObj.id,
-      "name": categoryObj.get("name"),
-      "parent": (categoryObj.get("parent_category")).get("name")
-    };
-    brandObj = filteredRequest.get("brand");
-    brand = {
-      "id": brandObj.id,
-      "name": brandObj.get("name")
-    };
-    reuqestGeoPoint = filteredRequest.get("addressGeoPoint");
-    radiusDiffInKm = reuqestGeoPoint.kilometersTo(sellerGeoPoint);
-    requestObj = {
-      id: filteredRequest.id,
-      radius: radiusDiffInKm,
-      product: product,
-      category: category,
-      brand: brand,
-      createdAt: filteredRequest.createdAt,
-      comments: filteredRequest.get("comments"),
-      status: filteredRequest.get("status"),
-      offerCount: filteredRequest.get("offerCount"),
-      lastOfferPrice: "",
-      onlinePrice: ""
-    };
-    queryNotification = new Parse.Query("Notification");
-    innerQuerySeller = new Parse.Query(Parse.User);
-    innerQuerySeller.equalTo("objectId", sellerId);
-    queryNotification.matchesQuery("recipientUser", innerQuerySeller);
-    queryNotification.equalTo("type", "Request");
-    innerQueryRequest = new Parse.Query("Request");
-    innerQueryRequest.equalTo("objectId", filteredRequest.id);
-    queryNotification.matchesQuery("requestObject", innerQueryRequest);
-    queryNotification.first().then(function(notificationObject) {
-      var Notification, notification, notificationInstance, sellerObj;
-      if (!_.isEmpty(notificationObject)) {
-        notification = {
-          "hasSeen": notificationObject.get("hasSeen")
-        };
-        requestObj['notification'] = notification;
-        return promise.resolve(requestObj);
+    getOtherPricesForProduct(prodObj).then(function(productPrice) {
+      var brand, brandObj, category, categoryObj, innerQueryRequest, innerQuerySeller, lastOffered, productsWithLastOffered, queryNotification, radiusDiffInKm, requestObj, reuqestGeoPoint;
+      categoryObj = filteredRequest.get("category");
+      category = {
+        "id": categoryObj.id,
+        "name": categoryObj.get("name"),
+        "parent": (categoryObj.get("parent_category")).get("name")
+      };
+      brandObj = filteredRequest.get("brand");
+      brand = {
+        "id": brandObj.id,
+        "name": brandObj.get("name")
+      };
+      reuqestGeoPoint = filteredRequest.get("addressGeoPoint");
+      radiusDiffInKm = reuqestGeoPoint.kilometersTo(sellerGeoPoint);
+      productsWithLastOffered = _.keys(productLastOfferedPrices);
+      console.log("product id is");
+      console.log(productLastOfferedPrices);
+      console.log("products with last offered");
+      console.log(productsWithLastOffered);
+      console.log(productLastOfferedPrices);
+      if (_.indexOf(productsWithLastOffered, productId) > -1) {
+        lastOffered = productLastOfferedPrices[productId];
       } else {
-        Notification = Parse.Object.extend("Notification");
-        notificationInstance = new Notification();
-        sellerObj = {
-          "__type": "Pointer",
-          "className": "_User",
-          "objectId": sellerId
-        };
-        notificationInstance.set("channel", "push_copy");
-        notificationInstance.set("type", "Request");
-        notificationInstance.set("processed", true);
-        notificationInstance.set("requestObject", filteredRequest);
-        notificationInstance.set("recipientUser", sellerObj);
-        notificationInstance.set("hasSeen", false);
-        return notificationInstance.save().then(function(savedNotification) {
+        lastOffered = "";
+      }
+      requestObj = {
+        id: filteredRequest.id,
+        radius: radiusDiffInKm,
+        product: product,
+        category: category,
+        brand: brand,
+        createdAt: filteredRequest.createdAt,
+        comments: filteredRequest.get("comments"),
+        status: filteredRequest.get("status"),
+        offerCount: filteredRequest.get("offerCount"),
+        lastOfferPrice: lastOffered,
+        onlinePrice: productPrice["online"],
+        platformPrice: productPrice["platform"]
+      };
+      queryNotification = new Parse.Query("Notification");
+      innerQuerySeller = new Parse.Query(Parse.User);
+      innerQuerySeller.equalTo("objectId", sellerId);
+      queryNotification.matchesQuery("recipientUser", innerQuerySeller);
+      queryNotification.equalTo("type", "Request");
+      innerQueryRequest = new Parse.Query("Request");
+      innerQueryRequest.equalTo("objectId", filteredRequest.id);
+      queryNotification.matchesQuery("requestObject", innerQueryRequest);
+      return queryNotification.first().then(function(notificationObject) {
+        var Notification, notification, notificationInstance, sellerObj;
+        if (!_.isEmpty(notificationObject)) {
           notification = {
-            "hasSeen": savedNotification.get("hasSeen")
+            "hasSeen": notificationObject.get("hasSeen")
           };
           requestObj['notification'] = notification;
           return promise.resolve(requestObj);
-        });
+        } else {
+          Notification = Parse.Object.extend("Notification");
+          notificationInstance = new Notification();
+          sellerObj = {
+            "__type": "Pointer",
+            "className": "_User",
+            "objectId": sellerId
+          };
+          notificationInstance.set("channel", "push_copy");
+          notificationInstance.set("type", "Request");
+          notificationInstance.set("processed", true);
+          notificationInstance.set("requestObject", filteredRequest);
+          notificationInstance.set("recipientUser", sellerObj);
+          notificationInstance.set("hasSeen", false);
+          return notificationInstance.save().then(function(savedNotification) {
+            notification = {
+              "hasSeen": savedNotification.get("hasSeen")
+            };
+            requestObj['notification'] = notification;
+            return promise.resolve(requestObj);
+          });
+        }
+      }, function(error) {
+        return promise.reject(error);
+      });
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
+
+  getOtherPricesForProduct = function(productObject) {
+    var innerQueryProduct, productId, productPrice, promise, queryPrice;
+    promise = new Parse.Promise();
+    productPrice = {};
+    productId = productObject.id;
+    queryPrice = new Parse.Query("Price");
+    innerQueryProduct = new Parse.Query("ProductItem");
+    innerQueryProduct.equalTo("objectId", productId);
+    queryPrice.matchesQuery("product", innerQueryProduct);
+    queryPrice.equalTo("type", "online_market_price");
+    queryPrice.first().then(function(onlinePriceObj) {
+      if (_.isEmpty(onlinePriceObj)) {
+        productPrice["online"] = "";
+      } else {
+        productPrice["online"] = onlinePriceObj.get("value");
       }
+      return getBestPlatformPrice(productObject).then(function(platformPrice) {
+        productPrice["platform"] = platformPrice;
+        return promise.resolve(productPrice);
+      }, function(error) {
+        return promise.reject(error);
+      });
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
+
+  getBestPlatformPrice = function(productObject) {
+    var innerQueryProduct, productId, promise, queryPrice;
+    promise = new Parse.Promise();
+    queryPrice = new Parse.Query("Price");
+    productId = productObject.id;
+    innerQueryProduct = new Parse.Query("ProductItem");
+    innerQueryProduct.equalTo("objectId", productId);
+    queryPrice.matchesQuery("product", innerQueryProduct);
+    queryPrice.notEqualTo("type", "online_market_price");
+    queryPrice.find().then(function(platformPrices) {
+      var minPrice, priceValues;
+      if (platformPrices.length === 0) {
+        minPrice = "";
+      } else {
+        priceValues = [];
+        _.each(platformPrices, function(platformPriceObj) {
+          return priceValues.push(parseInt(platformPriceObj.get("value")));
+        });
+        minPrice = _.min(priceValues);
+      }
+      return promise.resolve(minPrice);
     }, function(error) {
       return promise.reject(error);
     });
@@ -2687,6 +2724,33 @@
         return response.error("Failed to create user " + error.message);
       };
     })(this));
+  });
+
+  Parse.Cloud.define('updateSellerRating', function(request, response) {
+    var querySeller, ratingInStars, sellerId;
+    sellerId = request.params.sellerId;
+    ratingInStars = request.params.ratingInStars;
+    querySeller = new Parse.Query(Parse.User);
+    querySeller.equalTo("objectId", sellerId);
+    return querySeller.first().then(function(sellerObj) {
+      var currentRatingCount, currentRatingSum, newRatings;
+      currentRatingSum = sellerObj.get("ratingSum");
+      currentRatingCount = sellerObj.get("ratingCount");
+      newRatings = currentRatingSum + ratingInStars;
+      sellerObj.set("ratingSum", newRatings);
+      sellerObj.increment("ratingCount");
+      return sellerObj.save().then(function(updatedSeller) {
+        var avgRatings, ratingCount, ratingSum, result;
+        ratingSum = updatedSeller.get("ratingSum");
+        ratingCount = updatedSeller.get("ratingCount");
+        avgRatings = ratingSum / ratingCount;
+        result = {
+          "sellerId": sellerId,
+          "avgRatings": avgRatings
+        };
+        return response.success(result);
+      });
+    });
   });
 
   Parse.Cloud.useMasterKey();

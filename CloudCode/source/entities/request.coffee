@@ -466,6 +466,7 @@ getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius)
     sellerQuery.first()
     .then (sellerObject) ->
         sellerCategories = sellerObject.get("supportedCategories")
+        console.log sellerCategories
         sellerBrands = sellerObject.get("supportedBrands")
 
         if city is 'default'
@@ -491,16 +492,35 @@ getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius)
         offerQuery = new Parse.Query("Offer")
         offerQuery.matchesQuery("seller",innerQuerySellers)
 
-        offerQuery.select("request")
+        # offerQuery.select("request")
         offerQuery.include("request")
+        offerQuery.include("request.product")
+        offerQuery.include("price")
+        offerQuery.descending("createdAt")
 
         offerQuery.find()
         .then (offersMadeBySeller) ->
-            requestsWhereOfferMade = _.map(offersMadeBySeller , (offerMade) ->
-                
-                offerMade.get("request").id
 
-            )           
+            productLastOfferedPrices = {}
+            requestsWhereOfferMade = []
+
+            # all offers made by seller
+            _.each offersMadeBySeller , (offerMadeBySeller) ->
+                requestObj = offerMadeBySeller.get("request")
+                productObj = requestObj.get("product")
+                productId = productObj.id 
+                priceObj =  offerMadeBySeller.get("price")
+                offerPrice =  priceObj.get("value")
+
+                productLastOfferedPrices[productId] = offerPrice
+                
+                requestsWhereOfferMade.push offerMadeBySeller.get("request").id
+
+            # requestsWhereOfferMade = _.map(offersMadeBySeller , (offerMade) ->
+                
+            #     offerMade.get("request").id
+
+            # )           
 
             requestQuery = new Parse.Query("Request")
             requestQuery.containedIn("category",sellerCategories)
@@ -550,7 +570,7 @@ getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius)
                     "geoPoint" : sellerGeoPoint
 
                 requestsQs = _.map(filteredRequests , (filteredRequest) ->
-                    requestPromise = getRequestData(filteredRequest,sellerDetails)
+                    requestPromise = getRequestData(filteredRequest,sellerDetails,productLastOfferedPrices)
                 )   
 
                 Parse.Promise.when(requestsQs).then ->
@@ -576,7 +596,7 @@ getNewRequestsForSeller = (sellerId, city , area , sellerLocation ,sellerRadius)
 
     promise           
 
-getRequestData =  (filteredRequest,seller) ->
+getRequestData =  (filteredRequest,seller,productLastOfferedPrices) ->
     
     promise = new Parse.Promise()
 
@@ -585,6 +605,8 @@ getRequestData =  (filteredRequest,seller) ->
 
     # prepare the output without notification status
     prodObj = filteredRequest.get("product")
+    
+    productId = prodObj.id
     product =
         "id": prodObj.id
         "name":prodObj.get("name")
@@ -592,86 +614,179 @@ getRequestData =  (filteredRequest,seller) ->
         "image":prodObj.get("images")
         "model_number":prodObj.get("model_number")
 
-    categoryObj = filteredRequest.get("category")
-    category =
-        "id" : categoryObj.id
-        "name": categoryObj.get("name")
-        "parent": (categoryObj.get("parent_category")).get("name")
+    # returns object of online price and best platfomr price
+    getOtherPricesForProduct(prodObj)
+    .then (productPrice) ->
+        categoryObj = filteredRequest.get("category")
+        category =
+            "id" : categoryObj.id
+            "name": categoryObj.get("name")
+            "parent": (categoryObj.get("parent_category")).get("name")
 
-    brandObj = filteredRequest.get("brand")
-    brand =
-        "id" : brandObj.id
-        "name": brandObj.get("name")  
+        brandObj = filteredRequest.get("brand")
+        brand =
+            "id" : brandObj.id
+            "name": brandObj.get("name")  
 
-    reuqestGeoPoint =  filteredRequest.get("addressGeoPoint")  
-    radiusDiffInKm =   reuqestGeoPoint.kilometersTo(sellerGeoPoint) 
+        reuqestGeoPoint =  filteredRequest.get("addressGeoPoint")  
+        radiusDiffInKm =   reuqestGeoPoint.kilometersTo(sellerGeoPoint) 
 
-    requestObj = 
-        id : filteredRequest.id
-        radius : radiusDiffInKm
-        product: product
-        category: category
-        brand: brand
-        createdAt: filteredRequest.createdAt
-        comments: filteredRequest.get("comments")  
-        status: filteredRequest.get("status")            
-        offerCount: filteredRequest.get("offerCount")  
-        lastOfferPrice : ""
-        onlinePrice: ""          
+        productsWithLastOffered = _.keys(productLastOfferedPrices)
 
-    
-    #  now query notification to get notificaton status
-    queryNotification = new Parse.Query("Notification")
+        console.log "product id is"
+        console.log productLastOfferedPrices
+        console.log "products with last offered"
+        console.log productsWithLastOffered
+        console.log productLastOfferedPrices
 
-    innerQuerySeller = new Parse.Query(Parse.User)
-    innerQuerySeller.equalTo("objectId",sellerId )
-
-    queryNotification.matchesQuery("recipientUser",innerQuerySeller)
-    
-    queryNotification.equalTo("type","Request")
-
-    innerQueryRequest = new Parse.Query("Request")
-    innerQueryRequest.equalTo("objectId", filteredRequest.id)
-
-    queryNotification.matchesQuery("requestObject",innerQueryRequest)
-
-    queryNotification.first()
-    .then (notificationObject) ->
-
-        if !_.isEmpty(notificationObject)
-            notification = 
-                "hasSeen" : notificationObject.get("hasSeen")
-
-            requestObj['notification'] = notification
-
-            promise.resolve requestObj
-
+        if _.indexOf(productsWithLastOffered, productId) > -1
+            lastOffered = productLastOfferedPrices[productId]
         else
-            Notification = Parse.Object.extend("Notification")
-            notificationInstance = new Notification()
+            lastOffered = ""
 
-            sellerObj = 
-                "__type" : "Pointer",
-                "className":"_User",
-                "objectId":sellerId 
-            
-            notificationInstance.set "channel" , "push_copy"
-            notificationInstance.set "type" , "Request"
-            notificationInstance.set "processed" , true
-            notificationInstance.set "requestObject" , filteredRequest
-            notificationInstance.set "recipientUser" , sellerObj
-            notificationInstance.set "hasSeen" , false
+        requestObj = 
+            id : filteredRequest.id
+            radius : radiusDiffInKm
+            product: product
+            category: category
+            brand: brand
+            createdAt: filteredRequest.createdAt
+            comments: filteredRequest.get("comments")  
+            status: filteredRequest.get("status")            
+            offerCount: filteredRequest.get("offerCount")  
+            lastOfferPrice : lastOffered
+            onlinePrice: productPrice["online"] 
+            platformPrice : productPrice["platform"]         
 
-            notificationInstance.save()
-            .then (savedNotification) ->
+        
+        #  now query notification to get notificaton status
+        queryNotification = new Parse.Query("Notification")
+
+        innerQuerySeller = new Parse.Query(Parse.User)
+        innerQuerySeller.equalTo("objectId",sellerId )
+
+        queryNotification.matchesQuery("recipientUser",innerQuerySeller)
+        
+        queryNotification.equalTo("type","Request")
+
+        innerQueryRequest = new Parse.Query("Request")
+        innerQueryRequest.equalTo("objectId", filteredRequest.id)
+
+        queryNotification.matchesQuery("requestObject",innerQueryRequest)
+
+        queryNotification.first()
+        .then (notificationObject) ->
+
+            if !_.isEmpty(notificationObject)
                 notification = 
-                    "hasSeen" : savedNotification.get("hasSeen")
+                    "hasSeen" : notificationObject.get("hasSeen")
 
                 requestObj['notification'] = notification
 
-                promise.resolve requestObj  
+                promise.resolve requestObj
 
+            else
+                Notification = Parse.Object.extend("Notification")
+                notificationInstance = new Notification()
+
+                sellerObj = 
+                    "__type" : "Pointer",
+                    "className":"_User",
+                    "objectId":sellerId 
+                
+                notificationInstance.set "channel" , "push_copy"
+                notificationInstance.set "type" , "Request"
+                notificationInstance.set "processed" , true
+                notificationInstance.set "requestObject" , filteredRequest
+                notificationInstance.set "recipientUser" , sellerObj
+                notificationInstance.set "hasSeen" , false
+
+                notificationInstance.save()
+                .then (savedNotification) ->
+                    notification = 
+                        "hasSeen" : savedNotification.get("hasSeen")
+
+                    requestObj['notification'] = notification
+
+                    promise.resolve requestObj  
+
+        , (error) ->
+            promise.reject error
+
+    , (error) ->
+        promise.reject error 
+
+    promise
+
+getOtherPricesForProduct = (productObject) ->
+
+    promise = new Parse.Promise()
+
+    productPrice = {}
+
+    productId = productObject.id
+
+    # query Price class 
+
+    queryPrice = new Parse.Query("Price")
+
+    innerQueryProduct = new Parse.Query("ProductItem")
+    innerQueryProduct.equalTo("objectId" , productId)
+
+    queryPrice.matchesQuery("product" , innerQueryProduct)
+    queryPrice.equalTo("type" , "online_market_price")
+
+    queryPrice.first()
+    .then (onlinePriceObj) ->
+        if _.isEmpty(onlinePriceObj)
+            productPrice["online"] = ""
+        else
+            productPrice["online"] = onlinePriceObj.get("value")
+
+        # now find best platform price
+        getBestPlatformPrice(productObject)
+        .then (platformPrice) ->
+            productPrice["platform"] = platformPrice
+            promise.resolve productPrice
+
+        , (error) ->
+            promise.reject error
     , (error) ->
         promise.reject error
 
     promise
+
+
+getBestPlatformPrice = (productObject) ->
+    promise = new Parse.Promise()
+
+    # get all prices entered in price table for type other than "open_offer" in price class
+
+    queryPrice = new Parse.Query("Price")
+    productId = productObject.id
+
+    innerQueryProduct = new Parse.Query("ProductItem")
+    innerQueryProduct.equalTo("objectId" , productId)
+    queryPrice.matchesQuery("product",innerQueryProduct)
+    queryPrice.notEqualTo("type","online_market_price")
+
+    queryPrice.find()
+    .then (platformPrices) ->
+        if platformPrices.length is 0 
+            minPrice = ""
+        else
+            priceValues = []
+
+            _.each platformPrices , (platformPriceObj) ->
+                priceValues.push parseInt(platformPriceObj.get("value"))
+
+            minPrice = _.min(priceValues)
+
+        promise.resolve minPrice
+
+
+    , (error) ->
+        promise.reject error 
+
+    promise
+
