@@ -32,8 +32,6 @@ angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
       },
       onSuccess: function(data, displayLimit) {
         var creditHistory;
-        console.log('--creditr history details');
-        console.log(data);
         this.display = 'noError';
         creditHistory = _.size(data);
         if (creditHistory > 0) {
@@ -65,7 +63,7 @@ angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
         var params;
         params = {
           page: this.page,
-          displayLimit: 3
+          displayLimit: 5
         };
         return creditHistoryAPI.getCreditHistory(params).then((function(_this) {
           return function(data) {

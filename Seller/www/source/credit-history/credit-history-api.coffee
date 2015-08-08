@@ -11,7 +11,7 @@ angular.module 'LocalHyper.creditHistory'
 		user = User.getCurrent()
 
 		params = 
-			"sellerId": "hay0Mhspc1"
+			"sellerId": user.id
 			"displayLimit" : param.displayLimit
 			"page" : param.page
 

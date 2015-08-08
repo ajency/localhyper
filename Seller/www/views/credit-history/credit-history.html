@@ -13,13 +13,13 @@
 				<ul class="list">
 					<li class="item">
 						<div class="row"> 
-								<div class="col col-50"> Credit Available  </div> 
+								<div class="col col-50"> Credit Available :  </div> 
 								 <div class="col col-50"> {{view.availableCredit}} </div> 
 						</div>
 					</li>
 					<li class="item">
 						<div class="row"> 
-								<div class="col col-50"> Credit Used  </div> 
+								<div class="col col-50"> Credit Used : </div> 
 								 <div class="col col-50"> {{view.creditUsed}} </div> {{view.createdAt}}
 						</div>
 					</li>
@@ -36,19 +36,19 @@
 								<br>
 								Product Name : {{request.product.name}}
 								<br>
-								Offer made 
+								<b ng-if="request.transactionTowards == 'make_offer' "> Offer Made </b>
+								<b ng-if="request.transactionTowards == 'accept_offer' "> Offer Accepted </b>
 							</div>	
 						</div>
 
 						<div class="col col-50">
 							<div class="pull-right">
 								<p> Credit Points Used </p>
-								
 								   <h2> &nbsp; &nbsp; {{request.creditCount}} </h2> 
 							</div>
 						</div>
 					</div>
-					
+
 				</div>
 
 			</ion-list>

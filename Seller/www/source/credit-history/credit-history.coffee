@@ -4,8 +4,7 @@ angular.module 'LocalHyper.creditHistory', []
 .controller 'creditHistoryCtrl', ['$scope', 'App', 'creditHistoryAPI', 'User'
 	, ($scope, App, creditHistoryAPI, User)->
 
-		# creditHistoryAPI.getCreditBalance()
-
+		
 		$scope.view = 
 			display: 'loader'
 			errorType: ''
@@ -39,8 +38,6 @@ angular.module 'LocalHyper.creditHistory', []
 
 
 			onSuccess : (data, displayLimit)->
-				console.log '--creditr history details'
-				console.log data 
 				@display = 'noError'
 				creditHistory = _.size(data)
 				if creditHistory > 0
@@ -66,7 +63,7 @@ angular.module 'LocalHyper.creditHistory', []
 			creditHistory : ->
 				params = 
 					page: @page
-					displayLimit: 3
+					displayLimit: 5
 					
 				creditHistoryAPI.getCreditHistory params
 				.then (data)=>
