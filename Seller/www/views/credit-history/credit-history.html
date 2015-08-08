@@ -1,0 +1,66 @@
+<ion-view view-title="Credit History">
+
+	<ion-content ng-switch="view.display">
+
+			<ul class="list">
+				<li class="item">
+					<div class="row"> 
+							<div class="col col-50"> Toatal credit used  </div> 
+							 <div class="col col-50"> 50 </div> 
+					</div>
+				</li>
+			</ul>
+
+			<ion-refresher
+				on-refresh="view.onPullToRefresh()" 
+				class="aj-refresher">
+			</ion-refresher>
+
+			<ion-list 
+				class="card-list" 
+				ng-switch-when="noError">
+
+				<div class="card">
+					<div class="row">
+
+						<div class="col col-50">
+							<div class="">
+								Date : 16/6/2015
+								<br>
+								Product Name : Panosonic
+								<br>
+								Offer made 
+							</div>	
+						</div>
+
+						<div class="col col-50">
+							<div class="pull-right">
+								<p> Credit Points Used </p>
+								
+								   <h2> &nbsp; &nbsp; 1 </h2> 
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+			</ion-list>
+
+			<aj-error
+				ng-switch-when="error"
+				error-type="view.errorType"
+				tap-to-retry="view.onTapToRetry()">
+			</aj-error>
+
+			<ion-infinite-scroll
+				on-infinite="view.onInfiniteScroll()"
+				distance="10%" 
+				class="aj-refresher">
+			</ion-infinite-scroll>
+
+	</ion-content>
+	<ion-footer-bar class="bar-dark">
+	
+	</ion-footer-bar>
+
+</ion-view>

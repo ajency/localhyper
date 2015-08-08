@@ -42,14 +42,53 @@
 			</div>
 
 			<div>
-				<h5>Distance from you: {{view.requestDetails.data.radius.toFixed(1)}} kms radius</h5>
-				<h5>MRP: Rs {{App.toINR(view.requestDetails.data.product.mrp)}}</h5>
-				<h5>Number of bids: {{view.requestDetails.data.offerCount}}</h5>
+				<h5>
+					Model No : {{view.requestDetails.data.product.model_number}}
+				</h5>
+
+				<h5>
+					Request Status : {{App.humanize(view.requestDetails.data.status)}}
+				</h5>
+
+				<h5>
+					Distance from you: {{view.requestDetails.data.radius.toFixed(1)}} kms radius
+				</h5>
+
+				<h5>
+					MRP: Rs {{App.toINR(view.requestDetails.data.product.mrp)}}
+				</h5>
+
+				<h5>
+					Number of bids: {{view.requestDetails.data.offerCount}}
+				</h5>
+
 				<h5>
 					Category: {{view.requestDetails.data.category.parent}} > {{view.requestDetails.data.category.name}} > {{view.requestDetails.data.brand.name}}
 				</h5>
-				<h5>Your last price: DUMMY</h5>
-				<h5>Platform price: DUMMY</h5>
+
+				<h5 ng-if="view.requestDetails.data.lastOfferPrice !== ''">
+					Your last offer price: Rs {{App.toINR(view.requestDetails.data.lastOfferPrice)}}
+				</h5>
+
+				<h5 ng-if="view.requestDetails.data.lastOfferPrice === ''">
+					Your last offer price: N/A
+				</h5>
+
+				<h5 ng-if="view.requestDetails.data.onlinePrice !== ''">
+					Online price: Rs {{App.toINR(view.requestDetails.data.onlinePrice)}}
+				</h5>
+
+				<h5 ng-if="view.requestDetails.data.onlinePrice === ''">
+					Online price: N/A
+				</h5>
+
+				<h5 ng-if="view.requestDetails.data.platformPrice !== ''">
+					Platform price: Rs {{App.toINR(view.requestDetails.data.platformPrice)}}
+				</h5>
+
+				<h5 ng-if="view.requestDetails.data.platformPrice === ''">
+					Platform price: N/A
+				</h5>
 			</div>
 
 			<br>
@@ -62,7 +101,8 @@
 							name="group"
 							value="localPrice"
 							ng-model="view.requestDetails.price"
-							ng-change="App.resize();">
+							ng-change="App.resize();"
+							ng-disabled="view.requestDetails.data.platformPrice === ''">
 
 						<div class="item-content item-text-wrap">
 							<sm> Local Price </sm>
@@ -78,7 +118,8 @@
 							name="group"
 							value="onlinePrice"
 							ng-model="view.requestDetails.price"
-							ng-change="App.resize();">
+							ng-change="App.resize();"
+							ng-disabled="view.requestDetails.data.onlinePrice === ''">
 
 						<div class="item-content">
 							<sm> Online Price </sm>

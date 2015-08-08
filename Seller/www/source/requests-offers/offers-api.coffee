@@ -39,6 +39,18 @@ angular.module 'LocalHyper.requestsOffers'
 
 		defer.promise
 
+	OffersAPI.getAcceptedOfferCount = ->
+		defer = $q.defer()
+		params = "sellerId": User.getId()
+
+		$http.post 'functions/getAcceptedOfferCount', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
 	OffersAPI.acceptedOfferId = (action, id)->
 		switch action
 			when 'set'

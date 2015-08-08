@@ -5,10 +5,13 @@ angular.module 'LocalHyper.auth'
 
 	SmsAPI = {}
 
-	SmsAPI.requestSMSCode = (phone)->
+	SmsAPI.requestSMSCode = (phone, displayName, userType)->
 		defer = $q.defer()
 
-		$http.post 'functions/sendSMSCode', phone: phone
+		$http.post 'functions/sendSMSCode', 
+			phone: phone
+			displayName: displayName
+			userType: userType
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->

@@ -2,15 +2,19 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope'
-	, '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout'
+	, '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate'
+	, '$q', '$timeout', '$ionicLoading', '$ionicPlatform'
 	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI
-	, CSpinner, $ionicScrollDelegate, $q, $timeout)->
+	, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform)->
 
 		$scope.view = 
 			display: 'loader'
 			errorType: ''
 			requests: []
 			pendingRequestIds: []
+
+			sortBy: '-createdAt.iso'
+			sortName: 'Most Recent'
 
 			requestDetails:
 				modal: null
@@ -78,7 +82,7 @@ angular.module 'LocalHyper.requestsOffers'
 					if !request.notification.hasSeen
 						requests = $scope.view.requests
 						index = _.findIndex requests, (val)-> val.id is request.id
-						RequestsAPI.updateStatus request.id
+						RequestsAPI.updateNotificationStatus request.id
 						.then (data)=>
 							App.notification.decrement()
 							requests[index].notification.hasSeen = true
@@ -114,9 +118,9 @@ angular.module 'LocalHyper.requestsOffers'
 					priceValue = ''
 					switch @price
 						when 'localPrice'
-							priceValue = '9000'
+							priceValue = @data.platformPrice
 						when 'onlinePrice'
-							priceValue = '9000'
+							priceValue = @data.onlinePrice
 						when 'yourPrice'
 							priceValue = @offerPrice
 
@@ -158,13 +162,12 @@ angular.module 'LocalHyper.requestsOffers'
 				@getRequests()
 				@requestDetails.loadModal()
 
-			reFetch : ->
+			autoFetch : ->
 				@page = 0
 				@requests = []
 				@display = 'loader'
 				@errorType = ''
 				@getRequests()
-				@requestDetails.loadModal()
 
 			getRequests : ->
 				RequestsAPI.getAll()
@@ -179,6 +182,7 @@ angular.module 'LocalHyper.requestsOffers'
 			onSuccess : (data)->
 				@display = 'noError'
 				@requests = data.requests
+				App.notification.newRequests = _.size @requests
 				@markPendingNotificationsAsSeen()
 			
 			onError : (type)->
@@ -197,7 +201,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 			markPendingNotificationsAsSeen : ->
 				_.each @pendingRequestIds, (requestId)=>
-					RequestsAPI.updateStatus requestId
+					RequestsAPI.updateNotificationStatus requestId
 					.then (data)=>
 						index = _.findIndex @requests, (val)-> val.id is requestId
 						if index isnt -1
@@ -206,6 +210,75 @@ angular.module 'LocalHyper.requestsOffers'
 
 				@pendingRequestIds = []
 
+			showSortOptions : ->
+				$ionicLoading.show
+					scope: $scope
+					templateUrl: 'views/requests-offers/new-request-sort.html'
+					hideOnStateChange: true
+
+			simulateFetch : ->
+				App.scrollTop()
+				@display = 'loader'
+				$timeout =>
+					@display = 'noError'
+					App.resize()
+				, 500
+
+			onSort : (sortBy, sortName)->
+				$ionicLoading.hide()
+
+				switch sortBy
+					when '-createdAt.iso'
+						if @sortBy isnt '-createdAt.iso'
+							@sortBy = '-createdAt.iso'
+							@sortName = sortName
+							@simulateFetch()
+					when '-product.mrp'
+						if @sortBy isnt '-product.mrp'
+							@sortBy = '-product.mrp'
+							@sortName = sortName
+							@simulateFetch()
+					when 'product.mrp'
+						if @sortBy isnt 'product.mrp'
+							@sortBy = 'product.mrp'
+							@sortName = sortName
+							@simulateFetch()
+					when '-radius'
+						if @sortBy isnt '-radius'
+							@sortBy = '-radius'
+							@sortName = sortName
+							@simulateFetch()
+					when 'radius'
+						if @sortBy isnt 'radius'
+							@sortBy = 'radius'
+							@sortName = sortName
+							@simulateFetch()
+					when '-offerCount'
+						if @sortBy isnt '-offerCount'
+							@sortBy = '-offerCount'
+							@sortName = sortName
+							@simulateFetch()
+					when 'offerCount'
+						if @sortBy isnt 'offerCount'
+							@sortBy = 'offerCount'
+							@sortName = sortName
+							@simulateFetch()
+
+
+		onDeviceBack = ->
+			# filter = $scope.view.filter
+			if $('.loading-container').hasClass 'visible'
+				$ionicLoading.hide()
+			# else if filter.modal.isShown()
+			# 	filter.closeModal()
+			else
+				App.goBack -1
+
+		$scope.$on '$ionicView.enter', ->
+			$ionicPlatform.onHardwareBackButton onDeviceBack
+
+		$scope.$on '$ionicView.leave', ->
+			$ionicPlatform.offHardwareBackButton onDeviceBack
 
 		
 		$rootScope.$on 'in:app:notification', (e, obj)->
@@ -216,6 +289,8 @@ angular.module 'LocalHyper.requestsOffers'
 				when 'cancelled_request'
 					$rootScope.$broadcast 'get:unseen:notifications'
 					$scope.view.requestDetails.removeRequestCard payload.id
+				when 'accepted_offer'
+					$rootScope.$broadcast 'get:accepted:offer:count'
 		
 		$rootScope.$on 'push:notification:click', (e, obj)->
 			payload = obj.payload
@@ -233,10 +308,9 @@ angular.module 'LocalHyper.requestsOffers'
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
 
-
 		$rootScope.$on 'category:chain:changed', ->
 			# App.scrollTop()
-			$scope.view.reFetch()
+			$scope.view.autoFetch()
 ]
 
 

@@ -2,11 +2,13 @@ angular.module('LocalHyper.auth').factory('SmsAPI', [
   '$q', '$http', function($q, $http) {
     var SmsAPI;
     SmsAPI = {};
-    SmsAPI.requestSMSCode = function(phone) {
+    SmsAPI.requestSMSCode = function(phone, displayName, userType) {
       var defer;
       defer = $q.defer();
       $http.post('functions/sendSMSCode', {
-        phone: phone
+        phone: phone,
+        displayName: displayName,
+        userType: userType
       }).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {

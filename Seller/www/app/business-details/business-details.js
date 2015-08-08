@@ -1,5 +1,5 @@
 angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker) {
     $scope.view = {
       name: '',
       phone: '',
@@ -19,6 +19,41 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
             return this.radius--;
           }
         }
+      },
+      workingDays: [
+        {
+          name: 'Mon',
+          value: 'Monday',
+          selected: false
+        }, {
+          name: 'Tue',
+          value: 'Tuesday',
+          selected: false
+        }, {
+          name: 'Wed',
+          value: 'Wednesday',
+          selected: false
+        }, {
+          name: 'Thur',
+          value: 'Thursday',
+          selected: false
+        }, {
+          name: 'Fri',
+          value: 'Friday',
+          selected: false
+        }, {
+          name: 'Sat',
+          value: 'Saturday',
+          selected: false
+        }, {
+          name: 'Sun',
+          value: 'Sunday',
+          selected: false
+        }
+      ],
+      workTimings: {
+        start: '',
+        end: ''
       },
       location: {
         modal: null,
@@ -119,7 +154,9 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           this.latitude = details.latitude;
           this.longitude = details.longitude;
           this.location.latLng = new google.maps.LatLng(details.latitude, details.longitude);
-          return this.location.address = details.address;
+          this.location.address = details.address;
+          this.workTimings = details.workTimings;
+          return this.workingDays = details.workingDays;
         }
       },
       loadLocationModal: function() {
@@ -132,6 +169,43 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
             return _this.location.modal = modal;
           };
         })(this));
+      },
+      areWorkingDaysSelected: function() {
+        var selected;
+        selected = _.pluck(this.workingDays, 'selected');
+        return _.contains(selected, true);
+      },
+      getNonWorkingDays: function() {
+        var offDays;
+        offDays = [];
+        _.each(this.workingDays, (function(_this) {
+          return function(days) {
+            if (!days.selected) {
+              return offDays.push(days.value);
+            }
+          };
+        })(this));
+        return offDays;
+      },
+      addWorkTimings: function(type) {
+        var options;
+        if (App.isWebView()) {
+          options = {
+            date: new Date(),
+            mode: 'time',
+            is24Hour: true,
+            okText: 'Set',
+            androidTheme: 5
+          };
+          return $cordovaDatePicker.show(options).then((function(_this) {
+            return function(date) {
+              return _this.workTimings[type] = moment(date).format('HH:mm:ss');
+            };
+          })(this));
+        } else {
+          this.workTimings.start = '9:00:00';
+          return this.workTimings.end = '18:00:00';
+        }
       },
       onChangeLocation: function() {
         var mapHeight;
@@ -169,71 +243,75 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
       },
       onConfirmLocation: function() {
         if (!_.isNull(this.location.latLng) && this.location.addressFetch) {
-          return CDialog.confirm('Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']).then((function(_this) {
-            return function(btnIndex) {
-              if (btnIndex === 1) {
-                _this.location.address.full = GoogleMaps.fullAddress(_this.location.address);
-                _this.confirmedAddress = _this.location.address.full;
-                return _this.location.modal.hide();
-              }
-            };
-          })(this));
+          this.location.address.full = GoogleMaps.fullAddress(this.location.address);
+          this.confirmedAddress = this.location.address.full;
+          return this.location.modal.hide();
         } else {
           return CToast.show('Please wait, getting location details...');
         }
       },
+      saveBussinessDetails: function() {
+        return Storage.bussinessDetails('set', {
+          name: this.name,
+          phone: this.phone,
+          businessName: this.businessName,
+          address: this.location.address,
+          confirmedAddress: this.confirmedAddress,
+          latitude: this.latitude,
+          longitude: this.longitude,
+          deliveryRadius: this.delivery.radius,
+          location: {
+            address: this.location.address
+          },
+          delivery: {
+            radius: this.delivery.radius
+          },
+          workTimings: this.workTimings,
+          workingDays: this.workingDays,
+          offDays: this.getNonWorkingDays()
+        });
+      },
       onNext: function() {
+        var user;
         if (_.contains([this.businessName, this.name, this.phone], '')) {
           return CToast.show('Fill up all fields');
         } else if (_.isUndefined(this.phone)) {
           return CToast.show('Please enter valid phone number');
         } else if (this.confirmedAddress === '') {
           return CToast.show('Please select your location');
+        } else if (!this.areWorkingDaysSelected()) {
+          return CToast.show('Please select your working days');
+        } else if (_.contains([this.workTimings.start, this.workTimings.end], '')) {
+          return CToast.show('Please select your work timings');
         } else {
           this.latitude = this.location.latLng.lat();
           this.longitude = this.location.latLng.lng();
-          User.info('set', $scope.view);
-          return Storage.bussinessDetails('set', {
-            name: this.name,
-            phone: this.phone,
-            businessName: this.businessName,
-            address: this.location.address,
-            confirmedAddress: this.confirmedAddress,
-            latitude: this.latitude,
-            longitude: this.longitude,
-            deliveryRadius: this.delivery.radius,
-            location: {
-              address: this.location.address
-            },
-            delivery: {
-              radius: this.delivery.radius
-            }
-          }).then(function() {
-            if (App.previousState === 'my-profile' || App.previousState === '') {
-              CSpinner.show('', 'Please wait...');
-              return Storage.bussinessDetails('get').then(function(details) {
-                var user;
-                User.info('reset', details);
-                user = User.info('get');
-                user = User.info('get');
-                return AuthAPI.isExistingUser(user).then((function(_this) {
-                  return function(data) {
-                    return AuthAPI.loginExistingUser(data.userObj);
-                  };
-                })(this)).then(function(success) {
-                  return App.navigate('my-profile');
-                }, (function(_this) {
-                  return function(error) {
-                    return CToast.show('Please try again data not saved');
-                  };
-                })(this))["finally"](function() {
-                  return CSpinner.hide();
-                });
-              });
-            } else {
-              return App.navigate('category-chains');
-            }
-          });
+          this.offDays = this.getNonWorkingDays();
+          if (App.previousState === 'my-profile' || (App.previousState === '' && User.getCurrent() !== null)) {
+            User.info('set', $scope.view);
+            CSpinner.show('', 'Please wait...');
+            user = User.info('get');
+            return AuthAPI.isExistingUser(user).then((function(_this) {
+              return function(data) {
+                return AuthAPI.loginExistingUser(data.userObj);
+              };
+            })(this)).then((function(_this) {
+              return function(success) {
+                _this.saveBussinessDetails();
+                return App.navigate('my-profile');
+              };
+            })(this), (function(_this) {
+              return function(error) {
+                return CToast.show('Please try again data not saved');
+              };
+            })(this))["finally"](function() {
+              return CSpinner.hide();
+            });
+          } else {
+            User.info('set', $scope.view);
+            this.saveBussinessDetails();
+            return App.navigate('category-chains');
+          }
         }
       }
     };
@@ -251,6 +329,7 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
     return $stateProvider.state('business-details', {
       url: '/business-details',
       parent: 'main',
+      cache: false,
       views: {
         "appContent": {
           controller: 'BusinessDetailsCtrl',

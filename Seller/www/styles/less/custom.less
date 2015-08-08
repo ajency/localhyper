@@ -10,7 +10,7 @@
 /* Commen css */
 /************************************/
 
-h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider {
+h1, h2, h3, h4, h5, h6, p, input, button, select, textarea, .h1, .h2, .h3, .h4, .h5, .h6 .item, .item-divider, span, div, input, textarea, select, small, big, b, strong, body {
 	font-family: 'source_sans' !important;
 	color: @black;
 }
@@ -153,14 +153,31 @@ sm{
 /************************************/
 /* HEADER */
 /************************************/
-
-.has-header{
-	background:@gray-transperent;
+.nav-bar-title{
+	img{
+		width: 40%;
+	    margin-top: 5px;
+	}
 }
-[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light, .bar.bar-header {
-	background-image: url(../../img/header-bg.jpg) !important;
+.has-header{
+	// background: @gray-transperent;
+	background-color: #f2f1ed;
+}
+.bar-subheader{
+		background-color: #1f1f1f !important;
+		height: 60px;
+}
+[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light, .bar.bar-header  {
+	/*background-image: url(../../img/header-bg.jpg) !important;*/
+	background-color: #1f1f1f !important;
 	background-repeat: repeat-x !important;
-	border-bottom:1px solid @gray-lighter !important;
+	/*border-bottom:1px solid @gray-lighter !important;*/
+	.button{
+		color:@white;
+	}
+	.nav-bar-title{
+		color:@white;
+	}
 	.notification{
 		  height: 20px;
 		  width: 20px;
@@ -1085,5 +1102,89 @@ h5.with-sep {
 		margin-top: 8px;
 		/* color: @brand-primary; */
 		font-weight: bold;
+	}
+}
+
+//Verification
+.verify-first {
+	&.has-header {
+		background-color: #fff;
+		input {
+			background-color: #EFEFEF;
+		}
+	}
+	.verify-step-img {
+		height: 130px;
+	}
+	.item-input {
+		padding: 0;
+	}
+	input {
+		background-color: #fff;
+		height: 40px;
+		border-color: #ccc !important;
+		font-size: 16px;
+		padding: 0;
+		line-height: 43px;
+		&:active, &:focus {
+			border-color: @brand-primary !important;
+		}
+	}
+	h5 {
+		margin-bottom: 8px;
+		font-size: 16px;
+	}
+	.info-top {
+		padding: 10px 25px;
+		margin-top: 15px;
+		font-size: 14px;
+		line-height: 17px;
+	}
+}
+.info-top {
+		padding: 10px 25px;
+		margin-top: 15px;
+		font-size: 14px;
+		line-height: 17px;
+	}
+// .verify-setp3 {
+// 	height: 130px;
+// }
+.maxAttempts-div {
+	.verify-step-img {
+		height: 130px;
+	}
+	.btn-casup {
+		line-height: normal;
+		padding: 10px 8px;
+		padding-left: 72px;
+		position: relative;
+		text-align: left;
+		i {
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			height: 100%;
+			background-color: @brand-primary;
+			color: #fff;
+			padding: 13px 20px;
+		}
+		span {
+			display: block;
+			margin-top: 3px;
+			font-size: 20px;
+			font-weight: bold;
+			color: #444;
+		}
+		&.activated {
+			i {
+				background-color: desaturate(darken(@brand-primary, 25%), 25%);
+				// color: @brand-primary;
+			}
+			span {
+				color: #fff;
+			}
+		}
 	}
 }

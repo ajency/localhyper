@@ -48,6 +48,10 @@
 				</h5>
 
 				<h5>
+					Offer Status : {{App.humanize(view.offerDetails.data.offerStatus)}}
+				</h5>
+
+				<h5>
 					Distance from you: {{view.offerDetails.data.distanceFromCustomer.toFixed(2)}} kms radius
 				</h5>
 				
@@ -55,25 +59,15 @@
 					MRP: Rs  {{App.toINR(view.offerDetails.data.product.mrp)}}
 				</h5>
 
-				<h5>Number of bids: DUMMY</h5>
+				<h5>Number of bids: {{view.offerDetails.data.request.offerCount}}</h5>
 
 				<h5>
-					Category: {{view.offerDetails.data.category.parent}} > {{view.offerDetails.data.category.name}} > {{view.offerDetails.data.brand.name}}
+					Category: {{view.offerDetails.data.category.parentCategory}} > {{view.offerDetails.data.category.name}} > {{view.offerDetails.data.brand.name}}
 				</h5>
 
 				<h5>
 					Your offer price: {{App.toINR(view.offerDetails.data.offerPrice)}}
 				</h5>
-
-				<div ng-if="view.offerDetails.data.request.status == 'open' ">
-					<h5> 
-						Request expires in  :
-	            	 	<sm ng-if="view.offerDetails.showExpiry"
-							aj-count-down
-							created-at="view.offerDetails.data.request.createdAt">
-						</sm>
-					</h5>
-				</div>
 
 				<h5 ng-if="view.offerDetails.data.request.comments!==''">
 					Customer Comments : {{view.offerDetails.data.request.comments}} 
@@ -95,13 +89,77 @@
 						<p>
 							<span class="ti">Delivery Time</span>
 							<span class="ac-ti">
-								<span 
-									class="big">
-									{{view.offerDetails.data.offerDeliveryTime.value}} {{view.offerDetails.data.offerDeliveryTime.unit}}
+								<span class="big">
+									{{view.deliveryTime.humanize(view.offerDetails.data.offerDeliveryTime)}}
 								</span>
 							</span>
 						</p>
 					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="col col-80">
+					<label class="item item-input item-select">
+						<div class="input-label">
+							Delivery Status
+						</div>
+						<select 
+							ng-model="view.offerDetails.data.deliveryStatus"
+							ng-change="view.offerDetails.onDeliveryStatusChange()"
+							ng-disabled="view.offerDetails.showChange">
+
+							<option value="sent_for_delivery">
+								Sent for delivery
+							</option>
+							<option value="successful">
+								Successful
+							</option>
+							<option 
+								value="failed_delivery">
+								Failed
+							</option>
+						</select>
+					</label>
+				</div>
+
+				<div class="col" ng-if="view.offerDetails.showChange">
+					<button
+						class="button button-assertive"
+						ng-click="view.offerDetails.showChange = false;">
+						Change
+					</button>
+				</div>
+
+				<div class="col" ng-if="!view.offerDetails.showChange">
+					<button
+						class="button button-dark"
+						ng-click="view.offerDetails.onUpdateCancel();">
+						Cancel
+					</button>
+				</div>
+			</div>
+			
+			<div ng-if="view.offerDetails.failedDelivery.display">
+				<h4>Reason for failure</h4>
+			
+				<label class="item item-input">
+					<textarea 
+						placeholder=""
+						ng-model="view.offerDetails.failedDelivery.reason"
+						ng-disabled="view.offerDetails.showChange">
+					</textarea>
+				</label>
+			</div>
+			
+			<div class="row">
+				<div class="col">
+					<button
+						class="button button-block button-assertive"
+						ng-if="!view.offerDetails.showChange"
+						ng-click="view.offerDetails.updateDeliveryStatus();">
+						Update
+					</button>
 				</div>
 			</div>
 

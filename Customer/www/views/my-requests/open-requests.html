@@ -3,8 +3,7 @@
 	ng-init="view.init()">
 
 	<ion-nav-title>
-	MY REQUEST
-		<!-- <img src="img/logo.png"/> -->
+		My Request
     </ion-nav-title>
 
 	<ion-content ng-switch="view.display">
@@ -38,33 +37,33 @@
 						
 					</div>
 					<div class="row item border-none p-t-10" >
-			        <div class="col  p-t-0">
-			            <sm class="light-gray"> Local Price</sm><br>
-			            <h3 class=" item-text-wrap margin-none big-txt ">
-			            	<span class="WebRupee subdued">&#x20B9;</span> {{request.product.mrp.toLocaleString()}}
-			            </h3>
+				        <div class="col  p-t-0">
+				            <sm class="light-gray"> Local Price</sm><br>
+				            <h3 class=" item-text-wrap margin-none big-txt ">
+				            	<span class="WebRupee subdued">&#x20B9;</span> {{request.product.mrp.toLocaleString()}}
+				            </h3>
+				        </div>
+				        <div class="col p-t-0">
+				        	<div class="pull-right">
+				            <div class="offer"> {{request.offerCount}} </div>
+				            <h4 class="offertxt light-gray"> No of offers</h4>
+				           	</div>
+				        </div>
+			    	</div>
+			    <div class="row item item-divider" >
+			        <div class="col  col-25 ">
+			           <sm class="subdued "><i class="ion-ios-clock-outline"> </i>{{request.timeStr}}</sm>
 			        </div>
-			        <div class="col p-t-0">
-			        	<div class="pull-right">
-			            <div class="offer"> {{request.offerCount}} </div>
-			            <h4 class="offertxt light-gray"> No of offers</h4>
-			           	</div>
+			        <div class="col col-75">
+			         	<h3 class="margin-none status text-right m-t-5">  <b> {{request.status}}</b></h3>
 			        </div>
 			    </div>
-			        <div class="item item-divider">
-			        <div class="pull-right ">
-			           <h3 class="margin-none "> Status: {{request.status}}</h3>
-			        </div>
-
-			        <div class="pull-left ">
-			            <sm class="subdued"><i class="ion-ios-clock-outline"> </i>{{request.timeStr}}</sm>
-			        </div>
-			    </div>
+			     
 			</ion-item>
 		</ion-list>	
-		<ion-item ng-if="view.getOpenProducts">
-			No more products to display.
-		</ion-item>
+		<div ng-if="view.getOpenProducts">
+			<h4 class="text-center ">No more requests to display.</h4>
+		</div>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
@@ -81,13 +80,13 @@
 
 	</ion-content>
 
-	<ion-footer-bar class="bar-dark">
+	<ion-footer-bar class="bar-stable">
 		<div class="row">
 			<div class="col col-50 text-center" >
-				<h5 class="margin-none text-light normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
+				<h5 class="margin-none  normal"><i class="ion ion-arrow-swap"></i> SORT</h5>
 			</div>
 			<div class="col col-50 text-center border-left" ng-click="view.Filter()">
-				<h5 class="margin-none text-light normal"><i class="ion ion-funnel"></i> FILTER</h5>
+				<h5 class="margin-none  normal"><i class="ion ion-funnel"></i> FILTER</h5>
 			</div>
 		</div>
 	</ion-footer-bar>

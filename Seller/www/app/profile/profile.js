@@ -1,10 +1,14 @@
 angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
-  '$q', '$scope', 'User', 'App', 'CToast', 'Storage', 'CategoriesAPI', 'AuthAPI', 'CSpinner', 'CategoryChains', '$rootScope', function($q, $scope, User, App, CToast, Storage, CategoriesAPI, AuthAPI, CSpinner, CategoryChains, $rootScope) {
+  '$q', '$scope', 'User', 'App', 'CToast', 'Storage', 'CategoriesAPI', 'AuthAPI', 'CSpinner', 'CategoryChains', '$rootScope', 'BussinessDetails', function($q, $scope, User, App, CToast, Storage, CategoriesAPI, AuthAPI, CSpinner, CategoryChains, $rootScope, BussinessDetails) {
     $scope.view = {
       showDelete: false,
+      businessName: '',
+      phone: '',
       categoryChains: [],
       setCategoryChains: function() {
-        return this.categoryChains = CategoryChains;
+        this.categoryChains = CategoryChains;
+        this.businessName = BussinessDetails.businessName;
+        return this.phone = BussinessDetails.phone;
       },
       getBrands: function(brands) {
         var brandNames;
@@ -26,31 +30,27 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
         return this.categoryChains.splice(spliceIndex, 1);
       },
       saveDetails: function() {
-        var defer;
-        CSpinner.show('', 'Please wait...');
-        CategoriesAPI.categoryChains('set', this.categoryChains);
-        Storage.categoryChains('set', this.categoryChains);
-        defer = $q.defer();
-        return Storage.bussinessDetails('get').then(function(details) {
-          var user;
-          User.info('reset', details);
-          user = User.info('get');
-          user = User.info('get');
-          return AuthAPI.isExistingUser(user).then((function(_this) {
-            return function(data) {
+        return Storage.bussinessDetails('get').then((function(_this) {
+          return function(details) {
+            var user;
+            User.info('reset', details);
+            user = User.info('get');
+            CSpinner.show('', 'Please wait...');
+            return AuthAPI.isExistingUser(user).then(function(data) {
+              CSpinner.hide();
               return AuthAPI.loginExistingUser(data.userObj);
-            };
-          })(this)).then(function(success) {
-            $rootScope.$broadcast('category:chain:changed');
-            return App.navigate('new-requests');
-          }, (function(_this) {
-            return function(error) {
+            }).then(function(success) {
+              CategoriesAPI.categoryChains('set', _this.categoryChains);
+              Storage.categoryChains('set', _this.categoryChains);
+              $rootScope.$broadcast('category:chain:changed');
+              return CToast.show('Details saved');
+            }, function(error) {
               return CToast.show('Please try again data not saved');
-            };
-          })(this))["finally"](function() {
-            return CSpinner.hide();
-          });
-        });
+            })["finally"](function() {
+              return CSpinner.hide();
+            });
+          };
+        })(this));
       }
     };
     $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
@@ -98,6 +98,14 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
               } else {
                 defer.resolve(chains);
               }
+              return defer.promise;
+            },
+            BussinessDetails: function($q, Storage) {
+              var defer;
+              defer = $q.defer();
+              Storage.bussinessDetails('get').then(function(details) {
+                return defer.resolve(details);
+              });
               return defer.promise;
             }
           }

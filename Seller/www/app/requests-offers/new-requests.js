@@ -1,10 +1,13 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout', function($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate, $q, $timeout) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout', '$ionicLoading', '$ionicPlatform', function($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform) {
+    var onDeviceBack;
     $scope.view = {
       display: 'loader',
       errorType: '',
       requests: [],
       pendingRequestIds: [],
+      sortBy: '-createdAt.iso',
+      sortName: 'Most Recent',
       requestDetails: {
         modal: null,
         data: {},
@@ -84,7 +87,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             index = _.findIndex(requests, function(val) {
               return val.id === request.id;
             });
-            return RequestsAPI.updateStatus(request.id).then((function(_this) {
+            return RequestsAPI.updateNotificationStatus(request.id).then((function(_this) {
               return function(data) {
                 App.notification.decrement();
                 return requests[index].notification.hasSeen = true;
@@ -131,10 +134,10 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           priceValue = '';
           switch (this.price) {
             case 'localPrice':
-              priceValue = '9000';
+              priceValue = this.data.platformPrice;
               break;
             case 'onlinePrice':
-              priceValue = '9000';
+              priceValue = this.data.onlinePrice;
               break;
             case 'yourPrice':
               priceValue = this.offerPrice;
@@ -186,13 +189,12 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         this.getRequests();
         return this.requestDetails.loadModal();
       },
-      reFetch: function() {
+      autoFetch: function() {
         this.page = 0;
         this.requests = [];
         this.display = 'loader';
         this.errorType = '';
-        this.getRequests();
-        return this.requestDetails.loadModal();
+        return this.getRequests();
       },
       getRequests: function() {
         return RequestsAPI.getAll().then((function(_this) {
@@ -211,6 +213,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       onSuccess: function(data) {
         this.display = 'noError';
         this.requests = data.requests;
+        App.notification.newRequests = _.size(this.requests);
         return this.markPendingNotificationsAsSeen();
       },
       onError: function(type) {
@@ -230,7 +233,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       markPendingNotificationsAsSeen: function() {
         _.each(this.pendingRequestIds, (function(_this) {
           return function(requestId) {
-            return RequestsAPI.updateStatus(requestId).then(function(data) {
+            return RequestsAPI.updateNotificationStatus(requestId).then(function(data) {
               var index;
               index = _.findIndex(_this.requests, function(val) {
                 return val.id === requestId;
@@ -243,8 +246,91 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           };
         })(this));
         return this.pendingRequestIds = [];
+      },
+      showSortOptions: function() {
+        return $ionicLoading.show({
+          scope: $scope,
+          templateUrl: 'views/requests-offers/new-request-sort.html',
+          hideOnStateChange: true
+        });
+      },
+      simulateFetch: function() {
+        App.scrollTop();
+        this.display = 'loader';
+        return $timeout((function(_this) {
+          return function() {
+            _this.display = 'noError';
+            return App.resize();
+          };
+        })(this), 500);
+      },
+      onSort: function(sortBy, sortName) {
+        $ionicLoading.hide();
+        switch (sortBy) {
+          case '-createdAt.iso':
+            if (this.sortBy !== '-createdAt.iso') {
+              this.sortBy = '-createdAt.iso';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case '-product.mrp':
+            if (this.sortBy !== '-product.mrp') {
+              this.sortBy = '-product.mrp';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case 'product.mrp':
+            if (this.sortBy !== 'product.mrp') {
+              this.sortBy = 'product.mrp';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case '-radius':
+            if (this.sortBy !== '-radius') {
+              this.sortBy = '-radius';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case 'radius':
+            if (this.sortBy !== 'radius') {
+              this.sortBy = 'radius';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case '-offerCount':
+            if (this.sortBy !== '-offerCount') {
+              this.sortBy = '-offerCount';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+            break;
+          case 'offerCount':
+            if (this.sortBy !== 'offerCount') {
+              this.sortBy = 'offerCount';
+              this.sortName = sortName;
+              return this.simulateFetch();
+            }
+        }
       }
     };
+    onDeviceBack = function() {
+      if ($('.loading-container').hasClass('visible')) {
+        return $ionicLoading.hide();
+      } else {
+        return App.goBack(-1);
+      }
+    };
+    $scope.$on('$ionicView.enter', function() {
+      return $ionicPlatform.onHardwareBackButton(onDeviceBack);
+    });
+    $scope.$on('$ionicView.leave', function() {
+      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
+    });
     $rootScope.$on('in:app:notification', function(e, obj) {
       var payload;
       payload = obj.payload;
@@ -254,6 +340,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         case 'cancelled_request':
           $rootScope.$broadcast('get:unseen:notifications');
           return $scope.view.requestDetails.removeRequestCard(payload.id);
+        case 'accepted_offer':
+          return $rootScope.$broadcast('get:accepted:offer:count');
       }
     });
     $rootScope.$on('push:notification:click', function(e, obj) {
@@ -275,7 +363,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       return App.hideSplashScreen();
     });
     return $rootScope.$on('category:chain:changed', function() {
-      return $scope.view.reFetch();
+      return $scope.view.autoFetch();
     });
   }
 ]).controller('EachRequestTimeCtrl', [

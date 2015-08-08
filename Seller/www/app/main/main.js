@@ -1,5 +1,5 @@
 angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
-  '$scope', 'App', '$ionicPopover', '$rootScope', '$ionicSideMenuDelegate', 'CSpinner', '$timeout', 'Push', 'User', 'RequestsAPI', '$cordovaSocialSharing', '$cordovaAppRate', function($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, CSpinner, $timeout, Push, User, RequestsAPI, $cordovaSocialSharing, $cordovaAppRate) {
+  '$scope', 'App', '$ionicPopover', '$rootScope', '$ionicSideMenuDelegate', 'CSpinner', '$timeout', 'Push', 'User', 'RequestsAPI', '$cordovaSocialSharing', '$cordovaAppRate', 'OffersAPI', function($scope, App, $ionicPopover, $rootScope, $ionicSideMenuDelegate, CSpinner, $timeout, Push, User, RequestsAPI, $cordovaSocialSharing, $cordovaAppRate, OffersAPI) {
     $scope.view = {
       userPopover: null,
       init: function() {
@@ -7,6 +7,7 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         this.loadPopOver();
         if (User.isLoggedIn()) {
           this.getNotifications();
+          this.getCountOfAcceptedOffers();
         }
         return $ionicSideMenuDelegate.edgeDragThreshold(true);
       },
@@ -21,6 +22,11 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
             }
           };
         })(this));
+      },
+      getCountOfAcceptedOffers: function() {
+        return OffersAPI.getAcceptedOfferCount().then(function(count) {
+          return App.notification.accptedOffers = count;
+        });
       },
       loadPopOver: function() {
         return $ionicPopover.fromTemplateUrl('views/user-popover.html', {
@@ -68,11 +74,14 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         }
       }
     };
-    $rootScope.$on('$user:registration:success', function() {
-      App.notification.icon = true;
+    $rootScope.$on('get:unseen:notifications', function(e, obj) {
       return $scope.view.getNotifications();
     });
-    $rootScope.$on('get:unseen:notifications', function(e, obj) {
+    $rootScope.$on('get:accepted:offer:count', function(e, obj) {
+      return $scope.view.getCountOfAcceptedOffers();
+    });
+    $rootScope.$on('$user:registration:success', function() {
+      App.notification.icon = true;
       return $scope.view.getNotifications();
     });
     $rootScope.$on('in:app:notification', function(e, obj) {

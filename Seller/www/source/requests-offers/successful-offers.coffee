@@ -2,8 +2,10 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'SuccessfulOffersCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
-	, '$timeout', '$rootScope', 'CDialog', '$ionicPlatform'
-	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog, $ionicPlatform)->
+	, '$timeout', '$rootScope', 'CDialog', '$ionicPlatform', 'DeliveryTime'
+	, '$ionicLoading', 'CToast', 'CSpinner', 'RequestsAPI'
+	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CDialog
+	, $ionicPlatform, DeliveryTime, $ionicLoading, CToast, CSpinner, RequestsAPI)->
 
 		$scope.view = 
 			display: 'loader'
@@ -12,8 +14,12 @@ angular.module 'LocalHyper.requestsOffers'
 			page: 0
 			canLoadMore: true
 			refresh: false
+			gotAllOffers: false
+			noAcceptedOffers: false
+			deliveryTime: DeliveryTime
 
 			sortBy: 'updatedAt'
+			sortName: 'Recent Offers'
 			descending: true
 
 			filter:
@@ -82,11 +88,16 @@ angular.module 'LocalHyper.requestsOffers'
 						filterNames.push attribute[0].name
 					@excerpt = filterNames.join ', '
 
+			
 			offerDetails:
 				modal: null
 				showExpiry : false
 				data: {}
 				pendingOfferId: ""
+				showChange: true
+				failedDelivery: 
+					display: false
+					reason: ''
 
 				loadModal : ->
 					$ionicModal.fromTemplateUrl 'views/requests-offers/successful-offer-details.html', 
@@ -96,9 +107,12 @@ angular.module 'LocalHyper.requestsOffers'
 					.then (modal)=>
 						@modal = modal
 				
-				show : (request)->
+				show : (request, show=true)->
 					@data = request
-					@modal.show()
+					@data.deliveryStatus = request.request.status
+					@showChange = true
+					@checkIfFailedDelivery()
+					@modal.show() if show
 					@showExpiry = true
 
 				onNotificationClick : (offerId)->
@@ -114,10 +128,50 @@ angular.module 'LocalHyper.requestsOffers'
 					if @pendingOfferId isnt ""
 						requests = $scope.view.requests
 						index = _.findIndex requests, (offer)=> offer.id is @pendingOfferId
-						@data = requests[index]
-						@showExpiry = true
+						@show requests[index], false
 						@pendingOfferId = ""
 
+				onDeliveryStatusChange : ->
+					@failedDelivery.display = @data.deliveryStatus is 'failed_delivery'
+
+				checkIfFailedDelivery : ->
+					if @data.deliveryStatus is 'failed_delivery'
+						@failedDelivery.display = true
+						@failedDelivery.reason = @data.request.failedDeliveryReason
+					else
+						@failedDelivery.display = false
+						@failedDelivery.reason = ''
+
+				onUpdateCancel : ->
+					@data.deliveryStatus = @data.request.status
+					@checkIfFailedDelivery()
+					@showChange = true
+
+				updateDeliveryStatus : ->
+					if @data.deliveryStatus is 'failed_delivery'
+						if @failedDelivery.reason is ''
+							CToast.show 'Please provide reason for delivery failure'
+							return
+
+					params = 
+						"requestId": @data.request.id
+						"status": @data.deliveryStatus
+						"failedDeliveryReason": @failedDelivery.reason
+
+					CSpinner.show '', 'Please wait...'
+					RequestsAPI.updateRequestStatus params
+					.then =>
+						@data.request.status = @data.deliveryStatus
+						@data.request.failedDeliveryReason = @failedDelivery.reason
+						@showChange = true
+						CToast.showLongBottom 'Delivery status has been updated. '+
+						'Customer will be notified about the status update.'
+					, (error)->
+						CToast.show 'Failed to update status, please try again'
+					.finally ->
+						CSpinner.hide()
+
+			
 			init : ->
 				@offerDetails.loadModal()
 				@filter.loadModal()
@@ -128,6 +182,8 @@ angular.module 'LocalHyper.requestsOffers'
 			autoFetch : ->
 				@page = 0
 				@requests = []
+				@gotAllOffers = false
+				@noAcceptedOffers = false
 				@showOfferHistory()
 
 			reFetch : (refresh=true)->
@@ -135,8 +191,16 @@ angular.module 'LocalHyper.requestsOffers'
 				@page = 0
 				@requests = []
 				@canLoadMore = true
+				@gotAllOffers = false
+				@noAcceptedOffers = false
 				$timeout =>
 					@onScrollComplete()
+
+			showSortOptions : ->
+				$ionicLoading.show
+					scope: $scope
+					templateUrl: 'views/requests-offers/successful-offer-sort.html'
+					hideOnStateChange: true
 
 			showOfferHistory : ->
 				params = 
@@ -172,7 +236,9 @@ angular.module 'LocalHyper.requestsOffers'
 					else @requests = @requests.concat offerData
 				else
 					@canLoadMore = false
+					@noAcceptedOffers = true if _.size(@requests) is 0
 
+				@gotAllOffers = true if !@canLoadMore
 				@offerDetails.handlePendingOffer()
 
 			onError: (type)->
@@ -184,6 +250,8 @@ angular.module 'LocalHyper.requestsOffers'
 				@refresh = true
 				@page = 0
 				@canLoadMore = true
+				@gotAllOffers = false
+				@noAcceptedOffers = false
 				@showOfferHistory()
 
 			onInfiniteScroll : ->
@@ -194,6 +262,28 @@ angular.module 'LocalHyper.requestsOffers'
 				@display = 'loader'
 				@page = 0
 				@canLoadMore = true
+
+			onSort : (sortBy, sortName, descending)->
+				$ionicLoading.hide()
+
+				switch sortBy
+					when 'updatedAt'
+						if @sortBy isnt 'updatedAt'
+							@sortBy = 'updatedAt'
+							@sortName = sortName
+							@descending = descending
+							@reFetch()
+					when 'deliveryDate'
+						if @sortBy isnt 'deliveryDate'
+							@sortBy = 'deliveryDate'
+							@sortName = sortName
+							@descending = descending
+							@reFetch()
+						else if @descending isnt descending
+							@sortBy = 'deliveryDate'
+							@sortName = sortName
+							@descending = descending
+							@reFetch()
 
 
 		onDeviceBack = ->

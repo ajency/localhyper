@@ -21,7 +21,17 @@ textarea,
 .h4,
 .h5,
 .h6 .item,
-.item-divider {
+.item-divider,
+span,
+div,
+input,
+textarea,
+select,
+small,
+big,
+b,
+strong,
+body {
   font-family: 'source_sans' !important;
   color: #000000;
 }
@@ -165,14 +175,31 @@ sm {
 /************************************/
 /* HEADER */
 /************************************/
+.nav-bar-title img {
+  width: 40%;
+  margin-top: 5px;
+}
 .has-header {
-  background: #e8e8e8;
+  background-color: #f2f1ed;
+}
+.bar-subheader {
+  background-color: #1f1f1f !important;
+  height: 60px;
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light,
 .bar.bar-header {
-  background-image: url(../../img/header-bg.jpg) !important;
+  /*background-image: url(../../img/header-bg.jpg) !important;*/
+  background-color: #1f1f1f !important;
   background-repeat: repeat-x !important;
-  border-bottom: 1px solid #cccccc !important;
+  /*border-bottom:1px solid @gray-lighter !important;*/
+}
+[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light .button,
+.bar.bar-header .button {
+  color: #ffffff;
+}
+[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light .nav-bar-title,
+.bar.bar-header .nav-bar-title {
+  color: #ffffff;
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light .notification,
 .bar.bar-header .notification {
@@ -1101,5 +1128,78 @@ h5.with-sep span {
   margin-top: 8px;
   /* color: @brand-primary; */
   font-weight: bold;
+}
+.verify-first.has-header {
+  background-color: #fff;
+}
+.verify-first.has-header input {
+  background-color: #EFEFEF;
+}
+.verify-first .verify-step-img {
+  height: 130px;
+}
+.verify-first .item-input {
+  padding: 0;
+}
+.verify-first input {
+  background-color: #fff;
+  height: 40px;
+  border-color: #ccc !important;
+  font-size: 16px;
+  padding: 0;
+  line-height: 43px;
+}
+.verify-first input:active,
+.verify-first input:focus {
+  border-color: #f35a59 !important;
+}
+.verify-first h5 {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+.verify-first .info-top {
+  padding: 10px 25px;
+  margin-top: 15px;
+  font-size: 14px;
+  line-height: 17px;
+}
+.info-top {
+  padding: 10px 25px;
+  margin-top: 15px;
+  font-size: 14px;
+  line-height: 17px;
+}
+.maxAttempts-div .verify-step-img {
+  height: 130px;
+}
+.maxAttempts-div .btn-casup {
+  line-height: normal;
+  padding: 10px 8px;
+  padding-left: 72px;
+  position: relative;
+  text-align: left;
+}
+.maxAttempts-div .btn-casup i {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: #f35a59;
+  color: #fff;
+  padding: 13px 20px;
+}
+.maxAttempts-div .btn-casup span {
+  display: block;
+  margin-top: 3px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #444;
+}
+.maxAttempts-div .btn-casup.activated i {
+  background-color: #a52827;
+}
+.maxAttempts-div .btn-casup.activated span {
+  color: #fff;
 }
 /*# sourceMappingURL=custom.css.map */

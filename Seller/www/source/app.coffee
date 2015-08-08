@@ -5,11 +5,11 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.auth', 'LocalHyper.businessDetails', 'LocalHyper.main'
 	, 'LocalHyper.categories', 'LocalHyper.brands', 'LocalHyper.googleMaps'
 	, 'LocalHyper.requestsOffers', 'LocalHyper.requestsOffers', 'LocalHyper.profile'
-	, 'LocalHyper.aboutUs']
+	, 'LocalHyper.aboutUs','LocalHyper.suggestProduct','LocalHyper.creditHistory']
 
 
-.run ['$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps'
-	, ($rootScope, App, Push, $timeout, GoogleMaps)->
+.run ['$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps', 'User'
+	, ($rootScope, App, Push, $timeout, GoogleMaps, User)->
 
 		Parse.initialize APP_ID, JS_KEY
 		$rootScope.App = App
@@ -17,6 +17,8 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		#User Notification Icon (Right popover)
 		App.notification = 
 			icon: false
+			newRequests: 0
+			accptedOffers: 0
 			badge: false
 			count: 0
 			increment : ->
@@ -33,6 +35,9 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		$rootScope.$on '$stateChangeSuccess', (ev, to, toParams, from, fromParams)->
 			App.previousState = from.name
 			App.currentState  = to.name
+
+			# if App.currentState is 'business-details'
+			# 	businessDetails = if User.isLoggedIn() then '' else 'business-details'
 
 			#Enable/disable menu & show/hide notification icon
 			hideForStates = ['tutorial', 'business-details', 'verify-begin', 'verify-auto'

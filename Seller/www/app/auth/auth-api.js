@@ -105,7 +105,9 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
         area: address.city,
         deliveryRadius: parseInt(user.delivery.radius),
         supportedCategories: supportedCategories,
-        supportedBrands: supportedBrands
+        supportedBrands: supportedBrands,
+        offDays: user.offDays,
+        workTimings: user.workTimings
       };
       return data;
     };
@@ -139,7 +141,9 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
               "deliveryRadius": info.deliveryRadius,
               "supportedCategories": info.supportedCategories,
               "supportedBrands": info.supportedBrands,
-              "lastLogin": new Date()
+              "lastLogin": new Date(),
+              "offDays": info.offDays,
+              "workTimings": info.workTimings
             });
           });
         };
@@ -168,6 +172,7 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           var defaults;
           installationId = appInstallationId;
           defaults = new Parse.Query('Defaults');
+          defaults.equalTo("type", "SellerCredit");
           return defaults.first();
         };
       })(this)).then((function(_this) {
@@ -190,7 +195,10 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
             "supportedCategories": info.supportedCategories,
             "supportedBrands": info.supportedBrands,
             "lastLogin": new Date(),
-            "credit": defaultObj.get('sellerCredit')
+            "offDays": info.offDays,
+            "workTimings": info.workTimings,
+            "addedCredit": parseFloat(defaultObj.get('value')),
+            "subtractedCredit": 0
           });
           return user.signUp();
         };
@@ -203,6 +211,16 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           "area": user.get('area'),
           "sellerLocation": "default",
           "sellerRadius": "default"
+        });
+      }).then(function() {
+        var Transaction, transaction, user;
+        user = User.getCurrent();
+        Transaction = Parse.Object.extend('Transaction');
+        transaction = new Transaction();
+        return transaction.save({
+          "seller": user,
+          "transactionType": 'add',
+          "creditCount": user.get('addedCredit')
         });
       }).then(function(success) {
         return defer.resolve(success);

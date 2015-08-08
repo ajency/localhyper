@@ -11,8 +11,8 @@
 			<ion-nav-buttons side="left">
 				<img 
 					ng-if="App.logo.small"
-					src="./img/shopoye-logo.png" 
-					style="height: 30px; width: 32px"/>
+					src="./img/shopoye-icon.png" 
+					style=" height: 30px"/>
 			</ion-nav-buttons>
 
 			<ion-nav-buttons side="right">
@@ -23,7 +23,7 @@
 						{{App.notification.count}}
 					</span>
 					<button 
-						class="button button-icon ion-ios-person-outline"
+						class="button button-icon ion-person"
 						ng-click="view.userPopover.show($event)">
 					</button>
 				</div>
@@ -74,7 +74,7 @@
 					If no offer is made for a request within 10 minutes, your last made offer for requested product will be auto sent
 				</sm> -->
 
-				<ion-item ng-click="view.menuClose()">
+				<ion-item ng-click="view.menuClose();App.navigate('credit-history');">
 					<i class="i-history"></i> My credit history
 				</ion-item>
 				
@@ -96,7 +96,7 @@
 					<i class="i-help"></i> Help
 				</ion-item>
 
-				<ion-item ng-click="view.menuClose()">
+				<ion-item ng-click="view.menuClose(); App.navigate('suggest-product');">
 					<i class="i-suggest"></i> Suggest a product
 				</ion-item>
 
