@@ -8,8 +8,8 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.aboutUs','LocalHyper.suggestProduct','LocalHyper.creditHistory']
 
 
-.run ['$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps'
-	, ($rootScope, App, Push, $timeout, GoogleMaps)->
+.run ['$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps', 'User'
+	, ($rootScope, App, Push, $timeout, GoogleMaps, User)->
 
 		Parse.initialize APP_ID, JS_KEY
 		$rootScope.App = App
@@ -35,6 +35,9 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		$rootScope.$on '$stateChangeSuccess', (ev, to, toParams, from, fromParams)->
 			App.previousState = from.name
 			App.currentState  = to.name
+
+			# if App.currentState is 'business-details'
+			# 	businessDetails = if User.isLoggedIn() then '' else 'business-details'
 
 			#Enable/disable menu & show/hide notification icon
 			hideForStates = ['tutorial', 'business-details', 'verify-begin', 'verify-auto'

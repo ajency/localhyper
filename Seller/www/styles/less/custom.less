@@ -153,15 +153,31 @@ sm{
 /************************************/
 /* HEADER */
 /************************************/
-
+.nav-bar-title{
+	img{
+		width: 40%;
+	    margin-top: 5px;
+	}
+}
 .has-header{
 	// background: @gray-transperent;
 	background-color: #f2f1ed;
 }
-[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light, .bar.bar-header {
-	background-image: url(../../img/header-bg.jpg) !important;
+.bar-subheader{
+		background-color: #1f1f1f !important;
+		height: 60px;
+}
+[nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light, .bar.bar-header  {
+	/*background-image: url(../../img/header-bg.jpg) !important;*/
+	background-color: #1f1f1f !important;
 	background-repeat: repeat-x !important;
-	border-bottom:1px solid @gray-lighter !important;
+	/*border-bottom:1px solid @gray-lighter !important;*/
+	.button{
+		color:@white;
+	}
+	.nav-bar-title{
+		color:@white;
+	}
 	.notification{
 		  height: 20px;
 		  width: 20px;
