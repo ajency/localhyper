@@ -103,7 +103,7 @@ angular.module 'LocalHyper.requestsOffers'
 					$ionicModal.fromTemplateUrl 'views/requests-offers/successful-offer-details.html', 
 						scope: $scope,
 						animation: 'slide-in-up' 
-						hardwareBackButtonClose: true
+						hardwareBackButtonClose: false
 					.then (modal)=>
 						@modal = modal
 				
@@ -288,10 +288,13 @@ angular.module 'LocalHyper.requestsOffers'
 
 		onDeviceBack = ->
 			filter = $scope.view.filter
+			detailsModal = $scope.view.offerDetails.modal
 			if $('.loading-container').hasClass 'visible'
 				$ionicLoading.hide()
 			else if filter.modal.isShown()
 				filter.closeModal()
+			else if detailsModal.isShown()
+				detailsModal.hide()
 			else
 				App.goBack -1
 
