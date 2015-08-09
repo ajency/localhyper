@@ -5,11 +5,13 @@ module.exports = (grunt) ->
         options:
           join: true
         files:
-          'cloud/main.js':
+          'js/main.js':
             [
              'source/*.coffee'
              'source/entities/*.coffee'
             ]
+    uglify:
+      my_target: files: 'cloud/main.js': [ 'js/main.js' ]            
     watch:
       files: 
         [
@@ -19,10 +21,11 @@ module.exports = (grunt) ->
       tasks:
         [
           'coffee'
-#         'other-task'
+          'uglify'
         ]
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-contrib-watch'
+  grunt.loadNpmTasks 'grunt-contrib-uglify'
 
   grunt.registerTask 'default', ['coffee']
