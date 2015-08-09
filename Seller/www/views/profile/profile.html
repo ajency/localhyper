@@ -4,9 +4,9 @@
 
 	<ion-content>
 
-		<div class="list card">
+		<div class="list list-inset">
 			<ion-item>
-				Business Name: <b>{{view.businessName}}</b>
+				Business: <b>{{view.businessName}}</b>
 			</ion-item>
 
 			<ion-item>
@@ -14,27 +14,32 @@
 			</ion-item>
 
 			<ion-item>
-				Phone Number: <b>{{view.phone}}</b>
+				Phone Number: <b>+91-{{view.phone}}</b>
 			</ion-item>
 		</div>
 
 		<div class="row">
-			<div class="col card ">
+			<div class="col card">
 				<div class=" item-text-wrap">
-					Available credit points
-					<br><br>
-					20   &nbsp, view details
+					Available Credit Points
+					<br>
+					<div class="row">
+						<div class="col col-50">
+							<h3>{{view.creditAvailable}}</h3>
+						</div>
+						<div class="col" ng-click="App.navigate('credit-history');">
+							</br>
+							View Details
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="col card">
 				<div class=" item-text-wrap">
 					Auto Offer
 				</div>
-				<div class=" item-text-wrap">
-					<div class="pull-left  ">
-		            	 <i class="ion-ios-information-outline"></i>
-		        	</div>
-		        	<div class="pull-right ">
+				<div class="item-text-wrap">
+		        	<div class="pull-right">
 						<label class="toggle toggle-assertive">
 							<input type="checkbox">
 							<div class="track">

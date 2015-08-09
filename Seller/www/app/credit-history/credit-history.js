@@ -23,11 +23,15 @@ angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
         })(this));
       },
       setCreditDetails: function(user) {
-        var totalCredit, usedCredit;
-        totalCredit = user.get('addedCredit');
-        usedCredit = user.get('subtractedCredit');
-        this.creditAvailable = parseInt(totalCredit) - parseInt(usedCredit);
-        return this.creditUsed = usedCredit;
+        return $scope.$apply((function(_this) {
+          return function() {
+            var totalCredit, usedCredit;
+            totalCredit = user.get('addedCredit');
+            usedCredit = user.get('subtractedCredit');
+            _this.creditAvailable = parseInt(totalCredit) - parseInt(usedCredit);
+            return _this.creditUsed = usedCredit;
+          };
+        })(this));
       },
       onInfiniteScroll: function() {
         this.refresh = false;

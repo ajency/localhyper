@@ -9,7 +9,29 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
         this.businessName = BussinessDetails.businessName;
         this.phone = BussinessDetails.phone;
         this.name = BussinessDetails.name;
+        this.getCreditDetails();
         return this.categoryChains = CategoryChains;
+      },
+      getCreditDetails: function() {
+        return User.update().then((function(_this) {
+          return function(user) {
+            return _this.setCreditDetails(user);
+          };
+        })(this), (function(_this) {
+          return function(error) {
+            return _this.setCreditDetails(User.getCurrent());
+          };
+        })(this));
+      },
+      setCreditDetails: function(user) {
+        return $scope.$apply((function(_this) {
+          return function() {
+            var totalCredit, usedCredit;
+            totalCredit = user.get('addedCredit');
+            usedCredit = user.get('subtractedCredit');
+            return _this.creditAvailable = parseInt(totalCredit) - parseInt(usedCredit);
+          };
+        })(this));
       },
       getBrands: function(brands) {
         var brandNames;

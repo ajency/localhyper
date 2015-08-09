@@ -24,10 +24,11 @@ angular.module 'LocalHyper.creditHistory', []
 					@setCreditDetails User.getCurrent()
 
 			setCreditDetails : (user)->
-				totalCredit = user.get 'addedCredit'
-				usedCredit  = user.get 'subtractedCredit'
-				@creditAvailable = parseInt(totalCredit) - parseInt(usedCredit)
-				@creditUsed = usedCredit
+				$scope.$apply =>
+					totalCredit = user.get 'addedCredit'
+					usedCredit  = user.get 'subtractedCredit'
+					@creditAvailable = parseInt(totalCredit) - parseInt(usedCredit)
+					@creditUsed = usedCredit
 
 			onInfiniteScroll : ->
 				@refresh = false
