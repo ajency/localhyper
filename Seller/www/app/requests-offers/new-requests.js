@@ -8,18 +8,25 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       pendingRequestIds: [],
       sortBy: '-createdAt.iso',
       sortName: 'Most Recent',
+      resetSort: function() {
+        this.sortBy = '-createdAt.iso';
+        return this.sortName = 'Most Recent';
+      },
       filter: {
         modal: null,
-        attribute: 'category',
-        allAttributes: [],
-        attrValues: {},
-        originalValues: {},
-        other: {},
-        defaultRadius: User.getCurrent().get('deliveryRadius'),
-        selectedCategories: 'default',
-        selectedBrands: 'default',
-        selectedMrp: 'default',
-        selectedRadius: 'default',
+        reset: function() {
+          this.attribute = 'category';
+          this.excerpt = '';
+          this.allAttributes = [];
+          this.attrValues = {};
+          this.originalValues = {};
+          this.other = {};
+          this.defaultRadius = User.getCurrent().get('deliveryRadius');
+          this.selectedCategories = 'default';
+          this.selectedBrands = 'default';
+          this.selectedMrp = 'default';
+          return this.selectedRadius = 'default';
+        },
         plus: function() {
           if (this.attrValues['radius'] < 100) {
             return this.attrValues['radius']++;
@@ -158,10 +165,6 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           this.selectedBrands = 'default';
           this.selectedMrp = 'default';
           return this.selectedRadius = 'default';
-        },
-        resetFilters: function() {
-          this.attribute = 'category';
-          return this.clearFilters();
         },
         noChangeInSelection: function() {
           this.attrValues['radius'] = parseInt(this.attrValues['radius']);
@@ -431,9 +434,10 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         }
       },
       init: function() {
-        this.getRequests();
+        this.filter.reset();
         this.filter.loadModal();
-        return this.requestDetails.loadModal();
+        this.requestDetails.loadModal();
+        return this.getRequests();
       },
       reFetch: function() {
         App.scrollTop();
@@ -471,7 +475,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         this.requests = data.requests;
         this.filter.other['sellerBrands'] = data.sellerBrands;
         this.filter.other['sellerCategories'] = data.sellerCategories;
-        if (_.isEmpty(this.filter.attrValues['category'])) {
+        if (_.isEmpty(this.filter.attrValues)) {
           this.filter.setAttrValues();
         }
         this.setRequestsCount();
@@ -599,6 +603,11 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
     $scope.$on('$ionicView.leave', function() {
       return $ionicPlatform.offHardwareBackButton(onDeviceBack);
     });
+    $rootScope.$on('category:chain:updated', function() {
+      $scope.view.resetSort();
+      $scope.view.filter.reset();
+      return $scope.view.reFetch();
+    });
     $rootScope.$on('in:app:notification', function(e, obj) {
       var payload;
       payload = obj.payload;
@@ -627,11 +636,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           return App.navigate('successful-offers');
       }
     });
-    $scope.$on('$ionicView.afterEnter', function() {
+    return $scope.$on('$ionicView.afterEnter', function() {
       return App.hideSplashScreen();
-    });
-    return $rootScope.$on('category:chain:updated', function() {
-      return $scope.view.reFetch();
     });
   }
 ]).controller('EachRequestTimeCtrl', [

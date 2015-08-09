@@ -3,9 +3,9 @@ angular.module 'LocalHyper.businessDetails', []
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
 	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails'
-	, 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q'
+	, 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', '$rootScope'
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout
-	, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q)->
+	, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q, $rootScope)->
 	
 		$scope.view = 
 			name:''
@@ -13,7 +13,7 @@ angular.module 'LocalHyper.businessDetails', []
 			businessName:''
 			confirmedAddress: ''
 			terms: false
-			myProfileState : false
+			myProfileState : App.previousState is 'my-profile'
 
 			delivery:
 				radius: 10
@@ -222,6 +222,7 @@ angular.module 'LocalHyper.businessDetails', []
 							AuthAPI.loginExistingUser data.userObj
 						.then (success)=>
 							CToast.show 'Saved business details'
+							$rootScope.$broadcast 'category:chain:updated'
 							@saveBussinessDetails().then ->
 								App.navigate 'my-profile'
 						, (error)->
@@ -248,19 +249,14 @@ angular.module 'LocalHyper.businessDetails', []
 					workTimings: @workTimings
 					workingDays : @workingDays
 					offDays : @getNonWorkingDays()
-						
 		
-		
-		$scope.$on '$ionicView.beforeEnter', ->
-			if App.previousState is 'my-profile' || (App.previousState == '' && User.getCurrent() != null )
-				$scope.view.myProfileState = true 
-		
-		$scope.$on '$ionicView.enter', ->
-			App.hideSplashScreen()
 
 		$scope.$on '$destroy', ->
 			locationModal = $scope.view.location.modal
 			locationModal.remove() if !_.isNull(locationModal)
+
+		$scope.$on '$ionicView.enter', ->
+			App.hideSplashScreen()
 ]
 
 

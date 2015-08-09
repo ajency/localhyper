@@ -119,43 +119,47 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
             if (!minOneBrandSelected) {
               return CDialog.confirm('Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']).then(function(btnIndex) {
                 if (btnIndex === 1) {
-                  return _this.goBack(minOneBrandSelected);
+                  return _this.beforeGoBack();
                 }
               });
             } else {
-              return _this.goBack(minOneBrandSelected);
+              return _this.beforeGoBack();
             }
           };
         })(this));
       },
-      goBack: function(minOneBrandSelected) {
-        var count;
+      beforeGoBack: function() {
         if (User.isLoggedIn()) {
           CategoriesAPI.categoryChains('set', this.categoryChains);
-          return App.navigate('my-profile');
+          return this.goBack();
         } else {
-          if (minOneBrandSelected) {
-            CategoriesAPI.categoryChains('set', this.categoryChains);
-            Storage.categoryChains('set', this.categoryChains);
-          }
-          switch (App.previousState) {
-            case 'categories':
-              count = -2;
-              break;
-            case 'sub-categories':
-              count = -3;
-              break;
-            case 'category-chains':
-              count = -1;
-              break;
-            case 'my-profile':
-              count = -1;
-              break;
-            default:
-              count = 0;
-          }
-          return App.goBack(count);
+          CategoriesAPI.categoryChains('set', this.categoryChains);
+          return Storage.categoryChains('set', this.categoryChains).then((function(_this) {
+            return function() {
+              return _this.goBack();
+            };
+          })(this));
         }
+      },
+      goBack: function() {
+        var count;
+        switch (App.previousState) {
+          case 'categories':
+            count = -2;
+            break;
+          case 'sub-categories':
+            count = -3;
+            break;
+          case 'category-chains':
+            count = -1;
+            break;
+          case 'my-profile':
+            count = -1;
+            break;
+          default:
+            count = 0;
+        }
+        return App.goBack(count);
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function() {

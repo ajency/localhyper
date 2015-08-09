@@ -2,8 +2,9 @@ angular.module 'LocalHyper.brands', []
 
 
 .controller 'BrandsCtrl', ['$scope', 'BrandsAPI', '$stateParams', 'SubCategory'
-	, 'CToast', 'CategoriesAPI', 'App', 'CDialog', 'Storage','User'
-	, ($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App, CDialog, Storage, User)->
+	, 'CToast', 'CategoriesAPI', 'App', 'CDialog', 'Storage', 'User'
+	, ($scope, BrandsAPI, $stateParams, SubCategory, CToast, CategoriesAPI, App
+	, CDialog, Storage, User)->
 
 		$scope.view =
 			title: SubCategory.name
@@ -99,25 +100,27 @@ angular.module 'LocalHyper.brands', []
 					if !minOneBrandSelected
 						CDialog.confirm 'Select Brands', 'You have not selected any brands', ['Continue', 'Cancel']
 						.then (btnIndex)=>
-							if btnIndex is 1 then @goBack(minOneBrandSelected)
-					else @goBack(minOneBrandSelected)
+							if btnIndex is 1 then @beforeGoBack()
+					else @beforeGoBack()
 
-			goBack : (minOneBrandSelected)->
-				if User.isLoggedIn() #if user is logged it only sets in category api
-					CategoriesAPI.categoryChains 'set', @categoryChains 
-					App.navigate 'my-profile'
+			beforeGoBack : ->
+				if User.isLoggedIn()
+					CategoriesAPI.categoryChains 'set', @categoryChains
+					@goBack()
 				else
-					if minOneBrandSelected   #if atleast one brand is selected than only set values
-						CategoriesAPI.categoryChains 'set', @categoryChains 
-						Storage.categoryChains 'set', @categoryChains
+					CategoriesAPI.categoryChains 'set', @categoryChains 
+					Storage.categoryChains 'set', @categoryChains
+					.then =>
+						@goBack()
 
-					switch App.previousState
-						when 'categories' then count = -2
-						when 'sub-categories' then count = -3
-						when 'category-chains' then count = -1
-						when 'my-profile' then count = -1
-						else count = 0
-					App.goBack count
+			goBack : ->
+				switch App.previousState
+					when 'categories' then count = -2
+					when 'sub-categories' then count = -3
+					when 'category-chains' then count = -1
+					when 'my-profile' then count = -1
+					else count = 0
+				App.goBack count
 
 		
 		$scope.$on '$ionicView.beforeEnter', ->
@@ -145,3 +148,5 @@ angular.module 'LocalHyper.brands', []
 							
 							childCategory[0]
 ]
+
+

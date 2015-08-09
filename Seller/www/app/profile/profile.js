@@ -9,11 +9,7 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
         this.businessName = BussinessDetails.businessName;
         this.phone = BussinessDetails.phone;
         this.name = BussinessDetails.name;
-        return this.setCategoryChains();
-      },
-      setCategoryChains: function() {
-        this.categoryChains = CategoryChains;
-        return CategoriesAPI.categoryChains('set', CategoryChains);
+        return this.categoryChains = CategoryChains;
       },
       getBrands: function(brands) {
         var brandNames;
@@ -63,7 +59,7 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
     });
   }
 ]).config([
-  '$stateProvider', function($stateProvider, Storage, CategoriesAPI) {
+  '$stateProvider', function($stateProvider) {
     return $stateProvider.state('my-profile', {
       url: '/seller-profile',
       parent: 'main',
@@ -73,20 +69,27 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
           controller: 'ProfileCtrl',
           templateUrl: 'views/profile/profile.html',
           resolve: {
-            CategoryChains: function($q, Storage) {
-              var defer;
-              defer = $q.defer();
-              Storage.categoryChains('get').then(function(chains) {
-                return defer.resolve(chains);
-              });
-              return defer.promise;
-            },
             BussinessDetails: function($q, Storage) {
               var defer;
               defer = $q.defer();
               Storage.bussinessDetails('get').then(function(details) {
                 return defer.resolve(details);
               });
+              return defer.promise;
+            },
+            CategoryChains: function($q, Storage, CategoriesAPI, App) {
+              var categoryChains, defer, modifiableStates;
+              defer = $q.defer();
+              categoryChains = CategoriesAPI.categoryChains('get');
+              modifiableStates = ['brands', 'business-details', 'categories'];
+              if (_.contains(modifiableStates, App.currentState)) {
+                defer.resolve(categoryChains);
+              } else {
+                Storage.categoryChains('get').then(function(chains) {
+                  CategoriesAPI.categoryChains('set', chains);
+                  return defer.resolve(chains);
+                });
+              }
               return defer.promise;
             }
           }

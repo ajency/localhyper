@@ -1,11 +1,9 @@
 angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
   '$scope', 'App', 'CategoriesAPI', 'Storage', 'CategoryChains', function($scope, App, CategoriesAPI, Storage, CategoryChains) {
-    $scope.view = {
+    return $scope.view = {
       showDelete: false,
       categoryChains: [],
       init: function() {
-        this.showDelete = false;
-        this.categoryChains = [];
         return this.setCategoryChains();
       },
       setCategoryChains: function() {
@@ -36,15 +34,13 @@ angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
         });
       }
     };
-    return $scope.$on('$ionicView.beforeEnter', function() {
-      return $scope.view.init();
-    });
   }
 ]).config([
   '$stateProvider', function($stateProvider) {
     return $stateProvider.state('category-chains', {
       url: '/category-chains',
       parent: 'main',
+      cache: false,
       views: {
         "appContent": {
           templateUrl: 'views/categories/category-chains.html',

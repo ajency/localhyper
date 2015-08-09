@@ -16,11 +16,7 @@ angular.module 'LocalHyper.profile', []
 				@businessName = BussinessDetails.businessName
 				@phone = BussinessDetails.phone
 				@name = BussinessDetails.name
-				@setCategoryChains()
-
-			setCategoryChains : ->
 				@categoryChains = CategoryChains
-				CategoriesAPI.categoryChains 'set', CategoryChains
 				
 			getBrands : (brands)->
 				brandNames = _.pluck brands, 'name'
@@ -57,30 +53,12 @@ angular.module 'LocalHyper.profile', []
 					
 		
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
-			# $scope.view.init()
-			# scrollTopStates = ['suggest-product', 'credit-history', 'new-requests'
-			# 				, 'my-offer-history', 'successful-offers']
-			# if _.contains scrollTopStates, App.previousState
-			# 	App.scrollTop()
-
 			if !viewData.enableBack
 				viewData.enableBack = true
-
-		# $scope.$on '$ionicView.leave', ->
-		# 	categoryChainSet = true
-		# 	Storage.categoryChains 'get'
-		# 	.then (chains) ->
-		# 		if(App.currentState == 'categories' || App.currentState == 'sub-categories' || App.currentState == 'brands')
-		# 			categoryChainSet = false 
-		# 		else 
-		# 		   categoryChainSet = true
-
-		# 		if categoryChainSet == true
-		# 			CategoriesAPI.categoryChains 'set', chains
 ]
 
 
-.config ['$stateProvider', ($stateProvider,Storage,CategoriesAPI)->
+.config ['$stateProvider', ($stateProvider)->
 
 	$stateProvider
 
@@ -93,18 +71,25 @@ angular.module 'LocalHyper.profile', []
 					controller: 'ProfileCtrl'
 					templateUrl: 'views/profile/profile.html'
 					resolve :
-						CategoryChains : ($q, Storage)->
-							defer = $q.defer()
-							Storage.categoryChains 'get'
-							.then (chains) ->
-								defer.resolve chains
-							defer.promise
-
 						BussinessDetails : ($q, Storage)->
 							defer = $q.defer()
 							Storage.bussinessDetails 'get'
 							.then (details) ->
 								defer.resolve details
 
+							defer.promise
+						
+						CategoryChains : ($q, Storage, CategoriesAPI, App)->
+							defer = $q.defer()
+							categoryChains = CategoriesAPI.categoryChains 'get'
+							modifiableStates = ['brands', 'business-details', 'categories']
+							if _.contains modifiableStates, App.currentState
+								defer.resolve categoryChains
+							else
+								Storage.categoryChains 'get'
+								.then (chains) ->
+									CategoriesAPI.categoryChains 'set', chains
+									defer.resolve chains
+							
 							defer.promise
 ]

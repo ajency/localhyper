@@ -1,12 +1,12 @@
 angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', '$rootScope', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q, $rootScope) {
     $scope.view = {
       name: '',
       phone: '',
       businessName: '',
       confirmedAddress: '',
       terms: false,
-      myProfileState: false,
+      myProfileState: App.previousState === 'my-profile',
       delivery: {
         radius: 10,
         plus: function() {
@@ -304,6 +304,7 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
             }).then((function(_this) {
               return function(success) {
                 CToast.show('Saved business details');
+                $rootScope.$broadcast('category:chain:updated');
                 return _this.saveBussinessDetails().then(function() {
                   return App.navigate('my-profile');
                 });
@@ -343,20 +344,15 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         });
       }
     };
-    $scope.$on('$ionicView.beforeEnter', function() {
-      if (App.previousState === 'my-profile' || (App.previousState === '' && User.getCurrent() !== null)) {
-        return $scope.view.myProfileState = true;
-      }
-    });
-    $scope.$on('$ionicView.enter', function() {
-      return App.hideSplashScreen();
-    });
-    return $scope.$on('$destroy', function() {
+    $scope.$on('$destroy', function() {
       var locationModal;
       locationModal = $scope.view.location.modal;
       if (!_.isNull(locationModal)) {
         return locationModal.remove();
       }
+    });
+    return $scope.$on('$ionicView.enter', function() {
+      return App.hideSplashScreen();
     });
   }
 ]).config([

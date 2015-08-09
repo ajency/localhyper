@@ -9,8 +9,6 @@ angular.module 'LocalHyper.categories'
 			categoryChains : []
 
 			init : ->
-				@showDelete = false
-				@categoryChains = []
 				@setCategoryChains()
 
 			setCategoryChains : ->
@@ -34,10 +32,6 @@ angular.module 'LocalHyper.categories'
 			onChainClick : (chains)->
 				CategoriesAPI.subCategories 'set', chains.category.children
 				App.navigate 'brands', categoryID: chains.subCategory.id
-
-		
-		$scope.$on '$ionicView.beforeEnter', ->
-			$scope.view.init()
 ]
 
 
@@ -48,6 +42,7 @@ angular.module 'LocalHyper.categories'
 		.state 'category-chains',
 			url: '/category-chains'
 			parent: 'main'
+			cache: false
 			views: 
 				"appContent":
 					templateUrl: 'views/categories/category-chains.html'
