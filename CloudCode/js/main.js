@@ -344,7 +344,7 @@
 
   _ = require('underscore.js');
 
-  moment = require('moment');
+  moment = require('cloud/moment');
 
   treeify = function(list, idAttr, parentAttr, childrenAttr) {
     var lookup, treeList;
