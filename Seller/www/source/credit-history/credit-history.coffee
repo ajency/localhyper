@@ -70,7 +70,6 @@ angular.module 'LocalHyper.creditHistory', []
 					@canLoadMore = false
 
 				@gotAllRecords = true if !@canLoadMore
-				console.log @creditHistoryData
 
 			onError: (type)->
 				@display = 'error'

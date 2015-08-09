@@ -83,9 +83,8 @@ angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
           this.canLoadMore = false;
         }
         if (!this.canLoadMore) {
-          this.gotAllRecords = true;
+          return this.gotAllRecords = true;
         }
-        return console.log(this.creditHistoryData);
       },
       onError: function(type) {
         this.display = 'error';
