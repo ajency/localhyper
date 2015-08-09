@@ -189,3 +189,12 @@
 .successful-offer-sort {
 	height: 210px !important;
 }
+
+/* credit-history*/
+.credit-sub-header{
+	height: 80px !important;
+}
+
+.has-credit-sub-header{
+	top: 125px !important;
+}

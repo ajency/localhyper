@@ -1,78 +1,83 @@
-<ion-view view-title="Credit History">
+<ion-view 
+	view-title="Credit History"
+	ng-init="view.init()">
 
-	<ion-content ng-switch="view.display">
-			<ion-refresher
-				on-refresh="view.onPullToRefresh()" 
-				class="aj-refresher">
-			</ion-refresher>
+	<div class="bar bar-subheader credit-sub-header">
+		<div class="row">
+			<div class="col">
+				<ion-item> 
+					Credit Available: {{view.creditAvailable}}
+				</ion-item>
+			</div>
+			<div class="col">
+				<ion-item> 
+					Credit Used: {{view.creditUsed}}
+				</ion-item>
+			</div>
+		</div>
+	</div>
 
-			<ion-list 
-				class="card-list" 
-				ng-switch-when="noError">
+	<ion-content 
+		ng-switch="view.display"
+		class="has-credit-sub-header">
+		
+		<ion-refresher
+			on-refresh="view.onPullToRefresh();" 
+			class="aj-refresher">
+		</ion-refresher>
 
-				<ul class="list">
-					<li class="item">
-						<div class="row"> 
-								<div class="col col-50"> Credit Available :  </div> 
-								 <div class="col col-50"> {{view.availableCredit}} </div> 
+		<ion-list 
+			class="card-list" 
+			ng-switch-when="noError">
+
+			<div class="card" ng-repeat="credit in view.creditHistoryData">
+
+				<div class="row">
+					<div class="col col-75">
+						Date : {{view.getTransactionDate(credit.createdAt)}}
+
+						<div ng-if="credit.transactionType === 'add'">
+							<b>Balance Credited</b>
 						</div>
-					</li>
-					<li class="item">
-						<div class="row"> 
-								<div class="col col-50"> Credit Used : </div> 
-								 <div class="col col-50"> {{view.creditUsed}} </div> {{view.createdAt}}
-						</div>
-					</li>
-				</ul>
 
-				<div class="card"
-					 ng-repeat="request in view.creditHistoryData" 
-					 ng-controller="EachDisplayDateCtrl">
-
-					<div class="row">
-						<div class="col col-50">
-							<div class="">
-								Date : {{request.timeStr}}
-								<br>
-								Product Name : {{request.product.name}}
-								<br>
-								<b ng-if="request.transactionTowards == 'make_offer' "> Offer Made </b>
-								<b ng-if="request.transactionTowards == 'accept_offer' "> Offer Accepted </b>
-							</div>	
-						</div>
-
-						<div class="col col-50">
-							<div class="pull-right">
-								<p> Credit Points Used </p>
-								   <h2> &nbsp; &nbsp; {{request.creditCount}} </h2> 
-							</div>
+						<div ng-if="credit.transactionType === 'minus'">
+							Product Name : {{credit.product.name}}
+							</br>
+							<b ng-if="credit.transactionTowards === 'make_offer'"> Offer Made </b>
+							<b ng-if="credit.transactionTowards === 'accept_offer'"> Offer Accepted </b>
+						</div>	
+					</div>
+					
+					<div class="col col-10"></div>
+					
+					<div class="col">
+						<div>
+							<p>Points</p>
+							<h2>{{credit.creditCount}}</h2> 
 						</div>
 					</div>
-
 				</div>
+			</div>
 
-			</ion-list>
+		</ion-list>
 
-			<aj-error
-				ng-switch-when="error"
-				error-type="view.errorType"
-				tap-to-retry="view.onTapToRetry()">
-			</aj-error>
+		<aj-error
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry();">
+		</aj-error>
 
-			<ion-item ng-if="view.getAllHistory">
-				 No more credit history to display.
-			</ion-item>
+		<ion-item ng-if="view.gotAllRecords">
+			No more credit history to display.
+		</ion-item>
 
-			<ion-infinite-scroll
-				on-infinite="view.onInfiniteScroll()"
-				ng-if="view.canLoadMore"
-				distance="10%" 
-				class="aj-refresher">
-			</ion-infinite-scroll>
+		<ion-infinite-scroll
+			on-infinite="view.onInfiniteScroll();"
+			ng-if="view.canLoadMore"
+			distance="5%" 
+			class="aj-refresher">
+		</ion-infinite-scroll>
 
 	</ion-content>
-	<ion-footer-bar class="bar-dark">
-	
-	</ion-footer-bar>
 
 </ion-view>

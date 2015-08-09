@@ -22,6 +22,9 @@ angular.module 'LocalHyper.common'
 	User.getId = ->
 		@getCurrent().id
 
+	User.update = ->
+		@getCurrent().fetch()
+
 	User.info = (action, data={})->
 		switch action
 			when 'set'
