@@ -487,6 +487,40 @@
     });
   });
 
+  Parse.Cloud.define('addCredits', function(request, response) {
+    var newAddedCredits, querySeller, sellerId;
+    sellerId = request.params.sellerId;
+    newAddedCredits = parseInt(request.params.newAddedCredits);
+    querySeller = new Parse.Query(Parse.User);
+    querySeller.equalTo("objectId", sellerId);
+    return querySeller.first().then(function(sellerObj) {
+      var Transaction, transaction;
+      Transaction = Parse.Object.extend("Transaction");
+      transaction = new Transaction();
+      transaction.set("seller", sellerObj);
+      transaction.set("transactionType", "add");
+      transaction.set("creditCount", newAddedCredits);
+      return transaction.save().then(function(savedTransaction) {
+        var existingAddedCredits, updatedAddedCredits;
+        existingAddedCredits = sellerObj.get("addedCredit");
+        updatedAddedCredits = existingAddedCredits + newAddedCredits;
+        sellerObj.set("addedCredit", updatedAddedCredits);
+        return sellerObj.save().then(function(updatedSeller) {
+          var result;
+          result = {
+            sellerId: updatedSeller.id,
+            sellerCredits: updatedSeller.get("addedCredit")
+          };
+          return response.success(result);
+        }, function(error) {
+          return response.error(error);
+        });
+      });
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   resetRequestOfferCount = function(requestId) {
     var innerQueryRequest, promise, queryOffer;
     promise = new Parse.Promise();

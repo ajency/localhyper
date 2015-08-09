@@ -125,5 +125,40 @@ Parse.Cloud.define 'getCreditHistory' , (request, response) ->
     , (error) ->
         response.error error
 
+Parse.Cloud.define 'addCredits', (request, response) ->
+    sellerId = request.params.sellerId
+    newAddedCredits = parseInt request.params.newAddedCredits
 
+    querySeller = new Parse.Query(Parse.User)
+    querySeller.equalTo("objectId", sellerId)
+    querySeller.first()
+    .then (sellerObj) ->
+        
+        # make a transaction for the offer i.e added 
+        Transaction = Parse.Object.extend("Transaction")
+        transaction = new Transaction()
+        transaction.set "seller" , sellerObj
+        transaction.set "transactionType" , "add"
+        transaction.set "creditCount" , newAddedCredits
+
+        transaction.save()
+        .then (savedTransaction) -> 
+
+            existingAddedCredits = sellerObj.get("addedCredit")
+
+            updatedAddedCredits = existingAddedCredits + newAddedCredits
+
+            sellerObj.set "addedCredit" , updatedAddedCredits
+
+            sellerObj.save()
+            .then (updatedSeller) ->
+                result = 
+                    sellerId : updatedSeller.id
+                    sellerCredits : updatedSeller.get("addedCredit")
+                response.success result
+            , (error) ->
+                response.error error
+
+    , (error) ->
+        response.error error
             
