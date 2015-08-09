@@ -33,7 +33,8 @@
 	       	<ion-item
 	       		class="card"
 	       		ng-repeat="request in view.requests"
-	       		ng-click="view.offerDetails.show(request)">
+	       		ng-click="view.offerDetails.show(request)"
+	       		ng-controller="EachSuccessfulOfferCtrl">
 
 	       		<div class="item-wrapper-nr">
 					<div class="item-avatar border-none margin-none">
@@ -53,6 +54,14 @@
 						ng-if="request.offerStatus != 'unaccepted'"> 
 						Delivery Status : {{App.humanize(request.request.status)}}
 					</sm>
+
+					<div 
+						class="col p-t-0"
+						ng-if="request.request.status === 'pending_delivery' || request.request.status === 'sent_for_delivery'">
+			            <sm class="light-gray"> Delivery time left:</sm>
+			            	{{request.leftDeliveryTimeStr}}
+			            <br>
+			        </div>
 				</div>
 
 				<div class="row item border-none" >
@@ -102,10 +111,7 @@
 
 	</ion-content>
 
-	<ion-footer-bar 
-		class="bar-dark"
-		ng-show="view.requests.length > 0">
-		
+	<ion-footer-bar class="bar-dark">
 		<div class="row">
 			<div class="col col-50 text-center" ng-click="view.showSortOptions()">
 				<h5 class="margin-none text-light normal">

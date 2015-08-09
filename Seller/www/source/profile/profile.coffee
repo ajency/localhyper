@@ -41,7 +41,6 @@ angular.module 'LocalHyper.profile', []
 					CSpinner.show '', 'Please wait...'
 					AuthAPI.isExistingUser(user)
 					.then (data)=>
-						CSpinner.hide()
 						AuthAPI.loginExistingUser(data.userObj)
 					.then (success)=>
 							CategoriesAPI.categoryChains 'set', @categoryChains

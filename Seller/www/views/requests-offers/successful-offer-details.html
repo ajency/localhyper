@@ -76,6 +76,11 @@
 				<h5 ng-if="view.offerDetails.data.offerComments!==''">
 					Your Comments : {{view.offerDetails.data.offerComments}}
 				</h5>
+
+				<h5 ng-if="view.offerDetails.data.deliveryStatus === 'pending_delivery' 
+					|| view.offerDetails.data.deliveryStatus === 'sent_for_delivery'">
+					Delivery Time Left : {{view.offerDetails.data.leftDeliveryTimeStr}}
+				</h5>
 			</div>
 
 			<br>
@@ -87,7 +92,7 @@
 							<img src="./img/cal.png" alt="">
 						</i>
 						<p>
-							<span class="ti">Delivery Time</span>
+							<span class="ti">Claimed Delivery Time</span>
 							<span class="ac-ti">
 								<span class="big">
 									{{view.deliveryTime.humanize(view.offerDetails.data.offerDeliveryTime)}}
@@ -108,7 +113,10 @@
 							ng-model="view.offerDetails.data.deliveryStatus"
 							ng-change="view.offerDetails.onDeliveryStatusChange()"
 							ng-disabled="view.offerDetails.showChange">
-
+							
+							<option value="pending_delivery">
+								Pending delivery
+							</option>
 							<option value="sent_for_delivery">
 								Sent for delivery
 							</option>

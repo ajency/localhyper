@@ -103,7 +103,7 @@ angular.module 'LocalHyper.requestsOffers'
 					$ionicModal.fromTemplateUrl 'views/requests-offers/successful-offer-details.html', 
 						scope: $scope,
 						animation: 'slide-in-up' 
-						hardwareBackButtonClose: true
+						hardwareBackButtonClose: false
 					.then (modal)=>
 						@modal = modal
 				
@@ -288,10 +288,13 @@ angular.module 'LocalHyper.requestsOffers'
 
 		onDeviceBack = ->
 			filter = $scope.view.filter
+			detailsModal = $scope.view.offerDetails.modal
 			if $('.loading-container').hasClass 'visible'
 				$ionicLoading.hide()
 			else if filter.modal.isShown()
 				filter.closeModal()
+			else if detailsModal.isShown()
+				detailsModal.hide()
 			else
 				App.goBack -1
 
@@ -318,4 +321,17 @@ angular.module 'LocalHyper.requestsOffers'
 			offerId = OffersAPI.acceptedOfferId 'get'
 			$scope.view.offerDetails.onNotificationClick(offerId) if offerId isnt ''
 			OffersAPI.acceptedOfferId 'set', ''
+]
+
+
+.controller 'EachSuccessfulOfferCtrl', ['$scope', '$interval', 'DeliveryTime', ($scope, $interval, DeliveryTime)->
+
+	#Left delivery time
+	setTime = ->
+		$scope.request.leftDeliveryTimeStr = DeliveryTime.left $scope.request.offerDeliveryDate
+
+	setTime()
+	interval = $interval setTime, 60000
+	$scope.$on '$destroy', ->
+		$interval.cancel interval
 ]

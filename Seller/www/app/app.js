@@ -23,10 +23,13 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       small: true
     };
     return $rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
-      var bool, hideForStates;
+      var bool, businessDetails, hideForStates;
       App.previousState = from.name;
       App.currentState = to.name;
-      hideForStates = ['tutorial', 'business-details', 'verify-begin', 'verify-auto', 'verify-manual', 'categories', 'sub-categories', 'brands'];
+      if (App.currentState === 'business-details') {
+        businessDetails = User.isLoggedIn() ? '' : 'business-details';
+      }
+      hideForStates = ['tutorial', businessDetails, 'verify-begin', 'verify-auto', 'verify-manual', 'categories', 'sub-categories', 'brands', 'category-chains'];
       bool = !_.contains(hideForStates, App.currentState);
       App.menuEnabled.left = bool;
       return App.notification.icon = bool;
