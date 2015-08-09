@@ -346,6 +346,8 @@
 
   moment = require('cloud/moment');
 
+  moment = require('cloud/moment-range-min');
+
   treeify = function(list, idAttr, parentAttr, childrenAttr) {
     var lookup, treeList;
     if (!idAttr) {

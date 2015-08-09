@@ -20,6 +20,7 @@
 #   return
 _ = require('underscore.js')
 moment = require('cloud/moment')
+moment = require('cloud/moment-range-min')
 
 treeify = (list, idAttr, parentAttr, childrenAttr) ->
   if !idAttr
