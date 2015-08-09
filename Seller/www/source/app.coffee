@@ -41,7 +41,9 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 
 			#Enable/disable menu & show/hide notification icon
 			hideForStates = ['tutorial', businessDetails , 'verify-begin', 'verify-auto'
-							, 'verify-manual', 'categories', 'sub-categories', 'brands', 'category-chains']
+							, 'verify-manual', 'categories', 'sub-categories', 'brands'
+							, 'category-chains']
+			
 			bool = !_.contains(hideForStates, App.currentState)
 			App.menuEnabled.left  = bool
 			App.notification.icon = bool

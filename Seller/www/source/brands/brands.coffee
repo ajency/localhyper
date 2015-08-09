@@ -119,6 +119,7 @@ angular.module 'LocalHyper.brands', []
 						else count = 0
 					App.goBack count
 
+		
 		$scope.$on '$ionicView.beforeEnter', ->
 			if $scope.view.display is 'noError'
 				$scope.view.setBrandSelection() 

@@ -29,9 +29,8 @@ angular.module 'LocalHyper.common'
 					userInfo[index] = val
 			when 'get'
 				userInfo
-			when 'reset'
-				userInfo = data
-
+			# when 'reset'
+			# 	userInfo = data
 
 	User
 ]

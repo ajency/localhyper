@@ -474,7 +474,7 @@ angular.module 'LocalHyper.requestsOffers'
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
 
-		$rootScope.$on 'category:chain:changed', ->
+		$rootScope.$on 'category:chain:updated', ->
 			# App.scrollTop()
 			$scope.view.reFetch()
 ]

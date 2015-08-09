@@ -630,7 +630,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
     $scope.$on('$ionicView.afterEnter', function() {
       return App.hideSplashScreen();
     });
-    return $rootScope.$on('category:chain:changed', function() {
+    return $rootScope.$on('category:chain:updated', function() {
       return $scope.view.reFetch();
     });
   }
