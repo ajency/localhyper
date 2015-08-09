@@ -705,112 +705,199 @@ Parse.Cloud.define 'testDeliveryDate', (request, response) ->
     sellerOffDays = request.params.sellerOffDays
     sellerWorkTimings = request.params.sellerWorkTimings
 
-    result = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
+    deliveryDates = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
+    offerAcceptedDate2 = deliveryDates["offerAcceptedDate"]
+    deliveryDate = deliveryDates["deliveryDate"]
+    adjustedDeliveryDate = deliveryDates["adjustedDeliveryDate"]
+
+    endWorkTime = sellerWorkTimings[1]
+    timeOfDelivery = moment(deliveryDate).format("HH:mm:ss")
+    
+    pendingHours = getHoursDifference(endWorkTime, timeOfDelivery)
+
+    result = 
+        deliveryDate : moment(deliveryDate).format('dddd DD-MM-YYYY HH:mm:ss')
+        adjustedDeliveryDate : moment(adjustedDeliveryDate).format('dddd DD-MM-YYYY HH:mm:ss')
+        acceptedDate : moment(offerAcceptedDate).format('dddd DD-MM-YYYY HH:mm:ss')
+        offerAcceptedDate2 : deliveryDates["offerAcceptedDate"]
+        isDayValidWorking : isValidWorkDay(deliveryDate,sellerOffDays)
+        isDayValidWorkTime : isValidWorkTime(deliveryDate,sellerWorkTimings)
+        addedDateObject : moment(incrementDateObject(deliveryDate)).format('dddd DD-MM-YYYY HH:mm:ss')
+        isTimeBeforeWorkTime : isTimeBeforeWorkTime(deliveryDate,sellerWorkTimings)
+        pendingHours : pendingHours
+        timeOfDelivery : timeOfDelivery
+        endtime : sellerWorkTimings[1]
     response.success result
 
 getDeliveryDate = (claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings) ->
 
-    deliveryDuration = parseInt claimedDelivery.value
+    deliveryDuration = claimedDelivery.value
     deliveryUnit = claimedDelivery.unit
 
-    if deliveryUnit is "hrs"
-        addDuration = "hours"
-    else if deliveryUnit is "days"
-        addDuration = "days"
-
+    if deliveryUnit is "day"
+        deliveryDuration = deliveryDuration * 24
     
-    acceptedDateObj = offerAcceptedDate
+    deliveryDate = moment(offerAcceptedDate).add('hours',deliveryDuration).toDate()
 
-    deliveryDateMoment = moment(acceptedDateObj).add(addDuration,deliveryDuration)
-    deliveryDateComplete = moment(acceptedDateObj).add(addDuration,deliveryDuration).format("DD-MM-YYYY HH:mm:ss")
 
-    
+    pendingHours = ""
 
-    
-    deliveryTime = getTimeFromMoment(deliveryDateMoment)
 
-    isDeliveryTimeInWkHrs = isTimeInRange(deliveryTime, sellerWorkTimings)
+   
+    adjustedDeliveryDate = fetchAdjustedDelivery(offerAcceptedDate,deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings,deliveryDuration)
 
-    if isDeliveryTimeInWkHrs
-        deliveryDay = getDayFromMoment(deliveryDateMoment)
+    obj = 
+        offerAcceptedDate : offerAcceptedDate
+        deliveryDate : deliveryDate
+        adjustedDeliveryDate :adjustedDeliveryDate
 
-        isDeliveryDayOffDay = _.indexOf(sellerOffDays, deliveryDay)
+    return obj
 
-        if isDeliveryDayOffDay > -1
-            newDeliveryDateMoment = moment(deliveryDateComplete).add('days',1)
-            newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss")
-            newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY")
-            newDeliveryTime = sellerWorkTimings[0]
-            
-            newDeliveryDay = getDayFromMoment(newDeliveryDateMoment)
-
-            isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay)
-            
-            while isNewDeliveryDayOffDay > -1
-                newDeliveryDateMoment = moment(newDeliveryDateComplete).add('days',1)
-                newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss")
-                newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY")
-                newDeliveryTime = sellerWorkTimings[0] 
+fetchAdjustedDelivery = (offerAcceptedDate, deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings, deliveryDuration) ->
+    # deliveryTime = moment().hour(startTime[0]).minute(startTime[1]).seconds(startTime[2]).add(deliveryDuration, 'hours').format("HH:mm:ss");
+    if isValidWorkDay(deliveryDate ,sellerOffDays)
+        if _.isEmpty(pendingHours)
+            if isValidWorkTime(deliveryDate, sellerWorkTimings)
+                console.log "step1"
                 
-                newDeliveryDay = getDayFromMoment(newDeliveryDateMoment)
-                isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay)                               
-        
+                if(isTimeBeforeWorkTime(offerAcceptedDate, sellerWorkTimings))
+                    console.log "step2"
+                    startTime = sellerWorkTimings[0]
+                    startTime = startTime.split(':')
 
-            deliveryDateComplete = newDeliveryDate+" "+newDeliveryTime
+                    startWorkTime = 
+                        "hours" : parseInt startTime[0]
+                        "minutes" : parseInt startTime[1]
+                        "seconds" : parseInt startTime[2]
+
+
+                    dDate = deliveryDate
+                    acceptDate = offerAcceptedDate
+                    modifiedAcceptedDate = moment(acceptDate).hours(startWorkTime["hours"]).minutes(startWorkTime["minutes"]).seconds(startWorkTime["seconds"]).toDate()
+                    deliveryDate =  moment(modifiedAcceptedDate).add('hours',deliveryDuration).toDate()
+                    fetchAdjustedDelivery(modifiedAcceptedDate,deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings, deliveryDuration)
+                # if accepted date's time is less than start time of seller then delivery date's time = start_time + deliveryDuration
+                # set time of deliveryDate as startWork time
+                # to it add deliveryDuration then run the function again
+                else
+                    console.log "step3"
+                    deliveryDate
+            else
+                console.log "step4"
+                if(isTimeBeforeWorkTime(deliveryDate, sellerWorkTimings))
+                    console.log "step5"
+                    pendingHours = deliveryDuration
+                    fetchAdjustedDelivery(offerAcceptedDate,deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings, deliveryDuration)
+                    
+                else
+                    console.log "step6"
+                    # get difference from delivery date's time and end time of work time
+                    endWorkTime = sellerWorkTimings[1]
+                    timeOfDelivery = moment(deliveryDate).format("HH:mm:ss")
+                    pendingHours = getHoursDifference(endWorkTime,timeOfDelivery)     # timeOfDelivery > endWorkTime
+
+                    console.log "pending hours#{pendingHours}"
+
+                    deliveryDate = incrementDateObject(deliveryDate)
+
+                    fetchAdjustedDelivery(offerAcceptedDate,deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings, deliveryDuration)
+
+        else 
+            console.log "step7"
+            # deliveryDate + startTime + pendingHours
+            startWorkTime = sellerWorkTimings[0]
+            timeOfDelivery = moment(deliveryDate).format("HH:mm:ss")
+            diffInStartAndDelivery = getHoursDifference(timeOfDelivery,startWorkTime)  # startWorkTime > timeOfDelivery
+
+            diffHours = moment(diffInStartAndDelivery, "hh:mm:ss").hours()
+            diffMin = moment(diffInStartAndDelivery, "hh:mm:ss").minutes()
+            diffSec = moment(diffInStartAndDelivery, "hh:mm:ss").seconds()
+
+            dDate = deliveryDate
+            
+            moment(dDate).add('hours',diffHours)
+            moment(dDate).add('minutes',diffMin)
+            finalMoment = moment(dDate).add('seconds',diffSec)
+
+            deliveryDate = finalMoment.toDate()
 
     else
-        if deliveryDuration is "hrs"  
-            newDeliveryDateMoment = moment(acceptedDateObj).add('days',1)  
-        else
-            newDeliveryDateMoment = moment(deliveryDateComplete).add('days',1) 
+        console.log "step8"
+        deliveryDate = incrementDateObject(deliveryDate)
+        deliveryDate = fetchAdjustedDelivery(offerAcceptedDate,deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings,deliveryDuration)
 
-        deliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss")
 
-        startTime = sellerWorkTimings[0].split(':')
-        deliveryTime = moment().hour(startTime[0]).minute(startTime[1]).seconds(startTime[2]).add(deliveryDuration,'hours').format("HH:mm:ss")
+getHoursDifference = (initialTimeString, finalTimeString) ->
+    t1 = moment(initialTimeString, "hh:mm:ss")
+    t2 = moment(finalTimeString, "hh:mm:ss")
+    t3 = moment(t2.diff(t1)).format("hh:mm:ss")  
 
-        deliveryDay = getDayFromMoment(newDeliveryDateMoment)
+    return t3 
 
-        isDeliveryDayOffDay = _.indexOf(sellerOffDays, deliveryDay)
-
-        if isDeliveryDayOffDay > -1
-            newDeliveryDateMoment = moment(deliveryDateComplete).add('days',1)
-            newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss")
-            newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY")
-            
-            newDeliveryDay = getDayFromMoment(newDeliveryDateMoment)
-
-            isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay)
-            
-            while isNewDeliveryDayOffDay > -1
-                newDeliveryDateMoment = moment(newDeliveryDateComplete).add('days',1)
-                newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss")
-                newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY")
-                
-                newDeliveryDay = getDayFromMoment(newDeliveryDateMoment)
-                isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay)                               
-        
-
-            deliveryDateComplete = newDeliveryDate+" "+newDeliveryTime        
-
-    # convert delivery date moment object tot date object and return
-    deliveryDate = moment(deliveryDateComplete).toDate()
-
-    return deliveryDate
      
-getDayFromMoment = (momentDate) ->
-    return momentDate.format('dddd')
+isTimeInRange = (time, range)->
+    time = time.split(':')
+    timeHour = parseInt time[0]
+    timeMin = parseInt time[1]
 
-getTimeFromMoment = (momentDate) ->
-    return momentDate.format('HH:mm:ss')
+    startTime = range[0].split(':')
+    startTimeHour = parseInt startTime[0]
+    startTimeMin = parseInt startTime[1]
 
-isTimeInRange = (deliveryTime, sellerWorkTimings)->
-    deliveryTime = deliveryTime.split(':')
-    startTime = sellerWorkTimings[0].split(':')
-    endTime = sellerWorkTimings[1].split(':')
+    endTime = range[1].split(':')
+    endTimeHour = parseInt endTime[0]    
+    endTimeMin = parseInt endTime[1]    
     
-    if deliveryTime[0] >= startTime[0] or deliveryTime[0] <= endTime[0]
+    if timeHour > startTimeHour and timeHour < endTimeHour
       return true
+    else if timeHour is startTimeHour and timeHour < endTimeHour
+        if timeMin >= startTimeMin
+            return true
+        else 
+            return false
+    else if timeHour > startTimeHour and timeHour is endTimeHour
+        if timeMin <= endTimeMin
+            return true
+        else 
+            return false        
     else
       return false
 
+
+isValidWorkDay = (dateObj,nonWorkDays) ->
+    day = moment(dateObj).format('dddd')
+
+    if _.indexOf(nonWorkDays,day) > -1 
+        return false 
+    else
+        return true
+ 
+isValidWorkTime = (dateObj,workTimings) ->
+
+    time = moment(dateObj).format('HH:mm:ss')
+
+    isTimeInRange(time,workTimings)
+   
+
+incrementDateObject = (dateObj) ->
+    incrementedDateObj = moment(dateObj).add('days',1).toDate()
+    return incrementedDateObj
+
+isTimeBeforeWorkTime = (dateObj , workTimings) ->
+    time = moment(dateObj).format('HH:mm:ss')
+    time = time.split(':')
+    timeHour = parseInt time[0]
+
+    startTime = workTimings[0].split(':')
+    startTimeHour = parseInt startTime
+
+    endTime = workTimings[1].split(':')
+    endTimeHour = parseInt endTime    
+    
+    if timeHour < startTimeHour 
+        obj =
+            startTimeHour : startTimeHour
+            timeHour : timeHour
+        return true
+    else
+        return false 

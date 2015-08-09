@@ -1,5 +1,5 @@
 (function() {
-  var _, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDayFromMoment, getDeliveryDate, getNewRequestsForSeller, getNotificationData, getOtherPricesForProduct, getRequestData, getTimeFromMoment, isTimeInRange, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, treeify;
+  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getNewRequestsForSeller, getNotificationData, getOtherPricesForProduct, getRequestData, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -1447,94 +1447,187 @@
   });
 
   Parse.Cloud.define('testDeliveryDate', function(request, response) {
-    var claimedDelivery, offerAcceptedDate, result, sellerOffDays, sellerWorkTimings;
+    var adjustedDeliveryDate, claimedDelivery, deliveryDate, deliveryDates, endWorkTime, offerAcceptedDate, offerAcceptedDate2, pendingHours, result, sellerOffDays, sellerWorkTimings, timeOfDelivery;
     claimedDelivery = request.params.claimedDelivery;
     offerAcceptedDate = request.params.offerAcceptedDate;
     sellerOffDays = request.params.sellerOffDays;
     sellerWorkTimings = request.params.sellerWorkTimings;
-    result = getDeliveryDate(claimedDelivery, offerAcceptedDate, sellerOffDays, sellerWorkTimings);
+    deliveryDates = getDeliveryDate(claimedDelivery, offerAcceptedDate, sellerOffDays, sellerWorkTimings);
+    offerAcceptedDate2 = deliveryDates["offerAcceptedDate"];
+    deliveryDate = deliveryDates["deliveryDate"];
+    adjustedDeliveryDate = deliveryDates["adjustedDeliveryDate"];
+    endWorkTime = sellerWorkTimings[1];
+    timeOfDelivery = moment(deliveryDate).format("HH:mm:ss");
+    pendingHours = getHoursDifference(endWorkTime, timeOfDelivery);
+    result = {
+      deliveryDate: moment(deliveryDate).format('dddd DD-MM-YYYY HH:mm:ss'),
+      adjustedDeliveryDate: moment(adjustedDeliveryDate).format('dddd DD-MM-YYYY HH:mm:ss'),
+      acceptedDate: moment(offerAcceptedDate).format('dddd DD-MM-YYYY HH:mm:ss'),
+      offerAcceptedDate2: deliveryDates["offerAcceptedDate"],
+      isDayValidWorking: isValidWorkDay(deliveryDate, sellerOffDays),
+      isDayValidWorkTime: isValidWorkTime(deliveryDate, sellerWorkTimings),
+      addedDateObject: moment(incrementDateObject(deliveryDate)).format('dddd DD-MM-YYYY HH:mm:ss'),
+      isTimeBeforeWorkTime: isTimeBeforeWorkTime(deliveryDate, sellerWorkTimings),
+      pendingHours: pendingHours,
+      timeOfDelivery: timeOfDelivery,
+      endtime: sellerWorkTimings[1]
+    };
     return response.success(result);
   });
 
   getDeliveryDate = function(claimedDelivery, offerAcceptedDate, sellerOffDays, sellerWorkTimings) {
-    var acceptedDateObj, addDuration, deliveryDate, deliveryDateComplete, deliveryDateMoment, deliveryDay, deliveryDuration, deliveryTime, deliveryUnit, isDeliveryDayOffDay, isDeliveryTimeInWkHrs, isNewDeliveryDayOffDay, newDeliveryDate, newDeliveryDateComplete, newDeliveryDateMoment, newDeliveryDay, newDeliveryTime, startTime;
-    deliveryDuration = parseInt(claimedDelivery.value);
+    var adjustedDeliveryDate, deliveryDate, deliveryDuration, deliveryUnit, obj, pendingHours;
+    deliveryDuration = claimedDelivery.value;
     deliveryUnit = claimedDelivery.unit;
-    if (deliveryUnit === "hrs") {
-      addDuration = "hours";
-    } else if (deliveryUnit === "days") {
-      addDuration = "days";
+    if (deliveryUnit === "day") {
+      deliveryDuration = deliveryDuration * 24;
     }
-    acceptedDateObj = offerAcceptedDate;
-    deliveryDateMoment = moment(acceptedDateObj).add(addDuration, deliveryDuration);
-    deliveryDateComplete = moment(acceptedDateObj).add(addDuration, deliveryDuration).format("DD-MM-YYYY HH:mm:ss");
-    deliveryTime = getTimeFromMoment(deliveryDateMoment);
-    isDeliveryTimeInWkHrs = isTimeInRange(deliveryTime, sellerWorkTimings);
-    if (isDeliveryTimeInWkHrs) {
-      deliveryDay = getDayFromMoment(deliveryDateMoment);
-      isDeliveryDayOffDay = _.indexOf(sellerOffDays, deliveryDay);
-      if (isDeliveryDayOffDay > -1) {
-        newDeliveryDateMoment = moment(deliveryDateComplete).add('days', 1);
-        newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss");
-        newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY");
-        newDeliveryTime = sellerWorkTimings[0];
-        newDeliveryDay = getDayFromMoment(newDeliveryDateMoment);
-        isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay);
-        while (isNewDeliveryDayOffDay > -1) {
-          newDeliveryDateMoment = moment(newDeliveryDateComplete).add('days', 1);
-          newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss");
-          newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY");
-          newDeliveryTime = sellerWorkTimings[0];
-          newDeliveryDay = getDayFromMoment(newDeliveryDateMoment);
-          isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay);
+    deliveryDate = moment(offerAcceptedDate).add('hours', deliveryDuration).toDate();
+    pendingHours = "";
+    adjustedDeliveryDate = fetchAdjustedDelivery(offerAcceptedDate, deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings, deliveryDuration);
+    obj = {
+      offerAcceptedDate: offerAcceptedDate,
+      deliveryDate: deliveryDate,
+      adjustedDeliveryDate: adjustedDeliveryDate
+    };
+    return obj;
+  };
+
+  fetchAdjustedDelivery = function(offerAcceptedDate, deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings, deliveryDuration) {
+    var acceptDate, dDate, diffHours, diffInStartAndDelivery, diffMin, diffSec, endWorkTime, finalMoment, modifiedAcceptedDate, startTime, startWorkTime, timeOfDelivery;
+    if (isValidWorkDay(deliveryDate, sellerOffDays)) {
+      if (_.isEmpty(pendingHours)) {
+        if (isValidWorkTime(deliveryDate, sellerWorkTimings)) {
+          console.log("step1");
+          if (isTimeBeforeWorkTime(offerAcceptedDate, sellerWorkTimings)) {
+            console.log("step2");
+            startTime = sellerWorkTimings[0];
+            startTime = startTime.split(':');
+            startWorkTime = {
+              "hours": parseInt(startTime[0]),
+              "minutes": parseInt(startTime[1]),
+              "seconds": parseInt(startTime[2])
+            };
+            dDate = deliveryDate;
+            acceptDate = offerAcceptedDate;
+            modifiedAcceptedDate = moment(acceptDate).hours(startWorkTime["hours"]).minutes(startWorkTime["minutes"]).seconds(startWorkTime["seconds"]).toDate();
+            deliveryDate = moment(modifiedAcceptedDate).add('hours', deliveryDuration).toDate();
+            return fetchAdjustedDelivery(modifiedAcceptedDate, deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings, deliveryDuration);
+          } else {
+            console.log("step3");
+            return deliveryDate;
+          }
+        } else {
+          console.log("step4");
+          if (isTimeBeforeWorkTime(deliveryDate, sellerWorkTimings)) {
+            console.log("step5");
+            pendingHours = deliveryDuration;
+            return fetchAdjustedDelivery(offerAcceptedDate, deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings, deliveryDuration);
+          } else {
+            console.log("step6");
+            endWorkTime = sellerWorkTimings[1];
+            timeOfDelivery = moment(deliveryDate).format("HH:mm:ss");
+            pendingHours = getHoursDifference(endWorkTime, timeOfDelivery);
+            console.log("pending hours" + pendingHours);
+            deliveryDate = incrementDateObject(deliveryDate);
+            return fetchAdjustedDelivery(offerAcceptedDate, deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings, deliveryDuration);
+          }
         }
-        deliveryDateComplete = newDeliveryDate + " " + newDeliveryTime;
+      } else {
+        console.log("step7");
+        startWorkTime = sellerWorkTimings[0];
+        timeOfDelivery = moment(deliveryDate).format("HH:mm:ss");
+        diffInStartAndDelivery = getHoursDifference(timeOfDelivery, startWorkTime);
+        diffHours = moment(diffInStartAndDelivery, "hh:mm:ss").hours();
+        diffMin = moment(diffInStartAndDelivery, "hh:mm:ss").minutes();
+        diffSec = moment(diffInStartAndDelivery, "hh:mm:ss").seconds();
+        dDate = deliveryDate;
+        moment(dDate).add('hours', diffHours);
+        moment(dDate).add('minutes', diffMin);
+        finalMoment = moment(dDate).add('seconds', diffSec);
+        return deliveryDate = finalMoment.toDate();
       }
     } else {
-      if (deliveryDuration === "hrs") {
-        newDeliveryDateMoment = moment(acceptedDateObj).add('days', 1);
-      } else {
-        newDeliveryDateMoment = moment(deliveryDateComplete).add('days', 1);
-      }
-      deliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss");
-      startTime = sellerWorkTimings[0].split(':');
-      deliveryTime = moment().hour(startTime[0]).minute(startTime[1]).seconds(startTime[2]).add(deliveryDuration, 'hours').format("HH:mm:ss");
-      deliveryDay = getDayFromMoment(newDeliveryDateMoment);
-      isDeliveryDayOffDay = _.indexOf(sellerOffDays, deliveryDay);
-      if (isDeliveryDayOffDay > -1) {
-        newDeliveryDateMoment = moment(deliveryDateComplete).add('days', 1);
-        newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss");
-        newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY");
-        newDeliveryDay = getDayFromMoment(newDeliveryDateMoment);
-        isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay);
-        while (isNewDeliveryDayOffDay > -1) {
-          newDeliveryDateMoment = moment(newDeliveryDateComplete).add('days', 1);
-          newDeliveryDateComplete = newDeliveryDateMoment.format("DD-MM-YYYY HH:mm:ss");
-          newDeliveryDate = newDeliveryDateMoment.format("DD-MM-YYYY");
-          newDeliveryDay = getDayFromMoment(newDeliveryDateMoment);
-          isNewDeliveryDayOffDay = _.indexOf(sellerOffDays, newDeliveryDay);
-        }
-        deliveryDateComplete = newDeliveryDate + " " + newDeliveryTime;
-      }
+      console.log("step8");
+      deliveryDate = incrementDateObject(deliveryDate);
+      return deliveryDate = fetchAdjustedDelivery(offerAcceptedDate, deliveryDate, pendingHours, sellerOffDays, sellerWorkTimings, deliveryDuration);
     }
-    deliveryDate = moment(deliveryDateComplete).toDate();
-    return deliveryDate;
   };
 
-  getDayFromMoment = function(momentDate) {
-    return momentDate.format('dddd');
+  getHoursDifference = function(initialTimeString, finalTimeString) {
+    var t1, t2, t3;
+    t1 = moment(initialTimeString, "hh:mm:ss");
+    t2 = moment(finalTimeString, "hh:mm:ss");
+    t3 = moment(t2.diff(t1)).format("hh:mm:ss");
+    return t3;
   };
 
-  getTimeFromMoment = function(momentDate) {
-    return momentDate.format('HH:mm:ss');
+  isTimeInRange = function(time, range) {
+    var endTime, endTimeHour, endTimeMin, startTime, startTimeHour, startTimeMin, timeHour, timeMin;
+    time = time.split(':');
+    timeHour = parseInt(time[0]);
+    timeMin = parseInt(time[1]);
+    startTime = range[0].split(':');
+    startTimeHour = parseInt(startTime[0]);
+    startTimeMin = parseInt(startTime[1]);
+    endTime = range[1].split(':');
+    endTimeHour = parseInt(endTime[0]);
+    endTimeMin = parseInt(endTime[1]);
+    if (timeHour > startTimeHour && timeHour < endTimeHour) {
+      return true;
+    } else if (timeHour === startTimeHour && timeHour < endTimeHour) {
+      if (timeMin >= startTimeMin) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (timeHour > startTimeHour && timeHour === endTimeHour) {
+      if (timeMin <= endTimeMin) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   };
 
-  isTimeInRange = function(deliveryTime, sellerWorkTimings) {
-    var endTime, startTime;
-    deliveryTime = deliveryTime.split(':');
-    startTime = sellerWorkTimings[0].split(':');
-    endTime = sellerWorkTimings[1].split(':');
-    if (deliveryTime[0] >= startTime[0] || deliveryTime[0] <= endTime[0]) {
+  isValidWorkDay = function(dateObj, nonWorkDays) {
+    var day;
+    day = moment(dateObj).format('dddd');
+    if (_.indexOf(nonWorkDays, day) > -1) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  isValidWorkTime = function(dateObj, workTimings) {
+    var time;
+    time = moment(dateObj).format('HH:mm:ss');
+    return isTimeInRange(time, workTimings);
+  };
+
+  incrementDateObject = function(dateObj) {
+    var incrementedDateObj;
+    incrementedDateObj = moment(dateObj).add('days', 1).toDate();
+    return incrementedDateObj;
+  };
+
+  isTimeBeforeWorkTime = function(dateObj, workTimings) {
+    var endTime, endTimeHour, obj, startTime, startTimeHour, time, timeHour;
+    time = moment(dateObj).format('HH:mm:ss');
+    time = time.split(':');
+    timeHour = parseInt(time[0]);
+    startTime = workTimings[0].split(':');
+    startTimeHour = parseInt(startTime);
+    endTime = workTimings[1].split(':');
+    endTimeHour = parseInt(endTime);
+    if (timeHour < startTimeHour) {
+      obj = {
+        startTimeHour: startTimeHour,
+        timeHour: timeHour
+      };
       return true;
     } else {
       return false;
