@@ -1,45 +1,78 @@
 angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
-  '$scope', 'App', 'creditHistoryAPI', 'User', function($scope, App, creditHistoryAPI, User) {
+  '$scope', 'App', 'CreditHistoryAPI', 'User', function($scope, App, CreditHistoryAPI, User) {
     $scope.view = {
       display: 'loader',
       errorType: '',
       page: 0,
       canLoadMore: true,
       refresh: false,
-      availableCredit: '',
       creditHistoryData: [],
-      getAllCreditHistory: false,
-      onScrollComplete: function() {
-        return $scope.$broadcast('scroll.infiniteScrollComplete');
+      gotAllRecords: false,
+      init: function() {
+        return this.getCreditDetails();
+      },
+      getCreditDetails: function() {
+        return User.update().then((function(_this) {
+          return function(user) {
+            return _this.setCreditDetails(user);
+          };
+        })(this), (function(_this) {
+          return function(error) {
+            return _this.setCreditDetails(User.getCurrent());
+          };
+        })(this));
+      },
+      setCreditDetails: function(user) {
+        var totalCredit, usedCredit;
+        totalCredit = user.get('addedCredit');
+        usedCredit = user.get('subtractedCredit');
+        this.creditAvailable = parseInt(totalCredit) - parseInt(usedCredit);
+        return this.creditUsed = usedCredit;
       },
       onInfiniteScroll: function() {
-        this.getTotalCredit();
         this.refresh = false;
-        return this.creditHistory();
+        return this.getCreditHistory();
       },
       onPullToRefresh: function() {
-        this.getAllHistory = false;
+        this.gotAllRecords = false;
         this.refresh = true;
         this.page = 0;
         this.canLoadMore = true;
-        return this.creditHistory();
+        this.getCreditDetails();
+        return this.getCreditHistory();
       },
-      getTotalCredit: function() {
-        var user;
-        user = User.getCurrent();
-        this.availableCredit = parseInt(user._serverData.addedCredit) - parseInt(user._serverData.subtractedCredit);
-        return this.creditUsed = user._serverData.subtractedCredit;
+      getCreditHistory: function() {
+        var params;
+        params = {
+          page: this.page,
+          displayLimit: 5
+        };
+        return CreditHistoryAPI.getAll(params).then((function(_this) {
+          return function(data) {
+            return _this.onSuccess(data, params.displayLimit);
+          };
+        })(this), (function(_this) {
+          return function(error) {
+            return _this.onError(error);
+          };
+        })(this))["finally"]((function(_this) {
+          return function() {
+            _this.page = _this.page + 1;
+            $scope.$broadcast('scroll.refreshComplete');
+            return App.resize();
+          };
+        })(this));
       },
       onSuccess: function(data, displayLimit) {
-        var creditHistory;
+        var totalRecords;
         this.display = 'noError';
-        creditHistory = _.size(data);
-        if (creditHistory > 0) {
-          if (creditHistory < displayLimit) {
+        totalRecords = _.size(data);
+        if (totalRecords > 0) {
+          if (totalRecords < displayLimit) {
             this.canLoadMore = false;
           } else {
             this.canLoadMore = true;
-            this.onScrollComplete();
+            $scope.$broadcast('scroll.infiniteScrollComplete');
           }
           if (this.refresh) {
             this.creditHistoryData = data;
@@ -50,41 +83,23 @@ angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
           this.canLoadMore = false;
         }
         if (!this.canLoadMore) {
-          return this.getAllHistory = true;
+          return this.gotAllRecords = true;
         }
       },
       onError: function(type) {
-        this.creditHistoryData = [];
         this.display = 'error';
         this.errorType = type;
         return this.canLoadMore = false;
       },
-      creditHistory: function() {
-        var params;
-        params = {
-          page: this.page,
-          displayLimit: 5
-        };
-        return creditHistoryAPI.getCreditHistory(params).then((function(_this) {
-          return function(data) {
-            return _this.onSuccess(data, params.displayLimit);
-          };
-        })(this), (function(_this) {
-          return function(error) {
-            return _this.onError(error);
-          };
-        })(this))["finally"]((function(_this) {
-          return function() {
-            App.resize();
-            _this.page = _this.page + 1;
-            return $scope.$broadcast('scroll.refreshComplete');
-          };
-        })(this));
-      },
       onTapToRetry: function() {
+        this.creditHistoryData = [];
+        this.getCreditDetails();
         this.display = 'loader';
         this.page = 0;
         return this.canLoadMore = true;
+      },
+      getTransactionDate: function(createdAt) {
+        return moment(createdAt.iso).format('DD/MM/YYYY');
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
@@ -92,15 +107,6 @@ angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
         return viewData.enableBack = true;
       }
     });
-  }
-]).controller('EachDisplayDateCtrl', [
-  '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
-    var date, format, iso, now;
-    iso = $scope.request.createdAt.iso;
-    format = 'DD/MM/YYYY HH:mm:ss';
-    now = moment().format(format);
-    date = now.split(" ");
-    return $scope.request.timeStr = date[0];
   }
 ]).config([
   '$stateProvider', function($stateProvider) {
