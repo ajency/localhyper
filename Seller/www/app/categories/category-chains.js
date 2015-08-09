@@ -1,17 +1,16 @@
 angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
-  '$scope', 'App', 'CategoriesAPI', 'Storage', function($scope, App, CategoriesAPI, Storage) {
+  '$scope', 'App', 'CategoriesAPI', 'Storage', 'CategoryChains', function($scope, App, CategoriesAPI, Storage, CategoryChains) {
     return $scope.view = {
       showDelete: false,
       categoryChains: [],
+      init: function() {
+        return this.setCategoryChains();
+      },
       setCategoryChains: function() {
-        return Storage.categoryChains('get').then((function(_this) {
-          return function(chains) {
-            if (!_.isNull(chains)) {
-              _this.categoryChains = chains;
-              return CategoriesAPI.categoryChains('set', chains);
-            }
-          };
-        })(this));
+        if (!_.isNull(CategoryChains)) {
+          this.categoryChains = CategoryChains;
+          return CategoriesAPI.categoryChains('set', CategoryChains);
+        }
       },
       getBrands: function(brands) {
         var brandNames;
@@ -45,7 +44,17 @@ angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
       views: {
         "appContent": {
           templateUrl: 'views/categories/category-chains.html',
-          controller: 'CategoryChainsCtrl'
+          controller: 'CategoryChainsCtrl',
+          resolve: {
+            CategoryChains: function($q, Storage) {
+              var defer;
+              defer = $q.defer();
+              Storage.categoryChains('get').then(function(chains) {
+                return defer.resolve(chains);
+              });
+              return defer.promise;
+            }
+          }
         }
       }
     });

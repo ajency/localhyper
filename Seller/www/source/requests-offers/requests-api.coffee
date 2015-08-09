@@ -6,7 +6,7 @@ angular.module 'LocalHyper.requestsOffers'
 	RequestsAPI = {}
 	cancelledRequestId = ''
 
-	RequestsAPI.getAll = ->
+	RequestsAPI.getAll = (opts)->
 		defer = $q.defer()
 		user = User.getCurrent()
 		params = 
@@ -14,7 +14,10 @@ angular.module 'LocalHyper.requestsOffers'
 			"city": user.get 'city'
 			"area": user.get 'area'
 			"sellerLocation": "default"
-			"sellerRadius": "default"
+			"sellerRadius": opts.sellerRadius
+			"categories" : opts.categories
+			"brands" : opts.brands
+			"productMrp": opts.productMrp
 
 		$http.post 'functions/getNewRequests', params
 		.then (data)->

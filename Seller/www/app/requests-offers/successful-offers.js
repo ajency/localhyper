@@ -130,7 +130,7 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
           return $ionicModal.fromTemplateUrl('views/requests-offers/successful-offer-details.html', {
             scope: $scope,
             animation: 'slide-in-up',
-            hardwareBackButtonClose: true
+            hardwareBackButtonClose: false
           }).then((function(_this) {
             return function(modal) {
               return _this.modal = modal;
@@ -363,12 +363,15 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
       }
     };
     onDeviceBack = function() {
-      var filter;
+      var detailsModal, filter;
       filter = $scope.view.filter;
+      detailsModal = $scope.view.offerDetails.modal;
       if ($('.loading-container').hasClass('visible')) {
         return $ionicLoading.hide();
       } else if (filter.modal.isShown()) {
         return filter.closeModal();
+      } else if (detailsModal.isShown()) {
+        return detailsModal.hide();
       } else {
         return App.goBack(-1);
       }
@@ -400,6 +403,18 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         $scope.view.offerDetails.onNotificationClick(offerId);
       }
       return OffersAPI.acceptedOfferId('set', '');
+    });
+  }
+]).controller('EachSuccessfulOfferCtrl', [
+  '$scope', '$interval', 'DeliveryTime', function($scope, $interval, DeliveryTime) {
+    var interval, setTime;
+    setTime = function() {
+      return $scope.request.leftDeliveryTimeStr = DeliveryTime.left($scope.request.offerDeliveryDate);
+    };
+    setTime();
+    interval = $interval(setTime, 60000);
+    return $scope.$on('$destroy', function() {
+      return $interval.cancel(interval);
     });
   }
 ]);

@@ -1,19 +1,20 @@
 angular.module 'LocalHyper.categories'
 
 
-.controller 'CategoryChainsCtrl', ['$scope', 'App', 'CategoriesAPI', 'Storage'
-	, ($scope, App, CategoriesAPI, Storage)->
+.controller 'CategoryChainsCtrl', ['$scope', 'App', 'CategoriesAPI', 'Storage', 'CategoryChains'
+	, ($scope, App, CategoriesAPI, Storage, CategoryChains)->
 
 		$scope.view = 
 			showDelete: false
 			categoryChains : []
 
+			init : ->
+				@setCategoryChains()
+
 			setCategoryChains : ->
-				Storage.categoryChains 'get'
-				.then (chains) =>
-					if !_.isNull chains
-						@categoryChains = chains
-						CategoriesAPI.categoryChains 'set', chains
+				if !_.isNull CategoryChains
+					@categoryChains = CategoryChains
+					CategoriesAPI.categoryChains 'set', CategoryChains
 
 			getBrands : (brands)->
 				brandNames = _.pluck brands, 'name'
@@ -31,7 +32,6 @@ angular.module 'LocalHyper.categories'
 			onChainClick : (chains)->
 				CategoriesAPI.subCategories 'set', chains.category.children
 				App.navigate 'brands', categoryID: chains.subCategory.id
-
 ]
 
 
@@ -47,5 +47,12 @@ angular.module 'LocalHyper.categories'
 				"appContent":
 					templateUrl: 'views/categories/category-chains.html'
 					controller: 'CategoryChainsCtrl'
-
+					resolve: 
+						CategoryChains : ($q, Storage)->
+							defer = $q.defer()
+							Storage.categoryChains 'get'
+							.then (chains)->
+								defer.resolve chains
+							defer.promise
 ]
+

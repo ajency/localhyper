@@ -3,9 +3,9 @@ angular.module 'LocalHyper.requestsOffers'
 
 .controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope'
 	, '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate'
-	, '$q', '$timeout', '$ionicLoading', '$ionicPlatform'
+	, '$q', '$timeout', '$ionicLoading', '$ionicPlatform', 'CDialog'
 	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI
-	, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform)->
+	, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform, CDialog)->
 
 		$scope.view = 
 			display: 'loader'
@@ -16,6 +16,157 @@ angular.module 'LocalHyper.requestsOffers'
 			sortBy: '-createdAt.iso'
 			sortName: 'Most Recent'
 
+			resetSort : ->
+				@sortBy = '-createdAt.iso'
+				@sortName = 'Most Recent'
+
+			filter:
+				modal: null
+
+				reset : ->
+					@attribute = 'category'
+					@excerpt = ''
+					@allAttributes = []
+					@attrValues = {}
+					@originalValues = {}
+					@other = {}
+					@defaultRadius = User.getCurrent().get('deliveryRadius')
+					@selectedCategories = 'default'
+					@selectedBrands = 'default'
+					@selectedMrp = 'default'
+					@selectedRadius = 'default'
+
+				plus : ->
+					@attrValues['radius']++ if @attrValues['radius'] < 100
+				minus : ->
+					@attrValues['radius']-- if @attrValues['radius'] > 1
+
+				loadModal : ->
+					$ionicModal.fromTemplateUrl 'views/requests-offers/new-request-filter.html', 
+						scope: $scope,
+						animation: 'slide-in-up'
+						hardwareBackButtonClose: false
+					.then (modal)=>
+						@modal = modal
+
+				getPriceRange : ->
+					prices = [
+						{start: -1,    end: 1000,  name: "Rs 1000 & Below"}
+						{start: 1000,  end: 5000,  name: "Rs 1000 - Rs 5000"}
+						{start: 5000,  end: 10000, name: "Rs 5000 - Rs 10000"}
+						{start: 10000, end: 15000, name: "Rs 10000 - Rs 15000"}
+						{start: 15000, end: 20000, name: "Rs 15000 - Rs 20000"}
+						{start: 20000, end: 25000, name: "Rs 20000 - Rs 25000"}
+						{start: 25000, end: 30000, name: "Rs 25000 - Rs 30000"}
+						{start: 30000, end: 35000, name: "Rs 30000 - Rs 35000"}
+						{start: 35000, end: 40000, name: "Rs 35000 - Rs 40000"}
+						{start: 40000, end: 45000, name: "Rs 40000 - Rs 45000"}
+						{start: 45000, end: 50000, name: "Rs 45000 - Rs 50000"}
+						{start: 50000, end: -1,    name: "Rs 50000 & Above"}]
+
+				setAttrValues: ->
+					@attrValues['category'] = @other.sellerCategories
+					@attrValues['brand']    = @other.sellerBrands
+					@attrValues['mrp']      = @getPriceRange()
+					@attrValues['radius']   = @defaultRadius
+
+					@allAttributes.push value: 'category', name: 'Category', selected: 0
+					@allAttributes.push value: 'brand', name: 'Brand', selected: 0
+					@allAttributes.push value: 'mrp', name: 'MRP', selected: 0
+					@allAttributes.push value: 'radius', name: 'Distance'
+
+					# De-select all attr values
+					_.each @attrValues, (values)->
+						_.each values, (val)-> val.selected = false
+
+				showAttrCount : ->
+					_.each @attrValues, (values, index)=>
+						if _.isObject values
+							count = 0
+							_.each values, (val)-> count++ if val.selected
+							attrIndex = _.findIndex @allAttributes, (attrs)-> attrs.value is index
+							@allAttributes[attrIndex].selected = count
+
+				clearFilters : ->
+					_.each @attrValues, (values)->
+						_.each values, (val)-> val.selected = false
+					@attrValues['radius']   = @defaultRadius
+					
+					_.each @allAttributes, (attrs)-> attrs.selected = 0
+
+					@selectedCategories = 'default'
+					@selectedBrands = 'default'
+					@selectedMrp = 'default'
+					@selectedRadius = 'default'
+
+				noChangeInSelection : ->
+					@attrValues['radius'] = parseInt @attrValues['radius']
+					@originalValues['radius'] = parseInt @originalValues['radius']
+					_.isEqual _.sortBy(@originalValues), _.sortBy(@attrValues)
+
+				openModal : ->
+					@originalValues = JSON.parse JSON.stringify(@attrValues)
+					@modal.show()
+
+				closeModal : ->
+					if @noChangeInSelection()
+						@modal.hide()
+					else
+						msg = 'Your filter selection will go away'
+						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']
+						.then (btnIndex)=>
+							switch btnIndex
+								when 1
+									@attrValues = @originalValues
+									@showAttrCount()
+									@modal.hide()
+								when 2
+									@onApply()
+
+				onApply : ->
+					_.each @attrValues, (_values, attribute)=>
+						switch attribute
+							when 'category'
+								selected = []
+								_.each _values, (category)->
+									selected.push(category.id) if category.selected
+								@selectedCategories = if _.isEmpty(selected) then 'default' else selected
+
+							when 'brand'
+								selected = []
+								_.each _values, (brand)=>
+									selected.push(brand.id) if brand.selected
+								@selectedBrands = if _.isEmpty(selected) then 'default' else selected
+
+							when 'mrp'
+								start = []
+								end = []
+								_.each _values, (mrp)=>
+									if mrp.selected
+										start.push mrp.start
+										end.push mrp.end
+
+								@selectedMrp = if _.isEmpty(start) then 'default' else [_.min(start), _.max(end)]
+
+							when 'radius'
+								radius = parseInt _values
+								@selectedRadius = if radius is @defaultRadius then 'default' else radius
+					
+					@setExcerpt()
+					@modal.hide()
+					$scope.view.reFetch()
+
+				setExcerpt : ->
+					filterNames = []
+					_.each @allAttributes, (attr, index)=>
+						if attr.name is 'Distance'
+							if parseInt(@attrValues['radius']) isnt parseInt(@defaultRadius)
+								filterNames.push(attr.name)
+						else filterNames.push(attr.name) if attr.selected > 0
+					@excerpt = filterNames.join ', '
+
+			
+			
 			requestDetails:
 				modal: null
 				data: {}
@@ -51,7 +202,7 @@ angular.module 'LocalHyper.requestsOffers'
 						$ionicModal.fromTemplateUrl 'views/requests-offers/new-request-details.html', 
 							scope: $scope,
 							animation: 'slide-in-up'
-							hardwareBackButtonClose: true
+							hardwareBackButtonClose: false
 						.then (modal)=>
 							defer.resolve @modal = modal
 					else defer.resolve()
@@ -155,22 +306,33 @@ angular.module 'LocalHyper.requestsOffers'
 					spliceIndex = _.findIndex $scope.view.requests, (request)->
 						request.id is requestId
 					$scope.view.requests.splice(spliceIndex, 1) if spliceIndex isnt -1
+					$scope.view.setRequestsCount()
 
 
 
 			init : ->
-				@getRequests()
+				@filter.reset()
+				@filter.loadModal()
 				@requestDetails.loadModal()
+				@getRequests()
 
-			autoFetch : ->
-				@page = 0
+			reFetch : ->
+				App.scrollTop()
 				@requests = []
 				@display = 'loader'
-				@errorType = ''
 				@getRequests()
 
+			setRequestsCount : ->
+				App.notification.newRequests = _.size @requests
+
 			getRequests : ->
-				RequestsAPI.getAll()
+				options = 
+					sellerRadius: @filter.selectedRadius
+					categories: @filter.selectedCategories
+					brands: @filter.selectedBrands
+					productMrp: @filter.selectedMrp
+
+				RequestsAPI.getAll options
 				.then (data)=>
 					console.log data
 					@onSuccess data
@@ -178,11 +340,16 @@ angular.module 'LocalHyper.requestsOffers'
 					@onError error
 				.finally ->
 					$scope.$broadcast 'scroll.refreshComplete'
+					App.resize()
 
 			onSuccess : (data)->
 				@display = 'noError'
 				@requests = data.requests
-				App.notification.newRequests = _.size @requests
+				@filter.other['sellerBrands']     = data.sellerBrands
+				@filter.other['sellerCategories'] = data.sellerCategories
+				if _.isEmpty @filter.attrValues
+					@filter.setAttrValues()
+				@setRequestsCount()
 				@markPendingNotificationsAsSeen()
 			
 			onError : (type)->
@@ -265,12 +432,16 @@ angular.module 'LocalHyper.requestsOffers'
 							@simulateFetch()
 
 
+		
 		onDeviceBack = ->
-			# filter = $scope.view.filter
+			filter = $scope.view.filter
+			detailsModal = $scope.view.requestDetails.modal
 			if $('.loading-container').hasClass 'visible'
 				$ionicLoading.hide()
-			# else if filter.modal.isShown()
-			# 	filter.closeModal()
+			else if filter.modal.isShown()
+				filter.closeModal()
+			else if detailsModal.isShown()
+				detailsModal.hide()
 			else
 				App.goBack -1
 
@@ -280,6 +451,10 @@ angular.module 'LocalHyper.requestsOffers'
 		$scope.$on '$ionicView.leave', ->
 			$ionicPlatform.offHardwareBackButton onDeviceBack
 
+		$rootScope.$on 'category:chain:updated', ->
+			$scope.view.resetSort()
+			$scope.view.filter.reset()
+			$scope.view.reFetch()
 		
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
@@ -307,10 +482,6 @@ angular.module 'LocalHyper.requestsOffers'
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
-
-		$rootScope.$on 'category:chain:changed', ->
-			# App.scrollTop()
-			$scope.view.autoFetch()
 ]
 
 

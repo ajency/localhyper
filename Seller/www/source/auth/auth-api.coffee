@@ -179,6 +179,8 @@ angular.module 'LocalHyper.auth'
 					"workTimings": info.workTimings
 					"addedCredit": parseFloat defaultObj.get('value')
 					"subtractedCredit": 0
+					"ratingSum": 0
+					"ratingCount": 0
 				
 				user.signUp()
 			.then ->
@@ -191,6 +193,9 @@ angular.module 'LocalHyper.auth'
 					"area": user.get 'area'
 					"sellerLocation": "default"
 					"sellerRadius": "default"
+					"categories" : "default"
+					"brands" : "default"
+					"productMrp": "default"
 			.then ->
 				user = User.getCurrent()
 				Transaction = Parse.Object.extend 'Transaction'

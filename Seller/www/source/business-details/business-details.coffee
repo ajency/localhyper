@@ -3,9 +3,9 @@ angular.module 'LocalHyper.businessDetails', []
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
 	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails'
-	, 'AuthAPI', 'CSpinner', '$cordovaDatePicker'
+	, 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', '$rootScope'
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout
-	, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker)->
+	, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q, $rootScope)->
 	
 		$scope.view = 
 			name:''
@@ -13,7 +13,7 @@ angular.module 'LocalHyper.businessDetails', []
 			businessName:''
 			confirmedAddress: ''
 			terms: false
-			myProfileState : false
+			myProfileState : App.previousState is 'my-profile'
 
 			delivery:
 				radius: 10
@@ -31,9 +31,7 @@ angular.module 'LocalHyper.businessDetails', []
 				{name: 'Sat', value: 'Saturday', selected: false}
 				{name: 'Sun', value: 'Sunday', selected: false}]
 
-			workTimings: 
-				start: ''
-				end: ''
+			workTimings: start: '', end: ''
 
 			location:
 				modal: null
@@ -42,6 +40,18 @@ angular.module 'LocalHyper.businessDetails', []
 				latLng: null
 				address: null
 				addressFetch: true
+
+				loadModal : ->
+					defer = $q.defer()
+					if _.isNull @modal
+						$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
+							scope: $scope,
+							animation: 'slide-in-up'
+							hardwareBackButtonClose: true
+						.then (modal)=> 
+							defer.resolve @modal = modal
+					else defer.resolve()
+					defer.promise
 
 				showAlert : ->
 					positiveBtn = if App.isAndroid() then 'Open Settings' else 'Ok'
@@ -100,9 +110,8 @@ angular.module 'LocalHyper.businessDetails', []
 						@addressFetch = true
 
 			init : ->
-				@loadLocationModal()
 				@getStoredBusinessDetails()
-				
+
 			getStoredBusinessDetails : ->
 				details = BusinessDetails
 				if !_.isNull details 
@@ -113,18 +122,28 @@ angular.module 'LocalHyper.businessDetails', []
 					@delivery.radius =  details.deliveryRadius
 					@latitude =  details.latitude
 					@longitude =  details.longitude
-					@location.latLng = new google.maps.LatLng details.latitude, details.longitude
 					@location.address = details.address
 					@workTimings = details.workTimings
 					@workingDays = details.workingDays
-						
-			loadLocationModal : ->
-				$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
-					scope: $scope,
-					animation: 'slide-in-up'
-					hardwareBackButtonClose: true
-				.then (modal)=>
-					@location.modal = modal
+
+			isGoogleMapsScriptLoaded : ->
+				defer = $q.defer()
+				if typeof google is 'undefined'
+					CSpinner.show '', 'Please wait, loading resources...'
+					GoogleMaps.loadScript()
+					.then =>
+						@location.loadModal()
+					.then ->
+						defer.resolve true
+					, (error)->
+						CToast.show 'Could not connect to server. Please try again'
+						defer.resolve false
+					.finally ->
+						CSpinner.hide()
+				else
+					@location.loadModal().then ->
+						defer.resolve true
+				defer.promise
 
 			areWorkingDaysSelected : ->
 				selected = _.pluck @workingDays, 'selected'
@@ -152,33 +171,68 @@ angular.module 'LocalHyper.businessDetails', []
 					@workTimings.end = '18:00:00'
 
 			onChangeLocation : ->
-				@location.modal.show()
-				mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
-				$('.aj-big-map').css 'height': mapHeight
-				if _.isNull @location.latLng
-					$timeout =>
-						loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
-						@location.setMapCenter loc
-						@location.getCurrent()
-					, 200
-				else if not _.isUndefined @latitude
-					$timeout =>
-						loc = lat: @latitude, long: @longitude
-						latLng = @location.setMapCenter loc
-						@location.map.setZoom 15
-						@location.addMarker latLng
-					, 200
+				@isGoogleMapsScriptLoaded().then (loaded)=>
+					if loaded
+						@location.modal.show()
+						mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
+						$('.aj-big-map').css 'height': mapHeight
+						if not _.isUndefined @latitude
+							$timeout =>
+								loc = lat: @latitude, long: @longitude
+								latLng = @location.setMapCenter loc
+								@location.map.setZoom 15
+								@location.addMarker latLng
+							, 200
+						else if _.isNull @location.latLng
+							$timeout =>
+								loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
+								@location.setMapCenter loc
+								@location.getCurrent()
+							, 200
 
 			onConfirmLocation : ->
 				if !_.isNull(@location.latLng) and @location.addressFetch
-					# CDialog.confirm 'Confirm Location', 'Do you want to confirm this location?', ['Confirm', 'Cancel']
-					# .then (btnIndex)=>
-					# 	if btnIndex is 1
 					@location.address.full = GoogleMaps.fullAddress(@location.address)
 					@confirmedAddress = @location.address.full
+					@latitude = @location.latLng.lat()
+					@longitude = @location.latLng.lng()
 					@location.modal.hide()
 				else
 					CToast.show 'Please wait, getting location details...'
+
+			onNext : ->
+				if _.contains [@businessName, @name, @phone], ''
+					CToast.show 'Please fill up all fields'
+				else if _.isUndefined @phone
+					CToast.show 'Please enter valid phone number'
+				else if @confirmedAddress is ''
+					CToast.show 'Please select your location'
+				else if !@areWorkingDaysSelected()
+					CToast.show 'Please select your working days'
+				else if _.contains [@workTimings.start, @workTimings.end], ''
+					CToast.show 'Please select your work timings'
+				else
+					@offDays = @getNonWorkingDays()
+					
+					if @myProfileState
+						CSpinner.show '', 'Please wait...'
+						User.info 'set', $scope.view
+						AuthAPI.isExistingUser $scope.view
+						.then (data)->
+							AuthAPI.loginExistingUser data.userObj
+						.then (success)=>
+							CToast.show 'Saved business details'
+							$rootScope.$broadcast 'category:chain:updated'
+							@saveBussinessDetails().then ->
+								App.navigate 'my-profile'
+						, (error)->
+							CToast.show 'Could not connect to server, please try again.'
+						.finally ->
+							CSpinner.hide()
+					else
+						User.info 'set', $scope.view
+						@saveBussinessDetails().then ->
+							App.navigate 'category-chains'
 
 			saveBussinessDetails :->
 				Storage.bussinessDetails 'set',
@@ -195,46 +249,12 @@ angular.module 'LocalHyper.businessDetails', []
 					workTimings: @workTimings
 					workingDays : @workingDays
 					offDays : @getNonWorkingDays()
-
-			onNext : ->
-				if _.contains [@businessName, @name, @phone], ''
-					CToast.show 'Fill up all fields'
-				else if _.isUndefined @phone
-					CToast.show 'Please enter valid phone number'
-				else if @confirmedAddress is ''
-					CToast.show 'Please select your location'
-				else if !@areWorkingDaysSelected()
-					CToast.show 'Please select your working days'
-				else if _.contains [@workTimings.start, @workTimings.end], ''
-					CToast.show 'Please select your work timings'
-				else
-					@latitude = @location.latLng.lat()
-					@longitude = @location.latLng.lng()
-					@offDays = @getNonWorkingDays()
-					
-					if App.previousState == 'my-profile' || (App.previousState == '' && User.getCurrent() != null )
-						User.info 'set', $scope.view
-						CSpinner.show '', 'Please wait...'
-						user = User.info 'get'
-						AuthAPI.isExistingUser(user)
-						.then (data)=>
-							AuthAPI.loginExistingUser(data.userObj)
-						.then (success)=>
-							@saveBussinessDetails() 
-							App.navigate('my-profile')
-						, (error)=>
-							CToast.show 'Please try again data not saved'
-						.finally ->
-							CSpinner.hide()
-					else
-						User.info 'set', $scope.view
-						@saveBussinessDetails()
-						App.navigate 'category-chains'
-						
-		$scope.$on '$ionicView.beforeEnter', ->
-			if App.previousState == 'my-profile' || (App.previousState == '' && User.getCurrent() != null )
-				$scope.view.myProfileState = true 
 		
+
+		$scope.$on '$destroy', ->
+			locationModal = $scope.view.location.modal
+			locationModal.remove() if !_.isNull(locationModal)
+
 		$scope.$on '$ionicView.enter', ->
 			App.hideSplashScreen()
 ]
@@ -253,18 +273,11 @@ angular.module 'LocalHyper.businessDetails', []
 					controller: 'BusinessDetailsCtrl'
 					templateUrl: 'views/business-details/business-details.html'
 					resolve:
-						BusinessDetails : ($q, CSpinner, GoogleMaps, Storage)->
+						BusinessDetails : ($q, Storage)->
 							defer = $q.defer()
-							CSpinner.show '', 'Please wait...'
-
-							GoogleMaps.loadScript()
-							.then ->
-								Storage.bussinessDetails 'get'
+							Storage.bussinessDetails 'get'
 							.then (details)->
 								defer.resolve details
-							.finally ->
-								CSpinner.hide()
-							
 							defer.promise
 ]
 

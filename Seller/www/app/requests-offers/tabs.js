@@ -79,6 +79,27 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
           }
           return value + " " + unitText;
         }
+      },
+      left: function(timeObj) {
+        var day, daysLeft, deliveryDate, duration, format, hoursLeft, hr, min, minsLeft, str, timeLeft;
+        format = 'DD/MM/YYYY HH:mm:ss';
+        deliveryDate = moment(timeObj.iso).format(format);
+        timeLeft = moment(deliveryDate, format).diff(moment());
+        duration = moment.duration(timeLeft);
+        daysLeft = parseInt(duration.asDays().toFixed(0));
+        hoursLeft = parseInt(duration.asHours().toFixed(0));
+        minsLeft = parseInt(duration.asMinutes().toFixed(0));
+        if (minsLeft < 60) {
+          min = minsLeft === 1 ? 'min' : 'mins';
+          str = minsLeft >= 0 ? minsLeft + " " + min : "0";
+        } else if (hoursLeft < 24) {
+          hr = hoursLeft === 1 ? 'hr' : 'hrs';
+          str = hoursLeft + " " + hr;
+        } else {
+          day = daysLeft === 1 ? 'day' : 'days';
+          str = daysLeft + " " + day;
+        }
+        return str;
       }
     };
   }

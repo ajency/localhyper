@@ -1,7 +1,7 @@
 <ion-view
 	view-title="Add Categories"
-	ng-init="view.setCategoryChains()"
-	class="chain">
+	class="chain"
+	ng-init="view.init();">
 
 	<ion-nav-buttons side="right">
 		<button
@@ -35,12 +35,6 @@
 					ng-click="view.removeItemFromChains(chains.subCategory.id)">
 				</ion-delete-button>
 
-				<!-- <i
-					class="icon "
-					ng-click="view.removeItemFromChains(chains.subCategory.id)">
-					<button class="button button-outline button-dark icon-btn ion-close-round"></button>
-				</i> -->
-
 				<div class="lighter-nh">
 					{{chains.category.name}} <i class="ion-ios-arrow-forward"></i> 
 					<span class="darker">{{chains.subCategory.name}}</span>
@@ -55,7 +49,9 @@
 
 		</br>
 
-		<h5 class="subdued" ng-if="view.categoryChains.length == 0;">
+		<h5 
+			class="subdued" 
+			ng-if="view.categoryChains.length == 0;">
 			Choose the categories and brands you deal with. 
 			You shall receive requests based on the categories you select.
 		</h5>

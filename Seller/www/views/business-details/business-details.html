@@ -1,6 +1,6 @@
-<ion-view
+<ion-view 
 	view-title="Details"
-	ng-init="view.init()">
+	ng-init="view.init();">
 
 	<ion-content class="business-details">
 
@@ -243,6 +243,7 @@
 				ng-click="view.onNext()">
 				Next
 			</button>
+			
 			<button
 				class="title button button-block button-assertive"
 				ng-if ="view.myProfileState"
@@ -252,14 +253,5 @@
 		</ion-item>
 
    	</ion-content>
-
-   	<!-- <ion-footer-bar class="bar bar-footer with-btn">
-		<button
-			class="title button button-block button-assertive"
-			ng-disabled="!view.terms"
-			ng-click="view.onNext()">
-			Next
-		</button>
-	</ion-footer-bar> -->
 
 </ion-view>

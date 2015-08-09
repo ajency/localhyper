@@ -198,7 +198,9 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
             "offDays": info.offDays,
             "workTimings": info.workTimings,
             "addedCredit": parseFloat(defaultObj.get('value')),
-            "subtractedCredit": 0
+            "subtractedCredit": 0,
+            "ratingSum": 0,
+            "ratingCount": 0
           });
           return user.signUp();
         };
@@ -210,7 +212,10 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
           "city": user.get('city'),
           "area": user.get('area'),
           "sellerLocation": "default",
-          "sellerRadius": "default"
+          "sellerRadius": "default",
+          "categories": "default",
+          "brands": "default",
+          "productMrp": "default"
         });
       }).then(function() {
         var Transaction, transaction, user;
