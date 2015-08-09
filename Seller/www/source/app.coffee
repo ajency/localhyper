@@ -38,7 +38,6 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 
 			if App.currentState is 'business-details'
 				businessDetails = if User.isLoggedIn() then '' else 'business-details'
-				console.log(businessDetails)
 
 			#Enable/disable menu & show/hide notification icon
 			hideForStates = ['tutorial', businessDetails , 'verify-begin', 'verify-auto'

@@ -1,5 +1,5 @@
 angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q) {
     $scope.view = {
       name: '',
       phone: '',
@@ -62,6 +62,24 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         latLng: null,
         address: null,
         addressFetch: true,
+        loadModal: function() {
+          var defer;
+          defer = $q.defer();
+          if (_.isNull(this.modal)) {
+            $ionicModal.fromTemplateUrl('views/business-details/location.html', {
+              scope: $scope,
+              animation: 'slide-in-up',
+              hardwareBackButtonClose: true
+            }).then((function(_this) {
+              return function(modal) {
+                return defer.resolve(_this.modal = modal);
+              };
+            })(this));
+          } else {
+            defer.resolve();
+          }
+          return defer.promise;
+        },
         showAlert: function() {
           var positiveBtn;
           positiveBtn = App.isAndroid() ? 'Open Settings' : 'Ok';
@@ -139,8 +157,29 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         }
       },
       init: function() {
-        this.loadLocationModal();
         return this.getStoredBusinessDetails();
+      },
+      isGoogleMapsScriptLoaded: function() {
+        var defer;
+        defer = $q.defer();
+        if (typeof google === 'undefined') {
+          CSpinner.show('', 'Please wait, loading resources...');
+          GoogleMaps.loadScript().then((function(_this) {
+            return function() {
+              return _this.location.loadModal();
+            };
+          })(this)).then(function() {
+            return defer.resolve(true);
+          }, function(error) {
+            CToast.show('Could not connect to server. Please try again');
+            return defer.resolve(false);
+          })["finally"](function() {
+            return CSpinner.hide();
+          });
+        } else {
+          defer.resolve(true);
+        }
+        return defer.promise;
       },
       getStoredBusinessDetails: function() {
         var details;
@@ -158,17 +197,6 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           this.workTimings = details.workTimings;
           return this.workingDays = details.workingDays;
         }
-      },
-      loadLocationModal: function() {
-        return $ionicModal.fromTemplateUrl('views/business-details/location.html', {
-          scope: $scope,
-          animation: 'slide-in-up',
-          hardwareBackButtonClose: true
-        }).then((function(_this) {
-          return function(modal) {
-            return _this.location.modal = modal;
-          };
-        })(this));
       },
       areWorkingDaysSelected: function() {
         var selected;
@@ -208,38 +236,40 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         }
       },
       onChangeLocation: function() {
-        var mapHeight;
-        this.location.modal.show();
-        mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10;
-        $('.aj-big-map').css({
-          'height': mapHeight
-        });
-        if (_.isNull(this.location.latLng)) {
-          return $timeout((function(_this) {
-            return function() {
-              var loc;
-              loc = {
-                lat: GEO_DEFAULT.lat,
-                long: GEO_DEFAULT.lng
-              };
-              _this.location.setMapCenter(loc);
-              return _this.location.getCurrent();
-            };
-          })(this), 200);
-        } else if (!_.isUndefined(this.latitude)) {
-          return $timeout((function(_this) {
-            return function() {
-              var latLng, loc;
-              loc = {
-                lat: _this.latitude,
-                long: _this.longitude
-              };
-              latLng = _this.location.setMapCenter(loc);
-              _this.location.map.setZoom(15);
-              return _this.location.addMarker(latLng);
-            };
-          })(this), 200);
-        }
+        return this.isGoogleMapsScriptLoaded().then((function(_this) {
+          return function(loaded) {
+            var mapHeight;
+            if (loaded) {
+              _this.location.modal.show();
+              mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10;
+              $('.aj-big-map').css({
+                'height': mapHeight
+              });
+              if (_.isNull(_this.location.latLng)) {
+                return $timeout(function() {
+                  var loc;
+                  loc = {
+                    lat: GEO_DEFAULT.lat,
+                    long: GEO_DEFAULT.lng
+                  };
+                  _this.location.setMapCenter(loc);
+                  return _this.location.getCurrent();
+                }, 200);
+              } else if (!_.isUndefined(_this.latitude)) {
+                return $timeout(function() {
+                  var latLng, loc;
+                  loc = {
+                    lat: _this.latitude,
+                    long: _this.longitude
+                  };
+                  latLng = _this.location.setMapCenter(loc);
+                  _this.location.map.setZoom(15);
+                  return _this.location.addMarker(latLng);
+                }, 200);
+              }
+            }
+          };
+        })(this));
       },
       onConfirmLocation: function() {
         if (!_.isNull(this.location.latLng) && this.location.addressFetch) {
@@ -274,7 +304,7 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
       onNext: function() {
         var user;
         if (_.contains([this.businessName, this.name, this.phone], '')) {
-          return CToast.show('Fill up all fields');
+          return CToast.show('Please fill up all fields');
         } else if (_.isUndefined(this.phone)) {
           return CToast.show('Please enter valid phone number');
         } else if (this.confirmedAddress === '') {
@@ -335,16 +365,11 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           controller: 'BusinessDetailsCtrl',
           templateUrl: 'views/business-details/business-details.html',
           resolve: {
-            BusinessDetails: function($q, CSpinner, GoogleMaps, Storage) {
+            BusinessDetails: function($q, Storage) {
               var defer;
               defer = $q.defer();
-              CSpinner.show('', 'Please wait...');
-              GoogleMaps.loadScript().then(function() {
-                return Storage.bussinessDetails('get');
-              }).then(function(details) {
+              Storage.bussinessDetails('get').then(function(details) {
                 return defer.resolve(details);
-              })["finally"](function() {
-                return CSpinner.hide();
               });
               return defer.promise;
             }

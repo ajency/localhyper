@@ -28,7 +28,6 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       App.currentState = to.name;
       if (App.currentState === 'business-details') {
         businessDetails = User.isLoggedIn() ? '' : 'business-details';
-        console.log(businessDetails);
       }
       hideForStates = ['tutorial', businessDetails, 'verify-begin', 'verify-auto', 'verify-manual', 'categories', 'sub-categories', 'brands', 'category-chains'];
       bool = !_.contains(hideForStates, App.currentState);
