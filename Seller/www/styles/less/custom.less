@@ -495,7 +495,28 @@ sm{
 .light-gray{
 	color: #a1a1a1;
 }
+#Open{
+	border-left: 4px solid @success;
+}
+#Unaccepted{
+	border-left: 4px solid @brand-primary;
+}
 .card-list{
+		.activated{
+		background: @white !important;
+		background-color: @white !important;
+		.item{
+		background: @white !important;
+		background-color: @white !important;
+	}
+}
+.status{
+	b{
+		color: @brand-primary;
+		font-weight: 400;
+    	text-transform: uppercase;
+	}
+}
 		.card{
 			padding: 0px;
 			.item{
@@ -543,16 +564,16 @@ sm{
          text-align: center;
 	}
 }
-/*.notify-alert{
-	border: 2px solid @brand-primary;
+.notify-alert{
+			  background: #f1f1f1 !important;
 	.item{
-			  background: #FFE9E9 !important;
+			  background: #f1f1f1 !important;
 
 	}
 	.offertxt {
-	  background: #FFE9E9!important;
+	  background: #f1f1f1!important;
 	}
-}*/
+}
 .item-avatar {
 	img{
 		border: 1px solid #ccc;
@@ -1073,7 +1094,14 @@ h5.with-sep {
 		text-overflow: clip;
 		height: auto;
 		white-space: normal;
-		font-weight: bold;
+		font-weight: 400;
+		  display: -webkit-box;
+			  max-width: 100%;
+			  -webkit-line-clamp: 2;
+			  -webkit-box-orient: vertical;
+			  overflow: hidden;
+			  text-overflow: ellipsis;
+
 	}
 }
 
@@ -1228,15 +1256,22 @@ h5.with-sep {
 	line-height: 12px;
 	text-align: left;
 	i{
-		    font-size: 30px;
+		    font-size: 21px;
 		    float: left;
 		    margin-right: 10px;
 		    margin-left: 20px;
-		    margin-top: -5px;
+		    font-weight: 100;
 		    color: @brand-primary;
 	}
 	sm{
 		font-weight: 100;
+		  display: -webkit-box;
+			  max-width: 100%;
+			  -webkit-line-clamp: 1;
+			  -webkit-box-orient: vertical;
+			  overflow: hidden;
+			  text-overflow: ellipsis;
+
 	}
 
 }
