@@ -2580,8 +2580,6 @@
         requestQuery = new Parse.Query("Request");
         requestQuery.containedIn("category", sellerCategories);
         requestQuery.containedIn("brand", sellerBrands);
-        requestQuery.equalTo("city", city);
-        requestQuery.equalTo("area", area);
         requestQuery.equalTo("status", status);
         currentDate = new Date();
         currentTimeStamp = currentDate.getTime();
