@@ -509,6 +509,7 @@ class ProductController extends Controller
 
 							$i++;
 						}
+							
 							$priceRange[0]= min($insertedPrices);
 							$priceRange[1]= max($insertedPrices);
 							$productData['categoryId'] =$config[0];
