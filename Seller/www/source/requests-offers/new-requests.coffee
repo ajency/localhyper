@@ -223,10 +223,10 @@ angular.module 'LocalHyper.requestsOffers'
 						.scrollTop()
 
 				show : (request)->
-					console.log request
 					@data = request
 					@resetModal()
 					@modal.show()
+					@makeOfferBtn = false
 					@markNotificationAsSeen request
 
 				markNotificationAsSeen : (request)->
@@ -248,6 +248,7 @@ angular.module 'LocalHyper.requestsOffers'
 						@loadModal().then =>
 							$scope.view.pendingRequestIds.push requestId
 							@display = 'loader'
+							@makeOfferBtn = false
 							@modal.show()
 							RequestsAPI.getSingleRequest requestId
 							.then (request)=>
@@ -294,6 +295,7 @@ angular.module 'LocalHyper.requestsOffers'
 						OffersAPI.makeOffer params
 						.then (data)=>
 							@removeRequestCard requestId
+							@makeOfferBtn = true
 							@modal.hide()
 							CToast.showLongBottom 'Your offer has been made. For more details, please check your offer history.'
 							$rootScope.$broadcast 'make:offer:success'
