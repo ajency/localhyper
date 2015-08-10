@@ -1243,4 +1243,7 @@ h5.with-sep span {
   margin-top: -5px;
   color: #f35a59;
 }
+.filter-txt sm {
+  font-weight: 100;
+}
 /*# sourceMappingURL=custom.css.map */
