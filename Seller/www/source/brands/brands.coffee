@@ -82,7 +82,8 @@ angular.module 'LocalHyper.brands', []
 						brands: selectedBrands
 					data.push chain
 
-					if @isCategoryChainsEmpty() then @categoryChains = data
+					if @isCategoryChainsEmpty()
+						@categoryChains = if minOneBrandSelected then data else []
 					else
 						chainIndex = _.findIndex @categoryChains, (chains)->
 							chains.subCategory.id is SubCategory.id

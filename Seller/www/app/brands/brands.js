@@ -100,7 +100,7 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
             };
             data.push(chain);
             if (_this.isCategoryChainsEmpty()) {
-              _this.categoryChains = data;
+              _this.categoryChains = minOneBrandSelected ? data : [];
             } else {
               chainIndex = _.findIndex(_this.categoryChains, function(chains) {
                 return chains.subCategory.id === SubCategory.id;
