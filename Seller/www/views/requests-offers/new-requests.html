@@ -29,12 +29,12 @@
 			ng-switch-when="noError" 
 			class="card-list">
 
-			<ion-item 
+			<div
 				ng-if="view.requests.length == 0;"
 				class="item-text-wrap">
-				You currently have no new requests
-				Hint:Try increasing your delivery area range to view more requests
-			</ion-item>
+				<h4 class="text-center ">You currently have no new requests<br>
+				Hint:Try increasing your delivery area range to view more requests</h4>
+			</div>
 
 	       	<ion-item
 	       		class="card"
@@ -48,7 +48,7 @@
 				        <img ng-src="{{request.product.image[0].src}}">
 				    </div>
 				    <h2>{{request.product.name}}</h2>
-				    <p>{{request.radius.toFixed(2)}} kms radius</p>
+				    <p> <i class=" ion-ios-clock-outline" ></i> {{request.timeStr}}</p>
 			    </div>
 
 				<div class="row item border-none" >
@@ -74,11 +74,11 @@
 			    </div>
 			    <div class="item item-divider">
 			        <div class="pull-right ">
-			            <h3 class="margin-none "> Make an offer &nbsp;<i class="ion ion-log-out btn-danger"></i></h3>
+			            <h3 class="margin-none "> Make an offer &nbsp;<i class="ion ion-android-arrow-forward "></i></h3>
 			        </div>
 
-			        <div class="pull-left ">
-			            <sm class="subdued">{{request.timeStr}}</sm>
+			        <div class="pull-left text-primary ">
+			          <i class="ion-android-pin"></i> {{request.radius.toFixed(2)}} kms radius
 			        </div>
 			    </div>
 
@@ -94,27 +94,24 @@
 	</ion-content>
 
 
-	<ion-footer-bar 
-		class="bar-light"
-		ng-show="view.requests.length > 0">
-
-
+	<ion-footer-bar class="bar-light">
 		<div class="row">
 			<div class="col col-50 text-center" ng-click="view.showSortOptions()">
-				<h5 class="margin-none  normal">
-					{{view.sortName}}
-				</h5>
-				<h5 class="margin-none  normal">
-					<i class="ion ion-arrow-swap"></i> SORT
+				
+				<h5 class="margin-none  normal filter-txt">
+					<i class="ion ion-arrow-swap"></i>
+					 SORT<br>
+					 <sm>{{view.sortName}}<sm>
 				</h5>
 			</div>
 
 			<div class="col col-50 text-center border-left" ng-click="view.filter.openModal()">
-				<h5 class="margin-none  normal">
-					{{view.filter.excerpt}}
-				</h5>
-				<h5 class="margin-none  normal">
-					<i class="ion ion-funnel"></i> FILTER
+				
+				<h5 class="margin-none  normal filter-txt">
+						<i class="ion ion-funnel"></i>
+			 FILTER
+					<br>
+					 <sm>{{view.filter.excerpt}}<sm>
 				</h5>
 			</div>
 		</div>
