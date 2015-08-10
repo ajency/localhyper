@@ -64,6 +64,7 @@ class SellerController extends Controller
                               'lastLogin' =>$seller->get("lastLogin")->format('d-m-Y'),
                               'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
                               ];
+            
         }  
         return view('admin.sellerlist')->with('sellers',$sellerList);
     }

@@ -25,14 +25,14 @@
           </thead>
           <tbody>
            @foreach($sellers as $seller)
-              <tr  onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">
+              <tr>
                 <td>{{ $seller['name'] }}</td>
                 <td>{{ $seller['area'] }}</td>
                 <td>{{ $seller['categories'] }}</td>
                 <td>{{ $seller['offersCount'] }}</td>
                 <td>{{ $seller['successfullCount'] }}</td>
                 <td>{{ $seller['avgRating'] }}</td>
-                <td>{{ $seller['balanceCredit'] }}</td>
+                <td><span class="balance-credit" data-seller-id="{{ $seller['id'] }}">{{ $seller['balanceCredit'] }}</span> <a class="edit-balance-credit">edit</a></td>
                 <td>{{ $seller['createdAt'] }}</td>
                 <td>{{ $seller['lastLogin'] }}</td>
               </tr>

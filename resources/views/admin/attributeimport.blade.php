@@ -148,5 +148,11 @@
     </div>
 </div>
 
+<script>
 
+$( document ).ready(function() {
+   getCategories();
+});
+    
+</script>
 @endsection
