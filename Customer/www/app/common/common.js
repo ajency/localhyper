@@ -103,6 +103,13 @@ angular.module('LocalHyper.common', []).factory('App', [
       humanize: function(str) {
         return s.humanize(str);
       },
+      openLink: function(url) {
+        var options;
+        options = {
+          location: 'yes'
+        };
+        return $cordovaInAppBrowser.open(url, '_system', options);
+      },
       getInstallationId: function() {
         var defer;
         defer = $q.defer();

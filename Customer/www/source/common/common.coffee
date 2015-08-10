@@ -86,6 +86,10 @@ angular.module 'LocalHyper.common', []
 			humanize : (str)->
 				s.humanize str
 
+			openLink : (url)->
+				options = location: 'yes'
+				$cordovaInAppBrowser.open url, '_system', options
+
 			getInstallationId : ->
 				defer = $q.defer()
 				if @isWebView()
