@@ -14,12 +14,12 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
         selectedFilters = "all";
       }
       params = {
-        "categoryId": "" + opts.categoryID,
+        "categoryId": opts.categoryID,
         "selectedFilters": selectedFilters,
         "sortBy": opts.sortBy,
         "ascending": opts.ascending,
         "page": opts.page,
-        "displayLimit": 10
+        "displayLimit": opts.displayLimit
       };
       $http.post('functions/getProductsNew', params).then(function(data) {
         return defer.resolve(data.data.result);
