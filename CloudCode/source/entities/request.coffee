@@ -454,11 +454,44 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
 
     queryRequest.first()
     .then (requestObj) ->
-        
-        getRequestData(requestObj,sellerDetails)
+        productLastOfferedPrices = {}
+        # find all requests for which seller has made offer
+        innerQuerySellers = new Parse.Query(Parse.User)
+        innerQuerySellers.equalTo("objectId" , sellerDetails["id"] )
 
-        .then (requestData) ->
-            response.success requestData
+        offerQuery = new Parse.Query("Offer")
+        offerQuery.matchesQuery("seller",innerQuerySellers)
+
+        # offerQuery.select("request")
+        offerQuery.include("request")
+        offerQuery.include("request.product")
+        offerQuery.include("request.category")
+        offerQuery.include("request.category.parent_category")
+        offerQuery.include("price")
+        offerQuery.descending("createdAt")
+
+        offerQuery.find()
+        .then (offersMadeBySeller) ->
+
+            productLastOfferedPrices = {}
+            requestsWhereOfferMade = []
+
+            # all offers made by seller
+            _.each offersMadeBySeller , (offerMadeBySeller) ->
+                requestObj = offerMadeBySeller.get("request")
+                productObj = requestObj.get("product")
+                productId = productObj.id 
+                priceObj =  offerMadeBySeller.get("price")
+                offerPrice =  priceObj.get("value")
+
+                productLastOfferedPrices[productId] = offerPrice
+
+            getRequestData(requestObj,sellerDetails,productLastOfferedPrices)
+
+            .then (requestData) ->
+                response.success requestData
+            , (error) ->
+                response.error error
         , (error) ->
             response.error error
 

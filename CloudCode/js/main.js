@@ -2440,8 +2440,36 @@
     queryRequest.include("category.parent_category");
     queryRequest.include("brand");
     return queryRequest.first().then(function(requestObj) {
-      return getRequestData(requestObj, sellerDetails).then(function(requestData) {
-        return response.success(requestData);
+      var innerQuerySellers, offerQuery, productLastOfferedPrices;
+      productLastOfferedPrices = {};
+      innerQuerySellers = new Parse.Query(Parse.User);
+      innerQuerySellers.equalTo("objectId", sellerDetails["id"]);
+      offerQuery = new Parse.Query("Offer");
+      offerQuery.matchesQuery("seller", innerQuerySellers);
+      offerQuery.include("request");
+      offerQuery.include("request.product");
+      offerQuery.include("request.category");
+      offerQuery.include("request.category.parent_category");
+      offerQuery.include("price");
+      offerQuery.descending("createdAt");
+      return offerQuery.find().then(function(offersMadeBySeller) {
+        var requestsWhereOfferMade;
+        productLastOfferedPrices = {};
+        requestsWhereOfferMade = [];
+        _.each(offersMadeBySeller, function(offerMadeBySeller) {
+          var offerPrice, priceObj, productId, productObj;
+          requestObj = offerMadeBySeller.get("request");
+          productObj = requestObj.get("product");
+          productId = productObj.id;
+          priceObj = offerMadeBySeller.get("price");
+          offerPrice = priceObj.get("value");
+          return productLastOfferedPrices[productId] = offerPrice;
+        });
+        return getRequestData(requestObj, sellerDetails, productLastOfferedPrices).then(function(requestData) {
+          return response.success(requestData);
+        }, function(error) {
+          return response.error(error);
+        });
       }, function(error) {
         return response.error(error);
       });
