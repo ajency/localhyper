@@ -223,6 +223,7 @@ sm {
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light .button,
 .bar.bar-header .button {
   color: #ffffff;
+  font-weight: bold;
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light .nav-bar-title,
 .bar.bar-header .nav-bar-title {
@@ -1396,5 +1397,169 @@ h5.with-sep span {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.p-a-0 {
+  padding: 0;
+}
+.p-b-0 {
+  padding-bottom: 0;
+}
+.p-t-0 {
+  padding-top: 0;
+}
+.p-l-0 {
+  padding-left: 0;
+}
+.p-r-0 {
+  padding-right: 0;
+}
+.p-r-6 {
+  padding-right: 6px;
+}
+.p-b-7 {
+  padding-bottom: 7px;
+}
+.m-a-0 {
+  margin: 0;
+}
+.m-b-0 {
+  margin-bottom: 0;
+}
+.m-t-0 {
+  margin-top: 0;
+}
+.m-l-0 {
+  margin-left: 0;
+}
+.m-r-0 {
+  margin-right: 0;
+}
+.m-t-6 {
+  margin-top: 6px;
+}
+.b-r-1 {
+  border-right: 1px solid #ddd;
+}
+/*filter*/
+.filters-white-bg {
+  background-color: #ffffff;
+}
+.filters-white-bg .has-header {
+  background-color: transparent;
+}
+.filter-head button.button {
+  font-size: 15px;
+  margin-left: 5px;
+}
+.filter-head button.button.btn-close {
+  font-size: 32px;
+}
+.products-filter-view {
+  margin-top: 9px;
+}
+.products-filter-view label.item-radio {
+  /* border-color: #666; */
+  font-size: 14px;
+  background-color: transparent;
+  text-align: center;
+}
+.products-filter-view label.item-radio .item-content {
+  padding: 14px 10px;
+  background: transparent;
+  color: #444;
+  position: relative;
+}
+.products-filter-view label.item-radio .item-content .sel-count {
+  float: right;
+  width: 19px;
+  height: 19px;
+  line-height: 21px;
+  overflow: hidden;
+  font-size: 14px;
+  color: #fff;
+  background-color: #444;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 0px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+.products-filter-view label.item-radio input:checked ~ .item-content {
+  background-color: #ffffff;
+  color: #f35a59;
+}
+.products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before {
+  content: "\f349";
+  margin-bottom: 2px !important;
+}
+.products-filter-view label.item-radio input[value=category] + .item-content.ng-binding:before {
+  content: "\f2aa";
+  margin-bottom: 2px !important;
+}
+.products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
+  content: "\f2aa";
+}
+.products-filter-view label.item-radio input[value=radius] + .item-content.ng-binding:before {
+  content: "\f270";
+}
+.products-filter-view label.item-radio input[value=mrp] + .item-content.ng-binding:before {
+  content: "₹";
+}
+.products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before,
+.products-filter-view label.item-radio input[value=category] + .item-content.ng-binding:before,
+.products-filter-view label.item-radio input[value=radius] + .item-content.ng-binding:before,
+.products-filter-view label.item-radio input[value=mrp] + .item-content.ng-binding:before,
+.products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 5px;
+  font-family: "Ionicons";
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  text-rendering: auto;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.products-filter-view .item-checkbox {
+  padding: 9px 60px;
+  padding-right: 9px;
+}
+.products-filter-view .checkbox input,
+.products-filter-view .checkbox-icon {
+  width: 24px;
+  height: 24px;
+  top: 2px;
+}
+.products-filter-view .checkbox input:after,
+.products-filter-view .checkbox-icon:after {
+  top: 31%;
+  left: 21%;
+  width: 14px;
+  height: 7px;
+  border: 2px solid #fff;
+  border-top: 0;
+  border-right: 0;
+}
+.products-filter-view .checkbox input:checked + .checkbox-icon:before,
+.products-filter-view .checkbox input:checked:before {
+  background: #f45152;
+  border-color: #f45152;
+}
+.products-filter-view .col.col-33.p-a-0 {
+  position: relative;
+  z-index: 3;
+}
+.products-filter-view .col.col-33.p-a-0:before {
+  content: '';
+  width: 33.6%;
+  height: 1000%;
+  position: fixed;
+  background-color: #F2F1ED;
+  border-right: 1px solid #ddd;
 }
 /*# sourceMappingURL=custom.css.map */
