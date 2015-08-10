@@ -251,8 +251,8 @@ class AttributeController extends Controller
 				
 				$headers = array(
 					array('','',$categoryName),
-					array ('Config', 'objectId', 'Attribute Name', 'Type', 'Group', 'Unit', 'Is Filternable', 'Is Primary'),
-					array('Config', 'objectId', 'name', 'type', 'group', 'unit', 'is_filterable', 'is_primary')
+					array ('Config', 'objectId', 'Attribute Name', 'Type', 'Group', 'Unit', 'Is Filterable', 'Is Primary' , 'Image Name'),
+					array('Config', 'objectId', 'name', 'type', 'group', 'unit', 'is_filterable', 'is_primary' , 'image')
 					);
  
 				$attributeSheet->fromArray($headers, ' ', 'A1');
@@ -577,8 +577,8 @@ class AttributeController extends Controller
 		public function importAttributes($sheet)
 		{
 				$highestRow = $sheet->getHighestRow(); 
-				// $highestColumn = $sheet->getHighestColumn();
-				$highestColumn = 'H';
+				$highestColumn = $sheet->getHighestColumn();
+				// $highestColumn = 'H';
 
 				$headingsArray = $sheet->rangeToArray('A3:'.$highestColumn.'3',null, true, true, true);
 				$headingsArray = $headingsArray[3];
@@ -667,6 +667,7 @@ class AttributeController extends Controller
 				
 				// pass primary attributes in the last call and pass empty array in previous calls
 				//filterable Attributes
+
 				$primaryFilterableAttributeObj = ($primaryIsFilterable) ? $primaryAttributes : array() ;
 				$filterableData =['attributes' => $filterableAttribute,
 												 'categoryId' => $config[0],
