@@ -299,6 +299,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             this.onScrollComplete();
           }
           if (this.refresh) {
+            this.products = [];
             this.products = _products;
           } else {
             this.products = this.products.concat(_products);

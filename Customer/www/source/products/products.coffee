@@ -227,8 +227,11 @@ angular.module 'LocalHyper.products', []
 				if _.size(_products) > 0
 					if _.size(_products) < 10 then @canLoadMore = false
 					else @onScrollComplete()
-					if @refresh then @products = _products
-					else @products = @products.concat _products
+					if @refresh
+						@products = []
+						@products = _products
+					else 
+						@products = @products.concat _products
 				else
 					@canLoadMore = false
 
