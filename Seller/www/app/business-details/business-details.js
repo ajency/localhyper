@@ -1,12 +1,12 @@
 angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', '$rootScope', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q, $rootScope) {
     $scope.view = {
       name: '',
       phone: '',
       businessName: '',
       confirmedAddress: '',
       terms: false,
-      myProfileState: false,
+      myProfileState: App.previousState === 'my-profile',
       delivery: {
         radius: 10,
         plus: function() {
@@ -159,6 +159,22 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
       init: function() {
         return this.getStoredBusinessDetails();
       },
+      getStoredBusinessDetails: function() {
+        var details;
+        details = BusinessDetails;
+        if (!_.isNull(details)) {
+          this.name = details.name;
+          this.phone = details.phone;
+          this.businessName = details.businessName;
+          this.confirmedAddress = details.confirmedAddress;
+          this.delivery.radius = details.deliveryRadius;
+          this.latitude = details.latitude;
+          this.longitude = details.longitude;
+          this.location.address = details.address;
+          this.workTimings = details.workTimings;
+          return this.workingDays = details.workingDays;
+        }
+      },
       isGoogleMapsScriptLoaded: function() {
         var defer;
         defer = $q.defer();
@@ -177,26 +193,11 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
             return CSpinner.hide();
           });
         } else {
-          defer.resolve(true);
+          this.location.loadModal().then(function() {
+            return defer.resolve(true);
+          });
         }
         return defer.promise;
-      },
-      getStoredBusinessDetails: function() {
-        var details;
-        details = BusinessDetails;
-        if (!_.isNull(details)) {
-          this.name = details.name;
-          this.phone = details.phone;
-          this.businessName = details.businessName;
-          this.confirmedAddress = details.confirmedAddress;
-          this.delivery.radius = details.deliveryRadius;
-          this.latitude = details.latitude;
-          this.longitude = details.longitude;
-          this.location.latLng = new google.maps.LatLng(details.latitude, details.longitude);
-          this.location.address = details.address;
-          this.workTimings = details.workTimings;
-          return this.workingDays = details.workingDays;
-        }
       },
       areWorkingDaysSelected: function() {
         var selected;
@@ -245,17 +246,7 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
               $('.aj-big-map').css({
                 'height': mapHeight
               });
-              if (_.isNull(_this.location.latLng)) {
-                return $timeout(function() {
-                  var loc;
-                  loc = {
-                    lat: GEO_DEFAULT.lat,
-                    long: GEO_DEFAULT.lng
-                  };
-                  _this.location.setMapCenter(loc);
-                  return _this.location.getCurrent();
-                }, 200);
-              } else if (!_.isUndefined(_this.latitude)) {
+              if (!_.isUndefined(_this.latitude)) {
                 return $timeout(function() {
                   var latLng, loc;
                   loc = {
@@ -266,6 +257,16 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
                   _this.location.map.setZoom(15);
                   return _this.location.addMarker(latLng);
                 }, 200);
+              } else if (_.isNull(_this.location.latLng)) {
+                return $timeout(function() {
+                  var loc;
+                  loc = {
+                    lat: GEO_DEFAULT.lat,
+                    long: GEO_DEFAULT.lng
+                  };
+                  _this.location.setMapCenter(loc);
+                  return _this.location.getCurrent();
+                }, 200);
               }
             }
           };
@@ -275,9 +276,50 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         if (!_.isNull(this.location.latLng) && this.location.addressFetch) {
           this.location.address.full = GoogleMaps.fullAddress(this.location.address);
           this.confirmedAddress = this.location.address.full;
+          this.latitude = this.location.latLng.lat();
+          this.longitude = this.location.latLng.lng();
           return this.location.modal.hide();
         } else {
           return CToast.show('Please wait, getting location details...');
+        }
+      },
+      onNext: function() {
+        if (_.contains([this.businessName, this.name, this.phone], '')) {
+          return CToast.show('Please fill up all fields');
+        } else if (_.isUndefined(this.phone)) {
+          return CToast.show('Please enter valid phone number');
+        } else if (this.confirmedAddress === '') {
+          return CToast.show('Please select your location');
+        } else if (!this.areWorkingDaysSelected()) {
+          return CToast.show('Please select your working days');
+        } else if (_.contains([this.workTimings.start, this.workTimings.end], '')) {
+          return CToast.show('Please select your work timings');
+        } else {
+          this.offDays = this.getNonWorkingDays();
+          if (this.myProfileState) {
+            CSpinner.show('', 'Please wait...');
+            User.info('set', $scope.view);
+            return AuthAPI.isExistingUser($scope.view).then(function(data) {
+              return AuthAPI.loginExistingUser(data.userObj);
+            }).then((function(_this) {
+              return function(success) {
+                CToast.show('Saved business details');
+                $rootScope.$broadcast('category:chain:updated');
+                return _this.saveBussinessDetails().then(function() {
+                  return App.navigate('my-profile');
+                });
+              };
+            })(this), function(error) {
+              return CToast.show('Could not connect to server, please try again.');
+            })["finally"](function() {
+              return CSpinner.hide();
+            });
+          } else {
+            User.info('set', $scope.view);
+            return this.saveBussinessDetails().then(function() {
+              return App.navigate('category-chains');
+            });
+          }
         }
       },
       saveBussinessDetails: function() {
@@ -300,54 +342,13 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           workingDays: this.workingDays,
           offDays: this.getNonWorkingDays()
         });
-      },
-      onNext: function() {
-        var user;
-        if (_.contains([this.businessName, this.name, this.phone], '')) {
-          return CToast.show('Please fill up all fields');
-        } else if (_.isUndefined(this.phone)) {
-          return CToast.show('Please enter valid phone number');
-        } else if (this.confirmedAddress === '') {
-          return CToast.show('Please select your location');
-        } else if (!this.areWorkingDaysSelected()) {
-          return CToast.show('Please select your working days');
-        } else if (_.contains([this.workTimings.start, this.workTimings.end], '')) {
-          return CToast.show('Please select your work timings');
-        } else {
-          this.latitude = this.location.latLng.lat();
-          this.longitude = this.location.latLng.lng();
-          this.offDays = this.getNonWorkingDays();
-          if (App.previousState === 'my-profile' || (App.previousState === '' && User.getCurrent() !== null)) {
-            User.info('set', $scope.view);
-            CSpinner.show('', 'Please wait...');
-            user = User.info('get');
-            return AuthAPI.isExistingUser(user).then((function(_this) {
-              return function(data) {
-                return AuthAPI.loginExistingUser(data.userObj);
-              };
-            })(this)).then((function(_this) {
-              return function(success) {
-                _this.saveBussinessDetails();
-                return App.navigate('my-profile');
-              };
-            })(this), (function(_this) {
-              return function(error) {
-                return CToast.show('Please try again data not saved');
-              };
-            })(this))["finally"](function() {
-              return CSpinner.hide();
-            });
-          } else {
-            User.info('set', $scope.view);
-            this.saveBussinessDetails();
-            return App.navigate('category-chains');
-          }
-        }
       }
     };
-    $scope.$on('$ionicView.beforeEnter', function() {
-      if (App.previousState === 'my-profile' || (App.previousState === '' && User.getCurrent() !== null)) {
-        return $scope.view.myProfileState = true;
+    $scope.$on('$destroy', function() {
+      var locationModal;
+      locationModal = $scope.view.location.modal;
+      if (!_.isNull(locationModal)) {
+        return locationModal.remove();
       }
     });
     return $scope.$on('$ionicView.enter', function() {

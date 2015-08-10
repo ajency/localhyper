@@ -1,24 +1,22 @@
-angular.module('LocalHyper.creditHistory').factory('creditHistoryAPI', [
+angular.module('LocalHyper.creditHistory').factory('CreditHistoryAPI', [
   '$q', '$http', 'User', function($q, $http, User) {
-    var creditHistoryAPI;
-    creditHistoryAPI = {};
-    creditHistoryAPI.getCreditHistory = function(param) {
-      var defer, params, user;
-      user = User.getCurrent();
+    var CreditHistoryAPI;
+    CreditHistoryAPI = {};
+    CreditHistoryAPI.getAll = function(param) {
+      var defer, params;
+      defer = $q.defer();
       params = {
-        "sellerId": user.id,
+        "sellerId": User.getId(),
         "displayLimit": param.displayLimit,
         "page": param.page
       };
-      defer = $q.defer();
       $http.post('functions/getCreditHistory', params).then(function(data) {
-        var allCategories;
-        return defer.resolve(allCategories = data.data.result);
+        return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);
       });
       return defer.promise;
     };
-    return creditHistoryAPI;
+    return CreditHistoryAPI;
   }
 ]);

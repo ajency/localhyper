@@ -16,18 +16,25 @@ angular.module 'LocalHyper.requestsOffers'
 			sortBy: '-createdAt.iso'
 			sortName: 'Most Recent'
 
+			resetSort : ->
+				@sortBy = '-createdAt.iso'
+				@sortName = 'Most Recent'
+
 			filter:
 				modal: null
-				attribute: 'category'
-				allAttributes: []
-				attrValues: {}
-				originalValues: {}
-				other: {}
-				defaultRadius: User.getCurrent().get('deliveryRadius')
-				selectedCategories: 'default'
-				selectedBrands: 'default'
-				selectedMrp: 'default'
-				selectedRadius: 'default'
+
+				reset : ->
+					@attribute = 'category'
+					@excerpt = ''
+					@allAttributes = []
+					@attrValues = {}
+					@originalValues = {}
+					@other = {}
+					@defaultRadius = User.getCurrent().get('deliveryRadius')
+					@selectedCategories = 'default'
+					@selectedBrands = 'default'
+					@selectedMrp = 'default'
+					@selectedRadius = 'default'
 
 				plus : ->
 					@attrValues['radius']++ if @attrValues['radius'] < 100
@@ -90,11 +97,7 @@ angular.module 'LocalHyper.requestsOffers'
 					@selectedCategories = 'default'
 					@selectedBrands = 'default'
 					@selectedMrp = 'default'
-					@selectedRadius = 'default' 
-
-				resetFilters : ->
-					@attribute = 'category'
-					@clearFilters()
+					@selectedRadius = 'default'
 
 				noChangeInSelection : ->
 					@attrValues['radius'] = parseInt @attrValues['radius']
@@ -308,9 +311,10 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 			init : ->
-				@getRequests()
+				@filter.reset()
 				@filter.loadModal()
 				@requestDetails.loadModal()
+				@getRequests()
 
 			reFetch : ->
 				App.scrollTop()
@@ -343,7 +347,7 @@ angular.module 'LocalHyper.requestsOffers'
 				@requests = data.requests
 				@filter.other['sellerBrands']     = data.sellerBrands
 				@filter.other['sellerCategories'] = data.sellerCategories
-				if _.isEmpty @filter.attrValues['category']
+				if _.isEmpty @filter.attrValues
 					@filter.setAttrValues()
 				@setRequestsCount()
 				@markPendingNotificationsAsSeen()
@@ -446,6 +450,11 @@ angular.module 'LocalHyper.requestsOffers'
 
 		$scope.$on '$ionicView.leave', ->
 			$ionicPlatform.offHardwareBackButton onDeviceBack
+
+		$rootScope.$on 'category:chain:updated', ->
+			$scope.view.resetSort()
+			$scope.view.filter.reset()
+			$scope.view.reFetch()
 		
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
@@ -473,10 +482,6 @@ angular.module 'LocalHyper.requestsOffers'
 		
 		$scope.$on '$ionicView.afterEnter', ->
 			App.hideSplashScreen()
-
-		$rootScope.$on 'category:chain:changed', ->
-			# App.scrollTop()
-			$scope.view.reFetch()
 ]
 
 

@@ -1,37 +1,45 @@
-
 <ion-view 
 	view-title="My Profile"
-	ng-init="view.setCategoryChains()">
+	ng-init="view.init();">
 
 	<ion-content>
 
-	<div class="list card">
-		<a href="#" class="item">
-			Business Name : <b> {{view.businessName}} </b>
-		</a>
+		<div class="list list-inset">
+			<ion-item>
+				Business: <b>{{view.businessName}}</b>
+			</ion-item>
 
-		<a href="#" class="item ">
-			Phone Number : <b> {{view.phone}} </b>
-		</a>
-	</div>
+			<ion-item>
+				Name: <b>{{view.name}}</b>
+			</ion-item>
+
+			<ion-item>
+				Phone Number: <b>+91-{{view.phone}}</b>
+			</ion-item>
+		</div>
 
 		<div class="row">
-			<div class="col card ">
+			<div class="col card">
 				<div class=" item-text-wrap">
-					Available credit points
-					<br><br>
-					20   &nbsp, view details
+					Available Credit Points
+					<br>
+					<div class="row">
+						<div class="col col-50">
+							<h3>{{view.creditAvailable}}</h3>
+						</div>
+						<div class="col" ng-click="App.navigate('credit-history');">
+							</br>
+							View Details
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="col card">
 				<div class=" item-text-wrap">
 					Auto Offer
 				</div>
-				<div class=" item-text-wrap">
-					<div class="pull-left  ">
-		            	 <i class="ion-ios-information-outline"></i>
-		        	</div>
-		        	<div class="pull-right ">
+				<div class="item-text-wrap">
+		        	<div class="pull-right">
 						<label class="toggle toggle-assertive">
 							<input type="checkbox">
 							<div class="track">
@@ -43,17 +51,22 @@
 			</div>
 		</div>
 
-
 		<div class="card">
 			<div class="item item-divider ">
-				My Bussiness Categories are 
-
+				My Bussiness Categories
+				
 				<button
-					class="pull-right  button button-outline button-assertive icon-btn"
+					class="button button-outline button-assertive icon-btn pull-right"
+					ng-click="App.navigate('categories')">
+					<i class="icon ion-plus"></i>
+				</button>
+				<button
+					class="button button-outline button-assertive icon-btn pull-right"
 					ng-click="view.showDelete = !view.showDelete;">
 					<i class="icon ion-trash-a"></i>
 				</button>
 			</div>
+
 			<ion-list show-delete="view.showDelete">
 				<ion-item 
 					class="item item-text-wrap cat-chain item-icon-left" 
@@ -82,30 +95,25 @@
 			</ion-list>
 		</div>
 
-		<button class="button button-block bar-assertive" ng-click="App.navigate('categories');">
-			Add Categories
-		</button>
-
 		<div class="list card">
-			<a href="#" class="item item-text-wrap item-icon-left">
+			<a class="item item-text-wrap item-icon-left">
 				<i class="icon ion-information-circled"></i>
 				You receive request from customer for products under categories you added here
 			</a>
 		</div>
 
-		<button class="pull-right  button button-stable" ng-click="App.navigate('business-details')">
+		<button 
+			class="button button-dark button-block" 
+			ng-click="App.navigate('business-details');">
  			Edit Bussiness Details
 		</button>
 
-		<br><br>
-
 		<button 
-			class="button button-assertive" 
-			ng-click="view.saveDetails()"
-			ng-disabled="view.categoryChains.length == 0;">
-				Save
+			class="button button-assertive button-block" 
+			ng-click="view.saveDetails();"
+			ng-disabled="view.categoryChains.length == 0">
+			Save
 		</button>
-		
 
 	</ion-content>
 

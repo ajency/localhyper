@@ -1,5 +1,5 @@
 angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.businessDetails', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.brands', 'LocalHyper.googleMaps', 'LocalHyper.requestsOffers', 'LocalHyper.requestsOffers', 'LocalHyper.profile', 'LocalHyper.aboutUs', 'LocalHyper.suggestProduct', 'LocalHyper.creditHistory']).run([
-  '$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps', 'User', function($rootScope, App, Push, $timeout, GoogleMaps, User) {
+  '$rootScope', 'App', 'Push', '$timeout', 'User', function($rootScope, App, Push, $timeout, User) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
     App.notification = {
@@ -23,13 +23,23 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       small: true
     };
     return $rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
-      var bool, businessDetails, hideForStates;
+      var bool, brands, business_details, categories, hideForStates, sub_categories;
       App.previousState = from.name;
       App.currentState = to.name;
-      if (App.currentState === 'business-details') {
-        businessDetails = User.isLoggedIn() ? '' : 'business-details';
+      switch (App.currentState) {
+        case 'business-details':
+          business_details = User.isLoggedIn() ? '' : 'business-details';
+          break;
+        case 'brands':
+          brands = User.isLoggedIn() ? '' : 'brands';
+          break;
+        case 'categories':
+          categories = User.isLoggedIn() ? '' : 'categories';
+          break;
+        case 'sub-categories':
+          sub_categories = User.isLoggedIn() ? '' : 'sub-categories';
       }
-      hideForStates = ['tutorial', businessDetails, 'verify-begin', 'verify-auto', 'verify-manual', 'categories', 'sub-categories', 'brands', 'category-chains'];
+      hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual', 'category-chains', categories, sub_categories, business_details, brands];
       bool = !_.contains(hideForStates, App.currentState);
       App.menuEnabled.left = bool;
       return App.notification.icon = bool;

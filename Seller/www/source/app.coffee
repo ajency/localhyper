@@ -5,11 +5,11 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.auth', 'LocalHyper.businessDetails', 'LocalHyper.main'
 	, 'LocalHyper.categories', 'LocalHyper.brands', 'LocalHyper.googleMaps'
 	, 'LocalHyper.requestsOffers', 'LocalHyper.requestsOffers', 'LocalHyper.profile'
-	, 'LocalHyper.aboutUs','LocalHyper.suggestProduct','LocalHyper.creditHistory']
+	, 'LocalHyper.aboutUs', 'LocalHyper.suggestProduct', 'LocalHyper.creditHistory']
 
 
-.run ['$rootScope', 'App', 'Push', '$timeout', 'GoogleMaps', 'User'
-	, ($rootScope, App, Push, $timeout, GoogleMaps, User)->
+.run ['$rootScope', 'App', 'Push', '$timeout', 'User'
+	, ($rootScope, App, Push, $timeout, User)->
 
 		Parse.initialize APP_ID, JS_KEY
 		$rootScope.App = App
@@ -35,13 +35,21 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		$rootScope.$on '$stateChangeSuccess', (ev, to, toParams, from, fromParams)->
 			App.previousState = from.name
 			App.currentState  = to.name
-
-			if App.currentState is 'business-details'
-				businessDetails = if User.isLoggedIn() then '' else 'business-details'
+			
+			switch App.currentState
+				when 'business-details'
+					business_details = if User.isLoggedIn() then '' else 'business-details'
+				when 'brands'
+					brands = if User.isLoggedIn() then '' else 'brands'
+				when 'categories'
+					categories = if User.isLoggedIn() then '' else 'categories'
+				when 'sub-categories'
+					sub_categories = if User.isLoggedIn() then '' else 'sub-categories'
 
 			#Enable/disable menu & show/hide notification icon
-			hideForStates = ['tutorial', businessDetails , 'verify-begin', 'verify-auto'
-							, 'verify-manual', 'categories', 'sub-categories', 'brands', 'category-chains']
+			hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual'
+							, 'category-chains', categories, sub_categories, business_details, brands]
+			
 			bool = !_.contains(hideForStates, App.currentState)
 			App.menuEnabled.left  = bool
 			App.notification.icon = bool
