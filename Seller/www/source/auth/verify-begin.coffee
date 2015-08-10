@@ -1,8 +1,8 @@
 angular.module 'LocalHyper.auth'
 
 
-.controller 'VerifyBeginCtrl', ['$scope', 'App', 'CToast', 'User', 'UIMsg'
-	, ($scope, App, CToast, User, UIMsg)->
+.controller 'VerifyBeginCtrl', ['$scope', 'App', 'CToast', 'User', 'UIMsg', 'Storage'
+	, ($scope, App, CToast, User, UIMsg, Storage)->
 
 		$scope.user = 
 			name: ''
@@ -23,9 +23,15 @@ angular.module 'LocalHyper.auth'
 
 			nextStep : ->
 				if App.isOnline()
-					User.info 'set', $scope.user
-					state = if App.isAndroid() then 'verify-auto' else 'verify-manual'
-					App.navigate state
+					Storage.bussinessDetails 'get'
+					.then (details)=>
+						details['phone'] = @phone
+						details['name']  = @name
+						Storage.bussinessDetails 'set', details
+						.then ->
+							User.info 'set', $scope.user
+							state = if App.isAndroid() then 'verify-auto' else 'verify-manual'
+							App.navigate state
 				else
 					CToast.show UIMsg.noInternet
 

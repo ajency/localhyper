@@ -267,14 +267,13 @@
 
 	</ion-content>
 
-	<ion-footer
-		ng-switch-when="noError"
-		class="bar bar-footer bar-assertive" >
-		<div
-			class="title"
-			ng-click="view.requestDetails.makeOffer()">
+	<ion-footer-bar ng-switch-when="noError">
+		<button 
+			class="button button-block button-assertive title"
+			ng-click="view.requestDetails.makeOffer();"
+			ng-disabled="view.requestDetails.makeOfferBtn">
 			Make offer
-		</div>
-	</ion-footer>
+		</button>
+	</ion-footer-bar>
 
 </ion-modal-view>

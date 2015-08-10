@@ -321,10 +321,10 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           return $ionicScrollDelegate.$getByHandle('request-details').scrollTop();
         },
         show: function(request) {
-          console.log(request);
           this.data = request;
           this.resetModal();
           this.modal.show();
+          this.makeOfferBtn = false;
           return this.markNotificationAsSeen(request);
         },
         markNotificationAsSeen: function(request) {
@@ -355,6 +355,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
               return function() {
                 $scope.view.pendingRequestIds.push(requestId);
                 _this.display = 'loader';
+                _this.makeOfferBtn = false;
                 _this.modal.show();
                 return RequestsAPI.getSingleRequest(requestId).then(function(request) {
                   if (request.status === 'cancelled') {
@@ -409,6 +410,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             return OffersAPI.makeOffer(params).then((function(_this) {
               return function(data) {
                 _this.removeRequestCard(requestId);
+                _this.makeOfferBtn = true;
                 _this.modal.hide();
                 CToast.showLongBottom('Your offer has been made. For more details, please check your offer history.');
                 return $rootScope.$broadcast('make:offer:success');
