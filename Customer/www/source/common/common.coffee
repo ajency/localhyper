@@ -2,9 +2,11 @@ angular.module 'LocalHyper.common', []
 
 
 .factory 'App', ['$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate'
-	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', '$ionicScrollDelegate'
+	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q'
+	, '$ionicScrollDelegate', '$cordovaInAppBrowser'
 	, ($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window
-	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate)->
+	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate
+	, $cordovaInAppBrowser)->
 
 		App = 
 

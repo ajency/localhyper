@@ -1,8 +1,7 @@
-<ion-view
-
-	ng-init="view.init()">
-<ion-nav-title>
-		REQUEST DETIALS
+<ion-view ng-init="view.init();">
+	
+	<ion-nav-title>
+		Request Details
     </ion-nav-title>
 
 	<ion-content>
@@ -33,6 +32,7 @@
 							</p>
 						</div>
 					</div>
+
 					<div class="row">
 						<div
 							class="col col-50"
@@ -56,13 +56,11 @@
 						<div
 							class="col col-50 "
 							ng-if="view.request.comments !== ''">
-<button class="button icon ion-chatbox-working pull-right button-small button-light" ng-click="view.comments.toggle()"></button>
-							<!-- <button
-								class="button button-outline button-sm button-dark button-lighter"
-								ng-click="view.comments.toggle()">
 
-								<img src="./img/speechbubble.png" alt="Speech Bubble Icon">
-							</button> -->
+							<button 
+								class="button icon ion-chatbox-working pull-right button-small button-light" 
+								ng-click="view.comments.toggle();">
+							</button>
 
 							<ion-item
 								class="item-text-wrap item-accordion com-acc"
@@ -94,9 +92,6 @@
 							<p class="exp_in">Expires in <i class="icon ion-ios-clock-outline"></i></p>
 							<p class="why"><a>Why this product expires in 24 hrs</a></p>
 						</div>
-						<!-- <div class="col col-20">
-
-						</div> -->
 					</div>
 
 					<div
@@ -107,7 +102,7 @@
 							<label
 								class="status-label align-center"
 								ng-class="(view.request.status == 'cancelled'
-											|| view.request.status == 'expired') ? 'status-assertive' : 'status-balanced'">
+										|| view.request.status == 'expired') ? 'status-assertive' : 'status-balanced'">
 
 								{{App.humanize(view.request.status)}}
 							</label>
@@ -124,8 +119,7 @@
 
 		</ion-list>
 
-		<!-- <br> -->
-
+		
 		<ion-list ng-switch="view.offers.display">
 
 			<ion-spinner
@@ -133,16 +127,20 @@
 				ng-switch-when="loader">
 			</ion-spinner>
 
-			<div ng-switch-when="noError" >
+			<div ng-switch-when="noError">
+
 				<div
 					class="row"
 					ng-if="view.offers.all.length > 0;">
 
 					<div class="col">
-						<h4 class="align-left high-span rec-off">Received Offers <b>({{view.offers.all.length}})</b></h4>
+						<h4 class="align-left high-span rec-off">
+							Received Offers <b>({{view.offers.all.length}})</b>
+						</h4>
 					</div>
 				</div>
-
+				
+				<!--When open without offers-->
 				<div
 					class="row"
 					ng-if="view.offers.all.length == 0 && view.request.status === 'open';">
@@ -150,31 +148,35 @@
 
 						<img ng-src="./img/requestsent-icon.png" alt="Request has been sent!">
 
-						<h4>We have sent your request to sellers,<br>they will soon send their prices</h4>
+						<h4>We have sent your request to sellers,<br>they will soon send their prices.</h4>
 						<div class="spacer-40"></div>
 					</div>
 				</div>
 
 				<!--When expired without offers-->
-				<!--<div
+				<div 
 					class="row"
-					ng-if="view.offers.all.length == 0 && view.request.status === 'open';">-->
-				<div class="row">
+					ng-if="view.offers.all.length == 0 && view.request.status === 'expired';">
+
 					<div class="col no-offs-det align-center">
 
 						<img ng-src="./img/request-expired.png" alt="Request has been sent!" style="margin-left: 0;">
 
-						<h4>Your request has expired,<br>you can send another request.</h4>
+						<h4>Your request has expired,<br>you can make a new one.</h4>
 						<div class="spacer-40"></div>
 					</div>
 				</div>
+
 				<!--When cancelled without offers-->
-				<div class="row">
+				<div 
+					class="row"
+					ng-if="view.offers.all.length == 0 && view.request.status === 'cancelled';">
+
 					<div class="col no-offs-det align-center">
 
 						<img ng-src="./img/request-cancelled.png" alt="Request has been sent!" style="margin-left: 0;">
 
-						<h4>You have cancelled this request,<br>you can send another request.</h4>
+						<h4>You have cancelled this request,<br>you can make a new one.</h4>
 						<div class="spacer-40"></div>
 					</div>
 				</div>
@@ -187,19 +189,21 @@
 				ng-controller="EachOfferTimeCtrl">
 
 				<div class="item item-text-wrap">
+
 					<div class="row row-fluid">
 						<div class="col p-t-0 p-l-0 p-r-0">
 							<div class="user-wrap pull-left">
 								<img src="./img/user.png" alt="" class="user">
 							</div>
+
 							<div class="user-details">
 								<p class="pull-right time-rece"><i>{{offer.timeStr}}</i></p>
+								
 								<h3>{{offer.seller.businessName}}
 									<span class="loc">{{offer.seller.address.city}}</span>
 								</h3>
-								<p
-									class="comment subdued"
-									ng-if="offer.comments !== ''">
+								
+								<p class="comment subdued" ng-if="offer.comments !== ''">
 									<i class="icon ion-chatbox-working"> </i>
 									<span class="com">{{offer.comments}}</span>
 								</p>
@@ -235,11 +239,13 @@
 							<p class="info">Price Offered</p>
 							<h2><small>Rs</small> {{App.toINR(offer.price)}}</h2>
 						</div>
+
 						<div class="col align-center p-a-0 p-r-6">
 							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery time</p>
 							<h2>{{offer.deliveryTimeStr}}</h2>
 						</div>
+
 						<div class="col align-right p-a-0">
 							<div class="vert-div pull-left"></div>
 							<button
@@ -265,6 +271,7 @@
 							<p class="info">Delivery in</p>
 							<h2>{{offer.deliveryTimeLeftStr}}</h2>
 						</div>
+
 						<div class="col align-center p-a-0">
 							<div class="vert-div pull-left"></div>
 							<p class="info">Offer Status</p>
@@ -289,6 +296,7 @@
 							<p class="info">Delivery time</p>
 							<h2>{{offer.deliveryTimeStr}}</h2>
 						</div>
+
 						<div class="col align-right p-a-0">
 							<div class="vert-div pull-left"></div>
 							<button
