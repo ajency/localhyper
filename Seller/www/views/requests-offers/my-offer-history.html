@@ -21,17 +21,17 @@
 		</ion-refresher>
 
 		<ion-list 
-			class="card-list" 
+			class="card-list list-inset" 
 			ng-switch-when="noError">
 
-			<ion-item 
+			<h4 
 				ng-if="view.noOffersMade"
-				class="item-text-wrap">
+				class="text-center">
 				You have not made any offers.
-			</ion-item>
+			</h4>
 	       	
 	       	<ion-item
-	       		class="card "
+	       		class="card-box "
 	       		id="{{App.humanize(request.offerStatus)}}"
 	       		ng-repeat="request in view.requests"
 	       		ng-click="view.offerDetails.show(request)">

@@ -3,12 +3,12 @@
 	aj-loading-back-drop>
 
 	<ul class="list">
-		<li class="item">SORT BY</li>
+		<li class="item item-title">SORT BY</li>
 
 		<li class="item"
 			ng-class="(view.sortBy === '-createdAt.iso') ? 'active' : ''"
 			ng-click="view.onSort('-createdAt.iso', 'Most Recent')">
-
+				<img src="./img/recent.png"/>
 			Most Recent
 		</li>
 
@@ -16,42 +16,42 @@
 			ng-class="(view.sortBy === '-product.mrp') ? 'active' : ''"
 			ng-click="view.onSort('-product.mrp', 'MRP - high to low')">
 
-			<i class="i-price-high"></i>MRP - high to low
+			<img src="./img/ruppe-up.png"/>MRP - high to low
 		</li>
 
 		<li class="item" 
 			ng-class="(view.sortBy === 'product.mrp') ? 'active' : ''"
 			ng-click="view.onSort('product.mrp', 'MRP - low to high')">
 
-			<i class="i-price-low"></i>MRP - low to high
+			<img src="./img/ruppe-down.png"/>MRP - low to high
 		</li>
 
 		<li class="item"
 			ng-class="(view.sortBy === '-radius') ? 'active' : ''"
 			ng-click="view.onSort('-radius', 'Distance - high to low')">
 
-			Distance - high to low
+			<img src="./img/distance-up.png"/>Distance - high to low
 		</li>
 
 		<li class="item" 
 			ng-class="(view.sortBy === 'radius') ? 'active' : ''"
 			ng-click="view.onSort('radius', 'Distance - low to high')">
 
-			Distance - low to high
+			<img src="./img/distance-down.png"/>Distance - low to high
 		</li>
 
 		<li class="item"
 			ng-class="(view.sortBy === '-offerCount') ? 'active' : ''"
 			ng-click="view.onSort('-offerCount', 'Number of Offers - high to low')">
 
-			Number of Offers - high to low
+			<img src="./img/offer-up.png"/>Number of Offers - high to low
 		</li>
 
 		<li class="item" 
 			ng-class="(view.sortBy === 'offerCount') ? 'active' : ''"
 			ng-click="view.onSort('offerCount', 'Number of Offers - low to high')">
 
-			Number of Offers - low to high
+			<img src="./img/offer-down.png"/>Number of Offers - low to high
 		</li>
 
 	</ul>
