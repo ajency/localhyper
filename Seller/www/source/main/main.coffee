@@ -64,6 +64,10 @@ angular.module 'LocalHyper.main', []
 				@menuClose()
 				$cordovaAppRate.promptForRating(true) if App.isWebView()
 
+			onHelp : ->
+				@menuClose()
+				App.openLink HELP_URL
+
 
 		$rootScope.$on 'get:unseen:notifications', (e, obj)->
 			$scope.view.getNotifications()

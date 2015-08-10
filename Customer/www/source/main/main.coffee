@@ -75,6 +75,11 @@ angular.module 'LocalHyper.main', []
 			onRateUs : ->
 				@menuClose()
 				$cordovaAppRate.promptForRating(true) if App.isWebView()
+
+			onHelp : ->
+				@menuClose()
+				App.openLink HELP_URL
+
 		
 
 		$rootScope.$on '$user:registration:success', ->

@@ -289,7 +289,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         return this.canLoadMore = false;
       },
       onSuccess: function(data, displayLimit) {
-        var _products, productsSize;
+        var productsSize, _products;
         this.other = data;
         if (_.isEmpty(this.filter.attrValues['brand'])) {
           this.filter.setAttrValues();
@@ -325,7 +325,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return value + " " + unit;
+          return "" + value + " " + unit;
         } else {
           return '';
         }

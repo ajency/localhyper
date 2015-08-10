@@ -84,6 +84,10 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         if (App.isWebView()) {
           return $cordovaAppRate.promptForRating(true);
         }
+      },
+      onHelp: function() {
+        this.menuClose();
+        return App.openLink(HELP_URL);
       }
     };
     $rootScope.$on('$user:registration:success', function() {
