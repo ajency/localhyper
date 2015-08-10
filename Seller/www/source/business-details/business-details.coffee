@@ -3,9 +3,9 @@ angular.module 'LocalHyper.businessDetails', []
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
 	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails'
-	, 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', '$rootScope'
+	, 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', '$rootScope', '$ionicPlatform'
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout
-	, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q, $rootScope)->
+	, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q, $rootScope, $ionicPlatform)->
 	
 		$scope.view = 
 			name:''
@@ -47,7 +47,7 @@ angular.module 'LocalHyper.businessDetails', []
 						$ionicModal.fromTemplateUrl 'views/business-details/location.html', 
 							scope: $scope,
 							animation: 'slide-in-up'
-							hardwareBackButtonClose: true
+							hardwareBackButtonClose: false
 						.then (modal)=> 
 							defer.resolve @modal = modal
 					else defer.resolve()
@@ -249,13 +249,22 @@ angular.module 'LocalHyper.businessDetails', []
 					workTimings: @workTimings
 					workingDays : @workingDays
 					offDays : @getNonWorkingDays()
-		
+
+
+		onDeviceBack = ->
+			locationModal = $scope.view.location.modal
+			if !_.isNull(locationModal) && locationModal.isShown()
+				locationModal.hide()
+			else
+				App.goBack -1
 
 		$scope.$on '$destroy', ->
+			$ionicPlatform.offHardwareBackButton onDeviceBack
 			locationModal = $scope.view.location.modal
 			locationModal.remove() if !_.isNull(locationModal)
 
 		$scope.$on '$ionicView.enter', ->
+			$ionicPlatform.onHardwareBackButton onDeviceBack
 			App.hideSplashScreen()
 ]
 
