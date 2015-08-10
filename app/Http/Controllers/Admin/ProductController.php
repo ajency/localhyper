@@ -428,6 +428,7 @@ class ProductController extends Controller
 						*
 						// Attribute values not included
 						***/
+						$inputImageNames =[];
 						$countFixedData = 9;
 						$dataCount = count($namedDataArray[0]);
 						$attributeIdKeys =[];
@@ -497,6 +498,9 @@ class ProductController extends Controller
 									$insertedPrice = (int)$data['MRP'];
 									
 									$insertedPrices[]=$insertedPrice;
+
+									$image_slug = $data['Image'];
+									$inputImageNames[] = $image_slug;
 								}
 
 							}
