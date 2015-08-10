@@ -7,21 +7,21 @@
 
 		<li class="item"
 			ng-class="(view.sortBy === 'popularity') ? 'active' : ''"
-			ng-click="view.onSort('popularity')">
+			ng-click="view.onSort('popularity', 'Popularity', true)">
 
 			<i class="i-popularity"></i>Popularity
 		</li>
 
 		<li class="item"
 			ng-class="(view.sortBy === 'mrp' && view.ascending === false) ? 'active' : ''"
-			ng-click="view.onSort('mrp', false)">
+			ng-click="view.onSort('mrp', 'Price - high to low', false)">
 
 			<i class="i-price-high"></i>Price - high to low
 		</li>
 
 		<li class="item" 
 			ng-class="(view.sortBy === 'mrp' && view.ascending === true) ? 'active' : ''"
-			ng-click="view.onSort('mrp', true)">
+			ng-click="view.onSort('mrp', 'Price - low to high', true)">
 
 			<i class="i-price-low"></i>Price - low to high
 		</li>

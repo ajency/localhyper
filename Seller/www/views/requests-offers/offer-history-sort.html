@@ -2,20 +2,20 @@
 	class="sort-model sort-popup offer-history-sort"
 	aj-loading-back-drop>
 
-	<ul class="list">
-		<li class="item">SORT BY</li>
+	<ul class="list ">
+		<li class="item item-title">SORT BY</li>
 
 		<li class="item"
 			ng-class="(view.sortBy === 'updatedAt') ? 'active' : ''"
 			ng-click="view.onSort('updatedAt', 'Recent Activity', true)">
 
-			Recent Activity
+				<img src="./img/recent.png"/> Recent Activity
 		</li>
 
 		<li class="item"
 			ng-class="(view.sortBy === 'distance') ? 'active' : ''"
 			ng-click="view.onSort('distance', 'Nearest Distance', true)">
-
+			<img src="./img/nearby.png"/>
 			Nearest Distance
 		</li>
 
@@ -23,27 +23,27 @@
 			ng-class="(view.sortBy === 'offerPrice' && view.descending === true) ? 'active' : ''"
 			ng-click="view.onSort('offerPrice', 'Offer Price - high to low', true)">
 
-			<i class="i-price-high"></i>Offer Price - high to low
+				<img src="./img/offer-up.png"/> Offer Price - high to low
 		</li>
 
 		<li class="item" 
 			ng-class="(view.sortBy === 'offerPrice' && view.descending === false) ? 'active' : ''"
 			ng-click="view.onSort('offerPrice', 'Offer Price - low to high', false)">
 
-			<i class="i-price-low"></i>Offer Price - low to high
+				<img src="./img/offer-down.png"/> Offer Price - low to high
 		</li>
 		
 		<li class="item"
 			ng-class="(view.sortBy === 'expiryTime' && view.descending === true) ? 'active' : ''"
 			ng-click="view.onSort('expiryTime', 'Expiry Time - high to low', true)">
-
+			<img src="./img/expire-up.png"/>
 			Expiry Time - high to low
 		</li>
 
 		<li class="item" 
 			ng-class="(view.sortBy === 'expiryTime' && view.descending === false) ? 'active' : ''"
 			ng-click="view.onSort('expiryTime', 'Expiry Time - low to high', false)">
-
+			<img src="./img/expire-down.png"/>
 			Expiry Time - low to high
 		</li>
 
