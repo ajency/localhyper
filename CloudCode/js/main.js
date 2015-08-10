@@ -394,7 +394,8 @@
             id: resultobj.id,
             name: resultobj.get('name'),
             sort_order: resultobj.get('sort_order'),
-            image: resultobj.get('image')
+            image: resultobj.get('image'),
+            description: resultobj.get('description')
           };
           if (_.isObject(resultobj.get('parent_category'))) {
             parentCat = resultobj.get('parent_category');
