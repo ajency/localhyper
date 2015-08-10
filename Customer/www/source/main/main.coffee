@@ -27,6 +27,7 @@ angular.module 'LocalHyper.main', []
 				@loadPopOver()
 				if User.isLoggedIn()
 					@userProfile.set()
+					@getOpenRequestCount()
 					@getNotifications()
 				$ionicSideMenuDelegate.edgeDragThreshold true
 
@@ -37,6 +38,12 @@ angular.module 'LocalHyper.main', []
 					if notifications > 0
 						App.notification.badge = true
 						App.notification.count = notifications
+
+			getOpenRequestCount : ->
+				RequestAPI.getOpenRequestCount()
+				.then (data)->
+					App.notification.openRequests = data.requestCount
+					App.notification.offers = data.offerCount
 
 			loadPopOver : ->
 				$ionicPopover.fromTemplateUrl 'views/user-popover.html',
@@ -84,8 +91,12 @@ angular.module 'LocalHyper.main', []
 		$rootScope.$on '$user:registration:success', ->
 			App.notification.icon = true
 			$scope.view.userProfile.set()
+			$scope.view.getOpenRequestCount()
 			$scope.view.getNotifications()
 			App.resize()
+
+		$rootScope.$on 'make:request:success', ->
+			$scope.view.getOpenRequestCount()
 
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
@@ -93,6 +104,7 @@ angular.module 'LocalHyper.main', []
 				if App.notification.count is 0
 					$scope.view.getNotifications()
 				else App.notification.increment()
+				$scope.view.getOpenRequestCount()
 		
 		$rootScope.$on 'push:notification:click', (e, obj)->
 			payload = obj.payload

@@ -5,6 +5,8 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
     GoogleMaps.loadScript();
     App.notification = {
       icon: User.isLoggedIn(),
+      openRequests: 0,
+      offers: 0,
       badge: false,
       count: 0,
       increment: function() {

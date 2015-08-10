@@ -126,6 +126,19 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
       });
       return defer.promise;
     };
+    RequestAPI.getOpenRequestCount = function() {
+      var defer, params;
+      defer = $q.defer();
+      params = {
+        "customerId": User.getId()
+      };
+      $http.post('functions/getOpenRequestCount', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
     return RequestAPI;
   }
 ]);

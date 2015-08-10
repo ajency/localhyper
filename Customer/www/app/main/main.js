@@ -19,6 +19,7 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         this.loadPopOver();
         if (User.isLoggedIn()) {
           this.userProfile.set();
+          this.getOpenRequestCount();
           this.getNotifications();
         }
         return $ionicSideMenuDelegate.edgeDragThreshold(true);
@@ -34,6 +35,12 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
             }
           };
         })(this));
+      },
+      getOpenRequestCount: function() {
+        return RequestAPI.getOpenRequestCount().then(function(data) {
+          App.notification.openRequests = data.requestCount;
+          return App.notification.offers = data.offerCount;
+        });
       },
       loadPopOver: function() {
         return $ionicPopover.fromTemplateUrl('views/user-popover.html', {
@@ -93,18 +100,23 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
     $rootScope.$on('$user:registration:success', function() {
       App.notification.icon = true;
       $scope.view.userProfile.set();
+      $scope.view.getOpenRequestCount();
       $scope.view.getNotifications();
       return App.resize();
+    });
+    $rootScope.$on('make:request:success', function() {
+      return $scope.view.getOpenRequestCount();
     });
     $rootScope.$on('in:app:notification', function(e, obj) {
       var payload;
       payload = obj.payload;
       if (payload.type === 'new_offer') {
         if (App.notification.count === 0) {
-          return $scope.view.getNotifications();
+          $scope.view.getNotifications();
         } else {
-          return App.notification.increment();
+          App.notification.increment();
         }
+        return $scope.view.getOpenRequestCount();
       }
     });
     $rootScope.$on('push:notification:click', function(e, obj) {

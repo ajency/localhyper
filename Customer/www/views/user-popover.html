@@ -1,21 +1,31 @@
 <ion-popover-view>
 	
 	<ion-content class="aj-right-popover">
+
 		<div class="row">
-			  <div class="col">
-			  		<h2 class="margin-none number-count">3<sm>/ OFFERS</sm></h2>
-					<sm class="subdued">You have</sm>
-			  </div>
-			   <div class="col col-20"><br><i class="ion-arrow-swap subdued"></i></div>
-			  <div class="col ">
-			  	<h2 class="margin-none number-count">2<sm>/ REQUEST</sm></h2>
-					<sm class="subdued">For</sm>
-			  </div>
+			<div class="col">
+				<h2 class="margin-none number-count">{{App.notification.offers}}
+					<sm>/ OFFERS</sm>
+				</h2>
+				<sm class="subdued">You have</sm>
+			</div>
+
+			<div class="col col-20"><br><i class="ion-arrow-swap subdued"></i></div>
+			
+			<div class="col ">
+				<h2 class="margin-none number-count">{{App.notification.openRequests}}
+					<sm>/ REQUEST</sm>
+				</h2>
+				<sm class="subdued">For</sm>
+			</div>
 		</div>
 		
 		<hr class="margin-none">
 		
-		<a class="item item-icon-left" ng-click="App.navigate('open-requests'); view.userPopover.hide()">
+		<a 
+			class="item item-icon-left" 
+			ng-click="App.navigate('open-requests'); view.userPopover.hide();">
+
 			<i class="icon ion-pricetags"></i>
 			My Requests
 		</a>
