@@ -19,71 +19,13 @@ class RequestController extends Controller
      */
     public function index()
     {
-        $requests = new ParseQuery("Request");
-        $requests->includeKey('customerId');
-        $requests->includeKey('product');
-        $requests->includeKey('category');
-        $requestsData = $requests->find(); 
-        
-        $requestList = $productPriceArray=[];
-        
-        foreach($requestsData as $request)
-        {
-            $productId = $request->get("product")->get("objectId");
-            if(!isset($productPriceArray[$productId]))
-            {
-                $productPrice = new ParseQuery("Price");
-                $productPrice->equalTo("product", $productId);
-                $productPriceData = $productPrice->find();
-                $priceArray = [];
-                $onlinePrice = $platformPrice = '';
-                foreach($productPriceData as $price)
-                {
-                    $priceType = $price->get("type");
-                    if($priceType == 'online_market_price')
-                    {
-                        $onlinePrice = $price->get("value");
-                    }
-                    else{
-                        $priceArray[] = $price->get("value");
-                    }
-                }
-                $platformPrice = (!empty($priceArray))? min($priceArray).'/-' :'N/A'; 
-                
-                $productPriceArray[$productId]['OnlinePrice'] = $onlinePrice; 
-                $productPriceArray[$productId]['PlatformPrice'] = $platformPrice; 
-            }
-            else
-            {
-                $onlinePrice = $productPriceArray[$productId]['OnlinePrice']; 
-                $platformPrice = $productPriceArray[$productId]['PlatformPrice']; 
-            }
-            
-            
-            
-            $requestList[]= ['id' => $request->getObjectId(),
-                              'customerName' => $request->get("customerId")->get("displayName"),
-                              'productName' =>$request->get("product")->get("name"),
-                              'area' =>$request->get("area"),
-                              'category' =>$request->get("category")->get("name"),
-                              'mrp' =>$request->get("product")->get("mrp").'/-',
-                              'onlinePrice' =>$onlinePrice.'/-',
-                              'bestPlatformPrice' =>$platformPrice,
-                              'offerCount' =>$request->get("offerCount"),
-                              'status' =>$request->get("status"),
-                              ];  
-        }
+        $requestList = $this->getRequests('LIST');
         
         return view('admin.requestlist')->with('requestList',$requestList);
     }
     
-    public function requestExport()
-    { 
-        $excel = new PHPExcel();
-        $requestSheet = $excel->getSheet(0);
-		$requestSheet->setTitle('Request');
-        
-        
+    public function getRequests($type)
+    {
         $requests = new ParseQuery("Request");
         $requests->includeKey('customerId');
         $requests->includeKey('product');
@@ -138,6 +80,18 @@ class RequestController extends Controller
                               'status' =>$request->get("status"),
                               ];  
         }
+        
+        return $requestList;
+    }
+    
+    public function requestExport()
+    { 
+        $excel = new PHPExcel();
+        $requestSheet = $excel->getSheet(0);
+		$requestSheet->setTitle('Request');
+        
+        
+        $requestList = $this->getRequests('EXPORT');
         $headers = [];
  
         $headers []= 'CUSTOMER NAME' ;

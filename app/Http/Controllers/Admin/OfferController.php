@@ -19,6 +19,13 @@ class OfferController extends Controller
      */
     public function index()
     {
+        $offertList = $this->getOffers('LIST');
+
+        return view('admin.offerslist')->with('offerList',$offertList);
+    }
+    
+    public function getOffers($type)
+    {
         $offers = new ParseQuery("Offer");
         $offers->includeKey('seller');
         $offers->includeKey('request');
@@ -66,8 +73,6 @@ class OfferController extends Controller
                         'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
                          ] ;  
         }
-        
-        return view('admin.offerslist')->with('offerList',$offertList);
     }
     
     public function offersExport()
@@ -76,52 +81,7 @@ class OfferController extends Controller
         $offerSheet = $excel->getSheet(0);
 		$offerSheet->setTitle('Offers');
 
-        $offers = new ParseQuery("Offer");
-        $offers->includeKey('seller');
-        $offers->includeKey('request');
-        $offers->includeKey('request.product');
-        $offers->includeKey('price');
-        $offersData = $offers->find(); 
-       
-        $offertList = $productRequests=[];
-        
-        foreach($offersData as $offer)
-        {
-            $requestObj= $offer->get("request");
-            $productObj = $requestObj->get('product');
-            $priceObj = $offer->get('price');  
-            
-            $productId  = $productObj->getObjectId(); 
-            
-            if(!isset($productRequests[$productId]))
-            {
-                $requestsinnerQuery  = new ParseQuery("Request");
-                $requestsinnerQuery ->equalTo("product", $productObj);  
-                
-                $productRequests[$productId] = $requestsinnerQuery;
-            }
-            else
-               $requestsinnerQuery = $productRequests[$productId];
-           
-            $lastSellerOffer = new ParseQuery("Offer");
-            $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
-            $lastSellerOffer->descending("CreatedAt");
-            $lastOfferBySeller = $lastSellerOffer->first();  
-            
-            $offertList[] =[
-                        'productName'=>$productObj->get("name"),
-                        'modelNo'=>$productObj->get("model_number"),
-                        'sellerName'=>$offer->get("seller")->get("displayName"),
-                        'mrpOfProduct'=>$productObj->get("mrp").'/-',   
-                        'onlinePrice'=>$priceObj->get("value").'/-',
-                        'offerPrice'=>$offer->get("offerPrice").'/-',
-                        'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice").'/-',
-                        'requestStatus'=>$requestObj->get("status"),
-                        'offerStatus'=>$offer->get("status"),
-                        'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
-                        'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
-                         ] ;  
-        }
+        $offertList = $this->getOffers('EXPORT');
         
         $headers = [];
  
