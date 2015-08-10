@@ -58,7 +58,8 @@
     {
       "locator": "https://github.com/whiteoctober/cordova-plugin-app-version.git",
       "id": "uk.co.whiteoctober.cordova.appversion"
-    }
+    },
+    "cordova-plugin-inappbrowser"
   ],
   "cordovaPlatforms": [
     "ios",
