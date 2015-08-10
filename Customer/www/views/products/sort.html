@@ -6,6 +6,13 @@
 		<li class="item">SORT BY</li>
 
 		<li class="item"
+			ng-class="(view.sortBy === 'popularity') ? 'active' : ''"
+			ng-click="view.onSort('popularity')">
+
+			<i class="i-popularity"></i>Popularity
+		</li>
+
+		<li class="item"
 			ng-class="(view.sortBy === 'mrp' && view.ascending === false) ? 'active' : ''"
 			ng-click="view.onSort('mrp', false)">
 
@@ -17,13 +24,6 @@
 			ng-click="view.onSort('mrp', true)">
 
 			<i class="i-price-low"></i>Price - low to high
-		</li>
-
-		<li class="item"
-			ng-class="(view.sortBy === 'popularity') ? 'active' : ''"
-			ng-click="view.onSort('popularity')">
-
-			<i class="i-popularity"></i>Popularity
 		</li>
 	</ul>
 	
