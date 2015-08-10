@@ -5,8 +5,9 @@
 });*/
 var categorieData;
 
-$( document ).ready(function() {
-   $.ajax({
+function getCategories()
+{   
+    $.ajax({
         async :true, 
         url: "https://api.parse.com/1/functions/getCategories",
         type: "POST",
@@ -25,9 +26,7 @@ $( document ).ready(function() {
  
         }
     });
-    
-   
-});
+}
 
 function getDepartment()
 {   var temp= window.categorieData;
@@ -121,3 +120,37 @@ function showAttibuteExport()
     }
     
 }
+
+$(".edit-balance-credit").click(function(){
+     var str = '<input type="text" name="balanceCredit"><button class="save-seller-credits">save</button>';
+     $(this).closest('td').find(".balance-credit").append(str);
+     $(this).closest('td').find(".edit-balance-credit").addClass("hidden");
+});
+
+$('.sellerList').on('click', '.save-seller-credits', function () { 
+    var balance = $(this).closest('td').find("input[name='balanceCredit']").val(); 
+    var container = $(this).closest('td');
+    var sellerid = container.find(".balance-credit").attr('data-seller-id'); 
+
+    $.ajax({
+        async :true, 
+        url: "https://api.parse.com/1/functions/addCredits",
+        type: "POST",
+        headers: {
+                    "x-parse-application-id": window.APPLICATION_ID,
+                    "x-parse-rest-api-key": window.REST_API_KEY
+                  },
+        data: {
+            "sellerId" : sellerid,
+            "newAddedCredits" : balance,   
+        },
+        dataType: "JSON",
+        success: function (response) {
+            container.find(".balance-credit").html(response.result.sellerCredits);
+            container.find(".edit-balance-credit").removeClass("hidden"); 
+
+        }
+    });
+     
+});
+
