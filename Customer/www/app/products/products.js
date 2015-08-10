@@ -3,6 +3,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
     var onDeviceBack;
     $scope.view = {
       title: Product.subCategoryTitle,
+      footer: false,
       gotAllProducts: false,
       products: [],
       other: [],
@@ -10,6 +11,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       canLoadMore: true,
       refresh: false,
       sortBy: 'popularity',
+      sortName: 'Popularity',
       ascending: true,
       filter: {
         modal: null,
@@ -203,8 +205,21 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
               }
             };
           })(this));
+          this.setExcerpt();
           this.modal.hide();
           return $scope.view.reFetch();
+        },
+        setExcerpt: function() {
+          var filterNames;
+          filterNames = [];
+          _.each(this.allAttributes, (function(_this) {
+            return function(attr, index) {
+              if (attr.selected > 0) {
+                return filterNames.push(attr.name);
+              }
+            };
+          })(this));
+          return this.excerpt = filterNames.join(', ');
         }
       },
       init: function() {
@@ -212,9 +227,12 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       },
       reset: function() {
         this.sortBy = 'popularity';
+        this.sortName = 'Popularity';
         this.ascending = true;
+        this.filter.excerpt = '';
         this.filter.resetFilters();
         this.pullToRefresh = false;
+        this.footer = false;
         return this.reFetch(false);
       },
       reFetch: function(refresh) {
@@ -269,7 +287,8 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         };
         return ProductsAPI.getAll(options).then((function(_this) {
           return function(data) {
-            return _this.onSuccess(data, options.displayLimit);
+            _this.onSuccess(data, options.displayLimit);
+            return _this.footer = true;
           };
         })(this), (function(_this) {
           return function(error) {
@@ -330,12 +349,13 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           return '';
         }
       },
-      onSort: function(sortBy, ascending) {
+      onSort: function(sortBy, sortName, ascending) {
         $ionicLoading.hide();
         switch (sortBy) {
           case 'popularity':
             if (this.sortBy !== 'popularity') {
               this.sortBy = 'popularity';
+              this.sortName = sortName;
               this.ascending = true;
               return this.reFetch();
             }
@@ -343,10 +363,12 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           case 'mrp':
             if (this.sortBy !== 'mrp') {
               this.sortBy = 'mrp';
+              this.sortName = sortName;
               this.ascending = ascending;
               return this.reFetch();
             } else if (this.ascending !== ascending) {
               this.sortBy = 'mrp';
+              this.sortName = sortName;
               this.ascending = ascending;
               return this.reFetch();
             }

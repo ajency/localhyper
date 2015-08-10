@@ -8,13 +8,16 @@ angular.module 'LocalHyper.products', []
 
 		$scope.view =
 			title: Product.subCategoryTitle
+			footer: false
 			gotAllProducts: false
 			products: []
 			other: []
 			page: 0
 			canLoadMore: true
 			refresh: false
+			
 			sortBy: 'popularity'
+			sortName: 'Popularity'
 			ascending: true
 			
 			filter:
@@ -147,8 +150,15 @@ angular.module 'LocalHyper.products', []
 									selected.push(attr.id) if attr.selected
 								@selectedFilters.otherFilters[attribute] = selected
 					
+					@setExcerpt()
 					@modal.hide()
 					$scope.view.reFetch()
+
+				setExcerpt : ->
+					filterNames = []
+					_.each @allAttributes, (attr, index)=>
+						filterNames.push(attr.name) if attr.selected > 0
+					@excerpt = filterNames.join ', '
 					
 
 
@@ -157,9 +167,12 @@ angular.module 'LocalHyper.products', []
 
 			reset : ->
 				@sortBy = 'popularity'
+				@sortName = 'Popularity'
 				@ascending = true
+				@filter.excerpt = ''
 				@filter.resetFilters()
 				@pullToRefresh = false
+				@footer = false
 				@reFetch false
 
 			reFetch : (refresh=true)->
@@ -209,6 +222,7 @@ angular.module 'LocalHyper.products', []
 				ProductsAPI.getAll options
 				.then (data)=>
 					@onSuccess data, options.displayLimit
+					@footer = true
 				, (error)=>
 					@onError error
 				.finally =>
@@ -255,22 +269,25 @@ angular.module 'LocalHyper.products', []
 					"#{value} #{unit}"
 				else ''
 
-			onSort : (sortBy, ascending)->
+			onSort : (sortBy, sortName, ascending)->
 				$ionicLoading.hide()
 
 				switch sortBy
 					when 'popularity'
 						if @sortBy isnt 'popularity'
 							@sortBy = 'popularity'
+							@sortName = sortName
 							@ascending = true
 							@reFetch()
 					when 'mrp'
 						if @sortBy isnt 'mrp'
 							@sortBy = 'mrp'
+							@sortName = sortName
 							@ascending = ascending
 							@reFetch()
 						else if @ascending isnt ascending
 							@sortBy = 'mrp'
+							@sortName = sortName
 							@ascending = ascending
 							@reFetch()
 
