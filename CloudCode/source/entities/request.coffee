@@ -176,7 +176,7 @@ Parse.Cloud.define 'updateRequestStatus' , (request, response) ->
     status = request.params.status
     failedDeliveryReason = request.params.failedDeliveryReason
 
-    validStatuses = ['sent_for_delivery','failed_delivery','successful','cancelled']
+    validStatuses = ['pending_delivery', 'sent_for_delivery','failed_delivery','successful','cancelled']
     isValidStatus = _.indexOf(validStatuses, status )
 
     if isValidStatus > -1 
@@ -497,6 +497,38 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
 
     , (error) ->
         response.error error
+
+Parse.Cloud.define 'getOpenRequestCount' , (request, response) -> 
+    customerId = request.params.customerId
+
+    # find all request for the customer
+    innerQueryCustomer = new Parse.Query(Parse.User)
+    innerQueryCustomer.equalTo("objectId" , customerId)
+
+    queryRequests = new Parse.Query("Request")
+    queryRequests.select("offerCount")
+    queryRequests.matchesQuery("customerId" , innerQueryCustomer)
+    queryRequests.find()
+    .then (requestObjects) ->
+        requestCount = requestObjects.length
+        offerCount = 0
+
+        if requestCount is 0 
+            offerCount = 0
+        else
+             _.each requestObjects , (requestObject) ->
+                offerCount += requestObject.get("offerCount")
+
+        result = 
+            "requestCount" : requestCount
+            "offerCount" : offerCount
+
+        response.success result
+
+
+    , (error) ->
+        response.error error
+
 
 
 getNewRequestsForSeller = (sellerId,requestFilters) ->

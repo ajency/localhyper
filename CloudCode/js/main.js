@@ -2213,7 +2213,7 @@
     requestId = request.params.requestId;
     status = request.params.status;
     failedDeliveryReason = request.params.failedDeliveryReason;
-    validStatuses = ['sent_for_delivery', 'failed_delivery', 'successful', 'cancelled'];
+    validStatuses = ['pending_delivery', 'sent_for_delivery', 'failed_delivery', 'successful', 'cancelled'];
     isValidStatus = _.indexOf(validStatuses, status);
     if (isValidStatus > -1) {
       Request = Parse.Object.extend('Request');
@@ -2473,6 +2473,35 @@
       }, function(error) {
         return response.error(error);
       });
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
+  Parse.Cloud.define('getOpenRequestCount', function(request, response) {
+    var customerId, innerQueryCustomer, queryRequests;
+    customerId = request.params.customerId;
+    innerQueryCustomer = new Parse.Query(Parse.User);
+    innerQueryCustomer.equalTo("objectId", customerId);
+    queryRequests = new Parse.Query("Request");
+    queryRequests.select("offerCount");
+    queryRequests.matchesQuery("customerId", innerQueryCustomer);
+    return queryRequests.find().then(function(requestObjects) {
+      var offerCount, requestCount, result;
+      requestCount = requestObjects.length;
+      offerCount = 0;
+      if (requestCount === 0) {
+        offerCount = 0;
+      } else {
+        _.each(requestObjects, function(requestObject) {
+          return offerCount += requestObject.get("offerCount");
+        });
+      }
+      result = {
+        "requestCount": requestCount,
+        "offerCount": offerCount
+      };
+      return response.success(result);
     }, function(error) {
       return response.error(error);
     });
