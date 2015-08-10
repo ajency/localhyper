@@ -110,6 +110,11 @@ angular.module('LocalHyper.common', []).factory('App', [
         };
         return $cordovaInAppBrowser.open(url, '_system', options);
       },
+      callSupport: function() {
+        var telURI;
+        telURI = "tel:" + SUPPORT_NUMBER;
+        return document.location.href = telURI;
+      },
       getInstallationId: function() {
         var defer;
         defer = $q.defer();

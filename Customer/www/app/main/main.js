@@ -71,10 +71,8 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         return $ionicSideMenuDelegate.toggleLeft();
       },
       onCallUs: function() {
-        var telURI;
         this.menuClose();
-        telURI = "tel:" + SUPPORT_NUMBER;
-        return document.location.href = telURI;
+        return App.callSupport();
       },
       onShare: function() {
         var link, msg, subject;

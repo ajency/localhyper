@@ -91,6 +91,10 @@ angular.module 'LocalHyper.common', []
 				options = location: 'yes'
 				$cordovaInAppBrowser.open url, '_system', options
 
+			callSupport : ->
+				telURI = "tel:#{SUPPORT_NUMBER}"
+				document.location.href = telURI
+
 			getInstallationId : ->
 				defer = $q.defer()
 				if @isWebView()

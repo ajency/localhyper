@@ -69,8 +69,7 @@ angular.module 'LocalHyper.main', []
 
 			onCallUs : ->
 				@menuClose()
-				telURI = "tel:#{SUPPORT_NUMBER}"
-				document.location.href = telURI
+				App.callSupport()
 
 			onShare : ->
 				@menuClose()

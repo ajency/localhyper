@@ -266,10 +266,22 @@
 							<h2><small>Rs.</small> {{App.toINR(offer.price)}}</h2>
 						</div>
 
-						<div class="col align-center p-a-0 p-r-6">
+						<div 
+							class="col align-center p-a-0 p-r-6"
+							ng-if="offer.deliveryTimeLeftStr !== '0'">
+
 							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery in</p>
 							<h2>{{offer.deliveryTimeLeftStr}}</h2>
+						</div>
+
+						<div 
+							class="col align-center p-a-0 p-r-6"
+							ng-if="offer.deliveryTimeLeftStr === '0'">
+
+							<div class="vert-div pull-left"></div>
+							<p class="info">Delivery due</p>
+							<h2 ng-click="App.callSupport();">Call Support</h2>
 						</div>
 
 						<div class="col align-center p-a-0">
