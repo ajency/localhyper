@@ -540,7 +540,7 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
                     sellerWorkTimings  = ["9:00:00", "18:00:00"]
 
                     # deliveryDate = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
-                    deliveryDate = moment(offerAcceptedDate).add(deliveryDuration, "hours").toDate()
+                    deliveryDate = moment(offerAcceptedDate).add(deliveryDuration , "hours").toDate()
 
                     acceptedOffer.set("deliveryDate",deliveryDate)
                     acceptedOffer.save()
@@ -716,6 +716,7 @@ Parse.Cloud.define 'testDeliveryDate', (request, response) ->
     pendingHours = getHoursDifference(endWorkTime, timeOfDelivery)
 
     result = 
+        moment : moment()
         deliveryDate : moment(deliveryDate).format('dddd DD-MM-YYYY HH:mm:ss')
         adjustedDeliveryDate : moment(adjustedDeliveryDate).format('dddd DD-MM-YYYY HH:mm:ss')
         acceptedDate : moment(offerAcceptedDate).format('dddd DD-MM-YYYY HH:mm:ss')

@@ -346,8 +346,6 @@
 
   moment = require('cloud/moment');
 
-  moment = require('cloud/moment-range-min');
-
   treeify = function(list, idAttr, parentAttr, childrenAttr) {
     var lookup, treeList;
     if (!idAttr) {
@@ -1497,6 +1495,7 @@
     timeOfDelivery = moment(deliveryDate).format("HH:mm:ss");
     pendingHours = getHoursDifference(endWorkTime, timeOfDelivery);
     result = {
+      moment: moment(),
       deliveryDate: moment(deliveryDate).format('dddd DD-MM-YYYY HH:mm:ss'),
       adjustedDeliveryDate: moment(adjustedDeliveryDate).format('dddd DD-MM-YYYY HH:mm:ss'),
       acceptedDate: moment(offerAcceptedDate).format('dddd DD-MM-YYYY HH:mm:ss'),
