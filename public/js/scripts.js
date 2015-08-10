@@ -146,7 +146,8 @@ $('.sellerList').on('click', '.save-seller-credits', function () {
         },
         dataType: "JSON",
         success: function (response) {
-            container.find(".balance-credit").html(response.result.sellerCredits);
+            var balanceCredits = parseInt(response.result.addedCredit)+parseInt(response.result.subtractedCredit)
+            container.find(".balance-credit").html(balanceCredits);
             container.find(".edit-balance-credit").removeClass("hidden"); 
 
         }

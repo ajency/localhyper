@@ -7,6 +7,7 @@ use Parse\ParseObject;
 use Parse\ParseQuery;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use App\Http\Helper\FormatPhpExcel;
 
 class CustomerController extends Controller
 {
@@ -17,8 +18,14 @@ class CustomerController extends Controller
      */
     public function index()
     {
+        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+        $displayLimit = config('constants.page_limit'); 
+        
         $customers = new ParseQuery("_User");
         $customers->equalTo("userType", "customer");
+        $customersCount = $customers->count();  
+        $customers->limit($displayLimit);
+		$customers->skip($page * $displayLimit);
         $customerData = $customers->find();  
         $customerList =[];
         foreach($customerData as $customer)
@@ -62,8 +69,13 @@ class CustomerController extends Controller
                               ];  
  
             
-        } 
-        return view('admin.customerlist')->with('customers',$customerList);
+        }
+        
+        $numOfPages = ceil($customersCount/$displayLimit);
+        
+        
+        return view('admin.customerlist')->with('customers',$customerList)
+                                         ->with('numOfPages',$numOfPages);
     }
     
     public function date_diff($date2, $date1) 
@@ -72,7 +84,25 @@ class CustomerController extends Controller
       $end_ts = strtotime($date2);
       $diff = $end_ts - $start_ts;
       return round($diff / 86400); 
-    } 
+    }
+    
+    public function customersExport()
+    {
+        /*$excel = new PHPExcel(); // ea is short for Excel Application
+        $excel->getProperties()
+                                 ->setCreator('Prajay Verenkar')
+                                 ->setTitle('PHPExcel Attributes')
+                                 ->setLastModifiedBy('Prajay Verenkar')
+                                 ->setDescription('A demo to show how to use PHPExcel to manipulate an Excel file')
+                                 ->setSubject('PHP Excel manipulation')
+                                 ->setKeywords('excel php office phpexcel lakers')
+                                 ->setCategory('programming');
+
+ 
+        $customerSheet = $excel->getSheet(0);
+        $customerSheet->setTitle('AttributeValues');
+        */
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -168,4 +198,6 @@ class CustomerController extends Controller
     {
         //
     }
+    
+     
 }

@@ -37,6 +37,14 @@
            @endforeach
           </tbody>
          </table>
+        
+        <select name="number_of_pages" onchange="location.href='{{ url('admin/customer') }}?page='+this.value">
+            @for($i=1 ;$i<=$numOfPages ;$i++)
+           <option  value="{{ $i }}">{{ $i }}</option>                         
+            @endfor
+        </select>
+        
+                
                         </div>
 		</div>
     </div>

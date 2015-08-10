@@ -1,7 +1,7 @@
 @extends('layouts.master') 
 @section('content')
 <div class="content">  
-       <button type="button" class="btn btn-default btn-cons pull-right"><i class="fa fa-download"></i> Download CSV</button>
+       <button type="button" class="btn btn-default btn-cons pull-right" onclick="location.href='{{ url('admin/requests/requestexport') }}'"><i class="fa fa-download"></i> Download CSV</button>
 		<div class="page-title m-l-5">	
 			<h3 class="inline"><span class="semi-bold">Request</span> List</h3>
 		</div>

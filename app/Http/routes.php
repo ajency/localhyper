@@ -27,12 +27,16 @@ Route::controllers( [
  * Backend Admin routes
  */
 Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
+    Route::get( 'requests/requestexport', 'Admin\RequestController@requestExport' );
+    Route::get( 'offers/offersexport', 'Admin\OfferController@offersExport' );
+    
     Route::get( '/', 'Admin\AdminController@index' );
     Route::resource( 'customer', 'Admin\CustomerController' );
     Route::resource( 'seller', 'Admin\SellerController' );
     Route::resource( 'requests', 'Admin\RequestController' );
     Route::resource( 'offers', 'Admin\OfferController' );
-    
+    Route::resource( 'smsverify', 'Admin\SmsVerifyController' );
+ 
     Route::get( 'attribute/categoryconfiguration', 'Admin\AttributeController@categoryConfiguration' );
     Route::get( 'attribute/exportattributes/{categoryid}', 'Admin\AttributeController@exportAttributes' );
 

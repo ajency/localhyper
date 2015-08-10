@@ -116,6 +116,7 @@
      <p class="menu-title" onclick="location.href='{{ url('admin/offers') }}'">List of Offers <span class="pull-right"><a href="javascript:;"></a></span></p>
       <p class="menu-title" onclick="location.href='{{ url('admin/requests') }}'">List of Requests <span class="pull-right"><a href="javascript:;"></a></span></p>
       <p class="menu-title" onclick="location.href='{{ url('admin/customer') }}'">List of Customers &nbsp;<span class="pull-right"> <a href="javascript:;"> </a></span></p>
+       <p class="menu-title" onclick="location.href='{{ url('admin/smsverify') }}'">SMS Verify &nbsp;<span class="pull-right"> <a href="javascript:;"> </a></span></p>
        <p class="menu-title" onclick="location.href='#'">List of Ratings <span class="pull-right"><a href="javascript:;"></a></span></p>
     
   <div class="clearfix"></div>
