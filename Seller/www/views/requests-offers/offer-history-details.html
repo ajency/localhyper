@@ -12,7 +12,7 @@
 			</div>
 			<div class="col col-20">
 				<h2
-					ng-click="view.offerDetails.modal.hide()"
+					ng-click="view.offerDetails.modal.hide();"
 					class="text-right text-light">
 					<i class="ion ion-ios-close-outline"></i>
 				</h2>
@@ -30,67 +30,69 @@
 		</ion-spinner>
 
 		<ion-list ng-switch-when="noError">
-	<div class="list margin-none">
-		<div class="item item-details" href="#">
-			<div class="row">
-				<div class="col col-20 ">
-						<div class="item-avatar">
-							<img ng-src="{{view.offerDetails.data.product.images[0].src}}">
+
+			<div class="list margin-none">
+				<div class="item item-details">
+					<div class="row">
+						<div class="col col-20 ">
+							<div class="item-avatar">
+								<img ng-src="{{view.offerDetails.data.product.images[0].src}}">
+							</div>
 						</div>
-				</div>
-				<div class="col col-60">
-					<h2 class="text-left product-item">
-							{{view.offerDetails.data.product.name}}
-					</h2>
-					<h3 class="text-left subdued">
-						Model No : {{view.offerDetails.data.product.modelNumber}}
-					</h3>
-				</div>
-			</div>
+						<div class="col col-60">
+							<h2 class="text-left product-item">
+								{{view.offerDetails.data.product.name}}
+							</h2>
+							<h3 class="text-left subdued">
+								Model No : {{view.offerDetails.data.product.modelNumber}}
+							</h3>
+						</div>
+					</div>
 
-				<div class="row">
-					<div class="col col-20">
+					<div class="row">
+						<div class="col col-20">
 							<img class="pull-right" src="./img/distance.png" width="55px">
+						</div>
+						<div class="col col-50">
+							<b class="text-left m-t-5 center-block">
+								{{view.offerDetails.data.distanceFromCustomer.toFixed(2)}} <sm>kms radius</sm></b>
+							<h3 class="light-gray text-left">Distance from you</h3>
+						</div>
+						<div class="col">
+							<button 
+								class="button button-outline button-balanced button-block button-small" 
+								ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
+								{{App.humanize(view.offerDetails.data.request.status)}}
+							</button>
+						</div>
 					</div>
-					<div class="col col-50">
-						<b class="text-left m-t-5 center-block">{{view.offerDetails.data.distanceFromCustomer.toFixed(2)}} <sm>kms radius</sm></b>
-						<h3 class="light-gray text-left">Distance from you</h3>
-					</div>
-					<div class="col ">
-						<button class="button button-outline button-balanced button-block button-small" ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
-					{{App.humanize(view.offerDetails.data.request.status)}}
-						</button>
-
-					</div>
+				</div>
 			</div>
-		</div>
-	<div>
 			
-			 <div class="row">
-			    	<div class="col col-50 ">
-					<h5 class="text-left subdued "> MRP : <span class="WebRupee subdued">&#x20B9;</span> <b class="big-txt"> {{App.toINR(view.offerDetails.data.product.mrp)}}</b>
+			<div class="row">
+				<div class="col col-50 ">
+					<h5 class="text-left subdued"> 
+						MRP : <span class="WebRupee subdued">&#x20B9;</span> 
+						<b class="big-txt"> {{App.toINR(view.offerDetails.data.product.mrp)}}</b>
 					</h5>
-			    	</div>
-			    	<div class="col col-50 ">
-			    	<h5 class="text-left subdued">		No of offers : <b class="big-txt"> {{view.offerDetails.data.request.offerCount}}</b></h5>
-			    	</div>
-			    </div>
-			    <div class="row">
+				</div>
+				<div class="col col-50">
+					<h5 class="text-left subdued">
+						No of offers : <b class="big-txt"> {{view.offerDetails.data.request.offerCount}}</b>
+					</h5>
+				</div>
+			</div>
+
+			<div class="row">
 				<div class="col col-25">
-				<h5 class="margin-none subdued text-left">	Category</h5>
+					<h5 class="margin-none subdued text-left">Category</h5>
 				</div>
 				<div class="col col-75">
-						<h5 class="margin-none text-primary text-left">
-				
-					
-					{{view.offerDetails.data.category.parentCategory}} >>
-					
-					{{view.offerDetails.data.category.name}} >>
-				
-					{{view.offerDetails.data.brand.name}}
-					
-					<!--  > {{view.requestDetails.data.category.name}} > {{view.requestDetails.data.brand.name}} -->
-				</h5>
+					<h5 class="margin-none text-primary text-left">
+						{{view.offerDetails.data.category.parentCategory}} >>
+						{{view.offerDetails.data.category.name}} >>
+						{{view.offerDetails.data.brand.name}}
+					</h5>
 				</div>
 			</div>
 			
@@ -105,32 +107,14 @@
 					</div>
 				</div>
 			</div>
-		
-				
 
-			
+			<h5 ng-if="view.offerDetails.data.request.comments!==''">
+				Customer Comments : {{view.offerDetails.data.request.comments}} 
+			</h5>
 
-				
-				<!-- <div ng-if="view.offerDetails.data.request.status == 'open' ">
-					<h5> 
-						Request expires in  :
-	            	 	<sm ng-if="view.offerDetails.showExpiry"
-							aj-count-down
-							created-at="view.offerDetails.data.request.createdAt">
-						</sm>
-					</h5>
-				</div> -->
-
-				<h5 ng-if="view.offerDetails.data.request.comments!==''">
-					Customer Comments : {{view.offerDetails.data.request.comments}} 
-				</h5>
-
-				<h5 ng-if="view.offerDetails.data.offerComments!==''">
-					Your Comments : {{view.offerDetails.data.offerComments}}
-				</h5>
-			</div>
-
-		
+			<h5 ng-if="view.offerDetails.data.offerComments!==''">
+				Your Comments : {{view.offerDetails.data.offerComments}}
+			</h5>
 
 			<div class="row">
 				<div class="col col-50">
@@ -172,7 +156,7 @@
 		<aj-error
 			ng-switch-when="error"
 			error-type="view.errorType"
-			tap-to-retry="view.onTapToRetry()">
+			tap-to-retry="view.onTapToRetry();">
 		</aj-error>
 
 	</ion-content>

@@ -106,6 +106,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       getSingleProductDetails: function() {
         return ProductsAPI.getSingleProduct(this.productID).then((function(_this) {
           return function(productData) {
+            console.log(productData);
             _this.product = productData;
             return ProductsAPI.getNewOffers(_this.productID);
           };
