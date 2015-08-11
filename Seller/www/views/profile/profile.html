@@ -1,40 +1,78 @@
 <ion-view 
-	view-title="My Profile"
+	view-title=""
 	ng-init="view.init();">
-
-	<ion-content>
-
-		<div class="list list-inset">
-			<ion-item>
-				Business: <b>{{view.businessName}}</b>
-			</ion-item>
-
-			<ion-item>
-				Name: <b>{{view.name}}</b>
-			</ion-item>
-
-			<ion-item>
-				Phone Number: <b>+91-{{view.phone}}</b>
-			</ion-item>
-		</div>
+	<ion-nav-title>
+		My Profile
+    </ion-nav-title>
+	<ion-content class="business-details">
 
 		<div class="row">
-			<div class="col card">
+			<div class="col-80 ">
+				<h5 class="text-left  title-with-icon text-primary upper-case h5 m-t-10">
+					<i class="icon ion-briefcase"></i>
+					Business details
+				</h5>
+				
+			</div>
+			<div class="col-20">
+				<button class="button button-block  button-clear button-assertive margin-none" ng-click="App.navigate('business-details');">
+				 <i class="ion-compose"></i> Edit
+				</button>
+			</div>
+		</div>
+
+		<div class="card m-red">
+			<div class="list bg-white form-field">
+				<label class="item item-input item-stacked-label">
+					<i class="icon ion-briefcase ico-out"></i>
+					<span class="input-label">Business Name</span>
+					<input
+						type="text"
+						ng-model="view.businessName" disabled>
+				</label>
+
+				<label class="item item-input item-stacked-label">
+					<i class="icon ion-person ico-out"></i>
+					<span class="input-label">Full Name</span>
+						<input
+						type="text"
+						ng-model="view.name" disabled>
+				</label>
+
+				<label class="item item-input item-stacked-label">
+				<i class="icon ion-ios-telephone ico-out"></i>
+					<span class="input-label">Phone Number</span>
+					<input
+						type="tel"
+						minlength="10"
+						maxlength="10"
+						ng-pattern="App.onlyNumbers"
+						ng-model="view.phone"
+						ng-readonly="view.myProfileState" disabled>
+				</label>
+			</div>
+		</div>
+
+	
+			<div class=" card">
 				<div class=" item-text-wrap">
-					Available Credit Points
-					<br>
 					<div class="row">
-						<div class="col col-50">
-							<h3>{{view.creditAvailable}}</h3>
+						<div class="col col-20">
+							<img src="./img/credit.png" width="42px" class="center-block"/>
 						</div>
-						<div class="col" ng-click="App.navigate('credit-history');">
-							</br>
-							View Details
+						<div class="col col-80">
+							<h3 class="text-left margin-none bold">{{view.creditAvailable}}
+								<sm ng-click="App.navigate('credit-history');" class="text-primary">
+								View Details
+								</sm>
+							</h3>
+							<span class="subdued">Available Credit Points</span>
 						</div>
+						
 					</div>
 				</div>
-			</div>
-			<div class="col card">
+			
+	<!-- 		<div class="col card col-33">
 				<div class=" item-text-wrap">
 					Auto Offer
 				</div>
@@ -48,14 +86,18 @@
 						</label>
 					</div>
 				</div>	
-			</div>
+			</div> -->
 		</div>
-
-		<div class="card">
-			<div class="item item-divider ">
-				My Bussiness Categories
+<div class="row">
+			<div class="col-67 ">
+				<h5 class="text-left  title-with-icon text-primary upper-case h5 m-t-10">
+					<i class="icon ion-pricetag"></i>
+					My Bussiness Categories
+				</h5>
 				
-				<button
+			</div>
+			<div class="col-33">
+			<button
 					class="button button-outline button-assertive icon-btn pull-right"
 					ng-click="App.navigate('categories')">
 					<i class="icon ion-plus"></i>
@@ -66,6 +108,8 @@
 					<i class="icon ion-trash-a"></i>
 				</button>
 			</div>
+		</div>
+		<div class="card m-t-0">
 
 			<ion-list show-delete="view.showDelete">
 				<ion-item 
@@ -96,25 +140,38 @@
 		</div>
 
 		<div class="list card">
-			<a class="item item-text-wrap item-icon-left">
-				<i class="icon ion-information-circled"></i>
-				You receive request from customer for products under categories you added here
-			</a>
+			<div class="row">
+				<div class="col-20"><img src="./img/info-icon.png" class="center-block m-t-10" width="40px"/></div>
+				<div class="col-80">
+						<h4 class="text-left subdued ">
+							You receive request from customer for products under categories you added here
+						</h4>
+				</div>
+			</div>
+		
 		</div>
-
+<!-- 
 		<button 
 			class="button button-dark button-block" 
 			ng-click="App.navigate('business-details');">
  			Edit Bussiness Details
-		</button>
+		</button> -->
 
-		<button 
+	<!-- 	<button 
 			class="button button-assertive button-block" 
 			ng-click="view.saveDetails();"
 			ng-disabled="view.categoryChains.length == 0">
 			Save
-		</button>
+		</button> -->
 
 	</ion-content>
+		<ion-footer-bar class="bar-assertive">
 
+		<div 
+			class="title "  
+			ng-click="view.saveDetails();"
+			ng-disabled="view.categoryChains.length == 0">
+			Save My profile
+		</div>
+		</ion-footer-bar>
 </ion-view>

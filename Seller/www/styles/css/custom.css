@@ -65,6 +65,12 @@ hr {
   -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
+.uppercase {
+  text-transform: uppercase;
+}
+.text-success {
+  color: #5ab319;
+}
 .bar-assertive {
   background: #f35a59 !important;
 }
@@ -594,6 +600,12 @@ sm {
   color: #f35a59;
   font-weight: 400;
   text-transform: uppercase;
+}
+.card-list .card-box2 {
+  padding: 0px;
+  margin: 10px;
+  border-bottom: 2px solid #ccc;
+  background: #fff;
 }
 .card-list .card-box {
   padding: 0px;
@@ -1284,6 +1296,7 @@ h5.with-sep span {
   max-width: none;
   min-height: 0;
   max-height: none;
+  margin: 4px;
 }
 .button.button-outline.icon-btn i.icon:before {
   font-size: 20px;
@@ -1304,12 +1317,11 @@ h5.with-sep span {
 }
 .cat-chain .highlight {
   display: block;
-  font-size: 20px;
-  line-height: 27px;
+  font-size: 18px;
+  line-height: 22px;
   color: #2F2F2F;
   margin-top: 8px;
-  /* color: @brand-primary; */
-  font-weight: bold;
+  font-weight: 400;
 }
 .verify-first.has-header {
   background-color: #fff;
@@ -1603,7 +1615,41 @@ h5.with-sep span {
 .subdued .Accepted {
   color: #5ab319;
 }
-/*.has-footer {
-	bottom:0px;
-}*/
+.item-complex.item-icon-left .item-content {
+  padding-left: 24px;
+}
+input[disabled] {
+  color: #999;
+  background-color: #fff;
+}
+/* Credit History*/
+.date {
+  display: inline-block;
+  width: 40px;
+  vertical-align: middle;
+  text-align: center;
+  border: 1px solid #eaedef;
+  border-bottom: 2px solid #eaedef;
+  background-color: #FAFAFA;
+  border-radius: 3px;
+}
+.date .month {
+  font-size: 10px;
+  color: #FFF;
+  display: block;
+  line-height: 11px;
+  background-color: #666;
+  padding: 3px;
+}
+.date .day {
+  font-size: 18px;
+  display: block;
+  line-height: 22px;
+}
+.date .year {
+  font-size: 10px;
+  color: #919bac;
+  display: block;
+  line-height: 11px;
+}
 /*# sourceMappingURL=custom.css.map */
