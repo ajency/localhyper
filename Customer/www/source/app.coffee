@@ -15,6 +15,8 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	#User Notification Icon (Right popover)
 	App.notification = 
 		icon: User.isLoggedIn()
+		openRequests: 0
+		offers: 0
 		badge: false
 		count: 0
 		increment : ->

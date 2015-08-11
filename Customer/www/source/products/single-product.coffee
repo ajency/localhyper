@@ -3,8 +3,9 @@ angular.module 'LocalHyper.products'
 
 .controller 'SingleProductCtrl', ['$scope', '$stateParams', 'ProductsAPI', 'User'
 	, 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI'
+	, '$ionicScrollDelegate'
 	, ($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps
-	, CSpinner, $rootScope, RequestAPI)->
+	, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate)->
 
 		$scope.view = 
 			display: 'loader'
@@ -174,12 +175,15 @@ angular.module 'LocalHyper.products'
 
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
+
 			if payload.type is 'new_offer'
 				$scope.view.request.reFetch()
 		
 		$scope.$on '$ionicView.beforeEnter', ->
 			if _.contains ['products', 'verify-success'], App.previousState
-				App.scrollTop()
+				$ionicScrollDelegate
+					.$getByHandle 'single-product-handle'
+					.scrollTop true
 				$scope.view.reset()
 ]
 

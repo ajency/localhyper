@@ -1,5 +1,6 @@
 angular.module 'LocalHyper.myRequests'
 
+
 .controller 'OpenRequestCtrl', ['$scope', 'App', 'RequestAPI', '$ionicLoading'
 	, ($scope, App, RequestAPI, $ionicLoading)->
 

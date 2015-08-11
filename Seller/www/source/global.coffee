@@ -15,3 +15,6 @@ GEO_DEFAULT =
 
 # Support
 SUPPORT_NUMBER = '9765436351'
+
+# Help url
+HELP_URL = 'http://www.google.com/'

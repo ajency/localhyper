@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', '$ionicScrollDelegate', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -150,7 +150,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return value + " " + unit;
+          return "" + value + " " + unit;
         } else {
           return '';
         }
@@ -200,7 +200,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     });
     return $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['products', 'verify-success'], App.previousState)) {
-        App.scrollTop();
+        $ionicScrollDelegate.$getByHandle('single-product-handle').scrollTop(true);
         return $scope.view.reset();
       }
     });
