@@ -218,81 +218,29 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         }
       }
     });
-    return $scope.$on('$destroy', function() {
+    $scope.$on('$destroy', function() {
       inAppNotificationEvent();
       return $interval.cancel($scope.view.interval);
     });
+    return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
+      if (!viewData.enableBack) {
+        return viewData.enableBack = true;
+      }
+    });
   }
 ]).controller('EachOfferTimeCtrl', [
-  '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
-    var deliveryTime, getDeliveryTimeLeft, interval, setTime, unit, value;
-    deliveryTime = $scope.offer.deliveryTime;
-    value = deliveryTime.value;
-    switch (deliveryTime.unit) {
-      case 'hr':
-        unit = value === 1 ? 'hr' : 'hrs';
-        break;
-      case 'day':
-        unit = value === 1 ? 'day' : 'days';
-    }
-    $scope.offer.deliveryTimeStr = value + " " + unit;
-    getDeliveryTimeLeft = function(obj) {
-      var day, daysLeft, duration, format, hours, hoursLeft, hr, min, minsLeft, str, timeLeft, totalTime, updatedAt;
-      hours = deliveryTime.unit === 'hr' ? value : value * 24;
-      format = 'DD/MM/YYYY HH:mm:ss';
-      updatedAt = moment(obj.iso).format(format);
-      totalTime = moment(updatedAt, format).add(hours, 'h');
-      timeLeft = totalTime.diff(moment());
-      duration = moment.duration(timeLeft);
-      daysLeft = parseInt(duration.asDays().toFixed(0));
-      hoursLeft = parseInt(duration.asHours().toFixed(0));
-      minsLeft = parseInt(duration.asMinutes().toFixed(0));
-      if (minsLeft < 60) {
-        min = minsLeft === 1 ? 'min' : 'mins';
-        str = minsLeft >= 0 ? minsLeft + " " + min : "0";
-      } else if (hoursLeft < 24) {
-        hr = hoursLeft === 1 ? 'hr' : 'hrs';
-        str = hoursLeft + " " + hr;
-      } else {
-        day = daysLeft === 1 ? 'day' : 'days';
-        str = daysLeft + " " + day;
-      }
-      return str;
-    };
+  '$scope', '$interval', 'TimeString', 'DeliveryTime', function($scope, $interval, TimeString, DeliveryTime) {
+    var interval, setTime;
+    $scope.offer.deliveryTimeStr = DeliveryTime.humanize($scope.offer.deliveryTime);
     setTime = function() {
       $scope.offer.timeStr = TimeString.get($scope.offer.createdAt);
-      return $scope.offer.deliveryTimeLeftStr = getDeliveryTimeLeft($scope.offer.updatedAt);
+      return $scope.offer.deliveryTimeLeftStr = DeliveryTime.left($scope.offer.updatedAt);
     };
     setTime();
     interval = $interval(setTime, 60000);
     return $scope.$on('$destroy', function() {
       return $interval.cancel(interval);
     });
-  }
-]).directive('ajCountDown', [
-  '$timeout', function($timeout) {
-    return {
-      restrict: 'A',
-      scope: {
-        createdAt: '=',
-        countDownFinish: '&'
-      },
-      link: function(scope, el, attrs) {
-        return $timeout(function() {
-          var createdAt, total, totalStr;
-          createdAt = moment(scope.createdAt.iso);
-          total = moment(createdAt).add(24, 'hours');
-          totalStr = moment(total).format('YYYY/MM/DD HH:mm:ss');
-          return $(el).countdown(totalStr, function(event) {
-            return $(el).html(event.strftime('%-H:%-M:%-S'));
-          }).on('finish.countdown', function(event) {
-            return scope.$apply(function() {
-              return scope.countDownFinish();
-            });
-          });
-        });
-      }
-    };
   }
 ]).config([
   '$stateProvider', function($stateProvider) {
