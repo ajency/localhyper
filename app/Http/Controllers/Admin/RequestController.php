@@ -66,9 +66,9 @@ class RequestController extends Controller
                 $platformPrice = $productPriceArray[$productId]['PlatformPrice']; 
             }
             
-            
-            
-            $requestList[]= [
+            if($type=='LIST')
+            {
+               $requestList[]= [ 'id' => $request->getObjectId(),
                               'customerName' => $request->get("customerId")->get("displayName"),
                               'category' =>$request->get("category")->get("name"),    
                               'productName' =>$request->get("product")->get("name"),
@@ -78,7 +78,24 @@ class RequestController extends Controller
                               'area' =>$request->get("area"),
                               'offerCount' =>$request->get("offerCount"),
                               'status' =>$request->get("status"),
-                              ];  
+                              ]; 
+            }
+            else
+            {
+                $requestList[]= [ 
+                              'customerName' => $request->get("customerId")->get("displayName"),
+                              'category' =>$request->get("category")->get("name"),    
+                              'productName' =>$request->get("product")->get("name"),
+                              'mrp' =>$request->get("product")->get("mrp").'/-',
+                              'onlinePrice' =>$onlinePrice.'/-',
+                              'bestPlatformPrice' =>$platformPrice,
+                              'area' =>$request->get("area"),
+                              'offerCount' =>$request->get("offerCount"),
+                              'status' =>$request->get("status"),
+                              ]; 
+            }
+            
+             
         }
         
         return $requestList;

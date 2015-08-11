@@ -7,6 +7,8 @@ use Parse\ParseObject;
 use Parse\ParseQuery;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use \PHPExcel;
+use App\Http\Helper\FormatPhpExcel;
 
 class SellerController extends Controller
 {
@@ -17,7 +19,16 @@ class SellerController extends Controller
      */
     public function index()
     {
-        $sellers = new ParseQuery("_User");
+        $sellerList = $this->getSellers('LIST');
+        
+       
+        return view('admin.sellerlist')->with('sellers',$sellerList);
+    }
+    
+    
+    public function getSellers($type)
+    {
+         $sellers = new ParseQuery("_User");
         $sellers->equalTo("userType", "seller");
         $sellers->includeKey('supportedCategories');
         $sellerData = $sellers->find();   
@@ -53,7 +64,9 @@ class SellerController extends Controller
             
              $balanceCredit = $seller->get("addedCredit") - $seller->get("subtractedCredit");
             
-             $sellerList[]= ['id' => $seller->getObjectId(),
+            if($type=='LIST')
+            {
+                $sellerList[]= [ 'id' => $seller->getObjectId(),
                               'name' => $seller->get("displayName"),
                               'area' => $seller->get("area"),
                               'categories' => implode(", ",$categories),
@@ -64,9 +77,80 @@ class SellerController extends Controller
                               'lastLogin' =>$seller->get("lastLogin")->format('d-m-Y'),
                               'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
                               ];
+            }
+            else
+            {
+                $sellerList[]= [
+                              'name' => $seller->get("displayName"),
+                              'area' => $seller->get("area"),
+                              'categories' => implode(", ",$categories),
+                              'offersCount' => $offerCount .'/'.$sellerRequestCount,
+                              'successfullCount' => $offerSuccessfullCount,
+                              'avgRating' => 'N/A',
+                              'balanceCredit' => $balanceCredit,
+                              'lastLogin' =>$seller->get("lastLogin")->format('d-m-Y'),
+                              'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
+                              ];
+            }
+    
             
         }  
-        return view('admin.sellerlist')->with('sellers',$sellerList);
+        
+        return $sellerList;
+    }
+    
+    public function sellersExport()
+    { 
+        $excel = new PHPExcel();
+        $sellersSheet = $excel->getSheet(0);
+		$sellersSheet->setTitle('Offers');
+
+        $sellerList = $this->getSellers('EXPORT');
+        
+        $headers = [];
+ 
+        $headers []= 'SELLER NAME' ;
+        $headers []= 'AREA' ;
+        $headers []= 'CATEGORY' ;
+        $headers []= 'RESPONSE RATIO' ;
+        $headers []= 'NO. OF SUCCESSFULL OFFERS' ;
+        $headers []= 'AVG RATINGS' ;
+        $headers []= 'BALANCE CREDITS' ;
+        $headers []= 'REGISTERED DATE' ;
+        $headers []= 'LAST LOGIN' ;
+ 
+        						 
+        $sellersSheet->fromArray($headers, ' ', 'A1');
+        $sellersSheet->fromArray($sellerList, ' ','A2');
+
+
+        //Headr row height
+        $sellersSheet->getRowDimension('1')->setRowHeight(20);
+
+        //Format header row
+        FormatPhpExcel::format_header_row($sellersSheet, array(
+            'background_color'=>'FFFF00',
+            'border_color'=>'000000',
+            'font_size'=>'9',
+            'font_color'=>'000000',
+            'vertical_alignment'=>'VERTICAL_CENTER',
+            'font-weight'=>'bold'
+            ), '1'
+        );
+        
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="sellers-export.xls"');
+        header('Cache-Control: max-age=0');
+        // If you're serving to IE 9, then the following may be needed
+        header('Cache-Control: max-age=1');
+        // If you're serving to IE over SSL, then the following may be needed
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header ('Pragma: public'); // HTTP/1.0
+        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+        $objWriter->save('php://output'); 
+    
     }
 
     /**

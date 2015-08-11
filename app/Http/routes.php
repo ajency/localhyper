@@ -29,6 +29,8 @@ Route::controllers( [
 Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get( 'requests/requestexport', 'Admin\RequestController@requestExport' );
     Route::get( 'offers/offersexport', 'Admin\OfferController@offersExport' );
+    Route::get( 'customer/customersexport', 'Admin\CustomerController@customersExport' );
+    Route::get( 'seller/sellerexport', 'Admin\SellerController@sellersExport' );
     
     Route::get( '/', 'Admin\AdminController@index' );
     Route::resource( 'customer', 'Admin\CustomerController' );

@@ -58,7 +58,10 @@ class OfferController extends Controller
             $lastSellerOffer->descending("CreatedAt");
             $lastOfferBySeller = $lastSellerOffer->first();  
             
-            $offertList[] =[
+            if($type=='LIST')
+            {
+                $offertList[] =[
+                        'id' => $productObj->getObjectId(),
                         'productName'=>$productObj->get("name"),
                         'modelNo'=>$productObj->get("model_number"),
                         'sellerName'=>$offer->get("seller")->get("displayName"),
@@ -72,7 +75,29 @@ class OfferController extends Controller
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
                         'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
                          ] ;  
+            }
+            else
+            {
+                $offertList[] =[
+                        'productName'=>$productObj->get("name"),
+                        'modelNo'=>$productObj->get("model_number"),
+                        'sellerName'=>$offer->get("seller")->get("displayName"),
+                        'area'=>$offer->get("area"),
+                        'mrpOfProduct'=>$productObj->get("mrp").'/-',   
+                        'onlinePrice'=>$priceObj->get("value").'/-',
+                        'offerPrice'=>$offer->get("offerPrice").'/-',
+                        'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice").'/-',
+                        'requestStatus'=>$requestObj->get("status"),
+                        'offerStatus'=>$offer->get("status"),
+                        'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
+                        'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
+                         ] ;  
+            }
+            
+            
         }
+        
+        return $offertList;
     }
     
     public function offersExport()
