@@ -119,7 +119,7 @@ sm {
 }
 .platform-android .popover {
   height: 170px;
-  width: 250px;
+  width: 270px;
 }
 .subdued {
   color: #747474;
@@ -240,7 +240,7 @@ sm {
   height: 20px;
   width: 20px;
   text-align: center;
-  padding: 2px 6px;
+  padding: 2px 3px;
   position: absolute;
   margin-left: -4px !important;
   z-index: 9999;
@@ -1013,7 +1013,7 @@ sm {
   visibility: hidden;
 }
 .deli-tim {
-  max-width: 250px;
+  /*max-width: 250px;*/
   margin: 10px auto;
   margin-bottom: 2px;
   text-align: center;
@@ -1596,4 +1596,14 @@ h5.with-sep span {
   position: absolute;
   right: 10px;
 }
+.model-normal {
+  background: #F2F1ED !important;
+}
+.subdued .Open,
+.subdued .Accepted {
+  color: #5ab319;
+}
+/*.has-footer {
+	bottom:0px;
+}*/
 /*# sourceMappingURL=custom.css.map */
