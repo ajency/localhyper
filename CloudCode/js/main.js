@@ -510,7 +510,8 @@
           var result;
           result = {
             sellerId: updatedSeller.id,
-            sellerCredits: updatedSeller.get("addedCredit")
+            addedCredit: updatedSeller.get("addedCredit"),
+            subtractedCredit: updatedSeller.get("subtractedCredit")
           };
           return response.success(result);
         }, function(error) {
@@ -1412,7 +1413,8 @@
         "comments": requestObj.get("comments"),
         "createdAt": requestObj.createdAt,
         "updatedAt": requestObj.updatedAt,
-        "offerCount": requestObj.get("offerCount")
+        "offerCount": requestObj.get("offerCount"),
+        "deliveryDate": offerObj.get("offerCount")
       };
       return response.success(requestResult);
     }, function(error) {

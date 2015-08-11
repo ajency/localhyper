@@ -154,7 +154,8 @@ Parse.Cloud.define 'addCredits', (request, response) ->
             .then (updatedSeller) ->
                 result = 
                     sellerId : updatedSeller.id
-                    sellerCredits : updatedSeller.get("addedCredit")
+                    addedCredit : updatedSeller.get("addedCredit")
+                    subtractedCredit : updatedSeller.get("subtractedCredit")
                 response.success result
             , (error) ->
                 response.error error
