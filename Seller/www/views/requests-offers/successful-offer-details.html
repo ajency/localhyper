@@ -142,8 +142,8 @@
 				<div class="col col-50">
 					<div 
 						class="deli-tim" 
-						ng-if="view.offerDetails.data.deliveryStatus === 'pending_delivery' 
-						|| view.offerDetails.data.deliveryStatus === 'sent_for_delivery'">
+						ng-if="view.offerDetails.data.request.status === 'pending_delivery' 
+						|| view.offerDetails.data.request.status === 'sent_for_delivery'">
 						
 						<i class="icon-img icon-cust-cal bigger">
 							<img src="./img/cal.png" alt="">
@@ -159,8 +159,18 @@
 					</div>
 				</div>
 			</div>
+
+			<div 
+				class="row"
+				ng-if="view.offerDetails.data.request.status === 'successful'">
+
+				<h4>Delivery status: {{App.humanize(view.offerDetails.data.request.status)}}</h4>
+			</div>
 			
-			<div class="row">
+			<div 
+				class="row"
+				ng-if="view.offerDetails.data.request.status !== 'successful'">
+
 				<div class="col col-80">
 					<label class="item item-input item-select">
 						<div class="input-label">
@@ -168,12 +178,9 @@
 						</div>
 						<select 
 							ng-model="view.offerDetails.data.deliveryStatus"
-							ng-change="view.offerDetails.onDeliveryStatusChange()"
+							ng-change="view.offerDetails.onDeliveryStatusChange();"
 							ng-disabled="view.offerDetails.showChange">
 							
-							<option value="pending_delivery">
-								Pending delivery
-							</option>
 							<option value="sent_for_delivery">
 								Sent for delivery
 							</option>

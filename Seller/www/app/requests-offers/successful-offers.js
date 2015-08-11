@@ -142,13 +142,14 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
             show = true;
           }
           this.data = request;
-          this.data.deliveryStatus = request.request.status;
+          console.log(this.data);
           this.showChange = true;
-          this.checkIfFailedDelivery();
           if (show) {
             this.modal.show();
           }
-          return this.showExpiry = true;
+          this.showExpiry = true;
+          this.setDeliveryStatus();
+          return this.checkIfFailedDelivery();
         },
         onNotificationClick: function(offerId) {
           var index, requests;
@@ -178,6 +179,18 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
             return this.pendingOfferId = "";
           }
         },
+        setDeliveryStatus: function() {
+          var deliveryStatus;
+          deliveryStatus = this.data.request.status;
+          switch (deliveryStatus) {
+            case 'pending_delivery':
+              this.data.deliveryStatus = 'sent_for_delivery';
+              break;
+            default:
+              this.data.deliveryStatus = deliveryStatus;
+          }
+          return this.originalStatus = this.data.deliveryStatus;
+        },
         onDeliveryStatusChange: function() {
           return this.failedDelivery.display = this.data.deliveryStatus === 'failed_delivery';
         },
@@ -191,7 +204,7 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
           }
         },
         onUpdateCancel: function() {
-          this.data.deliveryStatus = this.data.request.status;
+          this.data.deliveryStatus = this.originalStatus;
           this.checkIfFailedDelivery();
           return this.showChange = true;
         },
