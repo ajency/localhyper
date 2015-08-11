@@ -453,8 +453,10 @@ class ProductController extends Controller
 							if(!(is_null(max( $namedData)))){
 
 								$indexedData = array_values($namedData); 
-
-
+								// echo "<pre>";
+								// print_r($namedData);
+								// echo "</pre>";
+								
 								$data = $namedData;
 
 								$attributeIds = [];
@@ -463,7 +465,10 @@ class ProductController extends Controller
 								$naAttribValue = in_array("#N/A", $indexedData,TRUE);
 
 								if (($namedData["BrandID"] == "#N/A") || ($naAttribValue == 1) ) {
-
+								// 									echo "<pre>Not included";
+								// print_r($namedData["BrandID"]);
+								// print_r($indexedData);
+								// echo "</pre>";
 									continue;
 								}
 								else{
@@ -540,6 +545,8 @@ class ProductController extends Controller
 							$productData['categoryId'] =$config[0];
 							$productData['priceRange'] =$priceRange;
 							$productData['products'] =$products;
+
+							// dd(json_encode($productData));
 							
 							$this->parseProductImport($productData);
 
@@ -643,7 +650,7 @@ class ProductController extends Controller
 				// dd(json_encode($data));
 				$functionName = "productImport";
 
-				$result = AttributeController::makeParseCurlRequest($functionName,$data,"jobs"); 
+				$result = AttributeController::makeParseCurlRequest($functionName,$data,"functions"); 
 
 				return $result;
 		}
