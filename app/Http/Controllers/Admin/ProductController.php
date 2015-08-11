@@ -267,13 +267,13 @@ class ProductController extends Controller
 				}
 				
 			 
-				$limit =10;
+				//$limit =10;
 				$page = 0; 
 				$i=0; 
 				 while (true) {
-							$limit = $limit + 50;
+							$limit = 20;
 							$products = $this->getCategoryProducts($catId, $page, $limit) ;
-							
+				 
 							if(empty($products))
 									break;
 	 
@@ -317,7 +317,7 @@ class ProductController extends Controller
 	 
 							$page++;
 					}
-				
+			 
 					$productSheet->fromArray($productsData, ' ', 'B3');
 
 
