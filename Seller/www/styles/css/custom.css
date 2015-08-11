@@ -1284,6 +1284,7 @@ h5.with-sep span {
   max-width: none;
   min-height: 0;
   max-height: none;
+  margin: 4px;
 }
 .button.button-outline.icon-btn i.icon:before {
   font-size: 20px;
@@ -1304,12 +1305,11 @@ h5.with-sep span {
 }
 .cat-chain .highlight {
   display: block;
-  font-size: 20px;
-  line-height: 27px;
+  font-size: 18px;
+  line-height: 22px;
   color: #2F2F2F;
   margin-top: 8px;
-  /* color: @brand-primary; */
-  font-weight: bold;
+  font-weight: 400;
 }
 .verify-first.has-header {
   background-color: #fff;
@@ -1603,7 +1603,11 @@ h5.with-sep span {
 .subdued .Accepted {
   color: #5ab319;
 }
-/*.has-footer {
-	bottom:0px;
-}*/
+.item-complex.item-icon-left .item-content {
+  padding-left: 24px;
+}
+input[disabled] {
+  color: #999;
+  background-color: #fff;
+}
 /*# sourceMappingURL=custom.css.map */

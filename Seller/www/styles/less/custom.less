@@ -1213,6 +1213,7 @@ h5.with-sep {
 	max-width: none;
 	min-height: 0;
 	max-height: none;
+    margin: 4px;
 	i.icon:before {
 		font-size: 20px;
 		line-height: 30px;
@@ -1234,12 +1235,11 @@ h5.with-sep {
 	}
 	.highlight {
 		display: block;
-		font-size: 20px;
-		line-height: 27px;
-		color: #2F2F2F;
-		margin-top: 8px;
-		/* color: @brand-primary; */
-		font-weight: bold;
+	    font-size: 18px;
+	    line-height: 22px;
+	    color: #2F2F2F;
+	    margin-top: 8px;
+	    font-weight: 400;
 	}
 }
 
@@ -1530,6 +1530,10 @@ h5.with-sep {
 		color: @success;
 	}
 }
-/*.has-footer {
-	bottom:0px;
-}*/
+.item-complex.item-icon-left .item-content {
+    padding-left: 24px;
+}
+input[disabled]{
+	    color: #999;
+	    background-color: #fff;
+}
