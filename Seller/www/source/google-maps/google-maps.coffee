@@ -57,7 +57,13 @@ angular.module 'LocalHyper.googleMaps', []
 					address.country = addr.long_name
 				when 'postal_code'
 					address.postal_code = addr.long_name
-					
+
+		if _.isUndefined address.city
+			_.each results, (result)->
+				_.each result.address_components, (addr)->
+					if addr.types[0] is 'locality'
+						address.city = addr.long_name
+
 		address
 
 	GoogleMaps.fullAddress = (address)->
