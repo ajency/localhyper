@@ -1013,7 +1013,7 @@ sm {
   visibility: hidden;
 }
 .deli-tim {
-  max-width: 250px;
+  /*max-width: 250px;*/
   margin: 10px auto;
   margin-bottom: 2px;
   text-align: center;
@@ -1595,5 +1595,11 @@ h5.with-sep span {
 .list-your-price i {
   position: absolute;
   right: 10px;
+}
+.model-normal {
+  background: #F2F1ED !important;
+}
+.subdued .Open {
+  color: #5ab319;
 }
 /*# sourceMappingURL=custom.css.map */
