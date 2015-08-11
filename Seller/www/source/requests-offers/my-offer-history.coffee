@@ -292,9 +292,7 @@ angular.module 'LocalHyper.requestsOffers'
 		
 		$scope.$on 'modal.hidden', ->
 			$scope.view.offerDetails.pendingRequestId = ""
-			$timeout ->
-				$scope.view.offerDetails.showExpiry = false
-			, 1000
+			$scope.view.offerDetails.showExpiry = false
 
 		$rootScope.$on 'make:offer:success', ->
 			App.scrollTop()

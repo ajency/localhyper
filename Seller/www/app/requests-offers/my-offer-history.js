@@ -363,9 +363,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
     });
     $scope.$on('modal.hidden', function() {
       $scope.view.offerDetails.pendingRequestId = "";
-      return $timeout(function() {
-        return $scope.view.offerDetails.showExpiry = false;
-      }, 1000);
+      return $scope.view.offerDetails.showExpiry = false;
     });
     $rootScope.$on('make:offer:success', function() {
       App.scrollTop();

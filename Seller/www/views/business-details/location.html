@@ -4,11 +4,11 @@
 		<div class="row row-fluid">
 			<div class="col col-20"></div>
 			<div class="col col-60">
-				<h4>Confirm your location</h4>
+				<h4 class="text-light">Confirm your location</h4>
 			</div>
 			<div class="col col-20">
 				<h2 ng-click="view.location.modal.hide()" class="text-right">
-					<i class="ion ion-ios-close-outline"></i>
+					<i class="ion ion-ios-close-outline text-light"></i>
 				</h2>
 			</div>
 		</div>
@@ -73,15 +73,19 @@
 				</div>
 			</div>
 		</div>
-
-		<google-map
-			class="aj-big-map"
-			on-create="view.location.onMapCreated(map)">
-		</google-map>
-
+		<div class="row">
+			<div class="col col-100">
+					<google-map
+						class="aj-big-map"
+						on-create="view.location.onMapCreated(map)">
+					</google-map>
+			</div>
+		</div>
+	
 	</ion-content>
 
 	<ion-footer-bar class="bar bar-footer bar-custom-footer with-btn">
+		
 		<button
 			class="button button-assertive btn-action"
 			ng-click="view.onConfirmLocation()">

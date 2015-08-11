@@ -33,7 +33,7 @@
 				ng-if="view.requests.length == 0;"
 				class="item-text-wrap">
 				<h4 class="text-center ">You currently have no new requests<br>
-				Hint:Try increasing your delivery area range to view more requests</h4>
+				Hint: Try increasing your delivery area range to view more requests</h4>
 			</div>
 
 	       	<ion-item
@@ -77,9 +77,10 @@
 			            <h3 class="margin-none "> Make an offer </h3>
 			        </div>
 
-			        <div class="pull-left text-primary ">
-			        	  <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.radius.toFixed(2)}} kms radius</b>
-			        
+			        <div class="pull-left text-primary">
+			        	<b class="light-gray">
+			        		<i class="ion-android-pin text-primary"></i> {{request.radius.toFixed(2)}} kms radius
+			        	</b>
 			        </div>
 			    </div>
 
@@ -111,7 +112,7 @@
 					<i class="ion ion-funnel"></i>
 			 		FILTER
 					<br>
-					 <sm>{{view.filter.excerpt}}<sm>
+					<sm>{{view.filter.excerpt}}<sm>
 				</h5>
 			</div>
 		</div>

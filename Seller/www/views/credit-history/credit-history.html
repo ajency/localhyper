@@ -46,14 +46,14 @@
 						<!-- Date : {{view.getTransactionDate(credit.createdAt)}} -->
 
 						<div ng-if="credit.transactionType === 'add'">
-							<br><b class="text-success uppercase">Balance Credited</b>
+							<br><b class="text-default uppercase">Balance Credited</b>
 						</div>
 
 						<div ng-if="credit.transactionType === 'minus'">
 							 <h5 class="margin-none subdued text-left">{{credit.product.name}}</h5>
 						
-							<b ng-if="credit.transactionTowards === 'make_offer'" class="text-success uppercase"> Offer Made </b>
-							<b ng-if="credit.transactionTowards === 'accept_offer'" class="text-success uppercase"> Offer Accepted </b>
+							<b ng-if="credit.transactionTowards === 'make_offer'" class="text-default uppercase"> Offer Made </b>
+							<b ng-if="credit.transactionTowards === 'accept_offer'" class="text-default uppercase"> Offer Accepted </b>
 						</div>	
 					</div>
 					
