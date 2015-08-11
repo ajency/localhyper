@@ -194,7 +194,8 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
           };
           return ProductsAPI.findSellers(params).then((function(_this) {
             return function(sellers) {
-              return _this.addSellerMarkers(sellers);
+              _this.addSellerMarkers(sellers);
+              return App.scrollTop();
             };
           })(this), function(error) {
             return CToast.show('Request failed, please try again');
@@ -273,7 +274,10 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         }
       }
     };
-    return $scope.$on('$ionicView.beforeEnter', function() {
+    $scope.$on('$ionicView.beforeEnter', function() {
+      return App.scrollTop();
+    });
+    return $scope.$on('$ionicView.afterEnter', function() {
       return $scope.view.init();
     });
   }

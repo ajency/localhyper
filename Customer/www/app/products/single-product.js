@@ -159,7 +159,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         if (!User.isLoggedIn()) {
           return App.navigate('verify-begin');
         } else if (_.isUndefined(window.google)) {
-          CSpinner.show('', 'Please wait...');
+          CSpinner.show('', 'Please wait, loading resources');
           return GoogleMaps.loadScript().then((function(_this) {
             return function() {
               return _this.getBestPrices();
