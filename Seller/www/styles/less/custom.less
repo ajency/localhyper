@@ -180,7 +180,7 @@ sm{
 }
 .bar-subheader{
 		background-color: #1f1f1f !important;
-		height: 60px;
+		// height: 60px;
 }
 .bar-footer{
 	    box-shadow: 0px 5px 15px #000;
@@ -450,7 +450,7 @@ sm{
       text-align: left;
       .item-title{
       	    font-weight: bold;
-   			 border-bottom: 3px solid #BDBDBD;  	
+   			 border-bottom: 3px solid #BDBDBD;
       }
       li{
           padding: 8px;
@@ -460,11 +460,11 @@ sm{
 			    width: 30px;
 			    float: left;
 			    margin-right: 10px;
-			    -webkit-filter: grayscale(100%); filter: grayscale(100%); 
+			    -webkit-filter: grayscale(100%); filter: grayscale(100%);
 		}
       }
 
-} 
+}
  .modal-backdrop-bg {
  		 background: rgba(0, 0, 0, 0.34);
 }
@@ -472,7 +472,7 @@ sm{
 		color:@brand-primary;
 		 background-color: #fff;
 	img{
-		 -webkit-filter: grayscale(0%); filter: grayscale(0%); 
+		 -webkit-filter: grayscale(0%); filter: grayscale(0%);
 
 	}
 }
@@ -620,10 +620,10 @@ sm{
 				    top: 10px;
 				    display: block !important;
 				    animation: shake 2s linear 1s infinite alternate;
-				  
+
 			 	}
 			 }
-	
+
 }
 @keyframes shake {
   0% {
@@ -1550,35 +1550,101 @@ input[disabled]{
 	    background-color: #fff;
 }
 
+
+.search-brands-wrap {
+	border: 0;
+	border-radius: 0;
+	background-color: #F3F3F3; //was #171717;
+	border-bottom: 1px solid #ccc;
+
+	// Dark Version
+	// border: 0;
+	// border-radius: 0;
+	// background-color: #171717;
+	.search-brands {
+		background-color: transparent;
+		padding: 0;
+		input {
+			color: #1F1F1F;
+			display: block;
+			width: 100%;
+			padding: 12px 8px 6px 15px;
+			height: auto;
+			font-style: italic;
+			line-height: 26px;
+			font-size: 15px;
+
+			// Dark Version
+			// color: #ccc;
+			// display: block;
+			// width: 100%;
+			// padding: 11px 8px 6px 15px;
+			// height: auto;
+			// font-style: italic;
+			// line-height: 24px;
+		}
+	}
+	button.button.button-small {
+		background: transparent;
+		border: 0;
+		color: #B9B5B5;
+		padding-right: 15px;
+
+		// Dark Version
+		// background-color: transparent;
+		// border: 0;
+		// padding-right: 15px;
+		// opacity: 0.4;
+		i:before {
+			font-size: 26px;
+		}
+	}
+}
+.brands .border-card.all-brands-indi {
+	height: 90px;
+	.item-check {
+		height: 90px;
+		.checkbox {
+			top: 15px;
+		}
+	}
+	.aj-img {
+		height: auto;
+		width: 100%;
+	}
+	h3 {
+		display: none;
+	}
+}
 /* Credit History*/
 .date{
-	    display: inline-block;
-	    width: 40px;
-	    vertical-align: middle;
-	    text-align: center;
-	    border: 1px solid #eaedef;
-	    border-bottom: 2px solid #eaedef;
-	    background-color: #FAFAFA;
-	    -webkit-border-radius: 3px;
-	    -moz-border-radius: 3px;
-	    border-radius: 3px;
-	    .month {
-		    font-size: 10px;
-		    color: #FFF;
-		    display: block;
-		    line-height: 11px;
-		    background-color: #666;
-		    padding: 3px;
-		}
-		.day {
-		    font-size: 18px;
-		    display: block;
-		    line-height: 22px;
-		}
-		.year {
-		    font-size: 10px;
-		    color: #919bac;
-		    display: block;
-		    line-height: 11px;
+	display: inline-block;
+	width: 35px;
+	vertical-align: middle;
+	text-align: center;
+	border: 1px solid #eaedef;
+	border-bottom: 2px solid #eaedef;
+	background-color: #FAFAFA;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	.month {
+		font-size: 10px;
+		color: #FFF;
+		display: block;
+		line-height: 11px;
+		background-color: #666;
+		padding: 3px;
+	}
+	.day {
+		font-size: 18px;
+		display: block;
+		line-height: 22px;
+	}
+	.year {
+		font-size: 10px;
+		color: #919bac;
+		display: block;
+		line-height: 11px;
 	}
 }
