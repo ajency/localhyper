@@ -43,11 +43,17 @@ h5,
 h6 {
   /*font-weight: 800;*/
 }
+hr {
+  opacity: .3;
+}
 /*.list{
 	  border-top: 1px solid #ccc
 }*/
 .text-primary {
   color: #f35a59;
+}
+.bold {
+  font-weight: bold;
 }
 .h5 {
   font-weight: 600;
@@ -1001,13 +1007,14 @@ sm {
   padding: 5px 8px;
   padding-bottom: 35px;
   text-align: center;
+  height: 75px;
 }
 .make-an-offer .radio-icon-hide {
   visibility: hidden;
 }
 .deli-tim {
   max-width: 250px;
-  margin: 30px auto;
+  margin: 10px auto;
   margin-bottom: 2px;
   text-align: center;
 }
@@ -1561,5 +1568,32 @@ h5.with-sep span {
   position: fixed;
   background-color: #F2F1ED;
   border-right: 1px solid #ddd;
+}
+/* Details Page */
+.item-details {
+  padding: 5px;
+}
+.item-details b {
+  font-size: 22px;
+}
+.item-details .product-item {
+  overflow: visible;
+  white-space: normal;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.big-txt {
+  font-size: 20px;
+}
+.list-your-price {
+  position: absolute;
+  width: 100%;
+  top: -85px;
+  background: #fff;
+  height: 77px;
+}
+.list-your-price i {
+  position: absolute;
+  right: 10px;
 }
 /*# sourceMappingURL=custom.css.map */
