@@ -1117,6 +1117,7 @@ h5.with-sep span {
   margin: 0;
   font-size: 14px;
   border-radius: 0;
+  float: left;
 }
 .bar-footer.with-btn .button i {
   margin-right: 5px;
@@ -1651,5 +1652,8 @@ input[disabled] {
   color: #919bac;
   display: block;
   line-height: 11px;
+}
+.text-default {
+  color: #666666;
 }
 /*# sourceMappingURL=custom.css.map */
