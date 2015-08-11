@@ -1234,6 +1234,8 @@ h5.with-sep span {
   min-height: 0;
   max-height: none;
   margin: 4px;
+  margin-top: 1px;
+  border: 0;
 }
 .button.button-outline.icon-btn i.icon:before {
   font-size: 20px;
@@ -1573,7 +1575,7 @@ input[disabled] {
   color: #1F1F1F;
   display: block;
   width: 100%;
-  padding: 12px 8px 6px 15px;
+  padding: 12px 15px 6px 4px;
   height: auto;
   font-style: italic;
   line-height: 26px;
@@ -1583,7 +1585,7 @@ input[disabled] {
   background: transparent;
   border: 0;
   color: #B9B5B5;
-  padding-right: 15px;
+  padding-left: 15px;
 }
 .search-brands-wrap button.button.button-small i:before {
   font-size: 26px;
