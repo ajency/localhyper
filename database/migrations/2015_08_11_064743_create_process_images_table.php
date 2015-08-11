@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ProcessImagesTable extends Migration
+class CreateProcessImagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -18,6 +18,7 @@ class ProcessImagesTable extends Migration
             $table->string('object_type');
             $table->text('images');
             $table->tinyInteger('status');
+            $table->timestamps();
         });
     }
 

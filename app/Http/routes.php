@@ -54,4 +54,5 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::post( 'product/importproducts', 'Admin\ProductController@importProduct' );
     Route::post( 'product/importproductprice', 'Admin\ProductController@importProductPrice' );
 
-});    
+});   
+
