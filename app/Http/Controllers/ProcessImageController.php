@@ -25,11 +25,13 @@ class ProcessImageController extends Controller
      * @return Response
      */
 
-    public $sizes;
+    public $productSizes;
+    public $categorySizes;
 
     public function __construct()
     {
-        $this->sizes = $this->getSizes();
+        $this->productSizes = $this->getSizes('product');
+        $this->categorySizes = $this->getSizes('category');
     }
 
 
@@ -52,7 +54,7 @@ class ProcessImageController extends Controller
             foreach($images as $key=>$value){
 
             //Resize and upload the image to amazon s3
-                $this->processImage($value, $pending->product_id);
+                $this->processImage($value, $pending->object_type);
             }
 
         //Change status when image processed successfully
@@ -135,7 +137,7 @@ class ProcessImageController extends Controller
 
 
 
-    public function processImage($url, $product_id)
+    public function processImage($url, $object_type)
     {
         //Instantiate Amazon S3 client object
         $s3 = AWS::createClient('s3');
@@ -159,7 +161,15 @@ class ProcessImageController extends Controller
         //Instantiate the image object from local copy
         $image = Image::make($destinationPath.$basename);
 
-        foreach($this->sizes as $size){
+        if($object_type == "product"){
+            $available_sizes = $this->productSizes; 
+        }
+        else{
+            $available_sizes = $this->productSizes; 
+        }
+        
+
+        foreach($this->productSizes as $size){
             $name =  $filename.$size['name'].'.'.$extension;
             $width = $size['width'];
             $height = $size['height'];
@@ -198,18 +208,32 @@ class ProcessImageController extends Controller
 
 
 
-public function getSizes(){
-    return array(
-        array('name'=>'-150x90', 'width'=>'150', 'height'=>'90', 'ratio'=>'5:3'),
-        array('name'=>'-300x180', 'width'=>'300', 'height'=>'180', 'ratio'=>'5:3'),
-        array('name'=>'-400x240', 'width'=>'400', 'height'=>'240', 'ratio'=>'5:3'),
-        array('name'=>'-800x480', 'width'=>'800', 'height'=>'480', 'ratio'=>'5:3'),
-        array('name'=>'-180x108', 'width'=>'180', 'height'=>'108', 'ratio'=>'5:3'),
-        array('name'=>'-360x216', 'width'=>'360', 'height'=>'216', 'ratio'=>'5:3'),
-        array('name'=>'-736x442', 'width'=>'736', 'height'=>'442', 'ratio'=>'5:3'),
-        array('name'=>'-1472x884', 'width'=>'1472', 'height'=>'884', 'ratio'=>'5:3')
-        );
-}
+    public function getSizes($type='products'){
+
+        if($type == "category"){
+            return  array(
+                array('name'=>'-160x110', 'width'=>'160', 'height'=>'110', 'ratio'=>'16:11'),
+                array('name'=>'-90x90', 'width'=>'90', 'height'=>'90', 'ratio'=>'1:1'),
+                array('name'=>'-320x220', 'width'=>'320', 'height'=>'220', 'ratio'=>'16:11'),
+                array('name'=>'-180x180', 'width'=>'800', 'height'=>'480', 'ratio'=>'1:1')
+                );
+
+        }
+        else{
+            return array(
+                array('name'=>'-150x90', 'width'=>'150', 'height'=>'90', 'ratio'=>'5:3'),
+                array('name'=>'-300x180', 'width'=>'300', 'height'=>'180', 'ratio'=>'5:3'),
+                array('name'=>'-400x240', 'width'=>'400', 'height'=>'240', 'ratio'=>'5:3'),
+                array('name'=>'-800x480', 'width'=>'800', 'height'=>'480', 'ratio'=>'5:3'),
+                array('name'=>'-180x108', 'width'=>'180', 'height'=>'108', 'ratio'=>'5:3'),
+                array('name'=>'-360x216', 'width'=>'360', 'height'=>'216', 'ratio'=>'5:3'),
+                array('name'=>'-736x442', 'width'=>'736', 'height'=>'442', 'ratio'=>'5:3'),
+                array('name'=>'-1000x600', 'width'=>'1000', 'height'=>'600', 'ratio'=>'5:3')
+                );
+
+        }
+
+    }
 
 
 

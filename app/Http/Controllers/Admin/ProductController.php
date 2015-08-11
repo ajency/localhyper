@@ -491,12 +491,12 @@ class ProductController extends Controller
 
 									// check if $data['image'] is a url , if it is a url then ignore else put it to the array of image urls
 
-									if (strpos($data['image'],'amazonaws') !== false) {
-										$imageUrl = $data['image']; //same as what is passed in the sheet
+									if ((strpos($data['Image'],'amazonaws') !== false)||(is_null($data['Image']))) {
+										$imageUrl = $data['Image']; //same as what is passed in the sheet
 									}
 									else{
 										$image_slug = $this->stringSpaceToPlus($data['Image']);
-										$imageUrl = $amazon_buket_url."".$image_slug.".jpg";
+										$imageUrl = $amazon_buket_url."".$image_slug.".jpeg";
 										$inputImageUrls[] = $imageUrl;
 									}
 
@@ -531,8 +531,6 @@ class ProductController extends Controller
 					        $processImage->status = 0;
 
 					        $processImage->save();
-
-
 
 
 							$priceRange[0]= min($insertedPrices);
