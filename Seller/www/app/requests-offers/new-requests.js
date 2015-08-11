@@ -405,6 +405,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             return CToast.show('Please select price');
           } else if (_.isNull(priceValue) || priceValue === '') {
             return CToast.show('Please enter your offer price');
+          } else if (_.isNull(this.deliveryTime.value)) {
+            return CToast.show('Please enter delivery time');
           } else {
             CSpinner.show('', 'Please wait...');
             return OffersAPI.makeOffer(params).then((function(_this) {
