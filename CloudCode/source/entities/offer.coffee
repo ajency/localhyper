@@ -614,7 +614,7 @@ Parse.Cloud.define 'getRequestForOffer', (request, response) ->
             "createdAt" : requestObj.createdAt
             "updatedAt" : requestObj.updatedAt
             "offerCount" : requestObj.get("offerCount")
-            "deliveryDate" : offerObj.get("offerCount")
+            "deliveryDate" : offerObj.get("deliveryDate")
 
         response.success requestResult
 
