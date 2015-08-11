@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Admin\AttributeController;
+use App\ProcessImage;
  
 use \PHPExcel;
 use Parse\ParseObject;
@@ -428,7 +429,7 @@ class ProductController extends Controller
 						*
 						// Attribute values not included
 						***/
-						$inputImageNames =[];
+						$inputImageUrls =[];
 						$countFixedData = 9;
 						$dataCount = count($namedDataArray[0]);
 						$attributeIdKeys =[];
@@ -487,7 +488,20 @@ class ProductController extends Controller
 									$products[$i]['objectId'] = $data['ProductID'];
 									$products[$i]['name'] = $data['ProductName'];
 									$products[$i]['model_number'] = $data['ModelNumber'];
-									$products[$i]['images'][] = ['src'=> $amazon_buket_url."".$data['Image'].".jpeg"];
+
+									// check if $data['image'] is a url , if it is a url then ignore else put it to the array of image urls
+
+									if (strpos($data['image'],'amazonaws') !== false) {
+										$imageUrl = $data['image']; //same as what is passed in the sheet
+									}
+									else{
+										$image_slug = $this->stringSpaceToPlus($data['Image']);
+										$imageUrl = $amazon_buket_url."".$image_slug.".jpg";
+										$inputImageUrls[] = $imageUrl;
+									}
+
+
+									$products[$i]['images'][] = ['src'=> $imageUrl];
 									$products[$i]['attrs']= $attributeIds;
 									$products[$i]['text_attributes']= $text_attributes;
 									$products[$i]['mrp'] = $data['MRP'];
@@ -499,8 +513,8 @@ class ProductController extends Controller
 									
 									$insertedPrices[]=$insertedPrice;
 
-									$image_slug = $data['Image'];
-									$inputImageNames[] = $image_slug;
+									
+									
 								}
 
 							}
@@ -510,11 +524,23 @@ class ProductController extends Controller
 							$i++;
 						}
 							
+							// insert image urls in process image table
+							$processImage = new ProcessImage();
+					        $processImage->object_type = "product";
+					        $processImage->images = $inputImageUrls;
+					        $processImage->status = 0;
+
+					        $processImage->save();
+
+
+
+
 							$priceRange[0]= min($insertedPrices);
 							$priceRange[1]= max($insertedPrices);
 							$productData['categoryId'] =$config[0];
 							$productData['priceRange'] =$priceRange;
 							$productData['products'] =$products;
+							
 							$this->parseProductImport($productData);
 
 						}
@@ -895,5 +921,9 @@ class ProductController extends Controller
 
 
 
+		}
+
+		public function stringSpaceToPlus($string){
+			return str_replace(" ", "+", $string);
 		}
 }
