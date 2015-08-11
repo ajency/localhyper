@@ -1,18 +1,20 @@
 <ion-view 
-	view-title="Credit History"
+	view-title=""
 	ng-init="view.init();">
-
+	<ion-nav-title >
+		Credit History
+    </ion-nav-title>
 	<div class="bar bar-subheader credit-sub-header">
 		<div class="row">
-			<div class="col">
-				<ion-item> 
-					Credit Available: {{view.creditAvailable}}
-				</ion-item>
+			<div class="col text-center">
+						<h3 class=" margin-none bold text-light">{{view.creditAvailable}}
+					   </h3>
+						<span class="text-light text-center">Credit Available</span>
 			</div>
-			<div class="col">
-				<ion-item> 
-					Credit Used: {{view.creditUsed}}
-				</ion-item>
+			<div class="col text-center">
+						<h3 class=" margin-none bold text-light"> {{view.creditUsed}}
+					   </h3>
+						<span class="text-light text-center">Credit Used</span>
 			</div>
 		</div>
 	</div>
@@ -27,33 +29,40 @@
 		</ion-refresher>
 
 		<ion-list 
-			class="card-list" 
+			class="card-list list-inset margin-none" 
 			ng-switch-when="noError">
 
-			<div class="card" ng-repeat="credit in view.creditHistoryData">
+			<div class="card-box2" ng-repeat="credit in view.creditHistoryData">
 
-				<div class="row">
-					<div class="col col-75">
-						Date : {{view.getTransactionDate(credit.createdAt)}}
+				<div class="row " >
+					<div class="col ">
+						<div class="date"> 
+							  <span class="month">Aug</span>
+							  <span class="day">9</span>
+							  <span class="year">2015</span>
+						</div>
+					</div>
+					<div class="col col-67">
+						<!-- Date : {{view.getTransactionDate(credit.createdAt)}} -->
 
 						<div ng-if="credit.transactionType === 'add'">
-							<b>Balance Credited</b>
+							<br><b class="text-success uppercase">Balance Credited</b>
 						</div>
 
 						<div ng-if="credit.transactionType === 'minus'">
-							Product Name : {{credit.product.name}}
-							</br>
-							<b ng-if="credit.transactionTowards === 'make_offer'"> Offer Made </b>
-							<b ng-if="credit.transactionTowards === 'accept_offer'"> Offer Accepted </b>
+							 <h5 class="margin-none subdued text-left">{{credit.product.name}}</h5>
+						
+							<b ng-if="credit.transactionTowards === 'make_offer'" class="text-success uppercase"> Offer Made </b>
+							<b ng-if="credit.transactionTowards === 'accept_offer'" class="text-success uppercase"> Offer Accepted </b>
 						</div>	
 					</div>
 					
-					<div class="col col-10"></div>
+
 					
-					<div class="col">
+					<div class="col col-20">
 						<div>
-							<p>Points</p>
-							<h2>{{credit.creditCount}}</h2> 
+							<p class="margin-none text-center">Points</p>
+							<h3 class="normal margin-none text-primary">{{credit.creditCount}}</h3> 
 						</div>
 					</div>
 				</div>
@@ -67,9 +76,9 @@
 			tap-to-retry="view.onTapToRetry();">
 		</aj-error>
 
-		<ion-item ng-if="view.gotAllRecords">
-			No more credit history to display.
-		</ion-item>
+		<div ng-if="view.gotAllRecords">
+		<h4 class="text-center "> That's all folks,	No more credit history to display.</h4>
+		</div>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll();"
