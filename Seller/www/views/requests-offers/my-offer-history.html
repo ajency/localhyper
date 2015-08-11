@@ -86,7 +86,9 @@
 					<b>{{App.humanize(request.request.status)}}</b></h3>
 			        </div>
 
-			        <div class="pull-left ">
+			        <div 
+			        	class="pull-left"
+			        	ng-if="request.request.status === 'open'">
 			        	<i class="ion-android-stopwatch"></i>
 		            	 	<b class="text-primary"
 								aj-count-down

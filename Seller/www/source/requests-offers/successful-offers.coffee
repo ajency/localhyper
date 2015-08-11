@@ -206,7 +206,7 @@ angular.module 'LocalHyper.requestsOffers'
 				params = 
 					page: @page
 					acceptedOffers: true
-					displayLimit: 3
+					displayLimit: 5
 					sortBy: @sortBy
 					descending: @descending
 					selectedFilters: @filter.selected
