@@ -60,7 +60,16 @@
 					<div class="col col-20">
 						<div>
 							<p class="margin-none text-center">Points</p>
-							<h3 class="normal margin-none text-primary">{{credit.creditCount}}</h3> 
+							<h3 
+								class="normal margin-none text-success"
+								ng-if="credit.transactionType === 'add'">
+								+{{credit.creditCount}}
+							</h3>
+							<h3 
+								class="normal margin-none text-primary"
+								ng-if="credit.transactionType === 'minus'">
+								-{{credit.creditCount}}
+							</h3>
 						</div>
 					</div>
 				</div>
