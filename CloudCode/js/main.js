@@ -1672,7 +1672,7 @@
     }
   };
 
-  Parse.Cloud.job('productImport', function(request, response) {
+  Parse.Cloud.define('productImport', function(request, response) {
     var ProductItem, categoryId, priceRange, productSavedArr, products, queryCategory;
     ProductItem = Parse.Object.extend('ProductItem');
     productSavedArr = [];

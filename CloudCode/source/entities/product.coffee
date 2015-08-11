@@ -1,4 +1,5 @@
-Parse.Cloud.job 'productImport', (request, response) ->
+# tested for atmost 379 products, times out for products more than that
+Parse.Cloud.define  'productImport', (request, response) ->
     ProductItem = Parse.Object.extend('ProductItem')
 
     productSavedArr = []
