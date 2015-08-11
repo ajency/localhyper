@@ -16,10 +16,6 @@ angular.module 'LocalHyper.products', []
 			canLoadMore: true
 			refresh: false
 			
-			sortBy: 'popularity'
-			sortName: 'Popularity'
-			ascending: true
-			
 			filter:
 				modal: null
 				attribute: 'brand'
@@ -168,7 +164,7 @@ angular.module 'LocalHyper.products', []
 			reset : ->
 				@sortBy = 'popularity'
 				@sortName = 'Popularity'
-				@ascending = true
+				@ascending = false
 				@filter.excerpt = ''
 				@filter.resetFilters()
 				@pullToRefresh = false
@@ -277,7 +273,7 @@ angular.module 'LocalHyper.products', []
 						if @sortBy isnt 'popularity'
 							@sortBy = 'popularity'
 							@sortName = sortName
-							@ascending = true
+							@ascending = ascending
 							@reFetch()
 					when 'mrp'
 						if @sortBy isnt 'mrp'

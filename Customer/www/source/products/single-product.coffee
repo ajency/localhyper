@@ -144,7 +144,7 @@ angular.module 'LocalHyper.products'
 				if !User.isLoggedIn()
 					App.navigate 'verify-begin'
 				else if _.isUndefined window.google
-					CSpinner.show '', 'Please wait...'
+					CSpinner.show '', 'Please wait, loading resources'
 					GoogleMaps.loadScript()
 					.then => 
 						@getBestPrices()

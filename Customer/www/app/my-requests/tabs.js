@@ -146,13 +146,13 @@ angular.module('LocalHyper.myRequests', []).directive('ajRemoveBoxShadow', [
           templateUrl: 'views/my-requests/tabs.html'
         }
       }
-    }).state('open-requests', {
-      url: '/open-requests',
+    }).state('my-requests', {
+      url: '/my-requests',
       parent: 'tabs',
       views: {
-        "openRequestsTab": {
-          controller: 'OpenRequestCtrl',
-          templateUrl: 'views/my-requests/open-requests.html'
+        "myRequestsTab": {
+          controller: 'MyRequestCtrl',
+          templateUrl: 'views/my-requests/my-requests.html'
         }
       }
     }).state('requests-history', {

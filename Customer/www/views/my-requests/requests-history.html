@@ -1,15 +1,13 @@
-<ion-view
-	aj-remove-box-shadow
-	ng-init="view.init();">
+<ion-view aj-remove-box-shadow>
 
 	<ion-nav-title>
-		Failed
+		Failed Requests
     </ion-nav-title>
 
 	<ion-content ng-switch="view.display">
 
 		<ion-refresher
-			on-refresh="view.onPullToRefresh()" 
+			on-refresh="view.onPullToRefresh();" 
 			class="aj-refresher">
 		</ion-refresher>
 
@@ -19,55 +17,60 @@
 
 			<ion-item
 				class="card"
-				ng-repeat="request in view.openRequests "
+				ng-repeat="request in view.expiredRequests"
 				ng-controller="EachRequestTimeCtrl"
-				ng-click="view.onClick(request)">
-						<div class=" row item border-none item-wrapper-nr">
-							<div class="col col-25">
-  								<div class="item-avatar border-none margin-none">
-									<img ng-src="{{request.product.images[0].src}}">
-								</div>
-  							</div>
-  							<div class="col col-75">
-  								<h2>{{request.product.name}}</h2>
-  							</div>
-  						</div>
-						<div class="row item border-none p-t-10" >
-					        <div class="col  p-t-0">
-					            <sm class="light-gray"> Local Price</sm><br>
-					            <h3 class=" item-text-wrap margin-none big-txt ">
-					            	<span class="WebRupee subdued">&#x20B9;</span> {{request.product.mrp.toLocaleString()}}
-					            </h3>
-					        </div>
-					        <div class="col p-t-0">
-					        	<div class="pull-right">
-					            <div class="offer"> {{request.offerCount}} </div>
-					            <h4 class="offertxt light-gray"> No of offers</h4>
-					           	</div>
-					        </div>
-			    		</div>
-						<div class="row item item-divider" >
-					        <div class="col  col-25 ">
-					           <sm class="subdued "><i class="ion-ios-clock-outline"> </i>{{request.timeStr}}</sm>
-					        </div>
-					        <div class="col col-75">
-					         	<h3 class="margin-none status text-right m-t-5"> Status: <b> {{request.status}}</b></h3>
-					        </div>
-					    </div>
-					<!--div class="item item-body">
-						<p>
-						<b>Address :</b>
-						{{openRequest.address.full}}
-						<br><br>
-						<b>Comments :{{openRequest.address.comments}}</b>
-						</p>
-					</div-->
+				ng-click="view.onRequestClick(request);">
+
+				<div class="row item border-none item-wrapper-nr">
+					<div class="col col-25">
+						<div class="item-avatar border-none margin-none">
+							<img ng-src="{{request.product.images[0].src}}">
+						</div>
+					</div>
+
+					<div class="col col-75">
+						<h2>{{request.product.name}}</h2>
+					</div>
+				</div>
+
+				<div class="row item border-none p-t-10">
+					<div class="col  p-t-0">
+						<sm class="light-gray"> Local Price</sm><br>
+						<h3 class=" item-text-wrap margin-none big-txt">
+							<span class="WebRupee subdued">&#x20B9;</span> 
+							{{App.toINR(request.product.mrp)}}
+						</h3>
+					</div>
+					<div class="col p-t-0">
+						<div class="pull-right">
+							<div class="offer"> {{request.offerCount}} </div>
+							<h4 class="offertxt light-gray"> No of offers</h4>
+						</div>
+					</div>
+				</div>
+
+				<div class="row item item-divider" >
+					<div class="col col-25">
+						<sm class="subdued">
+							<i class="ion-ios-clock-outline"> </i>{{request.timeStr}}
+						</sm>
+					</div>
+					<div class="col col-75">
+						<h3 class="margin-none status text-right m-t-5"> 
+							<b>{{App.humanize(request.status)}}</b>
+						</h3>
+					</div>
+				</div>
 					
 			</ion-item>
-		</ion-list>	
+		</ion-list>
+
+		<div ng-if="view.gotAllRequests">
+			<h4 class="text-center ">That's all folks. No more requests to display.</h4>
+		</div>
 
 		<ion-infinite-scroll
-			on-infinite="view.onInfiniteScroll()"
+			on-infinite="view.onInfiniteScroll();"
 			ng-if="view.canLoadMore"
 			distance="1%" 
 			class="aj-refresher">
@@ -76,7 +79,7 @@
 		<aj-error
 			ng-switch-when="error"
 			error-type="view.errorType"
-			tap-to-retry="view.onTapToRetry()">
+			tap-to-retry="view.onTapToRetry();">
 		</aj-error>
 
 	</ion-content>
