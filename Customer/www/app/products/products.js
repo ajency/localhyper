@@ -10,9 +10,6 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       page: 0,
       canLoadMore: true,
       refresh: false,
-      sortBy: 'popularity',
-      sortName: 'Popularity',
-      ascending: true,
       filter: {
         modal: null,
         attribute: 'brand',
@@ -228,7 +225,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       reset: function() {
         this.sortBy = 'popularity';
         this.sortName = 'Popularity';
-        this.ascending = true;
+        this.ascending = false;
         this.filter.excerpt = '';
         this.filter.resetFilters();
         this.pullToRefresh = false;
@@ -356,7 +353,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             if (this.sortBy !== 'popularity') {
               this.sortBy = 'popularity';
               this.sortName = sortName;
-              this.ascending = true;
+              this.ascending = ascending;
               return this.reFetch();
             }
             break;

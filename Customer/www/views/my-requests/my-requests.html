@@ -1,0 +1,107 @@
+<ion-view 
+	aj-remove-box-shadow
+	ng-init="view.init();">
+
+	<ion-nav-title>
+		My Requests
+    </ion-nav-title>
+
+	<ion-content ng-switch="view.display">
+
+		<ion-refresher
+			on-refresh="view.onPullToRefresh();" 
+			class="aj-refresher">
+		</ion-refresher>
+
+		<ion-list 
+			class="card-list"
+			ng-switch-when="noError">
+
+			<ion-item
+				class="card"
+				ng-repeat="request in view.openRequests"
+				ng-controller="EachRequestTimeCtrl"
+				ng-click="view.onRequestClick(request);">
+
+				<div class="row item border-none item-wrapper-nr">
+					<div class="col col-25">
+						<div class="item-avatar border-none margin-none">
+							<img ng-src="{{request.product.images[0].src}}">
+						</div>
+					</div>
+
+					<div class="col col-75">
+						<h2>{{request.product.name}}</h2>
+					</div>
+				</div>
+
+				<div class="row item border-none p-t-10" >
+			        <div class="col  p-t-0">
+			            <sm class="light-gray"> Local Price</sm><br>
+			            <h3 class="item-text-wrap margin-none big-txt">
+			            	<span class="WebRupee subdued">&#x20B9;</span> 
+			            	{{App.toINR(request.product.mrp)}}
+			            </h3>
+			        </div>
+			        <div class="col p-t-0">
+			        	<div class="pull-right">
+			            <div class="offer"> {{request.offerCount}} </div>
+			            <h4 class="offertxt light-gray"> No of offers</h4>
+			           	</div>
+			        </div>
+		    	</div>
+
+			    <div class="row item item-divider" >
+			        <div class="col  col-25 ">
+			           <sm class="subdued ">
+			           		<i class="ion-ios-clock-outline"> </i>{{request.timeStr}}
+			           	</sm>
+			        </div>
+			        <div class="col col-75">
+			         	<h3 
+			         		class="margin-none text-right m-t-5"
+			         		ng-class="(request.status === 'cancelled') ? 'status' : 'success'">  
+			         		<b>{{App.humanize(request.status)}}</b>
+			         	</h3>
+			        </div>
+			    </div>
+			     
+			</ion-item>
+		</ion-list>	
+		
+		<div ng-if="view.gotAllRequests">
+			<h4 class="text-center ">That's all folks. No more requests to display.</h4>
+		</div>
+
+		<ion-infinite-scroll
+			on-infinite="view.onInfiniteScroll();"
+			ng-if="view.canLoadMore"
+			distance="1%" 
+			class="aj-refresher">
+		</ion-infinite-scroll>
+
+		<aj-error
+			ng-switch-when="error"
+			error-type="view.errorType"
+			tap-to-retry="view.onTapToRetry();">
+		</aj-error>
+
+	</ion-content>
+
+	<ion-footer-bar class="bar-stable">
+		<div class="row">
+			<div 
+				class="col text-center border-left" 
+				ng-click="view.filter.openModal();">
+				
+				<h5 class="margin-none normal filter-txt">
+					<i class="ion ion-funnel"></i>
+			 		FILTER
+					<br>
+					<sm>{{view.filter.excerpt}}<sm>
+				</h5>
+			</div>
+		</div>
+	</ion-footer-bar>
+
+</ion-view>

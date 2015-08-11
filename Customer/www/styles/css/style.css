@@ -214,4 +214,9 @@
   display: block !important;
 }
 
-
+/* open requests tab */
+.success b{
+	color: #33cd5f;
+	font-weight: 400;
+    text-transform: uppercase;
+}
