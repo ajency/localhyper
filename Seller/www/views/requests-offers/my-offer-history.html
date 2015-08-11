@@ -1,6 +1,6 @@
 <ion-view 
 	aj-remove-box-shadow
-	ng-init="view.init()">
+	ng-init="view.init();">
 
 	<ion-nav-title>
 		<img src="img/logo.png"/>
@@ -36,17 +36,14 @@
 	       		ng-repeat="request in view.requests"
 	       		ng-click="view.offerDetails.show(request)">
 
-	       		<div class="item-wrapper-nr ">
+	       		<div class="item-wrapper-nr">
 					<div class="item-avatar border-none margin-none">
 				        <img ng-src="{{request.product.images[0].src}}">
 				    </div>
 				    <h2 class="">{{request.product.name}}</h2> 
 				    <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms radius</b>
-				    
-				    <!-- <div class="pull-right"> Auto Bid : no </div> -->
-					
-		
 				</div>
+				
 					<!-- 	<div class="row">
 					  <div class="col col-50">
 					  	 <div ng-if="request.request.status == 'open' ">

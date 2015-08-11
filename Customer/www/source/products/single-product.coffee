@@ -103,6 +103,7 @@ angular.module 'LocalHyper.products'
 			getSingleProductDetails : ->
 				ProductsAPI.getSingleProduct @productID
 				.then (productData)=>
+					console.log productData
 					@product = productData
 					ProductsAPI.getNewOffers @productID
 				.then (details)=>

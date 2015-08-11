@@ -199,7 +199,6 @@ sm {
 }
 .bar-subheader {
   background-color: #1f1f1f !important;
-  height: 60px;
 }
 .bar-footer {
   -webkit-box-shadow: 0px 5px 15px #000;
@@ -1622,6 +1621,51 @@ h5.with-sep span {
 input[disabled] {
   color: #999;
   background-color: #fff;
+}
+.search-brands-wrap {
+  border: 0;
+  border-radius: 0;
+  background-color: #F3F3F3;
+  border-bottom: 1px solid #ccc;
+}
+.search-brands-wrap .search-brands {
+  background-color: transparent;
+  padding: 0;
+}
+.search-brands-wrap .search-brands input {
+  color: #1F1F1F;
+  display: block;
+  width: 100%;
+  padding: 12px 8px 6px 15px;
+  height: auto;
+  font-style: italic;
+  line-height: 26px;
+  font-size: 15px;
+}
+.search-brands-wrap button.button.button-small {
+  background: transparent;
+  border: 0;
+  color: #B9B5B5;
+  padding-right: 15px;
+}
+.search-brands-wrap button.button.button-small i:before {
+  font-size: 26px;
+}
+.brands .border-card.all-brands-indi {
+  height: 90px;
+}
+.brands .border-card.all-brands-indi .item-check {
+  height: 90px;
+}
+.brands .border-card.all-brands-indi .item-check .checkbox {
+  top: 15px;
+}
+.brands .border-card.all-brands-indi .aj-img {
+  height: auto;
+  width: 100%;
+}
+.brands .border-card.all-brands-indi h3 {
+  display: none;
 }
 /* Credit History*/
 .date {

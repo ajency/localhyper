@@ -290,6 +290,8 @@ angular.module 'LocalHyper.requestsOffers'
 						CToast.show 'Please select price'
 					else if _.isNull(priceValue) or priceValue is ''
 						CToast.show 'Please enter your offer price'
+					else if _.isNull @deliveryTime.value
+						CToast.show 'Please enter delivery time'
 					else
 						CSpinner.show '', 'Please wait...'
 						OffersAPI.makeOffer params
