@@ -51,12 +51,12 @@ Parse.Cloud.job 'productImport', (request, response) ->
                 inputImages = product.images
                 _.each product.images , (productImage) ->
 
-                    if !_.isNull(productImage.src)
-                        prodImg = 
-                            "src" : productImage.src
-                    else
-                        prodImg = 
-                            "src" : "https://placehold.it/350x150?text=Product"
+                    # if !_.isNull(productImage.src)
+                    prodImg = 
+                        "src" : productImage.src
+                    # else
+                    #     prodImg = 
+                    #         "src" : "https://placehold.it/350x150?text=Product"
 
                     productImgs.push prodImg
 
