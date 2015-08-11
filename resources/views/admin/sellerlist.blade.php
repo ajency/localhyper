@@ -14,7 +14,8 @@
             <tr>
               <th>Seller Name</th>
               <th>Area</th>
-              <th>Category</th>
+              <th>Brands</th>
+              <th>Category</th>    
               <th>Response Ratio</th>
               <th>No. of Successfull Offers</th>
               <th>Avg Ratings</th>
@@ -28,6 +29,7 @@
               <tr>
                 <td>{{ $seller['name'] }}</td>
                 <td>{{ $seller['area'] }}</td>
+                <td>{{ $seller['brands'] }}</td>  
                 <td>{{ $seller['categories'] }}</td>
                 <td>{{ $seller['offersCount'] }}</td>
                 <td>{{ $seller['successfullCount'] }}</td>

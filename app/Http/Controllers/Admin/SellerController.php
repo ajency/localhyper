@@ -31,6 +31,7 @@ class SellerController extends Controller
          $sellers = new ParseQuery("_User");
         $sellers->equalTo("userType", "seller");
         $sellers->includeKey('supportedCategories');
+        $sellers->includeKey('supportedBrands');
         $sellerData = $sellers->find();   
         $sellerList =[];
         foreach($sellerData as $seller)
@@ -40,6 +41,13 @@ class SellerController extends Controller
              foreach($supportedCategories as $supportedCategory)
              {
                  $categories[] =$supportedCategory->get('name');
+             }
+            
+             $brands =[];
+             $supportedBrands =$seller->get("supportedBrands");
+             foreach($supportedBrands as $supportedBrand)
+             {
+                 $brands[] =$supportedBrand->get('name');
              }
             
             $sellerId = $seller->getObjectId();
@@ -69,6 +77,7 @@ class SellerController extends Controller
                 $sellerList[]= [ 'id' => $seller->getObjectId(),
                               'name' => $seller->get("displayName"),
                               'area' => $seller->get("area"),
+                              'brands' => implode(", ",$brands),       
                               'categories' => implode(", ",$categories),
                               'offersCount' => $offerCount .'/'.$sellerRequestCount,
                               'successfullCount' => $offerSuccessfullCount,
@@ -83,6 +92,7 @@ class SellerController extends Controller
                 $sellerList[]= [
                               'name' => $seller->get("displayName"),
                               'area' => $seller->get("area"),
+                              'brands' => implode(", ",$brands),       
                               'categories' => implode(", ",$categories),
                               'offersCount' => $offerCount .'/'.$sellerRequestCount,
                               'successfullCount' => $offerSuccessfullCount,
@@ -103,7 +113,7 @@ class SellerController extends Controller
     { 
         $excel = new PHPExcel();
         $sellersSheet = $excel->getSheet(0);
-		$sellersSheet->setTitle('Offers');
+		$sellersSheet->setTitle('Sellers');
 
         $sellerList = $this->getSellers('EXPORT');
         
@@ -111,6 +121,7 @@ class SellerController extends Controller
  
         $headers []= 'SELLER NAME' ;
         $headers []= 'AREA' ;
+        $headers []= 'Brands' ;
         $headers []= 'CATEGORY' ;
         $headers []= 'RESPONSE RATIO' ;
         $headers []= 'NO. OF SUCCESSFULL OFFERS' ;
