@@ -523,14 +523,16 @@ class ProductController extends Controller
 
 							$i++;
 						}
-							
-							// insert image urls in process image table
-							$processImage = new ProcessImage();
-					        $processImage->object_type = "product";
-					        $processImage->images = $inputImageUrls;
-					        $processImage->status = 0;
+							if (count($inputImageUrls)>0) {
+								// insert image urls in process image table
+								$processImage = new ProcessImage();
+						        $processImage->object_type = "product";
+						        $processImage->images = $inputImageUrls;
+						        $processImage->status = 0;
 
-					        $processImage->save();
+						        $processImage->save();
+							}
+
 
 
 							$priceRange[0]= min($insertedPrices);
