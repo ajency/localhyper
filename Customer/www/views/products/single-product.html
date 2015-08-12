@@ -1,4 +1,6 @@
-<ion-view view-title="">
+<ion-view 
+	view-title=""
+	ng-init="view.init();">
 
 	<ion-content 
 		class="bg-white" 
@@ -54,6 +56,21 @@
 						</div>
 					</div>
 
+				</div>
+				
+				<br>
+				<div class="card">
+					<div class="item item-divider">
+						Specifications
+					</div>
+					<div class="item item-text-wrap">
+						{{view.specifications.excerpt}}
+					</div>
+					<div 
+						class="item item-divider"
+						ng-click="view.specifications.openModal();">
+						View all
+					</div>
 				</div>
 			</div>
 

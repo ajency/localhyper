@@ -15,6 +15,7 @@ angular.module('LocalHyper.common').factory('Network', [
       if (isHttpUrl(url)) {
         if ($rootScope.App.isOnline()) {
           config.url = "https://api.parse.com/1/" + url;
+          config.timeout = 15000;
           if (User.isLoggedIn()) {
             config.headers['X-Parse-Session-Token'] = User.getSessionToken();
           }
