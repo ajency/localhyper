@@ -2,30 +2,29 @@
 
 	<ion-nav-title>
 		{{view.title}}
-		<!-- Select Brands -->
     </ion-nav-title>
 
     <ion-nav-buttons side="right">
 		<button
 			class="button button-outline button-assertive icon-btn"
-			ng-click="view.onDone()">
+			ng-click="view.onDone();">
 			<i class="icon ion-checkmark-round"></i>
 		</button>
 	</ion-nav-buttons>
 
-	<ion-header>
-		<div class="bar bar-subheader bar-assertive p-a-0">
-			<div class="item item-input-inset search-brands-wrap p-a-0">
-				<button class="button button-small">
-					<i class="icon ion-search"></i>
-				</button>
-				<label class="item-input-wrapper search-brands">
-					<input type="text" placeholder="Search for brands">
-				</label>
-			</div>
-			<!-- <h2 class="title m-title">{{view.title}}</h2> -->
+	<div class="bar bar-subheader bar-assertive p-a-0">
+		<div class="item item-input-inset search-brands-wrap p-a-0">
+			<button class="button button-small">
+				<i class="icon ion-search"></i>
+			</button>
+			<label class="item-input-wrapper search-brands">
+				<input 
+					type="text" 
+					placeholder="Search for brands"
+					ng-model="view.search">
+			</label>
 		</div>
-	</ion-header>
+	</div>
 
 	<ion-content
 		class="brands sub-categories"
@@ -40,28 +39,27 @@
 		<ion-list ng-switch-when="noError">
 			<div
 				class="col col-25 border-card relative all-brands-indi"
-				ng-repeat="brand in view.brands"
-				ng-init="brand.selected=view.brandSelection(brand.objectId);">
+				ng-repeat="brand in view.brands | filter:view.search">
 
-					<img
-						ng-src="{{brand.image.src}}"
-						class="aj-img center-block img-responsive m-t-20">
+				<img
+					ng-src="{{brand.image.src}}"
+					class="aj-img center-block img-responsive m-t-20">
 
-					<h3 class="text-center aj-title">
-						{{brand.name}}
-					</h3>
+				<h3 class="text-center aj-title">
+					{{brand.name}}
+				</h3>
 
-					<ion-checkbox
-						ng-model="brand.selected"
-						class="item-check">
-					</ion-checkbox>
+				<ion-checkbox
+					ng-model="brand.selected"
+					class="item-check">
+				</ion-checkbox>
 			</div>
 		</ion-list>
 
 		<aj-error
 			ng-switch-when="error"
 			error-type="view.errorType"
-			tap-to-retry="view.onTapToRetry()">
+			tap-to-retry="view.onTapToRetry();">
 		</aj-error>
 
 	</ion-content>
