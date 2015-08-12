@@ -448,62 +448,46 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
     ,(error) -> 
         response.error error    
 
-Parse.Cloud.afterSave "ProductItem", (request, response)->
+Parse.Cloud.afterSave "ProductItem", (request)->
     productObject = request.object
 
     stopWords = ["the", "in", "and"]
+
+
 
     toLowerCase = (w) ->
         w.toLowerCase()    
 
     # pick search keywords from name , model_number , attribute values from attrs , brand name , textAttributes object
+    wordsFromName = getWordsFromSentence(productObject.get("name"))
+    # wordsFromName = _.map(wordsFromName, toLowerCase)
 
-    wordsFromName = productObject.get("name").split(/b/)
-    wordsFromName = _.map(wordsFromName, toLowerCase)
-
-    wordsFromName = _.filter(wordsFromName, (w) ->
-      w.match(/^w+$/) and !_.contains(stopWords, w)
-    )  
-    
+    # wordsFromName = _.filter(wordsFromName, (w) ->
+    #   w.match(/^w+$/) and !_.contains(stopWords, w)
+    # )  
+    console.log getWordsFromSentence(productObject.get("name"))
     productObject.set "searchKeywords" , wordsFromName
     console.log "Saved keywords as #{wordsFromName}"
     productObject.save()
 
-#     mrp = parseInt(productObject.get("mrp"))
-
-#     if (!productObject.existed()) or ( (productObject.existed()) and (productObject.createdAt isnt productObject.updatedAt))
-#         categoryId = productObject.get("category").id
-
-#         queryCategory = new Parse.Query("Category")
-#         queryCategory.equalTo("objectId", categoryId)
-
-#         queryCategory.first()
-#         .then (categoryObject) ->
-#             newPriceRange = []
-#             oldPriceRange = categoryObject.get("price_range")
-#             if (_.isUndefined(oldPriceRange)) or (_.isEmpty(oldPriceRange))
-#                 oldPriceRange[0] = 0
-#                 oldPriceRange[1] = 0
-
-#             oldPriceRange[0] = parseInt(oldPriceRange[0])
-#             oldPriceRange[1] = parseInt(oldPriceRange[1])
-
-#             if (mrp >= oldPriceRange[1])
-#                 newPriceRange[0] = oldPriceRange[0]
-#                 newPriceRange[1] =  mrp
-#             else
-#                 newPriceRange[0] = mrp
-#                 newPriceRange[1] = oldPriceRange[1]
-
-#             # set new price range for category
-#             categoryObject.set "price_range" , newPriceRange
-
-#             categoryObject.save()
-
-#         , (error) ->
-#             console.log "Got an error while fetching category " + error.code + " : " + error.message
         
-  
+getWordsFromSentence = (sentence) =>
+
+    wordArr = []
+
+    # replace special characters in a sentence with a whitespace
+    sentence = sentence.replace(/\W/g, " ")
+
+    # trim sentence to remove leading and trailing white spaces
+    sentence = sentence.trim()    
+
+    # split the sentence by white space and retur narray of words
+    wordArr = sentence.split(/\s+/g)
+
+    return wordArr
+
+
+
 findAttribValues = (filter) =>
 
     promise = new Parse.Promise()    
