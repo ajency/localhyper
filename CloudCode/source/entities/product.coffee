@@ -448,42 +448,60 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
     ,(error) -> 
         response.error error    
 
-Parse.Cloud.afterSave "ProductItem", (request)->
+Parse.Cloud.afterSave "ProductItem", (request, response)->
     productObject = request.object
 
-    mrp = parseInt(productObject.get("mrp"))
+    stopWords = ["the", "in", "and"]
 
-    if (!productObject.existed()) or ( (productObject.existed()) and (productObject.createdAt isnt productObject.updatedAt))
-        categoryId = productObject.get("category").id
+    toLowerCase = (w) ->
+        w.toLowerCase()    
 
-        queryCategory = new Parse.Query("Category")
-        queryCategory.equalTo("objectId", categoryId)
+    # pick search keywords from name , model_number , attribute values from attrs , brand name , textAttributes object
 
-        queryCategory.first()
-        .then (categoryObject) ->
-            newPriceRange = []
-            oldPriceRange = categoryObject.get("price_range")
-            if (_.isUndefined(oldPriceRange)) or (_.isEmpty(oldPriceRange))
-                oldPriceRange[0] = 0
-                oldPriceRange[1] = 0
+    wordsFromName = productObject.get("name").split(/b/)
+    wordsFromName = _.map(wordsFromName, toLowerCase)
 
-            oldPriceRange[0] = parseInt(oldPriceRange[0])
-            oldPriceRange[1] = parseInt(oldPriceRange[1])
+    wordsFromName = _.filter(wordsFromName, (w) ->
+      w.match(/^w+$/) and !_.contains(stopWords, w)
+    )  
+    
+    productObject.set "searchKeywords" , wordsFromName
+    console.log "Saved keywords as #{wordsFromName}"
+    productObject.save()
 
-            if (mrp >= oldPriceRange[1])
-                newPriceRange[0] = oldPriceRange[0]
-                newPriceRange[1] =  mrp
-            else
-                newPriceRange[0] = mrp
-                newPriceRange[1] = oldPriceRange[1]
+#     mrp = parseInt(productObject.get("mrp"))
 
-            # set new price range for category
-            categoryObject.set "price_range" , newPriceRange
+#     if (!productObject.existed()) or ( (productObject.existed()) and (productObject.createdAt isnt productObject.updatedAt))
+#         categoryId = productObject.get("category").id
 
-            categoryObject.save()
+#         queryCategory = new Parse.Query("Category")
+#         queryCategory.equalTo("objectId", categoryId)
 
-        , (error) ->
-            console.log "Got an error while fetching category " + error.code + " : " + error.message
+#         queryCategory.first()
+#         .then (categoryObject) ->
+#             newPriceRange = []
+#             oldPriceRange = categoryObject.get("price_range")
+#             if (_.isUndefined(oldPriceRange)) or (_.isEmpty(oldPriceRange))
+#                 oldPriceRange[0] = 0
+#                 oldPriceRange[1] = 0
+
+#             oldPriceRange[0] = parseInt(oldPriceRange[0])
+#             oldPriceRange[1] = parseInt(oldPriceRange[1])
+
+#             if (mrp >= oldPriceRange[1])
+#                 newPriceRange[0] = oldPriceRange[0]
+#                 newPriceRange[1] =  mrp
+#             else
+#                 newPriceRange[0] = mrp
+#                 newPriceRange[1] = oldPriceRange[1]
+
+#             # set new price range for category
+#             categoryObject.set "price_range" , newPriceRange
+
+#             categoryObject.save()
+
+#         , (error) ->
+#             console.log "Got an error while fetching category " + error.code + " : " + error.message
         
   
 findAttribValues = (filter) =>

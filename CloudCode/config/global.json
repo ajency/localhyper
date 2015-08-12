@@ -4,14 +4,14 @@
   },
   "applications": {
     "CloudCode": {
-      "link": "shopoye"
+      "link": "localhyper"
     },
     "_default": {
-      "link": "shopoye"
+      "link": "localhyper"
     },
-    "shopoye": {
-      "applicationId": "837yxeNhLEJUXZ0ys2pxnxpmyjdrBnn7BcD0vMn7",
-      "masterKey": "aoyAfAqjov2pk7sDlKpMss8pE0EFFyjJyRKfUEJC"
+    "localhyper": {
+      "applicationId": "QN2IxFFiHCTm0oKSgI6KafqJJQ3nAxwQD8QiqrYZ",
+      "masterKey": "tu7L2mISoZxJkaerbn468OZ7ZZKc5HwpqtbxuHMI"
     }
   }
 }
