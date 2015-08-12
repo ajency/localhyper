@@ -8,7 +8,7 @@
 		<form 
 			novalidate 
 			ng-submit="view.onSearch();">
-			
+
 			<label class="item-input-wrapper">
 				<i class="icon ion-ios-search placeholder-icon"></i>
 				<input 
@@ -67,15 +67,14 @@
 		</ion-list>
 
 		<div 
-			ng-if="view.gotAllProducts && view.products.length == 0" 
-			class="text-center">
-			<h5 class="bold">Sorry, we could not find any matched products.</h5>
+			ng-if="view.gotAllProducts && view.products.length == 0" class="text-center">
+			<h5 class="bold fin">Sorry, we could not find any matched products.</h5>
+			<div class="spacer-40"></div>
 		</div>
 
-		<div 
-			ng-if="view.gotAllProducts && view.products.length >0" 
-			class="text-center">
-			<h5 class="bold">That's all folks, no more products to display.</h5>
+		<div ng-if="view.gotAllProducts && view.products.length > 0" class="text-center">
+			<h5 class="bold fin">That's all folks, no more products to display.</h5>
+			<div class="spacer-40"></div>
 		</div>
 
 		<ion-infinite-scroll
