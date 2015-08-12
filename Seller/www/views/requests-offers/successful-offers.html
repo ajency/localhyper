@@ -1,4 +1,4 @@
-<ion-view 
+<ion-view
 	aj-remove-box-shadow
 	ng-init="view.init()">
 
@@ -16,12 +16,12 @@
 	<ion-content ng-switch="view.display">
 
 		<ion-refresher
-			on-refresh="view.onPullToRefresh()" 
+			on-refresh="view.onPullToRefresh()"
 			class="aj-refresher">
 		</ion-refresher>
 
-		<ion-list 
-			class="card-list list-inset" 
+		<ion-list
+			class="card-list list-inset"
 			ng-switch-when="noError">
 
 			<h4
@@ -29,8 +29,9 @@
 				class="text-center">
 				You have no accepted offers.
 			</h4>
-	       	
+
 	       	<ion-item 
+
 	       		class="card-box"
 	       		ng-repeat="request in view.requests"
 	       		ng-click="view.offerDetails.show(request)"
@@ -40,9 +41,11 @@
 					<div class="item-avatar border-none margin-none">
 				        <img ng-src="{{request.product.images[0].src}}">
 				    </div>
+
 				    <h2>{{request.product.name}}
 							<i class="ion-record " id="{{App.humanize(request.offerStatus)}}"></i>
 				    </h2> 
+
 				      <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms radius</b>
 
 				 <!--    <div class="col p-t-0" >
@@ -50,14 +53,14 @@
 			            	{{view.deliveryTime.humanize(request.offerDeliveryTime)}}
 			            <br>
 			        </div> -->
-					
-					<!-- <sm 
-						class="light-gray" 
-						ng-if="request.offerStatus != 'unaccepted'"> 
+
+					<!-- <sm
+						class="light-gray"
+						ng-if="request.offerStatus != 'unaccepted'">
 						Delivery Status : {{App.humanize(request.request.status)}}
 					</sm>
 
-					<div 
+					<div
 						class="col p-t-0"
 						ng-if="request.request.status === 'pending_delivery' || request.request.status === 'sent_for_delivery'">
 			            <sm class="light-gray"> Delivery time left:</sm>
@@ -70,7 +73,7 @@
 			        <div class="col p-t-0">
 			            <sm class="light-gray">Offer Price</sm><br>
 			            <h3 class=" item-text-wrap margin-none big-txt ">
-			            	<span class="WebRupee subdued">&#x20B9;</span> 
+			            	<span class="WebRupee subdued">&#x20B9;</span>
 			            	{{App.toINR(request.offerPrice)}}
 			            </h3>
 			        </div>
@@ -94,13 +97,13 @@
 
 			        <div class="pull-left ">
 
-			        		<h3 
+			        		<h3
 						class="light-gray text-right margin-none"
 						ng-if="request.request.status === 'pending_delivery' || request.request.status === 'sent_for_delivery'">
 			          	 Delivery in: <b>{{request.leftDeliveryTimeStr}}</b>
-			            
+
 			      		  </h3>
-			 
+
 			        </div>
 			    </div>
 			</ion-item>
@@ -109,7 +112,7 @@
 		<aj-error
 			ng-switch-when="error"
 			error-type="view.errorType"
-			tap-to-retry="view.onTapToRetry()">
+			tap-to-retry="view.onTapToRetry()" class="error-wrapper">
 		</aj-error>
 
 		<h4 class="text-center" ng-if="view.gotAllOffers && view.requests.length !== 0">
@@ -119,7 +122,7 @@
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
 			ng-if="view.canLoadMore"
-			distance="1%" 
+			distance="1%"
 			class="aj-refresher">
 		</ion-infinite-scroll>
 
@@ -128,7 +131,7 @@
 	<ion-footer-bar class="bar-light">
 		<div class="row">
 			<div class="col col-50 text-center" ng-click="view.showSortOptions()">
-				
+
 				<h5 class="margin-none  normal filter-txt">
 					<i class="ion ion-arrow-swap"></i>
 					 SORT<br>
@@ -137,7 +140,7 @@
 			</div>
 
 			<div class="col col-50 text-center border-left" ng-click="view.filter.openModal()">
-				
+
 				<h5 class="margin-none  normal filter-txt">
 						<i class="ion ion-funnel"></i>
 			 FILTER
