@@ -26,21 +26,29 @@
           </thead>
           <tbody>
            @foreach($sellers as $seller)
-              <tr>
-                <td>{{ $seller['name'] }}</td>
-                <td>{{ $seller['area'] }}</td>
-                <td>{{ $seller['brands'] }}</td>  
-                <td>{{ $seller['categories'] }}</td>
-                <td>{{ $seller['offersCount'] }}</td>
-                <td>{{ $seller['successfullCount'] }}</td>
-                <td>{{ $seller['avgRating'] }}</td>
+              <tr >
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['name'] }}</td>
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['area'] }}</td>
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['brands'] }}</td>  
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['categories'] }}</td>
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['offersCount'] }}</td>
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['successfullCount'] }}</td>
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['avgRating'] }}</td>
                 <td><span class="balance-credit" data-seller-id="{{ $seller['id'] }}">{{ $seller['balanceCredit'] }}</span> <a class="edit-balance-credit">edit</a></td>
-                <td>{{ $seller['createdAt'] }}</td>
-                <td>{{ $seller['lastLogin'] }}</td>
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['createdAt'] }}</td>
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['lastLogin'] }}</td>
               </tr>
            @endforeach
           </tbody>
          </table>
+     @if($numOfPages > 1)  
+        Page : <select name="number_of_pages" onchange="location.href='{{ url('admin/seller') }}?page='+this.value">
+            @for($i=1 ;$i<=$numOfPages ;$i++)
+           <option {{ ($i == $page)?'selected':'' }}  value="{{ $i }}">{{ $i }}</option>                         
+            @endfor
+        </select> 
+    @endif        
+                
                         </div>
 		</div>
     </div> 

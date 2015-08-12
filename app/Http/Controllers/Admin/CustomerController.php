@@ -22,8 +22,10 @@ class CustomerController extends Controller
         $customerData = $this->getCustomers('LIST');
         $customerList = $customerData['list'];
         $numOfPages = $customerData['numOfPages'];
+        $page = $customerData['page'];
 
         return view('admin.customerlist')->with('customers',$customerList)
+                                         ->with('page',$page+1)
                                          ->with('numOfPages',$numOfPages);
     }
     
@@ -37,16 +39,17 @@ class CustomerController extends Controller
     
     public function getCustomers($type)
     {
-        
         $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
-        $displayLimit = config('constants.page_limit'); 
         $numOfPages = 0;
- 
+        
         $customers = new ParseQuery("_User");
         $customers->equalTo("userType", "customer");
         
         if($type == 'LIST')
-        {
+        {   //Pagination
+            
+            $displayLimit = config('constants.page_limit'); 
+ 
             $customersCount = $customers->count();  
             $customers->limit($displayLimit);
             $customers->skip($page * $displayLimit);
@@ -118,6 +121,7 @@ class CustomerController extends Controller
         
          $data['list']=$customerList;
          $data['numOfPages']=$numOfPages;
+         $data['page']=$page;
          return $data;
     }
     
@@ -206,34 +210,90 @@ class CustomerController extends Controller
         $customers = new ParseQuery("_User");
         $customers->equalTo("objectId", $id);
         $customerData = $customers->first(); 
+        $customer['id'] = $customerData->getObjectId();
+        $customer['username'] = $customerData->get("username"); 
         $customer['name'] = $customerData->get("displayName"); 
         $customer['address'] = $customerData->get("address"); 
         $customer['area'] = $customerData->get("area"); 
         $customer['city'] = $customerData->get("city");
+        $showRequest = false;
+         
+        if(isset($_GET['page']))
+        {
+            $page =($_GET['page']-1);
+            $showRequest = true;    
+        }
+        else
+            $page =0; 
+        $displayLimit = config('constants.page_limit'); 
+        $numOfPages = 0;
         
         $request = new ParseQuery("Request");
         $request->equalTo("customerId", $customerData);
         $request->includeKey('product');
         $request->includeKey('category');
+        
+        $requestCount = $request->count();          //Pagination
+        $request->limit($displayLimit);
+        $request->skip($page * $displayLimit);
+
+        $numOfPages = ceil($requestCount/$displayLimit);
+        
         $requestData = $request->find();
         
-        $requests =$product =[];
+        $requests =$productPriceArray =[];
         foreach($requestData as $request)
         {
+            $productId = $request->get("product")->get("objectId");
+            $requestStatus = $request->get("status");
+            if(!isset($productPriceArray[$productId]))
+            {
+                $productPrice = new ParseQuery("Price");
+                $productPrice->equalTo("product", $productId);
+                $productPrice->equalTo("type", 'online_market_price');
+                $onlinePriceData = $productPrice->first(); 
+                $onlinePrice = (!empty($onlinePriceData))?$onlinePriceData->get("value"):'N/A';
+ 
+                $productPriceArray[$productId]['OnlinePrice'] = $onlinePrice; 
+
+            }
+            else
+            {
+                $onlinePrice = $productPriceArray[$productId]['OnlinePrice']; 
+            }
+            $soldPrice = 'N/A';
+            if($requestStatus == 'pending_delivery' || $requestStatus == 'sent_for_delivery' || $requestStatus == 'successful')
+            {
+                $requestOffer = new ParseQuery("Offer");
+                $requestOffer->equalTo("request", $request);
+                $requestOffer->includeKey('price');
+                $soldPriceData = $requestOffer->first(); 
+                $soldPrice = (!empty($soldPriceData))?$soldPriceData->get("price")->get("value"):'N/A';
+            
+            }
+             $priceDiff = 'N/A';
+            if(is_int($onlinePrice) && is_int($soldPrice))
+            {
+                $priceDiff =$onlinePrice - $soldPrice;
+            }
  
             $requests[] =[
                             'productName'=>$request->get("product")->get("name"),
                             'mrp'=>$request->get("product")->get("mrp"),
                             'category'=>$request->get("category")->get("name"),
-                            'status'=>$request->get("status"),
+                            'onlinePrice' => $onlinePrice,
+                            'soldPrice' => $soldPrice,
+                            'priceDiff' => $priceDiff,
+                            'status'=>$requestStatus,
                          ] ;
-            
  
 
         }
  
- 
         return view('admin.customerdetails')->with('customer',$customer)
+                                            ->with('numOfPages',$numOfPages)
+                                            ->with('page',$page+1)
+                                            ->with('showRequest',$showRequest)
                                             ->with('requests',$requests);
     }
 

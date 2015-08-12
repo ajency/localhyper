@@ -131,7 +131,13 @@ $('.sellerList').on('click', '.save-seller-credits', function () {
     var balance = $(this).closest('td').find("input[name='balanceCredit']").val(); 
     var container = $(this).closest('td');
     var sellerid = container.find(".balance-credit").attr('data-seller-id'); 
-
+    
+    if(!isInteger(balance))
+    {
+        alert('Enter Valid Number')
+        return;
+    }
+    
     $.ajax({
         async :true, 
         url: "https://api.parse.com/1/functions/addCredits",
@@ -146,7 +152,7 @@ $('.sellerList').on('click', '.save-seller-credits', function () {
         },
         dataType: "JSON",
         success: function (response) {
-            var balanceCredits = parseInt(response.result.addedCredit)+parseInt(response.result.subtractedCredit)
+            var balanceCredits = parseInt(response.result.addedCredit)-parseInt(response.result.subtractedCredit)
             container.find(".balance-credit").html(balanceCredits);
             container.find(".edit-balance-credit").removeClass("hidden"); 
 
@@ -154,4 +160,8 @@ $('.sellerList').on('click', '.save-seller-credits', function () {
     });
      
 });
+
+function isInteger(n) {
+    return /^[0-9]+$/.test(n);
+}
 

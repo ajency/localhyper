@@ -7,20 +7,20 @@
         </li>
         <li><a href="#" class="active">{{ $seller['name']}}</a></li>
       </ul>
-      <div class="pull-right">
+      <!--<div class="pull-right">
         <button type="button" class="btn btn-default btn-cons" ><i class="fa fa-pencil"></i> Edit</button>
-      </div>
+      </div>-->
 
 
       
 <ul class="nav nav-pills" id="tab-4">
-<li class="active"><a href="#tab4hellowWorld">View Seller Information</a></li>
-<li><a href="#tab4FollowUs">View Offer History</a></li>
+<li class="{{ (!$showOffers)?'active':'' }}"><a href="#tab4hellowWorld">View Seller Information</a></li>
+<li  class="{{ ($showOffers)?'active':'' }}"><a href="#tab4FollowUs">View Offer History</a></li>
 
 </ul>
 <div class="grid simple vertical purple">
 <div class="tab-content">
-<div class="tab-pane active" id="tab4hellowWorld">
+<div class="tab-pane  {{ (!$showOffers)?'active':'' }}" id="tab4hellowWorld">
   <div class="user-description-box">
                 <div class="row">
                   <div class="col-md-6">
@@ -42,14 +42,14 @@
                     </div>
                     
                   </div>
-                  <div class="col-md-2 text-center">
+                  <!--<div class="col-md-2 text-center">
                      <h5 class="text-warning semi-bold m-b-30">Auto Bid</h5>  
                      <input type="checkbox" checked data-toggle="toggle" data-size="mini">
                   </div>
                   <div class="col-md-4 text-right">
                     <h5 class="text-warning semi-bold">Credit Counts Left : -</h5>  
                      <button type="button" class="btn btn-primary btn-info m-t-20" data-toggle="modal" data-target="#myModal"><i class="fa fa-dollar"></i> Add Credits</button>
-                  </div>
+                  </div>-->
                 </div>
              </div>
             <h5><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold text-info">ADDRESS DETAILS</span></h5>
@@ -73,35 +73,40 @@
                 @endforeach
             </div>
 </div>
-<div class="tab-pane" id="tab4FollowUs">
+<div class="tab-pane  {{ ($showOffers)?'active':'' }}" id="tab4FollowUs">
 <table class="table table-bordered">
           <thead>
             <tr>
-              <th>Offer Code</th>
               <th>Date</th>
               <th>Product Name</th>
               <th>Category</th>
               <th>Offer Amount</th>
               <th>Offer Status</th>
               <th>Credits Used</th>
-              <th>Auto Bid</th>
+              <!--<th>Auto Bid</th>-->
             </tr>
           </thead>
           <tbody>
               @foreach($selleroffers as $offer)
               <tr>
-                <td>-</td>
                 <td>{{ $offer['date'] }}</td>
                 <td>{{ $offer['productName'] }}</td>
                 <td>{{ $offer['category'] }}</td>
-                <td>$ {{ $offer['offerAmt'] }}</td>
+                <td>{{ $offer['offerAmt'] }}</td>
                 <td><span class="label label-info">{{ $offer['status'] }}</span></td>
-                <td>-</td>
-                <td class="text-center">-</td>
+                  <td>{{ $offer['creditUsed'] }}</td>
+                <!--<td class="text-center">-</td>-->
               </tr>
               @endforeach
           </tbody>
          </table>
+      @if($numOfPages > 1)
+        Page :<select name="number_of_pages" onchange="location.href='{{ url('admin/seller/'.$seller['id']) }}?page='+this.value">
+            @for($i=1 ;$i<=$numOfPages ;$i++)
+           <option {{ ($i == $page)?'selected':'' }} value="{{ $i }}">{{ $i }}</option>                         
+            @endfor
+        </select>
+     @endif
 </div>
 
 </div>

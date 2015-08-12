@@ -19,19 +19,41 @@ class SellerController extends Controller
      */
     public function index()
     {
-        $sellerList = $this->getSellers('LIST');
-        
-       
-        return view('admin.sellerlist')->with('sellers',$sellerList);
+        $sellersData = $this->getSellers('LIST');
+        $sellerList = $sellersData['list'];
+        $numOfPages = $sellersData['numOfPages'];
+        $page = $sellersData['page'];
+
+        return view('admin.sellerlist')->with('sellers',$sellerList)
+                                         ->with('page',$page+1)
+                                         ->with('numOfPages',$numOfPages);
+ 
     }
     
     
     public function getSellers($type)
     {
-         $sellers = new ParseQuery("_User");
+        
+        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+        $numOfPages = 0;
+        
+        $sellers = new ParseQuery("_User");
         $sellers->equalTo("userType", "seller");
         $sellers->includeKey('supportedCategories');
         $sellers->includeKey('supportedBrands');
+        
+        if($type == 'LIST')
+        {   //Pagination
+            
+            $displayLimit = config('constants.page_limit'); 
+ 
+            $sellersCount = $sellers->count();  
+            $sellers->limit($displayLimit);
+            $sellers->skip($page * $displayLimit);
+            
+            $numOfPages = ceil($sellersCount/$displayLimit);
+        }
+        
         $sellerData = $sellers->find();   
         $sellerList =[];
         foreach($sellerData as $seller)
@@ -59,8 +81,8 @@ class SellerController extends Controller
             
             $offer = new ParseQuery("Offer");
             $offer->equalTo("seller", $seller);
+            $offerCount = $offer->count();
             $offertData = $offer->find();
-            $offerCount = count($sellerId);
             $offerSuccessfullCount =  0;
             
             foreach($offertData as $offer)
@@ -106,7 +128,11 @@ class SellerController extends Controller
             
         }  
         
-        return $sellerList;
+         $data['list']=$sellerList;
+         $data['numOfPages']=$numOfPages;
+         $data['page']=$page;
+         return $data;
+ 
     }
     
     public function sellersExport()
@@ -203,23 +229,41 @@ class SellerController extends Controller
          {
              $categories[] =$supportedCategory->get('name');
          } 
-       
+        $seller['id'] = $sellerData->getObjectId();
         $seller['businessname'] = $sellerData->get("businessName"); 
         $seller['name'] = $sellerData->get("displayName"); 
-        $seller['email'] = $sellerData->get("email"); 
-        $seller['mobile'] =''; 
+        $seller['email'] = '-'; 
+        $seller['mobile'] =$sellerData->get("username"); 
         $seller['deliveryRadius'] = $sellerData->get("deliveryRadius");
         $seller['address'] = $sellerData->get("address"); 
         $seller['area'] = $sellerData->get("area"); 
         $seller['city'] = $sellerData->get("city");
         $seller['categories'] = $categories; 
-            
+        $showOffers = false;
+        
+        if(isset($_GET['page']))
+        {
+            $page =($_GET['page']-1);
+            $showOffers = true;    
+        }
+        else
+            $page =0; 
+        $displayLimit = config('constants.page_limit'); 
+        $numOfPages = 0;
+        
         $offers = new ParseQuery("Offer");
         $offers->equalTo("seller", $sellerData);
         $offers->includeKey('request');
         $offers->includeKey('request.product');
         $offers->includeKey('request.category');
         $offers->includeKey('Price');
+        
+        $requestCount = $offers->count();          //Pagination
+        $offers->limit($displayLimit);
+        $offers->skip($page * $displayLimit);
+
+        $numOfPages = ceil($requestCount/$displayLimit);
+        
         $offersData = $offers->find(); 
         
         $sellerOffers =$product = $category =[];
@@ -228,23 +272,37 @@ class SellerController extends Controller
             $requestObj= $offer->get("request");
             $productObj = $requestObj->get('product');
             $categoryObj = $requestObj->get('category');
-            $priceObj = $offer->get('Price');
+            $priceObj = $offer->get('Price'); 
+            
+            $creditUsed =0;
+            $transaction = new ParseQuery("Transaction");
+            $transaction->equalTo("offer", $offer);
+            $transactions = $transaction->find(); 
+            foreach($transactions as $transaction)
+            {
+               $creditUsed += $transaction->get("creditCount");
+            }
  
             $sellerOffers[] =[
+                        'id'=>$offer->getObjectId(),
                         'productName'=>$productObj->get("name"),
                         'category'=>$categoryObj->get("name"),
-                        'offerAmt'=>$priceObj->get("amount"),
+                        'offerAmt'=>'',//$priceObj->get("amount"),
+                        'creditUsed' => $creditUsed,
                         'status'=>$offer->get("status"),
                         'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
                          ] ;
             
  
 
-        }
+        }  
  
  
         return view('admin.sellerdetails')->with('seller',$seller)
-                                            ->with('selleroffers',$sellerOffers);
+                                          ->with('numOfPages',$numOfPages)
+                                          ->with('page',$page+1)
+                                          ->with('showOffers',$showOffers)    
+                                          ->with('selleroffers',$sellerOffers);
     }
 
     /**

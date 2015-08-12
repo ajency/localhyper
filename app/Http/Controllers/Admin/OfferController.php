@@ -19,18 +19,40 @@ class OfferController extends Controller
      */
     public function index()
     {
-        $offertList = $this->getOffers('LIST');
+        $offersData = $this->getOffers('LIST');
+        $offertList = $offersData['list'];
+        $numOfPages = $offersData['numOfPages'];
+        $page = $offersData['page'];
 
-        return view('admin.offerslist')->with('offerList',$offertList);
+        return view('admin.offerslist')->with('offerList',$offertList)
+                                         ->with('page',$page+1)
+                                         ->with('numOfPages',$numOfPages);
+ 
     }
     
     public function getOffers($type)
     {
+        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+        $numOfPages = 0;
+        
         $offers = new ParseQuery("Offer");
         $offers->includeKey('seller');
         $offers->includeKey('request');
         $offers->includeKey('request.product');
         $offers->includeKey('price');
+        
+        if($type == 'LIST')
+        {   //Pagination
+            
+            $displayLimit = config('constants.page_limit'); 
+ 
+            $offersCount = $offers->count();  
+            $offers->limit($displayLimit);
+            $offers->skip($page * $displayLimit);
+            
+            $numOfPages = ceil($offersCount/$displayLimit);
+        }
+        
         $offersData = $offers->find(); 
        
         $offertList = $productRequests=[];
@@ -97,7 +119,11 @@ class OfferController extends Controller
             
         }
         
-        return $offertList;
+        $data['list']=$offertList;
+        $data['numOfPages']=$numOfPages;
+        $data['page']=$page;
+        return $data;
+        
     }
     
     public function offersExport()

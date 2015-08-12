@@ -19,17 +19,37 @@ class RequestController extends Controller
      */
     public function index()
     {
-        $requestList = $this->getRequests('LIST');
-        
-        return view('admin.requestlist')->with('requestList',$requestList);
+      
+        $requestsData = $this->getRequests('LIST');
+        $requestList = $requestsData['list'];
+        $numOfPages = $requestsData['numOfPages'];
+        $page = $requestsData['page'];
+
+        return view('admin.requestlist')->with('requestList',$requestList)
+                                         ->with('page',$page+1)
+                                         ->with('numOfPages',$numOfPages);
     }
     
     public function getRequests($type)
     {
+        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+        $numOfPages = 0;
+        
         $requests = new ParseQuery("Request");
         $requests->includeKey('customerId');
         $requests->includeKey('product');
         $requests->includeKey('category');
+        if($type == 'LIST')
+        {   //Pagination
+            
+            $displayLimit = config('constants.page_limit'); 
+ 
+            $offersCount = $requests->count();  
+            $requests->limit($displayLimit);
+            $requests->skip($page * $displayLimit);
+            
+            $numOfPages = ceil($offersCount/$displayLimit);
+        }
         $requestsData = $requests->find(); 
         
         $requestList = $productPriceArray=[];
@@ -98,7 +118,11 @@ class RequestController extends Controller
              
         }
         
-        return $requestList;
+        $data['list']=$requestList;
+        $data['numOfPages']=$numOfPages;
+        $data['page']=$page;
+        return $data;
+        
     }
     
     public function requestExport()

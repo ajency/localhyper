@@ -20,14 +20,37 @@ class SmsVerifyController extends Controller
     public function index()
     {
        
-        $smsVerifyList = $this->getSmsVerify('LIST');
+        $smsVerifyData = $this->getSmsVerify('LIST');
         
-        return view('admin.smsverifylist')->with('smsVerifyList',$smsVerifyList);
+        $smsVerifyList = $smsVerifyData['list'];
+        $numOfPages = $smsVerifyData['numOfPages'];
+        $page = $smsVerifyData['page'];
+
+        return view('admin.smsverifylist')->with('smsVerifyList',$smsVerifyList)
+                                         ->with('page',$page+1)
+                                         ->with('numOfPages',$numOfPages);
+ 
     }
     
     public function getSmsVerify($type)
     {
+        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+        $numOfPages = 0;
+        
         $smsVerify = new ParseQuery("SMSVerify");
+        
+        if($type == 'LIST')
+        {   //Pagination
+            
+            $displayLimit = config('constants.page_limit'); 
+ 
+            $smsVerifyCount = $smsVerify->count();  
+            $smsVerify->limit($displayLimit);
+            $smsVerify->skip($page * $displayLimit);
+            
+            $numOfPages = ceil($smsVerifyCount/$displayLimit);
+        }
+        
         $smsVerifyData = $smsVerify->find();   
         $smsVerifyList =[];
         
@@ -59,7 +82,12 @@ class SmsVerifyController extends Controller
              
         }
         
-        return $smsVerifyList;
+        $data =[];
+        $data['list']=$smsVerifyList;
+        $data['numOfPages']=$numOfPages;
+        $data['page']=$page;
+        
+        return $data;
     }
     
     public function smsVerifyExport()
