@@ -1,5 +1,5 @@
 (function() {
-  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getNewRequestsForSeller, getNotificationData, getOtherPricesForProduct, getRequestData, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, treeify;
+  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getNewRequestsForSeller, getNotificationData, getOtherPricesForProduct, getRequestData, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -2044,39 +2044,36 @@
   });
 
   Parse.Cloud.afterSave("ProductItem", function(request) {
-    var productObject, stopWords, toLowerCase, wordsFromName;
+    var productObject, wordsFromName;
     productObject = request.object;
-    stopWords = ["the", "in", "and"];
-    toLowerCase = function(w) {
-      return w.toLowerCase();
-    };
     wordsFromName = getWordsFromSentence(productObject.get("name"));
+    wordsFromName = _.map(wordsFromName, toLowerCase);
     console.log(getWordsFromSentence(productObject.get("name")));
     productObject.set("searchKeywords", wordsFromName);
     console.log("Saved keywords as " + wordsFromName);
     return productObject.save();
   });
 
-  Parse.Cloud.define('searchProducts', function(request, response) {
-    var categoryId, innerCategoryQuery, keywords, queryProduct;
-    categoryId = request.params.categoryId;
-    keywords = request.params.keywords;
-    queryProduct = new Parse.Query("ProductItem");
-    innerCategoryQuery = new Parse.Query("Category");
-    innerCategoryQuery.equalTo("objectId", categoryId);
-    return queryProduct.matchesQuery("category", innerCategoryQuery);
-  });
-
   getWordsFromSentence = (function(_this) {
     return function(sentence) {
-      var wordArr;
+      var stopWords, wordArr, words;
       wordArr = [];
       sentence = sentence.replace(/\W/g, " ");
       sentence = sentence.trim();
       wordArr = sentence.split(/\s+/g);
-      return wordArr;
+      wordArr = _.map(wordArr, toLowerCase);
+      wordArr = _.unique(wordArr);
+      stopWords = ["the", "is", "and"];
+      words = _.filter(wordArr, function(word) {
+        return !_.contains(stopWords, word);
+      });
+      return words;
     };
   })(this);
+
+  toLowerCase = function(w) {
+    return w.toLowerCase();
+  };
 
   findAttribValues = (function(_this) {
     return function(filter) {

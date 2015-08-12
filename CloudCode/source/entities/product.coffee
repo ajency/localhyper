@@ -457,36 +457,17 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
 Parse.Cloud.afterSave "ProductItem", (request)->
     productObject = request.object
 
-    stopWords = ["the", "in", "and"]
 
-
-
-    toLowerCase = (w) ->
-        w.toLowerCase()    
 
     # pick search keywords from name , model_number , attribute values from attrs , brand name , textAttributes object
     wordsFromName = getWordsFromSentence(productObject.get("name"))
-    # wordsFromName = _.map(wordsFromName, toLowerCase)
+    wordsFromName = _.map(wordsFromName, toLowerCase)
 
-    # wordsFromName = _.filter(wordsFromName, (w) ->
-    #   w.match(/^w+$/) and !_.contains(stopWords, w)
-    # )  
+ 
     console.log getWordsFromSentence(productObject.get("name"))
     productObject.set "searchKeywords" , wordsFromName
     console.log "Saved keywords as #{wordsFromName}"
     productObject.save()
-
-Parse.Cloud.define 'searchProducts', (request, response) ->
-    categoryId = request.params.categoryId
-    keywords = request.params.keywords
-
-    queryProduct = new Parse.Query("ProductItem")
-
-    innerCategoryQuery = new Parse.Query("Category")
-    innerCategoryQuery.equalTo("objectId" , categoryId)
-
-    queryProduct.matchesQuery("category",innerCategoryQuery)
-
         
 getWordsFromSentence = (sentence) =>
 
@@ -501,7 +482,23 @@ getWordsFromSentence = (sentence) =>
     # split the sentence by white space and retur narray of words
     wordArr = sentence.split(/\s+/g)
 
-    return wordArr
+    #  change to lower case
+    wordArr = _.map(wordArr, toLowerCase)
+
+    # return only unique words
+    wordArr = _.unique(wordArr)
+
+    stopWords = ["the" , "is" , "and"]
+    
+    words = _.filter(wordArr, (word) ->
+      !_.contains(stopWords, word)
+    )
+
+
+    return words
+
+toLowerCase = (w) ->
+    w.toLowerCase()        
 
 
 
