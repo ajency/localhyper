@@ -47,7 +47,7 @@ hr{
 	color: @brand-primary;
 }
 .bar-light{
-	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+	// box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 .uppercase{
 	text-transform: uppercase;
@@ -1729,5 +1729,30 @@ input[disabled]~.radio-icon-show{
 	h5.gray {
 		color: @gray;
 		font-size: 16px;
+	}
+}
+
+//suggest a product
+.bar.bar-dark.suggest-subhead {
+	padding: 5px 8px 8px;
+	height: auto;
+	font-size: 14px;
+	text-align: center;
+	line-height: 20px;
+}
+.has-suggest-subhead {
+	top: 100px;
+	.item {
+		i.icon {
+			padding-top: 0;
+			margin-right: 6px;
+			color: @brand-primary;
+		}
+	}
+	.card {
+		margin: 10px;
+	}
+	button.button.button-block {
+		margin: 0;
 	}
 }
