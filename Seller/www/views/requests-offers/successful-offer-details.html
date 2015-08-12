@@ -30,10 +30,11 @@
 		</ion-spinner>
 
 		<ion-list ng-switch-when="noError">
+
 			<div class="list margin-none">
-				<div class="item item-details" href="#">
+				<div class="item item-details">
 					<div class="row">
-						<div class="col col-20 ">
+						<div class="col col-20">
 							<div class="item-avatar">
 								<img ng-src="{{view.offerDetails.data.product.images[0].src}}">
 							</div>
@@ -47,64 +48,70 @@
 							</h3>
 						</div>
 					</div>
-					<div class="row">
-							<div class="col col-20">
-									<img class="pull-right" src="./img/distance.png" width="55px">
-							</div>
-							<div class="col col-50">
-								<b class="text-left m-t-5 center-block">{{view.offerDetails.data.distanceFromCustomer.toFixed(2)}} <sm>kms radius</sm></b>
-								<h3 class="light-gray text-left">Distance from you</h3>
-							</div>
-							<div class="col ">
-								<button class="button button-outline button-balanced button-block button-small" ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
-							{{App.humanize(view.offerDetails.data.request.status)}}
-								</button>
 
-							</div>
+					<div class="row">
+						<div class="col col-20">
+							<img class="pull-right" src="./img/distance.png" width="55px">
+						</div>
+						<div class="col col-50">
+							<b class="text-left m-t-5 center-block">
+								{{view.offerDetails.data.distanceFromCustomer.toFixed(2)}} <sm>kms radius</sm></b>
+							<h3 class="light-gray text-left">Distance from you</h3>
+						</div>
+						<div class="col">
+							<button 
+								class="button button-outline button-balanced button-block button-small" 
+								ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
+								{{App.humanize(view.offerDetails.data.request.status)}}
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
+
 			<div>
-			 <div class="row">
-			    	<div class="col col-50 ">
-						 <h5 class="text-left subdued "> MRP : <span class="WebRupee subdued">&#x20B9;</span> <b class="big-txt"> {{App.toINR(view.offerDetails.data.product.mrp)}}</b>
+
+				<div class="row">
+					<div class="col col-50">
+					<h5 class="text-left subdued"> 
+						MRP : <span class="WebRupee subdued">&#x20B9;</span> 
+						<b class="big-txt">{{App.toINR(view.offerDetails.data.product.mrp)}}</b>
+					</h5>
+					</div>
+					<div class="col col-50">
+						<h5 class="text-left subdued">
+							No of offers : <b class="big-txt"> {{view.offerDetails.data.request.offerCount}}</b>
 						</h5>
-			    	</div>
-			    	<div class="col col-50 ">
-			    	    <h5 class="text-left subdued">		No of offers : <b class="big-txt"> {{view.offerDetails.data.request.offerCount}}</b></h5>
-			    	</div>
-			 </div>
-			    <div class="row">
-							<div class="col col-25">
-							<h5 class="margin-none subdued text-left">	Category</h5>
-							</div>
-							<div class="col col-75">
-									<h5 class="margin-none text-primary text-left">
-							
-								
-								{{view.offerDetails.data.category.parentCategory}} >>
-								
-								{{view.offerDetails.data.category.name}} >>
-							
-								{{view.offerDetails.data.brand.name}}
-								
-								<!--  > {{view.requestDetails.data.category.name}} > {{view.requestDetails.data.brand.name}} -->
-							</h5>
-							</div>
-				</div>
-				
-			<div class="row">
-				<div class="col col-100">
-					<div class="item text-center">
-						<h4 class="margin-none subdued">Your offer price: </h4>
-						<h1 class="margin-none">{{App.toINR(view.offerDetails.data.offerPrice)}}</h1>
-						<h3 class="subdued">
-							Offer Status : <b class="{{App.humanize(view.offerDetails.data.offerStatus)}}"> {{App.humanize(view.offerDetails.data.offerStatus)}}</b>
-						</h3>
 					</div>
 				</div>
-			</div>
+
+				<div class="row">
+					<div class="col col-25">
+						<h5 class="margin-none subdued text-left">Category</h5>
+					</div>
+					<div class="col col-75">
+						<h5 class="margin-none text-primary text-left">
+						{{view.offerDetails.data.category.parentCategory}} >>
+						{{view.offerDetails.data.category.name}} >>
+						{{view.offerDetails.data.brand.name}}
+						</h5>
+					</div>
+				</div>
 				
+				<div class="row">
+					<div class="col col-100">
+						<div class="item text-center">
+							<h4 class="margin-none subdued">Your offer price: </h4>
+							<h1 class="margin-none">{{App.toINR(view.offerDetails.data.offerPrice)}}</h1>
+							<h3 class="subdued">
+								Offer Status : 
+								<b class="{{App.humanize(view.offerDetails.data.offerStatus)}}"> 
+									{{App.humanize(view.offerDetails.data.offerStatus)}}
+								</b>
+							</h3>
+						</div>
+					</div>
+				</div>
 
 				<h5 ng-if="view.offerDetails.data.request.comments!==''">
 					Customer Comments : {{view.offerDetails.data.request.comments}} 
@@ -113,11 +120,7 @@
 				<h5 ng-if="view.offerDetails.data.offerComments!==''">
 					Your Comments : {{view.offerDetails.data.offerComments}}
 				</h5>
-
-			
 			</div>
-
-			
 
 			<div class="row">
 				<div class="col col-50">
@@ -135,9 +138,13 @@
 						</p>
 					</div>
 				</div>
+
 				<div class="col col-50">
-					<div class="deli-tim" ng-if="view.offerDetails.data.deliveryStatus === 'pending_delivery' 
-					|| view.offerDetails.data.deliveryStatus === 'sent_for_delivery'">
+					<div 
+						class="deli-tim" 
+						ng-if="view.offerDetails.data.request.status === 'pending_delivery' 
+						|| view.offerDetails.data.request.status === 'sent_for_delivery'">
+						
 						<i class="icon-img icon-cust-cal bigger">
 							<img src="./img/cal.png" alt="">
 						</i>
@@ -152,8 +159,18 @@
 					</div>
 				</div>
 			</div>
+
+			<div 
+				class="row"
+				ng-if="view.offerDetails.data.request.status === 'successful'">
+
+				<h4>Delivery status: {{App.humanize(view.offerDetails.data.request.status)}}</h4>
+			</div>
 			
-			<div class="row">
+			<div 
+				class="row"
+				ng-if="view.offerDetails.data.request.status !== 'successful'">
+
 				<div class="col col-80">
 					<label class="item item-input item-select">
 						<div class="input-label">
@@ -161,12 +178,9 @@
 						</div>
 						<select 
 							ng-model="view.offerDetails.data.deliveryStatus"
-							ng-change="view.offerDetails.onDeliveryStatusChange()"
+							ng-change="view.offerDetails.onDeliveryStatusChange();"
 							ng-disabled="view.offerDetails.showChange">
 							
-							<option value="pending_delivery">
-								Pending delivery
-							</option>
 							<option value="sent_for_delivery">
 								Sent for delivery
 							</option>

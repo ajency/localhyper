@@ -414,7 +414,7 @@ sm {
 .department-list {
   /*height: 199px;*/
   height: 150px;
-  background: #e8e8e8;
+  background-color: #ffffff;
   padding: 0px;
   /*	h3{
 		 font-weight: 600;
@@ -1133,7 +1133,7 @@ h5.with-sep span {
 .department-list {
   /*height: 199px;*/
   height: 175px;
-  background: #e8e8e8;
+  background: #ffffff;
   padding: 0px;
 }
 .department-list h2 {
@@ -1161,8 +1161,8 @@ h5.with-sep span {
 .item-avatar-left .item-content {
   padding: 0;
   min-height: 0;
-  width: 60px;
-  height: 60px;
+  width: 65px;
+  height: 65px;
   margin: 0 auto;
   border-top-left-radius: 50%;
   border-top-right-radius: 50%;
@@ -1197,7 +1197,7 @@ h5.with-sep span {
   border-radius: 0;
   position: relative;
   left: 0;
-  top: 0;
+  top: 4px;
   display: inline-block;
   vertical-align: middle;
 }
@@ -1206,7 +1206,7 @@ h5.with-sep span {
 .item-avatar-left.activated,
 .item-avatar-left .item-content.activated {
   background: #fff;
-  border-color: #f35a59;
+  border: 1px solid #f35a59 !important;
   color: #f35a59;
   -webkit-box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
   box-shadow: 0 0 8px rgba(243, 90, 89, 0.46);
@@ -1227,7 +1227,7 @@ h5.with-sep span {
 .item-avatar .item-content.more-link,
 .item-avatar-left.more-link,
 .item-avatar-left .item-content.more-link {
-  line-height: 54px;
+  line-height: 9px;
 }
 .item-avatar.more-link i,
 .item-avatar .item-content.more-link i,
@@ -1236,6 +1236,10 @@ h5.with-sep span {
   display: block;
   text-align: center;
   font-size: 32px;
+  padding: 0px;
+  margin: -5px;
+  padding-top: 15px;
+  color: #EF473A;
 }
 .item-avatar.more-link span,
 .item-avatar .item-content.more-link span,
@@ -1300,6 +1304,8 @@ h5.with-sep span {
   min-height: 0;
   max-height: none;
   margin: 4px;
+  margin-top: 1px;
+  border: 0;
 }
 .button.button-outline.icon-btn i.icon:before {
   font-size: 20px;
@@ -1649,7 +1655,7 @@ input[disabled] ~ .radio-icon-show {
   color: #1F1F1F;
   display: block;
   width: 100%;
-  padding: 12px 8px 6px 15px;
+  padding: 12px 15px 6px 4px;
   height: auto;
   font-style: italic;
   line-height: 26px;
@@ -1659,7 +1665,7 @@ input[disabled] ~ .radio-icon-show {
   background: transparent;
   border: 0;
   color: #B9B5B5;
-  padding-right: 15px;
+  padding-left: 15px;
 }
 .search-brands-wrap button.button.button-small i:before {
   font-size: 26px;

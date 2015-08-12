@@ -109,11 +109,12 @@ angular.module 'LocalHyper.requestsOffers'
 				
 				show : (request, show=true)->
 					@data = request
-					@data.deliveryStatus = request.request.status
+					console.log @data
 					@showChange = true
-					@checkIfFailedDelivery()
 					@modal.show() if show
 					@showExpiry = true
+					@setDeliveryStatus()
+					@checkIfFailedDelivery()
 
 				onNotificationClick : (offerId)->
 					requests = $scope.view.requests
@@ -131,6 +132,16 @@ angular.module 'LocalHyper.requestsOffers'
 						@show requests[index], false
 						@pendingOfferId = ""
 
+				setDeliveryStatus : ->
+					deliveryStatus = @data.request.status
+					switch deliveryStatus
+						when 'pending_delivery'
+							@data.deliveryStatus = 'sent_for_delivery'
+						else
+							@data.deliveryStatus = deliveryStatus
+					
+					@originalStatus = @data.deliveryStatus
+
 				onDeliveryStatusChange : ->
 					@failedDelivery.display = @data.deliveryStatus is 'failed_delivery'
 
@@ -143,7 +154,7 @@ angular.module 'LocalHyper.requestsOffers'
 						@failedDelivery.reason = ''
 
 				onUpdateCancel : ->
-					@data.deliveryStatus = @data.request.status
+					@data.deliveryStatus = @originalStatus
 					@checkIfFailedDelivery()
 					@showChange = true
 
@@ -206,7 +217,7 @@ angular.module 'LocalHyper.requestsOffers'
 				params = 
 					page: @page
 					acceptedOffers: true
-					displayLimit: 3
+					displayLimit: 5
 					sortBy: @sortBy
 					descending: @descending
 					selectedFilters: @filter.selected
