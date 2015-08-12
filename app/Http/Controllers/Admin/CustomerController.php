@@ -26,7 +26,8 @@ class CustomerController extends Controller
 
         return view('admin.customerlist')->with('customers',$customerList)
                                          ->with('page',$page+1)
-                                         ->with('numOfPages',$numOfPages);
+                                         ->with('numOfPages',$numOfPages)
+                                         ->with('activeMenu','customers');
     }
     
     public function date_diff($date2, $date1) 
@@ -294,7 +295,8 @@ class CustomerController extends Controller
                                             ->with('numOfPages',$numOfPages)
                                             ->with('page',$page+1)
                                             ->with('showRequest',$showRequest)
-                                            ->with('requests',$requests);
+                                            ->with('requests',$requests)
+                                            ->with('activeMenu','customers');
     }
 
     /**

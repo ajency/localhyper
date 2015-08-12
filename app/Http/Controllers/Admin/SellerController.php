@@ -26,7 +26,8 @@ class SellerController extends Controller
 
         return view('admin.sellerlist')->with('sellers',$sellerList)
                                          ->with('page',$page+1)
-                                         ->with('numOfPages',$numOfPages);
+                                         ->with('numOfPages',$numOfPages)
+                                         ->with('activeMenu','sellers');
  
     }
     
@@ -302,7 +303,8 @@ class SellerController extends Controller
                                           ->with('numOfPages',$numOfPages)
                                           ->with('page',$page+1)
                                           ->with('showOffers',$showOffers)    
-                                          ->with('selleroffers',$sellerOffers);
+                                          ->with('selleroffers',$sellerOffers)
+                                          ->with('activeMenu','sellers');
     }
 
     /**

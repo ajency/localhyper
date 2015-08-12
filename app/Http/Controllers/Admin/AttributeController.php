@@ -85,7 +85,8 @@ class AttributeController extends Controller
 		public function categoryConfiguration()
 		{
 				$parentCategories= CategoryController::getParentCategories();  
-				return view('admin.attributeimport')->with('parentCategories', $parentCategories);
+				return view('admin.attributeimport')->with('parentCategories', $parentCategories)
+                                                    ->with('activeMenu','categoryConfig');
 
 		}
 		

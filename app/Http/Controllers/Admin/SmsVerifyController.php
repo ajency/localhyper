@@ -28,7 +28,8 @@ class SmsVerifyController extends Controller
 
         return view('admin.smsverifylist')->with('smsVerifyList',$smsVerifyList)
                                          ->with('page',$page+1)
-                                         ->with('numOfPages',$numOfPages);
+                                         ->with('numOfPages',$numOfPages)
+                                         ->with('activeMenu','smsverify');
  
     }
     

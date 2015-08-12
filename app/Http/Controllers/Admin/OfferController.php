@@ -26,7 +26,8 @@ class OfferController extends Controller
 
         return view('admin.offerslist')->with('offerList',$offertList)
                                          ->with('page',$page+1)
-                                         ->with('numOfPages',$numOfPages);
+                                         ->with('numOfPages',$numOfPages)
+                                         ->with('activeMenu','offers');
  
     }
     

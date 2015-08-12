@@ -27,7 +27,8 @@ class RequestController extends Controller
 
         return view('admin.requestlist')->with('requestList',$requestList)
                                          ->with('page',$page+1)
-                                         ->with('numOfPages',$numOfPages);
+                                         ->with('numOfPages',$numOfPages)
+                                         ->with('activeMenu','requests');
     }
     
     public function getRequests($type)

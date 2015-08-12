@@ -103,8 +103,8 @@
     </div>
    </div>
   <!-- END MINI-PROFILE -->
-    <p class="menu-title" onclick="location.href='{{ url('admin/attribute/categoryconfiguration') }}'">Category Configuration <span class="text-right"> <i class="fa fa-check text-success"></i><a href="javascript:;"></a></span></p>
-  <p class="menu-title" onclick="location.href='{{ url('admin/seller') }}'">List of Sellers <span class="pull-right"><a href="javascript:;"></a></span></p>
+    <p class="menu-title" onclick="location.href='{{ url('admin/attribute/categoryconfiguration') }}'">Category Configuration <span class="text-right"> @if($activeMenu=='categoryConfig')<i class="fa fa-check text-success"></i>@endif</span></p>
+  <p class="menu-title" onclick="location.href='{{ url('admin/seller') }}'">List of Sellers <span class="text-right">@if($activeMenu=='sellers')<i class="fa fa-check text-success"></i>@endif</span></p>
    
     <!--<li class=""> <a href="javascript:;"> <i class="fa fa fa-adjust"></i> <span class="title">Themes</span> <span class="arrow "></span> </a>
        <ul class="sub-menu">
@@ -113,11 +113,11 @@
           <li > <a href="#">Elegant</a> </li>
         </ul>
     </li>-->    
-     <p class="menu-title" onclick="location.href='{{ url('admin/offers') }}'">List of Offers <span class="pull-right"><a href="javascript:;"></a></span></p>
-      <p class="menu-title" onclick="location.href='{{ url('admin/requests') }}'">List of Requests <span class="pull-right"><a href="javascript:;"></a></span></p>
-      <p class="menu-title" onclick="location.href='{{ url('admin/customer') }}'">List of Customers &nbsp;<span class="pull-right"> <a href="javascript:;"> </a></span></p>
-       <p class="menu-title" onclick="location.href='{{ url('admin/smsverify') }}'">SMS Verify &nbsp;<span class="pull-right"> <a href="javascript:;"> </a></span></p>
-       <p class="menu-title" onclick="location.href='#'">List of Ratings <span class="pull-right"><a href="javascript:;"></a></span></p>
+     <p class="menu-title" onclick="location.href='{{ url('admin/offers') }}'">List of Offers <span class="text-right">@if($activeMenu=='offers')<i class="fa fa-check text-success"></i>@endif</span></p>
+      <p class="menu-title" onclick="location.href='{{ url('admin/requests') }}'">List of Requests <span class="text-right">@if($activeMenu=='requests')<i class="fa fa-check text-success"></i>@endif</span></p>
+      <p class="menu-title" onclick="location.href='{{ url('admin/customer') }}'">List of Customers &nbsp;<span class="text-right">@if($activeMenu=='customers')<i class="fa fa-check text-success"></i>@endif</span></p>
+       <p class="menu-title" onclick="location.href='{{ url('admin/smsverify') }}'">SMS Verify &nbsp;<span class="text-right">@if($activeMenu=='smsverify')<i class="fa fa-check text-success"></i>@endif</span></p>
+       <p class="menu-title" onclick="location.href='#'">List of Ratings <span class="text-right">@if($activeMenu=='')<i class="fa fa-check text-success"></i>@endif</span></p>
     
   <div class="clearfix"></div>
     <!-- END SIDEBAR MENU --> 
