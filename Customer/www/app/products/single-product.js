@@ -1,5 +1,6 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', '$ionicScrollDelegate', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', '$ionicScrollDelegate', '$ionicPlatform', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform) {
+    var onDeviceBack;
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -97,6 +98,46 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           return App.navigate('request-details');
         }
       },
+      specifications: {
+        modal: null,
+        loadModal: function() {
+          return $ionicModal.fromTemplateUrl('views/products/specifications.html', {
+            scope: $scope,
+            animation: 'slide-in-up',
+            hardwareBackButtonClose: false
+          }).then((function(_this) {
+            return function(modal) {
+              return _this.modal = modal;
+            };
+          })(this));
+        },
+        openModal: function() {
+          $ionicScrollDelegate.$getByHandle('specification-modal-handle').scrollTop(true);
+          return this.modal.show();
+        },
+        set: function() {
+          var general, generalSpecs, groups, warranty;
+          groups = _.groupBy(window.specifications, function(spec) {
+            return spec.group;
+          });
+          general = groups['general'];
+          generalSpecs = [];
+          _.each(general, function(specs) {
+            return generalSpecs.push(App.humanize(specs.value));
+          });
+          this.excerpt = generalSpecs.join(', ');
+          warranty = groups['warranty'];
+          delete groups['general'];
+          delete groups['warranty'];
+          groups = _.toArray(groups);
+          groups.unshift(general);
+          groups.push(warranty);
+          return this.groups = groups;
+        }
+      },
+      init: function() {
+        return this.specifications.loadModal();
+      },
       reset: function() {
         this.display = 'loader';
         this.footer = false;
@@ -128,6 +169,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       onSuccess: function() {
         this.footer = true;
         this.display = 'noError';
+        this.specifications.set();
         this.request.checkIfActive();
         if (User.isLoggedIn()) {
           this.request.display = 'loader';
@@ -151,7 +193,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return "" + value + " " + unit;
+          return value + " " + unit;
         } else {
           return '';
         }
@@ -179,6 +221,21 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         return App.navigate('make-request');
       }
     };
+    onDeviceBack = function() {
+      var specificationModal;
+      specificationModal = $scope.view.specifications.modal;
+      if (!_.isNull(specificationModal) && specificationModal.isShown()) {
+        return specificationModal.hide();
+      } else {
+        return App.goBack(-1);
+      }
+    };
+    $scope.$on('$ionicView.enter', function() {
+      return $ionicPlatform.onHardwareBackButton(onDeviceBack);
+    });
+    $scope.$on('$ionicView.leave', function() {
+      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
+    });
     $rootScope.$on('make:request:success', function() {
       $scope.view.request.active = true;
       return $scope.view.request.reFetch();
