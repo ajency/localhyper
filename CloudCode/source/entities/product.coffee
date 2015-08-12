@@ -11,6 +11,8 @@ Parse.Cloud.define  'productImport', (request, response) ->
     categoryId = request.params.categoryId
     priceRange = request.params.priceRange
 
+    searchKeywords = request.params.searchKeywords
+
     # get category data
     queryCategory = new Parse.Query("Category")
 
@@ -295,6 +297,7 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
     ascending = request.params.ascending
     page = parseInt request.params.page
     displayLimit = parseInt request.params.displayLimit
+    searchKeywords = request.params.searchKeywords
     
 
     # get filterable attributes for the child category
@@ -343,6 +346,9 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
             # query to get products matching the child category
             query = new Parse.Query("ProductItem")
             query.matchesQuery("category", innerQuery)
+
+            if (searchKeywords isnt "all") and (searchKeywords.length > 0)
+                query.containsAll("searchKeywords", searchKeywords)
 
             if (selectedFilters isnt "all") and (_.isObject(selectedFilters))
                 filterableProps = Object.keys(selectedFilters)
@@ -469,6 +475,17 @@ Parse.Cloud.afterSave "ProductItem", (request)->
     productObject.set "searchKeywords" , wordsFromName
     console.log "Saved keywords as #{wordsFromName}"
     productObject.save()
+
+Parse.Cloud.define 'searchProducts', (request, response) ->
+    categoryId = request.params.categoryId
+    keywords = request.params.keywords
+
+    queryProduct = new Parse.Query("ProductItem")
+
+    innerCategoryQuery = new Parse.Query("Category")
+    innerCategoryQuery.equalTo("objectId" , categoryId)
+
+    queryProduct.matchesQuery("category",innerCategoryQuery)
 
         
 getWordsFromSentence = (sentence) =>

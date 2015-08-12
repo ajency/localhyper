@@ -1675,13 +1675,14 @@
   };
 
   Parse.Cloud.define('productImport', function(request, response) {
-    var ProductItem, categoryId, importedProductCount, priceRange, productSavedArr, products, queryCategory;
+    var ProductItem, categoryId, importedProductCount, priceRange, productSavedArr, products, queryCategory, searchKeywords;
     ProductItem = Parse.Object.extend('ProductItem');
     productSavedArr = [];
     importedProductCount = 0;
     products = request.params.products;
     categoryId = request.params.categoryId;
     priceRange = request.params.priceRange;
+    searchKeywords = request.params.searchKeywords;
     queryCategory = new Parse.Query("Category");
     queryCategory.equalTo("objectId", categoryId);
     queryCategory.include("filterable_attributes");
@@ -1905,13 +1906,14 @@
   });
 
   Parse.Cloud.define('getProductsNew', function(request, response) {
-    var ascending, categoryId, categoryQuery, displayLimit, page, selectedFilters, sortBy;
+    var ascending, categoryId, categoryQuery, displayLimit, page, searchKeywords, selectedFilters, sortBy;
     categoryId = request.params.categoryId;
     selectedFilters = request.params.selectedFilters;
     sortBy = request.params.sortBy;
     ascending = request.params.ascending;
     page = parseInt(request.params.page);
     displayLimit = parseInt(request.params.displayLimit);
+    searchKeywords = request.params.searchKeywords;
     categoryQuery = new Parse.Query("Category");
     categoryQuery.equalTo("objectId", categoryId);
     categoryQuery.select("filterable_attributes");
@@ -1946,6 +1948,9 @@
         innerQuery.equalTo("objectId", categoryId);
         query = new Parse.Query("ProductItem");
         query.matchesQuery("category", innerQuery);
+        if ((searchKeywords !== "all") && (searchKeywords.length > 0)) {
+          query.containsAll("searchKeywords", searchKeywords);
+        }
         if ((selectedFilters !== "all") && (_.isObject(selectedFilters))) {
           filterableProps = Object.keys(selectedFilters);
           if (_.contains(filterableProps, "brands")) {
@@ -2050,6 +2055,16 @@
     productObject.set("searchKeywords", wordsFromName);
     console.log("Saved keywords as " + wordsFromName);
     return productObject.save();
+  });
+
+  Parse.Cloud.define('searchProducts', function(request, response) {
+    var categoryId, innerCategoryQuery, keywords, queryProduct;
+    categoryId = request.params.categoryId;
+    keywords = request.params.keywords;
+    queryProduct = new Parse.Query("ProductItem");
+    innerCategoryQuery = new Parse.Query("Category");
+    innerCategoryQuery.equalTo("objectId", categoryId);
+    return queryProduct.matchesQuery("category", innerCategoryQuery);
   });
 
   getWordsFromSentence = (function(_this) {
