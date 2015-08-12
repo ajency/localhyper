@@ -573,13 +573,15 @@
   });
 
   Parse.Cloud.define("sendMail", function(request, status) {
-    var Mandrill, brand, category, comments, description, productName, text;
+    var Mandrill, brand, category, comments, description, productName, text, userType;
     productName = request.params.productName;
     category = request.params.category;
     brand = request.params.brand;
     description = request.params.description;
     comments = request.params.comments;
-    text = '<p>Product Name:' + productName + '<br> Category:' + category + '<br> Brand: ' + brand;
+    userType = request.params.userType;
+    text = '<b> You have received a suggestion for a product from ' + userType + '</b> <br>';
+    text += '<p>Product Name:' + productName + '<br> Category:' + category + '<br> Brand: ' + brand;
     if (description !== null) {
       text += '<br> Description: ' + description;
     }

@@ -4,22 +4,18 @@ Parse.Cloud.define "sendMail", (request, status) ->
 	brand = request.params.brand
 	description = request.params.description
 	comments = request.params.comments
+	userType = request.params.userType
 
-
-	text = '<p>Product Name:'+productName+'<br> Category:' + category + '<br> Brand: ' + brand 
+	text = '<b> You have received a suggestion for a product from ' + userType + '</b> <br>'
+	text += '<p>Product Name:'+productName+'<br> Category:' + category + '<br> Brand: ' + brand 
 	if description != null
 		text += '<br> Description: ' + description
 	if comments != null
 		text += '<br> Comments: ' + comments
-
 	text += '</p>'
 
-
-	
 	Mandrill = require('mandrill');
 	Mandrill.initialize('JGQ1FMECVDSJLnOFvxDzaQ')
-	
-	
 	
 	Mandrill.sendEmail({message:{
 		html: "<p>"+text+"</p>",
