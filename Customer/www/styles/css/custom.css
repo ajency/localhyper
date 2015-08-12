@@ -200,7 +200,7 @@ sm {
 }
 .bar-subheader {
   background-color: #1f1f1f !important;
-  height: 60px;
+  height: 52px;
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light,
 .bar.bar-header {
@@ -1099,7 +1099,7 @@ sm {
 }
 .bg-lightgrey .list {
   background-color: #f2f1ed;
-  border-top: 1px solid #C1C1C1;
+  border-top: 1px solid #909090;
 }
 .early-head {
   margin-top: 15px;
@@ -1488,4 +1488,64 @@ label.status-label {
 }
 .col.aboutus img {
   height: 70px;
+}
+.specs-sing.card .header.item {
+  border-bottom: 0;
+  background: #fff;
+  border-top: 1px solid #ECE9E9;
+  font-weight: bold;
+  color: #EF473A;
+  padding-top: 15px;
+}
+.specs-sing.card .header.item i.icon {
+  margin-right: 8px;
+}
+.specs-sing.card .header.item hr {
+  margin-bottom: 0;
+  height: 1px;
+  border: 0;
+  border-bottom: 1px solid #CACACA;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+.specs-sing.card .item.intro {
+  border-top: 0;
+  padding-top: 8px;
+}
+.specs-sing.card .item.footer {
+  padding-bottom: 7px;
+  padding-top: 10px;
+}
+.specs-modal .modal-title {
+  margin-top: 1px;
+}
+.specs-modal h2 {
+  color: #fff;
+  margin: 0;
+  margin-top: -4px;
+}
+.specs-modal .spec-card .item.item-divider {
+  padding-left: 8px;
+  padding-bottom: 6px;
+  font-weight: bold;
+  border-top: 1px solid #B1B1B1;
+  color: #f45152;
+}
+.specs-modal .spec-card .item.item-divider i.icon {
+  margin-right: 5px;
+}
+.specs-modal .spec-card .row {
+  border-bottom: 1px solid #E0E0E0;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-color: #fff;
+}
+.specs-modal .spec-card .row .bold-title {
+  font-weight: bold;
+  line-height: 17px;
+  display: inline-block;
+}
+.specs-modal .spec-card .row .normal-desc {
+  line-height: 17px;
+  display: inline-block;
 }
