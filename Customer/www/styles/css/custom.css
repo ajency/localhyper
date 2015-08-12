@@ -1458,3 +1458,26 @@ label.status-label {
 .card {
   margin: 10px;
 }
+.bar.bar-dark.suggest-subhead {
+  padding: 5px 8px 8px;
+  height: auto;
+  font-size: 14px;
+  text-align: center;
+  line-height: 20px;
+}
+.has-suggest-subhead {
+  top: 100px;
+}
+.has-suggest-subhead .item i.icon {
+  padding-top: 0;
+  margin-right: 6px;
+  color: #f45152;
+  display: inline-block;
+  vertical-align: top;
+}
+.has-suggest-subhead .card {
+  margin: 10px;
+}
+.has-suggest-subhead button.button.button-block {
+  margin: 0;
+}

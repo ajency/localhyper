@@ -1,11 +1,15 @@
-<ion-view view-title="Suggest a product">
+<ion-view view-title="<span class='nav-bar-title'>Suggest a product</span>">
 
-	<ion-content>
-			<div class="card">
+	<div class="bar bar-subheader bar-dark suggest-subhead">
+		Looking for an item, but don't see it in our store?<br>Tell us about it..
+	</div>
+
+	<ion-content class="has-subheader has-suggest-subhead">
+			<!-- <div class="card">
 				<div class="item item-text-wrap">
 					Looking for an item , but don't see it in our store? Tell us about it..
 				</div>
-			</div>
+			</div> -->
 
 			<div class="card">
 				<label class="item item-input item-stacked-label">
@@ -14,19 +18,20 @@
 				</label>
 			</div>
 
+			<div class="card cat egory">
+				<label class="item item-input item-select">
+					<span class="input-label"><i class="icon ion-social-buffer"></i> Category
+						<!-- &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<br> -->
+					</span>
+					<select class="pull-right" ng-model="suggest.category" ng-options="item as item.name for item in suggest.items" >
+						<option value="">-- Select Category --</option>
+					</select>
+				</label>
+			</div>
+
 			<div class="card category">
 				<label class="item item-input item-stacked-label">
-					<span class="input-label item-select"><i class="icon ion-social-buffer"></i> Category
-						&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;<br>
-
-						<select class="pull-right" ng-model="suggest.category" ng-options="item as item.name for item in suggest.items" >
-			      			<option value="">-- Select Category --</option>
-			   			</select>
-					</span>
-				</label>
-
-				<label class="item item-input item-stacked-label">
-					<span class="input-label"><i class="icon ion-flash"></i> Brand</span>
+					<span class="input-label"><i class="icon ion-ribbon-b"></i> Brand</span>
 					<input type="text" placeholder="Brand Name" ng-model="suggest.brand" >
 				</label>
 			</div>
@@ -48,7 +53,7 @@
 			<div class="list suggest-btn">
 				<div class="row">
 					<div class="col">
-						<button 
+						<button
 							class="button button-block button-assertive"
 							ng-click="suggest.onSuggest()">
 							Suggest this product
@@ -56,7 +61,7 @@
 					</div>
 				</div>
 			</div>
-		
+
 	</ion-content>
 
 </ion-view>
