@@ -4,55 +4,55 @@
 	ng-controller="SideMenuCtrl">
 
 	<ion-side-menu-content>
-		<ion-nav-bar 
+		<ion-nav-bar
 			class="bar-light"
 			no-tap-scroll="{{App.noTapScroll()}}">
 
 			<ion-nav-buttons side="left">
-				<img 
+				<img
 					ng-if="App.logo.small"
-					src="./img/shopoye-icon.png" 
+					src="./img/shopoye-icon.png"
 					style="height: 30px; "/>
 			</ion-nav-buttons>
 
 			<ion-nav-buttons side="right">
 				<div ng-if="App.notification.icon">
-					<span 
+					<span
 						class="notification badge badge-assertive"
 						ng-if="App.notification.badge">
 						{{App.notification.count}}
 					</span>
-					<button 
+					<button
 						class="button button-icon ion-ios-person"
 						ng-click="view.userPopover.show($event)">
 					</button>
 				</div>
 			</ion-nav-buttons>
 
-			<ion-nav-back-button 
-				ng-click="view.onBackClick()"> 
+			<ion-nav-back-button
+				ng-click="view.onBackClick()">
 			</ion-nav-back-button>
 		</ion-nav-bar>
 
 		<ion-nav-view name="appContent"> </ion-nav-view>
 	</ion-side-menu-content>
-	
-	
-	<ion-side-menu 
+
+
+	<ion-side-menu
 		side="left"
 		is-enabled="App.menuEnabled.left">
-		
+
 		<ion-content class="aj-menu-bg">
 
 			<ion-list class="aj-menutext">
-				
-				<ion-item ng-if="view.userProfile.display">
-					<h2 style="color: #FFF">{{view.userProfile.name}}</h2>
-					<h2 style="color: #FFF">+91-{{view.userProfile.phone}}</h2>
+
+				<ion-item ng-if="view.userProfile.display" class="userprofile">
+					<h2 style="color: #E2E2E2; font-size: 20px;"><i class="icon ion-person"></i> {{view.userProfile.name}}</h2>
+					<h2 style="color: #989898;"><i class="icon ion-ios-telephone" style="margin-left: 3px;"></i> +91-{{view.userProfile.phone}}</h2>
 				</ion-item>
 
 				<ion-item ng-click="view.menuClose(); App.navigate('categories');">
-					<i class="i-store"></i> <b>Store</b>
+					<i class="i-store"></i> <b style="color: #FFF;">Store</b>
 				</ion-item>
 
 				<hr>
@@ -60,7 +60,7 @@
 				<ion-item ng-click="view.onCallUs()">
 					<i class="i-call"></i> Call us
 				</ion-item>
-				
+
 				<ion-item ng-click="view.onShare()">
 					<i class="i-share"></i> Share
 				</ion-item>
