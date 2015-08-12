@@ -4,6 +4,8 @@ Parse.Cloud.define  'productImport', (request, response) ->
 
     productSavedArr = []
 
+    importedProductCount = 0
+
     products =  request.params.products
 
     categoryId = request.params.categoryId
@@ -38,6 +40,7 @@ Parse.Cloud.define  'productImport', (request, response) ->
             validAttrLength = lengthOfAttr + lengthOfTextAttr
             
             if !_.isNull(product.name) and (validAttrLength is totalAttrCount) and !_.isNull(product.brandId) 
+                importedProductCount++
                 productItem = new ProductItem()
 
                 if !_.isNull(product.objectId)
@@ -66,7 +69,7 @@ Parse.Cloud.define  'productImport', (request, response) ->
 
                 productItem.set "model_number", String (product.model_number)
                 productItem.set "mrp", parseInt product.mrp
-                productItem.set "popularity", product.popularity
+                productItem.set "popularity", parseInt product.popularity
                 productItem.set "group", product.group 
 
                 # set product brand
@@ -140,7 +143,7 @@ Parse.Cloud.define  'productImport', (request, response) ->
             categoryObj.set "price_range" , priceRange
             categoryObj.save()
             .then (savedCat)->
-                response.success "Successfully added the products"
+                response.success "Successfully added #{importedProductCount} products"
             , (error) ->
                 response.error "Failed to add products due to - #{error.message}"
           , (error) ->
@@ -445,42 +448,42 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
     ,(error) -> 
         response.error error    
 
-# Parse.Cloud.afterSave "ProductItem", (request)->
-#     productObject = request.object
+Parse.Cloud.afterSave "ProductItem", (request)->
+    productObject = request.object
 
-#     mrp = parseInt(productObject.get("mrp"))
+    mrp = parseInt(productObject.get("mrp"))
 
-#     if (!productObject.existed()) or ( (productObject.existed()) and (productObject.createdAt isnt productObject.updatedAt))
-#         categoryId = productObject.get("category").id
+    if (!productObject.existed()) or ( (productObject.existed()) and (productObject.createdAt isnt productObject.updatedAt))
+        categoryId = productObject.get("category").id
 
-#         queryCategory = new Parse.Query("Category")
-#         queryCategory.equalTo("objectId", categoryId)
+        queryCategory = new Parse.Query("Category")
+        queryCategory.equalTo("objectId", categoryId)
 
-#         queryCategory.first()
-#         .then (categoryObject) ->
-#             newPriceRange = []
-#             oldPriceRange = categoryObject.get("price_range")
-#             if (_.isUndefined(oldPriceRange)) or (_.isEmpty(oldPriceRange))
-#                 oldPriceRange[0] = 0
-#                 oldPriceRange[1] = 0
+        queryCategory.first()
+        .then (categoryObject) ->
+            newPriceRange = []
+            oldPriceRange = categoryObject.get("price_range")
+            if (_.isUndefined(oldPriceRange)) or (_.isEmpty(oldPriceRange))
+                oldPriceRange[0] = 0
+                oldPriceRange[1] = 0
 
-#             oldPriceRange[0] = parseInt(oldPriceRange[0])
-#             oldPriceRange[1] = parseInt(oldPriceRange[1])
+            oldPriceRange[0] = parseInt(oldPriceRange[0])
+            oldPriceRange[1] = parseInt(oldPriceRange[1])
 
-#             if (mrp >= oldPriceRange[1])
-#                 newPriceRange[0] = oldPriceRange[0]
-#                 newPriceRange[1] =  mrp
-#             else
-#                 newPriceRange[0] = mrp
-#                 newPriceRange[1] = oldPriceRange[1]
+            if (mrp >= oldPriceRange[1])
+                newPriceRange[0] = oldPriceRange[0]
+                newPriceRange[1] =  mrp
+            else
+                newPriceRange[0] = mrp
+                newPriceRange[1] = oldPriceRange[1]
 
-#             # set new price range for category
-#             categoryObject.set "price_range" , newPriceRange
+            # set new price range for category
+            categoryObject.set "price_range" , newPriceRange
 
-#             categoryObject.save()
+            categoryObject.save()
 
-#         , (error) ->
-#             console.log "Got an error while fetching category " + error.code + " : " + error.message
+        , (error) ->
+            console.log "Got an error while fetching category " + error.code + " : " + error.message
         
   
 findAttribValues = (filter) =>

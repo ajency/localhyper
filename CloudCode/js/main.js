@@ -1673,9 +1673,10 @@
   };
 
   Parse.Cloud.define('productImport', function(request, response) {
-    var ProductItem, categoryId, priceRange, productSavedArr, products, queryCategory;
+    var ProductItem, categoryId, importedProductCount, priceRange, productSavedArr, products, queryCategory;
     ProductItem = Parse.Object.extend('ProductItem');
     productSavedArr = [];
+    importedProductCount = 0;
     products = request.params.products;
     categoryId = request.params.categoryId;
     priceRange = request.params.priceRange;
@@ -1702,6 +1703,7 @@
         lengthOfTextAttr = _.keys(product.text_attributes).length;
         validAttrLength = lengthOfAttr + lengthOfTextAttr;
         if (!_.isNull(product.name) && (validAttrLength === totalAttrCount) && !_.isNull(product.brandId)) {
+          importedProductCount++;
           productItem = new ProductItem();
           if (!_.isNull(product.objectId)) {
             productItem.id = product.objectId;
@@ -1720,7 +1722,7 @@
           productItem.set("images", productImgs);
           productItem.set("model_number", String(product.model_number));
           productItem.set("mrp", parseInt(product.mrp));
-          productItem.set("popularity", product.popularity);
+          productItem.set("popularity", parseInt(product.popularity));
           productItem.set("group", product.group);
           brandObj = {
             "__type": "Pointer",
@@ -1775,7 +1777,7 @@
       return Parse.Object.saveAll(productSavedArr).then(function(objs) {
         categoryObj.set("price_range", priceRange);
         return categoryObj.save().then(function(savedCat) {
-          return response.success("Successfully added the products");
+          return response.success("Successfully added " + importedProductCount + " products");
         }, function(error) {
           return response.error("Failed to add products due to - " + error.message);
         });
@@ -2032,6 +2034,39 @@
     }, function(error) {
       return response.error(error);
     });
+  });
+
+  Parse.Cloud.afterSave("ProductItem", function(request) {
+    var categoryId, mrp, productObject, queryCategory;
+    productObject = request.object;
+    mrp = parseInt(productObject.get("mrp"));
+    if ((!productObject.existed()) || ((productObject.existed()) && (productObject.createdAt !== productObject.updatedAt))) {
+      categoryId = productObject.get("category").id;
+      queryCategory = new Parse.Query("Category");
+      queryCategory.equalTo("objectId", categoryId);
+      return queryCategory.first().then(function(categoryObject) {
+        var newPriceRange, oldPriceRange;
+        newPriceRange = [];
+        oldPriceRange = categoryObject.get("price_range");
+        if ((_.isUndefined(oldPriceRange)) || (_.isEmpty(oldPriceRange))) {
+          oldPriceRange[0] = 0;
+          oldPriceRange[1] = 0;
+        }
+        oldPriceRange[0] = parseInt(oldPriceRange[0]);
+        oldPriceRange[1] = parseInt(oldPriceRange[1]);
+        if (mrp >= oldPriceRange[1]) {
+          newPriceRange[0] = oldPriceRange[0];
+          newPriceRange[1] = mrp;
+        } else {
+          newPriceRange[0] = mrp;
+          newPriceRange[1] = oldPriceRange[1];
+        }
+        categoryObject.set("price_range", newPriceRange);
+        return categoryObject.save();
+      }, function(error) {
+        return console.log("Got an error while fetching category " + error.code + " : " + error.message);
+      });
+    }
   });
 
   findAttribValues = (function(_this) {
