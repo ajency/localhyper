@@ -49,6 +49,17 @@ hr {
 /*.list{
 	  border-top: 1px solid #ccc
 }*/
+.big-icon {
+  font-size: 30px;
+  line-height: 45px;
+}
+.single-input input {
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+  width: 100%;
+  font-size: 30px;
+}
 .text-primary {
   color: #f35a59;
 }
@@ -1021,7 +1032,7 @@ sm {
   padding: 5px 8px;
   padding-bottom: 35px;
   text-align: center;
-  height: 75px;
+  height: 70px;
 }
 .make-an-offer .radio-icon-hide {
   visibility: hidden;
@@ -1061,7 +1072,7 @@ sm {
 }
 h5.with-sep {
   text-align: center;
-  border-bottom: 1px solid #acacac;
+  border-bottom: 1px solid #D2D2D2;
   height: 7px;
 }
 h5.with-sep span {
