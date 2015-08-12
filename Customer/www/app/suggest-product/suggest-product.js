@@ -5,7 +5,7 @@ angular.module('LocalHyper.suggestProduct', []).controller('suggestProductCtrl',
       console.log(categories);
       return $scope.suggest.items = categories;
     });
-    return $scope.suggest = {
+    $scope.suggest = {
       productName: null,
       category: null,
       brand: null,
@@ -26,7 +26,8 @@ angular.module('LocalHyper.suggestProduct', []).controller('suggestProductCtrl',
             "category": this.category.name,
             "brand": this.brand,
             "description": this.productDescription,
-            "comments": this.yourComments
+            "comments": this.yourComments,
+            "userType": "Customer"
           };
           return $http.post('functions/sendMail', param).then(function(data) {
             return CToast.showLongBottom('Thank you for your time. We will do our best to accommodate your suggestion at the earliest.');
@@ -38,6 +39,11 @@ angular.module('LocalHyper.suggestProduct', []).controller('suggestProductCtrl',
         }
       }
     };
+    return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
+      if (!viewData.enableBack) {
+        return viewData.enableBack = true;
+      }
+    });
   }
 ]).config([
   '$stateProvider', function($stateProvider) {

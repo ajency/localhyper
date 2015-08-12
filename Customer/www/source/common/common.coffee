@@ -2,9 +2,10 @@ angular.module 'LocalHyper.common', []
 
 
 .factory 'App', ['$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate'
-	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', '$ionicScrollDelegate'
-	, ($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window
-	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate)->
+	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q'
+	, '$ionicScrollDelegate', '$cordovaInAppBrowser'
+	, ($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar
+	, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate, $cordovaInAppBrowser)->
 
 		App = 
 
@@ -85,6 +86,14 @@ angular.module 'LocalHyper.common', []
 
 			humanize : (str)->
 				s.humanize str
+
+			openLink : (url)->
+				options = location: 'yes'
+				$cordovaInAppBrowser.open url, '_system', options
+
+			callSupport : ->
+				telURI = "tel:#{SUPPORT_NUMBER}"
+				document.location.href = telURI
 
 			getInstallationId : ->
 				defer = $q.defer()

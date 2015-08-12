@@ -157,6 +157,7 @@ angular.module 'LocalHyper.products'
 					ProductsAPI.findSellers params
 					.then (sellers)=>
 						@addSellerMarkers sellers
+						App.scrollTop()
 					, (error)->
 						CToast.show 'Request failed, please try again'
 					.finally ->
@@ -191,7 +192,7 @@ angular.module 'LocalHyper.products'
 					else
 						product = ProductsAPI.productDetails 'get'
 						CSpinner.show '', 'Please wait...'
-						params = 
+						params =  
 							"customerId": User.getId()
 							"productId": product.objectId
 							"categoryId": product.category.objectId
@@ -226,6 +227,9 @@ angular.module 'LocalHyper.products'
 
 
 		$scope.$on '$ionicView.beforeEnter', ->
+			App.scrollTop()
+
+		$scope.$on '$ionicView.afterEnter', ->
 			$scope.view.init()
 ]
 

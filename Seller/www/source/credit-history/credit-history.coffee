@@ -24,10 +24,11 @@ angular.module 'LocalHyper.creditHistory', []
 					@setCreditDetails User.getCurrent()
 
 			setCreditDetails : (user)->
-				totalCredit = user.get 'addedCredit'
-				usedCredit  = user.get 'subtractedCredit'
-				@creditAvailable = parseInt(totalCredit) - parseInt(usedCredit)
-				@creditUsed = usedCredit
+				$scope.$apply =>
+					totalCredit = user.get 'addedCredit'
+					usedCredit  = user.get 'subtractedCredit'
+					@creditAvailable = parseInt(totalCredit) - parseInt(usedCredit)
+					@creditUsed = usedCredit
 
 			onInfiniteScroll : ->
 				@refresh = false
@@ -42,7 +43,7 @@ angular.module 'LocalHyper.creditHistory', []
 				@getCreditHistory()
 
 			getCreditHistory : ->
-				params = page: @page, displayLimit: 5
+				params = page: @page, displayLimit: 10
 				
 				CreditHistoryAPI.getAll params
 				.then (data)=>
@@ -83,13 +84,20 @@ angular.module 'LocalHyper.creditHistory', []
 				@page = 0
 				@canLoadMore = true
 
-			getTransactionDate : (createdAt)->
-				moment(createdAt.iso).format 'DD/MM/YYYY'
-
 		
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			if !viewData.enableBack
 				viewData.enableBack = true
+]
+
+
+.controller 'EachCreditRecordCtrl', ['$scope', ($scope)->
+
+	createdAt = $scope.credit.createdAt
+	$scope.credit.date = 
+		month: moment(createdAt.iso).format 'MMM'
+		day: moment(createdAt.iso).format 'DD'
+		year: moment(createdAt.iso).format 'YYYY'
 ]
 
 

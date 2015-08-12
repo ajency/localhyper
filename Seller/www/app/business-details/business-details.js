@@ -1,5 +1,6 @@
 angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', '$rootScope', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q, $rootScope) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', '$rootScope', '$ionicPlatform', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q, $rootScope, $ionicPlatform) {
+    var onDeviceBack;
     $scope.view = {
       name: '',
       phone: '',
@@ -69,7 +70,7 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
             $ionicModal.fromTemplateUrl('views/business-details/location.html', {
               scope: $scope,
               animation: 'slide-in-up',
-              hardwareBackButtonClose: true
+              hardwareBackButtonClose: false
             }).then((function(_this) {
               return function(modal) {
                 return defer.resolve(_this.modal = modal);
@@ -344,14 +345,25 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         });
       }
     };
+    onDeviceBack = function() {
+      var locationModal;
+      locationModal = $scope.view.location.modal;
+      if (!_.isNull(locationModal) && locationModal.isShown()) {
+        return locationModal.hide();
+      } else {
+        return App.goBack(-1);
+      }
+    };
     $scope.$on('$destroy', function() {
       var locationModal;
+      $ionicPlatform.offHardwareBackButton(onDeviceBack);
       locationModal = $scope.view.location.modal;
       if (!_.isNull(locationModal)) {
         return locationModal.remove();
       }
     });
     return $scope.$on('$ionicView.enter', function() {
+      $ionicPlatform.onHardwareBackButton(onDeviceBack);
       return App.hideSplashScreen();
     });
   }

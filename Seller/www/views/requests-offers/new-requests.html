@@ -1,6 +1,6 @@
 <ion-view
 	aj-remove-box-shadow
-	ng-init="view.init()">
+	ng-init="view.init();">
 
 	<ion-nav-title>
 		<img src="img/logo.png"/>
@@ -16,7 +16,7 @@
 	<ion-content ng-switch="view.display">
 
 		<ion-refresher
-			on-refresh="view.onPullToRefresh()" 
+			on-refresh="view.onPullToRefresh();"
 			class="aj-refresher">
 		</ion-refresher>
 
@@ -25,41 +25,42 @@
 			ng-switch-when="loader">
 		</ion-spinner>
 
-		<ion-list 
-			ng-switch-when="noError" 
-			class="card-list">
+		<ion-list
+			ng-switch-when="noError"
+			class="card-list list-inset">
 
-			<ion-item 
+			<div
 				ng-if="view.requests.length == 0;"
 				class="item-text-wrap">
-				You currently have no new requests
-				Hint:Try increasing your delivery area range to view more requests
-			</ion-item>
+				<h4 class="text-center hint-relo">
+				<span class="sing">You currently have no new requests</span>
+				<span class="dark">Hint:</span> Try increasing your delivery area range to view more requests</h4>
+			</div>
 
 	       	<ion-item
-	       		class="card"
+	       		class="card-box"
 	       		ng-repeat="request in view.requests | orderBy: view.sortBy"
 	       		ng-click="view.requestDetails.show(request)"
 	       		ng-class="(request.notification.hasSeen) ? '' : 'notify-alert'"
 	       		ng-controller="EachRequestTimeCtrl">
-				
+
 				<div class="item-wrapper-nr">
 					<div class="item-avatar border-none margin-none">
 				        <img ng-src="{{request.product.image[0].src}}">
 				    </div>
-				    <h2>{{request.product.name}}</h2>
-				    <p>{{request.radius.toFixed(2)}} kms radius</p>
+				    <h2>{{request.product.name}} <i class="ion-android-notifications hidden"></i></h2>
+				    <p> <i class=" ion-ios-clock-outline" ></i> {{request.timeStr}}</p>
 			    </div>
 
 				<div class="row item border-none" >
 			        <div class="col  p-t-0">
 			            <sm class="light-gray"> Local Price</sm><br>
-			            <h3 
+			            <h3
 			            	class="item-text-wrap margin-none big-txt"
 			            	ng-if="request.platformPrice !== ''">
 			            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.platformPrice)}}
 			            </h3>
-			            <h3 
+			            <h3
 			            	class="item-text-wrap margin-none big-txt"
 			            	ng-if="request.platformPrice === ''">
 			            	N/A
@@ -74,11 +75,13 @@
 			    </div>
 			    <div class="item item-divider">
 			        <div class="pull-right ">
-			            <h3 class="margin-none "> Make an offer &nbsp;<i class="ion ion-log-out btn-danger"></i></h3>
+			            <h3 class="margin-none uppercase text-primary"> Make an offer </h3>
 			        </div>
 
-			        <div class="pull-left ">
-			            <sm class="subdued">{{request.timeStr}}</sm>
+			        <div class="pull-left text-primary">
+			        	<b class="light-gray">
+			        		<i class="ion-android-pin text-primary"></i> {{request.radius.toFixed(2)}} kms radius
+			        	</b>
 			        </div>
 			    </div>
 
@@ -88,7 +91,7 @@
 		<aj-error
 			ng-switch-when="error"
 			error-type="view.errorType"
-			tap-to-retry="view.onTapToRetry()">
+			tap-to-retry="view.onTapToRetry()" class="error-wrapper">
 		</aj-error>
 
 	</ion-content>
@@ -96,20 +99,21 @@
 	<ion-footer-bar class="bar-light">
 		<div class="row">
 			<div class="col col-50 text-center" ng-click="view.showSortOptions()">
-				<h5 class="margin-none  normal">
-					{{view.sortName}}
-				</h5>
-				<h5 class="margin-none  normal">
-					<i class="ion ion-arrow-swap"></i> SORT
+
+				<h5 class="margin-none  normal filter-txt">
+					<i class="ion ion-arrow-swap"></i>
+					SORT<br>
+					<sm>{{view.sortName}}<sm>
 				</h5>
 			</div>
 
 			<div class="col col-50 text-center border-left" ng-click="view.filter.openModal()">
-				<h5 class="margin-none  normal">
-					{{view.filter.excerpt}}
-				</h5>
-				<h5 class="margin-none  normal">
-					<i class="ion ion-funnel"></i> FILTER
+
+				<h5 class="margin-none  normal filter-txt">
+					<i class="ion ion-funnel"></i>
+			 		FILTER
+					<br>
+					<sm>{{view.filter.excerpt}}<sm>
 				</h5>
 			</div>
 		</div>

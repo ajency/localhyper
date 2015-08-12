@@ -189,77 +189,27 @@ angular.module 'LocalHyper.myRequests'
 		$scope.$on '$destroy', ->
 			inAppNotificationEvent()
 			$interval.cancel $scope.view.interval
+
+		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
+			if !viewData.enableBack
+				viewData.enableBack = true
 ]
 
 
-.controller 'EachOfferTimeCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
+.controller 'EachOfferTimeCtrl', ['$scope', '$interval', 'TimeString', 'DeliveryTime'
+	, ($scope, $interval, TimeString, DeliveryTime)->
 
-	#Delivery time
-	deliveryTime = $scope.offer.deliveryTime
-	value = deliveryTime.value
-	switch deliveryTime.unit
-		when 'hr'
-			unit = if value is 1 then 'hr' else 'hrs'
-		when 'day'
-			unit = if value is 1 then 'day' else 'days' 
-
-	$scope.offer.deliveryTimeStr = "#{value} #{unit}"
-
-	getDeliveryTimeLeft = (obj)->
-		hours     = if deliveryTime.unit is 'hr' then value else value*24
-		format    = 'DD/MM/YYYY HH:mm:ss'
-		updatedAt = moment(obj.iso).format format
-		totalTime = moment(updatedAt, format).add hours, 'h'
-		timeLeft  = totalTime.diff moment()
-		duration  = moment.duration timeLeft
-		daysLeft  = parseInt duration.asDays().toFixed(0)
-		hoursLeft = parseInt duration.asHours().toFixed(0)
-		minsLeft  = parseInt duration.asMinutes().toFixed(0)
-		if minsLeft < 60
-			min = if minsLeft is 1 then 'min' else 'mins'
-			str = if minsLeft >= 0 then "#{minsLeft} #{min}" else "0"
-		else if hoursLeft < 24
-			hr = if hoursLeft is 1 then 'hr' else 'hrs'
-			str = "#{hoursLeft} #{hr}"
-		else
-			day = if daysLeft is 1 then 'day' else 'days'
-			str = "#{daysLeft} #{day}"
-		str
-	
-	#Offer & left delivery time
-	setTime = ->
-		$scope.offer.timeStr = TimeString.get $scope.offer.createdAt
-		$scope.offer.deliveryTimeLeftStr = getDeliveryTimeLeft $scope.offer.updatedAt
-
-	setTime()
-	interval = $interval setTime, 60000
-	$scope.$on '$destroy', ->
-		$interval.cancel interval
-]
-
-
-.directive 'ajCountDown', ['$timeout', ($timeout)->
-
-	restrict: 'A'
-	scope:
-		createdAt : '='
-		countDownFinish: '&'
-
-	link: (scope, el, attrs)->
+		$scope.offer.deliveryTimeStr = DeliveryTime.humanize $scope.offer.deliveryTime
 		
-		$timeout ->
-			createdAt = moment(scope.createdAt.iso)
-			total = moment(createdAt).add 24, 'hours'
-			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
+		#Offer time & left delivery time
+		setTime = ->
+			$scope.offer.timeStr = TimeString.get $scope.offer.createdAt
+			$scope.offer.deliveryTimeLeftStr = DeliveryTime.left $scope.offer.updatedAt
 
-			# totalStr = '2015/07/30 14:5:00'
-
-			$(el).countdown totalStr, (event)->
-				$(el).html event.strftime('%-H:%-M:%-S')
-
-			.on 'finish.countdown', (event)->
-				scope.$apply ->
-					scope.countDownFinish()
+		setTime()
+		interval = $interval setTime, 60000
+		$scope.$on '$destroy', ->
+			$interval.cancel interval
 ]
 
 

@@ -23,11 +23,15 @@ angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
         })(this));
       },
       setCreditDetails: function(user) {
-        var totalCredit, usedCredit;
-        totalCredit = user.get('addedCredit');
-        usedCredit = user.get('subtractedCredit');
-        this.creditAvailable = parseInt(totalCredit) - parseInt(usedCredit);
-        return this.creditUsed = usedCredit;
+        return $scope.$apply((function(_this) {
+          return function() {
+            var totalCredit, usedCredit;
+            totalCredit = user.get('addedCredit');
+            usedCredit = user.get('subtractedCredit');
+            _this.creditAvailable = parseInt(totalCredit) - parseInt(usedCredit);
+            return _this.creditUsed = usedCredit;
+          };
+        })(this));
       },
       onInfiniteScroll: function() {
         this.refresh = false;
@@ -45,7 +49,7 @@ angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
         var params;
         params = {
           page: this.page,
-          displayLimit: 5
+          displayLimit: 10
         };
         return CreditHistoryAPI.getAll(params).then((function(_this) {
           return function(data) {
@@ -97,9 +101,6 @@ angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
         this.display = 'loader';
         this.page = 0;
         return this.canLoadMore = true;
-      },
-      getTransactionDate: function(createdAt) {
-        return moment(createdAt.iso).format('DD/MM/YYYY');
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
@@ -107,6 +108,16 @@ angular.module('LocalHyper.creditHistory', []).controller('creditHistoryCtrl', [
         return viewData.enableBack = true;
       }
     });
+  }
+]).controller('EachCreditRecordCtrl', [
+  '$scope', function($scope) {
+    var createdAt;
+    createdAt = $scope.credit.createdAt;
+    return $scope.credit.date = {
+      month: moment(createdAt.iso).format('MMM'),
+      day: moment(createdAt.iso).format('DD'),
+      year: moment(createdAt.iso).format('YYYY')
+    };
   }
 ]).config([
   '$stateProvider', function($stateProvider) {

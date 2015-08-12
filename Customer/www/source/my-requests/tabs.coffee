@@ -19,6 +19,67 @@ angular.module 'LocalHyper.myRequests', []
 ]
 
 
+.directive 'ajCountDown', ['$timeout', ($timeout)->
+
+	restrict: 'A'
+	scope:
+		createdAt : '='
+		countDownFinish: '&'
+
+	link: (scope, el, attrs)->
+		
+		$timeout ->
+			createdAt = moment(scope.createdAt.iso)
+			total = moment(createdAt).add 24, 'hours'
+			totalStr = moment(total).format 'YYYY/MM/DD HH:mm:ss'
+
+			# totalStr = '2015/07/30 14:5:00'
+
+			$(el).countdown totalStr, (event)->
+				$(el).html event.strftime('%-H:%-M:%-S')
+
+			.on 'finish.countdown', (event)->
+				scope.$apply ->
+					scope.countDownFinish()
+]
+
+
+.factory 'DeliveryTime', [->
+
+	DeliveryTime = 
+
+		humanize : (obj)->
+			if !_.isUndefined obj
+				value = obj.value
+				switch obj.unit
+					when 'hr'
+						unitText = if value is 1 then 'Hour' else 'Hours'
+					when 'day'
+						unitText = if value is 1 then 'Day' else 'Days'
+
+				"#{value} #{unitText}"
+
+		left : (timeObj)->
+			format    = 'DD/MM/YYYY HH:mm:ss'
+			deliveryDate = moment(timeObj.iso).format format
+			timeLeft  = moment(deliveryDate, format).diff moment()
+			duration  = moment.duration timeLeft
+			daysLeft  = parseInt duration.asDays().toFixed(0)
+			hoursLeft = parseInt duration.asHours().toFixed(0)
+			minsLeft  = parseInt duration.asMinutes().toFixed(0)
+			if minsLeft < 60
+				min = if minsLeft is 1 then 'min' else 'mins'
+				str = if minsLeft >= 0 then "#{minsLeft} #{min}" else "0"
+			else if hoursLeft < 24
+				hr = if hoursLeft is 1 then 'hr' else 'hrs'
+				str = "#{hoursLeft} #{hr}"
+			else
+				day = if daysLeft is 1 then 'day' else 'days'
+				str = "#{daysLeft} #{day}"
+			str
+]
+
+
 .factory 'TimeString', [->
 
 	TimeString = {}
@@ -81,13 +142,13 @@ angular.module 'LocalHyper.myRequests', []
 				"appContent":
 					templateUrl: 'views/my-requests/tabs.html'
 
-		.state 'open-requests',
-			url: '/open-requests'
+		.state 'my-requests',
+			url: '/my-requests'
 			parent: 'tabs'
 			views: 
-				"openRequestsTab":
-					controller: 'OpenRequestCtrl'
-					templateUrl: 'views/my-requests/open-requests.html'
+				"myRequestsTab":
+					controller: 'MyRequestCtrl'
+					templateUrl: 'views/my-requests/my-requests.html'
 
 		.state 'requests-history',
 			url: '/requests-history'

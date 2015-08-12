@@ -134,6 +134,18 @@ angular.module 'LocalHyper.myRequests'
 
 		defer.promise
 
+	RequestAPI.getOpenRequestCount = ->
+		defer = $q.defer()
+		params = "customerId": User.getId()
+
+		$http.post 'functions/getOpenRequestCount', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
 	RequestAPI
 ]
 

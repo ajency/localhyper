@@ -6,15 +6,16 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.aboutUs', 'LocalHyper.googleMaps','LocalHyper.suggestProduct', 'LocalHyper.myRequests']
 
 
-.run ['$rootScope', 'App', 'GoogleMaps', 'User', ($rootScope, App, GoogleMaps, User)->
+.run ['$rootScope', 'App', 'User', ($rootScope, App, User)->
 
 	Parse.initialize APP_ID, JS_KEY
 	$rootScope.App = App
-	GoogleMaps.loadScript()
 
 	#User Notification Icon (Right popover)
 	App.notification = 
 		icon: User.isLoggedIn()
+		openRequests: 0
+		offers: 0
 		badge: false
 		count: 0
 		increment : ->

@@ -33,6 +33,7 @@ angular.module 'LocalHyper.suggestProduct', []
 						"brand": @brand
 						"description" : @productDescription
 						"comments" : @yourComments
+						"userType" : "Customer"
 
 					$http.post 'functions/sendMail', param
 					.then (data)->
@@ -41,6 +42,10 @@ angular.module 'LocalHyper.suggestProduct', []
 						CToast.show('Request failed, please try again')
 					.finally ->
 						CSpinner.hide()
+
+		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
+			if !viewData.enableBack
+				viewData.enableBack = true
 ]
 
 

@@ -220,7 +220,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
         params = {
           page: this.page,
           acceptedOffers: false,
-          displayLimit: 3,
+          displayLimit: 5,
           sortBy: this.sortBy,
           descending: this.descending,
           selectedFilters: this.filter.selected
@@ -363,9 +363,7 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
     });
     $scope.$on('modal.hidden', function() {
       $scope.view.offerDetails.pendingRequestId = "";
-      return $timeout(function() {
-        return $scope.view.offerDetails.showExpiry = false;
-      }, 1000);
+      return $scope.view.offerDetails.showExpiry = false;
     });
     $rootScope.$on('make:offer:success', function() {
       App.scrollTop();

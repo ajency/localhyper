@@ -65,6 +65,15 @@ angular.module('LocalHyper.googleMaps', []).factory('GoogleMaps', [
             return address.postal_code = addr.long_name;
         }
       });
+      if (_.isUndefined(address.city)) {
+        _.each(results, function(result) {
+          return _.each(result.address_components, function(addr) {
+            if (addr.types[0] === 'locality') {
+              return address.city = addr.long_name;
+            }
+          });
+        });
+      }
       return address;
     };
     GoogleMaps.fullAddress = function(address) {
@@ -72,7 +81,7 @@ angular.module('LocalHyper.googleMaps', []).factory('GoogleMaps', [
       string = '';
       _.each(address, function(val, key) {
         if (key !== 'full') {
-          return string += key === 'postal_code' ? "" + val : val + ", ";
+          return string += key === 'postal_code' ? "" + val : "" + val + ", ";
         }
       });
       return string;

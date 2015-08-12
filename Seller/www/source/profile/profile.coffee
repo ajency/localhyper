@@ -16,7 +16,21 @@ angular.module 'LocalHyper.profile', []
 				@businessName = BussinessDetails.businessName
 				@phone = BussinessDetails.phone
 				@name = BussinessDetails.name
+				@getCreditDetails()
 				@categoryChains = CategoryChains
+
+			getCreditDetails : ->
+				User.update()
+				.then (user)=>
+					@setCreditDetails user
+				, (error)=>
+					@setCreditDetails User.getCurrent()
+
+			setCreditDetails : (user)->
+				$scope.$apply =>
+					totalCredit = user.get 'addedCredit'
+					usedCredit  = user.get 'subtractedCredit'
+					@creditAvailable = parseInt(totalCredit) - parseInt(usedCredit)
 				
 			getBrands : (brands)->
 				brandNames = _.pluck brands, 'name'

@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', '$ionicScrollDelegate', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate) {
     $scope.view = {
       display: 'loader',
       errorType: '',
@@ -106,6 +106,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       getSingleProductDetails: function() {
         return ProductsAPI.getSingleProduct(this.productID).then((function(_this) {
           return function(productData) {
+            console.log(productData);
             _this.product = productData;
             return ProductsAPI.getNewOffers(_this.productID);
           };
@@ -150,7 +151,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           if (_.has(attrs.attribute, 'unit')) {
             unit = s.humanize(attrs.attribute.unit);
           }
-          return value + " " + unit;
+          return "" + value + " " + unit;
         } else {
           return '';
         }
@@ -159,7 +160,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         if (!User.isLoggedIn()) {
           return App.navigate('verify-begin');
         } else if (_.isUndefined(window.google)) {
-          CSpinner.show('', 'Please wait...');
+          CSpinner.show('', 'Please wait, loading resources');
           return GoogleMaps.loadScript().then((function(_this) {
             return function() {
               return _this.getBestPrices();
@@ -200,7 +201,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
     });
     return $scope.$on('$ionicView.beforeEnter', function() {
       if (_.contains(['products', 'verify-success'], App.previousState)) {
-        App.scrollTop();
+        $ionicScrollDelegate.$getByHandle('single-product-handle').scrollTop(true);
         return $scope.view.reset();
       }
     });

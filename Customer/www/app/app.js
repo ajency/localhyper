@@ -1,10 +1,11 @@
 angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.aboutUs', 'LocalHyper.googleMaps', 'LocalHyper.suggestProduct', 'LocalHyper.myRequests']).run([
-  '$rootScope', 'App', 'GoogleMaps', 'User', function($rootScope, App, GoogleMaps, User) {
+  '$rootScope', 'App', 'User', function($rootScope, App, User) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
-    GoogleMaps.loadScript();
     App.notification = {
       icon: User.isLoggedIn(),
+      openRequests: 0,
+      offers: 0,
       badge: false,
       count: 0,
       increment: function() {

@@ -17,12 +17,12 @@ angular.module 'LocalHyper.products'
 			selectedFilters = "all"
 
 		params = 
-			"categoryId": "#{opts.categoryID}"
+			"categoryId": opts.categoryID
 			"selectedFilters": selectedFilters
 			"sortBy": opts.sortBy
 			"ascending": opts.ascending
 			"page": opts.page
-			"displayLimit": 10
+			"displayLimit": opts.displayLimit
 
 		$http.post 'functions/getProductsNew', params
 		.then (data)->

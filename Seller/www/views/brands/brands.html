@@ -1,7 +1,8 @@
 <ion-view ng-init="view.init()">
 
 	<ion-nav-title>
-		Select Brands
+		{{view.title}}
+		<!-- Select Brands -->
     </ion-nav-title>
 
     <ion-nav-buttons side="right">
@@ -13,8 +14,16 @@
 	</ion-nav-buttons>
 
 	<ion-header>
-		<div class="bar bar-subheader bar-assertive">
-			<h2 class="title m-title">{{view.title}}</h2>
+		<div class="bar bar-subheader bar-assertive p-a-0">
+			<div class="item item-input-inset search-brands-wrap p-a-0">
+				<button class="button button-small">
+					<i class="icon ion-search"></i>
+				</button>
+				<label class="item-input-wrapper search-brands">
+					<input type="text" placeholder="Search for brands">
+				</label>
+			</div>
+			<!-- <h2 class="title m-title">{{view.title}}</h2> -->
 		</div>
 	</ion-header>
 
@@ -30,7 +39,7 @@
 		<br><br>
 		<ion-list ng-switch-when="noError">
 			<div
-				class="col col-50 border-card relative"
+				class="col col-25 border-card relative all-brands-indi"
 				ng-repeat="brand in view.brands"
 				ng-init="brand.selected=view.brandSelection(brand.objectId);">
 

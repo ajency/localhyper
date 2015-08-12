@@ -18,3 +18,4 @@ List of cordova plugins used:
 16) ionic plugin add https://github.com/pushandplay/cordova-plugin-apprate.git
 17) ionic plugin add https://github.com/whiteoctober/cordova-plugin-app-version.git
 18) ionic plugin add https://github.com/VitaliiBlagodir/cordova-plugin-datepicker.git
+19) ionic plugin add cordova-plugin-inappbrowser

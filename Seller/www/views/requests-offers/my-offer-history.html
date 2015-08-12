@@ -1,6 +1,6 @@
-<ion-view 
+<ion-view
 	aj-remove-box-shadow
-	ng-init="view.init()">
+	ng-init="view.init();">
 
 	<ion-nav-title>
 		<img src="img/logo.png"/>
@@ -16,22 +16,23 @@
 	<ion-content ng-switch="view.display">
 
 		<ion-refresher
-			on-refresh="view.onPullToRefresh()" 
+			on-refresh="view.onPullToRefresh()"
 			class="aj-refresher">
 		</ion-refresher>
 
-		<ion-list 
-			class="card-list" 
+		<ion-list
+			class="card-list list-inset"
 			ng-switch-when="noError">
 
-			<ion-item 
+			<h4
 				ng-if="view.noOffersMade"
-				class="item-text-wrap">
+				class="text-center">
 				You have not made any offers.
-			</ion-item>
-	       	
+			</h4>
+
 	       	<ion-item
-	       		class="card"
+	       		class="card-box "
+	       		id="{{App.humanize(request.offerStatus)}}"
 	       		ng-repeat="request in view.requests"
 	       		ng-click="view.offerDetails.show(request)">
 
@@ -39,36 +40,31 @@
 					<div class="item-avatar border-none margin-none">
 				        <img ng-src="{{request.product.images[0].src}}">
 				    </div>
-				    <h2>{{request.product.name}}</h2> 
-				    <p> {{request.distanceFromCustomer.toFixed(2)}} kms radius </p>
-				    <!-- <div class="pull-right"> Auto Bid : no </div> -->
-
-				    <div class="col p-t-0" >
-			            <sm class="light-gray"> Claimed delivery :</sm>
-			            	{{view.deliveryTime.humanize(request.offerDeliveryTime)}}
-			            <br>
-			            <div ng-if="request.request.status == 'open' ">
-				            <sm class="light-gray" > Request expires in  :</sm>
-		            	 	<sm class=""
-								aj-count-down
-								created-at="request.request.createdAt"
-								count-down-finish="view.onRequestExpiry(request)">
-							</sm>
-					   </div>
-			        </div>
-					
-					<sm 
-						class="light-gray" 
-						ng-if="request.offerStatus != 'unaccepted'"> 
-						Request Status : {{App.humanize(request.request.status)}}
-					</sm>
+				    <h2 class="">{{request.product.name}}</h2>
+				    <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms radius</b>
 				</div>
 
+					<!-- 	<div class="row">
+					  <div class="col col-50">
+					  	 <div ng-if="request.request.status == 'open' ">
+				            <sm class="light-gray text-left"> Claimed delivery :</sm>
+			            	<b>{{view.deliveryTime.humanize(request.offerDeliveryTime)}}</b>
+					   </div>
+					  </div>
+					  <div class="col col-50 text-right">
+					  	<sm
+						class="light-gray text-right"
+						ng-if="request.offerStatus != 'unaccepted'">
+						Request Status :
+					</sm><b>{{App.humanize(request.request.status)}}</b>
+					  </div>
+
+					</div> -->
 				<div class="row item border-none" >
 			        <div class="col p-t-0">
 			            <sm class="light-gray">Offer Price</sm><br>
 			            <h3 class=" item-text-wrap margin-none big-txt ">
-			            	<span class="WebRupee subdued">&#x20B9;</span> 
+			            	<span class="WebRupee subdued">&#x20B9;</span>
 			            	{{App.toINR(request.offerPrice)}}
 			            </h3>
 			        </div>
@@ -82,11 +78,25 @@
 
 			    <div class="item item-divider">
 			        <div class="pull-right ">
-			            <h3 class="margin-none"> Details &nbsp;<i class="ion ion-log-out btn-danger"></i></h3>
+			            <!-- <h3 class="margin-none"> Details &nbsp;<i class="ion ion-android-arrow-forward "></i></h3> -->
+			       <h3
+						class="light-gray text-right margin-none"
+						ng-if="request.offerStatus != 'unaccepted'">
+						Request Status :
+					<b>{{App.humanize(request.request.status)}}</b></h3>
 			        </div>
 
-			        <div class="pull-left ">
-			            Offer status: <b>{{App.humanize(request.offerStatus)}}</b>
+			        <div
+			        	class="pull-left"
+			        	ng-if="request.request.status === 'open'">
+			        	<i class="ion-android-stopwatch"></i>
+		            	 	<b class="text-primary"
+								aj-count-down
+								created-at="request.request.createdAt"
+								count-down-finish="view.onRequestExpiry(request)">
+							</b>
+			        	<!--   -->
+			          <!--   Offer status: <b>{{App.humanize(request.offerStatus)}}</b> -->
 			        </div>
 			    </div>
 			</ion-item>
@@ -95,39 +105,40 @@
 		<aj-error
 			ng-switch-when="error"
 			error-type="view.errorType"
-			tap-to-retry="view.onTapToRetry()">
+			tap-to-retry="view.onTapToRetry()" class="error-wrapper">
 		</aj-error>
 
-		<ion-item ng-if="view.gotAllOffers && view.requests.length !== 0">
-			That's all folks, no more offers to display.
-		</ion-item>
+		<div ng-if="view.gotAllOffers && view.requests.length !== 0">
+			<h4 class="text-center "> That's all folks, no more offers to display. </h4>
+		</div>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
 			ng-if="view.canLoadMore"
-			distance="1%" 
+			distance="1%"
 			class="aj-refresher">
 		</ion-infinite-scroll>
 
 	</ion-content>
 
-	<ion-footer-bar class="bar-dark">
+	<ion-footer-bar class="bar-light">
 		<div class="row">
 			<div class="col col-50 text-center" ng-click="view.showSortOptions()">
-				<h5 class="margin-none text-light normal">
-					{{view.sortName}}
-				</h5>
-				<h5 class="margin-none text-light normal">
-					<i class="ion ion-arrow-swap"></i> SORT
+
+				<h5 class="margin-none  normal filter-txt">
+					<i class="ion ion-arrow-swap"></i>
+					SORT<br>
+					<sm>{{view.sortName}}<sm>
 				</h5>
 			</div>
 
 			<div class="col col-50 text-center border-left" ng-click="view.filter.openModal()">
-				<h5 class="margin-none text-light normal">
-					{{view.filter.excerpt}}
-				</h5>
-				<h5 class="margin-none text-light normal">
-					<i class="ion ion-funnel"></i> FILTER
+
+				<h5 class="margin-none  normal filter-txt">
+					<i class="ion ion-funnel"></i>
+			 		FILTER
+					<br>
+					<sm>{{view.filter.excerpt}}<sm>
 				</h5>
 			</div>
 		</div>

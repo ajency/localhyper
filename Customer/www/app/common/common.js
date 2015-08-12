@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common', []).factory('App', [
-  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', '$ionicScrollDelegate', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate) {
+  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', '$ionicScrollDelegate', '$cordovaInAppBrowser', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate, $cordovaInAppBrowser) {
     var App;
     return App = {
       start: true,
@@ -102,6 +102,18 @@ angular.module('LocalHyper.common', []).factory('App', [
       },
       humanize: function(str) {
         return s.humanize(str);
+      },
+      openLink: function(url) {
+        var options;
+        options = {
+          location: 'yes'
+        };
+        return $cordovaInAppBrowser.open(url, '_system', options);
+      },
+      callSupport: function() {
+        var telURI;
+        telURI = "tel:" + SUPPORT_NUMBER;
+        return document.location.href = telURI;
       },
       getInstallationId: function() {
         var defer;

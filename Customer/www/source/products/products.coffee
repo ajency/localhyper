@@ -8,14 +8,13 @@ angular.module 'LocalHyper.products', []
 
 		$scope.view =
 			title: Product.subCategoryTitle
+			footer: false
 			gotAllProducts: false
 			products: []
 			other: []
 			page: 0
 			canLoadMore: true
 			refresh: false
-			sortBy: 'popularity'
-			ascending: true
 			
 			filter:
 				modal: null
@@ -147,8 +146,15 @@ angular.module 'LocalHyper.products', []
 									selected.push(attr.id) if attr.selected
 								@selectedFilters.otherFilters[attribute] = selected
 					
+					@setExcerpt()
 					@modal.hide()
 					$scope.view.reFetch()
+
+				setExcerpt : ->
+					filterNames = []
+					_.each @allAttributes, (attr, index)=>
+						filterNames.push(attr.name) if attr.selected > 0
+					@excerpt = filterNames.join ', '
 					
 
 
@@ -157,8 +163,12 @@ angular.module 'LocalHyper.products', []
 
 			reset : ->
 				@sortBy = 'popularity'
-				@ascending = true
+				@sortName = 'Popularity'
+				@ascending = false
+				@filter.excerpt = ''
 				@filter.resetFilters()
+				@pullToRefresh = false
+				@footer = false
 				@reFetch false
 
 			reFetch : (refresh=true)->
@@ -184,7 +194,7 @@ angular.module 'LocalHyper.products', []
 			onPullToRefresh : ->
 				if App.isOnline()
 					@gotAllProducts = false
-					@canLoadMore = true
+					@canLoadMore = false
 					@page = 0
 					@refresh = true
 					@getProducts()
@@ -197,38 +207,49 @@ angular.module 'LocalHyper.products', []
 				@getProducts()
 
 			getProducts : ->
-				ProductsAPI.getAll
+				options = 
 					categoryID: $stateParams.categoryID
 					page: @page
 					sortBy: @sortBy
 					ascending: @ascending
 					selectedFilters: @filter.selectedFilters
+					displayLimit: 10
+
+				ProductsAPI.getAll options
 				.then (data)=>
-					console.log data
-					@onSuccess data
+					@onSuccess data, options.displayLimit
+					@footer = true
 				, (error)=>
 					@onError error
 				.finally =>
 					@page = @page + 1
+					@pullToRefresh = true
 					@onRefreshComplete()
 					App.resize()
 
 			onError : (error)->
-				console.log error
 				CToast.showLong UIMsg.serverError
 				@canLoadMore = false
 			
-			onSuccess : (data)->
+			onSuccess : (data, displayLimit)->
 				@other = data
 				if _.isEmpty @filter.attrValues['brand']
 					@filter.setAttrValues() 
 
 				_products = data.products
-				if _.size(_products) > 0
-					if _.size(_products) < 10 then @canLoadMore = false
-					else @onScrollComplete()
-					if @refresh then @products = _products
-					else @products = @products.concat _products
+				productsSize = _.size _products
+				if productsSize > 0
+					if productsSize < displayLimit
+						@canLoadMore = false
+					else
+						@canLoadMore = true
+						@onScrollComplete()
+					
+					if @refresh
+						@products = []
+						@products = _products
+					else 
+						@products = @products.concat _products
 				else
 					@canLoadMore = false
 
@@ -244,22 +265,25 @@ angular.module 'LocalHyper.products', []
 					"#{value} #{unit}"
 				else ''
 
-			onSort : (sortBy, ascending)->
+			onSort : (sortBy, sortName, ascending)->
 				$ionicLoading.hide()
 
 				switch sortBy
 					when 'popularity'
 						if @sortBy isnt 'popularity'
 							@sortBy = 'popularity'
-							@ascending = true
+							@sortName = sortName
+							@ascending = ascending
 							@reFetch()
 					when 'mrp'
 						if @sortBy isnt 'mrp'
 							@sortBy = 'mrp'
+							@sortName = sortName
 							@ascending = ascending
 							@reFetch()
 						else if @ascending isnt ascending
 							@sortBy = 'mrp'
+							@sortName = sortName
 							@ascending = ascending
 							@reFetch()
 

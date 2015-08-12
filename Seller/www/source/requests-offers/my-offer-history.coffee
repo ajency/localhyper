@@ -172,7 +172,7 @@ angular.module 'LocalHyper.requestsOffers'
 				params = 
 					page: @page
 					acceptedOffers: false
-					displayLimit: 3
+					displayLimit: 5
 					sortBy: @sortBy
 					descending: @descending
 					selectedFilters: @filter.selected
@@ -292,9 +292,7 @@ angular.module 'LocalHyper.requestsOffers'
 		
 		$scope.$on 'modal.hidden', ->
 			$scope.view.offerDetails.pendingRequestId = ""
-			$timeout ->
-				$scope.view.offerDetails.showExpiry = false
-			, 1000
+			$scope.view.offerDetails.showExpiry = false
 
 		$rootScope.$on 'make:offer:success', ->
 			App.scrollTop()

@@ -1,6 +1,8 @@
 <ion-view view-title="">
 
-	<ion-content class="bg-white">
+	<ion-content 
+		class="bg-white" 
+		delegate-handle="single-product-handle">
 
 		<ion-list ng-switch="view.display">
 
@@ -147,7 +149,7 @@
 		<div
 			class="title"
 			ng-hide="view.request.active"
-			ng-click="view.checkUserLogin()">
+			ng-click="view.checkUserLogin();">
 			Get Best Prices
 		</div>
 		<div

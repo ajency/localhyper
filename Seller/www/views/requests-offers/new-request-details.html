@@ -7,13 +7,13 @@
 		<div class="row row-fluid">
 			<div class="col col-20"></div>
 			<div class="col col-60">
-				<h4>Make an Offer</h4>
+				<h4 class="text-light">Make an Offer</h4>
 			</div>
 			<div class="col col-20">
 				<h2
 					ng-click="view.requestDetails.modal.hide()"
 					class="text-right">
-					<i class="ion ion-ios-close-outline"></i>
+					<i class="ion ion-ios-close-outline text-light"></i>
 				</h2>
 			</div>
 		</div>
@@ -30,68 +30,98 @@
 
 		<ion-list ng-switch-when="noError">
 
-			<div class="row">
-				<div class="col col-20">
-					<div class="item-avatar">
-						<img class="" ng-src="{{view.requestDetails.data.product.image[0].src}}" >
+			<div class="list margin-none">
+
+				<div class="item item-details">
+					<div class="row">
+						<div class="col col-20">
+							<div class="item-avatar">
+								<img ng-src="{{view.requestDetails.data.product.image[0].src}}">
+							</div>
+						</div>
+
+						<div class="col col-60">
+							<h2 class="text-left product-item">{{view.requestDetails.data.product.name}}</h2>
+							<h3 class="text-left subdued">
+								Model No : {{view.requestDetails.data.product.model_number}}
+							</h3>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col col-20">
+							<img class="pull-right" src="./img/distance.png" width="55px">
+						</div>
+						<div class="col col-50 m-t-5">
+							<b class="text-left margin-none ">
+								{{view.requestDetails.data.radius.toFixed(1)}} <sm>kms radius</sm>
+							</b>
+							<h3 class="light-gray text-left">Distance from you</h3>
+						</div>
+						<div class="col status">
+							<div class="{{App.humanize(view.requestDetails.data.status)}}">
+								{{App.humanize(view.requestDetails.data.status)}}
+							</div>
+						</div>
+					</div>
+<hr>
+					<div class="row">
+					<div class="col ">
+						<!-- <h5 class="text-left subdued text-center margin-none">
+							MRP  <br><span class="WebRupee subdued">&#x20B9;</span> -->
+						<h4 class="text-left subdued text-center margin-none">
+							MRP  <br><span class="WebRupee subdued">&#x20B9;</span>
+							<b class="big-txt">{{App.toINR(view.requestDetails.data.product.mrp)}}</b>
+						</h4>
+					</div>
+					<div class="col border-right">
+						<h4 class="text-left subdued text-center margin-none">
+							No of offers <br> <b class="big-txt"> {{view.requestDetails.data.offerCount}}</b>
+						</h4>
+					</div>
+						<div class="col border-right"
+							ng-if="view.requestDetails.data.lastOfferPrice !== ''">
+						<!-- <h5 class="text-left subdued text-center margin-none">
+							Last offer <br> <b class="big-txt"> <span class="WebRupee subdued">&#x20B9;</span> -->
+						<h4 class="text-left subdued text-center margin-none">
+							Last offer <br> <span class="WebRupee subdued">&#x20B9;</span> <b class="big-txt">
+							{{App.toINR(view.requestDetails.data.lastOfferPrice)}}  </b>
+						</h4>
 					</div>
 				</div>
-				<div class="col col-60">
-					<h5 class="text-left">{{view.requestDetails.data.product.name}}</h5>
+
+<hr>
+				<div
+					class="row"
+					ng-if="view.requestDetails.data.lastOfferPrice !== ''">
+
+					<div class="col col-100">
+						<h5
+							class="margin-none subdued text-left"
+							ng-if="view.requestDetails.data.lastOfferPrice !== ''">
+
+							Your last offer price :  <span class="WebRupee subdued">&#x20B9;</span>
+							{{App.toINR(view.requestDetails.data.lastOfferPrice)}}  <i class="ion-ios-help-outline"></i>
+						</h5>
+					</div>
+				</div>
+
 				</div>
 			</div>
 
-			<div>
-				<h5>
-					Model No : {{view.requestDetails.data.product.model_number}}
-				</h5>
 
-				<h5>
-					Request Status : {{App.humanize(view.requestDetails.data.status)}}
-				</h5>
+				<div class="row">
+					<div class="col col-100">
+						<h4 class=" subdued text-center margin-none">Category</h4>
 
-				<h5>
-					Distance from you: {{view.requestDetails.data.radius.toFixed(1)}} kms radius
-				</h5>
+						<h5 class=" subdued text-center">
+						{{view.requestDetails.data.category.parent}} &nbsp;<b><i class="ion-arrow-right-b subdued"></i></b>
+						&nbsp;{{view.requestDetails.data.category.name}} &nbsp;<b><i class="ion-arrow-right-b subdued"></i></b>
+						&nbsp;{{view.requestDetails.data.brand.name}}
+						</h5>
 
-				<h5>
-					MRP: Rs {{App.toINR(view.requestDetails.data.product.mrp)}}
-				</h5>
-
-				<h5>
-					Number of bids: {{view.requestDetails.data.offerCount}}
-				</h5>
-
-				<h5>
-					Category: {{view.requestDetails.data.category.parent}} > {{view.requestDetails.data.category.name}} > {{view.requestDetails.data.brand.name}}
-				</h5>
-
-				<h5 ng-if="view.requestDetails.data.lastOfferPrice !== ''">
-					Your last offer price: Rs {{App.toINR(view.requestDetails.data.lastOfferPrice)}}
-				</h5>
-
-				<h5 ng-if="view.requestDetails.data.lastOfferPrice === ''">
-					Your last offer price: N/A
-				</h5>
-
-				<h5 ng-if="view.requestDetails.data.onlinePrice !== ''">
-					Online price: Rs {{App.toINR(view.requestDetails.data.onlinePrice)}}
-				</h5>
-
-				<h5 ng-if="view.requestDetails.data.onlinePrice === ''">
-					Online price: N/A
-				</h5>
-
-				<h5 ng-if="view.requestDetails.data.platformPrice !== ''">
-					Platform price: Rs {{App.toINR(view.requestDetails.data.platformPrice)}}
-				</h5>
-
-				<h5 ng-if="view.requestDetails.data.platformPrice === ''">
-					Platform price: N/A
-				</h5>
+				</div>
 			</div>
-
-			<br>
 
 			<div class="row make-an-offer">
 				<div class="col">
@@ -105,12 +135,21 @@
 							ng-disabled="view.requestDetails.data.platformPrice === ''">
 
 						<div class="item-content item-text-wrap">
-							<sm> Local Price </sm>
+							<h4 class="subdued"> Local Price </h4>
+							<h4 class ="bold" ng-if="view.requestDetails.data.platformPrice !== ''">
+								<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.requestDetails.data.platformPrice)}}
+							</h4>
+
+							<h4 class ="bold" ng-if="view.requestDetails.data.platformPrice === ''">
+								N/A
+							</h4>
 						</div>
+
 						<i class="radio-icon-hide rad-ico ion-android-radio-button-on"></i>
 						<i class="radio-icon-show rad-ico ion-android-radio-button-off"></i>
 					</label>
 				</div>
+
 				<div class="col">
 					<label class="item item-radio">
 						<input
@@ -122,12 +161,21 @@
 							ng-disabled="view.requestDetails.data.onlinePrice === ''">
 
 						<div class="item-content">
-							<sm> Online Price </sm>
+							<h4 class="subdued"> Online Price </h4>
+							<h4 class ="bold" ng-if="view.requestDetails.data.onlinePrice !== ''">
+								<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.requestDetails.data.onlinePrice)}}
+							</h4>
+
+							<h4 class ="bold" ng-if="view.requestDetails.data.onlinePrice === ''">
+								N/A
+							</h4>
 						</div>
+
 						<i class="radio-icon-hide rad-ico ion-android-radio-button-on"></i>
 						<i class="radio-icon-show rad-ico ion-android-radio-button-off"></i>
 					</label>
 				</div>
+
 				<div class="col">
 					<label class="item item-radio">
 						<input
@@ -138,8 +186,9 @@
 							ng-change="App.resize();">
 
 						<div class="item-content">
-							<sm> Your Price </sm>
+							<h4 class="subdued"> Your Price </h4>
 						</div>
+
 						<i class="radio-icon-hide rad-ico ion-android-radio-button-on"></i>
 						<i class="radio-icon-show rad-ico ion-android-radio-button-off"></i>
 					</label>
@@ -147,16 +196,16 @@
 		    </div>
 
 			<div
-				class="list"
+				class="list margin-none"
 				ng-if="view.requestDetails.price === 'yourPrice'">
-				<label class="item item-input item-floating-label">
-					<span class="input-label">Your offer price</span>
-					<input
-			    		type="number"
+					<div class="list list-inset m-t-0">
+					  <label class="item item-input">
+					    <input type="number"
 			    		placeholder="Enter your offer price"
 			    		ng-pattern="App.onlyNumbers"
 			    		ng-model="view.requestDetails.offerPrice">
-				</label>
+					  </label>
+					</div>
 			</div>
 
 			<div class="row">
@@ -173,7 +222,7 @@
 								{{view.requestDetails.deliveryTime.value}} {{view.requestDetails.deliveryTime.unitText}}
 							</span>
 							<span
-								class="change"
+								class="change text-primary"
 								ng-if="!view.requestDetails.deliveryTime.display"
 								ng-click="view.requestDetails.deliveryTime.display=true; App.resize();">
 								(Change)
@@ -185,12 +234,51 @@
 			</div>
 
 			<div
-				class="list"
+				class="list margin-none card m-red"
 				ng-show="view.requestDetails.deliveryTime.display">
-
 				<div class="row">
+					<div class="col "> <i class="ion-plus-circled big-icon pull-right"></i></div>
+					<div class="col col-33">
+					<label class="single-input" >
+						<input class="text-center"
+					    		type="number"
+					    		min="1" max="100"
+					    		ng-pattern="App.onlyNumbers"
+					    		ng-model="view.requestDetails.deliveryTime.value"
+					    		ng-change="view.requestDetails.deliveryTime.setDuration()">
+					</label>
+					</div>
+					<div class="col "> <i class="ion-minus-circled big-icon pull-left"></i></div>
+
+
+				</div>
+				<div class="row">
+					<div class="col col-67">
+							<label class="item item-input item-select">
+												<div class="input-label">
+													Duration
+												</div>
+												<select
+													ng-model="view.requestDetails.deliveryTime.unit"
+													ng-change="view.requestDetails.deliveryTime.setDuration()">
+													<option value="hr">Hour(s)</option>
+													<option value="day">Day(s)</option>
+												</select>
+						</label>
+					</div>
+					<div class="col col-33">
+							<button
+							class="button  button-block  margin-none button-clear button-assertive"
+							ng-click="view.requestDetails.deliveryTime.done();">
+							Update
+						</button>
+					</div>
+				</div>
+
+
+			<!-- 	<div class="row">
 					<div class="col col-20">
-						<label class="item item-input" style="width: 70px;">
+						<label class="item item-input" style="width: 70px; height:49px;">
 							<input
 					    		type="number"
 					    		min="1" max="100"
@@ -219,7 +307,7 @@
 							Done
 						</button>
 					</div>
-				</div>
+				</div> -->
 			</div>
 
 			<div ng-if="view.requestDetails.data.comments!==''">
@@ -231,14 +319,14 @@
 
 			    <div class="row">
 			    	<div class="col col-20">
-			    		<a href="#" class="userava">
+			    		<a class="userava">
 			    			C
 			    		</a>
 			    	</div>
 			    	<div class="col col-80 user-comment">
-			    		<p>{{view.requestDetails.data.comments}}</p>
+			    		<p class="subdued">{{view.requestDetails.data.comments}}</p>
 			    		<button
-			    			class="button button-small button-black"
+			    			class="button button button-outline button-small button-assertive margin-none"
 			    			ng-show="view.requestDetails.reply.button"
 			    			ng-click="view.requestDetails.reply.button=false; App.resize();">
 			    			Reply
@@ -246,15 +334,16 @@
 			    	</div>
 			    </div>
 
-				<div class="list">
-					<label class="item item-input">
+
+					<label class="item item-input" ng-hide="view.requestDetails.reply.button"
+							ng-model="view.requestDetails.reply.text">
 						<textarea
 							placeholder="Your reply"
 							ng-hide="view.requestDetails.reply.button"
 							ng-model="view.requestDetails.reply.text">
 						</textarea>
 					</label>
-				</div>
+
 			</div>
 
 		</ion-list>
@@ -262,19 +351,18 @@
 		<aj-error
 			ng-switch-when="error"
 			error-type="view.requestDetails.errorType"
-			tap-to-retry="view.requestDetails.get()">
+			tap-to-retry="view.requestDetails.get()" class="error-wrapper">
 		</aj-error>
 
 	</ion-content>
 
-	<ion-footer
-		ng-switch-when="noError"
-		class="bar bar-footer bar-assertive" >
-		<div
-			class="title"
-			ng-click="view.requestDetails.makeOffer()">
+	<ion-footer-bar ng-switch-when="noError">
+		<button
+			class="button button-block button-assertive margin-none title"
+			ng-click="view.requestDetails.makeOffer();"
+			ng-disabled="view.requestDetails.makeOfferBtn">
 			Make offer
-		</div>
-	</ion-footer>
+		</button>
+	</ion-footer-bar>
 
 </ion-modal-view>
