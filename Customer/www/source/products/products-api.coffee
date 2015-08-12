@@ -23,7 +23,7 @@ angular.module 'LocalHyper.products'
 			"ascending": opts.ascending
 			"page": opts.page
 			"displayLimit": opts.displayLimit
-			"searchKeywords": "all"
+			"searchKeywords": opts.searchKeywords
 
 		$http.post 'functions/getProductsNew', params
 		.then (data)->

@@ -234,7 +234,7 @@ angular.module 'LocalHyper.products'
 				$scope.view.request.reFetch()
 		
 		$scope.$on '$ionicView.beforeEnter', ->
-			if _.contains ['products', 'verify-success'], App.previousState
+			if _.contains ['products', 'verify-success', 'products-search'], App.previousState
 				$ionicScrollDelegate
 					.$getByHandle 'single-product-handle'
 					.scrollTop true

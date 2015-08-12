@@ -4,7 +4,27 @@
 		{{view.title}}
     </ion-nav-title>
 
-	<ion-content class="sub-categories product-list">
+	<div class="bar bar-subheader item-input-inset">
+		<form 
+			novalidate 
+			ng-submit="view.onSearch();">
+			
+			<label class="item-input-wrapper">
+				<i class="icon ion-ios-search placeholder-icon"></i>
+				<input 
+					type="search" 
+					placeholder="Search for products"
+					ng-model="view.search">
+			</label>
+		</form>
+		<button 
+			class="button button-clear"
+			ng-click="view.search = '';">
+			Clear
+		</button>
+	</div>
+
+	<ion-content class="sub-categories product-list has-subheader">
 
 		<ion-refresher 
 			ng-if="view.pullToRefresh"

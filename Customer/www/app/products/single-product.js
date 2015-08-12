@@ -257,7 +257,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       }
     });
     return $scope.$on('$ionicView.beforeEnter', function() {
-      if (_.contains(['products', 'verify-success'], App.previousState)) {
+      if (_.contains(['products', 'verify-success', 'products-search'], App.previousState)) {
         $ionicScrollDelegate.$getByHandle('single-product-handle').scrollTop(true);
         return $scope.view.reset();
       }

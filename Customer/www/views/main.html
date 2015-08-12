@@ -16,6 +16,12 @@
 			</ion-nav-buttons>
 
 			<ion-nav-buttons side="right">
+				<button 
+					ng-if="App.search.icon"
+					class="button button-icon ion-android-search"
+					ng-click="App.navigate('products-search', {categoryID: App.search.categoryID})">
+				</button>
+
 				<div ng-if="App.notification.icon">
 					<span 
 						class="notification badge badge-assertive"
