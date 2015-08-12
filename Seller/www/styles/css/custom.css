@@ -1862,6 +1862,8 @@ input[disabled] ~ .radio-icon-show {
   padding-top: 0;
   margin-right: 6px;
   color: #f35a59;
+  display: inline-block;
+  vertical-align: top;
 }
 .has-suggest-subhead .card {
   margin: 10px;
