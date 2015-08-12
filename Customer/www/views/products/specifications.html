@@ -1,0 +1,45 @@
+<ion-modal-view>
+
+	<ion-header-bar no-tap-scroll="true">
+		<div class="row row-fluid">
+			<div 
+				class="col col-67 sm-text">
+				<h5 class="text-left">Specifications</h5>
+			</div>
+			<div class="col">
+				<h2 
+					ng-click="view.specifications.modal.hide();" 
+					class="text-right">
+					<i class="ion ion-ios-close-outline"></i> 
+				</h2>
+			</div>
+		</div>
+	</ion-header-bar>
+
+	<ion-content delegate-handle="specification-modal-handle">
+		<div 
+			class="card"
+			ng-repeat="group in view.specifications.groups">
+
+			<div class="item item-divider">
+				{{App.humanize(group[0].group)}}
+			</div>
+			<div 
+				class="row"
+				ng-repeat="spec in group">
+
+				<div class="col-25">
+					<div class="item item-text-wrap">
+						{{App.humanize(spec.key)}}
+					</div>
+				</div>
+				<div class="col">
+					<div class="item item-text-wrap">
+						{{App.humanize(spec.value)}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</ion-content>
+
+</ion-modal-view>

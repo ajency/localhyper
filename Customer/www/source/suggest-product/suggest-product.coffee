@@ -33,6 +33,7 @@ angular.module 'LocalHyper.suggestProduct', []
 						"brand": @brand
 						"description" : @productDescription
 						"comments" : @yourComments
+						"userType" : "Customer"
 
 					$http.post 'functions/sendMail', param
 					.then (data)->

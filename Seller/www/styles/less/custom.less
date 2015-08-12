@@ -46,6 +46,9 @@ hr{
 .text-primary{
 	color: @brand-primary;
 }
+.dashed{
+	border: 1px dashed #ccc;
+}
 .bar-light{
 	// box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -537,10 +540,16 @@ sm{
 	color: #a1a1a1;
 }
 #Open, #Accepted{
-	border-left: 2px solid @success;
+	color: @success;
+	position: absolute;
+	right: 10px;
+	top: 10px;
 }
 #Unaccepted{
-	border-left: 2px solid @brand-primary;
+	color: @brand-primary;
+	position: absolute;
+	right: 10px;
+	top: 10px;
 }
 .truck{
 	width: 35px;
@@ -578,11 +587,14 @@ sm{
 		.card-box{
 			padding: 0px;
 			margin: 10px;
+			.item-avatar{
+				width:55px;
+				height: 55px;
+			}
 			.item{
 				padding-bottom: 0px;
 				min-height: 32px !important;
 			    background: #fff;
-
 			}
 			.item-divider{
 				border-top: 1px dashed #ccc;
@@ -803,6 +815,24 @@ sm{
 .b-r-1 {border-right: 1px solid #ddd;}
 
 .business-details {
+	.item-days{
+		padding: 0px;
+		text-align: center;
+		display: block;
+		text-transform: uppercase;
+		.checkbox{
+display: block;
+			position: relative;
+			margin-top: 0px;
+			top:0px;
+			right: 0px;
+			left:0px;
+				input{
+					margin: auto;
+					display: block;
+				}
+		}
+	}
 	.card.m-red {
 		margin-top: 0;
 		margin-bottom: 5px;
@@ -978,7 +1008,7 @@ sm{
 }
 .deli-tim {
 	/*max-width: 250px;*/
-	margin: 20px auto;
+	margin: 10px auto;
 	margin-bottom: 2px;
 	text-align: center;
 	.icon-img {
@@ -1684,19 +1714,66 @@ input[disabled]~.radio-icon-show{
 	    color: #666666;
 }
 .status{
-	.Open{
+	.Open, .Successful{
 		border-radius: 5px;
 	    border-radius: 3px;
-	    border: 1px solid @success;
+	    border: 1px solid @success !important;
 	    text-align: center;
 	    padding: 6px;
 	    margin-top: 7px;
-	    color: @success;
+	    color: @success!important;
+	    font-size: 13px;
+	}
+	.Expired, .Cancelled, .pending{
+		border-radius: 5px;
+	    border-radius: 3px;
+	    border: 1px solid @brand-primary;
+	    text-align: center;
+	    padding: 6px;
+	    margin-top: 7px;
+	    color: @brand-primary;
+	    font-size: 13px;
 	}
 }
 .border-right{
 	border-left: 1px solid #ccc;
 }
+
+
+/* My Offer Filter*/
+.offer-list{
+	li:first-child:before{
+			content: "\f21b";
+			display: inline-block;
+			color:@success;
+		    font-family: Ionicons;
+		    speak: none;
+		    margin-right: 10px;
+		    font-style: normal;
+		    font-weight: 400;
+		    font-variant: normal;
+		    text-transform: none;
+		    text-rendering: auto;
+		    line-height: 1;
+		    -webkit-font-smoothing: antialiased;
+	}
+	li:nth-child(2):before{
+			content: "\f21b";
+			display: inline-block;
+			color:@brand-primary;
+		    font-family: Ionicons;
+		    speak: none;
+		    margin-right: 10px;
+		    font-style: normal;
+		    font-weight: 400;
+		    font-variant: normal;
+		    text-transform: none;
+		    text-rendering: auto;
+		    line-height: 1;
+		    -webkit-font-smoothing: antialiased;
+	}
+}
+
 
 //Requests page
 .hint-relo {
@@ -1758,3 +1835,4 @@ input[disabled]~.radio-icon-show{
 		margin: 0;
 	}
 }
+

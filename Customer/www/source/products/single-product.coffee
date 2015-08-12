@@ -3,9 +3,9 @@ angular.module 'LocalHyper.products'
 
 .controller 'SingleProductCtrl', ['$scope', '$stateParams', 'ProductsAPI', 'User'
 	, 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI'
-	, '$ionicScrollDelegate'
+	, '$ionicScrollDelegate', '$ionicPlatform'
 	, ($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps
-	, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate)->
+	, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform)->
 
 		$scope.view = 
 			display: 'loader'
@@ -93,6 +93,44 @@ angular.module 'LocalHyper.products'
 					App.navigate 'request-details'
 
 
+			specifications :
+				modal: null
+
+				loadModal : ->
+					$ionicModal.fromTemplateUrl 'views/products/specifications.html', 
+						scope: $scope,
+						animation: 'slide-in-up'
+						hardwareBackButtonClose: false
+					.then (modal)=>
+						@modal = modal
+
+				openModal : ->
+					$ionicScrollDelegate
+						.$getByHandle 'specification-modal-handle'
+						.scrollTop true
+					@modal.show()
+
+				set : ->
+					groups = _.groupBy window.specifications, (spec)-> spec.group
+					
+					general = groups['general']
+					generalSpecs = []
+					_.each general, (specs)->
+						generalSpecs.push App.humanize specs.value
+					@excerpt = generalSpecs.join ', '
+
+					warranty = groups['warranty']
+					delete groups['general']
+					delete groups['warranty']
+					groups = _.toArray groups
+					groups.unshift general
+					groups.push warranty
+					@groups = groups
+
+			
+			
+			init : ->
+				@specifications.loadModal()
 
 			reset : ->
 				@display = 'loader'
@@ -118,6 +156,7 @@ angular.module 'LocalHyper.products'
 			onSuccess : ->
 				@footer = true
 				@display = 'noError'
+				@specifications.set()
 				@request.checkIfActive()
 				if User.isLoggedIn()
 					@request.display = 'loader'
@@ -160,6 +199,20 @@ angular.module 'LocalHyper.products'
 				ProductsAPI.productDetails 'set', @product
 				App.navigate 'make-request'
 
+
+		
+		onDeviceBack = ->
+			specificationModal = $scope.view.specifications.modal
+			if !_.isNull(specificationModal) && specificationModal.isShown()
+				specificationModal.hide()
+			else
+				App.goBack -1
+
+		$scope.$on '$ionicView.enter', ->
+			$ionicPlatform.onHardwareBackButton onDeviceBack
+
+		$scope.$on '$ionicView.leave', ->
+			$ionicPlatform.offHardwareBackButton onDeviceBack
 
 		$rootScope.$on 'make:request:success', ->
 			$scope.view.request.active = true
