@@ -47,7 +47,7 @@
 							</h3>
 						</div>
 					</div>
-				 
+
 					<div class="row">
 						<div class="col col-20">
 							<img class="pull-right" src="./img/distance.png" width="55px">
@@ -69,8 +69,8 @@
 
 				<div class="row">
 					<div class="col ">
-						<h5 class="text-left subdued text-center margin-none"> 
-							MRP  <br><span class="WebRupee subdued">&#x20B9;</span> 
+						<h5 class="text-left subdued text-center margin-none">
+							MRP  <br><span class="WebRupee subdued">&#x20B9;</span>
 							<b class="big-txt">{{App.toINR(view.requestDetails.data.product.mrp)}}</b>
 						</h5>
 					</div>
@@ -79,40 +79,40 @@
 							No of offers <br> <b class="big-txt"> {{view.requestDetails.data.offerCount}}</b>
 						</h5>
 					</div>
-						<div class="col border-right" 
+						<div class="col border-right"
 							ng-if="view.requestDetails.data.lastOfferPrice !== ''">
 						<h5 class="text-left subdued text-center margin-none">
-							Last offer <br> <b class="big-txt"> <span class="WebRupee subdued">&#x20B9;</span>  
+							Last offer <br> <b class="big-txt"> <span class="WebRupee subdued">&#x20B9;</span>
 							{{App.toINR(view.requestDetails.data.lastOfferPrice)}}  </b>
 						</h5>
 					</div>
 				</div>
 <hr>
-				<div 
-					class="row" 
+				<div
+					class="row"
 					ng-if="view.requestDetails.data.lastOfferPrice !== ''">
 
 					<div class="col col-100">
-						<h5 
-							class="margin-none subdued text-left" 
+						<h5
+							class="margin-none subdued text-left"
 							ng-if="view.requestDetails.data.lastOfferPrice !== ''">
 
-							Your last offer price :  <span class="WebRupee subdued">&#x20B9;</span>  
-							{{App.toINR(view.requestDetails.data.lastOfferPrice)}}  <i class="ion-ios-help-outline"></i> 
+							Your last offer price :  <span class="WebRupee subdued">&#x20B9;</span>
+							{{App.toINR(view.requestDetails.data.lastOfferPrice)}}  <i class="ion-ios-help-outline"></i>
 						</h5>
 					</div>
 				</div>
-				
+
 				<div class="row">
 					<div class="col col-100">
 						<h4 class=" subdued text-center margin-none">Category</h4>
-					
+
 						<h5 class=" subdued text-center">
 						{{view.requestDetails.data.category.parent}} &nbsp;<b><i class="ion-arrow-right-b subdued"></i></b>
 						&nbsp;{{view.requestDetails.data.category.name}} &nbsp;<b><i class="ion-arrow-right-b subdued"></i></b>
 						&nbsp;{{view.requestDetails.data.brand.name}}
 						</h5>
-					
+
 				</div>
 			</div>
 
@@ -131,7 +131,7 @@
 							<sm> Local Price </sm>
 							<h4 class ="bold" ng-if="view.requestDetails.data.platformPrice !== ''">
 								<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.requestDetails.data.platformPrice)}}
-							</h4> 
+							</h4>
 
 							<h4 class ="bold" ng-if="view.requestDetails.data.platformPrice === ''">
 								N/A
@@ -304,13 +304,13 @@
 		<aj-error
 			ng-switch-when="error"
 			error-type="view.requestDetails.errorType"
-			tap-to-retry="view.requestDetails.get()">
+			tap-to-retry="view.requestDetails.get()" class="error-wrapper">
 		</aj-error>
 
 	</ion-content>
 
 	<ion-footer-bar ng-switch-when="noError">
-		<button 
+		<button
 			class="button button-block button-assertive margin-none title"
 			ng-click="view.requestDetails.makeOffer();"
 			ng-disabled="view.requestDetails.makeOfferBtn">
