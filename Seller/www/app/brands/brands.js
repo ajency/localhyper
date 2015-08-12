@@ -23,8 +23,7 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
       },
       onSuccess: function(data) {
         this.display = 'noError';
-        this.brands = data;
-        return this.setBrandSelection();
+        return this.brands = data;
       },
       onError: function(type) {
         this.display = 'error';
@@ -39,6 +38,25 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
         this.categoryChains = CategoriesAPI.categoryChains('get');
         empty = _.isEmpty(this.categoryChains);
         return empty;
+      },
+      brandSelection: function(brandID) {
+        var _brandIds, _brands, chain, selected;
+        selected = false;
+        if (this.isCategoryChainsEmpty()) {
+          selected = false;
+        } else {
+          chain = _.filter(this.categoryChains, function(chains) {
+            return chains.subCategory.id === SubCategory.id;
+          });
+          if (!_.isEmpty(chain)) {
+            _brands = chain[0].brands;
+            _brandIds = _.pluck(_brands, 'objectId');
+            selected = _.contains(_brandIds, brandID);
+          } else {
+            selected = false;
+          }
+        }
+        return selected;
       },
       setBrandSelection: function() {
         var _brandIds, _brands, chain;
