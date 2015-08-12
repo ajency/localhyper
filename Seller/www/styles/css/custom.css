@@ -197,6 +197,9 @@ sm {
 .has-header {
   background-color: #f2f1ed;
 }
+.modal {
+  background-color: #F2F1ED!important;
+}
 .bar-subheader {
   background-color: #1f1f1f !important;
 }
@@ -1025,7 +1028,7 @@ sm {
 }
 .deli-tim {
   /*max-width: 250px;*/
-  margin: 10px auto;
+  margin: 20px auto;
   margin-bottom: 2px;
   text-align: center;
 }
@@ -1051,7 +1054,6 @@ sm {
   font-size: 22px;
 }
 .deli-tim p .change {
-  color: #919191;
   font-size: 11px;
 }
 .modal-offer-header {
@@ -1064,7 +1066,7 @@ h5.with-sep {
 }
 h5.with-sep span {
   display: inline-block;
-  background: #fff;
+  background: #F2F1ED;
   padding: 0 20px;
 }
 .userava {
@@ -1259,6 +1261,7 @@ h5.with-sep span {
   width: 72%;
   text-overflow: clip;
   height: auto;
+  color: #505050;
   white-space: normal;
   font-weight: 400;
   display: -webkit-box;
@@ -1597,17 +1600,17 @@ h5.with-sep span {
 .big-txt {
   font-size: 20px;
 }
-.list-your-price {
-  position: absolute;
-  width: 100%;
-  top: -85px;
-  background: #fff;
-  height: 77px;
-}
-.list-your-price i {
-  position: absolute;
-  right: 10px;
-}
+/*.list-your-price{
+	    position: absolute;
+	    width: 100%;
+	    top: -85px;
+	    background: #fff;
+	    height: 77px;
+	    i{
+	    	    position: absolute;
+    			right: 10px;
+	    }
+}*/
 .model-normal {
   background: #F2F1ED !important;
 }
@@ -1621,6 +1624,16 @@ h5.with-sep span {
 input[disabled] {
   color: #999;
   background-color: #fff;
+}
+input[disabled] ~ .item-content {
+  background-color: #D6D6D6;
+}
+input[disabled] ~ .item-content h4,
+input[disabled] ~ .item-content sm {
+  color: #7B7B7B;
+}
+input[disabled] ~ .radio-icon-show {
+  color: #7B7B7B !important;
 }
 .search-brands-wrap {
   border: 0;
@@ -1699,5 +1712,17 @@ input[disabled] {
 }
 .text-default {
   color: #666666;
+}
+.status .Open {
+  border-radius: 5px;
+  border-radius: 3px;
+  border: 1px solid #5ab319;
+  text-align: center;
+  padding: 6px;
+  margin-top: 7px;
+  color: #5ab319;
+}
+.border-right {
+  border-left: 1px solid #ccc;
 }
 /*# sourceMappingURL=custom.css.map */
