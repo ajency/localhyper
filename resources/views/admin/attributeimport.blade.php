@@ -85,6 +85,7 @@
                             <a href="#" target="_blank" class="export_product">
                                 <button type="button" class="btn btn-default btn-cons btn-small"><i class="fa fa-download"></i> Download Sheet</button>
                             </a>
+                            <button style="float:right" data-category-id="" type="button" class="btn btn-default btn-cons btn-small update-search-keyword"><i class="fa "></i>Update Search Keyword</button>
 
 
                             <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Import</span></h4>

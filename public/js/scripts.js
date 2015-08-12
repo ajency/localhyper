@@ -110,6 +110,7 @@ function showAttibuteExport()
         $(".export_product").attr('href',productUrl);
         $(".export_product_price").attr('href',productPriceUrl);
         
+        $(".update-search-keyword").attr("data-category-id",category);
         $(".export_block").removeClass('hidden');
     
     }
@@ -120,6 +121,27 @@ function showAttibuteExport()
     }
     
 }
+
+$(".update-search-keyword").click(function(){
+     var categoryId = $(this).attr('data-category-id'); 
+      $.ajax({
+        async :true, 
+        url: "#",
+        type: "POST",
+        headers: {
+                    "x-parse-application-id": window.APPLICATION_ID,
+                    "x-parse-rest-api-key": window.REST_API_KEY
+                  },
+        data: {
+            "categoryId" : categoryId,
+        },
+        dataType: "JSON",
+        success: function (response) {
+            
+
+        }
+    }); 
+});
 
 $(".edit-balance-credit").click(function(){
      var str = '<input type="text" name="balanceCredit"><button class="save-seller-credits">save</button>';
