@@ -143,6 +143,9 @@ angular.module 'LocalHyper.products'
 				@request.reset()
 				@getSingleProductDetails()
 
+			getDate : (obj)->
+				moment(obj.iso).format 'DD/MM/YYYY'
+
 			getSingleProductDetails : ->
 				ProductsAPI.getSingleProduct @productID
 				.then (productData)=>
