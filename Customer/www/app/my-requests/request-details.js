@@ -1,5 +1,5 @@
 angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
-  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog) {
+  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup) {
     var inAppNotificationEvent;
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
@@ -13,6 +13,14 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
             return App.resize();
           }, 500);
         }
+      },
+      showComment: function() {
+        return $ionicPopup.alert({
+          title: 'You commented',
+          template: this.request.comments,
+          okText: 'Close',
+          okType: 'button-assertive'
+        });
       },
       comments: {
         show: false,

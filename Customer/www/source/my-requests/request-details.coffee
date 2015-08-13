@@ -2,9 +2,9 @@ angular.module 'LocalHyper.myRequests'
 
 
 .controller 'RequestDetailsCtrl', ['$scope', 'RequestAPI', '$interval', 'TimeString'
-	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog'
+	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup'
 	, ($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner
-	, CToast, $rootScope, CDialog)->
+	, CToast, $rootScope, CDialog, $ionicPopup)->
 
 		$scope.view = 
 			request: RequestAPI.requestDetails 'get'
@@ -19,6 +19,13 @@ angular.module 'LocalHyper.myRequests'
 						App.resize()
 					, 500
 
+			showComment : ->
+				$ionicPopup.alert
+					title: 'You commented'
+					template: @request.comments
+					okText: 'Close'
+					okType: 'button-assertive'
+
 			comments:
 				show: false
 				toggle : ->
@@ -26,7 +33,6 @@ angular.module 'LocalHyper.myRequests'
 					$timeout -> 
 						App.resize()
 					, 500
-
 
 			cancelRequest: 
 				footer: false
