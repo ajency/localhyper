@@ -429,6 +429,9 @@ sm {
   border-left: 1px solid #FFF;
   border-bottom: 3px solid rgba(190, 190, 190, 0.63);
 }
+.sub-categories .border-card2.border-card.activated {
+  background-color: #F5F4F4;
+}
 .sub-categories .border-card {
   /*border-left: 1px solid @gray-lighter;*/
   border-right: 1px solid #cccccc;
@@ -1598,7 +1601,7 @@ label.status-label {
   padding: 3px 10px;
 }
 .search-full-page .sub-head-search i.icon {
-  font-size: 20px;
+  font-size: 24px;
 }
 .search-full-page .sub-head-search form {
   width: 100%;
