@@ -236,9 +236,9 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
             CSpinner.show('', 'Please wait...');
             params = {
               "customerId": User.getId(),
-              "productId": product.objectId,
-              "categoryId": product.category.objectId,
-              "brandId": product.brand.objectId,
+              "productId": product.id,
+              "categoryId": product.category.id,
+              "brandId": product.brand.id,
               "comments": this.comments.text,
               "status": "open",
               "deliveryStatus": "",
