@@ -853,6 +853,7 @@ sm {
   font-size: 14px;
   padding: 5px 12px;
   margin-top: 10px;
+  border: 0;
 }
 .obj-title .col .item.item-accordion.item-text-wrap.com-acc {
   min-width: 150px;
