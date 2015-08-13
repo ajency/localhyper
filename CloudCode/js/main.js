@@ -380,6 +380,7 @@
     sortBy = request.params.sortBy;
     Category = Parse.Object.extend('Category');
     queryCategory = new Parse.Query(Category);
+    queryCategory.exists("name");
     queryCategory.include("parent_category");
     queryFindPromise = queryCategory.find();
     queryFindPromise.done((function(_this) {
@@ -3239,29 +3240,49 @@
   });
 
   Parse.Cloud.define('updateSellerRating', function(request, response) {
-    var querySeller, ratingInStars, sellerId;
+    var Ratings, comments, customer, customerId, ratingInStars, ratings, seller, sellerId;
+    customerId = request.params.customerId;
     sellerId = request.params.sellerId;
     ratingInStars = request.params.ratingInStars;
-    querySeller = new Parse.Query(Parse.User);
-    querySeller.equalTo("objectId", sellerId);
-    return querySeller.first().then(function(sellerObj) {
-      var currentRatingCount, currentRatingSum, newRatings;
-      currentRatingSum = sellerObj.get("ratingSum");
-      currentRatingCount = sellerObj.get("ratingCount");
-      newRatings = currentRatingSum + ratingInStars;
-      sellerObj.set("ratingSum", newRatings);
-      sellerObj.increment("ratingCount");
-      return sellerObj.save().then(function(updatedSeller) {
-        var avgRatings, ratingCount, ratingSum, result;
-        ratingSum = updatedSeller.get("ratingSum");
-        ratingCount = updatedSeller.get("ratingCount");
-        avgRatings = ratingSum / ratingCount;
-        result = {
-          "sellerId": sellerId,
-          "avgRatings": avgRatings
-        };
-        return response.success(result);
+    comments = request.params.comments;
+    Ratings = Parse.Object.extend("Ratings");
+    ratings = new Ratings();
+    customer = new Parse.User;
+    customer.id = customerId;
+    seller = new Parse.User;
+    seller.id = sellerId;
+    ratings.set("ratingBy", customer);
+    ratings.set("ratingForType", "seller");
+    ratings.set("ratingFor", seller);
+    ratings.set("count", ratingInStars);
+    ratings.set("comments", comments);
+    return ratings.save().then(function(ratingObj) {
+      var querySeller;
+      querySeller = new Parse.Query(Parse.User);
+      querySeller.equalTo("objectId", sellerId);
+      return querySeller.first().then(function(sellerObj) {
+        var currentRatingCount, currentRatingSum, newRatings;
+        currentRatingSum = sellerObj.get("ratingSum");
+        currentRatingCount = sellerObj.get("ratingCount");
+        newRatings = currentRatingSum + ratingInStars;
+        sellerObj.set("ratingSum", newRatings);
+        sellerObj.increment("ratingCount");
+        return sellerObj.save().then(function(updatedSeller) {
+          var avgRatings, ratingCount, ratingSum, result;
+          ratingSum = updatedSeller.get("ratingSum");
+          ratingCount = updatedSeller.get("ratingCount");
+          avgRatings = ratingSum / ratingCount;
+          result = {
+            "sellerId": sellerId,
+            "avgRatings": avgRatings
+          };
+          return response.success(result);
+        }, function(error) {
+          return response.error(error);
+        });
       });
+    }, function(error) {
+      return response.error(error);
     });
   });
 

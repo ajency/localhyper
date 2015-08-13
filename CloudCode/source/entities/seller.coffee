@@ -184,35 +184,66 @@ Parse.Cloud.define 'createTestSeller', (request, response) ->
             response.error "Failed to create user #{error.message}"     
 
 Parse.Cloud.define 'updateSellerRating', (request, response) ->
+    customerId = request.params.customerId
     sellerId = request.params.sellerId
     ratingInStars = request.params.ratingInStars
+    comments = request.params.comments
 
-    querySeller = new Parse.Query(Parse.User)
-    querySeller.equalTo("objectId", sellerId)
+    # make an entry in ratings table
 
-    querySeller.first()
-    .then (sellerObj) ->
-        # get current rating sum and rating count
+    Ratings = Parse.Object.extend("Ratings")
+    ratings = new Ratings()
 
-        currentRatingSum = sellerObj.get("ratingSum")
-        currentRatingCount = sellerObj.get("ratingCount")
+    customer = new Parse.User 
+    customer.id = customerId
 
-        newRatings = currentRatingSum + ratingInStars
+    seller = new Parse.User 
+    seller.id = sellerId
 
-        sellerObj.set "ratingSum" , newRatings
-        sellerObj.increment("ratingCount")
+    ratings.set "ratingBy" , customer 
+    ratings.set "ratingForType" , "seller" 
+    ratings.set "ratingFor" , seller 
+    ratings.set "count" , ratingInStars 
+    ratings.set "comments" , comments
 
-        sellerObj.save() 
-        .then (updatedSeller) ->
-            ratingSum = updatedSeller.get("ratingSum")
-            ratingCount = updatedSeller.get("ratingCount")
-            avgRatings = ratingSum/ratingCount
+    ratings.save()
+    .then (ratingObj) ->
+        querySeller = new Parse.Query(Parse.User)
+        querySeller.equalTo("objectId", sellerId)
 
-            result =
-                "sellerId" : sellerId
-                "avgRatings" : avgRatings
-            
-            response.success result
+        querySeller.first()
+        .then (sellerObj) ->
+            # get current rating sum and rating count
+
+            currentRatingSum = sellerObj.get("ratingSum")
+            currentRatingCount = sellerObj.get("ratingCount")
+
+            newRatings = currentRatingSum + ratingInStars
+
+            sellerObj.set "ratingSum" , newRatings
+            sellerObj.increment("ratingCount")
+
+            sellerObj.save() 
+            .then (updatedSeller) ->
+                ratingSum = updatedSeller.get("ratingSum")
+                ratingCount = updatedSeller.get("ratingCount")
+                avgRatings = ratingSum/ratingCount
+
+                result =
+                    "sellerId" : sellerId
+                    "avgRatings" : avgRatings
+                
+                response.success result    
+            , (error) ->
+                response.error error     
+
+    , (error) ->
+        response.error error 
+
+
+
+
+
         
 
 
