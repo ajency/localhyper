@@ -54,5 +54,10 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::post( 'product/importproducts', 'Admin\ProductController@importProduct' );
     Route::post( 'product/importproductprice', 'Admin\ProductController@importProductPrice' );
 
-});   
+}); 
+
+/**static pages*/
+Route::get( '/customer-faqs', 'StaticPagesController@customerFaq' );
+Route::get( '/seller-faqs', 'StaticPagesController@sellerFaq' );
+ 
 

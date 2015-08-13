@@ -41,31 +41,14 @@
 <!-- BEGIN BODY -->
 <body class="">
 <!-- BEGIN HEADER -->
-<div class="header navbar navbar-inverse "> 
-  <!-- BEGIN TOP NAVIGATION BAR -->
-  <div class="navbar-inner">
-	<div class="header-seperation"> 
-		<ul class="nav pull-left notifcation-center" id="main-menu-toggle-wrapper" style="display:none">	
-		 <li class="dropdown"> <a id="main-menu-toggle" href="#main-menu"  class="" > <div class="iconset top-menu-toggle-white"></div> </a> </li>		 
-		</ul>
-      <!-- BEGIN LOGO -->	
-      <a href="index.html"><img src="assets/img/logo.png" class="logo" alt=""  data-src="assets/img/logo.png" data-src-retina="assets/img/logo2x.png" width="106" height="21"/></a>
-      
-      </div>
-      <!-- END RESPONSIVE MENU TOGGLER --> 
-      
-      <!-- END TOP NAVIGATION MENU --> 
-   
-  </div>
-  <!-- END TOP NAVIGATION BAR --> 
-</div>
+
 <!-- END HEADER -->
 <div class="page-container row-fluid">
  
   
   <!-- END SIDEBAR --> 
   <!-- BEGIN PAGE CONTAINER-->
-<div class="page-content"> 
+<div class="page-content no-sidebar"> 
     <!-- BEGIN SAMPLE PORTLET CONFIGURATION MODAL FORM-->
  
   @yield('content')

@@ -8117,3 +8117,22 @@ body.rtl .footer-widget {
   right: 0;
   left: auto;
 }
+label {
+  font-size: 15px;
+}
+.panel-group .panel-heading.collapsed {
+  border: 1px solid #D0DEE8;
+  background: #fff;
+}
+.panel-default > .panel-heading {
+  margin-bottom: 10px;
+  border-radius: 0;
+  background-color: none;
+}
+.faq.page-content {
+  margin-left: 0;
+}
+
+.no-sidebar.page-content{
+    margin-left: 0;
+}

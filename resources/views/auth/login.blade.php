@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('content')
-<div class="content col-md-offset-3">  
+<div class="content col-md-offset-3 col-md-6">  
     
 		<div class="page-title m-l-5">	
 			<h3 class="inline"><span class="semi-bold">Login</span></h3>
@@ -22,7 +22,7 @@
 					<form id="login-form" class="login-form" role="form" method="POST" action="{{ url('/auth/login') }}">
 						<input type="hidden" name="_token" value="{{ csrf_token() }}">
 <div class="row">
-<div class="form-group col-md-10">
+<div class="form-group col-md-12">
 <label class="form-label">E-Mail Address</label>
 <div class="controls">
 <div class="input-with-icon  right">
@@ -33,7 +33,7 @@
 </div>
 </div>
 <div class="row">
-<div class="form-group col-md-10">
+<div class="form-group col-md-12">
 <label class="form-label">Password</label>
 <span class="help"></span>
 <div class="controls">
@@ -45,7 +45,7 @@
 </div>
 </div>
 <div class="row">
-<div class="control-group  col-md-10">
+<div class="control-group  col-md-12">
 <div class="checkbox checkbox check-success"> <a href="{{ url('/password/email') }}">Trouble login in?</a>&nbsp;&nbsp;
 <input type="checkbox" id="checkbox1" value="1">
 <label for="checkbox1">Keep me reminded </label>
@@ -53,7 +53,7 @@
 </div>
 </div>
 <div class="row">
-<div class="col-md-10">
+<div class="col-md-12">
 <button class="btn btn-primary btn-cons pull-right" type="submit">Login</button>
 </div>
 </div>

@@ -1,4 +1,5 @@
-@extends('layouts.master') @section('content')
+@extends('layouts.master') 
+@section('content')
 <div class="content">
     <div class="page-title m-l-5">
         <h3 class="inline"><span class="semi-bold">Category</span> Configuration</h3> <i class="fa fa-sitemap"></i>
