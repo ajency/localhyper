@@ -1,34 +1,35 @@
-<ion-view ng-init="view.init();">
+<ion-view ng-init="view.init();" class="search-full-page">
 
 	<ion-nav-title>
 		{{view.title}}
     </ion-nav-title>
 
-	<div class="bar bar-subheader item-input-inset">
-		<form 
-			novalidate 
-			ng-submit="view.onSearch();">
+	<div class="bar bar-subheader item-input-inset sub-head-search">
+		<i class="icon ion-ios-search placeholder-icon"></i>
+		<form
+			novalidate
+			ng-submit="view.onSearch();" class="">
 
 			<label class="item-input-wrapper">
-				<i class="icon ion-ios-search placeholder-icon"></i>
-				<input 
-					type="search" 
+
+				<input
+					type="search"
 					placeholder="Search for products"
 					ng-model="view.search">
 			</label>
 		</form>
-		<button 
+		<button
 			class="button button-clear"
 			ng-click="view.search = '';">
-			Clear
+			<i class="icon ion-android-close"></i>
 		</button>
 	</div>
 
 	<ion-content class="sub-categories product-list has-subheader">
 
-		<ion-refresher 
+		<ion-refresher
 			ng-if="view.pullToRefresh"
-			on-refresh="view.onPullToRefresh();" 
+			on-refresh="view.onPullToRefresh();"
 		 	class="aj-refresher">
 		</ion-refresher>
 
@@ -66,7 +67,7 @@
 
 		</ion-list>
 
-		<div 
+		<div
 			ng-if="view.gotAllProducts && view.products.length == 0" class="text-center">
 			<h5 class="bold fin">Sorry, we could not find any matched products.</h5>
 			<div class="spacer-40"></div>
@@ -80,19 +81,19 @@
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll();"
 			ng-if="view.canLoadMore"
-			distance="1%" 
+			distance="1%"
 			class="aj-refresher">
 		</ion-infinite-scroll>
 
 	</ion-content>
 
-	<ion-footer-bar 
-		ng-show="view.footer" 
+	<ion-footer-bar
+		ng-show="view.footer"
 		class="bar-light">
 
 		<div class="row">
 			<div class="col col-50 text-center" ng-click="view.showSortOptions();">
-				
+
 				<h5 class="margin-none normal filter-txt">
 					<i class="ion ion-arrow-swap"></i>
 					SORT<br>
@@ -101,7 +102,7 @@
 			</div>
 
 			<div class="col col-50 text-center border-left" ng-click="view.filter.openModal();">
-				
+
 				<h5 class="margin-none normal filter-txt">
 					<i class="ion ion-funnel"></i>
 			 		FILTER

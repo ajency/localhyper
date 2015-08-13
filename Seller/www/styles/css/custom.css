@@ -1635,7 +1635,6 @@ input[disabled] ~ .radio-icon-show {
   width: 100%;
   padding: 4px 15px 2px 4px;
   height: auto;
-  font-style: italic;
   line-height: 26px;
   font-size: 15px;
 }
@@ -1812,4 +1811,13 @@ input[disabled] ~ .radio-icon-show {
 }
 .has-suggest-subhead button.button.button-block {
   margin: 0;
+}
+.search-full-page .sub-head-search i.icon {
+  font-size: 20px;
+}
+.search-full-page .sub-head-search form {
+  width: 100%;
+}
+.search-full-page .sub-head-search .button-clear {
+  padding-left: 8px;
 }
