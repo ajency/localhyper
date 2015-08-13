@@ -16,7 +16,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       },
       showComment: function() {
         return $ionicPopup.alert({
-          title: 'You commented',
+          title: 'Comment',
           template: this.request.comments,
           okText: 'Close',
           okType: 'button-assertive'

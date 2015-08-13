@@ -21,7 +21,7 @@ angular.module 'LocalHyper.myRequests'
 
 			showComment : ->
 				$ionicPopup.alert
-					title: 'You commented'
+					title: 'Comment'
 					template: @request.comments
 					okText: 'Close'
 					okType: 'button-assertive'

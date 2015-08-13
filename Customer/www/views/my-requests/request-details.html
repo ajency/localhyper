@@ -36,16 +36,19 @@
 					<div class="row">
 						<div
 							class="col"
-							ng-if="view.request"
-							ng-click="view.address.toggle()">
+							ng-if="view.request">
 
 							<button
 								class="button icon ion-chatbox-working pull-right button-small button-light"
-								ng-click="view.comments.toggle();">
+								ng-if="view.request.comments !== ''"
+								ng-click="view.showComment();">
 							</button>
 
 							<p class="loca">
-								<span class="loca-wrap">
+								<span 
+									class="loca-wrap"
+									ng-click="view.address.toggle();">
+
 									<i class="icon ion-ios-location"></i> Address :
 									<span>{{view.request.address.city}}</span>
 									<a ng-if="!view.address.show">More</a>
@@ -59,23 +62,6 @@
 								{{view.request.address.full}}
 							</ion-item>
 						</div>
-
-						<!-- <div
-							class="col col-50 "
-							ng-if="view.request.comments !== ''">
-
-							<button
-								class="button icon ion-chatbox-working pull-right button-small button-light"
-								ng-click="view.comments.toggle();">
-							</button>
-
-							<ion-item
-								class="item-text-wrap item-accordion com-acc"
-								style="margin-top: 0;"
-								ng-show="view.comments.show">
-								{{view.request.comments}}
-							</ion-item>
-						</div> -->
 					</div>
 
 					<div class="row">
