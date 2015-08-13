@@ -207,7 +207,8 @@
 
 								<button 
 									class="button button-dark button-small"
-									ng-click="view.offers.openRatePopup()">
+									ng-if="!offer.seller.isSellerRated"
+									ng-click="view.offers.openRatePopup(offer.seller);">
 									Rate Seller
 								</button>
 							</div>

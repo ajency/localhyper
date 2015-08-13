@@ -2,9 +2,9 @@ angular.module 'LocalHyper.myRequests'
 
 
 .controller 'RequestDetailsCtrl', ['$scope', 'RequestAPI', '$interval', 'TimeString'
-	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup'
+	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User'
 	, ($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner
-	, CToast, $rootScope, CDialog, $ionicPopup)->
+	, CToast, $rootScope, CDialog, $ionicPopup, User)->
 
 		$scope.view = 
 			request: RequestAPI.requestDetails 'get'
@@ -42,6 +42,11 @@ angular.module 'LocalHyper.myRequests'
 				errorType: ''
 				all: []
 				limitTo: 1
+				rate:
+					score: 0
+					comment: ''
+					setScore : (score)->
+						@score = score
 
 				showAll : ->
 					@limitTo = 100
@@ -82,8 +87,10 @@ angular.module 'LocalHyper.myRequests'
 							.then =>
 								_.each @all, (offer)-> App.notification.decrement()
 
-				openRatePopup : ->
-					ratePopup = $ionicPopup.show
+				openRatePopup : (seller)->
+					@rate.score = 0
+					@rate.comment = ''
+					$ionicPopup.show
 						templateUrl: 'views/my-requests/rate.html'
 						title: 'Rate This Seller'
 						scope: $scope
@@ -92,9 +99,24 @@ angular.module 'LocalHyper.myRequests'
 							{
 								text: '<b>Submit</b>'
 								type: 'button-assertive'
-								onTap: (e)->
-									console.log 'Rate'
+								onTap: (e)=>
+									@rateSeller seller
 							}]
+
+				rateSeller : (seller)->
+					CSpinner.show '', 'Submitting your review...'
+					RequestAPI.updateSellerRating
+						"customerId": User.getId()
+						"sellerId": seller.id
+						"ratingInStars": @rate.score
+						"comments": @rate.comment
+					.then ->
+						seller.isSellerRated = true
+						CToast.show 'Thanks for your feedback'
+					, (error)->
+						CToast.show 'An error occurred, please try again'
+					.finally ->
+						CSpinner.hide()
 
 			
 

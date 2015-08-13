@@ -1,8 +1,11 @@
 <div>
-	<user-rating rate-click="abc(score);"></user-rating>
+	<user-rating 
+		rate-click="view.offers.rate.setScore(score);">
+	</user-rating>
 	<br>
 	<input 
 		type="textarea"
-		placeholder="Comments">
+		placeholder="Comments"
+		ng-model="view.offers.rate.comment">
 	<br>
 </div>

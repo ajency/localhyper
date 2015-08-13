@@ -57,6 +57,7 @@ angular.module('LocalHyper.myRequests', []).directive('ajRemoveBoxShadow', [
       link: function(scope, el, attrs) {
         return $timeout(function() {
           return $(el).raty({
+            score: 0,
             numberMax: 5,
             path: 'lib/raty/lib/images/',
             click: function(score, evt) {

@@ -56,6 +56,7 @@ angular.module 'LocalHyper.myRequests', []
 
 		$timeout ->
 			$(el).raty
+				score: 0
 				numberMax: 5
 				path: 'lib/raty/lib/images/'
 				click: (score, evt)->

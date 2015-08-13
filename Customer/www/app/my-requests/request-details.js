@@ -1,5 +1,5 @@
 angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
-  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup) {
+  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup, User) {
     var inAppNotificationEvent;
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
@@ -41,6 +41,13 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         errorType: '',
         all: [],
         limitTo: 1,
+        rate: {
+          score: 0,
+          comment: '',
+          setScore: function(score) {
+            return this.score = score;
+          }
+        },
         showAll: function() {
           this.limitTo = 100;
           return App.resize();
@@ -92,9 +99,10 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
             };
           })(this));
         },
-        openRatePopup: function() {
-          var ratePopup;
-          return ratePopup = $ionicPopup.show({
+        openRatePopup: function(seller) {
+          this.rate.score = 0;
+          this.rate.comment = '';
+          return $ionicPopup.show({
             templateUrl: 'views/my-requests/rate.html',
             title: 'Rate This Seller',
             scope: $scope,
@@ -104,11 +112,29 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
               }, {
                 text: '<b>Submit</b>',
                 type: 'button-assertive',
-                onTap: function(e) {
-                  return console.log('Rate');
-                }
+                onTap: (function(_this) {
+                  return function(e) {
+                    return _this.rateSeller(seller);
+                  };
+                })(this)
               }
             ]
+          });
+        },
+        rateSeller: function(seller) {
+          CSpinner.show('', 'Submitting your review...');
+          return RequestAPI.updateSellerRating({
+            "customerId": User.getId(),
+            "sellerId": seller.id,
+            "ratingInStars": this.rate.score,
+            "comments": this.rate.comment
+          }).then(function() {
+            seller.isSellerRated = true;
+            return CToast.show('Thanks for your feedback');
+          }, function(error) {
+            return CToast.show('An error occurred, please try again');
+          })["finally"](function() {
+            return CSpinner.hide();
           });
         }
       },
