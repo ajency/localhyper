@@ -187,8 +187,8 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
               latitude: this.latLng.lat(),
               longitude: this.latLng.lng()
             },
-            "categoryId": product.category.objectId,
-            "brandId": product.brand.objectId,
+            "categoryId": product.category.id,
+            "brandId": product.brand.id,
             "city": this.address.city,
             "area": this.address.city
           };

@@ -3,9 +3,9 @@ angular.module 'LocalHyper.products'
 
 .controller 'SingleProductCtrl', ['$scope', '$stateParams', 'ProductsAPI', 'User'
 	, 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI'
-	, '$ionicScrollDelegate', '$ionicPlatform'
+	, '$ionicScrollDelegate', '$ionicPlatform', 'PrimaryAttribute'
 	, ($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps
-	, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform)->
+	, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform, PrimaryAttribute)->
 
 		$scope.view = 
 			display: 'loader'
@@ -13,6 +13,7 @@ angular.module 'LocalHyper.products'
 			footer: false
 			productID: $stateParams.productID
 			product: {}
+			primaryAttribute: PrimaryAttribute
 
 			request:
 				page: 0
@@ -111,12 +112,16 @@ angular.module 'LocalHyper.products'
 					@modal.show()
 
 				set : ->
-					groups = _.groupBy window.specifications, (spec)-> spec.group
+					groups = _.groupBy $scope.view.product.specifications, (spec)-> spec.group
 					
 					general = groups['general']
 					generalSpecs = []
 					_.each general, (specs)->
-						generalSpecs.push App.humanize specs.value
+						if _.isNull specs.unit
+							str = App.humanize specs.value
+						else 
+							str = "#{App.humanize(specs.value)} #{App.humanize(specs.unit)}"
+						generalSpecs.push str
 					@excerpt = generalSpecs.join ', '
 
 					warranty = groups['warranty']
@@ -124,7 +129,7 @@ angular.module 'LocalHyper.products'
 					delete groups['warranty']
 					groups = _.toArray groups
 					groups.unshift general
-					groups.push warranty
+					groups.push(warranty) if !_.isUndefined(warranty)
 					@groups = groups
 
 			
@@ -169,16 +174,6 @@ angular.module 'LocalHyper.products'
 			onTapToRetry : ->
 				@display = 'loader'
 				@getSingleProductDetails()
-
-			getPrimaryAttrs : ->
-				if !_.isUndefined @product.primaryAttributes
-					attrs = @product.primaryAttributes[0]
-					value = s.humanize attrs.value
-					unit = ''
-					if _.has attrs.attribute, 'unit'
-						unit = s.humanize attrs.attribute.unit
-					"#{value} #{unit}"
-				else ''
 
 			checkUserLogin : ->
 				if !User.isLoggedIn()

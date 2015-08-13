@@ -2,12 +2,13 @@ angular.module 'LocalHyper.products', []
 
 
 .controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal'
-	, '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform', 'CDialog'
+	, '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform', 'CDialog', 'PrimaryAttribute'
 	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg
-	, $ionicLoading, $ionicPlatform, CDialog)->
+	, $ionicLoading, $ionicPlatform, CDialog, PrimaryAttribute)->
 
 		$scope.view =
 			title: Product.subCategoryTitle
+			primaryAttribute: PrimaryAttribute
 			footer: false
 			gotAllProducts: false
 			products: []
@@ -224,7 +225,7 @@ angular.module 'LocalHyper.products', []
 			getWordsFromSentence : ->
 				wordArr = []
 				sentence = @search
-				sentence = sentence.replace /\W/g, " "
+				sentence = sentence.replace /[^a-zA-Z0-9.]/g, " "
 				sentence = sentence.trim() 
 				wordArr = sentence.split /\s+/g
 				wordArr = _.map wordArr, (word)-> word.toLowerCase()
@@ -289,16 +290,6 @@ angular.module 'LocalHyper.products', []
 					@canLoadMore = false
 
 				@gotAllProducts = true if !@canLoadMore
-
-			getPrimaryAttrs : (attrs)->
-				if !_.isUndefined attrs
-					attrs = attrs[0]
-					value = s.humanize attrs.value
-					unit = ''
-					if _.has attrs.attribute, 'unit'
-						unit = s.humanize attrs.attribute.unit
-					"#{value} #{unit}"
-				else ''
 
 			onSort : (sortBy, sortName, ascending)->
 				$ionicLoading.hide()

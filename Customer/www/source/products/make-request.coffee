@@ -150,8 +150,8 @@ angular.module 'LocalHyper.products'
 						"location": 
 							latitude: @latLng.lat()
 							longitude: @latLng.lng()
-						"categoryId": product.category.objectId
-						"brandId": product.brand.objectId 
+						"categoryId": product.category.id
+						"brandId": product.brand.id 
 						"city": @address.city
 						"area": @address.city
 					ProductsAPI.findSellers params

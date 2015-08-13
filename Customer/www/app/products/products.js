@@ -1,8 +1,9 @@
 angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
-  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform', 'CDialog', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg, $ionicLoading, $ionicPlatform, CDialog) {
+  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform', 'CDialog', 'PrimaryAttribute', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg, $ionicLoading, $ionicPlatform, CDialog, PrimaryAttribute) {
     var onDeviceBack;
     $scope.view = {
       title: Product.subCategoryTitle,
+      primaryAttribute: PrimaryAttribute,
       footer: false,
       gotAllProducts: false,
       products: [],
@@ -292,7 +293,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         var sentence, stopWords, wordArr, words;
         wordArr = [];
         sentence = this.search;
-        sentence = sentence.replace(/\W/g, " ");
+        sentence = sentence.replace(/[^a-zA-Z0-9.]/g, " ");
         sentence = sentence.trim();
         wordArr = sentence.split(/\s+/g);
         wordArr = _.map(wordArr, function(word) {
@@ -371,20 +372,6 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         }
         if (!this.canLoadMore) {
           return this.gotAllProducts = true;
-        }
-      },
-      getPrimaryAttrs: function(attrs) {
-        var unit, value;
-        if (!_.isUndefined(attrs)) {
-          attrs = attrs[0];
-          value = s.humanize(attrs.value);
-          unit = '';
-          if (_.has(attrs.attribute, 'unit')) {
-            unit = s.humanize(attrs.attribute.unit);
-          }
-          return value + " " + unit;
-        } else {
-          return '';
         }
       },
       onSort: function(sortBy, sortName, ascending) {
