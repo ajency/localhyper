@@ -170,7 +170,7 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
         })(this));
       },
       onSuccess: function(data, displayLimit) {
-        var requestsSize, _requests;
+        var _requests, requestsSize;
         this.display = 'noError';
         _requests = data;
         requestsSize = _.size(_requests);

@@ -19,7 +19,8 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
         "sortBy": opts.sortBy,
         "ascending": opts.ascending,
         "page": opts.page,
-        "displayLimit": opts.displayLimit
+        "displayLimit": opts.displayLimit,
+        "searchKeywords": opts.searchKeywords
       };
       $http.post('functions/getProductsNew', params).then(function(data) {
         return defer.resolve(data.data.result);

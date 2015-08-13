@@ -150,8 +150,8 @@ angular.module 'LocalHyper.products'
 						"location": 
 							latitude: @latLng.lat()
 							longitude: @latLng.lng()
-						"categoryId": product.category.objectId
-						"brandId": product.brand.objectId 
+						"categoryId": product.category.id
+						"brandId": product.brand.id 
 						"city": @address.city
 						"area": @address.city
 					ProductsAPI.findSellers params
@@ -194,9 +194,9 @@ angular.module 'LocalHyper.products'
 						CSpinner.show '', 'Please wait...'
 						params =  
 							"customerId": User.getId()
-							"productId": product.objectId
-							"categoryId": product.category.objectId
-							"brandId": product.brand.objectId
+							"productId": product.id
+							"categoryId": product.category.id
+							"brandId": product.brand.id
 							"comments": @comments.text
 							"status": "open"
 							"deliveryStatus": ""

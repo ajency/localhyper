@@ -27,6 +27,7 @@ angular.module 'LocalHyper.brands', []
 			onSuccess : (data)->
 				@display = 'noError'
 				@brands = data
+				@setBrandSelection()
 
 			onError: (type)->
 				@display = 'error'
@@ -40,19 +41,6 @@ angular.module 'LocalHyper.brands', []
 				@categoryChains = CategoriesAPI.categoryChains 'get'
 				empty = _.isEmpty @categoryChains
 				empty
-
-			brandSelection : (brandID)->
-				selected = false
-				if @isCategoryChainsEmpty()
-					selected = false
-				else
-					chain = _.filter @categoryChains, (chains)-> chains.subCategory.id is SubCategory.id
-					if !_.isEmpty chain
-						_brands = chain[0].brands
-						_brandIds = _.pluck _brands, 'objectId'
-						selected = _.contains _brandIds, brandID
-					else selected = false
-				selected
 
 			setBrandSelection : ->
 				if @isCategoryChainsEmpty()

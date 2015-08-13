@@ -5,24 +5,24 @@
 	</ion-nav-title>
 
 	<div class="bar bar-subheader item-input-inset">
-		<i 
-			class="icon ion-android-locate placeholder-icon icon-input" 
+		<i
+			class="icon ion-android-locate placeholder-icon icon-input"
 			ng-click="view.getCurrent();">
 		</i>
 
 		<label class="item-input-wrapper">
-			<input 
+			<input
 				id="locationSearch"
-				type="text" 
+				type="text"
 				placeholder="Search for location"
 				data-tap-disabled="true"
 				google-map-search
 				on-place-change="view.onPlaceChange(location);"
 				ng-model="view.searchText">
 		</label>
-		
-		<button 
-			class="button button-clear" 
+
+		<button
+			class="button button-clear"
 			ng-click="view.searchText = ''">
 			Clear
 		</button>
@@ -35,9 +35,9 @@
 			on-create="view.onMapCreated(map);">
 		</google-map>
 
-		<br>
+		<!-- <br> -->
 
-		<div ng-if="view.sellers.displayCount">
+		<div ng-if="view.sellers.displayCount" class="count-sellers">
 			<h4 ng-show="view.sellers.count == 0;">
 				Since there are no sellers who serve your area, the number of offers received might be less or take longer.
 			</h4>
@@ -92,7 +92,7 @@
 			</div>
 
 			<div class="row p-b-0">
-				<div class="col p-b-0 p-r-0 b-r-1">
+				<div class="col p-b-0 p-r-0">
 					<label class="item item-input no-input">
 						City: {{view.address.city}}
 					</label>
@@ -105,7 +105,7 @@
 			</div>
 
 			<div class="row p-b-0">
-				<div class="col p-r-0 b-r-1">
+				<div class="col p-r-0">
 					<label class="item item-input no-input">
 						State: {{view.address.state}}
 					</label>
@@ -118,7 +118,7 @@
 			</div>
 		</div>
 
-		<br>
+		<!-- <br> -->
 
 		<div class="row row-fluid">
 			<div class="col ">
@@ -133,33 +133,38 @@
 			<div class="col col-80">
 				<div class="list">
 					<label class="item item-input item-stacked-label">
-						<input 
+						<input
 							class="comment"
 							readonly
-							type="text" 
+							type="text"
 							placeholder="Enter comments if any"
 							ng-model="view.comments.text">
 					</label>
 				</div>
 			</div>
 			<div class="col col-20">
-				<h2 class="p-t-10 text-center"><i class="icon ion-chatbox-working" ng-click="view.addComments();"></i></h2>
+				<h2 class="p-t-10 text-center">
+					<i 
+						class="icon ion-chatbox-working" 
+						ng-click="view.addComments();">
+					</i>
+				</h2>
 			</div>
 		</div>
-		
+
 		<br>
-		
+
     </ion-content>
 
 	<ion-footer-bar class="bar-assertive">
-		<button 
+		<button
 			class="title button-block button-clear"
 			ng-hide="view.sellers.found"
 			ng-click="view.findSellers();">
 			Find sellers
 		</button>
 
-		<button 
+		<button
 			class="title button-block button-clear"
 			ng-show="view.sellers.found"
 			ng-click="view.makeRequest();">

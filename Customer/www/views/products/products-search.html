@@ -1,10 +1,31 @@
-<ion-view ng-init="view.init();">
+<ion-view ng-init="view.init();" class="search-full-page">
 
 	<ion-nav-title>
 		{{view.title}}
     </ion-nav-title>
 
-	<ion-content class="sub-categories product-list">
+	<div class="bar bar-subheader item-input-inset sub-head-search">
+		<i class="icon ion-search placeholder-icon"></i>
+		<form
+			novalidate
+			ng-submit="view.onSearch();" class="">
+
+			<label class="item-input-wrapper">
+
+				<input
+					type="search"
+					placeholder="Search for products"
+					ng-model="view.search">
+			</label>
+		</form>
+		<button
+			class="button button-clear"
+			ng-click="view.search = '';">
+			<i class="icon ion-android-close"></i>
+		</button>
+	</div>
+
+	<ion-content class="sub-categories product-list has-subheader">
 
 		<ion-refresher
 			ng-if="view.pullToRefresh"
@@ -29,7 +50,7 @@
 				<div class="row">
 					<div class="col">
 						<h6 class="subdued">
-							{{view.primaryAttribute.get(product.primaryAttributes)}}
+							{{view.getPrimaryAttrs(product.primaryAttributes)}}
 						</h6>
 					</div>
 				</div>
@@ -46,7 +67,7 @@
 
 		</ion-list>
 
-		<div 
+		<div
 			ng-if="view.gotAllProducts && view.products.length == 0" class="text-center">
 			<h5 class="bold fin">Sorry, we could not find any matched products.</h5>
 			<div class="spacer-40"></div>

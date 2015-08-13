@@ -200,7 +200,7 @@ sm {
 }
 .bar-subheader {
   background-color: #1f1f1f !important;
-  height: 60px;
+  height: 52px;
 }
 [nav-bar-transition=ios] [nav-bar=active] .bar.bar-header.bar-light,
 .bar.bar-header {
@@ -428,6 +428,9 @@ sm {
   border-right: 1px solid rgba(190, 190, 190, 0.63);
   border-left: 1px solid #FFF;
   border-bottom: 3px solid rgba(190, 190, 190, 0.63);
+}
+.sub-categories .border-card2.border-card.activated {
+  background-color: #F5F4F4;
 }
 .sub-categories .border-card {
   /*border-left: 1px solid @gray-lighter;*/
@@ -850,6 +853,8 @@ sm {
   font-size: 14px;
   padding: 5px 12px;
   margin-top: 6px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+  border: 0;
 }
 .obj-title .col .item.item-accordion.item-text-wrap.com-acc {
   min-width: 150px;
@@ -1094,12 +1099,15 @@ sm {
 .spacer-40 {
   height: 40px;
 }
+.fin {
+  color: #969696;
+  margin-top: 25px;
+}
 .bg-lightgrey {
   background-color: #f2f1ed;
 }
 .bg-lightgrey .list {
   background-color: #f2f1ed;
-  border-top: 1px solid #C1C1C1;
 }
 .early-head {
   margin-top: 15px;
@@ -1457,4 +1465,147 @@ label.status-label {
 }
 .card {
   margin: 10px;
+}
+.bar.bar-dark.suggest-subhead {
+  padding: 5px 8px 8px;
+  height: auto;
+  font-size: 14px;
+  text-align: center;
+  line-height: 20px;
+}
+.has-suggest-subhead {
+  top: 100px;
+}
+.has-suggest-subhead .item i.icon {
+  padding-top: 0;
+  margin-right: 6px;
+  color: #f45152;
+  display: inline-block;
+  vertical-align: top;
+}
+.has-suggest-subhead .card {
+  margin: 10px;
+}
+.has-suggest-subhead button.button.button-block {
+  margin: 0;
+}
+.aj-menu-bg .item.userprofile {
+  border-bottom: 1px solid #2F2F2F;
+  margin-bottom: 1px;
+  box-shadow: inset 0 -1px 5px rgba(0, 0, 0, 0.2);
+}
+.col.aboutus img {
+  height: 70px;
+}
+.specs-sing .header.item {
+  border-bottom: 0;
+  background: #fff;
+  border-top: 1px solid #ECE9E9;
+  font-weight: bold;
+  color: #EF473A;
+  padding-top: 15px;
+}
+.specs-sing .header.item i.icon {
+  margin-right: 8px;
+}
+.specs-sing .header.item hr {
+  margin-bottom: 0;
+  height: 1px;
+  border: 0;
+  border-bottom: 1px solid #CACACA;
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+}
+.specs-sing .item.intro {
+  border-top: 0;
+  padding-top: 8px;
+}
+.specs-sing .item.footer {
+  padding-bottom: 7px;
+  padding-top: 10px;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin-top: 1px;
+  margin-bottom: 1px;
+  font-weight: bold;
+}
+.specs-sing .item.footer.activated {
+  background-color: #EFECEC;
+}
+.specs-modal .has-header {
+  background-color: #fff;
+  padding-top: 10px;
+}
+.specs-modal .modal-title {
+  margin-top: 1px;
+}
+.specs-modal h2 {
+  color: #fff;
+  margin: 0;
+  margin-top: -4px;
+}
+.specs-modal .spec-card {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.specs-modal .spec-card .item.item-divider {
+  padding: 5px 8px 3px;
+  height: auto !important;
+  min-height: 0;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  border: 0;
+  color: #101010;
+  background-color: #E6E6E6;
+}
+.specs-modal .spec-card .item.item-divider i.icon {
+  margin-right: 5px;
+}
+.specs-modal .spec-card .col {
+  padding: 2px 5px;
+  border-right: 0;
+}
+.specs-modal .spec-card .col.col-25 {
+  border-right: 1px solid #E0E0E0;
+}
+.specs-modal .spec-card .row {
+  border-bottom: 1px solid #E0E0E0;
+  margin-top: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  background-color: #fff;
+}
+.specs-modal .spec-card .row .bold-title {
+  line-height: 17px;
+  display: inline-block;
+}
+.specs-modal .spec-card .row .normal-desc {
+  line-height: 17px;
+  display: inline-block;
+}
+.count-sellers h4 {
+  margin: 0;
+  padding: 8px;
+  border-bottom: 1px solid #B5B5B5;
+  background-color: #fff;
+}
+.map-content .title-with-icon {
+  padding-top: 8px;
+  padding-left: 8px;
+}
+.map-content .address-inputs {
+  padding-top: 0;
+}
+.map-content .address-inputs label {
+  padding: 3px 10px;
+}
+.search-full-page .sub-head-search i.icon {
+  font-size: 24px;
+}
+.search-full-page .sub-head-search form {
+  width: 100%;
+}
+.search-full-page .sub-head-search .button-clear {
+  padding-left: 8px;
 }

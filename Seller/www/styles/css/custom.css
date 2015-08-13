@@ -72,6 +72,9 @@ hr {
 .text-primary {
   color: #f35a59;
 }
+.dashed {
+  border: 1px dashed #ccc;
+}
 .uppercase {
   text-transform: uppercase;
 }
@@ -579,10 +582,16 @@ sm {
 }
 #Open,
 #Accepted {
-  border-left: 2px solid #5ab319;
+  color: #5ab319;
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }
 #Unaccepted {
-  border-left: 2px solid #f35a59;
+  color: #f35a59;
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }
 .truck {
   width: 35px;
@@ -616,6 +625,10 @@ sm {
 .card-list .card-box {
   padding: 0px;
   margin: 10px;
+}
+.card-list .card-box .item-avatar {
+  width: 55px;
+  height: 55px;
 }
 .card-list .card-box .item {
   padding-bottom: 0px;
@@ -811,6 +824,24 @@ sm {
 .b-r-1 {
   border-right: 1px solid #ddd;
 }
+.business-details .item-days {
+  padding: 0px;
+  text-align: center;
+  display: block;
+  text-transform: uppercase;
+}
+.business-details .item-days .checkbox {
+  display: block;
+  position: relative;
+  margin-top: 0px;
+  top: 0px;
+  right: 0px;
+  left: 0px;
+}
+.business-details .item-days .checkbox input {
+  margin: auto;
+  display: block;
+}
 .business-details .card.m-red {
   margin-top: 0;
   margin-bottom: 5px;
@@ -970,7 +1001,7 @@ sm {
 }
 .deli-tim {
   /*max-width: 250px;*/
-  margin: 20px auto;
+  margin: 10px auto;
   margin-bottom: 2px;
   text-align: center;
 }
@@ -1590,20 +1621,20 @@ input[disabled] ~ .radio-icon-show {
 .search-brands-wrap {
   border: 0;
   border-radius: 0;
-  background-color: #F3F3F3;
+  background-color: #1F1F1F;
   border-bottom: 1px solid #ccc;
+  padding-top: 3px;
+  padding-bottom: 5px;
 }
 .search-brands-wrap .search-brands {
-  background-color: transparent;
   padding: 0;
 }
 .search-brands-wrap .search-brands input {
   color: #1F1F1F;
   display: block;
   width: 100%;
-  padding: 12px 15px 6px 4px;
+  padding: 4px 15px 2px 4px;
   height: auto;
-  font-style: italic;
   line-height: 26px;
   font-size: 15px;
 }
@@ -1611,7 +1642,7 @@ input[disabled] ~ .radio-icon-show {
   background: transparent;
   border: 0;
   color: #B9B5B5;
-  padding-left: 15px;
+  padding-left: 0;
 }
 .search-brands-wrap button.button.button-small i:before {
   font-size: 26px;
@@ -1667,17 +1698,62 @@ input[disabled] ~ .radio-icon-show {
 .text-default {
   color: #666666;
 }
-.status .Open {
+.status .Open,
+.status .Successful {
   border-radius: 5px;
   border-radius: 3px;
-  border: 1px solid #5ab319;
+  border: 1px solid #5ab319 !important;
   text-align: center;
   padding: 6px;
   margin-top: 7px;
-  color: #5ab319;
+  color: #5ab319 !important;
+  font-size: 13px;
+}
+.status .Expired,
+.status .Cancelled,
+.status .pending {
+  border-radius: 5px;
+  border-radius: 3px;
+  border: 1px solid #f35a59;
+  text-align: center;
+  padding: 6px;
+  margin-top: 7px;
+  color: #f35a59;
+  font-size: 13px;
 }
 .border-right {
   border-left: 1px solid #ccc;
+}
+/* My Offer Filter*/
+.offer-list li:first-child:before {
+  content: "\f21b";
+  display: inline-block;
+  color: #5ab319;
+  font-family: Ionicons;
+  speak: none;
+  margin-right: 10px;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  text-rendering: auto;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+.offer-list li:nth-child(2):before {
+  content: "\f21b";
+  display: inline-block;
+  color: #f35a59;
+  font-family: Ionicons;
+  speak: none;
+  margin-right: 10px;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  text-rendering: auto;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
 }
 .hint-relo {
   padding-left: 25px;
@@ -1727,6 +1803,8 @@ input[disabled] ~ .radio-icon-show {
   padding-top: 0;
   margin-right: 6px;
   color: #f35a59;
+  display: inline-block;
+  vertical-align: top;
 }
 .has-suggest-subhead .card {
   margin: 10px;

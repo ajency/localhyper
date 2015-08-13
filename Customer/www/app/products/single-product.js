@@ -1,11 +1,13 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', '$ionicScrollDelegate', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', '$ionicScrollDelegate', '$ionicPlatform', 'PrimaryAttribute', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform, PrimaryAttribute) {
+    var onDeviceBack;
     $scope.view = {
       display: 'loader',
       errorType: '',
       footer: false,
       productID: $stateParams.productID,
       product: {},
+      primaryAttribute: PrimaryAttribute,
       request: {
         page: 0,
         all: [],
@@ -97,6 +99,54 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           return App.navigate('request-details');
         }
       },
+      specifications: {
+        modal: null,
+        loadModal: function() {
+          return $ionicModal.fromTemplateUrl('views/products/specifications.html', {
+            scope: $scope,
+            animation: 'slide-in-up',
+            hardwareBackButtonClose: false
+          }).then((function(_this) {
+            return function(modal) {
+              return _this.modal = modal;
+            };
+          })(this));
+        },
+        openModal: function() {
+          $ionicScrollDelegate.$getByHandle('specification-modal-handle').scrollTop(true);
+          return this.modal.show();
+        },
+        set: function() {
+          var general, generalSpecs, groups, warranty;
+          groups = _.groupBy($scope.view.product.specifications, function(spec) {
+            return spec.group;
+          });
+          general = groups['general'];
+          generalSpecs = [];
+          _.each(general, function(specs) {
+            var str;
+            if (_.isNull(specs.unit)) {
+              str = App.humanize(specs.value);
+            } else {
+              str = (App.humanize(specs.value)) + " " + (App.humanize(specs.unit));
+            }
+            return generalSpecs.push(str);
+          });
+          this.excerpt = generalSpecs.join(', ');
+          warranty = groups['warranty'];
+          delete groups['general'];
+          delete groups['warranty'];
+          groups = _.toArray(groups);
+          groups.unshift(general);
+          if (!_.isUndefined(warranty)) {
+            groups.push(warranty);
+          }
+          return this.groups = groups;
+        }
+      },
+      init: function() {
+        return this.specifications.loadModal();
+      },
       reset: function() {
         this.display = 'loader';
         this.footer = false;
@@ -128,6 +178,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       onSuccess: function() {
         this.footer = true;
         this.display = 'noError';
+        this.specifications.set();
         this.request.checkIfActive();
         if (User.isLoggedIn()) {
           this.request.display = 'loader';
@@ -141,20 +192,6 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       onTapToRetry: function() {
         this.display = 'loader';
         return this.getSingleProductDetails();
-      },
-      getPrimaryAttrs: function() {
-        var attrs, unit, value;
-        if (!_.isUndefined(this.product.primaryAttributes)) {
-          attrs = this.product.primaryAttributes[0];
-          value = s.humanize(attrs.value);
-          unit = '';
-          if (_.has(attrs.attribute, 'unit')) {
-            unit = s.humanize(attrs.attribute.unit);
-          }
-          return "" + value + " " + unit;
-        } else {
-          return '';
-        }
       },
       checkUserLogin: function() {
         if (!User.isLoggedIn()) {
@@ -179,6 +216,21 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         return App.navigate('make-request');
       }
     };
+    onDeviceBack = function() {
+      var specificationModal;
+      specificationModal = $scope.view.specifications.modal;
+      if (!_.isNull(specificationModal) && specificationModal.isShown()) {
+        return specificationModal.hide();
+      } else {
+        return App.goBack(-1);
+      }
+    };
+    $scope.$on('$ionicView.enter', function() {
+      return $ionicPlatform.onHardwareBackButton(onDeviceBack);
+    });
+    $scope.$on('$ionicView.leave', function() {
+      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
+    });
     $rootScope.$on('make:request:success', function() {
       $scope.view.request.active = true;
       return $scope.view.request.reFetch();
@@ -200,7 +252,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       }
     });
     return $scope.$on('$ionicView.beforeEnter', function() {
-      if (_.contains(['products', 'verify-success'], App.previousState)) {
+      if (_.contains(['products', 'verify-success', 'products-search'], App.previousState)) {
         $ionicScrollDelegate.$getByHandle('single-product-handle').scrollTop(true);
         return $scope.view.reset();
       }
