@@ -59,7 +59,22 @@
 				</div>
 
 				<!-- <br> -->
-				<div class="card specs-sing">
+				<div class="specs-sing">
+					<!-- <div class="item item-divider header">
+						<i class="icon ion-clipboard"></i>
+						Specifications
+						<hr>
+					</div>
+					<div class="item item-text-wrap intro">
+						{{view.specifications.excerpt}}
+					</div> -->
+					<div
+						class="item item-divider footer"
+						ng-click="view.specifications.openModal();">
+						Specifications <i class="icon ion-ios-arrow-right pull-right"></i>
+					</div>
+				</div>
+				<!-- <div class="card specs-sing">
 					<div class="item item-divider header">
 						<i class="icon ion-clipboard"></i>
 						Specifications
@@ -73,7 +88,7 @@
 						ng-click="view.specifications.openModal();">
 						View all <i class="icon ion-plus-round pull-right"></i>
 					</div>
-				</div>
+				</div> -->
 			</div>
 
 			<aj-error

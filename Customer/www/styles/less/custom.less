@@ -1059,7 +1059,7 @@ sm{
 	background-color: #f2f1ed;
 	.list {
 		background-color: #f2f1ed;
-		border-top: 1px solid #909090;
+		// border-top: 1px solid #909090;
 	}
 }
 .early-head {
@@ -1501,7 +1501,7 @@ label.status-label {
 }
 
 //single product
-.specs-sing.card {
+.specs-sing {
 	.header.item {
 		border-bottom: 0;
 	    background: #fff;
@@ -1527,11 +1527,24 @@ label.status-label {
 	.item.footer {
 		padding-bottom: 7px;
 		padding-top: 10px;
+		background-color: #fff;
+		border-top: 1px solid #eee;
+		border-bottom: 1px solid #eee;
+		margin-top: 1px;
+		margin-bottom: 1px;
+		font-weight: bold;
+		&.activated {
+			background-color: #EFECEC;
+		}
 	}
 }
 
 //specs modal popup
 .specs-modal {
+	.has-header {
+		background-color: #fff;
+		padding-top: 10px;
+	}
 	.modal-title {
 		margin-top: 1px;
 	}
@@ -1541,24 +1554,39 @@ label.status-label {
 		margin-top: -4px;
 	}
 	.spec-card {
+		padding-left: 8px;
+		padding-right: 8px;
 		.item.item-divider {
-			padding-left: 8px;
-			padding-bottom: 6px;
+			padding: 5px 8px 3px;
+			height: auto !important;
+			min-height: 0;
 			font-weight: bold;
-			border-top: 1px solid #B1B1B1;
-			color: @brand-primary;
+			font-size: 14px;
+			text-transform: uppercase;
+			border: 0;
+			color: #101010;
+			background-color: #E6E6E6;
 			i.icon {
 				margin-right: 5px;
 			}
 		}
+		.col {
+			padding: 2px 5px;
+			border-right: 0;
+			&.col-25 {
+				border-right: 1px solid #E0E0E0;
+			}
+		}
 		.row {
 			border-bottom: 1px solid #E0E0E0;
+			// border-right: 1px solid #E0E0E0;
+			// border-left: 1px solid #E0E0E0;
 			margin-top: 0;
 			padding-top: 0;
 			padding-bottom: 0;
 			background-color: #fff;
 			.bold-title {
-				font-weight: bold;
+				// font-weight: bold;
 				line-height: 17px;
 				display: inline-block;
 			}
@@ -1586,5 +1614,8 @@ label.status-label {
 	}
 	.address-inputs {
 		padding-top: 0;
+		label {
+			padding: 3px 10px;
+		}
 	}
 }

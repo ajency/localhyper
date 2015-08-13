@@ -1103,7 +1103,6 @@ sm {
 }
 .bg-lightgrey .list {
   background-color: #f2f1ed;
-  border-top: 1px solid #909090;
 }
 .early-head {
   margin-top: 15px;
@@ -1493,7 +1492,7 @@ label.status-label {
 .col.aboutus img {
   height: 70px;
 }
-.specs-sing.card .header.item {
+.specs-sing .header.item {
   border-bottom: 0;
   background: #fff;
   border-top: 1px solid #ECE9E9;
@@ -1501,22 +1500,35 @@ label.status-label {
   color: #EF473A;
   padding-top: 15px;
 }
-.specs-sing.card .header.item i.icon {
+.specs-sing .header.item i.icon {
   margin-right: 8px;
 }
-.specs-sing.card .header.item hr {
+.specs-sing .header.item hr {
   margin-bottom: 0;
   height: 1px;
   border: 0;
   border-bottom: 1px solid #CACACA;
   box-shadow: 0 0 0 rgba(0, 0, 0, 0);
 }
-.specs-sing.card .item.intro {
+.specs-sing .item.intro {
   border-top: 0;
   padding-top: 8px;
 }
-.specs-sing.card .item.footer {
+.specs-sing .item.footer {
   padding-bottom: 7px;
+  padding-top: 10px;
+  background-color: #fff;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin-top: 1px;
+  margin-bottom: 1px;
+  font-weight: bold;
+}
+.specs-sing .item.footer.activated {
+  background-color: #EFECEC;
+}
+.specs-modal .has-header {
+  background-color: #fff;
   padding-top: 10px;
 }
 .specs-modal .modal-title {
@@ -1527,15 +1539,30 @@ label.status-label {
   margin: 0;
   margin-top: -4px;
 }
-.specs-modal .spec-card .item.item-divider {
+.specs-modal .spec-card {
   padding-left: 8px;
-  padding-bottom: 6px;
+  padding-right: 8px;
+}
+.specs-modal .spec-card .item.item-divider {
+  padding: 5px 8px 3px;
+  height: auto !important;
+  min-height: 0;
   font-weight: bold;
-  border-top: 1px solid #B1B1B1;
-  color: #f45152;
+  font-size: 14px;
+  text-transform: uppercase;
+  border: 0;
+  color: #101010;
+  background-color: #E6E6E6;
 }
 .specs-modal .spec-card .item.item-divider i.icon {
   margin-right: 5px;
+}
+.specs-modal .spec-card .col {
+  padding: 2px 5px;
+  border-right: 0;
+}
+.specs-modal .spec-card .col.col-25 {
+  border-right: 1px solid #E0E0E0;
 }
 .specs-modal .spec-card .row {
   border-bottom: 1px solid #E0E0E0;
@@ -1545,7 +1572,6 @@ label.status-label {
   background-color: #fff;
 }
 .specs-modal .spec-card .row .bold-title {
-  font-weight: bold;
   line-height: 17px;
   display: inline-block;
 }
@@ -1565,4 +1591,7 @@ label.status-label {
 }
 .map-content .address-inputs {
   padding-top: 0;
+}
+.map-content .address-inputs label {
+  padding: 3px 10px;
 }
