@@ -41,7 +41,7 @@
 							<button
 								class="button icon ion-chatbox-working pull-right button-small button-light"
 								ng-if="view.request.comments !== ''"
-								ng-click="view.showComment();">
+								ng-click="view.showComment('Your Comment', view.request.comments);">
 							</button>
 
 							<p class="loca">
@@ -196,7 +196,11 @@
 									<span class="loc">{{offer.seller.address.city}}</span>
 								</h3>
 
-								<p class="comment subdued" ng-if="offer.comments !== ''">
+								<p 
+									class="comment subdued" 
+									ng-if="offer.comments !== ''"
+									ng-click="view.showComment('Seller Comment', offer.comments);">
+
 									<i class="icon ion-chatbox-working"> </i>
 									<span class="com">{{offer.comments}}</span>
 								</p>
