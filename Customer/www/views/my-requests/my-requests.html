@@ -38,9 +38,17 @@
 				<div class="row item border-none p-t-10" >
 			        <div class="col  p-t-0">
 			            <sm class="light-gray"> Local Price</sm><br>
-			            <h3 class="item-text-wrap margin-none big-txt">
+			            <h3 
+			            	class="item-text-wrap margin-none big-txt"
+			            	ng-if="request.product.platformPrice !== ''">
+
 			            	<span class="WebRupee subdued">&#x20B9;</span> 
-			            	{{App.toINR(request.product.mrp)}}
+			            	{{App.toINR(request.product.platformPrice)}}
+			            </h3>
+			            <h3 
+			            	class="item-text-wrap margin-none big-txt"
+			            	ng-if="request.product.platformPrice === ''">
+			            	N/A
 			            </h3>
 			        </div>
 			        <div class="col p-t-0">
@@ -67,9 +75,13 @@
 			    </div>
 			     
 			</ion-item>
-		</ion-list>	
+		</ion-list>
+
+		<div ng-if="view.gotAllRequests && view.openRequests.length == 0">
+			<h4 class="text-center ">We could not find any requests.</h4>
+		</div>
 		
-		<div ng-if="view.gotAllRequests">
+		<div ng-if="view.gotAllRequests && view.openRequests.length > 0">
 			<h4 class="text-center ">That's all folks. No more requests to display.</h4>
 		</div>
 

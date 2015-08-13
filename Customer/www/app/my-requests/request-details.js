@@ -91,6 +91,25 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
               }
             };
           })(this));
+        },
+        openRatePopup: function() {
+          var ratePopup;
+          return ratePopup = $ionicPopup.show({
+            templateUrl: 'views/my-requests/rate.html',
+            title: 'Rate This Seller',
+            scope: $scope,
+            buttons: [
+              {
+                text: 'Cancel'
+              }, {
+                text: '<b>Submit</b>',
+                type: 'button-assertive',
+                onTap: function(e) {
+                  return console.log('Rate');
+                }
+              }
+            ]
+          });
         }
       },
       init: function() {

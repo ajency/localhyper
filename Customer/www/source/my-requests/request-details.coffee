@@ -82,6 +82,20 @@ angular.module 'LocalHyper.myRequests'
 							.then =>
 								_.each @all, (offer)-> App.notification.decrement()
 
+				openRatePopup : ->
+					ratePopup = $ionicPopup.show
+						templateUrl: 'views/my-requests/rate.html'
+						title: 'Rate This Seller'
+						scope: $scope
+						buttons: [
+							{ text: 'Cancel' }
+							{
+								text: '<b>Submit</b>'
+								type: 'button-assertive'
+								onTap: (e)->
+									console.log 'Rate'
+							}]
+
 			
 
 			init : ->

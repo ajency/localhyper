@@ -44,6 +44,26 @@ angular.module 'LocalHyper.myRequests', []
 ]
 
 
+.directive 'userRating', ['$timeout', ($timeout)->
+
+	restrict: 'E'
+	replace: true
+	template: '<div></div>'
+	scope:
+		rateClick: '&'
+
+	link: (scope, el, attrs)->
+
+		$timeout ->
+			$(el).raty
+				numberMax: 5
+				path: 'lib/raty/lib/images/'
+				click: (score, evt)->
+					scope.$apply ->
+						scope.rateClick score: score
+]
+
+
 .factory 'DeliveryTime', [->
 
 	DeliveryTime = 
