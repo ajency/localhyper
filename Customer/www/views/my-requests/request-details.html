@@ -35,7 +35,7 @@
 
 					<div class="row">
 						<div
-							class="col col-50"
+							class="col"
 							ng-if="view.request"
 							ng-click="view.address.toggle()">
 
@@ -44,6 +44,11 @@
 								<span>{{view.request.address.city}}</span>
 								<a ng-if="!view.address.show">More</a>
 								<a ng-if="view.address.show">Less</a>
+
+								<button 
+									class="button icon ion-chatbox-working pull-right button-small button-light" 
+									ng-click="view.comments.toggle();">
+								</button>
 							</p>
 
 							<ion-item
@@ -53,7 +58,7 @@
 							</ion-item>
 						</div>
 
-						<div
+						<!-- <div
 							class="col col-50 "
 							ng-if="view.request.comments !== ''">
 
@@ -68,7 +73,7 @@
 								ng-show="view.comments.show">
 								{{view.request.comments}}
 							</ion-item>
-						</div>
+						</div> -->
 					</div>
 
 					<div class="row">

@@ -27,6 +27,7 @@ angular.module 'LocalHyper.myRequests'
 						App.resize()
 					, 500
 
+
 			cancelRequest: 
 				footer: false
 				set : ->
