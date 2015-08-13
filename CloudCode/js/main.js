@@ -1,5 +1,5 @@
 (function() {
-  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getNewRequestsForSeller, getNotificationData, getOtherPricesForProduct, getRequestData, getRequestsWithPrice, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify, updateProductKeywords;
+  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getNewRequestsForSeller, getNotificationData, getOfferData, getOtherPricesForProduct, getRequestData, getRequestsWithPrice, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify, updateProductKeywords;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -1235,8 +1235,13 @@
   });
 
   Parse.Cloud.define('getRequestOffers', function(request, response) {
-    var innerQueryRequest, queryOffers, requestId;
+    var customerId, innerQueryRequest, queryOffers, requestId;
     requestId = request.params.requestId;
+    if (_.has(request.params, 'customerId')) {
+      customerId = request.params.customerId;
+    } else {
+      customerId = null;
+    }
     queryOffers = new Parse.Query("Offer");
     innerQueryRequest = new Parse.Query("Request");
     innerQueryRequest.equalTo("objectId", requestId);
@@ -1246,44 +1251,18 @@
     queryOffers.include("request.product");
     queryOffers.include("seller");
     return queryOffers.find().then(function(offerObjects) {
-      var offers;
-      offers = [];
-      offers = _.map(offerObjects, function(offerObject) {
-        var deliveryDate, offer, priceObj, product, productObj, seller, sellerObj;
-        productObj = offerObject.get("request").get("product");
-        product = {
-          "name": productObj.get("name"),
-          "images": productObj.get("images")
-        };
-        sellerObj = offerObject.get("seller");
-        seller = {
-          "displayName": sellerObj.get("displayName"),
-          "businessName": sellerObj.get("businessName"),
-          "address": sellerObj.get("address"),
-          "city": sellerObj.get("city"),
-          "phoneNumber": sellerObj.get("username")
-        };
-        priceObj = offerObject.get("price");
-        if (!_.isUndefined(offerObject.get("deliveryDate"))) {
-          deliveryDate = offerObject.get("deliveryDate");
-        } else {
-          deliveryDate = "";
-        }
-        offer = {
-          "id": offerObject.id,
-          "product": product,
-          "seller": seller,
-          "price": priceObj.get("value"),
-          "comments": offerObject.get("comments"),
-          "deliveryTime": offerObject.get("deliveryTime"),
-          "status": offerObject.get("status"),
-          "createdAt": offerObject.createdAt,
-          "updatedAt": offerObject.updatedAt,
-          "deliveryDate": deliveryDate
-        };
-        return offer;
+      var offersQ;
+      offersQ = [];
+      offersQ = _.map(offerObjects, function(offerObject) {
+        return getOfferData(offerObject, customerId);
       });
-      return response.success(offers);
+      return Parse.Promise.when(offersQ).then(function() {
+        var offers;
+        offers = _.flatten(_.toArray(arguments));
+        return response.success(offers);
+      }, function(error) {
+        return response.error(error);
+      });
     }, function(error) {
       return response.error(error);
     });
@@ -1691,6 +1670,72 @@
     } else {
       return false;
     }
+  };
+
+  getOfferData = function(offerObject, customerId) {
+    var error, innerQueryCustomer, innerQuerySeller, product, productObj, promise, queryRatings, seller, sellerObj;
+    promise = new Parse.Promise();
+    productObj = offerObject.get("request").get("product");
+    product = {
+      "name": productObj.get("name"),
+      "images": productObj.get("images")
+    };
+    sellerObj = offerObject.get("seller");
+    seller = {
+      "id": sellerObj.id,
+      "displayName": sellerObj.get("displayName"),
+      "businessName": sellerObj.get("businessName"),
+      "address": sellerObj.get("address"),
+      "city": sellerObj.get("city"),
+      "phoneNumber": sellerObj.get("username")
+    };
+    if (!_.isNull(customerId)) {
+      queryRatings = new Parse.Query("Ratings");
+      innerQueryCustomer = new Parse.Query(Parse.User);
+      innerQueryCustomer.equalTo("objectId", customerId);
+      queryRatings.matchesQuery("ratingBy", innerQueryCustomer);
+      innerQuerySeller = new Parse.Query(Parse.User);
+      innerQuerySeller.equalTo("objectId", sellerObj.id);
+      queryRatings.matchesQuery("ratingFor", innerQuerySeller);
+      queryRatings.equalTo("ratingForType", "seller");
+      queryRatings.first().then(function(ratingByCustomerObj) {
+        var deliveryDate, isSellerRated, offer, priceObj;
+        if (!_.isEmpty(ratingByCustomerObj)) {
+          isSellerRated = true;
+        } else {
+          isSellerRated = false;
+        }
+        priceObj = offerObject.get("price");
+        if (!_.isUndefined(offerObject.get("deliveryDate"))) {
+          deliveryDate = offerObject.get("deliveryDate");
+        } else {
+          deliveryDate = "";
+        }
+        seller["isSellerRated"] = isSellerRated;
+        offer = {
+          "id": offerObject.id,
+          "product": product,
+          "seller": seller,
+          "price": priceObj.get("value"),
+          "comments": offerObject.get("comments"),
+          "deliveryTime": offerObject.get("deliveryTime"),
+          "status": offerObject.get("status"),
+          "createdAt": offerObject.createdAt,
+          "updatedAt": offerObject.updatedAt,
+          "deliveryDate": deliveryDate
+        };
+        return promise.resolve(offer);
+      }, function(error) {
+        return promise.reject(error);
+      });
+    } else {
+      error = {
+        "code": "no_customer_id",
+        "message": "No customer id sent"
+      };
+      promise.reject(error);
+    }
+    return promise;
   };
 
   Parse.Cloud.define('productImport', function(request, response) {

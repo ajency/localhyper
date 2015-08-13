@@ -410,6 +410,11 @@ Parse.Cloud.afterSave "Offer", (request)->
 Parse.Cloud.define 'getRequestOffers' , (request, response) ->
     requestId = request.params.requestId
 
+    if _.has(request.params, 'customerId')
+        customerId = request.params.customerId  
+    else  
+        customerId = null
+
     # get all offers for the request
     queryOffers = new Parse.Query("Offer")
     innerQueryRequest = new Parse.Query("Request")
@@ -423,49 +428,18 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
 
     queryOffers.find()
     .then (offerObjects) ->
-        offers = []      
-        offers = _.map(offerObjects , (offerObject) ->
+        offersQ = []      
+        offersQ = _.map(offerObjects , (offerObject) ->
 
-                    productObj = offerObject.get("request").get("product")
+            getOfferData(offerObject ,customerId)
 
-                    product = 
-                        "name" : productObj.get("name")
-                        "images" : productObj.get("images")
+        )
 
-
-                    sellerObj = offerObject.get("seller")
-
-                    seller =
-                        "displayName" : sellerObj.get("displayName")
-                        "businessName" : sellerObj.get("businessName")
-                        "address" : sellerObj.get("address")
-                        "city" : sellerObj.get("city")
-                        "phoneNumber" : sellerObj.get("username")
-
-                    priceObj = offerObject.get("price")
-
-                    if !_.isUndefined offerObject.get("deliveryDate")
-                        deliveryDate = offerObject.get("deliveryDate")
-                    else 
-                        deliveryDate = ""
-                    
-                    offer = 
-                        "id" : offerObject.id
-                        "product" : product
-                        "seller" : seller
-                        "price" : priceObj.get("value")
-                        "comments" : offerObject.get("comments")
-                        "deliveryTime" : offerObject.get("deliveryTime")
-                        "status" : offerObject.get("status")
-                        "createdAt" : offerObject.createdAt
-                        "updatedAt" : offerObject.updatedAt
-                        "deliveryDate" : deliveryDate
-
-                    offer    
-
-                )
-
-        response.success offers 
+        Parse.Promise.when(offersQ).then ->
+            offers = _.flatten(_.toArray(arguments)) 
+            response.success offers 
+        , (error) ->
+            response.error error
 
     , (error) ->
         response.error error
@@ -922,3 +896,78 @@ isTimeBeforeWorkTime = (dateObj , workTimings) ->
         return true
     else
         return false 
+
+getOfferData = (offerObject, customerId) ->
+
+    promise = new Parse.Promise()
+    
+    productObj = offerObject.get("request").get("product")
+
+    product = 
+        "name" : productObj.get("name")
+        "images" : productObj.get("images")
+
+
+    sellerObj = offerObject.get("seller")
+
+    seller =
+        "id" : sellerObj.id
+        "displayName" : sellerObj.get("displayName")
+        "businessName" : sellerObj.get("businessName")
+        "address" : sellerObj.get("address")
+        "city" : sellerObj.get("city")
+        "phoneNumber" : sellerObj.get("username")
+
+    if !_.isNull(customerId)
+        # query rating table and check if seller is rated by the customer 
+
+        queryRatings = new Parse.Query("Ratings")
+
+        innerQueryCustomer = new Parse.Query(Parse.User)
+        innerQueryCustomer.equalTo("objectId" , customerId)
+        queryRatings.matchesQuery("ratingBy" ,innerQueryCustomer)
+
+        innerQuerySeller = new Parse.Query(Parse.User)
+        innerQuerySeller.equalTo("objectId" , sellerObj.id)
+        queryRatings.matchesQuery("ratingFor" ,innerQuerySeller)  
+
+        queryRatings.equalTo("ratingForType" , "seller")
+
+        queryRatings.first()
+        .then (ratingByCustomerObj) ->
+            if !_.isEmpty(ratingByCustomerObj)
+                isSellerRated = true
+            else
+                isSellerRated = false
+
+            priceObj = offerObject.get("price")
+
+            if !_.isUndefined offerObject.get("deliveryDate")
+                deliveryDate = offerObject.get("deliveryDate")
+            else 
+                deliveryDate = ""
+            
+            seller["isSellerRated"] = isSellerRated
+            offer = 
+                "id" : offerObject.id
+                "product" : product
+                "seller" : seller
+                "price" : priceObj.get("value")
+                "comments" : offerObject.get("comments")
+                "deliveryTime" : offerObject.get("deliveryTime")
+                "status" : offerObject.get("status")
+                "createdAt" : offerObject.createdAt
+                "updatedAt" : offerObject.updatedAt
+                "deliveryDate" : deliveryDate
+                
+            promise.resolve offer 
+
+        , (error) ->
+            promise.reject error 
+    else
+        error = 
+            "code" : "no_customer_id"
+            "message" : "No customer id sent"
+        promise.reject error
+
+    promise
