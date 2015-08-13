@@ -2656,14 +2656,20 @@
   });
 
   Parse.Cloud.define('getOpenRequestCount', function(request, response) {
-    var customerId, innerQueryCustomer, queryRequests;
+    var currentDate, currentTimeStamp, customerId, expiryValueInHrs, innerQueryCustomer, queryDate, queryRequests, time24HoursAgo;
     customerId = request.params.customerId;
     innerQueryCustomer = new Parse.Query(Parse.User);
     innerQueryCustomer.equalTo("objectId", customerId);
     queryRequests = new Parse.Query("Request");
-    queryRequests.select("offerCount");
     queryRequests.matchesQuery("customerId", innerQueryCustomer);
-    queryRequests.equalTo("status", innerQueryCustomer);
+    queryRequests.equalTo("status", "open");
+    currentDate = new Date();
+    currentTimeStamp = currentDate.getTime();
+    expiryValueInHrs = 24;
+    queryDate = new Date();
+    time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000);
+    queryDate.setTime(time24HoursAgo);
+    queryRequests.greaterThanOrEqualTo("createdAt", queryDate);
     return queryRequests.find().then(function(requestObjects) {
       var offerCount, requestCount, result;
       requestCount = requestObjects.length;
