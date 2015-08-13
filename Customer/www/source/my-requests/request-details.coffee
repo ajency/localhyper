@@ -217,7 +217,7 @@ angular.module 'LocalHyper.myRequests'
 		#Offer time & left delivery time
 		setTime = ->
 			$scope.offer.timeStr = TimeString.get $scope.offer.createdAt
-			$scope.offer.deliveryTimeLeftStr = DeliveryTime.left $scope.offer.updatedAt
+			$scope.offer.deliveryTimeLeftStr = DeliveryTime.left $scope.offer.deliveryDate
 
 		setTime()
 		interval = $interval setTime, 60000

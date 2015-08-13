@@ -252,7 +252,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
     $scope.offer.deliveryTimeStr = DeliveryTime.humanize($scope.offer.deliveryTime);
     setTime = function() {
       $scope.offer.timeStr = TimeString.get($scope.offer.createdAt);
-      return $scope.offer.deliveryTimeLeftStr = DeliveryTime.left($scope.offer.updatedAt);
+      return $scope.offer.deliveryTimeLeftStr = DeliveryTime.left($scope.offer.deliveryDate);
     };
     setTime();
     interval = $interval(setTime, 60000);
