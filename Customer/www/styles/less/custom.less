@@ -373,10 +373,13 @@ sm{
 			height: 225px !important;
  		    // background: none !important;
  		    &.border-card {
- 		    background: #ffffff; /* Old browsers */
- 		    border-right: 1px solid rgba(190, 190, 190, 0.63);
- 		    border-left: 1px solid #FFF;
- 		    border-bottom: 3px solid rgba(190, 190, 190, 0.63);
+	 		    background: #ffffff; /* Old browsers */
+	 		    border-right: 1px solid rgba(190, 190, 190, 0.63);
+	 		    border-left: 1px solid #FFF;
+	 		    border-bottom: 3px solid rgba(190, 190, 190, 0.63);
+	 		    &.activated {
+	 		    	background-color: #F5F4F4;
+	 		    }
  		    }
 
 	}
@@ -1626,7 +1629,7 @@ label.status-label {
 .search-full-page {
 	.sub-head-search {
 		i.icon {
-			font-size: 20px;
+			font-size: 24px;
 		}
 		form {width: 100%;}
 		.button-clear {
