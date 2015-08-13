@@ -443,6 +443,11 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
                         "phoneNumber" : sellerObj.get("username")
 
                     priceObj = offerObject.get("price")
+
+                    if !_.isUndefined offerObject.get("deliveryDate")
+                        deliveryDate = offerObject.get("deliveryDate")
+                    else 
+                        deliveryDate = ""
                     
                     offer = 
                         "id" : offerObject.id
@@ -454,6 +459,7 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
                         "status" : offerObject.get("status")
                         "createdAt" : offerObject.createdAt
                         "updatedAt" : offerObject.updatedAt
+                        "deliveryDate" : deliveryDate
 
                     offer    
 
@@ -599,24 +605,37 @@ Parse.Cloud.define 'getRequestForOffer', (request, response) ->
     .then (offerObj) ->
         requestObj = offerObj.get("request")
         productObj = requestObj.get("product")
-        
-        product = 
-            "name" :productObj.get("name")
-            "images" :productObj.get("images")
-            "mrp" :productObj.get("mrp")
-        
-        requestResult = 
-            "id" : requestObj.id
-            "product" : product
-            "status" : requestObj.get("status")
-            "address" : requestObj.get("address")
-            "comments" : requestObj.get("comments")
-            "createdAt" : requestObj.createdAt
-            "updatedAt" : requestObj.updatedAt
-            "offerCount" : requestObj.get("offerCount")
-            "deliveryDate" : offerObj.get("deliveryDate")
 
-        response.success requestResult
+        getOtherPricesForProduct(productObj)
+        .then (otherPrice) ->
+            product = 
+                "name" :productObj.get("name")
+                "images" :productObj.get("images")
+                "mrp" :productObj.get("mrp")
+                "onlinePrice" : otherPrice["online"]["value"]
+                "platformPrice" : otherPrice["platform"]["value"]
+            
+            if !_.isUndefined offerObj.get("deliveryDate")
+                deliveryDate = offerObj.get("deliveryDate")
+            else 
+                deliveryDate = ""
+
+            requestResult = 
+                "id" : requestObj.id
+                "product" : product
+                "status" : requestObj.get("status")
+                "address" : requestObj.get("address")
+                "comments" : requestObj.get("comments")
+                "createdAt" : requestObj.createdAt
+                "updatedAt" : requestObj.updatedAt
+                "offerCount" : requestObj.get("offerCount")
+                "deliveryDate" : deliveryDate
+
+            response.success requestResult 
+                       
+        , (error) ->
+            response.error error    
+
 
     , (error) ->
         response.error error

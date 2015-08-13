@@ -1,5 +1,5 @@
 (function() {
-  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getNewRequestsForSeller, getNotificationData, getOtherPricesForProduct, getRequestData, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify, updateProductKeywords;
+  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getNewRequestsForSeller, getNotificationData, getOtherPricesForProduct, getRequestData, getRequestsWithPrice, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify, updateProductKeywords;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -1248,7 +1248,7 @@
       var offers;
       offers = [];
       offers = _.map(offerObjects, function(offerObject) {
-        var offer, priceObj, product, productObj, seller, sellerObj;
+        var deliveryDate, offer, priceObj, product, productObj, seller, sellerObj;
         productObj = offerObject.get("request").get("product");
         product = {
           "name": productObj.get("name"),
@@ -1263,6 +1263,11 @@
           "phoneNumber": sellerObj.get("username")
         };
         priceObj = offerObject.get("price");
+        if (!_.isUndefined(offerObject.get("deliveryDate"))) {
+          deliveryDate = offerObject.get("deliveryDate");
+        } else {
+          deliveryDate = "";
+        }
         offer = {
           "id": offerObject.id,
           "product": product,
@@ -1272,7 +1277,8 @@
           "deliveryTime": offerObject.get("deliveryTime"),
           "status": offerObject.get("status"),
           "createdAt": offerObject.createdAt,
-          "updatedAt": offerObject.updatedAt
+          "updatedAt": offerObject.updatedAt,
+          "deliveryDate": deliveryDate
         };
         return offer;
       });
@@ -1399,26 +1405,38 @@
     queryOffer.include("request");
     queryOffer.include("request.product");
     return queryOffer.first().then(function(offerObj) {
-      var product, productObj, requestObj, requestResult;
+      var productObj, requestObj;
       requestObj = offerObj.get("request");
       productObj = requestObj.get("product");
-      product = {
-        "name": productObj.get("name"),
-        "images": productObj.get("images"),
-        "mrp": productObj.get("mrp")
-      };
-      requestResult = {
-        "id": requestObj.id,
-        "product": product,
-        "status": requestObj.get("status"),
-        "address": requestObj.get("address"),
-        "comments": requestObj.get("comments"),
-        "createdAt": requestObj.createdAt,
-        "updatedAt": requestObj.updatedAt,
-        "offerCount": requestObj.get("offerCount"),
-        "deliveryDate": offerObj.get("deliveryDate")
-      };
-      return response.success(requestResult);
+      return getOtherPricesForProduct(productObj).then(function(otherPrice) {
+        var deliveryDate, product, requestResult;
+        product = {
+          "name": productObj.get("name"),
+          "images": productObj.get("images"),
+          "mrp": productObj.get("mrp"),
+          "onlinePrice": otherPrice["online"]["value"],
+          "platformPrice": otherPrice["platform"]["value"]
+        };
+        if (!_.isUndefined(offerObj.get("deliveryDate"))) {
+          deliveryDate = offerObj.get("deliveryDate");
+        } else {
+          deliveryDate = "";
+        }
+        requestResult = {
+          "id": requestObj.id,
+          "product": product,
+          "status": requestObj.get("status"),
+          "address": requestObj.get("address"),
+          "comments": requestObj.get("comments"),
+          "createdAt": requestObj.createdAt,
+          "updatedAt": requestObj.updatedAt,
+          "offerCount": requestObj.get("offerCount"),
+          "deliveryDate": deliveryDate
+        };
+        return response.success(requestResult);
+      }, function(error) {
+        return response.error(error);
+      });
     }, function(error) {
       return response.error(error);
     });
@@ -2250,6 +2268,93 @@
     };
   })(this);
 
+  getOtherPricesForProduct = function(productObject) {
+    var innerQueryProduct, productId, productPrice, promise, queryPrice;
+    promise = new Parse.Promise();
+    productPrice = {};
+    productId = productObject.id;
+    queryPrice = new Parse.Query("Price");
+    innerQueryProduct = new Parse.Query("ProductItem");
+    innerQueryProduct.equalTo("objectId", productId);
+    queryPrice.matchesQuery("product", innerQueryProduct);
+    queryPrice.equalTo("type", "online_market_price");
+    queryPrice.first().then(function(onlinePriceObj) {
+      var flipkartUrl, snapdealUrl, srcUrl;
+      if (_.isEmpty(onlinePriceObj)) {
+        productPrice["online"] = {
+          value: "",
+          source: "",
+          sourceUrl: "",
+          updatedAt: ""
+        };
+      } else {
+        flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/Flipkart+logo.jpg";
+        snapdealUrl = " https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/sd.png";
+        if (onlinePriceObj.get("source") === "flipkart") {
+          srcUrl = flipkartUrl;
+        } else {
+          srcUrl = snapdealUrl;
+        }
+        productPrice["online"] = {
+          value: onlinePriceObj.get("value"),
+          source: onlinePriceObj.get("source"),
+          srcUrl: srcUrl,
+          updatedAt: onlinePriceObj.updatedAt
+        };
+      }
+      return getBestPlatformPrice(productObject).then(function(platformPrice) {
+        productPrice["platform"] = platformPrice;
+        return promise.resolve(productPrice);
+      }, function(error) {
+        return promise.reject(error);
+      });
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
+
+  getBestPlatformPrice = function(productObject) {
+    var innerQueryProduct, productId, promise, queryPrice;
+    promise = new Parse.Promise();
+    queryPrice = new Parse.Query("Price");
+    productId = productObject.id;
+    innerQueryProduct = new Parse.Query("ProductItem");
+    innerQueryProduct.equalTo("objectId", productId);
+    queryPrice.matchesQuery("product", innerQueryProduct);
+    queryPrice.notEqualTo("type", "online_market_price");
+    queryPrice.find().then(function(platformPrices) {
+      var minPrice, minPriceObj, priceObjArr, priceValues;
+      if (platformPrices.length === 0) {
+        minPrice = "";
+        minPriceObj = {
+          value: minPrice,
+          updatedAt: ""
+        };
+      } else {
+        priceValues = [];
+        priceObjArr = [];
+        _.each(platformPrices, function(platformPriceObj) {
+          var pricObj;
+          pricObj = {
+            "value": parseInt(platformPriceObj.get("value")),
+            "updatedAt": platformPriceObj.updatedAt
+          };
+          priceObjArr.push(pricObj);
+          return priceValues.push(parseInt(platformPriceObj.get("value")));
+        });
+        minPrice = _.min(priceValues);
+        minPriceObj = _.where(priceObjArr, {
+          value: minPrice
+        });
+      }
+      return promise.resolve(minPriceObj[0]);
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
+
   Parse.Cloud.define('makeRequest', function(request, response) {
     var Request, address, area, brandId, brandObj, categoryId, categoryObj, city, comments, customerId, customerObj, location, point, productId, productObj, status;
     customerId = request.params.customerId;
@@ -2566,38 +2671,17 @@
     queryRequest.limit(displayLimit);
     queryRequest.skip(page * displayLimit);
     return queryRequest.find().then(function(requests) {
-      var pastRequests;
-      pastRequests = _.map(requests, function(requestObj) {
-        var createdDate, diff, differenceInDays, pastReq, product, requestStatus;
-        currentDate = new Date();
-        createdDate = requestObj.createdAt;
-        diff = currentDate.getTime() - createdDate.getTime();
-        differenceInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
-        requestStatus = requestObj.get("status");
-        if (differenceInDays >= 1) {
-          if (requestStatus === "open") {
-            requestStatus = "expired";
-          }
-        }
-        product = {
-          "name": requestObj.get("product").get("name"),
-          "images": requestObj.get("product").get("images"),
-          "mrp": requestObj.get("product").get("mrp")
-        };
-        pastReq = {
-          "id": requestObj.id,
-          "product": product,
-          "status": requestStatus,
-          "createdAt": requestObj.createdAt,
-          "updatedAt": requestObj.updatedAt,
-          "differenceInDays": differenceInDays,
-          "address": requestObj.get("address"),
-          "comments": requestObj.get("comments"),
-          "offerCount": requestObj.get("offerCount")
-        };
-        return pastReq;
+      var productPricesQs;
+      productPricesQs = _.map(requests, function(reqObj) {
+        return getRequestsWithPrice(reqObj);
       });
-      return response.success(pastRequests);
+      return Parse.Promise.when(productPricesQs).then(function() {
+        var pastRequests;
+        pastRequests = _.flatten(_.toArray(arguments));
+        return response.success(pastRequests);
+      }, function(error) {
+        return response.error(error);
+      });
     }, function(error) {
       return response.error(error);
     });
@@ -2955,87 +3039,42 @@
     return promise;
   };
 
-  getOtherPricesForProduct = function(productObject) {
-    var innerQueryProduct, productId, productPrice, promise, queryPrice;
+  getRequestsWithPrice = function(requestObj) {
+    var createdDate, currentDate, diff, differenceInDays, productObj, promise, requestStatus;
     promise = new Parse.Promise();
-    productPrice = {};
-    productId = productObject.id;
-    queryPrice = new Parse.Query("Price");
-    innerQueryProduct = new Parse.Query("ProductItem");
-    innerQueryProduct.equalTo("objectId", productId);
-    queryPrice.matchesQuery("product", innerQueryProduct);
-    queryPrice.equalTo("type", "online_market_price");
-    queryPrice.first().then(function(onlinePriceObj) {
-      var flipkartUrl, snapdealUrl, srcUrl;
-      if (_.isEmpty(onlinePriceObj)) {
-        productPrice["online"] = {
-          value: "",
-          source: "",
-          sourceUrl: "",
-          updatedAt: ""
-        };
-      } else {
-        flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/Flipkart+logo.jpg";
-        snapdealUrl = " https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/sd.png";
-        if (onlinePriceObj.get("source") === "flipkart") {
-          srcUrl = flipkartUrl;
-        } else {
-          srcUrl = snapdealUrl;
-        }
-        productPrice["online"] = {
-          value: onlinePriceObj.get("value"),
-          source: onlinePriceObj.get("source"),
-          srcUrl: srcUrl,
-          updatedAt: onlinePriceObj.updatedAt
-        };
+    currentDate = new Date();
+    createdDate = requestObj.createdAt;
+    diff = currentDate.getTime() - createdDate.getTime();
+    differenceInDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+    requestStatus = requestObj.get("status");
+    if (differenceInDays >= 1) {
+      if (requestStatus === "open") {
+        requestStatus = "expired";
       }
-      return getBestPlatformPrice(productObject).then(function(platformPrice) {
-        productPrice["platform"] = platformPrice;
-        return promise.resolve(productPrice);
-      }, function(error) {
-        return promise.reject(error);
-      });
-    }, function(error) {
-      return promise.reject(error);
-    });
-    return promise;
-  };
-
-  getBestPlatformPrice = function(productObject) {
-    var innerQueryProduct, productId, promise, queryPrice;
-    promise = new Parse.Promise();
-    queryPrice = new Parse.Query("Price");
-    productId = productObject.id;
-    innerQueryProduct = new Parse.Query("ProductItem");
-    innerQueryProduct.equalTo("objectId", productId);
-    queryPrice.matchesQuery("product", innerQueryProduct);
-    queryPrice.notEqualTo("type", "online_market_price");
-    queryPrice.find().then(function(platformPrices) {
-      var minPrice, minPriceObj, priceObjArr, priceValues;
-      if (platformPrices.length === 0) {
-        minPrice = "";
-        minPriceObj = {
-          value: minPrice,
-          updatedAt: ""
-        };
-      } else {
-        priceValues = [];
-        priceObjArr = [];
-        _.each(platformPrices, function(platformPriceObj) {
-          var pricObj;
-          pricObj = {
-            "value": parseInt(platformPriceObj.get("value")),
-            "updatedAt": platformPriceObj.updatedAt
-          };
-          priceObjArr.push(pricObj);
-          return priceValues.push(parseInt(platformPriceObj.get("value")));
-        });
-        minPrice = _.min(priceValues);
-        minPriceObj = _.where(priceObjArr, {
-          value: minPrice
-        });
-      }
-      return promise.resolve(minPriceObj[0]);
+    }
+    productObj = requestObj.get("product");
+    getOtherPricesForProduct(productObj).then(function(otherPrice) {
+      var pastReq, product;
+      product = {
+        "name": productObj.get("name"),
+        "images": productObj.get("images"),
+        "mrp": productObj.get("mrp"),
+        "onlinePrice": otherPrice["online"]["value"],
+        "platformPrice": otherPrice["platform"]["value"]
+      };
+      pastReq = {
+        "id": requestObj.id,
+        "product": product,
+        "status": requestStatus,
+        "createdAt": requestObj.createdAt,
+        "updatedAt": requestObj.updatedAt,
+        "differenceInDays": differenceInDays,
+        "address": requestObj.get("address"),
+        "comments": requestObj.get("comments"),
+        "offerCount": requestObj.get("offerCount")
+      };
+      pastReq;
+      return promise.resolve(pastReq);
     }, function(error) {
       return promise.reject(error);
     });

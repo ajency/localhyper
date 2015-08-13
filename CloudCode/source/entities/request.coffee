@@ -395,43 +395,17 @@ Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
 
     queryRequest.find()
     .then (requests) ->
-        pastRequests = _.map(requests, (requestObj) ->
 
-            currentDate = new Date()
-            createdDate = requestObj.createdAt
-            diff = currentDate.getTime() - createdDate.getTime()
-            differenceInDays =  Math.floor(diff / (1000 * 60 * 60 * 24)) 
-
-            # if expired
-            requestStatus = requestObj.get("status")
-            
-            if differenceInDays >= 1 
-                if requestStatus is "open"
-                    requestStatus = "expired"
-                
-            product =
-                "name": requestObj.get("product").get("name")
-                "images": requestObj.get("product").get("images")
-                "mrp": requestObj.get("product").get("mrp")
-
-            
-            
-            pastReq = 
-                "id" : requestObj.id
-                "product" : product
-                "status" : requestStatus
-                "createdAt": requestObj.createdAt
-                "updatedAt": requestObj.updatedAt
-                "differenceInDays" :differenceInDays
-                "address": requestObj.get("address")
-                "comments": requestObj.get("comments")
-                "offerCount": requestObj.get("offerCount")
-
-            pastReq
-
-
+        productPricesQs = _.map(requests, (reqObj) ->
+            getRequestsWithPrice(reqObj)
         )
-        response.success pastRequests
+
+        Parse.Promise.when(productPricesQs).then -> 
+            pastRequests = _.flatten(_.toArray(arguments))               
+            response.success pastRequests
+        , (error) ->
+            response.error error
+
     , (error) ->
         response.error error    
 
@@ -868,102 +842,48 @@ getRequestData =  (filteredRequest,seller,productLastOfferedPrices) ->
 
     promise
 
-getOtherPricesForProduct = (productObject) ->
-
+getRequestsWithPrice = (requestObj) ->
     promise = new Parse.Promise()
 
-    productPrice = {}
+    currentDate = new Date()
+    createdDate = requestObj.createdAt
+    diff = currentDate.getTime() - createdDate.getTime()
+    differenceInDays =  Math.floor(diff / (1000 * 60 * 60 * 24)) 
 
-    productId = productObject.id
+    # if expired
+    requestStatus = requestObj.get("status")
+    
+    if differenceInDays >= 1 
+        if requestStatus is "open"
+            requestStatus = "expired"
 
-    # query Price class 
+    productObj = requestObj.get("product")
 
-    queryPrice = new Parse.Query("Price")
+    getOtherPricesForProduct(productObj)
+    .then (otherPrice) ->
+        
+        product =
+            "name": productObj.get("name")
+            "images": productObj.get("images")
+            "mrp": productObj.get("mrp")
+            "onlinePrice" : otherPrice["online"]["value"]
+            "platformPrice" : otherPrice["platform"]["value"]
 
-    innerQueryProduct = new Parse.Query("ProductItem")
-    innerQueryProduct.equalTo("objectId" , productId)
+        
+        pastReq = 
+            "id" : requestObj.id
+            "product" : product
+            "status" : requestStatus
+            "createdAt": requestObj.createdAt
+            "updatedAt": requestObj.updatedAt
+            "differenceInDays" :differenceInDays
+            "address": requestObj.get("address")
+            "comments": requestObj.get("comments")
+            "offerCount": requestObj.get("offerCount")
 
-    queryPrice.matchesQuery("product" , innerQueryProduct)
-    queryPrice.equalTo("type" , "online_market_price")
+        pastReq
 
-    queryPrice.first()
-    .then (onlinePriceObj) ->
-        if _.isEmpty(onlinePriceObj)
-            productPrice["online"] = 
-                value : ""
-                source : ""
-                sourceUrl : ""
-                updatedAt : ""
-        else
-            flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/Flipkart+logo.jpg"
-            snapdealUrl = " https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/sd.png"
-
-            if onlinePriceObj.get("source") is "flipkart"
-                srcUrl =  flipkartUrl
-            else
-                srcUrl =  snapdealUrl    
-            
-
-            productPrice["online"] = 
-                value : onlinePriceObj.get("value")
-                source : onlinePriceObj.get("source")
-                srcUrl : srcUrl
-                updatedAt : onlinePriceObj.updatedAt           
-            
-
-        # now find best platform price
-        getBestPlatformPrice(productObject)
-        .then (platformPrice) ->
-            productPrice["platform"] = platformPrice
-            promise.resolve productPrice
-
-        , (error) ->
-            promise.reject error
-    , (error) ->
-        promise.reject error
-
-    promise
-
-
-getBestPlatformPrice = (productObject) ->
-    promise = new Parse.Promise()
-
-    # get all prices entered in price table for type other than "open_offer" in price class
-
-    queryPrice = new Parse.Query("Price")
-    productId = productObject.id
-
-    innerQueryProduct = new Parse.Query("ProductItem")
-    innerQueryProduct.equalTo("objectId" , productId)
-    queryPrice.matchesQuery("product",innerQueryProduct)
-    queryPrice.notEqualTo("type","online_market_price")
-
-    queryPrice.find()
-    .then (platformPrices) ->
-        if platformPrices.length is 0 
-            minPrice = ""
-            minPriceObj =  
-                value : minPrice
-                updatedAt : ""
-        else
-            priceValues = []
-            priceObjArr = []
-
-            _.each platformPrices , (platformPriceObj) ->
-                pricObj = 
-                    "value" : parseInt(platformPriceObj.get("value"))
-                    "updatedAt" : platformPriceObj.updatedAt   
-
-                priceObjArr.push pricObj
-
-                priceValues.push parseInt(platformPriceObj.get("value"))
-
-            minPrice = _.min(priceValues)
-
-            minPriceObj = _.where priceObjArr, value: minPrice
-
-        promise.resolve minPriceObj[0]
-
+        promise.resolve pastReq
 
     , (error) ->
         promise.reject error 

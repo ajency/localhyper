@@ -686,6 +686,106 @@ findAttribValues = (filter) =>
 
     promise   
 
+getOtherPricesForProduct = (productObject) ->
 
+    promise = new Parse.Promise()
+
+    productPrice = {}
+
+    productId = productObject.id
+
+    # query Price class 
+
+    queryPrice = new Parse.Query("Price")
+
+    innerQueryProduct = new Parse.Query("ProductItem")
+    innerQueryProduct.equalTo("objectId" , productId)
+
+    queryPrice.matchesQuery("product" , innerQueryProduct)
+    queryPrice.equalTo("type" , "online_market_price")
+
+    queryPrice.first()
+    .then (onlinePriceObj) ->
+        if _.isEmpty(onlinePriceObj)
+            productPrice["online"] = 
+                value : ""
+                source : ""
+                sourceUrl : ""
+                updatedAt : ""
+        else
+            flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/Flipkart+logo.jpg"
+            snapdealUrl = " https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/sd.png"
+
+            if onlinePriceObj.get("source") is "flipkart"
+                srcUrl =  flipkartUrl
+            else
+                srcUrl =  snapdealUrl    
+            
+
+            productPrice["online"] = 
+                value : onlinePriceObj.get("value")
+                source : onlinePriceObj.get("source")
+                srcUrl : srcUrl
+                updatedAt : onlinePriceObj.updatedAt           
+            
+
+        # now find best platform price
+        getBestPlatformPrice(productObject)
+        .then (platformPrice) ->
+            productPrice["platform"] = platformPrice
+            promise.resolve productPrice
+
+        , (error) ->
+            promise.reject error
+    , (error) ->
+        promise.reject error
+
+    promise
+
+
+getBestPlatformPrice = (productObject) ->
+    promise = new Parse.Promise()
+
+    # get all prices entered in price table for type other than "open_offer" in price class
+
+    queryPrice = new Parse.Query("Price")
+    productId = productObject.id
+
+    innerQueryProduct = new Parse.Query("ProductItem")
+    innerQueryProduct.equalTo("objectId" , productId)
+    queryPrice.matchesQuery("product",innerQueryProduct)
+    queryPrice.notEqualTo("type","online_market_price")
+
+    queryPrice.find()
+    .then (platformPrices) ->
+        if platformPrices.length is 0 
+            minPrice = ""
+            minPriceObj =  
+                value : minPrice
+                updatedAt : ""
+        else
+            priceValues = []
+            priceObjArr = []
+
+            _.each platformPrices , (platformPriceObj) ->
+                pricObj = 
+                    "value" : parseInt(platformPriceObj.get("value"))
+                    "updatedAt" : platformPriceObj.updatedAt   
+
+                priceObjArr.push pricObj
+
+                priceValues.push parseInt(platformPriceObj.get("value"))
+
+            minPrice = _.min(priceValues)
+
+            minPriceObj = _.where priceObjArr, value: minPrice
+
+        promise.resolve minPriceObj[0]
+
+
+    , (error) ->
+        promise.reject error 
+
+    promise
 
 
