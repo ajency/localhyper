@@ -121,7 +121,12 @@
 				        <div class="col text-center">
 				        	<div class="vert-div pull-left"></div>
 				        	<p>Status</p>
-				        	<label class="status-label status-balanced"> {{App.humanize(request.status)}}</label>
+				        	<label 
+				        		class="status-label"
+				        		ng-class="(request.status === 'cancelled' 
+				        				|| request.status === 'expired') ? 'status-assertive' : 'status-balanced'"> 
+				        		{{App.humanize(request.status)}}
+				        	</label>
 				        </div>
 				        <div class="col text-center">
 				        	<div class="vert-div pull-left"></div>
