@@ -62,7 +62,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <input type="hidden" value="{{ csrf_token()}}" name="_token" />
-                                        <button type="submit" class="btn btn-default "><i class="fa fa-upload"></i> Upload</button>
+                                        <button type="submit" class="btn btn-default btn-import"><i class="fa fa-upload"></i> Upload</button>
                                     </div>
                                 </div>
                             </form>
@@ -99,7 +99,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <input type="hidden" value="{{ csrf_token()}}" name="_token" />
-                                        <button type="submit" class="btn btn-default "><i class="fa fa-upload"></i> Upload</button>
+                                        <button type="submit" class="btn btn-default btn-import"><i class="fa fa-upload"></i> Upload</button>
                                     </div>
                                 </div>
                             </form>
@@ -134,7 +134,7 @@
                                     </div>
                                     <div class="col-sm-4">
                                         <input type="hidden" value="{{ csrf_token()}}" name="_token" />
-                                        <button type="submit" class="btn btn-default "><i class="fa fa-upload"></i> Upload</button>
+                                        <button type="submit" class="btn btn-default btn-import"><i class="fa fa-upload"></i> Upload</button>
                                     </div>
                                 </div>
                             </form>

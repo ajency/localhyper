@@ -126,7 +126,7 @@ $(".update-search-keyword").click(function(){
      var categoryId = $(this).attr('data-category-id'); 
       $.ajax({
         async :true, 
-        url: "#",
+        url: "https://api.parse.com/1/functions/updateCategoryProductsKeywords",
         type: "POST",
         headers: {
                     "x-parse-application-id": window.APPLICATION_ID,
@@ -186,4 +186,9 @@ $('.sellerList').on('click', '.save-seller-credits', function () {
 function isInteger(n) {
     return /^[0-9]+$/.test(n);
 }
+
+$('.btn-import').click(function(){
+    $(this).addClass("hidden");
+});
+
 
