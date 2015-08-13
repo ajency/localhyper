@@ -4,14 +4,14 @@
 		Expired Requests
     </ion-nav-title>
 
-	<ion-content ng-switch="view.display">
+	<ion-content ng-switch="view.display" class="my-requests-glob">
 
 		<ion-refresher
-			on-refresh="view.onPullToRefresh();" 
+			on-refresh="view.onPullToRefresh();"
 			class="aj-refresher">
 		</ion-refresher>
 
-		<ion-list 
+		<ion-list
 			class="card-list"
 			ng-switch-when="noError">
 
@@ -37,7 +37,7 @@
 					<div class="col  p-t-0">
 						<sm class="light-gray"> Local Price</sm><br>
 						<h3 class=" item-text-wrap margin-none big-txt">
-							<span class="WebRupee subdued">&#x20B9;</span> 
+							<span class="WebRupee subdued">&#x20B9;</span>
 							{{App.toINR(request.product.mrp)}}
 						</h3>
 					</div>
@@ -56,23 +56,23 @@
 						</sm>
 					</div>
 					<div class="col col-75">
-						<h3 class="margin-none status text-right m-t-5"> 
+						<h3 class="margin-none status text-right m-t-5">
 							<b>{{App.humanize(request.status)}}</b>
 						</h3>
 					</div>
 				</div>
-					
+
 			</ion-item>
 		</ion-list>
 
 		<div ng-if="view.gotAllRequests">
-			<h4 class="text-center ">That's all folks. No more requests to display.</h4>
+			<h5 class="text-center fin">That's all folks. No more requests to display.</h5>
 		</div>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll();"
 			ng-if="view.canLoadMore"
-			distance="1%" 
+			distance="1%"
 			class="aj-refresher">
 		</ion-infinite-scroll>
 

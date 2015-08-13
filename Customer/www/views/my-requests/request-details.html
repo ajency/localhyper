@@ -45,7 +45,7 @@
 							</button>
 
 							<p class="loca">
-								<span 
+								<span
 									class="loca-wrap"
 									ng-click="view.address.toggle();">
 
@@ -196,8 +196,8 @@
 									<span class="loc">{{offer.seller.address.city}}</span>
 								</h3>
 
-								<p 
-									class="comment subdued" 
+								<p
+									class="comment subdued"
 									ng-if="offer.comments !== ''"
 									ng-click="view.showComment('Seller Comment', offer.comments);">
 
@@ -320,16 +320,20 @@
 
 			<ion-item
 				ng-if="view.offers.limitTo == 1 && view.offers.all.length > 1;"
-				ng-click="view.offers.showAll()" class="text-center">
+				ng-click="view.offers.showAll()" class="text-center show-all-req">
 				SHOW ALL OFFERS
 			</ion-item>
 
-			<button
-				class="button button-block button-assertive"
-				ng-if="view.request.status === 'open' && view.offers.all.length > 0;"
-				ng-click="view.onCancelRequest();">
-				Cancel Request
-			</button>
+			<div class="row">
+				<div class="col">
+					<button
+						class="button button-block button-assertive"
+						ng-if="view.request.status === 'open' && view.offers.all.length > 0;"
+						ng-click="view.onCancelRequest();">
+						Cancel Request
+					</button>
+				</div>
+			</div>
 
 			<aj-error
 				ng-switch-when="error"
@@ -341,12 +345,16 @@
 	</ion-content>
 
 	<ion-footer-bar
-		class="bar-assertive"
+		class="bar-asse rtive bar no-shadow cancel-req-btn"
 		ng-if="view.cancelRequest.footer">
-		<div
-			class="title"
-			ng-click="view.onCancelRequest();">
-			Cancel Request
+		<div class="row">
+			<div class="col">
+				<div
+					class="title no-shadow"
+					ng-click="view.onCancelRequest();">
+					Cancel Request
+				</div>
+			</div>
 		</div>
 	</ion-footer-bar>
 
