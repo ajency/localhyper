@@ -1892,13 +1892,93 @@
     queryProductItem = new Parse.Query(ProductItem);
     queryProductItem.equalTo("objectId", productId);
     queryProductItem.include("attrs");
-    queryProductItem.include("brand");
     queryProductItem.include("attrs.attribute");
+    queryProductItem.include("brand");
     queryProductItem.include("category");
+    queryProductItem.include("category.secondary_attributes");
     queryProductItem.include("primaryAttributes");
     queryProductItem.include("primaryAttributes.attribute");
     return queryProductItem.first().then(function(ProductData) {
-      return response.success(ProductData);
+      var attribId, attributeIdNames, brand, brandObj, category, categoryObj, productAttributes, productResult, productSpec, secondary_attributes, specifications, textAttributes;
+      categoryObj = ProductData.get("category");
+      category = {
+        id: categoryObj.id,
+        name: categoryObj.get("name")
+      };
+      brandObj = ProductData.get("brand");
+      brand = {
+        id: brandObj.id,
+        name: brandObj.get("name")
+      };
+      secondary_attributes = categoryObj.get("secondary_attributes");
+      textAttributes = ProductData.get("textAttributes");
+      attributeIdNames = {};
+      if (secondary_attributes.length > 0) {
+        _.each(secondary_attributes, function(secondary_attribute) {
+          var attrobj, group, name;
+          if (!_.isNull(secondary_attribute)) {
+            if (!_.isUndefined(secondary_attribute.get("group"))) {
+              group = secondary_attribute.get("group");
+            } else {
+              group = "other";
+            }
+            if (!_.isUndefined(secondary_attribute.get("name"))) {
+              name = secondary_attribute.get("name");
+            } else {
+              name = "";
+            }
+            attrobj = {
+              "group": group,
+              "name": name
+            };
+            return attributeIdNames[secondary_attribute.id] = attrobj;
+          }
+        });
+      }
+      productAttributes = ProductData.get("attrs");
+      specifications = [];
+      _.each(productAttributes, function(productAttributeValue) {
+        var attributeObj, attributeObjId, productSpec, unit;
+        attributeObj = productAttributeValue.get("attribute");
+        attributeObjId = attributeObj.id;
+        if (!_.isUndefined(attributeObj.get("unit"))) {
+          unit = attributeObj.get("unit");
+        } else {
+          unit = "";
+        }
+        productSpec = {
+          "group": attributeObj.get("group"),
+          "key": attributeObj.get("name"),
+          "value": productAttributeValue.get("value"),
+          "unit": unit
+        };
+        return specifications.push(productSpec);
+      });
+      if (!_.isUndefined(textAttributes) || !_.isEmpty(textAttributes)) {
+        for (attribId in textAttributes) {
+          if (textAttributes.hasOwnProperty(attribId)) {
+            productSpec = {
+              "group": attributeIdNames[attribId]["group"],
+              "key": attributeIdNames[attribId]["name"],
+              "value": textAttributes[attribId],
+              "unit": ""
+            };
+            specifications.push(productSpec);
+          }
+        }
+      }
+      productResult = {
+        id: ProductData.id,
+        name: ProductData.get("name"),
+        model_number: ProductData.get("model_number"),
+        mrp: ProductData.get("mrp"),
+        images: ProductData.get("images"),
+        category: category,
+        brand: brand,
+        primaryAttributes: ProductData.get("primaryAttributes"),
+        specifications: specifications
+      };
+      return response.success(productResult);
     }, function(error) {
       return response.error(error);
     });

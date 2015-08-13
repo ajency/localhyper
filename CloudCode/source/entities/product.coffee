@@ -275,15 +275,99 @@ Parse.Cloud.define 'getProduct', (request, response) ->
 
     queryProductItem.equalTo("objectId", productId)
     queryProductItem.include("attrs")
-    queryProductItem.include("brand")
     queryProductItem.include("attrs.attribute")
+    queryProductItem.include("brand")
     queryProductItem.include("category")
+    queryProductItem.include("category.secondary_attributes")
     queryProductItem.include("primaryAttributes")
     queryProductItem.include("primaryAttributes.attribute")
 
     queryProductItem.first()
     .then (ProductData)->
-        response.success ProductData
+        categoryObj = ProductData.get "category"
+        
+        category = 
+            id : categoryObj.id
+            name : categoryObj.get "name"
+
+        brandObj = ProductData.get "brand"
+
+        brand = 
+            id : brandObj.id
+            name : brandObj.get "name"            
+
+        secondary_attributes = categoryObj.get "secondary_attributes"
+        textAttributes = ProductData.get "textAttributes"
+
+        attributeIdNames = {}
+
+        if secondary_attributes.length > 0
+            _.each secondary_attributes , (secondary_attribute) ->
+                if !_.isNull secondary_attribute
+                    if !_.isUndefined secondary_attribute.get "group"
+                        group = secondary_attribute.get "group"
+                    else 
+                        group = "other"
+
+                    if !_.isUndefined secondary_attribute.get "name"
+                        name = secondary_attribute.get "name"
+                    else 
+                        name = ""  
+                                      
+                    attrobj = 
+                        "group" : group
+                        "name" : name
+                    attributeIdNames[secondary_attribute.id] = attrobj
+        
+
+        productAttributes  = ProductData.get "attrs"  
+
+        specifications = [] 
+
+        _.each productAttributes , (productAttributeValue) ->
+            attributeObj = productAttributeValue.get "attribute"
+            attributeObjId = attributeObj.id
+
+            if !_.isUndefined attributeObj.get "unit"   
+                unit = attributeObj.get "unit" 
+            else 
+                unit = ""
+            
+            productSpec = 
+                "group" : attributeObj.get "group"            
+                "key" : attributeObj.get "name"    
+                "value" :  productAttributeValue.get "value"  
+                "unit" :  unit
+
+            specifications.push productSpec 
+
+
+        if !_.isUndefined(textAttributes) or !_.isEmpty(textAttributes)
+            for attribId of textAttributes
+              if textAttributes.hasOwnProperty(attribId)
+                productSpec = 
+                    "group" : attributeIdNames[attribId]["group"]           
+                    "key" : attributeIdNames[attribId]["name"]     
+                    "value" :  textAttributes[attribId]
+                    "unit" :  ""  
+                    
+                specifications.push productSpec                     
+
+
+        productResult =
+            id : ProductData.id
+            name : ProductData.get "name"
+            model_number : ProductData.get "model_number"
+            mrp : ProductData.get "mrp"
+            images : ProductData.get "images"
+            category : category
+            brand : brand
+            primaryAttributes : ProductData.get "primaryAttributes"
+            # attributeIdNames : attributeIdNames
+            specifications : specifications
+
+
+        response.success productResult
     , (error)->
         response.error error    
 
