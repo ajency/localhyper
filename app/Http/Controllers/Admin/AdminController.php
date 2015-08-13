@@ -16,8 +16,8 @@ class AdminController extends Controller
      */
     public function index()
     {  
-      
-        return view('admin.home');
+        return redirect("/admin/attribute/categoryconfiguration");
+        //return view('admin.home');
     }
 
     /**
