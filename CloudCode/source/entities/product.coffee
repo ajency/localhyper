@@ -11,8 +11,6 @@ Parse.Cloud.define  'productImport', (request, response) ->
     categoryId = request.params.categoryId
     priceRange = request.params.priceRange
 
-    searchKeywords = request.params.searchKeywords
-
     # get category data
     queryCategory = new Parse.Query("Category")
 
@@ -297,7 +295,11 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
     ascending = request.params.ascending
     page = parseInt request.params.page
     displayLimit = parseInt request.params.displayLimit
-    searchKeywords = request.params.searchKeywords
+    
+    if _.has(request.params, 'searchKeywords')
+        searchKeywords = request.params.searchKeywords
+    else
+        searchKeywords = "all"
     
 
     # get filterable attributes for the child category
@@ -454,27 +456,84 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
     ,(error) -> 
         response.error error    
 
-Parse.Cloud.afterSave "ProductItem", (request)->
-    productObject = request.object
+Parse.Cloud.define 'updateCategoryProductsKeywords', (request, response) ->
+    categoryId = request.params.categoryId
 
+    innerQueryCategory = new Parse.Query("Category")
+    innerQueryCategory.equalTo("objectId", categoryId)
 
+    queryProducts = new Parse.Query("ProductItem")
+    queryProducts.matchesQuery("category" , innerQueryCategory)
+    queryProducts.include("attrs")
+    queryProducts.include("brand")
+    
+    queryProducts.find()
+    .then (products) ->
+        updateKeywordQs = []
+        
+        updateKeywordQs = _.map(products , (productObject) ->
+            updateProductKeywords(productObject)
+        )   
+
+        Parse.Promise.when(updateKeywordQs).then -> 
+            response.success arguments
+        , (error) ->
+            response.error error        
+
+    , (error) ->
+        response.error error
+ 
+
+updateProductKeywords = (productObject) =>
+    promise = new Parse.Promise()
+    sentenceWithKeyWords = ""
+
+    productName = productObject.get("name")
+    sentenceWithKeyWords = sentenceWithKeyWords+" "+productName
+
+    modelNumber = productObject.get("model_number")
+    sentenceWithKeyWords = sentenceWithKeyWords+" "+modelNumber
+
+    brandObj = productObject.get("brand")
+    brandName = brandObj.get("name")
+    sentenceWithKeyWords = sentenceWithKeyWords+" "+brandName
+
+    if !_.isUndefined(productObject.get("textAttributes"))
+        textAttributes = productObject.get("textAttributes")
+        _.each textAttributes , (textAttribute) ->
+            sentenceWithKeyWords = sentenceWithKeyWords+" "+textAttribute
+
+     
+    
+    if !_.isUndefined(productObject.get("attrs")) 
+        productAttrs = productObject.get("attrs")       
+        _.each productAttrs , (productAttr) ->
+            productAttrValue = productAttr.get("value")
+            sentenceWithKeyWords = sentenceWithKeyWords+" "+productAttrValue
 
     # pick search keywords from name , model_number , attribute values from attrs , brand name , textAttributes object
-    wordsFromName = getWordsFromSentence(productObject.get("name"))
+    wordsFromName = getWordsFromSentence(sentenceWithKeyWords)
     wordsFromName = _.map(wordsFromName, toLowerCase)
 
- 
-    console.log getWordsFromSentence(productObject.get("name"))
     productObject.set "searchKeywords" , wordsFromName
-    console.log "Saved keywords as #{wordsFromName}"
+
     productObject.save()
+    .then (savedProduct) ->
+        promise.resolve(savedProduct.id)
+    , (error) ->
+        promise.reject error
+
+
+    promise
+
         
 getWordsFromSentence = (sentence) =>
 
     wordArr = []
 
-    # replace special characters in a sentence with a whitespace
-    sentence = sentence.replace(/\W/g, " ")
+    # replace all characters except a-zA-Z0-9 and period in a sentence with a whitespace
+    # sentence = sentence.replace(/\W/g, " ")
+    sentence = sentence.replace(/[^a-zA-Z0-9.]/g, " ")
 
     # trim sentence to remove leading and trailing white spaces
     sentence = sentence.trim()    

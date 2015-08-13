@@ -1,5 +1,5 @@
 (function() {
-  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getNewRequestsForSeller, getNotificationData, getOtherPricesForProduct, getRequestData, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify;
+  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getNewRequestsForSeller, getNotificationData, getOtherPricesForProduct, getRequestData, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify, updateProductKeywords;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -1675,14 +1675,13 @@
   };
 
   Parse.Cloud.define('productImport', function(request, response) {
-    var ProductItem, categoryId, importedProductCount, priceRange, productSavedArr, products, queryCategory, searchKeywords;
+    var ProductItem, categoryId, importedProductCount, priceRange, productSavedArr, products, queryCategory;
     ProductItem = Parse.Object.extend('ProductItem');
     productSavedArr = [];
     importedProductCount = 0;
     products = request.params.products;
     categoryId = request.params.categoryId;
     priceRange = request.params.priceRange;
-    searchKeywords = request.params.searchKeywords;
     queryCategory = new Parse.Query("Category");
     queryCategory.equalTo("objectId", categoryId);
     queryCategory.include("filterable_attributes");
@@ -1913,7 +1912,11 @@
     ascending = request.params.ascending;
     page = parseInt(request.params.page);
     displayLimit = parseInt(request.params.displayLimit);
-    searchKeywords = request.params.searchKeywords;
+    if (_.has(request.params, 'searchKeywords')) {
+      searchKeywords = request.params.searchKeywords;
+    } else {
+      searchKeywords = "all";
+    }
     categoryQuery = new Parse.Query("Category");
     categoryQuery.equalTo("objectId", categoryId);
     categoryQuery.select("filterable_attributes");
@@ -2043,22 +2046,74 @@
     });
   });
 
-  Parse.Cloud.afterSave("ProductItem", function(request) {
-    var productObject, wordsFromName;
-    productObject = request.object;
-    wordsFromName = getWordsFromSentence(productObject.get("name"));
-    wordsFromName = _.map(wordsFromName, toLowerCase);
-    console.log(getWordsFromSentence(productObject.get("name")));
-    productObject.set("searchKeywords", wordsFromName);
-    console.log("Saved keywords as " + wordsFromName);
-    return productObject.save();
+  Parse.Cloud.define('updateCategoryProductsKeywords', function(request, response) {
+    var categoryId, innerQueryCategory, queryProducts;
+    categoryId = request.params.categoryId;
+    innerQueryCategory = new Parse.Query("Category");
+    innerQueryCategory.equalTo("objectId", categoryId);
+    queryProducts = new Parse.Query("ProductItem");
+    queryProducts.matchesQuery("category", innerQueryCategory);
+    queryProducts.include("attrs");
+    queryProducts.include("brand");
+    return queryProducts.find().then(function(products) {
+      var updateKeywordQs;
+      updateKeywordQs = [];
+      updateKeywordQs = _.map(products, function(productObject) {
+        return updateProductKeywords(productObject);
+      });
+      return Parse.Promise.when(updateKeywordQs).then(function() {
+        return response.success(arguments);
+      }, function(error) {
+        return response.error(error);
+      });
+    }, function(error) {
+      return response.error(error);
+    });
   });
+
+  updateProductKeywords = (function(_this) {
+    return function(productObject) {
+      var brandName, brandObj, modelNumber, productAttrs, productName, promise, sentenceWithKeyWords, textAttributes, wordsFromName;
+      promise = new Parse.Promise();
+      sentenceWithKeyWords = "";
+      productName = productObject.get("name");
+      sentenceWithKeyWords = sentenceWithKeyWords + " " + productName;
+      modelNumber = productObject.get("model_number");
+      sentenceWithKeyWords = sentenceWithKeyWords + " " + modelNumber;
+      brandObj = productObject.get("brand");
+      brandName = brandObj.get("name");
+      sentenceWithKeyWords = sentenceWithKeyWords + " " + brandName;
+      if (!_.isUndefined(productObject.get("textAttributes"))) {
+        textAttributes = productObject.get("textAttributes");
+        _.each(textAttributes, function(textAttribute) {
+          return sentenceWithKeyWords = sentenceWithKeyWords + " " + textAttribute;
+        });
+      }
+      if (!_.isUndefined(productObject.get("attrs"))) {
+        productAttrs = productObject.get("attrs");
+        _.each(productAttrs, function(productAttr) {
+          var productAttrValue;
+          productAttrValue = productAttr.get("value");
+          return sentenceWithKeyWords = sentenceWithKeyWords + " " + productAttrValue;
+        });
+      }
+      wordsFromName = getWordsFromSentence(sentenceWithKeyWords);
+      wordsFromName = _.map(wordsFromName, toLowerCase);
+      productObject.set("searchKeywords", wordsFromName);
+      productObject.save().then(function(savedProduct) {
+        return promise.resolve(savedProduct.id);
+      }, function(error) {
+        return promise.reject(error);
+      });
+      return promise;
+    };
+  })(this);
 
   getWordsFromSentence = (function(_this) {
     return function(sentence) {
       var stopWords, wordArr, words;
       wordArr = [];
-      sentence = sentence.replace(/\W/g, " ");
+      sentence = sentence.replace(/[^a-zA-Z0-9.]/g, " ");
       sentence = sentence.trim();
       wordArr = sentence.split(/\s+/g);
       wordArr = _.map(wordArr, toLowerCase);
