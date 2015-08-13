@@ -1944,7 +1944,7 @@
         if (!_.isUndefined(attributeObj.get("unit"))) {
           unit = attributeObj.get("unit");
         } else {
-          unit = "";
+          unit = null;
         }
         productSpec = {
           "group": attributeObj.get("group"),
@@ -1961,7 +1961,7 @@
               "group": attributeIdNames[attribId]["group"],
               "key": attributeIdNames[attribId]["name"],
               "value": textAttributes[attribId],
-              "unit": ""
+              "unit": null
             };
             specifications.push(productSpec);
           }
@@ -1970,7 +1970,7 @@
       productResult = {
         id: ProductData.id,
         name: ProductData.get("name"),
-        model_number: ProductData.get("model_number"),
+        modelNumber: ProductData.get("model_number"),
         mrp: ProductData.get("mrp"),
         images: ProductData.get("images"),
         category: category,
@@ -1978,7 +1978,13 @@
         primaryAttributes: ProductData.get("primaryAttributes"),
         specifications: specifications
       };
-      return response.success(productResult);
+      return getOtherPricesForProduct(ProductData).then(function(productPrice) {
+        productResult["onlinePrice"] = productPrice["online"];
+        productResult["platformPrice"] = productPrice["platform"];
+        return response.success(productResult);
+      }, function(error) {
+        return response.error(error);
+      });
     }, function(error) {
       return response.error(error);
     });
@@ -2892,8 +2898,8 @@
         status: filteredRequest.get("status"),
         offerCount: filteredRequest.get("offerCount"),
         lastOfferPrice: lastOffered,
-        onlinePrice: productPrice["online"],
-        platformPrice: productPrice["platform"]
+        onlinePrice: productPrice["online"]["value"],
+        platformPrice: productPrice["platform"]["value"]
       };
       queryNotification = new Parse.Query("Notification");
       innerQuerySeller = new Parse.Query(Parse.User);
@@ -2954,9 +2960,17 @@
     queryPrice.equalTo("type", "online_market_price");
     queryPrice.first().then(function(onlinePriceObj) {
       if (_.isEmpty(onlinePriceObj)) {
-        productPrice["online"] = "";
+        productPrice["online"] = {
+          value: "",
+          source: "",
+          updatedAt: ""
+        };
       } else {
-        productPrice["online"] = onlinePriceObj.get("value");
+        productPrice["online"] = {
+          value: onlinePriceObj.get("value"),
+          source: onlinePriceObj.get("source"),
+          updatedAt: onlinePriceObj.updatedAt
+        };
       }
       return getBestPlatformPrice(productObject).then(function(platformPrice) {
         productPrice["platform"] = platformPrice;
@@ -2980,17 +2994,31 @@
     queryPrice.matchesQuery("product", innerQueryProduct);
     queryPrice.notEqualTo("type", "online_market_price");
     queryPrice.find().then(function(platformPrices) {
-      var minPrice, priceValues;
+      var minPrice, minPriceObj, priceObjArr, priceValues;
       if (platformPrices.length === 0) {
         minPrice = "";
+        minPriceObj = {
+          value: minPrice,
+          updatedAt: ""
+        };
       } else {
         priceValues = [];
+        priceObjArr = [];
         _.each(platformPrices, function(platformPriceObj) {
+          var pricObj;
+          pricObj = {
+            "value": parseInt(platformPriceObj.get("value")),
+            "updatedAt": platformPriceObj.updatedAt
+          };
+          priceObjArr.push(pricObj);
           return priceValues.push(parseInt(platformPriceObj.get("value")));
         });
         minPrice = _.min(priceValues);
+        minPriceObj = _.where(priceObjArr, {
+          value: minPrice
+        });
       }
-      return promise.resolve(minPrice);
+      return promise.resolve(minPriceObj[0]);
     }, function(error) {
       return promise.reject(error);
     });

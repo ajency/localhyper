@@ -331,7 +331,7 @@ Parse.Cloud.define 'getProduct', (request, response) ->
             if !_.isUndefined attributeObj.get "unit"   
                 unit = attributeObj.get "unit" 
             else 
-                unit = ""
+                unit = null
             
             productSpec = 
                 "group" : attributeObj.get "group"            
@@ -349,7 +349,7 @@ Parse.Cloud.define 'getProduct', (request, response) ->
                     "group" : attributeIdNames[attribId]["group"]           
                     "key" : attributeIdNames[attribId]["name"]     
                     "value" :  textAttributes[attribId]
-                    "unit" :  ""  
+                    "unit" :  null  
                     
                 specifications.push productSpec                     
 
@@ -357,7 +357,7 @@ Parse.Cloud.define 'getProduct', (request, response) ->
         productResult =
             id : ProductData.id
             name : ProductData.get "name"
-            model_number : ProductData.get "model_number"
+            modelNumber : ProductData.get "model_number"
             mrp : ProductData.get "mrp"
             images : ProductData.get "images"
             category : category
@@ -366,8 +366,14 @@ Parse.Cloud.define 'getProduct', (request, response) ->
             # attributeIdNames : attributeIdNames
             specifications : specifications
 
-
-        response.success productResult
+        getOtherPricesForProduct(ProductData)
+        .then (productPrice) ->  
+            productResult["onlinePrice"] = productPrice["online"] 
+            productResult["platformPrice"] = productPrice["platform"] 
+            
+            response.success productResult
+        , (error) ->
+            response.error error 
     , (error)->
         response.error error    
 

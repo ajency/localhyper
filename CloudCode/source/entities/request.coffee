@@ -792,8 +792,8 @@ getRequestData =  (filteredRequest,seller,productLastOfferedPrices) ->
             status: filteredRequest.get("status")            
             offerCount: filteredRequest.get("offerCount")  
             lastOfferPrice : lastOffered
-            onlinePrice: productPrice["online"] 
-            platformPrice : productPrice["platform"]         
+            onlinePrice: productPrice["online"]["value"] 
+            platformPrice : productPrice["platform"]["value"]         
 
         
         #  now query notification to get notificaton status
@@ -876,9 +876,16 @@ getOtherPricesForProduct = (productObject) ->
     queryPrice.first()
     .then (onlinePriceObj) ->
         if _.isEmpty(onlinePriceObj)
-            productPrice["online"] = ""
+            productPrice["online"] = 
+                value : ""
+                source : ""
+                updatedAt : ""
         else
-            productPrice["online"] = onlinePriceObj.get("value")
+            productPrice["online"] = 
+                value : onlinePriceObj.get("value")
+                source : onlinePriceObj.get("source")
+                updatedAt : onlinePriceObj.updatedAt           
+            
 
         # now find best platform price
         getBestPlatformPrice(productObject)
@@ -911,15 +918,27 @@ getBestPlatformPrice = (productObject) ->
     .then (platformPrices) ->
         if platformPrices.length is 0 
             minPrice = ""
+            minPriceObj =  
+                value : minPrice
+                updatedAt : ""
         else
             priceValues = []
+            priceObjArr = []
 
             _.each platformPrices , (platformPriceObj) ->
+                pricObj = 
+                    "value" : parseInt(platformPriceObj.get("value"))
+                    "updatedAt" : platformPriceObj.updatedAt   
+
+                priceObjArr.push pricObj
+
                 priceValues.push parseInt(platformPriceObj.get("value"))
 
             minPrice = _.min(priceValues)
 
-        promise.resolve minPrice
+            minPriceObj = _.where priceObjArr, value: minPrice
+
+        promise.resolve minPriceObj[0]
 
 
     , (error) ->
