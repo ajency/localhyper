@@ -2663,6 +2663,7 @@
     queryRequests = new Parse.Query("Request");
     queryRequests.select("offerCount");
     queryRequests.matchesQuery("customerId", innerQueryCustomer);
+    queryRequests.equalTo("status", innerQueryCustomer);
     return queryRequests.find().then(function(requestObjects) {
       var offerCount, requestCount, result;
       requestCount = requestObjects.length;
@@ -2959,16 +2960,26 @@
     queryPrice.matchesQuery("product", innerQueryProduct);
     queryPrice.equalTo("type", "online_market_price");
     queryPrice.first().then(function(onlinePriceObj) {
+      var flipkartUrl, snapdealUrl, srcUrl;
       if (_.isEmpty(onlinePriceObj)) {
         productPrice["online"] = {
           value: "",
           source: "",
+          sourceUrl: "",
           updatedAt: ""
         };
       } else {
+        flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/Flipkart+logo.jpg";
+        snapdealUrl = " https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/sd.png";
+        if (onlinePriceObj.get("source") === "flipkart") {
+          srcUrl = flipkartUrl;
+        } else {
+          srcUrl = snapdealUrl;
+        }
         productPrice["online"] = {
           value: onlinePriceObj.get("value"),
           source: onlinePriceObj.get("source"),
+          srcUrl: srcUrl,
           updatedAt: onlinePriceObj.updatedAt
         };
       }

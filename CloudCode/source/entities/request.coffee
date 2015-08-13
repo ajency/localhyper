@@ -508,10 +508,13 @@ Parse.Cloud.define 'getOpenRequestCount' , (request, response) ->
     queryRequests = new Parse.Query("Request")
     queryRequests.select("offerCount")
     queryRequests.matchesQuery("customerId" , innerQueryCustomer)
+    queryRequests.equalTo("status" , innerQueryCustomer)
     queryRequests.find()
     .then (requestObjects) ->
         requestCount = requestObjects.length
         offerCount = 0
+
+
 
         if requestCount is 0 
             offerCount = 0
@@ -879,11 +882,22 @@ getOtherPricesForProduct = (productObject) ->
             productPrice["online"] = 
                 value : ""
                 source : ""
+                sourceUrl : ""
                 updatedAt : ""
         else
+            flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/Flipkart+logo.jpg"
+            snapdealUrl = " https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/sd.png"
+
+            if onlinePriceObj.get("source") is "flipkart"
+                srcUrl =  flipkartUrl
+            else
+                srcUrl =  snapdealUrl    
+            
+
             productPrice["online"] = 
                 value : onlinePriceObj.get("value")
                 source : onlinePriceObj.get("source")
+                srcUrl : srcUrl
                 updatedAt : onlinePriceObj.updatedAt           
             
 
