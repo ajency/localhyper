@@ -52,6 +52,7 @@ Parse.Cloud.define 'getCategories', (request, response) ->
   Category = Parse.Object.extend('Category')
 
   queryCategory = new Parse.Query(Category)
+  queryCategory.exists("name")
   queryCategory.include("parent_category")
   
   queryFindPromise = queryCategory.find()
