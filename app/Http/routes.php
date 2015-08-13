@@ -59,5 +59,6 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
 /**static pages*/
 Route::get( '/customer-faqs', 'StaticPagesController@customerFaq' );
 Route::get( '/seller-faqs', 'StaticPagesController@sellerFaq' );
+Route::get( '/termsandconditions', 'StaticPagesController@termsAndConditions' );
  
 

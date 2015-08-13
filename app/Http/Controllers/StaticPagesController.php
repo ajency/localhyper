@@ -94,4 +94,9 @@ class StaticPagesController extends Controller
     {
         return view('frontend.sellerfaq');
     }
+    
+    public function termsAndConditions()
+    {
+        return view('frontend.termsandconditions');
+    }
 }
