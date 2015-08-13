@@ -14,22 +14,13 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           }, 500);
         }
       },
-      showComment: function() {
+      showComment: function(title, comment) {
         return $ionicPopup.alert({
-          title: 'Comment',
-          template: this.request.comments,
+          title: title,
+          template: comment,
           okText: 'Close',
           okType: 'button-assertive'
         });
-      },
-      comments: {
-        show: false,
-        toggle: function() {
-          this.show = !this.show;
-          return $timeout(function() {
-            return App.resize();
-          }, 500);
-        }
       },
       cancelRequest: {
         footer: false,

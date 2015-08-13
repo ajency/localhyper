@@ -19,20 +19,12 @@ angular.module 'LocalHyper.myRequests'
 						App.resize()
 					, 500
 
-			showComment : ->
+			showComment : (title, comment)->
 				$ionicPopup.alert
-					title: 'Comment'
-					template: @request.comments
+					title: title
+					template: comment
 					okText: 'Close'
 					okType: 'button-assertive'
-
-			comments:
-				show: false
-				toggle : ->
-					@show = !@show
-					$timeout -> 
-						App.resize()
-					, 500
 
 			cancelRequest: 
 				footer: false

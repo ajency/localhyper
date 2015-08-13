@@ -236,7 +236,8 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       forSearch: function() {
         this.beforeReset();
         this.search = '';
-        return this.canLoadMore = false;
+        this.canLoadMore = false;
+        return this.gotAllProducts = false;
       },
       reset: function() {
         this.beforeReset();
