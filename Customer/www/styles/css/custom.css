@@ -850,6 +850,8 @@ sm {
   font-size: 14px;
   padding: 5px 12px;
   margin-top: 6px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+  border: 0;
 }
 .obj-title .col .item.item-accordion.item-text-wrap.com-acc {
   min-width: 150px;
@@ -1594,4 +1596,13 @@ label.status-label {
 }
 .map-content .address-inputs label {
   padding: 3px 10px;
+}
+.search-full-page .sub-head-search i.icon {
+  font-size: 20px;
+}
+.search-full-page .sub-head-search form {
+  width: 100%;
+}
+.search-full-page .sub-head-search .button-clear {
+  padding-left: 8px;
 }
