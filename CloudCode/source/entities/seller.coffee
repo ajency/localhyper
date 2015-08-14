@@ -69,9 +69,8 @@ Parse.Cloud.define 'getLocationBasedSellers' , (request, response) ->
     city = request.params.city
     area = request.params.area
 
-    status = "temporary"
 
-    Request = Parse.Object.extend('Request')
+    Request = Parse.Object.extend('LocationRequests')
 
     tempRequest = new Request()
 
@@ -79,7 +78,6 @@ Parse.Cloud.define 'getLocationBasedSellers' , (request, response) ->
     point = new Parse.GeoPoint locationGeoPoint
 
     tempRequest.set "addressGeoPoint", point
-    tempRequest.set "status", status
     tempRequest.set "city", city
     tempRequest.set "area", area
 

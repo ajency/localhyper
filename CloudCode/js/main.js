@@ -3181,7 +3181,7 @@
   };
 
   Parse.Cloud.define('getLocationBasedSellers', function(request, response) {
-    var Request, area, brandId, brandObj, categoryId, categoryObj, city, locationGeoPoint, point, status, tempRequest;
+    var Request, area, brandId, brandObj, categoryId, categoryObj, city, locationGeoPoint, point, tempRequest;
     locationGeoPoint = {
       "latitude": request.params.location.latitude,
       "longitude": request.params.location.longitude
@@ -3190,12 +3190,10 @@
     brandId = request.params.brandId;
     city = request.params.city;
     area = request.params.area;
-    status = "temporary";
-    Request = Parse.Object.extend('Request');
+    Request = Parse.Object.extend('LocationRequests');
     tempRequest = new Request();
     point = new Parse.GeoPoint(locationGeoPoint);
     tempRequest.set("addressGeoPoint", point);
-    tempRequest.set("status", status);
     tempRequest.set("city", city);
     tempRequest.set("area", area);
     categoryObj = {
