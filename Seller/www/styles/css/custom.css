@@ -828,6 +828,11 @@ sm {
 .b-r-1 {
   border-right: 1px solid #ddd;
 }
+.business-details .d-t-a-btn {
+  line-height: 42px;
+  height: auto;
+  min-height: 0;
+}
 .business-details .item-days {
   padding: 0px;
   text-align: center;
@@ -1390,6 +1395,17 @@ h5.with-sep span {
 .maxAttempts-div .btn-casup.activated span {
   color: #fff;
 }
+.with-prefix {
+  position: relative;
+}
+.with-prefix .prefix {
+  position: absolute;
+  font-size: 16px;
+  top: 0;
+  left: 0;
+  padding: 10px 12px 7px;
+  background-color: #ddd;
+}
 .filter-txt {
   line-height: 12px;
   text-align: left;
@@ -1637,6 +1653,11 @@ input[disabled] ~ .radio-icon-show {
 .search-brands-wrap .search-brands {
   padding: 0;
 }
+.search-brands-wrap .search-brands button.button.button-small i.icon.ion-search {
+  font-size: 28px;
+  margin-right: 5px;
+  margin-left: 3px;
+}
 .search-brands-wrap .search-brands input {
   color: #1F1F1F;
   display: block;
@@ -1652,8 +1673,8 @@ input[disabled] ~ .radio-icon-show {
   color: #B9B5B5;
   padding-left: 0;
 }
-.search-brands-wrap button.button.button-small i:before {
-  font-size: 26px;
+.search-brands-wrap button.button.button-small i.icon:before {
+  font-size: 30px;
 }
 .brands .border-card.all-brands-indi {
   height: 90px;
@@ -1819,4 +1840,16 @@ input[disabled] ~ .radio-icon-show {
 }
 .has-suggest-subhead button.button.button-block {
   margin: 0;
+}
+.mob-holder {
+  display: block;
+}
+.mob-holder span {
+  display: inline-block;
+  color: #999;
+  font-size: 16px;
+  vertical-align: middle;
+}
+.mob-holder input {
+  display: inline-block;
 }

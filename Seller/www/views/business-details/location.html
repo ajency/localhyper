@@ -73,6 +73,11 @@
 				</div>
 			</div>
 		</div>
+		<div class="row p-a-0">
+			<div class="col p-a-0 text-center">
+				<h5 class="fin">Tap the map to choose new location</h5>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col col-100">
 					<google-map
@@ -81,22 +86,22 @@
 					</google-map>
 			</div>
 		</div>
-	
+
 	</ion-content>
 
 	<ion-footer-bar class="bar bar-footer bar-custom-footer with-btn">
-		
-		<button
-			class="button button-assertive btn-action"
-			ng-click="view.onConfirmLocation()">
-			Confirm Location
-		</button>
 
 		<button
 			class="button button-dark btn-action"
 			ng-click="view.location.getCurrent()">
 			<i class="ion ion-android-locate"></i>
 			Get my Location
+		</button>
+
+		<button
+			class="button button-assertive btn-action"
+			ng-click="view.onConfirmLocation()">
+			Confirm Location
 		</button>
 	</ion-footer-bar>
 

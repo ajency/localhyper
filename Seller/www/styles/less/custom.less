@@ -819,6 +819,11 @@ sm{
 .b-r-1 {border-right: 1px solid #ddd;}
 
 .business-details {
+	.d-t-a-btn {
+		line-height: 42px;
+		height: auto;
+		min-height: 0;
+	}
 	.item-days{
 		padding: 0px;
 		text-align: center;
@@ -1398,6 +1403,17 @@ h5.with-sep {
 		}
 	}
 }
+.with-prefix {
+	position: relative;
+	.prefix {
+		position: absolute;
+		font-size: 16px;
+		top: 0;
+		left: 0;
+		padding: 10px 12px 7px;
+		background-color: #ddd;
+	}
+}
 
 .filter-txt{
 	line-height: 12px;
@@ -1633,6 +1649,11 @@ input[disabled]~.radio-icon-show{
 	// background-color: #171717;
 	.search-brands {
 		// background-color: transparent;
+		button.button.button-small i.icon.ion-search {
+			font-size: 28px;
+			margin-right: 5px;
+			margin-left: 3px;
+		}
 		padding: 0;
 		input {
 			color: #1F1F1F;
@@ -1658,15 +1679,15 @@ input[disabled]~.radio-icon-show{
 		background: transparent;
 		border: 0;
 		color: #B9B5B5;
-		padding-left: 0;
 
 		// Dark Version
 		// background-color: transparent;
 		// border: 0;
 		// padding-right: 15px;
 		// opacity: 0.4;
-		i:before {
-			font-size: 26px;
+		padding-left: 0;
+		i.icon:before {
+			font-size: 30px;
 		}
 	}
 }
@@ -1841,5 +1862,20 @@ input[disabled]~.radio-icon-show{
 	}
 	button.button.button-block {
 		margin: 0;
+	}
+}
+
+
+
+.mob-holder {
+	display: block;
+	span {
+		display: inline-block;
+		color: #999;
+		font-size: 16px;
+		vertical-align: middle;
+	}
+	input {
+		display: inline-block;
 	}
 }
