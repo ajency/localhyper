@@ -1,5 +1,5 @@
 <ion-view ng-init="view.init();">
-	
+
 	<ion-nav-title>
 		Request Details
     </ion-nav-title>
@@ -35,38 +35,31 @@
 
 					<div class="row">
 						<div
-							class="col col-50"
-							ng-if="view.request"
-							ng-click="view.address.toggle()">
+							class="col"
+							ng-if="view.request">
+
+							<button
+								class="button icon ion-chatbox-working pull-right button-small button-light"
+								ng-if="view.request.comments !== ''"
+								ng-click="view.showComment('Your Comment', view.request.comments);">
+							</button>
 
 							<p class="loca">
-								<i class="icon ion-ios-location"></i> Address :
-								<span>{{view.request.address.city}}</span>
-								<a ng-if="!view.address.show">More</a>
-								<a ng-if="view.address.show">Less</a>
+								<span
+									class="loca-wrap"
+									ng-click="view.address.toggle();">
+
+									<i class="icon ion-ios-location"></i> Address :
+									<span>{{view.request.address.city}}</span>
+									<a ng-if="!view.address.show">More</a>
+									<a ng-if="view.address.show">Less</a>
+								</span>
 							</p>
 
 							<ion-item
 								class="item-text-wrap item-accordion"
 								ng-show="view.address.show">
 								{{view.request.address.full}}
-							</ion-item>
-						</div>
-
-						<div
-							class="col col-50 "
-							ng-if="view.request.comments !== ''">
-
-							<button 
-								class="button icon ion-chatbox-working pull-right button-small button-light" 
-								ng-click="view.comments.toggle();">
-							</button>
-
-							<ion-item
-								class="item-text-wrap item-accordion com-acc"
-								style="margin-top: 0;"
-								ng-show="view.comments.show">
-								{{view.request.comments}}
 							</ion-item>
 						</div>
 					</div>
@@ -119,7 +112,7 @@
 
 		</ion-list>
 
-		
+
 		<ion-list ng-switch="view.offers.display">
 
 			<ion-spinner
@@ -139,7 +132,7 @@
 						</h4>
 					</div>
 				</div>
-				
+
 				<!--When open without offers-->
 				<div
 					class="row"
@@ -154,7 +147,7 @@
 				</div>
 
 				<!--When expired without offers-->
-				<div 
+				<div
 					class="row"
 					ng-if="view.offers.all.length == 0 && view.request.status === 'expired';">
 
@@ -168,7 +161,7 @@
 				</div>
 
 				<!--When cancelled without offers-->
-				<div 
+				<div
 					class="row"
 					ng-if="view.offers.all.length == 0 && view.request.status === 'cancelled';">
 
@@ -198,15 +191,26 @@
 
 							<div class="user-details">
 								<p class="pull-right time-rece"><i>{{offer.timeStr}}</i></p>
-								
+
 								<h3>{{offer.seller.businessName}}
 									<span class="loc">{{offer.seller.address.city}}</span>
 								</h3>
-								
-								<p class="comment subdued" ng-if="offer.comments !== ''">
+
+								<p
+									class="comment subdued"
+									ng-if="offer.comments !== ''"
+									ng-click="view.showComment('Seller Comment', offer.comments);">
+
 									<i class="icon ion-chatbox-working"> </i>
 									<span class="com">{{offer.comments}}</span>
 								</p>
+
+								<button 
+									class="button button-dark button-small"
+									ng-if="!offer.seller.isSellerRated"
+									ng-click="view.offers.openRatePopup(offer.seller);">
+									Rate Seller
+								</button>
 							</div>
 						</div>
 					</div>
@@ -216,7 +220,7 @@
 						ng-if="offer.status === 'accepted'">
 
 						<div class="col col-75 p-a-0">
-							
+
 							<p>{{offer.seller.address.full}}</p>
 						</div>
 						<div class="col-25">
@@ -266,7 +270,7 @@
 							<h2><small>Rs.</small> {{App.toINR(offer.price)}}</h2>
 						</div>
 
-						<div 
+						<div
 							class="col align-center p-a-0 p-r-6"
 							ng-if="offer.deliveryTimeLeftStr !== '0'">
 
@@ -275,7 +279,7 @@
 							<h2>{{offer.deliveryTimeLeftStr}}</h2>
 						</div>
 
-						<div 
+						<div
 							class="col align-center p-a-0 p-r-6"
 							ng-if="offer.deliveryTimeLeftStr === '0'">
 
@@ -323,16 +327,20 @@
 
 			<ion-item
 				ng-if="view.offers.limitTo == 1 && view.offers.all.length > 1;"
-				ng-click="view.offers.showAll()" class="text-center">
+				ng-click="view.offers.showAll()" class="text-center show-all-req">
 				SHOW ALL OFFERS
 			</ion-item>
 
-			<button
-				class="button button-block button-assertive"
-				ng-if="view.request.status === 'open' && view.offers.all.length > 0;"
-				ng-click="view.onCancelRequest();">
-				Cancel Request
-			</button>
+			<div class="row">
+				<div class="col">
+					<button
+						class="button button-block button-assertive"
+						ng-if="view.request.status === 'open' && view.offers.all.length > 0;"
+						ng-click="view.onCancelRequest();">
+						Cancel Request
+					</button>
+				</div>
+			</div>
 
 			<aj-error
 				ng-switch-when="error"
@@ -344,12 +352,16 @@
 	</ion-content>
 
 	<ion-footer-bar
-		class="bar-assertive"
+		class="bar-asse rtive bar no-shadow cancel-req-btn"
 		ng-if="view.cancelRequest.footer">
-		<div
-			class="title"
-			ng-click="view.onCancelRequest();">
-			Cancel Request
+		<div class="row">
+			<div class="col">
+				<div
+					class="title no-shadow"
+					ng-click="view.onCancelRequest();">
+					Cancel Request
+				</div>
+			</div>
 		</div>
 	</ion-footer-bar>
 

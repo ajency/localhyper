@@ -1,41 +1,49 @@
-<ion-modal-view>
+<ion-modal-view class="specs-modal">
 
 	<ion-header-bar no-tap-scroll="true">
 		<div class="row row-fluid">
-			<div 
+			<div
 				class="col col-67 sm-text">
-				<h5 class="text-left">Specifications</h5>
+				<h4 class="text-left text-light m-a-0 modal-title">Specifications</h4>
 			</div>
 			<div class="col">
-				<h2 
-					ng-click="view.specifications.modal.hide();" 
+				<h2
+					ng-click="view.specifications.modal.hide();"
 					class="text-right">
-					<i class="ion ion-ios-close-outline"></i> 
+					<i class="ion ion-ios-close-outline"></i>
 				</h2>
 			</div>
 		</div>
 	</ion-header-bar>
 
 	<ion-content delegate-handle="specification-modal-handle">
-		<div 
-			class="card"
+		<div
+			class="spec-card col p-t-0 p-b-0"
 			ng-repeat="group in view.specifications.groups">
 
 			<div class="item item-divider">
-				{{App.humanize(group[0].group)}}
+				<!-- <i class="icon ion-arrow-right-c"></i>  -->{{App.humanize(group[0].group)}}
 			</div>
-			<div 
+			<div
 				class="row"
 				ng-repeat="spec in group">
 
-				<div class="col-25">
-					<div class="item item-text-wrap">
+				<div class="col col-25">
+					<div class="bold-title">
 						{{App.humanize(spec.key)}}
 					</div>
 				</div>
 				<div class="col">
-					<div class="item item-text-wrap">
+					<div 
+						class="normal-desc"
+						ng-if="spec.unit == null">
 						{{App.humanize(spec.value)}}
+					</div>
+
+					<div 
+						class="normal-desc"
+						ng-if="spec.unit != null">
+						{{App.humanize(spec.value)}} {{App.humanize(spec.unit)}}
 					</div>
 				</div>
 			</div>

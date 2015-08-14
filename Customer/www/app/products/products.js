@@ -1,15 +1,17 @@
 angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
-  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform', 'CDialog', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg, $ionicLoading, $ionicPlatform, CDialog) {
+  '$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal', '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform', 'CDialog', 'PrimaryAttribute', function($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg, $ionicLoading, $ionicPlatform, CDialog, PrimaryAttribute) {
     var onDeviceBack;
     $scope.view = {
       title: Product.subCategoryTitle,
+      primaryAttribute: PrimaryAttribute,
       footer: false,
       gotAllProducts: false,
       products: [],
       other: [],
       page: 0,
-      canLoadMore: true,
+      canLoadMore: false,
       refresh: false,
+      search: '',
       filter: {
         modal: null,
         attribute: 'brand',
@@ -222,14 +224,23 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       init: function() {
         return this.filter.loadModal();
       },
-      reset: function() {
+      beforeReset: function() {
         this.sortBy = 'popularity';
         this.sortName = 'Popularity';
         this.ascending = false;
         this.filter.excerpt = '';
         this.filter.resetFilters();
         this.pullToRefresh = false;
-        this.footer = false;
+        return this.footer = false;
+      },
+      forSearch: function() {
+        this.beforeReset();
+        this.search = '';
+        this.canLoadMore = false;
+        return this.gotAllProducts = false;
+      },
+      reset: function() {
+        this.beforeReset();
         return this.reFetch(false);
       },
       reFetch: function(refresh) {
@@ -272,6 +283,37 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         this.refresh = false;
         return this.getProducts();
       },
+      onSearch: function() {
+        if (this.search === '') {
+          return CToast.show('Please provide input');
+        } else {
+          return this.reFetch();
+        }
+      },
+      getWordsFromSentence: function() {
+        var sentence, stopWords, wordArr, words;
+        wordArr = [];
+        sentence = this.search;
+        sentence = sentence.replace(/[^a-zA-Z0-9.]/g, " ");
+        sentence = sentence.trim();
+        wordArr = sentence.split(/\s+/g);
+        wordArr = _.map(wordArr, function(word) {
+          return word.toLowerCase();
+        });
+        wordArr = _.unique(wordArr);
+        stopWords = ["the", "is", "and"];
+        words = _.filter(wordArr, function(word) {
+          return !_.contains(stopWords, word);
+        });
+        return words;
+      },
+      getSearchKeyWords: function() {
+        if (App.currentState === 'products') {
+          return 'all';
+        } else {
+          return this.getWordsFromSentence();
+        }
+      },
       getProducts: function() {
         var options;
         options = {
@@ -280,7 +322,8 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           sortBy: this.sortBy,
           ascending: this.ascending,
           selectedFilters: this.filter.selectedFilters,
-          displayLimit: 10
+          displayLimit: 10,
+          searchKeywords: this.getSearchKeyWords()
         };
         return ProductsAPI.getAll(options).then((function(_this) {
           return function(data) {
@@ -332,20 +375,6 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           return this.gotAllProducts = true;
         }
       },
-      getPrimaryAttrs: function(attrs) {
-        var unit, value;
-        if (!_.isUndefined(attrs)) {
-          attrs = attrs[0];
-          value = s.humanize(attrs.value);
-          unit = '';
-          if (_.has(attrs.attribute, 'unit')) {
-            unit = s.humanize(attrs.attribute.unit);
-          }
-          return value + " " + unit;
-        } else {
-          return '';
-        }
-      },
       onSort: function(sortBy, sortName, ascending) {
         $ionicLoading.hide();
         switch (sortBy) {
@@ -384,7 +413,13 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       }
     };
     $scope.$on('$ionicView.beforeEnter', function() {
-      if (_.contains(['categories', 'sub-categories'], App.previousState)) {
+      App.search.categoryID = $stateParams.categoryID;
+      if (App.currentState === 'products-search') {
+        $scope.view.forSearch();
+        if (App.previousState !== 'single-product') {
+          return $scope.view.products = [];
+        }
+      } else if (_.contains(['categories', 'sub-categories'], App.previousState)) {
         return $scope.view.reset();
       }
     });
@@ -403,6 +438,27 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
       views: {
         "appContent": {
           templateUrl: 'views/products/products.html',
+          controller: 'ProductsCtrl',
+          resolve: {
+            Product: function($stateParams, CategoriesAPI) {
+              var childCategory, subCategories;
+              subCategories = CategoriesAPI.subCategories('get');
+              childCategory = _.filter(subCategories, function(category) {
+                return category.id === $stateParams.categoryID;
+              });
+              return {
+                subCategoryTitle: childCategory[0].name
+              };
+            }
+          }
+        }
+      }
+    }).state('products-search', {
+      url: '/products-search:categoryID',
+      parent: 'main',
+      views: {
+        "appContent": {
+          templateUrl: 'views/products/products-search.html',
           controller: 'ProductsCtrl',
           resolve: {
             Product: function($stateParams, CategoriesAPI) {

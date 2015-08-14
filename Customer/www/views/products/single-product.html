@@ -1,9 +1,9 @@
-<ion-view 
+<ion-view
 	view-title=""
 	ng-init="view.init();">
 
-	<ion-content 
-		class="bg-white" 
+	<ion-content
+		class="bg-white"
 		delegate-handle="single-product-handle">
 
 		<ion-list ng-switch="view.display">
@@ -22,8 +22,7 @@
 					<div class="row">
 						<div class="col col-100">
 							<h4 class="subdued text-left">
-								<!-- <span class="text-danger">In</span>  -->
-								{{view.getPrimaryAttrs()}}
+								{{view.primaryAttribute.get(view.product.primaryAttributes)}}
 							</h4>
 							<h3 class="text-left normal margin-none">{{view.product.name}}</h3>
 						</div>
@@ -33,45 +32,86 @@
 						<div class="col col-33 align-center">
 							MRP
 							<h3 class="text-l eft normal margin-none strike">
-								<span class="WebRupee subdued sym-sma">&#x20B9;</span> {{view.product.mrp}}
+								<span class="WebRupee subdued sym-sma">&#x20B9;</span> {{App.toINR(view.product.mrp)}}
 							</h3>
 						</div>
 
 						<div class="col border-left align-center">
-							<h4 class="text-l eft margin-none">
-								<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
+							<h4
+								class="text-l eft margin-none"
+								ng-if="view.product.platformPrice.value !== ''">
+
+								<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.product.platformPrice.value)}}
 							</h4>
-							<div class="sm-text">local  <br>
-								<span>as on 16/06/2015</span>
+							<h4
+								class="text-l eft margin-none"
+								ng-if="view.product.platformPrice.value === ''">
+								N/A
+							</h4>
+							<div class="sm-text">Local  <br>
+								<span ng-if="view.product.platformPrice.value !== ''">
+									as on {{view.getDate(view.product.platformPrice.updatedAt)}}
+								</span>
 							</div>
 						</div>
 
 						<div class="col border-left align-center">
-							<h4 class="text-le ft margin-none">
-								<span class="WebRupee subdued">&#x20B9;</span> {{view.product.mrp}}
+							<h4
+								class="text-le ft margin-none"
+								ng-if="view.product.onlinePrice.value !== ''">
+
+								<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.product.onlinePrice.value)}}
 							</h4>
-							<div class="sm-text">Online <img src="./img/flipkart-icon.jpg"/><br>
-								<span>as on 16/06/2015</span>
+							<h4
+								class="text-le ft margin-none"
+								ng-if="view.product.onlinePrice.value === ''">
+								N/A
+							</h4>
+							<div class="sm-text">Online
+								<img
+									ng-if="view.product.onlinePrice.value !== ''"
+									ng-src="{{view.product.onlinePrice.sourceUrl}}"/><br>
+
+								<span ng-if="view.product.onlinePrice.value !== ''">
+									as on {{view.getDate(view.product.onlinePrice.updatedAt)}}
+								</span>
 							</div>
 						</div>
 					</div>
 
 				</div>
-				
-				<br>
-				<div class="card">
-					<div class="item item-divider">
+
+				<!-- <br> -->
+				<div class="card specs-sing">
+					<div class="item item-divider header">
+						<i class="icon ion-clipboard"></i>
 						Specifications
+						<hr>
 					</div>
-					<div class="item item-text-wrap">
+					<div class="item item-text-wrap intro">
 						{{view.specifications.excerpt}}
 					</div>
-					<div 
-						class="item item-divider"
+					<div
+						class="item item-divider footer"
 						ng-click="view.specifications.openModal();">
-						View all
+						View all <i class="icon ion-plus-round pull-right"></i>
 					</div>
 				</div>
+				<!-- <div class="card specs-sing">
+					<div class="item item-divider header">
+						<i class="icon ion-clipboard"></i>
+						Specifications
+						<hr>
+					</div>
+					<div class="item item-text-wrap intro">
+						{{view.specifications.excerpt}}
+					</div>
+					<div
+						class="item item-divider footer"
+						ng-click="view.specifications.openModal();">
+						View all <i class="icon ion-plus-round pull-right"></i>
+					</div>
+				</div> -->
 			</div>
 
 			<aj-error
@@ -92,7 +132,7 @@
 				ng-switch-when="loader">
 			</ion-spinner>
 
-			<div ng-switch-when="noError">
+			<div ng-switch-when="noError" class="no-err">
 				<h4 ng-if="view.request.all.length > 0" class="early-head">
 					Your earlier made requests
 				</h4>
@@ -103,13 +143,34 @@
 		       		ng-controller="EachRequestTimeCtrl"
 		       		ng-click="view.request.onCardClick(request);">
 
-					<div class="row item border-none" >
-				        <!-- <div class="col  p-t-0">
-				            <sm class="light-gray"> MRP</sm>
-				            <h1 class=" item-text-wrap margin-none big-txt ">
-				            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.product.mrp)}}
-				            </h1>
-				        </div> -->
+					<div class="row item border-none" style="padding-bottom: 2px;">
+				        <div class="col p-b-7">
+				        	<div>
+					            <div class="offer"> {{request.offerCount}} </div>
+					            <h4 class="offertxt light-gray subdued"> No. of offers</h4>
+				           	</div>
+				        </div>
+				        <div class="col text-center">
+				        	<!-- <div class="vert-div pull-left"></div> -->
+				        	<p class="text-right">
+				        		<!-- Status: -->
+					        	<label
+					        		class="status-label"
+					        		ng-class="(request.status === 'cancelled'
+					        				|| request.status === 'expired') ? 'status-assertive' : 'status-balanced'">
+					        		{{App.humanize(request.status)}}
+					        	</label>
+				        	</p>
+				        </div>
+				    </div>
+				    <div class="row item border-none border-top-dash" style="margin-top: 3px;">
+				        <div class="col text-left p-t-0">
+				        	<!-- <div class="vert-div pull-left"></div> -->
+				        	<p class="m-t-6"><i class="icon ion-clock"></i> <label class="status-label status-dark small-let">{{request.timeStr}}</label></p>
+				        </div>
+				    </div>
+
+				    <!-- <div class="row item border-none" >
 				        <div class="col p-b-7">
 				        	<div>
 					            <div class="offer"> {{request.offerCount}} </div>
@@ -119,7 +180,12 @@
 				        <div class="col text-center">
 				        	<div class="vert-div pull-left"></div>
 				        	<p>Status</p>
-				        	<label class="status-label status-balanced"> {{App.humanize(request.status)}}</label>
+				        	<label
+				        		class="status-label"
+				        		ng-class="(request.status === 'cancelled'
+				        				|| request.status === 'expired') ? 'status-assertive' : 'status-balanced'">
+				        		{{App.humanize(request.status)}}
+				        	</label>
 				        </div>
 				        <div class="col text-center">
 				        	<div class="vert-div pull-left"></div>
@@ -127,6 +193,7 @@
 				        	<label class="status-label status-dark small-let">{{request.timeStr}}</label>
 				        </div>
 				    </div>
+				     -->
 				      <!-- <div class="item item-divider">
 				        <div class="pull-right ">
 
@@ -138,7 +205,7 @@
 				    </div> -->
 				</ion-item>
 
-				<ion-item
+				<ion-item class="show-all-req"
 					ng-if="view.request.all.length > 1 && view.request.limitTo == 1"
 					ng-click="view.request.showAllRequests()">
 					Show all requests

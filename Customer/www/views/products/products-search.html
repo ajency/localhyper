@@ -1,0 +1,110 @@
+<ion-view ng-init="view.init();" class="search-full-page">
+
+	<ion-nav-title>
+		{{view.title}}
+    </ion-nav-title>
+
+	<div class="bar bar-subheader item-input-inset sub-head-search">
+		<i class="icon ion-search placeholder-icon"></i>
+		<form
+			novalidate
+			ng-submit="view.onSearch();" class="">
+
+			<label class="item-input-wrapper">
+
+				<input
+					type="search"
+					placeholder="Search for products"
+					ng-model="view.search">
+			</label>
+		</form>
+		<button
+			class="button button-clear"
+			ng-click="view.search = '';">
+			<i class="icon ion-android-close"></i>
+		</button>
+	</div>
+
+	<ion-content class="sub-categories product-list has-subheader">
+
+		<ion-list>
+			<div
+				class="col col-50 border-card border-card2 sing-pro"
+				collection-repeat="product in view.products"
+				item-width="50%"
+				ng-click="App.navigate('single-product', {productID: product.objectId})">
+
+				<img ng-src="{{product.images[0].src}}" class=" center-block aj-img" >
+
+				<div class="row">
+					<div class="col">
+						<h5 class="text-left title">{{product.name}}</h5>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<h6 class="subdued">
+							{{view.getPrimaryAttrs(product.primaryAttributes)}}
+						</h6>
+					</div>
+				</div>
+
+				<div class="row open-links">
+                    <div class="col col-67">
+                		<h4 class="margin-none pull-left strike" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
+                	</div>
+                	<div class="col">
+                		<h4 class="margin-none pull-right subdued"> <i class="ion-log-out"></i></h4>
+                	</div>
+				</div>
+			</div>
+
+		</ion-list>
+
+		<div
+			ng-if="view.gotAllProducts && view.products.length == 0" class="text-center">
+			<h5 class="bold fin">Sorry, we could not find any matched products.</h5>
+			<div class="spacer-40"></div>
+		</div>
+
+		<div ng-if="view.gotAllProducts && view.products.length > 0" class="text-center">
+			<h5 class="bold fin">That's all folks, no more products to display.</h5>
+			<div class="spacer-40"></div>
+		</div>
+
+		<ion-infinite-scroll
+			on-infinite="view.onInfiniteScroll();"
+			ng-if="view.canLoadMore"
+			distance="1%"
+			class="aj-refresher">
+		</ion-infinite-scroll>
+
+	</ion-content>
+
+	<ion-footer-bar
+		ng-show="view.footer"
+		class="bar-light">
+
+		<div class="row">
+			<div class="col col-50 text-center" ng-click="view.showSortOptions();">
+
+				<h5 class="margin-none normal filter-txt">
+					<i class="ion ion-arrow-swap"></i>
+					SORT<br>
+					<sm>{{view.sortName}}<sm>
+				</h5>
+			</div>
+
+			<div class="col col-50 text-center border-left" ng-click="view.filter.openModal();">
+
+				<h5 class="margin-none normal filter-txt">
+					<i class="ion ion-funnel"></i>
+			 		FILTER
+					<br>
+					<sm>{{view.filter.excerpt}}<sm>
+				</h5>
+			</div>
+		</div>
+	</ion-footer-bar>
+
+</ion-view>

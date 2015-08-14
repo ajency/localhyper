@@ -45,6 +45,33 @@ angular.module('LocalHyper.myRequests', []).directive('ajRemoveBoxShadow', [
       }
     };
   }
+]).directive('userRating', [
+  '$timeout', function($timeout) {
+    return {
+      restrict: 'E',
+      replace: true,
+      template: '<div></div>',
+      scope: {
+        rateClick: '&'
+      },
+      link: function(scope, el, attrs) {
+        return $timeout(function() {
+          return $(el).raty({
+            score: 0,
+            numberMax: 5,
+            path: 'lib/raty/lib/images/',
+            click: function(score, evt) {
+              return scope.$apply(function() {
+                return scope.rateClick({
+                  score: score
+                });
+              });
+            }
+          });
+        });
+      }
+    };
+  }
 ]).factory('DeliveryTime', [
   function() {
     var DeliveryTime;

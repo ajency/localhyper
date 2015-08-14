@@ -2,9 +2,9 @@ angular.module 'LocalHyper.myRequests'
 
 
 .controller 'RequestDetailsCtrl', ['$scope', 'RequestAPI', '$interval', 'TimeString'
-	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog'
+	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User'
 	, ($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner
-	, CToast, $rootScope, CDialog)->
+	, CToast, $rootScope, CDialog, $ionicPopup, User)->
 
 		$scope.view = 
 			request: RequestAPI.requestDetails 'get'
@@ -19,13 +19,12 @@ angular.module 'LocalHyper.myRequests'
 						App.resize()
 					, 500
 
-			comments:
-				show: false
-				toggle : ->
-					@show = !@show
-					$timeout -> 
-						App.resize()
-					, 500
+			showComment : (title, comment)->
+				$ionicPopup.alert
+					title: title
+					template: comment
+					okText: 'Close'
+					okType: 'button-assertive'
 
 			cancelRequest: 
 				footer: false
@@ -43,6 +42,11 @@ angular.module 'LocalHyper.myRequests'
 				errorType: ''
 				all: []
 				limitTo: 1
+				rate:
+					score: 0
+					comment: ''
+					setScore : (score)->
+						@score = score
 
 				showAll : ->
 					@limitTo = 100
@@ -82,6 +86,37 @@ angular.module 'LocalHyper.myRequests'
 							RequestAPI.updateNotificationStatus offerIds
 							.then =>
 								_.each @all, (offer)-> App.notification.decrement()
+
+				openRatePopup : (seller)->
+					@rate.score = 0
+					@rate.comment = ''
+					$ionicPopup.show
+						templateUrl: 'views/my-requests/rate.html'
+						title: 'Rate This Seller'
+						scope: $scope
+						buttons: [
+							{ text: 'Cancel' }
+							{
+								text: '<b>Submit</b>'
+								type: 'button-assertive'
+								onTap: (e)=>
+									@rateSeller seller
+							}]
+
+				rateSeller : (seller)->
+					CSpinner.show '', 'Submitting your review...'
+					RequestAPI.updateSellerRating
+						"customerId": User.getId()
+						"sellerId": seller.id
+						"ratingInStars": @rate.score
+						"comments": @rate.comment
+					.then ->
+						seller.isSellerRated = true
+						CToast.show 'Thanks for your feedback'
+					, (error)->
+						CToast.show 'An error occurred, please try again'
+					.finally ->
+						CSpinner.hide()
 
 			
 
@@ -204,7 +239,7 @@ angular.module 'LocalHyper.myRequests'
 		#Offer time & left delivery time
 		setTime = ->
 			$scope.offer.timeStr = TimeString.get $scope.offer.createdAt
-			$scope.offer.deliveryTimeLeftStr = DeliveryTime.left $scope.offer.updatedAt
+			$scope.offer.deliveryTimeLeftStr = DeliveryTime.left $scope.offer.deliveryDate
 
 		setTime()
 		interval = $interval setTime, 60000

@@ -2,19 +2,21 @@ angular.module 'LocalHyper.products', []
 
 
 .controller 'ProductsCtrl', ['$scope', 'ProductsAPI', '$stateParams', 'Product', '$ionicModal'
-	, '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform', 'CDialog'
+	, '$timeout', 'App', 'CToast', 'UIMsg', '$ionicLoading', '$ionicPlatform', 'CDialog', 'PrimaryAttribute'
 	, ($scope, ProductsAPI, $stateParams, Product, $ionicModal, $timeout, App, CToast, UIMsg
-	, $ionicLoading, $ionicPlatform, CDialog)->
+	, $ionicLoading, $ionicPlatform, CDialog, PrimaryAttribute)->
 
 		$scope.view =
 			title: Product.subCategoryTitle
+			primaryAttribute: PrimaryAttribute
 			footer: false
 			gotAllProducts: false
 			products: []
 			other: []
 			page: 0
-			canLoadMore: true
+			canLoadMore: false
 			refresh: false
+			search: ''
 			
 			filter:
 				modal: null
@@ -160,8 +162,8 @@ angular.module 'LocalHyper.products', []
 
 			init : ->
 				@filter.loadModal()
-
-			reset : ->
+			
+			beforeReset : ->
 				@sortBy = 'popularity'
 				@sortName = 'Popularity'
 				@ascending = false
@@ -169,6 +171,15 @@ angular.module 'LocalHyper.products', []
 				@filter.resetFilters()
 				@pullToRefresh = false
 				@footer = false
+
+			forSearch : ->
+				@beforeReset()
+				@search = ''
+				@canLoadMore = false
+				@gotAllProducts = false
+
+			reset : ->
+				@beforeReset()
 				@reFetch false
 
 			reFetch : (refresh=true)->
@@ -206,6 +217,31 @@ angular.module 'LocalHyper.products', []
 				@refresh = false
 				@getProducts()
 
+			onSearch : ->
+				if @search is ''
+					CToast.show 'Please provide input'
+				else
+					@reFetch()
+
+			getWordsFromSentence : ->
+				wordArr = []
+				sentence = @search
+				sentence = sentence.replace /[^a-zA-Z0-9.]/g, " "
+				sentence = sentence.trim() 
+				wordArr = sentence.split /\s+/g
+				wordArr = _.map wordArr, (word)-> word.toLowerCase()
+				wordArr = _.unique wordArr
+
+				stopWords = ["the" , "is" , "and"]
+				
+				words = _.filter wordArr, (word) ->
+					!_.contains stopWords, word
+				words
+
+			getSearchKeyWords : ->
+				if App.currentState is 'products' then 'all'
+				else @getWordsFromSentence()
+
 			getProducts : ->
 				options = 
 					categoryID: $stateParams.categoryID
@@ -214,6 +250,7 @@ angular.module 'LocalHyper.products', []
 					ascending: @ascending
 					selectedFilters: @filter.selectedFilters
 					displayLimit: 10
+					searchKeywords: @getSearchKeyWords()
 
 				ProductsAPI.getAll options
 				.then (data)=>
@@ -255,16 +292,6 @@ angular.module 'LocalHyper.products', []
 
 				@gotAllProducts = true if !@canLoadMore
 
-			getPrimaryAttrs : (attrs)->
-				if !_.isUndefined attrs
-					attrs = attrs[0]
-					value = s.humanize attrs.value
-					unit = ''
-					if _.has attrs.attribute, 'unit'
-						unit = s.humanize attrs.attribute.unit
-					"#{value} #{unit}"
-				else ''
-
 			onSort : (sortBy, sortName, ascending)->
 				$ionicLoading.hide()
 
@@ -298,7 +325,13 @@ angular.module 'LocalHyper.products', []
 				App.goBack -1
 
 		$scope.$on '$ionicView.beforeEnter', ->
-			if _.contains ['categories', 'sub-categories'], App.previousState
+			App.search.categoryID = $stateParams.categoryID
+			if App.currentState is 'products-search'
+				$scope.view.forSearch()
+				if App.previousState isnt 'single-product'
+					$scope.view.products = []
+					
+			else if _.contains ['categories', 'sub-categories'], App.previousState
 				$scope.view.reset()
 
 		$scope.$on '$ionicView.enter', ->
@@ -327,5 +360,19 @@ angular.module 'LocalHyper.products', []
 								category.id is $stateParams.categoryID
 							
 							subCategoryTitle: childCategory[0].name 
-]
 
+		.state 'products-search',
+			url: '/products-search:categoryID'
+			parent: 'main'
+			views: 
+				"appContent":
+					templateUrl: 'views/products/products-search.html'
+					controller: 'ProductsCtrl'
+					resolve:
+						Product: ($stateParams, CategoriesAPI)->
+							subCategories = CategoriesAPI.subCategories 'get'
+							childCategory = _.filter subCategories, (category)->
+								category.id is $stateParams.categoryID
+							
+							subCategoryTitle: childCategory[0].name 
+]

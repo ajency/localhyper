@@ -22,13 +22,19 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
     App.logo = {
       small: true
     };
+    App.search = {
+      icon: false,
+      categoryID: ''
+    };
     return $rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
-      var bool, hideForStates;
+      var bool, hideForStates, showSearchForStates;
       App.previousState = from.name;
       App.currentState = to.name;
       hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual'];
       bool = !_.contains(hideForStates, App.currentState);
-      return App.menuEnabled.left = bool;
+      App.menuEnabled.left = bool;
+      showSearchForStates = ['products', 'single-product'];
+      return App.search.icon = _.contains(showSearchForStates, App.currentState);
     });
   }
 ]).config([

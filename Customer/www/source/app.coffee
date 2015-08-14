@@ -28,6 +28,11 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	
 	#Small app logo
 	App.logo = small: true
+
+	#Search icon
+	App.search = 
+		icon: false
+		categoryID: ''
 	
 	$rootScope.$on '$stateChangeSuccess', (ev, to, toParams, from, fromParams)->
 		App.previousState = from.name
@@ -37,6 +42,9 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual']
 		bool = !_.contains(hideForStates, App.currentState)
 		App.menuEnabled.left  = bool
+
+		showSearchForStates = ['products', 'single-product']
+		App.search.icon = _.contains showSearchForStates, App.currentState
 ]
 
 

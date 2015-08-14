@@ -1,17 +1,17 @@
 <ion-view aj-remove-box-shadow>
 
 	<ion-nav-title>
-		Failed Requests
+		Expired Requests
     </ion-nav-title>
 
-	<ion-content ng-switch="view.display">
+	<ion-content ng-switch="view.display" class="my-requests-glob">
 
 		<ion-refresher
-			on-refresh="view.onPullToRefresh();" 
+			on-refresh="view.onPullToRefresh();"
 			class="aj-refresher">
 		</ion-refresher>
 
-		<ion-list 
+		<ion-list
 			class="card-list"
 			ng-switch-when="noError">
 
@@ -36,9 +36,17 @@
 				<div class="row item border-none p-t-10">
 					<div class="col  p-t-0">
 						<sm class="light-gray"> Local Price</sm><br>
-						<h3 class=" item-text-wrap margin-none big-txt">
-							<span class="WebRupee subdued">&#x20B9;</span> 
-							{{App.toINR(request.product.mrp)}}
+						<h3 
+							class="item-text-wrap margin-none big-txt"
+							ng-if="request.product.platformPrice !== ''">
+
+							<span class="WebRupee subdued">&#x20B9;</span>
+							{{App.toINR(request.product.platformPrice)}}
+						</h3>
+						<h3 
+							class="item-text-wrap margin-none big-txt"
+							ng-if="request.product.platformPrice === ''">
+							N/A
 						</h3>
 					</div>
 					<div class="col p-t-0">
@@ -56,23 +64,27 @@
 						</sm>
 					</div>
 					<div class="col col-75">
-						<h3 class="margin-none status text-right m-t-5"> 
+						<h3 class="margin-none status text-right m-t-5">
 							<b>{{App.humanize(request.status)}}</b>
 						</h3>
 					</div>
 				</div>
-					
+
 			</ion-item>
 		</ion-list>
 
-		<div ng-if="view.gotAllRequests">
-			<h4 class="text-center ">That's all folks. No more requests to display.</h4>
+		<div ng-if="view.gotAllRequests && view.expiredRequests.length == 0">
+			<h5 class="text-center fin">There are no expired requests.</h5>
+		</div>
+
+		<div ng-if="view.gotAllRequests && view.expiredRequests.length > 0">
+			<h5 class="text-center fin">That's all folks. No more requests to display.</h5>
 		</div>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll();"
 			ng-if="view.canLoadMore"
-			distance="1%" 
+			distance="1%"
 			class="aj-refresher">
 		</ion-infinite-scroll>
 

@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', '$ionicScrollDelegate', '$ionicPlatform', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', '$ionicScrollDelegate', '$ionicPlatform', 'PrimaryAttribute', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform, PrimaryAttribute) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -7,6 +7,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       footer: false,
       productID: $stateParams.productID,
       product: {},
+      primaryAttribute: PrimaryAttribute,
       request: {
         page: 0,
         all: [],
@@ -117,13 +118,19 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         },
         set: function() {
           var general, generalSpecs, groups, warranty;
-          groups = _.groupBy(window.specifications, function(spec) {
+          groups = _.groupBy($scope.view.product.specifications, function(spec) {
             return spec.group;
           });
           general = groups['general'];
           generalSpecs = [];
           _.each(general, function(specs) {
-            return generalSpecs.push(App.humanize(specs.value));
+            var str;
+            if (_.isNull(specs.unit)) {
+              str = App.humanize(specs.value);
+            } else {
+              str = (App.humanize(specs.value)) + " " + (App.humanize(specs.unit));
+            }
+            return generalSpecs.push(str);
           });
           this.excerpt = generalSpecs.join(', ');
           warranty = groups['warranty'];
@@ -131,7 +138,9 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           delete groups['warranty'];
           groups = _.toArray(groups);
           groups.unshift(general);
-          groups.push(warranty);
+          if (!_.isUndefined(warranty)) {
+            groups.push(warranty);
+          }
           return this.groups = groups;
         }
       },
@@ -143,6 +152,9 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         this.footer = false;
         this.request.reset();
         return this.getSingleProductDetails();
+      },
+      getDate: function(obj) {
+        return moment(obj.iso).format('DD/MM/YYYY');
       },
       getSingleProductDetails: function() {
         return ProductsAPI.getSingleProduct(this.productID).then((function(_this) {
@@ -183,20 +195,6 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       onTapToRetry: function() {
         this.display = 'loader';
         return this.getSingleProductDetails();
-      },
-      getPrimaryAttrs: function() {
-        var attrs, unit, value;
-        if (!_.isUndefined(this.product.primaryAttributes)) {
-          attrs = this.product.primaryAttributes[0];
-          value = s.humanize(attrs.value);
-          unit = '';
-          if (_.has(attrs.attribute, 'unit')) {
-            unit = s.humanize(attrs.attribute.unit);
-          }
-          return value + " " + unit;
-        } else {
-          return '';
-        }
       },
       checkUserLogin: function() {
         if (!User.isLoggedIn()) {
@@ -257,7 +255,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       }
     });
     return $scope.$on('$ionicView.beforeEnter', function() {
-      if (_.contains(['products', 'verify-success'], App.previousState)) {
+      if (_.contains(['products', 'verify-success', 'products-search'], App.previousState)) {
         $ionicScrollDelegate.$getByHandle('single-product-handle').scrollTop(true);
         return $scope.view.reset();
       }

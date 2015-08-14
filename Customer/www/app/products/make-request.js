@@ -187,8 +187,8 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
               latitude: this.latLng.lat(),
               longitude: this.latLng.lng()
             },
-            "categoryId": product.category.objectId,
-            "brandId": product.brand.objectId,
+            "categoryId": product.category.id,
+            "brandId": product.brand.id,
             "city": this.address.city,
             "area": this.address.city
           };
@@ -236,9 +236,9 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
             CSpinner.show('', 'Please wait...');
             params = {
               "customerId": User.getId(),
-              "productId": product.objectId,
-              "categoryId": product.category.objectId,
-              "brandId": product.brand.objectId,
+              "productId": product.id,
+              "categoryId": product.category.id,
+              "brandId": product.brand.id,
               "comments": this.comments.text,
               "status": "open",
               "deliveryStatus": "",

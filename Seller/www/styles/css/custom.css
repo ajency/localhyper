@@ -1686,20 +1686,20 @@ input[disabled] ~ .radio-icon-show {
 .search-brands-wrap {
   border: 0;
   border-radius: 0;
-  background-color: #F3F3F3;
+  background-color: #1F1F1F;
   border-bottom: 1px solid #ccc;
+  padding-top: 3px;
+  padding-bottom: 5px;
 }
 .search-brands-wrap .search-brands {
-  background-color: transparent;
   padding: 0;
 }
 .search-brands-wrap .search-brands input {
   color: #1F1F1F;
   display: block;
   width: 100%;
-  padding: 12px 15px 6px 4px;
+  padding: 4px 15px 2px 4px;
   height: auto;
-  font-style: italic;
   line-height: 26px;
   font-size: 15px;
 }
@@ -1707,7 +1707,7 @@ input[disabled] ~ .radio-icon-show {
   background: transparent;
   border: 0;
   color: #B9B5B5;
-  padding-left: 15px;
+  padding-left: 0;
 }
 .search-brands-wrap button.button.button-small i:before {
   font-size: 26px;
