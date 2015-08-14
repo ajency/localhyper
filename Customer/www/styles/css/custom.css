@@ -1702,3 +1702,30 @@ label.status-label {
 .get-price-head button.button.button-clear i.icon:before {
   font-size: 30px;
 }
+.error-occ {
+  border: 0;
+  background-color: #eee;
+  text-align: center;
+  font-size: 15px;
+}
+.filter-txt {
+  line-height: 12px;
+  text-align: left;
+}
+.filter-txt i {
+  font-size: 21px;
+  float: left;
+  margin-right: 10px;
+  margin-left: 20px;
+  font-weight: 100;
+  color: #f45152;
+}
+.filter-txt sm {
+  font-weight: 100;
+  display: -webkit-box;
+  max-width: 100%;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
