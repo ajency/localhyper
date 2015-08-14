@@ -157,7 +157,8 @@
 					        	<label
 					        		class="status-label"
 					        		ng-class="(request.status === 'cancelled'
-					        				|| request.status === 'expired') ? 'status-assertive' : 'status-balanced'">
+					        				|| request.status === 'expired'
+					        				|| request.status === 'failed_delivery') ? 'status-assertive' : 'status-balanced'">
 					        		{{App.humanize(request.status)}}
 					        	</label>
 				        	</p>

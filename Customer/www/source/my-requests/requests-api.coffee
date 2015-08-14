@@ -30,12 +30,10 @@ angular.module 'LocalHyper.myRequests'
 
 		defer.promise
 
-	RequestAPI.getRequestForOffer = (offerId)->
+	RequestAPI.getRequestDetails = (params)->
 		defer = $q.defer()
-		
-		params = "offerId": offerId
 
-		$http.post 'functions/getRequestForOffer', params
+		$http.post 'functions/getRequestDetails', params
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->
