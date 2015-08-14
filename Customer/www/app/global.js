@@ -1,6 +1,6 @@
 var APP_ID, APP_NAME, GEO_DEFAULT, GOOGLE_MAPS_API_KEY, HELP_URL, JS_KEY, PACKAGE_NAME, REST_API_KEY, SUPPORT_NUMBER;
 
-APP_NAME = 'ShopOye Customer';
+APP_NAME = 'ShopOye';
 
 PACKAGE_NAME = 'com.localhyper.customer';
 
@@ -17,6 +17,6 @@ GEO_DEFAULT = {
   lng: 77.87109375
 };
 
-SUPPORT_NUMBER = '9765436351';
+SUPPORT_NUMBER = '+919004198625';
 
-HELP_URL = 'http://www.google.com/';
+HELP_URL = 'http://shopoye.co.in/customer-faqs';
