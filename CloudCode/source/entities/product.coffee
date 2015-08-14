@@ -759,10 +759,10 @@ getBestPlatformPrice = (productObject) ->
     queryPrice.find()
     .then (platformPrices) ->
         if platformPrices.length is 0 
-            minPrice = ""
             minPriceObj =  
-                value : minPrice
+                value : ""
                 updatedAt : ""
+            promise.resolve minPriceObj
         else
             priceValues = []
             priceObjArr = []
@@ -780,7 +780,7 @@ getBestPlatformPrice = (productObject) ->
 
             minPriceObj = _.where priceObjArr, value: minPrice
 
-        promise.resolve minPriceObj[0]
+            promise.resolve minPriceObj[0]
 
 
     , (error) ->

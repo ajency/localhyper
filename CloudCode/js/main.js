@@ -2329,11 +2329,11 @@
     queryPrice.find().then(function(platformPrices) {
       var minPrice, minPriceObj, priceObjArr, priceValues;
       if (platformPrices.length === 0) {
-        minPrice = "";
         minPriceObj = {
-          value: minPrice,
+          value: "",
           updatedAt: ""
         };
+        return promise.resolve(minPriceObj);
       } else {
         priceValues = [];
         priceObjArr = [];
@@ -2350,8 +2350,8 @@
         minPriceObj = _.where(priceObjArr, {
           value: minPrice
         });
+        return promise.resolve(minPriceObj[0]);
       }
-      return promise.resolve(minPriceObj[0]);
     }, function(error) {
       return promise.reject(error);
     });
