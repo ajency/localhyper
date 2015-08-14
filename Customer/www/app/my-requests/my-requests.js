@@ -28,6 +28,10 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
             value: 'successful',
             selected: false
           }, {
+            name: 'Sent for delivery',
+            value: 'sent_for_delivery',
+            selected: false
+          }, {
             name: 'Pending delivery',
             value: 'pending_delivery',
             selected: false
