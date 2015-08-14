@@ -68,7 +68,8 @@
 			        <div class="col col-75">
 			         	<h3
 			         		class="margin-none text-right m-t-5"
-			         		ng-class="(request.status === 'cancelled') ? 'status' : 'success'">
+			         		ng-class="(request.status === 'cancelled'
+			         				|| request.status === 'failed_delivery') ? 'status' : 'success'">
 			         		<b>{{App.humanize(request.status)}}</b>
 			         	</h3>
 			        </div>
