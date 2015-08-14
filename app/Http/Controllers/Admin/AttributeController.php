@@ -121,6 +121,8 @@ class AttributeController extends Controller
 					];
 				$attributeValueData = $this->getCategoryAttributeValues($categoryData, "attributeValues");
 
+				// dd(json_encode($attributeValueData));
+
 				$headers = $data = $attributeValues= $headerFlag =[];
 
 				$attributes_label = [];
@@ -532,14 +534,14 @@ class AttributeController extends Controller
 
 							foreach($namedData as $key=>$value)
 							{ 
-
+									if($value==''){
+										$i++;
+										continue;
+									}
+												
 									if($i%2)
 									{
-											if($value==''){
-												$i++;
-												continue;
-											}
-													
+	
 											
 											$dataKey = explode("(",$key);
 
@@ -569,7 +571,7 @@ class AttributeController extends Controller
 						}
 
 				}
-
+				
 				$this->parseAttributeValueImport($attributeValues);
 				
 				return true;
