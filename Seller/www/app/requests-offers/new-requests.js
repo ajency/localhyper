@@ -270,14 +270,6 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           value: 1,
           unit: 'hr',
           unitText: 'Hour',
-          plus: function() {
-            return this.value++;
-          },
-          minus: function() {
-            if (this.value > 1) {
-              return this.value--;
-            }
-          },
           setDuration: function() {
             if (!_.isNull(this.value)) {
               switch (this.unit) {
@@ -287,6 +279,16 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
                   return this.unitText = this.value === 1 ? 'Day' : 'Days';
               }
             }
+          },
+          plus: function() {
+            this.value++;
+            return this.setDuration();
+          },
+          minus: function() {
+            if (this.value > 1) {
+              this.value--;
+            }
+            return this.setDuration();
           },
           done: function() {
             if (_.isNull(this.value)) {

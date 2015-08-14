@@ -181,11 +181,6 @@ angular.module 'LocalHyper.requestsOffers'
 					unit: 'hr'
 					unitText: 'Hour'
 
-					plus : ->
-						@value++
-					minus : ->
-						@value-- if @value > 1
-
 					setDuration : ->
 						if !_.isNull @value
 							switch @unit
@@ -193,6 +188,14 @@ angular.module 'LocalHyper.requestsOffers'
 									@unitText = if @value is 1 then 'Hour' else 'Hours'
 								when 'day'
 									@unitText = if @value is 1 then 'Day' else 'Days'
+
+					plus : ->
+						@value++
+						@setDuration()
+						
+					minus : ->
+						@value-- if @value > 1
+						@setDuration()
 
 					done : ->
 						if _.isNull(@value)
