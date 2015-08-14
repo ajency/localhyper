@@ -1379,52 +1379,6 @@
     });
   });
 
-  Parse.Cloud.define('getRequestForOffer', function(request, response) {
-    var offerId, queryOffer;
-    offerId = request.params.offerId;
-    queryOffer = new Parse.Query("Offer");
-    queryOffer.equalTo("objectId", offerId);
-    queryOffer.select("request");
-    queryOffer.include("request");
-    queryOffer.include("request.product");
-    return queryOffer.first().then(function(offerObj) {
-      var productObj, requestObj;
-      requestObj = offerObj.get("request");
-      productObj = requestObj.get("product");
-      return getOtherPricesForProduct(productObj).then(function(otherPrice) {
-        var deliveryDate, product, requestResult;
-        product = {
-          "name": productObj.get("name"),
-          "images": productObj.get("images"),
-          "mrp": productObj.get("mrp"),
-          "onlinePrice": otherPrice["online"]["value"],
-          "platformPrice": otherPrice["platform"]["value"]
-        };
-        if (!_.isUndefined(offerObj.get("deliveryDate"))) {
-          deliveryDate = offerObj.get("deliveryDate");
-        } else {
-          deliveryDate = "";
-        }
-        requestResult = {
-          "id": requestObj.id,
-          "product": product,
-          "status": requestObj.get("status"),
-          "address": requestObj.get("address"),
-          "comments": requestObj.get("comments"),
-          "createdAt": requestObj.createdAt,
-          "updatedAt": requestObj.updatedAt,
-          "offerCount": requestObj.get("offerCount"),
-          "deliveryDate": deliveryDate
-        };
-        return response.success(requestResult);
-      }, function(error) {
-        return response.error(error);
-      });
-    }, function(error) {
-      return response.error(error);
-    });
-  });
-
   Parse.Cloud.define('isOfferNotificationSeen', function(request, response) {
     var innerQueryRequest, queryOffer, requestId, type, userId;
     userId = request.params.userId;
@@ -2822,6 +2776,81 @@
     }, function(error) {
       return response.error(error);
     });
+  });
+
+  Parse.Cloud.define('getRequestDetails', function(request, response) {
+    var offerId, queryOffer, queryRequest, requestId;
+    offerId = request.params.offerId;
+    requestId = request.params.requestId;
+    if (!_.isEmpty(offerId)) {
+      queryOffer = new Parse.Query("Offer");
+      queryOffer.equalTo("objectId", offerId);
+      queryOffer.select("request");
+      queryOffer.include("request");
+      queryOffer.include("request.product");
+      return queryOffer.first().then(function(offerObj) {
+        var productObj, requestObj;
+        requestObj = offerObj.get("request");
+        productObj = requestObj.get("product");
+        return getOtherPricesForProduct(productObj).then(function(otherPrice) {
+          var product, requestResult;
+          product = {
+            "name": productObj.get("name"),
+            "images": productObj.get("images"),
+            "mrp": productObj.get("mrp"),
+            "onlinePrice": otherPrice["online"]["value"],
+            "platformPrice": otherPrice["platform"]["value"]
+          };
+          requestResult = {
+            "id": requestObj.id,
+            "product": product,
+            "status": requestObj.get("status"),
+            "address": requestObj.get("address"),
+            "comments": requestObj.get("comments"),
+            "createdAt": requestObj.createdAt,
+            "updatedAt": requestObj.updatedAt,
+            "offerCount": requestObj.get("offerCount")
+          };
+          return response.success(requestResult);
+        }, function(error) {
+          return response.error(error);
+        });
+      }, function(error) {
+        return response.error(error);
+      });
+    } else if (!_.isEmpty(requestId)) {
+      queryRequest = new Parse.Query("Request");
+      queryRequest.equalTo("objectId", requestId);
+      return queryRequest.first().then(function(requestObj) {
+        var productObj;
+        productObj = requestObj.get("product");
+        return getOtherPricesForProduct(productObj).then(function(otherPrice) {
+          var product, requestResult;
+          product = {
+            "name": productObj.get("name"),
+            "images": productObj.get("images"),
+            "mrp": productObj.get("mrp"),
+            "onlinePrice": otherPrice["online"]["value"],
+            "platformPrice": otherPrice["platform"]["value"]
+          };
+          requestResult = {
+            "id": requestObj.id,
+            "product": product,
+            "status": requestObj.get("status"),
+            "address": requestObj.get("address"),
+            "comments": requestObj.get("comments"),
+            "createdAt": requestObj.createdAt,
+            "updatedAt": requestObj.updatedAt,
+            "offerCount": requestObj.get("offerCount")
+          };
+          return response.success(requestResult);
+        }, function(error) {
+          return response.error(error);
+        });
+      }, function(error) {
+        return response.error(error);
+      });
+    }
   });
 
   getNewRequestsForSeller = function(sellerId, requestFilters) {

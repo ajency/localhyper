@@ -566,54 +566,6 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
 
 
 
-Parse.Cloud.define 'getRequestForOffer', (request, response) ->
-    offerId = request.params.offerId
-
-    queryOffer = new Parse.Query("Offer")
-    queryOffer.equalTo("objectId", offerId)
-    queryOffer.select("request")
-    queryOffer.include("request")
-    queryOffer.include("request.product")
-
-    queryOffer.first()
-    .then (offerObj) ->
-        requestObj = offerObj.get("request")
-        productObj = requestObj.get("product")
-
-        getOtherPricesForProduct(productObj)
-        .then (otherPrice) ->
-            product = 
-                "name" :productObj.get("name")
-                "images" :productObj.get("images")
-                "mrp" :productObj.get("mrp")
-                "onlinePrice" : otherPrice["online"]["value"]
-                "platformPrice" : otherPrice["platform"]["value"]
-            
-            if !_.isUndefined offerObj.get("deliveryDate")
-                deliveryDate = offerObj.get("deliveryDate")
-            else 
-                deliveryDate = ""
-
-            requestResult = 
-                "id" : requestObj.id
-                "product" : product
-                "status" : requestObj.get("status")
-                "address" : requestObj.get("address")
-                "comments" : requestObj.get("comments")
-                "createdAt" : requestObj.createdAt
-                "updatedAt" : requestObj.updatedAt
-                "offerCount" : requestObj.get("offerCount")
-                "deliveryDate" : deliveryDate
-
-            response.success requestResult 
-                       
-        , (error) ->
-            response.error error    
-
-
-    , (error) ->
-        response.error error
-
 # check if offer notification has been seen or not
 Parse.Cloud.define 'isOfferNotificationSeen', (request, response) ->
     userId = request.params.userId

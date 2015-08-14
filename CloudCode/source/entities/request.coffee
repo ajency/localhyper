@@ -516,6 +516,84 @@ Parse.Cloud.define 'getOpenRequestCount' , (request, response) ->
     , (error) ->
         response.error error
 
+# API to get request details based on request id or offer id (used in customer app for single request details)
+Parse.Cloud.define 'getRequestDetails', (request, response) ->
+    offerId = request.params.offerId
+    requestId = request.params.requestId
+
+    if !_.isEmpty offerId
+        queryOffer = new Parse.Query("Offer")
+        queryOffer.equalTo("objectId", offerId)
+        queryOffer.select("request")
+        queryOffer.include("request")
+        queryOffer.include("request.product")
+        queryOffer.first()
+        .then (offerObj) ->
+            requestObj = offerObj.get("request")
+            productObj = requestObj.get("product")  
+            getOtherPricesForProduct(productObj)
+            .then (otherPrice) ->
+                product = 
+                    "name" :productObj.get("name")
+                    "images" :productObj.get("images")
+                    "mrp" :productObj.get("mrp")
+                    "onlinePrice" : otherPrice["online"]["value"]
+                    "platformPrice" : otherPrice["platform"]["value"]
+                
+
+
+                requestResult = 
+                    "id" : requestObj.id
+                    "product" : product
+                    "status" : requestObj.get("status")
+                    "address" : requestObj.get("address")
+                    "comments" : requestObj.get("comments")
+                    "createdAt" : requestObj.createdAt
+                    "updatedAt" : requestObj.updatedAt
+                    "offerCount" : requestObj.get("offerCount")
+
+                response.success requestResult 
+                           
+            , (error) ->
+                response.error error 
+        , (error) ->
+            response.error error                   
+
+    else if !_.isEmpty requestId
+        # query request directly
+        queryRequest = new Parse.Query("Request")
+        queryRequest.equalTo("objectId", requestId)
+        queryRequest.first()
+        .then (requestObj) ->
+            productObj = requestObj.get("product")  
+            getOtherPricesForProduct(productObj)
+            .then (otherPrice) ->
+                product = 
+                    "name" :productObj.get("name")
+                    "images" :productObj.get("images")
+                    "mrp" :productObj.get("mrp")
+                    "onlinePrice" : otherPrice["online"]["value"]
+                    "platformPrice" : otherPrice["platform"]["value"]
+                
+
+
+                requestResult = 
+                    "id" : requestObj.id
+                    "product" : product
+                    "status" : requestObj.get("status")
+                    "address" : requestObj.get("address")
+                    "comments" : requestObj.get("comments")
+                    "createdAt" : requestObj.createdAt
+                    "updatedAt" : requestObj.updatedAt
+                    "offerCount" : requestObj.get("offerCount")
+
+                response.success requestResult  
+            
+            , (error) ->
+                response.error error            
+
+        , (error) ->
+            response.error error
 
 
 getNewRequestsForSeller = (sellerId,requestFilters) ->
