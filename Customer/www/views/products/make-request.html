@@ -4,7 +4,7 @@
 		Make Request
 	</ion-nav-title>
 
-	<div class="bar bar-subheader item-input-inset">
+	<div class="bar bar-subheader item-input-inset get-price-head">
 		<i
 			class="icon ion-android-locate placeholder-icon icon-input"
 			ng-click="view.getCurrent();">
@@ -24,7 +24,7 @@
 		<button
 			class="button button-clear"
 			ng-click="view.searchText = ''">
-			Clear
+			<i class="icon ion-android-close"></i>
 		</button>
 	</div>
 
@@ -130,8 +130,12 @@
 		</div>
 
 		<div class="row">
-			<div class="col col-80">
-				<div class="list">
+			<div class="col co l-80">
+				<div class="list popup-comments">
+					<i
+						class="icon ion-chatbox-working"
+						ng-click="view.addComments();">
+					</i>
 					<label class="item item-input item-stacked-label">
 						<input
 							class="comment"
@@ -139,20 +143,24 @@
 							type="text"
 							placeholder="Enter comments if any"
 							ng-model="view.comments.text">
+
+						<!-- <span class="icon"> -->
+
+						<!-- </span> -->
 					</label>
 				</div>
 			</div>
-			<div class="col col-20">
-				<h2 class="p-t-10 text-center">
-					<i 
-						class="icon ion-chatbox-working" 
-						ng-click="view.addComments();">
-					</i>
-				</h2>
-			</div>
+			<!-- <div class="col col-20">
+
+			</div> -->
 		</div>
 
-		<br>
+		<!-- <br> -->
+		<div class="row">
+			<div class="col">
+				<h5 class="fin text-center" style="margin-top: 15px;">Please enter the correct delivery address</h5>
+			</div>
+		</div>
 
     </ion-content>
 

@@ -153,6 +153,9 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         this.request.reset();
         return this.getSingleProductDetails();
       },
+      getDate: function(obj) {
+        return moment(obj.iso).format('DD/MM/YYYY');
+      },
       getSingleProductDetails: function() {
         return ProductsAPI.getSingleProduct(this.productID).then((function(_this) {
           return function(productData) {
@@ -245,9 +248,10 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       return $scope.view.reset();
     });
     $rootScope.$on('in:app:notification', function(e, obj) {
-      var payload;
+      var payload, refetchFor;
       payload = obj.payload;
-      if (payload.type === 'new_offer') {
+      refetchFor = ['new_offer', 'request_delivery_changed'];
+      if (_.contains(refetchFor, payload.type)) {
         return $scope.view.request.reFetch();
       }
     });

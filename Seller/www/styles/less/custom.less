@@ -27,6 +27,10 @@ hr{
     font-size: 30px;
     line-height: 45px;
 }
+.points{
+	    font-size: 20px;
+    	line-height: 30px;
+}
 .single-input input{
 	margin: 0px;
     padding: 0px;
@@ -111,7 +115,7 @@ hr{
 	margin:0px !important;
 }
 sm{
-   font-size: 11px;
+   font-size: 12px;
 }
 .platform-android .popover {
 	height: 170px;
@@ -184,8 +188,8 @@ sm{
 /************************************/
 .nav-bar-title{
 	img{
-		width: 40%;
 	    margin-top: 5px;
+    	height: 30px;
 	}
 }
 .has-header{
@@ -821,7 +825,8 @@ sm{
 		display: block;
 		text-transform: uppercase;
 		.checkbox{
-display: block;
+			display: block;
+			padding: 0px;
 			position: relative;
 			margin-top: 0px;
 			top:0px;
@@ -1054,10 +1059,10 @@ h5.with-sep {
 	display: block;
 	color: #b1b1b1;
 	text-decoration: none;
-	font-size: 18px;
-	width: 35px;
-	height: 35px;
-	line-height: 35px;
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    line-height: 31px;
 	padding: 0;
 	text-align: center;
 	border: 1px solid #b1b1b1;
@@ -1065,6 +1070,7 @@ h5.with-sep {
 	margin: 0 auto;
 }
 .user-comment {
+	    padding-top: 8px;
 	p {
 		font-size: 14px;
 		padding-right: 25px;
@@ -1449,13 +1455,18 @@ h5.with-sep {
 }
 .products-filter-view {
 	margin-top: 9px;
+	.item:nth-child(4){
+				.sel-count {
+					width:50px !important;
+				}
+	}
 	label.item-radio {
 		/* border-color: #666; */
 		font-size: 14px;
 		background-color: transparent;
 		text-align: center;
 		.item-content {
-			padding: 14px 10px;
+			padding: 20px 10px;
 			background: transparent;
 			color: #444;
 			position: relative;
@@ -1617,7 +1628,7 @@ input[disabled]~.radio-icon-show{
 	border: 0;
 	border-radius: 0;
 	background-color: #1F1F1F; //was #171717;
-	border-bottom: 1px solid #ccc;
+	/*border-bottom: 1px solid #ccc;*/
 	padding-top: 3px;
     padding-bottom: 5px;
 

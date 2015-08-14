@@ -41,12 +41,14 @@
 			</div>
 
 			<div ng-switch-when="maxAttempts" class="maxAttempts-div">
+
+				<br>
 				<img src="./img/verify_5.png" class="center-img verify-step-img"/>
 
 				<h3>Sorry...</h3>
 				<div class="row">
 					<div class="center sm-text col subdued">
-						<span class="info-top m-t-0">Exceeded maximum number of attempts. Please contact our support and enter code manually.</span>
+						<span class="info-top m-t-0" style="padding: 0;">Exceeded maximum number of attempts. Please contact our support and enter code manually.</span>
 					</div>
 				</div>
 				<br>
@@ -75,6 +77,8 @@
 				</div>
 			</div>
 
+
+
 			<aj-error
 				ng-switch-when="error"
 				error-type="view.errorType"
@@ -86,4 +90,12 @@
 		<br><br>
 
 	</ion-content>
+
+	<!-- <div class="verify-btm-bar bar bar-assertive bar-footer">
+		<button
+			class="button button-block button-assertive aj-btn"
+			ng-click="view.onNext()">
+			Next
+		</button>
+	</div> -->
 </ion-view>

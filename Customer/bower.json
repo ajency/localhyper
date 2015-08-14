@@ -12,6 +12,7 @@
     "localforage": "~1.2.3",
     "underscore.string": "~3.1.1",
     "jquery.countdown": "~2.0.4",
-    "moment": "~2.10.3"
+    "moment": "~2.10.3",
+    "raty": "~2.7.0"
   }
 }

@@ -1,10 +1,11 @@
 angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
-  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup) {
+  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup, User) {
     var inAppNotificationEvent;
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
       display: 'loader',
       errorType: '',
+      pushParams: null,
       address: {
         show: false,
         toggle: function() {
@@ -14,22 +15,13 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           }, 500);
         }
       },
-      showComment: function() {
+      showComment: function(title, comment) {
         return $ionicPopup.alert({
-          title: 'Comment',
-          template: this.request.comments,
+          title: title,
+          template: comment,
           okText: 'Close',
           okType: 'button-assertive'
         });
-      },
-      comments: {
-        show: false,
-        toggle: function() {
-          this.show = !this.show;
-          return $timeout(function() {
-            return App.resize();
-          }, 500);
-        }
       },
       cancelRequest: {
         footer: false,
@@ -45,11 +37,17 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         }
       },
       offers: {
-        id: null,
         display: 'none',
         errorType: '',
         all: [],
         limitTo: 1,
+        rate: {
+          score: 0,
+          comment: '',
+          setScore: function(score) {
+            return this.score = score;
+          }
+        },
         showAll: function() {
           this.limitTo = 100;
           return App.resize();
@@ -100,21 +98,68 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
               }
             };
           })(this));
+        },
+        openRatePopup: function(seller) {
+          this.rate.score = 0;
+          this.rate.comment = '';
+          return $ionicPopup.show({
+            templateUrl: 'views/my-requests/rate.html',
+            title: 'Rate This Seller',
+            scope: $scope,
+            buttons: [
+              {
+                text: 'Cancel'
+              }, {
+                text: '<b>Submit</b>',
+                type: 'button-assertive',
+                onTap: (function(_this) {
+                  return function(e) {
+                    return _this.rateSeller(seller);
+                  };
+                })(this)
+              }
+            ]
+          });
+        },
+        rateSeller: function(seller) {
+          CSpinner.show('', 'Submitting your review...');
+          return RequestAPI.updateSellerRating({
+            "customerId": User.getId(),
+            "sellerId": seller.id,
+            "ratingInStars": this.rate.score,
+            "comments": this.rate.comment
+          }).then(function() {
+            seller.isSellerRated = true;
+            return CToast.show('Thanks for your feedback');
+          }, function(error) {
+            return CToast.show('An error occurred, please try again');
+          })["finally"](function() {
+            return CSpinner.hide();
+          });
         }
       },
       init: function() {
         if (_.has(this.request, 'pushOfferId')) {
-          this.offers.id = this.request.pushOfferId;
-          return this.getRequestForOffer();
+          this.pushParams = {
+            "offerId": this.request.pushOfferId,
+            "requestId": ''
+          };
+          return this.getRequestDetails();
+        } else if (_.has(this.request, 'pushRequestId')) {
+          this.pushParams = {
+            "offerId": '',
+            "requestId": this.request.pushRequestId
+          };
+          return this.getRequestDetails();
         } else {
           this.display = 'noError';
           this.setRequestTime();
           return this.offers.get();
         }
       },
-      getRequestForOffer: function() {
+      getRequestDetails: function() {
         this.display = 'loader';
-        return RequestAPI.getRequestForOffer(this.offers.id).then((function(_this) {
+        return RequestAPI.getRequestDetails(this.pushParams).then((function(_this) {
           return function(request) {
             return _this.onSuccess(request);
           };
@@ -151,7 +196,6 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         })(this), 60000);
       },
       onRequestExpiry: function() {
-        console.log('onRequestExpiry');
         this.request.status = 'expired';
         return this.cancelRequest.set();
       },
@@ -220,10 +264,13 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       payload = obj.payload;
       if (payload.type === 'new_offer') {
         if (_.size($scope.view.offers.all) === 0) {
-          return $scope.view.offers.get();
+          $scope.view.offers.get();
         } else {
-          return $scope.view.offers.getSilently();
+          $scope.view.offers.getSilently();
         }
+      }
+      if (payload.type === 'request_delivery_changed') {
+        return $scope.view.request.status = payload.requestStatus;
       }
     });
     $scope.$on('$destroy', function() {
@@ -242,7 +289,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
     $scope.offer.deliveryTimeStr = DeliveryTime.humanize($scope.offer.deliveryTime);
     setTime = function() {
       $scope.offer.timeStr = TimeString.get($scope.offer.createdAt);
-      return $scope.offer.deliveryTimeLeftStr = DeliveryTime.left($scope.offer.updatedAt);
+      return $scope.offer.deliveryTimeLeftStr = DeliveryTime.left($scope.offer.deliveryDate);
     };
     setTime();
     interval = $interval(setTime, 60000);

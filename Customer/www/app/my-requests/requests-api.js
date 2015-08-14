@@ -25,13 +25,10 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
       });
       return defer.promise;
     };
-    RequestAPI.getRequestForOffer = function(offerId) {
-      var defer, params;
+    RequestAPI.getRequestDetails = function(params) {
+      var defer;
       defer = $q.defer();
-      params = {
-        "offerId": offerId
-      };
-      $http.post('functions/getRequestForOffer', params).then(function(data) {
+      $http.post('functions/getRequestDetails', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);
@@ -53,7 +50,8 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
       var defer, params;
       defer = $q.defer();
       params = {
-        "requestId": requestId
+        "requestId": requestId,
+        "customerId": User.getId()
       };
       $http.post('functions/getRequestOffers', params).then(function(data) {
         return defer.resolve(data.data.result);
@@ -133,6 +131,16 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
         "customerId": User.getId()
       };
       $http.post('functions/getOpenRequestCount', params).then(function(data) {
+        return defer.resolve(data.data.result);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
+    };
+    RequestAPI.updateSellerRating = function(params) {
+      var defer;
+      defer = $q.defer();
+      $http.post('functions/updateSellerRating', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);

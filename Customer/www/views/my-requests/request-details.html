@@ -41,11 +41,11 @@
 							<button
 								class="button icon ion-chatbox-working pull-right button-small button-light"
 								ng-if="view.request.comments !== ''"
-								ng-click="view.showComment();">
+								ng-click="view.showComment('Your Comment', view.request.comments);">
 							</button>
 
 							<p class="loca">
-								<span 
+								<span
 									class="loca-wrap"
 									ng-click="view.address.toggle();">
 
@@ -95,7 +95,8 @@
 							<label
 								class="status-label align-center"
 								ng-class="(view.request.status == 'cancelled'
-										|| view.request.status == 'expired') ? 'status-assertive' : 'status-balanced'">
+										|| view.request.status == 'expired'
+										|| view.request.status == 'failed_delivery') ? 'status-assertive' : 'status-balanced'">
 
 								{{App.humanize(view.request.status)}}
 							</label>
@@ -107,7 +108,7 @@
 			<aj-error
 				ng-switch-when="error"
 				error-type="view.errorType"
-				tap-to-retry="view.getRequestForOffer()">
+				tap-to-retry="view.getRequestDetails();">
 			</aj-error>
 
 		</ion-list>
@@ -196,10 +197,21 @@
 									<span class="loc">{{offer.seller.address.city}}</span>
 								</h3>
 
-								<p class="comment subdued" ng-if="offer.comments !== ''">
+								<p
+									class="comment subdued"
+									ng-if="offer.comments !== ''"
+									ng-click="view.showComment('Seller Comment', offer.comments);">
+
 									<i class="icon ion-chatbox-working"> </i>
 									<span class="com">{{offer.comments}}</span>
 								</p>
+
+								<button 
+									class="button button-dark button-small"
+									ng-if="!offer.seller.isSellerRated"
+									ng-click="view.offers.openRatePopup(offer.seller);">
+									Rate Seller
+								</button>
 							</div>
 						</div>
 					</div>
@@ -316,16 +328,20 @@
 
 			<ion-item
 				ng-if="view.offers.limitTo == 1 && view.offers.all.length > 1;"
-				ng-click="view.offers.showAll()" class="text-center">
+				ng-click="view.offers.showAll()" class="text-center show-all-req">
 				SHOW ALL OFFERS
 			</ion-item>
 
-			<button
-				class="button button-block button-assertive"
-				ng-if="view.request.status === 'open' && view.offers.all.length > 0;"
-				ng-click="view.onCancelRequest();">
-				Cancel Request
-			</button>
+			<div class="row">
+				<div class="col">
+					<button
+						class="button button-block button-assertive"
+						ng-if="view.request.status === 'open' && view.offers.all.length > 0;"
+						ng-click="view.onCancelRequest();">
+						Cancel Request
+					</button>
+				</div>
+			</div>
 
 			<aj-error
 				ng-switch-when="error"
@@ -337,12 +353,17 @@
 	</ion-content>
 
 	<ion-footer-bar
-		class="bar-assertive"
+		class="bar-asse rtive bar no-shadow cancel-req-btn"
 		ng-if="view.cancelRequest.footer">
-		<div
-			class="title"
-			ng-click="view.onCancelRequest();">
-			Cancel Request
+		
+		<div class="row">
+			<div class="col">
+				<div
+					class="title no-shadow"
+					ng-click="view.onCancelRequest();">
+					Cancel Request
+				</div>
+			</div>
 		</div>
 	</ion-footer-bar>
 

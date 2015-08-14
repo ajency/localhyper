@@ -30,12 +30,10 @@ angular.module 'LocalHyper.myRequests'
 
 		defer.promise
 
-	RequestAPI.getRequestForOffer = (offerId)->
+	RequestAPI.getRequestDetails = (params)->
 		defer = $q.defer()
-		
-		params = "offerId": offerId
 
-		$http.post 'functions/getRequestForOffer', params
+		$http.post 'functions/getRequestDetails', params
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->
@@ -53,7 +51,9 @@ angular.module 'LocalHyper.myRequests'
 	RequestAPI.getOffers = (requestId)->
 		defer = $q.defer()
 		
-		params = "requestId": requestId
+		params = 
+			"requestId": requestId
+			"customerId": User.getId()
 
 		$http.post 'functions/getRequestOffers', params
 		.then (data)->
@@ -139,6 +139,17 @@ angular.module 'LocalHyper.myRequests'
 		params = "customerId": User.getId()
 
 		$http.post 'functions/getOpenRequestCount', params
+		.then (data)->
+			defer.resolve data.data.result
+		, (error)->
+			defer.reject error
+
+		defer.promise
+
+	RequestAPI.updateSellerRating = (params)->
+		defer = $q.defer()
+
+		$http.post 'functions/updateSellerRating', params
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->

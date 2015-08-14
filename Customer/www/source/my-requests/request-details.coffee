@@ -2,14 +2,15 @@ angular.module 'LocalHyper.myRequests'
 
 
 .controller 'RequestDetailsCtrl', ['$scope', 'RequestAPI', '$interval', 'TimeString'
-	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup'
+	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User'
 	, ($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner
-	, CToast, $rootScope, CDialog, $ionicPopup)->
+	, CToast, $rootScope, CDialog, $ionicPopup, User)->
 
 		$scope.view = 
 			request: RequestAPI.requestDetails 'get'
 			display: 'loader'
 			errorType: ''
+			pushParams: null
 			
 			address: 
 				show: false
@@ -19,20 +20,12 @@ angular.module 'LocalHyper.myRequests'
 						App.resize()
 					, 500
 
-			showComment : ->
+			showComment : (title, comment)->
 				$ionicPopup.alert
-					title: 'Comment'
-					template: @request.comments
+					title: title
+					template: comment
 					okText: 'Close'
 					okType: 'button-assertive'
-
-			comments:
-				show: false
-				toggle : ->
-					@show = !@show
-					$timeout -> 
-						App.resize()
-					, 500
 
 			cancelRequest: 
 				footer: false
@@ -45,11 +38,15 @@ angular.module 'LocalHyper.myRequests'
 						@footer = false
 			
 			offers:
-				id: null
 				display: 'none'
 				errorType: ''
 				all: []
 				limitTo: 1
+				rate:
+					score: 0
+					comment: ''
+					setScore : (score)->
+						@score = score
 
 				showAll : ->
 					@limitTo = 100
@@ -90,20 +87,60 @@ angular.module 'LocalHyper.myRequests'
 							.then =>
 								_.each @all, (offer)-> App.notification.decrement()
 
+				openRatePopup : (seller)->
+					@rate.score = 0
+					@rate.comment = ''
+					$ionicPopup.show
+						templateUrl: 'views/my-requests/rate.html'
+						title: 'Rate This Seller'
+						scope: $scope
+						buttons: [
+							{ text: 'Cancel' }
+							{
+								text: '<b>Submit</b>'
+								type: 'button-assertive'
+								onTap: (e)=>
+									@rateSeller seller
+							}]
+
+				rateSeller : (seller)->
+					CSpinner.show '', 'Submitting your review...'
+					RequestAPI.updateSellerRating
+						"customerId": User.getId()
+						"sellerId": seller.id
+						"ratingInStars": @rate.score
+						"comments": @rate.comment
+					.then ->
+						seller.isSellerRated = true
+						CToast.show 'Thanks for your feedback'
+					, (error)->
+						CToast.show 'An error occurred, please try again'
+					.finally ->
+						CSpinner.hide()
+
 			
 
 			init : ->
 				if _.has(@request, 'pushOfferId')
-					@offers.id = @request.pushOfferId
-					@getRequestForOffer() 
+					#When new offer
+					@pushParams =
+						"offerId": @request.pushOfferId
+						"requestId": ''
+					@getRequestDetails()
+				else if _.has(@request, 'pushRequestId')
+					#When delivery status change
+					@pushParams =
+						"offerId": ''
+						"requestId": @request.pushRequestId
+					@getRequestDetails()
 				else
 					@display = 'noError'
 					@setRequestTime()
 					@offers.get()
 
-			getRequestForOffer : ->
+			getRequestDetails : ->
 				@display = 'loader'
-				RequestAPI.getRequestForOffer @offers.id
+				RequestAPI.getRequestDetails @pushParams
 				.then (request)=>
 					@onSuccess request
 				, (error)=>
@@ -130,7 +167,6 @@ angular.module 'LocalHyper.myRequests'
 				, 60000
 
 			onRequestExpiry : ->
-				console.log 'onRequestExpiry'
 				@request.status = 'expired'
 				@cancelRequest.set()
 
@@ -192,6 +228,9 @@ angular.module 'LocalHyper.myRequests'
 			if payload.type is 'new_offer'
 				if _.size($scope.view.offers.all) is 0 then $scope.view.offers.get()
 				else $scope.view.offers.getSilently()
+
+			if payload.type is 'request_delivery_changed'
+				$scope.view.request.status = payload.requestStatus
 		
 		$scope.$on '$destroy', ->
 			inAppNotificationEvent()
@@ -211,7 +250,7 @@ angular.module 'LocalHyper.myRequests'
 		#Offer time & left delivery time
 		setTime = ->
 			$scope.offer.timeStr = TimeString.get $scope.offer.createdAt
-			$scope.offer.deliveryTimeLeftStr = DeliveryTime.left $scope.offer.updatedAt
+			$scope.offer.deliveryTimeLeftStr = DeliveryTime.left $scope.offer.deliveryDate
 
 		setTime()
 		interval = $interval setTime, 60000

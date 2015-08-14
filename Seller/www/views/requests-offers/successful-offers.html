@@ -26,7 +26,7 @@
 
 			<h4
 				ng-if="view.noAcceptedOffers"
-				class="text-center">
+				class="text-center subdued">
 				You have no accepted offers.
 			</h4>
 
@@ -46,7 +46,7 @@
 							<i class="ion-record " id="{{App.humanize(request.offerStatus)}}"></i>
 				    </h2> 
 
-				      <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms radius</b>
+				      <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms away</b>
 
 				 <!--    <div class="col p-t-0" >
 			            <sm class="light-gray"> Claimed delivery :</sm>
@@ -115,7 +115,7 @@
 			tap-to-retry="view.onTapToRetry()" class="error-wrapper">
 		</aj-error>
 
-		<h4 class="text-center" ng-if="view.gotAllOffers && view.requests.length !== 0">
+		<h4 class="text-center subdued" ng-if="view.gotAllOffers && view.requests.length !== 0">
 			That's all folks, no more offers to display.
 		</h4>
 

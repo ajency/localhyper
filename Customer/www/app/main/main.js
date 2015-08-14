@@ -124,6 +124,12 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         RequestAPI.requestDetails('set', {
           pushOfferId: payload.id
         });
+        App.navigate('request-details');
+      }
+      if (payload.type === 'request_delivery_changed') {
+        RequestAPI.requestDetails('set', {
+          pushRequestId: payload.id
+        });
         return App.navigate('request-details');
       }
     });

@@ -61,12 +61,12 @@
 						<div>
 							<p class="margin-none text-center">Points</p>
 							<h3 
-								class="normal margin-none text-success"
+								class="normal margin-none text-success points"
 								ng-if="credit.transactionType === 'add'">
 								+{{credit.creditCount}}
 							</h3>
 							<h3 
-								class="normal margin-none text-primary"
+								class="normal margin-none text-primary points"
 								ng-if="credit.transactionType === 'minus'">
 								-{{credit.creditCount}}
 							</h3>
@@ -84,7 +84,7 @@
 		</aj-error>
 
 		<div ng-if="view.gotAllRecords">
-			<h4 class="text-center">That's all folks, no more records to display.</h4>
+			<h4 class="text-center subdued">That's all folks, no more records to display.</h4>
 		</div>
 
 		<ion-infinite-scroll

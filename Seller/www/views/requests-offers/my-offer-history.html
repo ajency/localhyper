@@ -26,7 +26,7 @@
 
 			<h4
 				ng-if="view.noOffersMade"
-				class="text-center">
+				class="text-center subdued">
 				You have not made any offers.
 			</h4>
 
@@ -44,7 +44,7 @@
 					<i class="ion-record " id="{{App.humanize(request.offerStatus)}}"></i>
 				    </h2> 
 
-				    <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms radius</b>
+				    <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms away</b>
 				</div>
 
 					<!-- 	<div class="row">
@@ -112,7 +112,7 @@
 		</aj-error>
 
 		<div ng-if="view.gotAllOffers && view.requests.length !== 0">
-			<h4 class="text-center "> That's all folks, no more offers to display. </h4>
+			<h4 class="text-center subdued"> That's all folks, no more offers to display. </h4>
 		</div>
 
 		<ion-infinite-scroll
