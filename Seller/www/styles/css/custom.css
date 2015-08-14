@@ -53,6 +53,10 @@ hr {
   font-size: 30px;
   line-height: 45px;
 }
+.points {
+  font-size: 20px;
+  line-height: 30px;
+}
 .single-input input {
   margin: 0px;
   padding: 0px;
@@ -131,7 +135,7 @@ hr {
   margin: 0px !important;
 }
 sm {
-  font-size: 11px;
+  font-size: 12px;
 }
 .platform-android .popover {
   height: 170px;
@@ -1626,7 +1630,7 @@ input[disabled] ~ .radio-icon-show {
   border: 0;
   border-radius: 0;
   background-color: #1F1F1F;
-  border-bottom: 1px solid #ccc;
+  /*border-bottom: 1px solid #ccc;*/
   padding-top: 3px;
   padding-bottom: 5px;
 }
