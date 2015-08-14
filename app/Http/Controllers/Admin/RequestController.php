@@ -131,9 +131,9 @@ class RequestController extends Controller
         $excel = new PHPExcel();
         $requestSheet = $excel->getSheet(0);
 		$requestSheet->setTitle('Request');
-        
-        
-        $requestList = $this->getRequests('EXPORT');
+ 
+        $requestsData = $this->getRequests('EXPORT');
+        $requestList = $requestsData['list'];
         $headers = [];
  
         $headers []= 'CUSTOMER NAME' ;

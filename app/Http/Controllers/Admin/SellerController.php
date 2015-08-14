@@ -141,8 +141,9 @@ class SellerController extends Controller
         $excel = new PHPExcel();
         $sellersSheet = $excel->getSheet(0);
 		$sellersSheet->setTitle('Sellers');
-
-        $sellerList = $this->getSellers('EXPORT');
+ 
+        $sellersData = $this->getSellers('EXPORT');
+        $sellerList = $sellersData['list'];
         
         $headers = [];
  

@@ -117,7 +117,7 @@
       <p class="menu-title" onclick="location.href='{{ url('admin/requests') }}'">List of Requests <span class="text-right">@if($activeMenu=='requests')<i class="fa fa-check text-success"></i>@endif</span></p>
       <p class="menu-title" onclick="location.href='{{ url('admin/customer') }}'">List of Customers &nbsp;<span class="text-right">@if($activeMenu=='customers')<i class="fa fa-check text-success"></i>@endif</span></p>
        <p class="menu-title" onclick="location.href='{{ url('admin/smsverify') }}'">SMS Verify &nbsp;<span class="text-right">@if($activeMenu=='smsverify')<i class="fa fa-check text-success"></i>@endif</span></p>
-       <p class="menu-title" onclick="location.href='#'">List of Ratings <span class="text-right">@if($activeMenu=='')<i class="fa fa-check text-success"></i>@endif</span></p>
+       <p class="menu-title" onclick="location.href='{{ url('admin/ratings') }}'">List of Ratings <span class="text-right">@if($activeMenu=='ratings')<i class="fa fa-check text-success"></i>@endif</span></p>
     
   <div class="clearfix"></div>
     <!-- END SIDEBAR MENU --> 

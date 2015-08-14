@@ -32,6 +32,7 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get( 'customer/customersexport', 'Admin\CustomerController@customersExport' );
     Route::get( 'seller/sellerexport', 'Admin\SellerController@sellersExport' );
     Route::get( 'smsverify/smsverifyexport', 'Admin\SmsVerifyController@smsVerifyExport' );
+    Route::get( 'ratings/ratingsexport', 'Admin\RatingsController@ratingsExport' );
     
     Route::get( '/', 'Admin\AdminController@index' );
     Route::resource( 'customer', 'Admin\CustomerController' );
@@ -39,6 +40,7 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::resource( 'requests', 'Admin\RequestController' );
     Route::resource( 'offers', 'Admin\OfferController' );
     Route::resource( 'smsverify', 'Admin\SmsVerifyController' );
+    Route::resource( 'ratings', 'Admin\RatingsController' );
  
     Route::get( 'attribute/categoryconfiguration', 'Admin\AttributeController@categoryConfiguration' );
     Route::get( 'attribute/exportattributes/{categoryid}', 'Admin\AttributeController@exportAttributes' );

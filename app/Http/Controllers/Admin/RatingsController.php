@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 use \PHPExcel;
 use App\Http\Helper\FormatPhpExcel;
 
-class SmsVerifyController extends Controller
+class RatingsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,107 +19,105 @@ class SmsVerifyController extends Controller
      */
     public function index()
     {
-       
-        $smsVerifyData = $this->getSmsVerify('LIST');
-        $smsVerifyList = $smsVerifyData['list'];
-        $numOfPages = $smsVerifyData['numOfPages'];
-        $page = $smsVerifyData['page'];
+        $ratingsData = $this->getRatings('LIST');
+        
+        $ratingsList = $ratingsData['list'];
+        $numOfPages = $ratingsData['numOfPages'];
+        $page = $ratingsData['page'];
 
-        return view('admin.smsverifylist')->with('smsVerifyList',$smsVerifyList)
+        return view('admin.ratingslist')->with('ratingsList',$ratingsList)
                                          ->with('page',$page+1)
                                          ->with('numOfPages',$numOfPages)
-                                         ->with('activeMenu','smsverify');
- 
+                                         ->with('activeMenu','ratings');
     }
     
-    public function getSmsVerify($type)
+    public function getRatings($type)
     {
         $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
         $numOfPages = 0;
         
-        $smsVerify = new ParseQuery("SMSVerify");
+        $ratings = new ParseQuery("Ratings");
+        $ratings->includeKey('ratingBy');
+        $ratings->includeKey('ratingFor');
+        $ratings->equalTo("ratingForType", "seller");
         
         if($type == 'LIST')
         {   //Pagination
             
             $displayLimit = config('constants.page_limit'); 
  
-            $smsVerifyCount = $smsVerify->count();  
-            $smsVerify->limit($displayLimit);
-            $smsVerify->skip($page * $displayLimit);
+            $ratingsCount = $ratings->count();  
+            $ratings->limit($displayLimit);
+            $ratings->skip($page * $displayLimit);
             
-            $numOfPages = ceil($smsVerifyCount/$displayLimit);
+            $numOfPages = ceil($ratingsCount/$displayLimit);
         }
         
-        $smsVerifyData = $smsVerify->find();   
-        $smsVerifyList =[];
+        $ratingsData = $ratings->find();   
+        $ratingsList =[];
         
-        foreach($smsVerifyData as $data)
+        foreach($ratingsData as $rating)
         {  
  
             if($type=='LIST')
             {
-               $smsVerifyList[]= [  'id' => $data->getObjectId(),
-                                  'name' => $data->get("displayName"),
-                                  'userType' => $data->get("userType"),
-                                  'phone' => $data->get("phone"),
-                                  'verificationCode' => $data->get("verificationCode"),
-                                  'attempts' => $data->get("attempts"),    
-                                  'updatedAt' => $data->getUpdatedAt()->format('d-m-Y'),    
+               $ratingsList[]= [  'id' => $rating->getObjectId(),
+                                  'ratingBy' => $rating->get("ratingBy")->get("displayName"),
+                                  'ratingFor' => $rating->get("ratingFor")->get("displayName"),
+                                  'count' => $rating->get("count"),
+                                  'comments' => $rating->get("comments"),
+                                  'date' => $rating->getCreatedAt()->format('d-m-Y'),    
                               ];
             }
             else
             {
-                $smsVerifyList[]= [  
-                                  'name' => $data->get("displayName"),
-                                  'userType' => $data->get("userType"),
-                                  'phone' => $data->get("phone"),
-                                  'verificationCode' => $data->get("verificationCode"),
-                                  'attempts' => $data->get("attempts"),    
-                                  'updatedAt' => $data->getUpdatedAt()->format('d-m-Y'),    
+                $ratingsList[]= [ 
+                                  'date' => $rating->getCreatedAt()->format('d-m-Y'), 
+                                  'ratingFor' => $rating->get("ratingFor")->get("displayName"),
+                                  'count' => $rating->get("count"),    
+                                  'comments' => $rating->get("comments"),
+                                  'ratingBy' => $rating->get("ratingBy")->get("displayName"),
+                                  
+                                  
                               ]; 
             }
              
         }
         
         $data =[];
-        $data['list']=$smsVerifyList;
+        $data['list']=$ratingsList;
         $data['numOfPages']=$numOfPages;
         $data['page']=$page;
         
         return $data;
     }
     
-    public function smsVerifyExport()
+    public function ratingsExport()
     { 
         $excel = new PHPExcel();
-        $smsVerifySheet = $excel->getSheet(0);
-		$smsVerifySheet->setTitle('SMS Verify');
+        $ratingSheet = $excel->getSheet(0);
+		$ratingSheet->setTitle('Ratings');
         
- 
-        $smsVerifyData = $this->getSmsVerify('EXPORT');
-        $smsVerifyList = $smsVerifyData['list'];
         
+        $ratingsData = $this->getRatings('EXPORT');
+        $ratingsList = $ratingsData['list'];  
         $headers = [];
  
-        $headers []= 'NAME' ;
-        $headers []= 'USER TYPE' ;
-        $headers []= 'PHONE' ;
-        $headers []= 'VERIFICATION CODE' ;
-        $headers []= 'ATTEMPT' ;
-        $headers []= 'UPDATE AT' ;
-
-        										
-
-        $smsVerifySheet->fromArray($headers, ' ', 'A1');
-        $smsVerifySheet->fromArray($smsVerifyList, ' ','A2');
+        $headers []= 'Date' ;
+        $headers []= 'Seller' ;
+        $headers []= 'Rating' ;
+        $headers []= 'Comments' ;
+        $headers []= 'Seller' ;
+ 
+        $ratingSheet->fromArray($headers, ' ', 'A1');
+        $ratingSheet->fromArray($ratingsList, ' ','A2');
 
 
         //Headr row height
-        $smsVerifySheet->getRowDimension('1')->setRowHeight(20);
+        $ratingSheet->getRowDimension('1')->setRowHeight(20);
 
         //Format header row
-        FormatPhpExcel::format_header_row($smsVerifySheet, array(
+        FormatPhpExcel::format_header_row($ratingSheet, array(
             'background_color'=>'FFFF00',
             'border_color'=>'000000',
             'font_size'=>'9',
@@ -130,7 +128,7 @@ class SmsVerifyController extends Controller
         );
         
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="sms-verify-export.xls"');
+        header('Content-Disposition: attachment;filename="ratings-export.xls"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');
@@ -157,9 +155,10 @@ class SmsVerifyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * @param  Request  $request
      * @return Response
      */
-    public function store()
+    public function store(Request $request)
     {
         //
     }
@@ -189,10 +188,11 @@ class SmsVerifyController extends Controller
     /**
      * Update the specified resource in storage.
      *
+     * @param  Request  $request
      * @param  int  $id
      * @return Response
      */
-    public function update($id)
+    public function update(Request $request, $id)
     {
         //
     }

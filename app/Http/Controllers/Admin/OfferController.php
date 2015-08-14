@@ -132,8 +132,9 @@ class OfferController extends Controller
         $excel = new PHPExcel();
         $offerSheet = $excel->getSheet(0);
 		$offerSheet->setTitle('Offers');
-
-        $offertList = $this->getOffers('EXPORT');
+ 
+        $offersData = $this->getOffers('EXPORT');
+        $offertList = $offersData['list'];
         
         $headers = [];
  
