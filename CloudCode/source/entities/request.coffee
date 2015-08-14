@@ -83,7 +83,8 @@ Parse.Cloud.define 'makeRequest' , (request, response) ->
                     sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
                     sellerRadius = catBasedSeller.get "deliveryRadius"
 
-                    getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId)
+                    typeOfRequest = "make_request"
+                    getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId, typeOfRequest)
                 )
 
                 Parse.Promise.when(findQs).then ->

@@ -32,9 +32,13 @@ getCategoryBasedSellers = (categoryId,brandId,city,area) ->
 
     promise
 
-getAreaBoundSellers = (sellerId,sellerGeoPoint,sellerRadius,createdRequestId) ->
+getAreaBoundSellers = (sellerId,sellerGeoPoint,sellerRadius,createdRequestId,typeOfRequest) ->
     
-    requestQuery = new Parse.Query("Request") 
+    if typeOfRequest is "find_sellers"
+        requestQuery = new Parse.Query("LocationRequests") 
+    else 
+        requestQuery = new Parse.Query("Request") 
+        
     requestQuery.equalTo("objectId", createdRequestId)
     # requestQuery.equalTo("customerId", customerObj)
     # requestQuery.equalTo("status", "open")
@@ -109,7 +113,8 @@ Parse.Cloud.define 'getLocationBasedSellers' , (request, response) ->
             getCategoryBasedSellers(categoryId,brandId,city,area)
             .then (categoryBasedSellers) ->
                 # findQs = []
-                # console.log getCategoryBasedSellers.length
+                console.log "categoryBasedSellers"
+                console.log categoryBasedSellers
 
                 findQs = []
 
@@ -119,7 +124,8 @@ Parse.Cloud.define 'getLocationBasedSellers' , (request, response) ->
                     sellerGeoPoint = catBasedSeller.get "addressGeoPoint"
                     sellerRadius = catBasedSeller.get "deliveryRadius"
 
-                    getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId)
+                    typeOfRequest = "find_sellers" #make_request
+                    getAreaBoundSellers(sellerId,sellerGeoPoint,sellerRadius,createdRequestId , typeOfRequest)
                 )
 
                 Parse.Promise.when(findQs).then ->
