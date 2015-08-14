@@ -23,6 +23,7 @@ angular.module 'LocalHyper.myRequests'
 					{name: 'Open requests', value: 'open', selected: false}
 					{name: 'Cancelled requests', value: 'cancelled', selected: false}
 					{name: 'Successful delivery', value: 'successful', selected: false}
+					{name: 'Sent for delivery', value: 'sent_for_delivery', selected: false}
 					{name: 'Pending delivery', value: 'pending_delivery', selected: false}
 					{name: 'Failed delivery', value: 'failed_delivery', selected: false}]
 
