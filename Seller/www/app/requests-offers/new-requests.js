@@ -367,7 +367,6 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
                 _this.display = 'loader';
                 _this.makeOfferBtn = false;
                 _this.modal.show();
-                console.log('requestId: ' + requestId);
                 return RequestsAPI.getSingleRequest(requestId).then(function(request) {
                   if (request.status === 'cancelled') {
                     CSpinner.show('', 'Sorry, this request has been cancelled');

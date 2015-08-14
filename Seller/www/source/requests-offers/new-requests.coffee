@@ -259,7 +259,6 @@ angular.module 'LocalHyper.requestsOffers'
 							@display = 'loader'
 							@makeOfferBtn = false
 							@modal.show()
-							console.log 'requestId: '+requestId
 							RequestsAPI.getSingleRequest requestId
 							.then (request)=>
 								if request.status is 'cancelled'
