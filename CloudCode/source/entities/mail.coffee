@@ -15,24 +15,22 @@ Parse.Cloud.define "sendMail", (request, status) ->
 	text += '</p>'
 
 	Mandrill = require('mandrill');
-	Mandrill.initialize('JGQ1FMECVDSJLnOFvxDzaQ')
+	Mandrill.initialize('PhWvFeH8FEiav4blIeNfXA')
 	
 	Mandrill.sendEmail({message:{
 		html: "<p>"+text+"</p>",
 		text: text,
 		subject: "Product suggestions",
-		from_email: "parse@cloudcode.com",
-		from_name: "Cloud Code",
-		to: [{ email: "namrata@ajency.in", name: "ShopOye"},{ email: "ashika@ajency.in ", "type": "cc"}]
+		from_email: "ShopeoyeParse@cloudcode.com",
+		from_name: "Shopeoye",
+		to: [{ email: "support@shopoye.co.in", name: "Shopoye"},{ email: "info@shopoye.co.in", "type": "cc"},{ email: "ashika@ajency.in ", "type": "cc"}]
 
 		},async: true
 		},{
 			success: (httpResponse) ->
-				console.log(httpResponse)
 				status.success 'Mail Sent'
 
 			error: (httpResponse) ->
-				console.error(httpResponse)
 				status.error 'err'
 		})
 

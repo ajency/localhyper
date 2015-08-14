@@ -591,18 +591,21 @@
     }
     text += '</p>';
     Mandrill = require('mandrill');
-    Mandrill.initialize('JGQ1FMECVDSJLnOFvxDzaQ');
+    Mandrill.initialize('PhWvFeH8FEiav4blIeNfXA');
     return Mandrill.sendEmail({
       message: {
         html: "<p>" + text + "</p>",
         text: text,
         subject: "Product suggestions",
-        from_email: "parse@cloudcode.com",
-        from_name: "Cloud Code",
+        from_email: "ShopeoyeParse@cloudcode.com",
+        from_name: "Shopeoye",
         to: [
           {
-            email: "namrata@ajency.in",
-            name: "ShopOye"
+            email: "support@shopoye.co.in",
+            name: "Shopoye"
+          }, {
+            email: "info@shopoye.co.in",
+            "type": "cc"
           }, {
             email: "ashika@ajency.in ",
             "type": "cc"
@@ -612,11 +615,9 @@
       async: true
     }, {
       success: function(httpResponse) {
-        console.log(httpResponse);
         return status.success('Mail Sent');
       },
       error: function(httpResponse) {
-        console.error(httpResponse);
         return status.error('err');
       }
     });
