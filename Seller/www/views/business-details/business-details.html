@@ -45,7 +45,7 @@
 						maxlength="10"
 						ng-pattern="App.onlyNumbers"
 						ng-model="view.phone"
-						ng-readonly="view.myProfileState">
+						ng-readonly="view.myProfileState" disabled>
 				</label>
 			</div>
 		</div>
@@ -107,7 +107,7 @@
 			<div class="row platop">
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[0].selected">
 						</label>
 						Mon
@@ -115,7 +115,7 @@
 				</div>
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[1].selected">
 						</label>
 						Tue
@@ -123,7 +123,7 @@
 				</div>
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[2].selected">
 						</label>
 						Wed
@@ -131,7 +131,7 @@
 				</div>
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[3].selected">
 						</label>
 						Thur
@@ -142,7 +142,7 @@
 
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[4].selected">
 						</label>
 						Fri
@@ -150,7 +150,7 @@
 				</div>
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[5].selected">
 						</label>
 						Sat
@@ -158,11 +158,14 @@
 				</div>
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[6].selected">
 						</label>
 						Sun
 					</li>
+				</div>
+				<div class="col">
+		
 				</div>
 			</div>
 
@@ -181,10 +184,10 @@
 			<div class="row platop">
 				<div class="col">
 					<ion-item ng-click="view.addWorkTimings('start')">
-						Start Time: {{view.workTimings.start}}
+						<i class="ion-clock"></i> Start Time: {{view.workTimings.start}}
 					</ion-item>
 					<ion-item ng-click="view.addWorkTimings('end')">
-						End Time: {{view.workTimings.end}}
+						<i class="ion-clock"></i> End Time: {{view.workTimings.end}}
 					</ion-item>
 				</div>
 			</div>
@@ -240,7 +243,7 @@
 			 I agree with the terms & conditions
 		</div>
 
-		<ion-item class="nobg">
+		<ion-item class="nobg border-none">
 			<button
 				class="title button button-block button-assertive"
 				ng-disabled="!view.terms"
