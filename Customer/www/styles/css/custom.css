@@ -783,48 +783,6 @@ sm {
   background-color: #fff;
   color: #000;
 }
-.p-a-0 {
-  padding: 0;
-}
-.p-b-0 {
-  padding-bottom: 0;
-}
-.p-t-0 {
-  padding-top: 0;
-}
-.p-l-0 {
-  padding-left: 0;
-}
-.p-r-0 {
-  padding-right: 0;
-}
-.p-r-6 {
-  padding-right: 6px;
-}
-.p-b-7 {
-  padding-bottom: 7px;
-}
-.m-a-0 {
-  margin: 0;
-}
-.m-b-0 {
-  margin-bottom: 0;
-}
-.m-t-0 {
-  margin-top: 0;
-}
-.m-l-0 {
-  margin-left: 0;
-}
-.m-r-0 {
-  margin-right: 0;
-}
-.m-t-6 {
-  margin-top: 6px;
-}
-.b-r-1 {
-  border-right: 1px solid #ddd;
-}
 .address-inputs {
   padding-top: 8px;
 }
@@ -1000,7 +958,7 @@ sm {
   font-weight: bold;
   text-align: left;
   margin-bottom: 3px;
-  margin-top: 3px;
+  margin-top: 0;
 }
 .rece-offer h3 span {
   font-weight: 300;
@@ -1014,6 +972,17 @@ sm {
 .rece-offer p.comment {
   color: #777777;
   opacity: .6;
+  margin-bottom: 0;
+}
+.rece-offer p.comment button.button.icon {
+  padding: 1px 8px 0;
+  min-height: 0;
+  line-height: 23px;
+}
+.rece-offer p.comment button.button.rating-btn {
+  min-height: 0;
+  padding: 0 8px;
+  line-height: 23px;
 }
 .rece-offer p.comment img {
   height: 15px;
@@ -1058,6 +1027,15 @@ sm {
   font-weight: normal;
   font-size: 14px;
 }
+.rece-offer .offer-vals h2.call-support {
+  font-size: 14px;
+  color: #33CD5F;
+  padding: 5px 0;
+  text-indent: 0;
+  margin-left: 7px;
+  display: block;
+  border: 1px solid #33cd5f;
+}
 .rece-offer .offer-vals .button {
   padding: 0 15px;
   margin-top: 6px;
@@ -1069,10 +1047,20 @@ sm {
   padding: 0 11px;
   float: right;
   margin-top: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 .rece-offer .offer-vals .button.btn-phone .icon:before {
   font-size: 24px;
-  line-height: 27px;
+  line-height: 29px;
+}
+.rece-offer .offer-vals .button.button-balanced.call-support {
+  font-size: 12px;
+  line-height: 16px;
+  padding: 1px 5px;
+  margin-top: 3px;
+  font-weight: normal !important;
 }
 .align-left {
   text-align: left;
@@ -1090,7 +1078,7 @@ sm {
   color: #252525;
 }
 .high-span.rec-off {
-  margin-top: 20px;
+  margin-top: 8px;
   margin-bottom: 5px;
 }
 .no-offs-det {
@@ -1749,4 +1737,46 @@ label.status-label {
   margin-left: -124.5px;
   min-height: 0;
   line-height: 50px;
+}
+.p-a-0 {
+  padding: 0;
+}
+.p-b-0 {
+  padding-bottom: 0;
+}
+.p-t-0 {
+  padding-top: 0;
+}
+.p-l-0 {
+  padding-left: 0;
+}
+.p-r-0 {
+  padding-right: 0;
+}
+.p-r-6 {
+  padding-right: 6px;
+}
+.p-b-7 {
+  padding-bottom: 7px;
+}
+.m-a-0 {
+  margin: 0;
+}
+.m-b-0 {
+  margin-bottom: 0;
+}
+.m-t-0 {
+  margin-top: 0;
+}
+.m-l-0 {
+  margin-left: 0;
+}
+.m-r-0 {
+  margin-right: 0;
+}
+.m-t-6 {
+  margin-top: 6px;
+}
+.b-r-1 {
+  border-right: 1px solid #ddd;
 }
