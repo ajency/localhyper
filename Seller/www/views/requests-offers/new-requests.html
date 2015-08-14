@@ -13,86 +13,91 @@
 		</button>
 	</ion-nav-buttons>
 
-	<ion-content ng-switch="view.display">
+	<ion-content>
 
 		<ion-refresher
 			on-refresh="view.onPullToRefresh();"
 			class="aj-refresher">
 		</ion-refresher>
 
-		<ion-spinner
-			class="aj-spinner"
-			ng-switch-when="loader">
-		</ion-spinner>
-
 		<ion-list
-			ng-switch-when="noError"
+			ng-switch="view.display"
 			class="card-list list-inset">
 
-			<div
-				ng-if="view.requests.length == 0;"
-				class="item-text-wrap">
-				<h4 class="text-center hint-relo">
-				<span class="sing">You currently have no new requests</span>
-				<span class="dark">Hint:</span> Try increasing your delivery area range to view more requests</h4>
+			<ion-spinner
+				class="aj-spinner"
+				ng-switch-when="loader">
+			</ion-spinner>
+
+			<div ng-switch-when="noError">
+
+				<div
+					ng-if="view.requests.length == 0;"
+					class="item-text-wrap">
+					<h4 class="text-center hint-relo">
+					<span class="sing">You currently have no new requests</span>
+					<span class="dark">Hint:</span> Try increasing your delivery area range to view more requests</h4>
+				</div>
+
+		       	<ion-item
+		       		class="card-box"
+		       		ng-repeat="request in view.requests | orderBy: view.sortBy"
+		       		ng-click="view.requestDetails.show(request)"
+		       		ng-class="(request.notification.hasSeen) ? '' : 'notify-alert'"
+		       		ng-controller="EachRequestTimeCtrl">
+
+					<div class="item-wrapper-nr">
+						<div class="item-avatar border-none margin-none">
+					        <img ng-src="{{request.product.image[0].src}}">
+					    </div>
+					    <h2>{{request.product.name}} <i class="ion-android-notifications hidden"></i></h2>
+					    <p> <i class=" ion-ios-clock-outline" ></i> {{request.timeStr}}</p>
+				    </div>
+
+					<div class="row item border-none" >
+				        <div class="col  p-t-0">
+				            <sm class="light-gray"> Local Price</sm><br>
+				            <h3
+				            	class="item-text-wrap margin-none big-txt"
+				            	ng-if="request.platformPrice !== ''">
+				            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.platformPrice)}}
+				            </h3>
+				            <h3
+				            	class="item-text-wrap margin-none big-txt"
+				            	ng-if="request.platformPrice === ''">
+				            	N/A
+				            </h3>
+				        </div>
+				        <div class="col p-t-0">
+				        	<div class="pull-right">
+					            <div class="offer"> {{request.offerCount}} </div>
+					            <h4 class="offertxt light-gray"> No of offers</h4>
+				           	</div>
+				        </div>
+				    </div>
+				    <div class="item item-divider">
+				        <div class="pull-right ">
+				            <h3 class="margin-none uppercase text-primary"> Make an offer </h3>
+				        </div>
+
+				        <div class="pull-left text-primary">
+				        	<b class="light-gray">
+				        		<i class="ion-android-pin text-primary"></i> {{request.radius.toFixed(2)}} kms away
+				        	</b>
+				        </div>
+				    </div>
+
+				</ion-item>
 			</div>
 
-	       	<ion-item
-	       		class="card-box"
-	       		ng-repeat="request in view.requests | orderBy: view.sortBy"
-	       		ng-click="view.requestDetails.show(request)"
-	       		ng-class="(request.notification.hasSeen) ? '' : 'notify-alert'"
-	       		ng-controller="EachRequestTimeCtrl">
+			<aj-error
+				ng-switch-when="error"
+				error-type="view.errorType"
+				tap-to-retry="view.onTapToRetry();" 
+				class="error-wrapper">
+			</aj-error>
 
-				<div class="item-wrapper-nr">
-					<div class="item-avatar border-none margin-none">
-				        <img ng-src="{{request.product.image[0].src}}">
-				    </div>
-				    <h2>{{request.product.name}} <i class="ion-android-notifications hidden"></i></h2>
-				    <p> <i class=" ion-ios-clock-outline" ></i> {{request.timeStr}}</p>
-			    </div>
-
-				<div class="row item border-none" >
-			        <div class="col  p-t-0">
-			            <sm class="light-gray"> Local Price</sm><br>
-			            <h3
-			            	class="item-text-wrap margin-none big-txt"
-			            	ng-if="request.platformPrice !== ''">
-			            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.platformPrice)}}
-			            </h3>
-			            <h3
-			            	class="item-text-wrap margin-none big-txt"
-			            	ng-if="request.platformPrice === ''">
-			            	N/A
-			            </h3>
-			        </div>
-			        <div class="col p-t-0">
-			        	<div class="pull-right">
-				            <div class="offer"> {{request.offerCount}} </div>
-				            <h4 class="offertxt light-gray"> No of offers</h4>
-			           	</div>
-			        </div>
-			    </div>
-			    <div class="item item-divider">
-			        <div class="pull-right ">
-			            <h3 class="margin-none uppercase text-primary"> Make an offer </h3>
-			        </div>
-
-			        <div class="pull-left text-primary">
-			        	<b class="light-gray">
-			        		<i class="ion-android-pin text-primary"></i> {{request.radius.toFixed(2)}} kms away
-			        	</b>
-			        </div>
-			    </div>
-
-			</ion-item>
 		</ion-list>
-
-		<aj-error
-			ng-switch-when="error"
-			error-type="view.errorType"
-			tap-to-retry="view.onTapToRetry()" class="error-wrapper">
-		</aj-error>
 
 	</ion-content>
 

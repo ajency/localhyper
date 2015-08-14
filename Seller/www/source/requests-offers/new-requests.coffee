@@ -180,6 +180,12 @@ angular.module 'LocalHyper.requestsOffers'
 					value: 1
 					unit: 'hr'
 					unitText: 'Hour'
+
+					plus : ->
+						@value++
+					minus : ->
+						@value-- if @value > 1
+
 					setDuration : ->
 						if !_.isNull @value
 							switch @unit
@@ -250,6 +256,7 @@ angular.module 'LocalHyper.requestsOffers'
 							@display = 'loader'
 							@makeOfferBtn = false
 							@modal.show()
+							console.log 'requestId: '+requestId
 							RequestsAPI.getSingleRequest requestId
 							.then (request)=>
 								if request.status is 'cancelled'
