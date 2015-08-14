@@ -23,10 +23,10 @@
 					placeholder="Search for brands"
 					ng-model="view.search">
 			</label>
-			<button 
+			<button
 				class="button button-small button-clear"
 				ng-click="view.search = '';">
-				Clear
+				<i class="icon ion-android-close"></i>
 			</button>
 		</div>
 	</div>
@@ -61,7 +61,7 @@
 			</div>
 		</ion-list>
 
-		<div 
+		<div
 			class="text-center"
 			ng-if="view.filteredBrands.length == 0">
 

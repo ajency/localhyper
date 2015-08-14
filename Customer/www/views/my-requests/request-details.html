@@ -206,7 +206,7 @@
 									<span class="com">{{offer.comments}}</span>
 								</p>
 
-								<button 
+								<button
 									class="button button-dark button-small"
 									ng-if="!offer.seller.isSellerRated"
 									ng-click="view.offers.openRatePopup(offer.seller);">
@@ -226,7 +226,7 @@
 						</div>
 						<div class="col-25">
 							<button
-								class="button button-small button-assertive btn-phone"
+								class="button button-small button-balanced btn-phone pull-right"
 								ng-click="view.callSeller(offer.seller.phoneNumber)">
 								<!-- CALL SELLER -->
 								<i class="icon ion-ios-telephone"></i>
@@ -353,18 +353,18 @@
 	</ion-content>
 
 	<ion-footer-bar
-		class="bar-asse rtive bar no-shadow cancel-req-btn"
+		class="bar-assertive bar no-shadow can cel-req-btn"
 		ng-if="view.cancelRequest.footer">
-		
-		<div class="row">
-			<div class="col">
+
+		<!-- <div class="row">
+			<div class="col"> -->
 				<div
 					class="title no-shadow"
 					ng-click="view.onCancelRequest();">
 					Cancel Request
 				</div>
-			</div>
-		</div>
+			<!-- </div>
+		</div> -->
 	</ion-footer-bar>
 
 </ion-view>
