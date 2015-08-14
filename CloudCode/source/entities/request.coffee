@@ -347,7 +347,7 @@ Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
 
 
         if selectedFilters.length is 0
-            otherRequestStatuses = ["cancelled","pending_delivery","failed_delivery","successful"]
+            otherRequestStatuses = ["cancelled","pending_delivery","failed_delivery", "sent_for_delivery", "successful"]
         else
             otherRequestStatuses = _.without(selectedFilters, "open")
         
