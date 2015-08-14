@@ -1,4 +1,5 @@
 <ion-modal-view class="model-normal">
+
    <ion-header-bar
       style="height:54px;"
       class="modal-offer-header"
@@ -17,14 +18,16 @@
          </div>
       </div>
    </ion-header-bar>
-   <ion-content 
-      class=" "
-      ng-switch="view.display">
+
+   <ion-content ng-switch="view.display">
+
       <ion-spinner
          class="aj-spinner spinner-android"
          ng-switch-when="loader">
       </ion-spinner>
+
       <ion-list ng-switch-when="noError">
+
          <div class="list margin-none">
             <div class="item item-details">
                <div class="row">
@@ -42,6 +45,7 @@
                      </h3>
                   </div>
                </div>
+
                <div class="row">
                   <div class="col col-20">
                      <img class="pull-right" src="./img/distance.png" width="55px">
@@ -54,14 +58,18 @@
                      <h3 class="light-gray text-left">Distance from you</h3>
                   </div>
                   <div class="col status">
-                     <div class="{{App.humanize(view.offerDetails.data.request.status)}}" ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
+                     <div 
+                        class="{{App.humanize(view.offerDetails.data.request.status)}}" 
+                        ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
                         {{App.humanize(view.offerDetails.data.request.status)}}
                      </div>
                   </div>
                </div>
+
                <hr class="margin-none">
+
                <div class="row">
-                  <div class="col ">
+                  <div class="col">
                      <h4 class="text-left subdued text-center margin-none"> 
                         MRP  <br><span class="WebRupee subdued">&#x20B9;</span> 
                         <b class="big-txt">{{App.toINR(view.offerDetails.data.product.mrp)}}</b>
@@ -80,33 +88,35 @@
                      </h4>
                   </div>
                </div>
+
             </div>
          </div>
 
+         <div class="row">
+            <div class="col col-25">
+               <h5 class="subdued text-left">Offer Status:</h5>
+            </div>
+            <div class="col  subdued">
+               <h5 class=" text-left bold {{App.humanize(view.offerDetails.data.offerStatus)}}">
+                  <i class="ion-ribbon-b"> </i> {{App.humanize(view.offerDetails.data.offerStatus)}}
+               </h5>
+            </div>
+         </div>
 
          <div class="row">
-               <div class="col col-25">
-                  <h5 class=" subdued text-left  ">Offer Status:</h5>
-               </div>
-               <div class="col  subdued">
-                  <h5 class=" text-left bold   {{App.humanize(view.offerDetails.data.offerStatus)}}">
-                     <i class="ion-ribbon-b"> </i> {{App.humanize(view.offerDetails.data.offerStatus)}}
-                  </h5>
-               </div>
+            <div class="col col-25">
+               <h5 class=" subdued text-left margin-none">Category:</h5>
             </div>
-            <div class="row">
-               <div class="col col-25 ">
-                  <h5 class=" subdued text-left  margin-none">Category:</h5>
-               </div>
-               <div class="col  ">
-                  <h5 class=" subdued text-left bold margin-none">
-                     {{view.offerDetails.data.category.parentCategory}}  &nbsp;<b><i class="ion-arrow-right-b subdued"></i></b>
-                     &nbsp;{{view.offerDetails.data.category.name}} &nbsp;<b><i class="ion-arrow-right-b subdued"></i></b>
-                     &nbsp;{{view.offerDetails.data.brand.name}}
-                  </h5>
-               </div>
+            <div class="col">
+               <h5 class="subdued text-left bold margin-none">
+                  {{view.offerDetails.data.category.parentCategory}}  &nbsp;<b><i class="ion-arrow-right-b subdued"></i></b>
+                  &nbsp;{{view.offerDetails.data.category.name}} &nbsp;<b><i class="ion-arrow-right-b subdued"></i></b>
+                  &nbsp;{{view.offerDetails.data.brand.name}}
+               </h5>
             </div>
-            <hr>
+         </div>
+
+         <hr>
          <!-- <div class="row">
             <div class="col col-100">
             	<div class="item text-center dashed">
@@ -134,6 +144,7 @@
                   </p>
                </div>
             </div>
+
             <div class="col " ng-if="view.offerDetails.data.request.status == 'open' ">
                <div class="deli-tim" >
                   <i class="icon-img icon-cust-cal bigger">
@@ -151,13 +162,14 @@
                </div>
             </div>
          </div>
-         <div ng-if="view.offerDetails.data.comments!==''">
+
+         <div ng-if="view.offerDetails.data.request.comments !== ''">
             <div class="row">
                <div class="col">
                   <h5 class="with-sep"><span>Comments</span></h5>
                </div>
             </div>
-            <div class="row" ng-if="view.offerDetails.data.request.comments!==''">
+            <div class="row">
                <div class="col col-20">
                   <a class="userava">
                   C
@@ -167,7 +179,7 @@
                   <p class="subdued">{{view.offerDetails.data.request.comments}} </p>
                </div>
             </div>
-            <div class="row" ng-if="view.offerDetails.data.offerComments!==''">
+            <div class="row" ng-if="view.offerDetails.data.offerComments !== ''">
                <div class="col col-20">
                   <a class="userava">
                   S
@@ -179,11 +191,13 @@
             </div>
          </div>
       </ion-list>
+
       <aj-error
          ng-switch-when="error"
          error-type="view.errorType"
          tap-to-retry="view.onTapToRetry();">
       </aj-error>
+
    </ion-content>
 </ion-modal-view>
 

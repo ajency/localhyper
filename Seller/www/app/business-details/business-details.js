@@ -53,8 +53,8 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         }
       ],
       workTimings: {
-        start: '',
-        end: ''
+        start: '10:00:00',
+        end: '20:00:00'
       },
       location: {
         modal: null,

@@ -11,23 +11,27 @@
          </div>
          <div class="col col-20">
             <h2
-               ng-click="view.offerDetails.modal.hide()"
+               ng-click="view.offerDetails.modal.hide();"
                class="text-right">
                <i class="ion ion-ios-close-outline text-light"></i>
             </h2>
          </div>
       </div>
    </ion-header-bar>
+
    <ion-content 
       class="has-footer"
       ng-switch="view.display">
+
       <ion-spinner
          class="aj-spinner spinner-android"
          ng-switch-when="loader">
       </ion-spinner>
+
       <ion-list ng-switch-when="noError">
          <div class="list margin-none">
             <div class="item item-details">
+
                <div class="row">
                   <div class="col col-20">
                      <div class="item-avatar">
@@ -43,6 +47,7 @@
                      </h3>
                   </div>
                </div>
+
                <div class="row">
                   <div class="col col-20">
                      <img class="pull-right" src="./img/distance.png" width="55px">
@@ -60,7 +65,9 @@
                      </div>
                   </div>
                </div>
+
                <hr class="margin-none">
+
                <div class="row ">
                   <div class="col ">
                      <h4 class="text-left subdued text-center margin-none"> 
@@ -81,7 +88,9 @@
                   </div>
                </div>
             </div>
+
             <div class="item-divider" ng-if="view.offerDetails.data.request.status !== 'successful'">
+
                <div class="row ">
                   <div class="col col-75">
                      <label class="item item-input item-select">
@@ -92,6 +101,7 @@
                            ng-model="view.offerDetails.data.deliveryStatus"
                            ng-change="view.offerDetails.onDeliveryStatusChange();"
                            ng-disabled="view.offerDetails.showChange">
+                           
                            <option value="sent_for_delivery">
                               Sent for delivery
                            </option>
@@ -120,6 +130,7 @@
                      </button>
                   </div>
                </div>
+
                <div class="row" ng-if="view.offerDetails.failedDelivery.display">
                   <div class="col">
                      <label class="item item-input">
@@ -133,13 +144,14 @@
                </div>
             </div>
          </div>
+
          <div>
             <div class="row">
                <div class="col col-25">
-                  <h5 class=" subdued text-left  ">Offer Status:</h5>
+                  <h5 class=" subdued text-left">Offer Status:</h5>
                </div>
                <div class="col  subdued">
-                  <h5 class=" text-left bold   {{App.humanize(view.offerDetails.data.offerStatus)}}">
+                  <h5 class=" text-left bold {{App.humanize(view.offerDetails.data.offerStatus)}}">
                      <i class="ion-ribbon-b"> </i> {{App.humanize(view.offerDetails.data.offerStatus)}}
                   </h5>
                </div>
@@ -158,6 +170,7 @@
             </div>
             <hr>
          </div>
+
          <div class="row">
             <div class="col col-50">
                <div class="deli-tim">
@@ -165,41 +178,44 @@
                   <img src="./img/cal.png" alt="">
                   </i>
                   <p>
-                     <span class="ti">Claimed Delivery </span>
+                     <span class="ti">Claimed Delivery</span>
                      <span class="ac-ti">
-                     <span class="big">
-                     {{view.deliveryTime.humanize(view.offerDetails.data.offerDeliveryTime)}}
-                     </span>
+                        <span class="big">
+                        {{view.deliveryTime.humanize(view.offerDetails.data.offerDeliveryTime)}}
+                        </span>
                      </span>
                   </p>
                </div>
             </div>
+
             <div class="col col-50">
                <div 
                   class="deli-tim" 
                   ng-if="view.offerDetails.data.request.status === 'pending_delivery' 
                   || view.offerDetails.data.request.status === 'sent_for_delivery'">
+
                   <i class="icon-img icon-cust-cal bigger">
-                  <img src="./img/deliveryin.png" alt="">
+                     <img src="./img/deliveryin.png" alt="">
                   </i>
                   <p>
                      <span class="ti">Delivery In </span>
                      <span class="ac-ti">
-                     <span class="big text-primary" >
-                     {{view.offerDetails.data.leftDeliveryTimeStr}}
+                     <span class="big text-primary">
+                        {{view.offerDetails.data.leftDeliveryTimeStr}}
                      </span>
                      </span>
                   </p>
                </div>
             </div>
          </div>
-         <div ng-if="view.offerDetails.data.comments!==''">
+
+         <div ng-if="view.offerDetails.data.request.comments!==''">
             <div class="row">
                <div class="col">
                   <h5 class="with-sep"><span>Comments</span></h5>
                </div>
             </div>
-            <div class="row" ng-if="view.offerDetails.data.request.comments!==''">
+            <div class="row">
                <div class="col col-20">
                   <a class="userava">
                   C
@@ -209,7 +225,7 @@
                   <p class="subdued">{{view.offerDetails.data.request.comments}}  </p>
                </div>
             </div>
-            <div class="row" ng-if="view.offerDetails.data.offerComments!==''">
+            <div class="row" ng-if="view.offerDetails.data.offerComments !== ''">
                <div class="col col-20">
                   <a class="userava">
                   S
@@ -221,17 +237,23 @@
             </div>
          </div>
       </ion-list>
+
       <aj-error
          ng-switch-when="error"
          error-type="view.errorType"
-         tap-to-retry="view.onTapToRetry()">
+         tap-to-retry="view.onTapToRetry();">
       </aj-error>
+
    </ion-content>
-   <ion-footer-bar ng-if="!view.offerDetails.showChange"
+
+   <ion-footer-bar 
+      ng-if="!view.offerDetails.showChange"
       ng-click="view.offerDetails.updateDeliveryStatus();">
+
       <button class="button button-block button-assertive margin-none title">
-      Update
+         Update
       </button>
    </ion-footer-bar>
+
 </ion-modal-view>
 

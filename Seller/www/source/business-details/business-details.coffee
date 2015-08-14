@@ -31,7 +31,7 @@ angular.module 'LocalHyper.businessDetails', []
 				{name: 'Sat', value: 'Saturday', selected: false}
 				{name: 'Sun', value: 'Sunday', selected: false}]
 
-			workTimings: start: '', end: ''
+			workTimings: start: '10:00:00', end: '20:00:00'
 
 			location:
 				modal: null
