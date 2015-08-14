@@ -754,7 +754,8 @@
           msg = productName + " is sent for delivery";
           otherPushData = {
             "id": obj.id,
-            "type": "sent_for_delivery_request"
+            "type": "request_delivery_changed",
+            "requestStatus": obj.get("status")
           };
         } else if (type === "FailedDeliveryRequest") {
           obj = pendingNotification.get("requestObject");
@@ -763,7 +764,8 @@
           msg = "Delivery failed for " + productName;
           otherPushData = {
             "id": obj.id,
-            "type": "failed_delivery_request"
+            "type": "request_delivery_changed",
+            "requestStatus": obj.get("status")
           };
         } else if (type === "SuccessfulRequest") {
           obj = pendingNotification.get("requestObject");
@@ -772,7 +774,8 @@
           msg = "Delivery successful for " + productName;
           otherPushData = {
             "id": obj.id,
-            "type": "successful_request"
+            "type": "request_delivery_changed",
+            "requestStatus": obj.get("status")
           };
         }
         switch (channel) {
