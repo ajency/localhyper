@@ -83,7 +83,7 @@
 								count-down-finish="view.onRequestExpiry()">
 							</h2>
 							<p class="exp_in">Expires in <i class="icon ion-ios-clock-outline"></i></p>
-							<p class="why"><a>Why this product expires in 24 hrs</a></p>
+							<p class="why"><a href="http://shopoye.co.in/customer-faqs">Why this product expires in 24 hrs</a></p>
 						</div>
 					</div>
 
@@ -202,12 +202,12 @@
 									ng-if="offer.comments !== ''"
 									ng-click="view.showComment('Seller Comment', offer.comments);">
 
-									<i class="icon ion-chatbox-working"> </i>
-									<span class="com">{{offer.comments}}</span>
+									<button class="button icon ion-chatbox-working button-small button-light"></button>
+									<span style="display: none" class="com">{{offer.comments}}</span>
 								</p>
 
 								<button
-									class="button button-dark button-small"
+									class="button button-dark button-small pull-right rating-btn"
 									ng-if="!offer.seller.isSellerRated"
 									ng-click="view.offers.openRatePopup(offer.seller);">
 									Rate Seller
@@ -286,7 +286,7 @@
 
 							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery due</p>
-							<h2 ng-click="App.callSupport();">Call Support</h2>
+							<button class="button button-balanced call-support" ng-click="App.callSupport();">Call Support</button>
 						</div>
 
 						<div class="col align-center p-a-0">
