@@ -563,6 +563,7 @@ Parse.Cloud.define 'getRequestDetails', (request, response) ->
         # query request directly
         queryRequest = new Parse.Query("Request")
         queryRequest.equalTo("objectId", requestId)
+        queryRequest.include("product")
         queryRequest.first()
         .then (requestObj) ->
             productObj = requestObj.get("product")  

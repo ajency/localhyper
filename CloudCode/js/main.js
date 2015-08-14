@@ -2821,6 +2821,7 @@
     } else if (!_.isEmpty(requestId)) {
       queryRequest = new Parse.Query("Request");
       queryRequest.equalTo("objectId", requestId);
+      queryRequest.include("product");
       return queryRequest.first().then(function(requestObj) {
         var productObj;
         productObj = requestObj.get("product");
