@@ -25,13 +25,10 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
       });
       return defer.promise;
     };
-    RequestAPI.getRequestForOffer = function(offerId) {
-      var defer, params;
+    RequestAPI.getRequestDetails = function(params) {
+      var defer;
       defer = $q.defer();
-      params = {
-        "offerId": offerId
-      };
-      $http.post('functions/getRequestForOffer', params).then(function(data) {
+      $http.post('functions/getRequestDetails', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
         return defer.reject(error);

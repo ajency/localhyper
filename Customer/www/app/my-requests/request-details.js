@@ -5,6 +5,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       request: RequestAPI.requestDetails('get'),
       display: 'loader',
       errorType: '',
+      pushParams: null,
       address: {
         show: false,
         toggle: function() {
@@ -36,7 +37,6 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         }
       },
       offers: {
-        id: null,
         display: 'none',
         errorType: '',
         all: [],
@@ -140,17 +140,26 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       },
       init: function() {
         if (_.has(this.request, 'pushOfferId')) {
-          this.offers.id = this.request.pushOfferId;
-          return this.getRequestForOffer();
+          this.pushParams = {
+            "offerId": this.request.pushOfferId,
+            "requestId": ''
+          };
+          return this.getRequestDetails();
+        } else if (_.has(this.request, 'pushRequestId')) {
+          this.pushParams = {
+            "offerId": '',
+            "requestId": this.request.pushRequestId
+          };
+          return this.getRequestDetails();
         } else {
           this.display = 'noError';
           this.setRequestTime();
           return this.offers.get();
         }
       },
-      getRequestForOffer: function() {
+      getRequestDetails: function() {
         this.display = 'loader';
-        return RequestAPI.getRequestForOffer(this.offers.id).then((function(_this) {
+        return RequestAPI.getRequestDetails(this.pushParams).then((function(_this) {
           return function(request) {
             return _this.onSuccess(request);
           };
@@ -187,7 +196,6 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         })(this), 60000);
       },
       onRequestExpiry: function() {
-        console.log('onRequestExpiry');
         this.request.status = 'expired';
         return this.cancelRequest.set();
       },
@@ -256,10 +264,13 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       payload = obj.payload;
       if (payload.type === 'new_offer') {
         if (_.size($scope.view.offers.all) === 0) {
-          return $scope.view.offers.get();
+          $scope.view.offers.get();
         } else {
-          return $scope.view.offers.getSilently();
+          $scope.view.offers.getSilently();
         }
+      }
+      if (payload.type === 'request_delivery_changed') {
+        return $scope.view.request.status = payload.requestStatus;
       }
     });
     $scope.$on('$destroy', function() {

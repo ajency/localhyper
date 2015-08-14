@@ -10,6 +10,7 @@ angular.module 'LocalHyper.myRequests'
 			request: RequestAPI.requestDetails 'get'
 			display: 'loader'
 			errorType: ''
+			pushParams: null
 			
 			address: 
 				show: false
@@ -37,7 +38,6 @@ angular.module 'LocalHyper.myRequests'
 						@footer = false
 			
 			offers:
-				id: null
 				display: 'none'
 				errorType: ''
 				all: []
@@ -122,16 +122,25 @@ angular.module 'LocalHyper.myRequests'
 
 			init : ->
 				if _.has(@request, 'pushOfferId')
-					@offers.id = @request.pushOfferId
-					@getRequestForOffer() 
+					#When new offer
+					@pushParams =
+						"offerId": @request.pushOfferId
+						"requestId": ''
+					@getRequestDetails()
+				else if _.has(@request, 'pushRequestId')
+					#When delivery status change
+					@pushParams =
+						"offerId": ''
+						"requestId": @request.pushRequestId
+					@getRequestDetails()
 				else
 					@display = 'noError'
 					@setRequestTime()
 					@offers.get()
 
-			getRequestForOffer : ->
+			getRequestDetails : ->
 				@display = 'loader'
-				RequestAPI.getRequestForOffer @offers.id
+				RequestAPI.getRequestDetails @pushParams
 				.then (request)=>
 					@onSuccess request
 				, (error)=>
@@ -158,7 +167,6 @@ angular.module 'LocalHyper.myRequests'
 				, 60000
 
 			onRequestExpiry : ->
-				console.log 'onRequestExpiry'
 				@request.status = 'expired'
 				@cancelRequest.set()
 
@@ -220,6 +228,9 @@ angular.module 'LocalHyper.myRequests'
 			if payload.type is 'new_offer'
 				if _.size($scope.view.offers.all) is 0 then $scope.view.offers.get()
 				else $scope.view.offers.getSilently()
+
+			if payload.type is 'request_delivery_changed'
+				$scope.view.request.status = payload.requestStatus
 		
 		$scope.$on '$destroy', ->
 			inAppNotificationEvent()

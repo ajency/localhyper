@@ -227,8 +227,8 @@ angular.module 'LocalHyper.products'
 
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
-
-			if payload.type is 'new_offer'
+			refetchFor = ['new_offer', 'request_delivery_changed']
+			if _.contains refetchFor, payload.type
 				$scope.view.request.reFetch()
 		
 		$scope.$on '$ionicView.beforeEnter', ->

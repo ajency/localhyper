@@ -110,6 +110,10 @@ angular.module 'LocalHyper.main', []
 			if payload.type is 'new_offer'
 				RequestAPI.requestDetails 'set', pushOfferId: payload.id
 				App.navigate 'request-details'
+
+			if payload.type is 'request_delivery_changed'
+				RequestAPI.requestDetails 'set', pushRequestId: payload.id
+				App.navigate 'request-details'
 		
 		$rootScope.$on 'on:session:expiry', ->
 			Parse.User.logOut()
