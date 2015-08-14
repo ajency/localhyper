@@ -22,7 +22,7 @@
 					<span class="input-label">Business Name</span>
 					<input
 						type="text"
-						placeholder="Business name"
+						placeholder=""
 						ng-model="view.businessName">
 				</label>
 
@@ -31,7 +31,7 @@
 					<span class="input-label">Full Name</span>
 						<input
 						type="text"
-						placeholder="Your name"
+						placeholder=""
 						ng-model="view.name">
 				</label>
 
@@ -41,12 +41,12 @@
 					<span class="mob-holder">
 						<span>+91</span><input
 							type="tel"
-							placeholder="Your mobile number"
+							placeholder=""
 							minlength="10"
 							maxlength="10"
 							ng-pattern="App.onlyNumbers"
 							ng-model="view.phone"
-							ng-readonly="view.myProfileState" disabled>
+							ng-disabled="view.myProfileState">
 					</span>
 				</label>
 			</div>

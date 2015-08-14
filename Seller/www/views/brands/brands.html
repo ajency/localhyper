@@ -23,7 +23,9 @@
 					placeholder="Search for brands"
 					ng-model="view.search">
 			</label>
-			<button class="button button-small button-clear">
+			<button
+				class="button button-small button-clear"
+				ng-click="view.search = '';">
 				<i class="icon ion-android-close"></i>
 			</button>
 		</div>
@@ -42,7 +44,7 @@
 		<ion-list ng-switch-when="noError">
 			<div
 				class="col col-25 border-card relative all-brands-indi"
-				ng-repeat="brand in view.brands | filter:view.search">
+				ng-repeat="brand in view.filteredBrands = (view.brands | filter:view.search)">
 
 				<img
 					ng-src="{{brand.image.src}}"
@@ -58,6 +60,14 @@
 				</ion-checkbox>
 			</div>
 		</ion-list>
+
+		<div
+			class="text-center"
+			ng-if="view.filteredBrands.length == 0">
+
+			<h5 class="bold fin">Sorry, no search results found.</h5>
+			<div class="spacer-40"></div>
+		</div>
 
 		<aj-error
 			ng-switch-when="error"

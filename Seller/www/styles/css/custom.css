@@ -205,8 +205,8 @@ sm {
 /* HEADER */
 /************************************/
 .nav-bar-title img {
-  width: 40%;
   margin-top: 5px;
+  height: 30px;
 }
 .has-header {
   background-color: #f2f1ed;
@@ -1486,6 +1486,9 @@ h5.with-sep span {
 .products-filter-view {
   margin-top: 9px;
 }
+.products-filter-view .item:nth-child(4) .sel-count {
+  width: 50px !important;
+}
 .products-filter-view label.item-radio {
   /* border-color: #666; */
   font-size: 14px;
@@ -1493,7 +1496,7 @@ h5.with-sep span {
   text-align: center;
 }
 .products-filter-view label.item-radio .item-content {
-  padding: 14px 10px;
+  padding: 20px 10px;
   background: transparent;
   color: #444;
   position: relative;
