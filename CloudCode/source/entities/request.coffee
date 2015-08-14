@@ -428,7 +428,7 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
     queryRequest.include("brand")    
 
     queryRequest.first()
-    .then (requestObj) ->
+    .then (requestObject) ->
         productLastOfferedPrices = {}
         # find all requests for which seller has made offer
         innerQuerySellers = new Parse.Query(Parse.User)
@@ -461,7 +461,7 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
 
                 productLastOfferedPrices[productId] = offerPrice
 
-            getRequestData(requestObj,sellerDetails,productLastOfferedPrices)
+            getRequestData(requestObject,sellerDetails,productLastOfferedPrices)
 
             .then (requestData) ->
                 response.success requestData

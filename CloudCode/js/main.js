@@ -2705,7 +2705,7 @@
     queryRequest.include("category");
     queryRequest.include("category.parent_category");
     queryRequest.include("brand");
-    return queryRequest.first().then(function(requestObj) {
+    return queryRequest.first().then(function(requestObject) {
       var innerQuerySellers, offerQuery, productLastOfferedPrices;
       productLastOfferedPrices = {};
       innerQuerySellers = new Parse.Query(Parse.User);
@@ -2723,7 +2723,7 @@
         productLastOfferedPrices = {};
         requestsWhereOfferMade = [];
         _.each(offersMadeBySeller, function(offerMadeBySeller) {
-          var offerPrice, priceObj, productId, productObj;
+          var offerPrice, priceObj, productId, productObj, requestObj;
           requestObj = offerMadeBySeller.get("request");
           productObj = requestObj.get("product");
           productId = productObj.id;
@@ -2731,7 +2731,7 @@
           offerPrice = priceObj.get("value");
           return productLastOfferedPrices[productId] = offerPrice;
         });
-        return getRequestData(requestObj, sellerDetails, productLastOfferedPrices).then(function(requestData) {
+        return getRequestData(requestObject, sellerDetails, productLastOfferedPrices).then(function(requestData) {
           return response.success(requestData);
         }, function(error) {
           return response.error(error);
