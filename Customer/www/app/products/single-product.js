@@ -153,6 +153,9 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         this.request.reset();
         return this.getSingleProductDetails();
       },
+      getDate: function(obj) {
+        return moment(obj.iso).format('DD/MM/YYYY');
+      },
       getSingleProductDetails: function() {
         return ProductsAPI.getSingleProduct(this.productID).then((function(_this) {
           return function(productData) {

@@ -176,6 +176,7 @@ angular.module 'LocalHyper.products', []
 				@beforeReset()
 				@search = ''
 				@canLoadMore = false
+				@gotAllProducts = false
 
 			reset : ->
 				@beforeReset()

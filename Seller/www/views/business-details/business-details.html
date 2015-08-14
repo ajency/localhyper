@@ -1,8 +1,8 @@
-<ion-view 
+<ion-view
 	view-title=""
 	ng-init="view.init();">
 			<ion-nav-title>
-				Details
+				Business details
   		  </ion-nav-title>
 	<ion-content class="business-details">
 
@@ -22,6 +22,7 @@
 					<span class="input-label">Business Name</span>
 					<input
 						type="text"
+						placeholder="Business name"
 						ng-model="view.businessName">
 				</label>
 
@@ -30,6 +31,7 @@
 					<span class="input-label">Full Name</span>
 						<input
 						type="text"
+						placeholder="Your name"
 						ng-model="view.name">
 				</label>
 
@@ -38,11 +40,12 @@
 					<span class="input-label">Phone Number</span>
 					<input
 						type="tel"
+						placeholder="Your mobile number"
 						minlength="10"
 						maxlength="10"
 						ng-pattern="App.onlyNumbers"
 						ng-model="view.phone"
-						ng-readonly="view.myProfileState">
+						ng-readonly="view.myProfileState" disabled>
 				</label>
 			</div>
 		</div>
@@ -104,7 +107,7 @@
 			<div class="row platop">
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[0].selected">
 						</label>
 						Mon
@@ -112,7 +115,7 @@
 				</div>
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[1].selected">
 						</label>
 						Tue
@@ -120,7 +123,7 @@
 				</div>
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[2].selected">
 						</label>
 						Wed
@@ -128,7 +131,7 @@
 				</div>
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[3].selected">
 						</label>
 						Thur
@@ -136,10 +139,10 @@
 				</div>
 			</div>
 			<div class="row platop">
-		
+
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[4].selected">
 						</label>
 						Fri
@@ -147,7 +150,7 @@
 				</div>
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[5].selected">
 						</label>
 						Sat
@@ -155,14 +158,17 @@
 				</div>
 				<div class="col">
 					<li class="item item-checkbox item-days">
-						<label class="checkbox">
+						<label class="checkbox checkbox-square">
 							<input type="checkbox" ng-model="view.workingDays[6].selected">
 						</label>
 						Sun
 					</li>
 				</div>
-			</div>
+				<div class="col">
 		
+				</div>
+			</div>
+
 		</div>
 
 		<div class="row row-fluid">
@@ -178,10 +184,10 @@
 			<div class="row platop">
 				<div class="col">
 					<ion-item ng-click="view.addWorkTimings('start')">
-						Start Time: {{view.workTimings.start}}
+						<i class="ion-clock"></i> Start Time: {{view.workTimings.start}}
 					</ion-item>
 					<ion-item ng-click="view.addWorkTimings('end')">
-						End Time: {{view.workTimings.end}}
+						<i class="ion-clock"></i> End Time: {{view.workTimings.end}}
 					</ion-item>
 				</div>
 			</div>
@@ -191,7 +197,7 @@
 			<div class="col p-b-0">
 				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
 					<i class="icon ion-map"></i>
-					Deliverable Area
+					Delivery Area
 				</h5>
 			</div>
 		</div>
@@ -208,7 +214,7 @@
 								</i>
 							</h3>
 							<h5 class="text-left">
-								From your selected location, the radius of the area within which you wish to deliver the goods
+								From your selected location, area in which you can deliver your goods
 							</h5>
 						</div>
 					</div>
@@ -228,16 +234,16 @@
 		</div>
 
 
-		<div 
+		<div
 			class="item item-checkbox nobg terms"
 			ng-if ="!view.myProfileState" >
 			<label class="checkbox">
 				<input type="checkbox" ng-model="view.terms">
 			</label>
-			 I agree with the terms & conditions 
+			 I agree with the terms & conditions
 		</div>
 
-		<ion-item class="nobg">
+		<ion-item class="nobg border-none">
 			<button
 				class="title button button-block button-assertive"
 				ng-disabled="!view.terms"
@@ -245,7 +251,7 @@
 				ng-click="view.onNext()">
 				Next
 			</button>
-			
+
 			<button
 				class="title button button-block button-assertive"
 				ng-if ="view.myProfileState"
