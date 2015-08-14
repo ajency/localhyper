@@ -895,6 +895,7 @@ sm {
 }
 .business-details .item-days .checkbox {
   display: block;
+  padding: 0px;
   position: relative;
   margin-top: 0px;
   top: 0px;
