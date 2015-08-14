@@ -104,11 +104,13 @@ function showAttibuteExport()
     
     if(!error){
         var attributeUrl = BASEURL +'/admin/attribute/exportattributes/'+category;
-        var productUrl = BASEURL +'/admin/product/exportproducts/'+category;
+        var productUrl = BASEURL +'/admin/product/exportproducts/'+category+'/true';
+        var emptyProductUrl = BASEURL +'/admin/product/exportproducts/'+category;
         var productPriceUrl = BASEURL +'/admin/product/exportproductonlineprice/'+category;
-        $(".export_attributes").attr('href',attributeUrl);
-        $(".export_product").attr('href',productUrl);
-        $(".export_product_price").attr('href',productPriceUrl);
+        $(".export_attributes").attr('onclick',"location.href='"+attributeUrl+"'");
+        $(".export_product").attr('onclick',"location.href='"+productUrl+"'");
+        $(".export_empty_product").attr('onclick',"location.href='"+emptyProductUrl+"'");
+        $(".export_product_price").attr('onclick',"location.href='"+productPriceUrl+"'");
         
         $(".update-search-keyword").attr("data-category-id",category);
         $(".export_block").removeClass('hidden');
@@ -116,8 +118,10 @@ function showAttibuteExport()
     }
     else
     {
-        $(".export_attributes").attr('href','#');
-        $(".export_product").attr('href','#');
+        $(".export_attributes").removeAttr('onclick');
+        $(".export_product").removeAttr('onclick');
+        $(".export_empty_product").removeAttr('onclick');
+        $(".export_product_price").removeAttr('onclick');
     }
     
 }

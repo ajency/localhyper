@@ -48,9 +48,9 @@
                             <h4>Configure your <span class="semi-bold">brands, attributes</span> and <span class="semi-bold">attribute values</span></h4>
                             <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Export</span></h4>
 
-                            <a href="#" target="_blank" class="export_attributes">
-                                <button type="button" class="btn btn-default btn-cons btn-small"><i class="fa fa-download"></i> Download Sheet</button>
-                            </a>
+                           
+                                <button type="button" class="btn btn-default btn-cons btn-small export_attributes"><i class="fa fa-download"></i> Download Sheet</button>
+                             
 
                             <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Import</span></h4>
                             <form action="{{ url( 'admin/attribute/importmasterdata') }}" method="POST" enctype="multipart/form-data">
@@ -83,9 +83,10 @@
                         <div class="panel-body">
                             <h4>Configure your <span class="semi-bold">Products</span></h4>
                             <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Export</span></h4>
-                            <a href="#" target="_blank" class="export_product">
-                                <button type="button" class="btn btn-default btn-cons btn-small"><i class="fa fa-download"></i> Download Sheet</button>
-                            </a>
+                            
+                                <button type="button" class="btn btn-default btn-cons btn-small export_product"><i class="fa fa-download"></i> Download Sheet</button>
+                            <button type="button" class="btn btn-default btn-cons btn-small export_empty_product"><i class="fa fa-download"></i> Download Empty Sheet</button>
+                             
                             <button style="float:right" data-category-id="" type="button" class="btn btn-default btn-cons btn-small update-search-keyword"><i class="fa "></i>Update Search Keyword</button>
 
 
@@ -119,11 +120,9 @@
                         <div class="panel-body">
                             <h4>Configure your <span class="semi-bold">Products price</span></h4>
                             <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Export</span></h4>
-
-                            <a href="#" target="_blank" class="export_product_price">
-                                <button type="button" class="btn btn-default btn-cons btn-small"><i class="fa fa-download"></i> Download Sheet</button>
-                            </a>
-
+ 
+                                <button type="button" class="btn btn-default btn-cons btn-small export_product_price"><i class="fa fa-download"></i> Download Sheet</button>
+ 
                             <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Import</span></h4>
                             <form action="{{ url( 'admin/product/importproductprice') }}" method="POST" enctype="multipart/form-data">
                                 <div class="row">

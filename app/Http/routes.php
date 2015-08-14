@@ -49,8 +49,9 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::post( 'attribute/importmasterdata', 'Admin\AttributeController@importMasterData' );
     Route::get( 'attribute/exportattributevalues', 'Admin\AttributeController@exportAttributeValues' );
     
-     Route::get( 'product/exportproducts/{categoryid}', 'Admin\ProductController@exportProducts' );
-     Route::get( 'product/exportproductonlineprice/{categoryid}', 'Admin\ProductController@exportProductOnlinePrice' );
+    Route::get( 'product/exportproducts/{categoryid}', 'Admin\ProductController@exportProducts' );
+    Route::get( 'product/exportproducts/{categoryid}/{flag}', 'Admin\ProductController@exportProducts' );
+    Route::get( 'product/exportproductonlineprice/{categoryid}', 'Admin\ProductController@exportProductOnlinePrice' );
     Route::post( 'product/importproducts', 'Admin\ProductController@importProduct' );
     Route::post( 'product/importproductprice', 'Admin\ProductController@importProductPrice' );
 

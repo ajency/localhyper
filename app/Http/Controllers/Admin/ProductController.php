@@ -92,9 +92,9 @@ class ProductController extends Controller
 				//
 		}
 		
-		 public function exportProducts($catId)
+		 public function exportProducts($catId,$flag=false)
 		{  
-				$attributeController = new AttributeController(); 
+  				$attributeController = new AttributeController(); 
 				
 				$excel = new PHPExcel(); // ea is short for Excel Application
 				$excel->getProperties()
@@ -266,7 +266,9 @@ class ProductController extends Controller
 						$column = $attributeController->getNextCell($column,'2');
 				}
 				
-			 
+			     
+                if($flag)
+                { 
 				//$limit =10;
 				$page = 0; 
 				$i=0; 
@@ -319,7 +321,7 @@ class ProductController extends Controller
 					}
 			 
 					$productSheet->fromArray($productsData, ' ', 'B3');
-
+                  }
 
 					//freeze pan
 					$productSheet->getStyle('1:1')->getFont()->setBold(true);
