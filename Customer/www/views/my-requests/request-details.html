@@ -83,7 +83,9 @@
 								count-down-finish="view.onRequestExpiry()">
 							</h2>
 							<p class="exp_in">Expires in <i class="icon ion-ios-clock-outline"></i></p>
-							<p class="why"><a href="http://shopoye.co.in/customer-faqs">Why this product expires in 24 hrs</a></p>
+							<p class="why">
+								<a href="http://shopoye.co.in/customer-faqs">Why this product expires in 24 hrs</a>
+							</p>
 						</div>
 					</div>
 
@@ -179,7 +181,7 @@
 			<div
 				ng-switch-when="noError"
 				class="card no-shadow rece-offer m-t-0"
-				ng-repeat="offer in view.offers.all | orderBy: 'status' | limitTo: view.offers.limitTo"
+				ng-repeat="offer in view.offers.all | orderBy: ['status', '-createdAt.iso'] | limitTo: view.offers.limitTo"
 				ng-controller="EachOfferTimeCtrl">
 
 				<div class="item item-text-wrap">
