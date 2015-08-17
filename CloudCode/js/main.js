@@ -2165,6 +2165,8 @@
     queryProducts.matchesQuery("category", innerQueryCategory);
     queryProducts.include("attrs");
     queryProducts.include("brand");
+    queryProducts.include("brand");
+    queryProducts.ascending("updatedAt");
     return queryProducts.find().then(function(products) {
       var updateKeywordQs;
       updateKeywordQs = [];
@@ -2172,12 +2174,12 @@
         return updateProductKeywords(productObject);
       });
       return Parse.Promise.when(updateKeywordQs).then(function() {
-        return response.success(arguments);
+        return response.success("Success");
       }, function(error) {
-        return response.error(error);
+        return response.error("Failure");
       });
     }, function(error) {
-      return response.error(error);
+      return response.error("Failure");
     });
   });
 

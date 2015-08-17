@@ -558,6 +558,8 @@ Parse.Cloud.job 'updateCategoryProductsKeywords', (request, response) ->
     queryProducts.matchesQuery("category" , innerQueryCategory)
     queryProducts.include("attrs")
     queryProducts.include("brand")
+    queryProducts.include("brand")
+    queryProducts.ascending("updatedAt")
     
     queryProducts.find()
     .then (products) ->
@@ -568,12 +570,12 @@ Parse.Cloud.job 'updateCategoryProductsKeywords', (request, response) ->
         )   
 
         Parse.Promise.when(updateKeywordQs).then -> 
-            response.success arguments
+            response.success "Success"
         , (error) ->
-            response.error error        
+            response.error "Failure"        
 
     , (error) ->
-        response.error error
+        response.error "Failure"
  
 
 updateProductKeywords = (productObject) =>
