@@ -1201,15 +1201,15 @@ button.button.button-assertive b {
   white-space: normal;
   line-height: 19px;
   display: inline-block;
-  margin-top: 6px;
+  margin-top: 3px;
   position: relative;
   top: 2px;
 }
 .req-ca .status-label.small-let {
   text-transform: none;
-  font-size: 14px;
+  font-size: 12px;
   display: inline-block;
-  top: 0;
+  top: -1px;
 }
 .req-ca p {
   margin-bottom: 0;
@@ -1229,7 +1229,7 @@ button.button.button-assertive b {
   bottom: 8px;
 }
 .req-ca .border-top-dash {
-  border-top: 1px dashed #aaa;
+  border-top: 1px dashed #DADADA;
 }
 .WebRupee.sym-sma {
   font-size: 16px;
@@ -1339,7 +1339,7 @@ label.status-label {
 }
 .products-filter-view .checkbox input:after,
 .products-filter-view .checkbox-icon:after {
-  top: 31%;
+  top: 10%;
   left: 21%;
   width: 14px;
   height: 7px;

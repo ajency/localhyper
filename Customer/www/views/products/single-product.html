@@ -144,7 +144,7 @@
 		       		ng-click="view.request.onCardClick(request);">
 
 					<div class="row item border-none" style="padding-bottom: 2px;">
-				        <div class="col p-b-7">
+				        <div class="col p-b-0 p-t-0">
 				        	<div>
 					            <div class="offer"> {{request.offerCount}} </div>
 					            <h4 class="offertxt light-gray subdued"> No. of offers</h4>
@@ -152,10 +152,10 @@
 				        </div>
 				        <div class="col text-center">
 				        	<!-- <div class="vert-div pull-left"></div> -->
-				        	<p class="text-right">
+				        	<p class="text-right" style="margin-top: 0;">
 				        		<!-- Status: -->
 					        	<label
-					        		class="status-label"
+					        		class="status-label" style="margin-top: 0;"
 					        		ng-class="(request.status === 'cancelled'
 					        				|| request.status === 'expired'
 					        				|| request.status === 'failed_delivery') ? 'status-assertive' : 'status-balanced'">
@@ -164,8 +164,8 @@
 				        	</p>
 				        </div>
 				    </div>
-				    <div class="row item border-none border-top-dash" style="margin-top: 3px;">
-				        <div class="col text-left p-t-0">
+				    <div class="row item border-none border-top-dash" style="margin-top: 3px; min-height: 0 !important;">
+				        <div class="col text-left p-t-0 p-b-0">
 				        	<!-- <div class="vert-div pull-left"></div> -->
 				        	<p class="m-t-6"><i class="icon ion-clock"></i> <label class="status-label status-dark small-let">{{request.timeStr}}</label></p>
 				        </div>
@@ -235,7 +235,7 @@
 			class="title"
 			ng-hide="view.request.active"
 			ng-click="view.checkUserLogin();">
-			Get Best Prices
+			Get best prices from your local sellers
 		</div>
 		<div
 			class="title"
