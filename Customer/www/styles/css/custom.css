@@ -177,6 +177,9 @@ sm {
   left: 60px !important;
   right: 60px !important;
 }
+button.button.button-assertive b {
+  color: #fff;
+}
 /************************************/
 /* HEADER */
 /************************************/
@@ -996,6 +999,11 @@ sm {
   -ms-box-shadow: 0 0 0 #fff;
   -o-box-shadow: 0 0 0 #fff;
   box-shadow: 0 0 0 #fff;
+}
+.rece-offer .user-details button.button.button-dark {
+  line-height: 21px;
+  min-height: 0;
+  padding: 0 6px;
 }
 .rece-offer .user-wrap {
   width: 50px;
@@ -1875,4 +1883,16 @@ label.status-label {
 }
 .b-r-1 {
   border-right: 1px solid #ddd;
+}
+.rating-section {
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+.rating-section img {
+  margin-right: 5px;
+}
+.comments-input {
+  padding: 5px 8px;
+  line-height: normal;
+  border: 1px solid #ccc;
 }
