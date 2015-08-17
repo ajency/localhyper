@@ -63,7 +63,22 @@
 				<ul class="list">
 					<li
 						class="item item-text-wrap item-checkbox"
-						ng-repeat="value in view.filter.attrValues[view.filter.attribute] track by $index">
+						ng-repeat="value in view.filter.attrValues[view.filter.attribute] | orderBy:view.filter.orderBy() track by $index"
+						ng-if="view.filter.attribute !== 'price' && view.filter.isNotNA(value.name)">
+
+						<label class="checkbox checkbox-square">
+							<input
+								type="checkbox"
+								ng-model="value.selected"
+								ng-change="view.filter.showAttrCount()">
+						</label>
+						{{value.name}}
+					</li>
+
+					<li
+						class="item item-text-wrap item-checkbox"
+						ng-repeat="value in view.filter.attrValues[view.filter.attribute] track by $index"
+						ng-if="view.filter.attribute === 'price'">
 
 						<label class="checkbox checkbox-square">
 							<input

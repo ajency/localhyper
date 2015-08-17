@@ -219,6 +219,22 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             };
           })(this));
           return this.excerpt = filterNames.join(', ');
+        },
+        isNotNA: function(name) {
+          name = name.replace(/[^a-zA-Z ]/g, "");
+          name = name.toLowerCase();
+          return name !== 'na';
+        },
+        orderBy: function() {
+          return function(obj) {
+            var name;
+            name = parseFloat(obj.name);
+            if (_.isNaN(name)) {
+              return obj.name;
+            } else {
+              return name;
+            }
+          };
         }
       },
       init: function() {
