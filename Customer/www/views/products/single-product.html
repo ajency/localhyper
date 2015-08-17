@@ -3,7 +3,7 @@
 	ng-init="view.init();">
 
 	<ion-content
-		class="bg-white"
+		class="bg-wh ite"
 		delegate-handle="single-product-handle">
 
 		<ion-list ng-switch="view.display">
@@ -13,7 +13,7 @@
 				ng-switch-when="loader">
 			</ion-spinner>
 
-			<div ng-switch-when="noError">
+			<div ng-switch-when="noError" class="bg-white">
 				<img
 					class="aj-sp-img img-responsive"
 					ng-src="{{view.product.images[0].src}}">
