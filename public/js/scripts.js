@@ -130,7 +130,7 @@ $(".update-search-keyword").click(function(){
      var categoryId = $(this).attr('data-category-id'); 
       $.ajax({
         async :true, 
-        url: "https://api.parse.com/1/functions/updateCategoryProductsKeywords",
+        url: "https://api.parse.com/1/jobs/updateCategoryProductsKeywords",
         type: "POST",
         headers: {
                     "x-parse-application-id": window.APPLICATION_ID,
