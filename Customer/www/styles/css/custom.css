@@ -1382,20 +1382,20 @@ label.status-label {
 .bar-footer {
   box-shadow: 0px 5px 15px #000;
 }
-.request {
-  background: url(../../img/request.png) no-repeat;
-  width: 35px;
-  height: 35px !important;
-  background-size: 100%;
-  margin-top: 8px !important;
+/*.request{
+	background: url(../../img/request.png) no-repeat;
+    width: 35px;
+    height: 35px !important;
+    background-size: 100%;
+    margin-top: 8px !important;
 }
-.expire {
-  background: url(../../img/expired.png) no-repeat;
-  width: 35px;
-  height: 35px !important;
-  background-size: 100%;
-  margin-top: 8px !important;
-}
+.expire{
+    background: url(../../img/expired.png) no-repeat;
+    width: 35px;
+    height: 35px !important;
+    background-size: 100%;
+    margin-top: 8px !important;
+}*/
 .sort-box li:first-child {
   border-bottom: 3px solid #ccc;
 }

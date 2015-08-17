@@ -85,6 +85,10 @@ hr {
 .text-success {
   color: #5ab319;
 }
+.fin {
+  color: #969696;
+  margin-top: 25px;
+}
 .bar-assertive {
   background: #f35a59 !important;
 }
@@ -1873,12 +1877,6 @@ input[disabled] ~ .radio-icon-show {
 .mob-holder input {
   display: inline-block;
 }
-<<<<<<< HEAD
-<<<<<<< HEAD
-/*# sourceMappingURL=custom.css.map */
-=======
-=======
->>>>>>> 8a9676e358fd684ac0e990b1b3521d60b780a768
 .p-a-0 {
   padding: 0;
 }
@@ -1921,7 +1919,4 @@ input[disabled] ~ .radio-icon-show {
 .b-r-1 {
   border-right: 1px solid #ddd;
 }
-<<<<<<< HEAD
->>>>>>> 8a9676e358fd684ac0e990b1b3521d60b780a768
-=======
->>>>>>> 8a9676e358fd684ac0e990b1b3521d60b780a768
+/*# sourceMappingURL=custom.css.map */
