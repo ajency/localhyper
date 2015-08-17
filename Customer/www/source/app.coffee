@@ -6,7 +6,7 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 	, 'LocalHyper.aboutUs', 'LocalHyper.googleMaps','LocalHyper.suggestProduct', 'LocalHyper.myRequests']
 
 
-.run ['$rootScope', 'App', 'User', ($rootScope, App, User)->
+.run ['$rootScope', 'App', 'User', '$timeout', ($rootScope, App, User, $timeout)->
 
 	Parse.initialize APP_ID, JS_KEY
 	$rootScope.App = App
@@ -44,7 +44,12 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 		App.menuEnabled.left  = bool
 
 		showSearchForStates = ['products', 'single-product']
-		App.search.icon = _.contains showSearchForStates, App.currentState
+		#Temporary work around for issue #105
+		if _.contains showSearchForStates, App.currentState
+			$timeout ->
+				App.search.icon = true
+			, 500
+		else App.search.icon = false
 ]
 
 

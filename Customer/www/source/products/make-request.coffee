@@ -33,10 +33,10 @@ angular.module 'LocalHyper.products'
 				else
 					@getCurrent()
 
-			reset : ->
+			reset : (clearPlace = true)->
 				App.resize()
 				@userMarker.setMap null if @userMarker
-				@placeMarker.setMap null if @placeMarker
+				@placeMarker.setMap null if @placeMarker and clearPlace
 				@clearSellerMarkers()
 				@sellers.found = false
 				@sellers.displayCount = false
@@ -98,6 +98,7 @@ angular.module 'LocalHyper.products'
 				google.maps.event.addListener @placeMarker, 'dragend', (event)=>
 					$scope.$apply =>
 						@latLng = event.latLng
+						@reset false
 						@searchText = ''
 						@setAddress()
 
