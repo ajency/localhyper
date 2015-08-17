@@ -134,7 +134,8 @@ $(".update-search-keyword").click(function(){
         type: "POST",
         headers: {
                     "x-parse-application-id": window.APPLICATION_ID,
-                    "x-parse-rest-api-key": window.REST_API_KEY
+                    "x-parse-rest-api-key": window.REST_API_KEY,
+                    "x-parse-master-key": window.MASTER_KEY,
                   },
         data: {
             "categoryId" : categoryId,

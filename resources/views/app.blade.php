@@ -30,6 +30,7 @@
     var JAVASCRIPT_KEY = '{{ config("constants.parse_sdk.javascript_key") }}';
     var APPLICATION_ID = '{{ config("constants.parse_sdk.app_id") }}';
     var REST_API_KEY = '{{ config("constants.parse_sdk.rest_api_key") }}';
+    var MASTER_KEY = '{{ config("constants.parse_sdk.master_key") }}';
 
 </script>
 <script src="{{ asset('plugins/jquery-1.8.3.min.js') }}" type="text/javascript"></script>     
