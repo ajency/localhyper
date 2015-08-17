@@ -1905,3 +1905,9 @@ input[disabled] ~ .radio-icon-show {
   border-color: #f35a59;
   color: #fff;
 }
+.user-noti-info .col.col-20 {
+  max-width: 25px;
+}
+.user-noti-info h2.margin-none.number-count.ng-binding {
+  white-space: nowrap;
+}

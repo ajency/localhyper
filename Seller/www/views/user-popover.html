@@ -1,8 +1,8 @@
 <ion-popover-view>
-	
-	<ion-content class="aj-right-popover">
 
-		<div class="row">
+	<ion-content class="aj-right-popover user-noti-info">
+
+		<div class="row p-l-0 p-r-0">
 			<div class="col">
 				<h2 class="margin-none number-count">
 					{{App.notification.newRequests}}<sm>/ REQUEST</sm>
@@ -19,24 +19,24 @@
 				<sm class="subdued">Accepted</sm>
 			</div>
 		</div>
-		
+
 		<hr class="margin-none">
 
-		<a 
-			class="item item-icon-left item-text-wrap" 
+		<a
+			class="item item-icon-left item-text-wrap"
 			ng-click="App.navigate('new-requests'); view.userPopover.hide();">
-			
+
 			<i class="icon ion-pricetags"></i>
 			Requests & Offers
 		</a>
-		<a 
-			class="item item-icon-left" 
+		<a
+			class="item item-icon-left"
 			ng-click="App.navigate('my-profile'); view.userPopover.hide();">
-			
+
 			<i class="icon ion-person"></i>
 			Profile
 		</a>
-	
+
 	</ion-content>
 
 </ion-popover-view>

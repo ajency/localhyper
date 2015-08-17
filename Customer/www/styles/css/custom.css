@@ -1647,8 +1647,12 @@ label.status-label {
   padding: 2px 5px;
   border-right: 0;
 }
-.specs-modal .spec-card .col.col-25 {
+.specs-modal .spec-card .col.col-25,
+.specs-modal .spec-card .col.col-33 {
   border-right: 1px solid #E0E0E0;
+}
+.specs-modal .spec-card .col.col-33 {
+  min-width: 105px;
 }
 .specs-modal .spec-card .row {
   border-bottom: 1px solid #E0E0E0;

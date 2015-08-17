@@ -1692,8 +1692,11 @@ label.status-label {
 		.col {
 			padding: 2px 5px;
 			border-right: 0;
-			&.col-25 {
+			&.col-25, &.col-33 {
 				border-right: 1px solid #E0E0E0;
+			}
+			&.col-33 {
+				min-width: 105px;
 			}
 		}
 		.row {
