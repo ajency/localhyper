@@ -338,7 +338,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           sortBy: this.sortBy,
           ascending: this.ascending,
           selectedFilters: this.filter.selectedFilters,
-          displayLimit: 10,
+          displayLimit: 24,
           searchKeywords: this.getSearchKeyWords()
         };
         return ProductsAPI.getAll(options).then((function(_this) {

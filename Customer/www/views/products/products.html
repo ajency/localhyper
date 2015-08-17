@@ -19,7 +19,10 @@
 				item-width="50%"
 				ng-click="App.navigate('single-product', {productID: product.objectId})">
 
-				<img ng-src="{{product.images[0].src}}" class=" center-block aj-img" >
+				<img 
+					ng-src="{{product.images[0].src}}" 
+					class="center-block aj-img">
+					<!-- onerror="this.src='./img/bg.jpg';"> -->
 
 				<div class="row">
 					<div class="col">

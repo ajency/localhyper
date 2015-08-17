@@ -262,7 +262,7 @@ angular.module 'LocalHyper.products', []
 					sortBy: @sortBy
 					ascending: @ascending
 					selectedFilters: @filter.selectedFilters
-					displayLimit: 10
+					displayLimit: 24
 					searchKeywords: @getSearchKeyWords()
 
 				ProductsAPI.getAll options
