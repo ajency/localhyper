@@ -503,7 +503,8 @@ class ProductController extends Controller
 									}
 									else{
 										$image_slug = $this->stringSpaceToPlus($data['Image']);
-										$imageUrl = $amazon_buket_url."".$image_slug.".jpeg";
+										$image_format = ".jpg" ;
+										$imageUrl = $amazon_buket_url."".$image_slug."".$image_format;
 										$inputImageUrls[] = $imageUrl;
 									}
 
