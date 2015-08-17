@@ -424,6 +424,12 @@ sm {
   margin-bottom: -10px;
   background-position: -9px -553px;
 }
+.color-dark {
+  color: #4d4d4d;
+}
+/************************************/
+/*Tutorial View*/
+/************************************/
 .aj-slide-img {
   background-position: center;
 }
