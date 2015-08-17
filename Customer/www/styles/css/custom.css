@@ -1256,7 +1256,7 @@ label.status-label {
   margin-bottom: 2px !important;
 }
 .products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
-  content: "\f2aa";
+  content: "₹";
 }
 .products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before,
 .products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
