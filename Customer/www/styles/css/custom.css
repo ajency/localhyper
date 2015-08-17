@@ -735,7 +735,7 @@ sm {
   line-height: 20px;
 }
 .about-us-page {
-  background: url(../../img/bg-abt.png);
+  background-color: #1f1f1f;
   background-size: cover;
 }
 .about-us-page .has-header {
