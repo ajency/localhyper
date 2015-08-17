@@ -167,14 +167,14 @@
 	<ion-footer-bar class="bar-assertive">
 		<button
 			class="title button-block button-clear"
-			ng-hide="view.sellers.found"
+			ng-if="!view.sellers.found"
 			ng-click="view.findSellers();">
 			Find sellers
 		</button>
 
 		<button
 			class="title button-block button-clear"
-			ng-show="view.sellers.found"
+			ng-if="view.sellers.found"
 			ng-click="view.makeRequest();">
 			Make Request
 		</button>
