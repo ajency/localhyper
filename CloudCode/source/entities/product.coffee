@@ -333,8 +333,9 @@ Parse.Cloud.define 'getProduct', (request, response) ->
             else 
                 unit = null
             
+            productgrp = attributeObj.get "group" 
             productSpec = 
-                "group" : attributeObj.get "group"            
+                "group" : productgrp.toLowerCase()           
                 "key" : attributeObj.get "name"    
                 "value" :  productAttributeValue.get "value"  
                 "unit" :  unit
@@ -345,8 +346,9 @@ Parse.Cloud.define 'getProduct', (request, response) ->
         if !_.isUndefined(textAttributes) or !_.isEmpty(textAttributes)
             for attribId of textAttributes
               if textAttributes.hasOwnProperty(attribId)
+                prodgrp = attributeIdNames[attribId]["group"]
                 productSpec = 
-                    "group" : attributeIdNames[attribId]["group"]           
+                    "group" : prodgrp.toLowerCase()           
                     "key" : attributeIdNames[attribId]["name"]     
                     "value" :  textAttributes[attribId]
                     "unit" :  null  

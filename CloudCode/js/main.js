@@ -1921,7 +1921,7 @@
     queryProductItem.include("primaryAttributes");
     queryProductItem.include("primaryAttributes.attribute");
     return queryProductItem.first().then(function(ProductData) {
-      var attribId, attributeIdNames, brand, brandObj, category, categoryObj, productAttributes, productResult, productSpec, secondary_attributes, specifications, textAttributes;
+      var attribId, attributeIdNames, brand, brandObj, category, categoryObj, prodgrp, productAttributes, productResult, productSpec, secondary_attributes, specifications, textAttributes;
       categoryObj = ProductData.get("category");
       category = {
         id: categoryObj.id,
@@ -1960,7 +1960,7 @@
       productAttributes = ProductData.get("attrs");
       specifications = [];
       _.each(productAttributes, function(productAttributeValue) {
-        var attributeObj, attributeObjId, productSpec, unit;
+        var attributeObj, attributeObjId, productSpec, productgrp, unit;
         attributeObj = productAttributeValue.get("attribute");
         attributeObjId = attributeObj.id;
         if (!_.isUndefined(attributeObj.get("unit"))) {
@@ -1968,8 +1968,9 @@
         } else {
           unit = null;
         }
+        productgrp = attributeObj.get("group");
         productSpec = {
-          "group": attributeObj.get("group"),
+          "group": productgrp.toLowerCase(),
           "key": attributeObj.get("name"),
           "value": productAttributeValue.get("value"),
           "unit": unit
@@ -1979,8 +1980,9 @@
       if (!_.isUndefined(textAttributes) || !_.isEmpty(textAttributes)) {
         for (attribId in textAttributes) {
           if (textAttributes.hasOwnProperty(attribId)) {
+            prodgrp = attributeIdNames[attribId]["group"];
             productSpec = {
-              "group": attributeIdNames[attribId]["group"],
+              "group": prodgrp.toLowerCase(),
               "key": attributeIdNames[attribId]["name"],
               "value": textAttributes[attribId],
               "unit": null
