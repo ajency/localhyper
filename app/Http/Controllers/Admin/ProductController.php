@@ -467,10 +467,10 @@ class ProductController extends Controller
 								$naAttribValue = in_array("#N/A", $indexedData,TRUE);
 
 								if (($namedData["BrandID"] == "#N/A") || ($naAttribValue == 1) ) {
-								// 									echo "<pre>Not included";
-								// print_r($namedData["BrandID"]);
-								// print_r($indexedData);
-								// echo "</pre>";
+									echo "<pre>Skipped Product<br/><br/>";
+									echo "Product Name :". $data['ProductName']. "<br/> Model Number : ".$data['ModelNumber']."<br/>";
+									print_r($indexedData);
+									echo "</pre>";
 									continue;
 								}
 								else{
@@ -549,12 +549,14 @@ class ProductController extends Controller
 							$productData['priceRange'] =$priceRange;
 							$productData['products'] =$products;
 
-							// dd(json_encode($productData));
+							echo "<br/>Attempted Upload of".count($products)." products.<br/>==================================================<br/>JSON Input for product Import<br/>";
+							echo json_encode($productData);
+							echo "<br/>==================================================<br/>";
 							
 							$this->parseProductImport($productData);
 
 						}
-						return redirect("/admin/attribute/categoryconfiguration");
+						// return redirect("/admin/attribute/categoryconfiguration");
 
 					}
 
