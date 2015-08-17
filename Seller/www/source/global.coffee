@@ -14,7 +14,7 @@ GEO_DEFAULT =
 	lng: 77.87109375
 
 # Support
-SUPPORT_NUMBER = '9765436351'
+SUPPORT_NUMBER = '+919004198625'
 
 # Help url
-HELP_URL = 'http://www.google.com/'
+HELP_URL = 'http://shopoye.co.in/seller-faqs'
