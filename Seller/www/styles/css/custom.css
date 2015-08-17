@@ -424,6 +424,16 @@ sm {
   margin-bottom: -10px;
   background-position: -9px -553px;
 }
+.aj-slide-img {
+  background-position: center;
+}
+.aj-slide-img .started {
+  bottom: 91px;
+  width: 250px;
+  margin-left: -124.5px;
+  min-height: 0;
+  line-height: 50px;
+}
 /************************************/
 /*Department List*/
 /************************************/
