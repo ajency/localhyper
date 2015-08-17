@@ -2156,7 +2156,7 @@
     });
   });
 
-  Parse.Cloud.define('updateCategoryProductsKeywords', function(request, response) {
+  Parse.Cloud.job('updateCategoryProductsKeywords', function(request, response) {
     var categoryId, innerQueryCategory, queryProducts;
     categoryId = request.params.categoryId;
     innerQueryCategory = new Parse.Query("Category");

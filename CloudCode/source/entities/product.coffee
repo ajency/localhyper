@@ -548,7 +548,7 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
     ,(error) -> 
         response.error error    
 
-Parse.Cloud.define 'updateCategoryProductsKeywords', (request, response) ->
+Parse.Cloud.job 'updateCategoryProductsKeywords', (request, response) ->
     categoryId = request.params.categoryId
 
     innerQueryCategory = new Parse.Query("Category")
