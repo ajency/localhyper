@@ -432,7 +432,7 @@ sm {
   /* Old browsers */
   border-right: 1px solid rgba(190, 190, 190, 0.63);
   border-left: 1px solid #FFF;
-  border-bottom: 3px solid rgba(190, 190, 190, 0.63);
+  border-bottom: 1px solid rgba(190, 190, 190, 0.63);
 }
 .sub-categories .border-card2.border-card.activated {
   background-color: #F5F4F4;
@@ -734,13 +734,47 @@ sm {
   font-size: 14px;
   line-height: 20px;
 }
-.aboutus {
-  margin-top: 35px;
+.about-us-page {
+  background: url(../../img/bg-abt.png);
+  background-size: cover;
 }
-.aboutus p {
+.about-us-page .has-header {
+  background: transparent !important;
+}
+.about-us-page .b-b-0 {
+  border-bottom: 1px solid #313131;
+  margin-bottom: 20px;
+}
+.about-us-page p {
   text-align: center;
   padding-left: 25px;
   padding-right: 25px;
+  color: #7D7D7D;
+}
+.about-us-page .aboutus {
+  margin-top: 35px;
+}
+.about-us-page .social {
+  margin-top: 20px;
+  text-align: center;
+}
+.about-us-page .social a {
+  display: inline-block;
+  font-size: 20px;
+  color: #f45152;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 35px;
+  height: 35px;
+  line-height: 36px;
+  text-align: center;
+  border: 1px solid #444;
+  border-radius: 50%;
+}
+.about-us-page .social a.activated {
+  background: #f45152;
+  border-color: #f45152;
+  color: #fff;
 }
 .sing-pro h5 {
   margin-top: 5px;
@@ -749,7 +783,9 @@ sm {
 .sing-pro h6.subdued {
   margin: 0;
   padding-bottom: 8px;
-  border-bottom: 1px solid #ddd;
+}
+.sing-pro h4.margin-none.pull-right.subdued i.ion-log-out {
+  display: none;
 }
 .list-cont {
   position: relative;
@@ -1704,6 +1740,10 @@ label.status-label {
   top: 0;
   font-size: 28px;
   padding: 11px 10px 9px;
+}
+.popup-comments input.comment {
+  padding-right: 40px;
+  text-overflow: ellipsis;
 }
 .get-price-head i.icon.placeholder-icon:before {
   font-size: 26px;
