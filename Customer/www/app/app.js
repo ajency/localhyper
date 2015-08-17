@@ -1,5 +1,5 @@
 angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage', 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products', 'LocalHyper.aboutUs', 'LocalHyper.googleMaps', 'LocalHyper.suggestProduct', 'LocalHyper.myRequests']).run([
-  '$rootScope', 'App', 'User', function($rootScope, App, User) {
+  '$rootScope', 'App', 'User', '$timeout', function($rootScope, App, User, $timeout) {
     Parse.initialize(APP_ID, JS_KEY);
     $rootScope.App = App;
     App.notification = {
@@ -34,7 +34,13 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       bool = !_.contains(hideForStates, App.currentState);
       App.menuEnabled.left = bool;
       showSearchForStates = ['products', 'single-product'];
-      return App.search.icon = _.contains(showSearchForStates, App.currentState);
+      if (_.contains(showSearchForStates, App.currentState)) {
+        return $timeout(function() {
+          return App.search.icon = true;
+        }, 500);
+      } else {
+        return App.search.icon = false;
+      }
     });
   }
 ]).config([
