@@ -1719,7 +1719,7 @@ label.status-label {
   align-items: center;
 }
 .search-full-page .sub-head-search .button-clear {
-  padding-left: 8px;
+  padding-left: 4px;
 }
 .search-full-page .sub-head-search .button-clear i.icon:before {
   font-size: 30px;
