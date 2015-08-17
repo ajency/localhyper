@@ -181,8 +181,8 @@ sm {
 /* HEADER */
 /************************************/
 .nav-bar-title img {
-  width: 40%;
-  margin-top: 7px;
+  margin-top: 5px;
+  height: 30px;
 }
 .has-header {
   background-color: #F2F1ED;
