@@ -364,7 +364,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         return this.canLoadMore = false;
       },
       onSuccess: function(data, displayLimit) {
-        var productsSize, _products;
+        var _products, productsSize;
         this.other = data;
         if (_.isEmpty(this.filter.attrValues['brand'])) {
           this.filter.setAttrValues();
