@@ -83,6 +83,9 @@ h6 {
 .border-left {
   border-left: 1px solid #ccc;
 }
+.border-right {
+  border-right: 1px solid #ccc;
+}
 .bottom-fixed {
   position: absolute;
   bottom: 0px;
@@ -1339,7 +1342,7 @@ label.status-label {
 }
 .products-filter-view .checkbox input:after,
 .products-filter-view .checkbox-icon:after {
-  top: 10%;
+  top: 31%;
   left: 21%;
   width: 14px;
   height: 7px;
