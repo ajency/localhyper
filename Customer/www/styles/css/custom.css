@@ -951,6 +951,7 @@ button.button.button-assertive b {
   margin-bottom: 0;
   margin-top: 3px;
   margin-right: 9px;
+  min-width: 92px;
 }
 .obj-title .expires p.exp_in {
   color: #959595;
