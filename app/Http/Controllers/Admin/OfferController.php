@@ -56,7 +56,7 @@ class OfferController extends Controller
         
         $offersData = $offers->find(); 
        
-        $offertList = $productRequests=[];
+        $offertList = $productRequests= $onlinePriceArray=[];
         
         foreach($offersData as $offer)
         {
@@ -72,9 +72,20 @@ class OfferController extends Controller
                 $requestsinnerQuery ->equalTo("product", $productObj);  
                 
                 $productRequests[$productId] = $requestsinnerQuery;
+                
+                $productPrice = new ParseQuery("Price");
+                $productPrice->equalTo("type", "online_market_price");
+                $productPrice->equalTo("product", $productObj);
+                $productPriceData = $productPrice->first();
+                
+                $onlinePrice = (!empty($productPriceData))? $productPriceData->get("value").'/-' :'';
+                $onlinePriceArray[$productId]['OnlinePrice'] = $onlinePrice; 
             }
             else
+            {
                $requestsinnerQuery = $productRequests[$productId];
+               $onlinePrice = $onlinePriceArray[$productId]['OnlinePrice']; 
+            }
            
             $lastSellerOffer = new ParseQuery("Offer");
             $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
@@ -90,8 +101,8 @@ class OfferController extends Controller
                         'sellerName'=>$offer->get("seller")->get("displayName"),
                         'area'=>$offer->get("area"),
                         'mrpOfProduct'=>$productObj->get("mrp").'/-',   
-                        'onlinePrice'=>$priceObj->get("value").'/-',
-                        'offerPrice'=>$offer->get("offerPrice").'/-',
+                        'onlinePrice'=>$onlinePrice,
+                        'offerPrice'=>$priceObj->get("value").'/-',
                         'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice").'/-',
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
