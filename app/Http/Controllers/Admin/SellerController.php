@@ -258,7 +258,7 @@ class SellerController extends Controller
         $offers->includeKey('request');
         $offers->includeKey('request.product');
         $offers->includeKey('request.category');
-        $offers->includeKey('Price');
+        $offers->includeKey('price');
         
         $requestCount = $offers->count();          //Pagination
         $offers->limit($displayLimit);
@@ -274,7 +274,7 @@ class SellerController extends Controller
             $requestObj= $offer->get("request");
             $productObj = $requestObj->get('product');
             $categoryObj = $requestObj->get('category');
-            $priceObj = $offer->get('Price'); 
+            $priceObj =   $offer->get('price'); 
             
             $creditUsed =0;
             $transaction = new ParseQuery("Transaction");
@@ -289,7 +289,7 @@ class SellerController extends Controller
                         'id'=>$offer->getObjectId(),
                         'productName'=>$productObj->get("name"),
                         'category'=>$categoryObj->get("name"),
-                        'offerAmt'=>'',//$priceObj->get("amount"),
+                        'offerAmt'=>$priceObj->get("value"),
                         'creditUsed' => $creditUsed,
                         'status'=>$offer->get("status"),
                         'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
