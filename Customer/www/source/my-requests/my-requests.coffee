@@ -173,8 +173,9 @@ angular.module 'LocalHyper.myRequests'
 		$scope.$on '$ionicView.enter', ->
 			$ionicPlatform.onHardwareBackButton onDeviceBack
 
-		$scope.$on '$ionicView.leave', ->
-			$ionicPlatform.offHardwareBackButton onDeviceBack
+		$scope.$on '$stateChangeSuccess', (ev, to)->
+			if to.name isnt 'my-requests'
+				$ionicPlatform.offHardwareBackButton onDeviceBack
 
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			if !viewData.enableBack

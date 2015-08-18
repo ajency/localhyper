@@ -19,8 +19,8 @@
       </div>
    </ion-header-bar>
 
-   <ion-content 
-      class="has-footer"
+   <ion-content
+      class="has-foo ter"
       ng-switch="view.display">
 
       <ion-spinner
@@ -54,7 +54,7 @@
                   </div>
                   <div class="col ">
                      <b class="text-left m-t-5 center-block">
-                        {{view.offerDetails.data.distanceFromCustomer.toFixed(2)}} 
+                        {{view.offerDetails.data.distanceFromCustomer.toFixed(2)}}
                         <sm>kms away</sm>
                      </b>
                      <h3 class="light-gray text-left">Distance from you</h3>
@@ -70,8 +70,8 @@
 
                <div class="row ">
                   <div class="col ">
-                     <h4 class="text-left subdued text-center margin-none"> 
-                        MRP  <br><span class="WebRupee subdued">&#x20B9;</span> 
+                     <h4 class="text-left subdued text-center margin-none">
+                        MRP  <br><span class="WebRupee subdued">&#x20B9;</span>
                         <b class="big-txt">{{App.toINR(view.offerDetails.data.product.mrp)}}</b>
                      </h4>
                   </div>
@@ -82,7 +82,7 @@
                   </div>
                   <div class="col border-right">
                      <h4 class="text-left subdued text-center margin-none">
-                        You offered <br><span class="WebRupee subdued">&#x20B9;</span> 
+                        You offered <br><span class="WebRupee subdued">&#x20B9;</span>
                         <b class="big-txt">{{App.toINR(view.offerDetails.data.offerPrice)}}</b>
                      </h4>
                   </div>
@@ -97,18 +97,18 @@
                         <div class="input-label">
                            Status
                         </div>
-                        <select 
+                        <select
                            ng-model="view.offerDetails.data.deliveryStatus"
                            ng-change="view.offerDetails.onDeliveryStatusChange();"
                            ng-disabled="view.offerDetails.showChange">
-                           
+
                            <option value="sent_for_delivery">
                               Sent for delivery
                            </option>
                            <option value="successful">
                               Successful
                            </option>
-                           <option 
+                           <option
                               value="failed_delivery">
                               Failed
                            </option>
@@ -134,7 +134,7 @@
                <div class="row" ng-if="view.offerDetails.failedDelivery.display">
                   <div class="col">
                      <label class="item item-input">
-                     <textarea 
+                     <textarea
                         placeholder="Reason for failure"
                         ng-model="view.offerDetails.failedDelivery.reason"
                         ng-disabled="view.offerDetails.showChange">
@@ -189,9 +189,9 @@
             </div>
 
             <div class="col col-50">
-               <div 
-                  class="deli-tim" 
-                  ng-if="view.offerDetails.data.request.status === 'pending_delivery' 
+               <div
+                  class="deli-tim"
+                  ng-if="view.offerDetails.data.request.status === 'pending_delivery'
                   || view.offerDetails.data.request.status === 'sent_for_delivery'">
 
                   <i class="icon-img icon-cust-cal bigger">
@@ -246,7 +246,7 @@
 
    </ion-content>
 
-   <ion-footer-bar 
+   <ion-footer-bar
       ng-if="!view.offerDetails.showChange"
       ng-click="view.offerDetails.updateDeliveryStatus();">
 

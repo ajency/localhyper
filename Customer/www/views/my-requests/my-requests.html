@@ -14,7 +14,7 @@
 		</ion-refresher>
 
 		<ion-list
-			class="card-list"
+			class="card-list req-cards-c"
 			ng-switch-when="noError">
 
 			<ion-item
@@ -35,8 +35,8 @@
 					</div>
 				</div>
 
-				<div class="row item border-none p-t-10" >
-			        <div class="col  p-t-0">
+				<div class="row item border-none" >
+			        <div class="col  p- t-0">
 			            <sm class="light-gray"> Local Price</sm><br>
 			            <h3
 			            	class="item-text-wrap margin-none big-txt"
@@ -51,7 +51,7 @@
 			            	N/A
 			            </h3>
 			        </div>
-			        <div class="col p-t-0">
+			        <div class="col p-t-0 p-r-0">
 			        	<div class="pull-right">
 			            <div class="offer"> {{request.offerCount}} </div>
 			            <h4 class="offertxt light-gray"> No of offers</h4>
@@ -60,12 +60,12 @@
 		    	</div>
 
 			    <div class="row item item-divider" >
-			        <div class="col  col-25 ">
+			        <div class="col  col-25 p-t-0 p-b-0 ">
 			           <sm class="subdued ">
 			           		<i class="ion-ios-clock-outline"> </i>{{request.timeStr}}
 			           	</sm>
 			        </div>
-			        <div class="col col-75">
+			        <div class="col col-75 p-t-0 p-b-0">
 			         	<h3
 			         		class="margin-none text-right m-t-5"
 			         		ng-class="(request.status === 'cancelled'
@@ -80,11 +80,13 @@
 
 		<div ng-if="view.gotAllRequests && view.openRequests.length == 0">
 			<h5 class="text-center fin">We could not find any requests.</h5>
+			<div class="spacer-20"></div>
 		</div>
 
 		<div ng-if="view.gotAllRequests && view.openRequests.length > 0">
 			<!-- <img src="./img/nomorerequests.png" alt="" class="req-img"> -->
 			<h5 class="text-center fin">That's all folks. No more requests to display.</h5>
+			<div class="spacer-20"></div>
 		</div>
 
 		<ion-infinite-scroll

@@ -30,7 +30,7 @@
 				You have no accepted offers.
 			</h5>
 
-	       	<ion-item 
+	       	<ion-item
 
 	       		class="card-box"
 	       		ng-repeat="request in view.requests"
@@ -44,7 +44,7 @@
 
 				    <h2>{{request.product.name}}
 							<i class="ion-record " id="{{App.humanize(request.offerStatus)}}"></i>
-				    </h2> 
+				    </h2>
 
 				      <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms away</b>
 
@@ -115,9 +115,10 @@
 			tap-to-retry="view.onTapToRetry()" class="error-wrapper">
 		</aj-error>
 
-		<h4 class="text-center subdued" ng-if="view.gotAllOffers && view.requests.length !== 0">
+		<h5 class="text-center subdued fin" ng-if="view.gotAllOffers && view.requests.length !== 0">
 			That's all folks, no more offers to display.
-		</h4>
+			<div class="spacer-20"></div>
+		</h5>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"
