@@ -2,9 +2,9 @@ angular.module 'LocalHyper.products'
 
 
 .controller 'MakeRequestCtrl', ['$scope', 'App', 'GPS', 'CToast', 'CDialog', '$timeout'
-	, 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope'
+	, 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope', '$ionicPlatform'
 	, ($scope, App, GPS, CToast, CDialog, $timeout, GoogleMaps, UIMsg, CSpinner
-	, User, ProductsAPI, $ionicPopup, $rootScope)->
+	, User, ProductsAPI, $ionicPopup, $rootScope, $ionicPlatform)->
 
 		$scope.view =
 			latLng: null
@@ -18,6 +18,7 @@ angular.module 'LocalHyper.products'
 
 			comments: 
 				text: ''
+				popup: null
 
 			init : ->
 				@reset()
@@ -167,24 +168,24 @@ angular.module 'LocalHyper.products'
 
 			addComments : ->
 				@comments.temp = @comments.text
-				$ionicPopup.show
-					template:   '<div class="list">
-									<label class="item item-input">
-										<textarea 
-											placeholder="Comments"
-											ng-model="view.comments.temp">
-										</textarea>
-									</label>
-								</div>'
-					title: 'Add comments'
-					scope: $scope
-					buttons: [
-						{ text: 'Cancel' }
-						{ 
-							text: '<b>Save</b>'
-							type: 'button-positive'
-							onTap: (e)=> @comments.text = @comments.temp
-						}]
+				@comments.popup = $ionicPopup.show
+						template:   '<div class="list">
+										<label class="item item-input">
+											<textarea 
+												placeholder="Comments"
+												ng-model="view.comments.temp">
+											</textarea>
+										</label>
+									</div>'
+						title: 'Add comments'
+						scope: $scope
+						buttons: [
+							{ text: 'Cancel' }
+							{ 
+								text: '<b>Save</b>'
+								type: 'button-positive'
+								onTap: (e)=> @comments.text = @comments.temp
+							}]
 
 			makeRequest : ->
 				if @isLocationReady()
@@ -226,12 +227,28 @@ angular.module 'LocalHyper.products'
 						.finally ->
 							CSpinner.hide()
 
+		
+
+		onDeviceBack = ->
+			if $('.popup-container').hasClass 'active'
+				
+				$scope.view.comments.popup.close()
+			else
+				
+				App.goBack -1
+
+		$scope.$on '$ionicView.enter', ->
+			$ionicPlatform.onHardwareBackButton onDeviceBack
+
+		$scope.$on '$ionicView.leave', ->
+			$ionicPlatform.offHardwareBackButton onDeviceBack
 
 		$scope.$on '$ionicView.beforeEnter', ->
 			App.scrollTop()
 
 		$scope.$on '$ionicView.afterEnter', ->
 			$scope.view.init()
+
 ]
 
 

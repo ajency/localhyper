@@ -1,5 +1,6 @@
 angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
-  '$scope', 'App', 'GPS', 'CToast', 'CDialog', '$timeout', 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope', function($scope, App, GPS, CToast, CDialog, $timeout, GoogleMaps, UIMsg, CSpinner, User, ProductsAPI, $ionicPopup, $rootScope) {
+  '$scope', 'App', 'GPS', 'CToast', 'CDialog', '$timeout', 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope', '$ionicPlatform', function($scope, App, GPS, CToast, CDialog, $timeout, GoogleMaps, UIMsg, CSpinner, User, ProductsAPI, $ionicPopup, $rootScope, $ionicPlatform) {
+    var onDeviceBack;
     $scope.view = {
       latLng: null,
       addressFetch: true,
@@ -10,7 +11,8 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         found: false
       },
       comments: {
-        text: ''
+        text: '',
+        popup: null
       },
       init: function() {
         this.reset();
@@ -211,7 +213,7 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       },
       addComments: function() {
         this.comments.temp = this.comments.text;
-        return $ionicPopup.show({
+        return this.comments.popup = $ionicPopup.show({
           template: '<div class="list"> <label class="item item-input"> <textarea placeholder="Comments" ng-model="view.comments.temp"> </textarea> </label> </div>',
           title: 'Add comments',
           scope: $scope,
@@ -278,6 +280,19 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         }
       }
     };
+    onDeviceBack = function() {
+      if ($('.popup-container').hasClass('active')) {
+        return $scope.view.comments.popup.close();
+      } else {
+        return App.goBack(-1);
+      }
+    };
+    $scope.$on('$ionicView.enter', function() {
+      return $ionicPlatform.onHardwareBackButton(onDeviceBack);
+    });
+    $scope.$on('$ionicView.leave', function() {
+      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
+    });
     $scope.$on('$ionicView.beforeEnter', function() {
       return App.scrollTop();
     });

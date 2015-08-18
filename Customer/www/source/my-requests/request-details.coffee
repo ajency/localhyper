@@ -12,6 +12,7 @@ angular.module 'LocalHyper.myRequests'
 			errorType: ''
 			pushParams: null
 			
+			
 			address: 
 				show: false
 				toggle : ->
@@ -43,9 +44,12 @@ angular.module 'LocalHyper.myRequests'
 				all: []
 				limitTo: 1
 				rate:
+					star : ''
 					score: 0
 					comment: ''
 					setScore : (score)->
+						rateValue = ['','Poor', 'Average', 'Good', 'Very Good', 'Excellent']
+						@star = rateValue[score]
 						@score = score
 
 				showAll : ->
@@ -88,6 +92,7 @@ angular.module 'LocalHyper.myRequests'
 								_.each @all, (offer)-> App.notification.decrement()
 
 				openRatePopup : (seller)->
+					@rate.star = ''
 					@rate.score = 0
 					@rate.comment = ''
 					$ionicPopup.show
@@ -104,19 +109,22 @@ angular.module 'LocalHyper.myRequests'
 							}]
 
 				rateSeller : (seller)->
-					CSpinner.show '', 'Submitting your review...'
-					RequestAPI.updateSellerRating
-						"customerId": User.getId()
-						"sellerId": seller.id
-						"ratingInStars": @rate.score
-						"comments": @rate.comment
-					.then ->
-						seller.isSellerRated = true
-						CToast.show 'Thanks for your feedback'
-					, (error)->
-						CToast.show 'An error occurred, please try again'
-					.finally ->
-						CSpinner.hide()
+					if (@rate.score == 0)
+						CToast.show 'Please select stars'
+					else 
+						CSpinner.show '', 'Submitting your review...'
+						RequestAPI.updateSellerRating
+							"customerId": User.getId()
+							"sellerId": seller.id
+							"ratingInStars": @rate.score
+							"comments": @rate.comment
+						.then ->
+							seller.isSellerRated = true
+							CToast.show 'Thanks for your feedback'
+						, (error)->
+							CToast.show 'An error occurred, please try again'
+						.finally ->
+							CSpinner.hide()
 
 			
 
