@@ -532,13 +532,16 @@ class ProductController extends Controller
 							$i++;
 						}
 							if (count($inputImageUrls)>0) {
-								// insert image urls in process image table
-								$processImage = new ProcessImage();
-						        $processImage->object_type = "product";
-						        $processImage->images = $inputImageUrls;
-						        $processImage->status = 0;
+								foreach ($inputImageUrls as $inputImageUrl) {
+									// insert image urls in process image table
+									$processImage = new ProcessImage();
+									$processImage->object_type = "product";
+									$processImage->images = $inputImageUrl;
+									$processImage->status = 0;
 
-						        $processImage->save();
+									$processImage->save();
+								}
+
 							}
 
 
