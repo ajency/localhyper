@@ -20,6 +20,8 @@
               <th>No. Of Requests Cancelled</th>
               <th>No. Of Requests Successfull</th>
               <th>No. Of Failed Delivery</th>
+              <th>No. Of Pending Delivery</th>
+              <th>No. Of Sent Delivery</th>    
             </tr>
           </thead>
           <tbody>
@@ -32,7 +34,9 @@
                 <td>{{ $customer['requestExpired'] }}</td>
                 <td>{{ $customer['requestCancelled'] }}</td>  
                 <td>{{ $customer['requestSuccessfull'] }}</td>  
-                <td>{{ $customer['deliveryStatus'] }}</td>    
+                <td>{{ $customer['deliveryStatus'] }}</td> 
+                <td>{{ $customer['pendingDelivery'] }}</td> 
+                <td>{{ $customer['sentDelivery'] }}</td>   
               </tr>
            @endforeach
           </tbody>
