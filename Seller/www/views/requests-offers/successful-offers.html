@@ -115,8 +115,9 @@
 			tap-to-retry="view.onTapToRetry()" class="error-wrapper">
 		</aj-error>
 
-		<h5 class="text-center subdued" ng-if="view.gotAllOffers && view.requests.length !== 0">
+		<h5 class="text-center subdued fin" ng-if="view.gotAllOffers && view.requests.length !== 0">
 			That's all folks, no more offers to display.
+			<div class="spacer-20"></div>
 		</h5>
 
 		<ion-infinite-scroll
