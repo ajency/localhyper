@@ -851,6 +851,13 @@ sm{
 .b-r-1 {border-right: 1px solid #ddd;}
 
 .business-details {
+	.card {
+		margin-top: 10px;
+		margin-bottom: 10px;
+		&.m-t-0 {
+			margin-top: 0;
+		}
+	}
 	.d-t-a-btn {
 		line-height: 42px;
 		height: auto;
@@ -1990,5 +1997,33 @@ input[disabled]~.radio-icon-show{
 	}
 	h2.margin-none.number-count.ng-binding {
 		white-space: nowrap;
+	}
+}
+
+
+//menu settings & others
+.aj-menu-bg {
+	p {
+		padding: 0 16px;
+		margin: 0;
+		margin-top: 10px;
+		color: #848484;
+		text-transform: uppercase;
+	}
+}
+
+//auto offer in profile
+.auto-offer-profile {
+	h4 {
+		margin: 0;
+		text-align: left;
+		line-height: 37px;
+		padding-left: 12px;
+		color: @brand-primary;
+	}
+	label {
+		padding-right: 15px;
+		position: relative;
+		top: 3px;
 	}
 }

@@ -858,6 +858,13 @@ sm {
 .b-r-1 {
   border-right: 1px solid #ddd;
 }
+.business-details .card {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.business-details .card.m-t-0 {
+  margin-top: 0;
+}
 .business-details .d-t-a-btn {
   line-height: 42px;
   height: auto;
@@ -1951,4 +1958,23 @@ input[disabled] ~ .radio-icon-show {
 }
 .user-noti-info h2.margin-none.number-count.ng-binding {
   white-space: nowrap;
+}
+.aj-menu-bg p {
+  padding: 0 16px;
+  margin: 0;
+  margin-top: 10px;
+  color: #848484;
+  text-transform: uppercase;
+}
+.auto-offer-profile h4 {
+  margin: 0;
+  text-align: left;
+  line-height: 37px;
+  padding-left: 12px;
+  color: #f35a59;
+}
+.auto-offer-profile label {
+  padding-right: 15px;
+  position: relative;
+  top: 3px;
 }
