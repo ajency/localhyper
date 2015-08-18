@@ -450,6 +450,7 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
 
             productLastOfferedPrices = {}
             requestsWhereOfferMade = []
+            productLastOfferedDeliveryTime = {}
 
             # all offers made by seller
             _.each offersMadeBySeller , (offerMadeBySeller) ->
@@ -460,8 +461,15 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
                 offerPrice =  priceObj.get("value")
 
                 productLastOfferedPrices[productId] = offerPrice
+                
+                lastDeliveryTime = offerMadeBySeller.get("deliveryTime")
+                productLastOfferedDeliveryTime[productId] = lastDeliveryTime 
 
-            getRequestData(requestObject,sellerDetails,productLastOfferedPrices)
+            lastOffers = []          
+            lastOffers[0] =  productLastOfferedPrices         
+            lastOffers[1] =  productLastOfferedDeliveryTime                
+
+            getRequestData(requestObject,sellerDetails,lastOffers)
 
             .then (requestData) ->
                 response.success requestData
@@ -695,6 +703,7 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
         .then (offersMadeBySeller) ->
 
             productLastOfferedPrices = {}
+            productLastOfferedDeliveryTime = {}
             requestsWhereOfferMade = []
 
             # all offers made by seller
@@ -706,6 +715,9 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
                 offerPrice =  priceObj.get("value")
 
                 productLastOfferedPrices[productId] = offerPrice
+
+                lastDeliveryTime = offerMadeBySeller.get("deliveryTime")
+                productLastOfferedDeliveryTime[productId] = lastDeliveryTime
                 
                 requestsWhereOfferMade.push offerMadeBySeller.get("request").id
 
@@ -713,7 +725,11 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
                 
             #     offerMade.get("request").id
 
-            # )           
+            # ) 
+
+            lastOffers = []          
+            lastOffers[0] =  productLastOfferedPrices         
+            lastOffers[1] =  productLastOfferedDeliveryTime         
 
             requestQuery = new Parse.Query("Request")
             requestQuery.containedIn("category",sellerCategories)
@@ -779,7 +795,7 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
                     "geoPoint" : sellerGeoPoint
 
                 requestsQs = _.map(filteredRequests , (filteredRequest) ->
-                    requestPromise = getRequestData(filteredRequest,sellerDetails,productLastOfferedPrices)
+                    requestPromise = getRequestData(filteredRequest,sellerDetails,lastOffers)
                 )   
 
                 Parse.Promise.when(requestsQs).then ->
@@ -806,10 +822,13 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
 
     promise           
 
-getRequestData =  (filteredRequest,seller,productLastOfferedPrices) ->
+getRequestData =  (filteredRequest,seller,lastOffers ) ->
     
     promise = new Parse.Promise()
 
+    productLastOfferedPrices = lastOffers[0]
+    productLastOfferedDeliveryTime = lastOffers[1] 
+    
     sellerId = seller.id 
     sellerGeoPoint = seller.geoPoint
 
@@ -848,6 +867,15 @@ getRequestData =  (filteredRequest,seller,productLastOfferedPrices) ->
         else
             lastOffered = ""
 
+         
+        productsWithLastOfferedDelivery = _.keys(productLastOfferedDeliveryTime)   
+        if _.indexOf(productsWithLastOfferedDelivery, productId) > -1
+            lastOfferedDeliveryTime = productLastOfferedDeliveryTime[productId]
+        else
+            lastOfferedDeliveryTime = ""
+
+
+
         requestObj = 
             id : filteredRequest.id
             radius : radiusDiffInKm
@@ -859,6 +887,7 @@ getRequestData =  (filteredRequest,seller,productLastOfferedPrices) ->
             status: filteredRequest.get("status")            
             offerCount: filteredRequest.get("offerCount")  
             lastOfferPrice : lastOffered
+            lastDeliveryTime : lastOfferedDeliveryTime
             onlinePrice: productPrice["online"]["value"] 
             platformPrice : productPrice["platform"]["value"]         
 

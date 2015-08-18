@@ -2765,19 +2765,25 @@
       offerQuery.include("price");
       offerQuery.descending("createdAt");
       return offerQuery.find().then(function(offersMadeBySeller) {
-        var requestsWhereOfferMade;
+        var lastOffers, productLastOfferedDeliveryTime, requestsWhereOfferMade;
         productLastOfferedPrices = {};
         requestsWhereOfferMade = [];
+        productLastOfferedDeliveryTime = {};
         _.each(offersMadeBySeller, function(offerMadeBySeller) {
-          var offerPrice, priceObj, productId, productObj, requestObj;
+          var lastDeliveryTime, offerPrice, priceObj, productId, productObj, requestObj;
           requestObj = offerMadeBySeller.get("request");
           productObj = requestObj.get("product");
           productId = productObj.id;
           priceObj = offerMadeBySeller.get("price");
           offerPrice = priceObj.get("value");
-          return productLastOfferedPrices[productId] = offerPrice;
+          productLastOfferedPrices[productId] = offerPrice;
+          lastDeliveryTime = offerMadeBySeller.get("deliveryTime");
+          return productLastOfferedDeliveryTime[productId] = lastDeliveryTime;
         });
-        return getRequestData(requestObject, sellerDetails, productLastOfferedPrices).then(function(requestData) {
+        lastOffers = [];
+        lastOffers[0] = productLastOfferedPrices;
+        lastOffers[1] = productLastOfferedDeliveryTime;
+        return getRequestData(requestObject, sellerDetails, lastOffers).then(function(requestData) {
           return response.success(requestData);
         }, function(error) {
           return response.error(error);
@@ -2988,19 +2994,25 @@
       offerQuery.include("price");
       offerQuery.descending("createdAt");
       return offerQuery.find().then(function(offersMadeBySeller) {
-        var currentDate, currentTimeStamp, endPrice, expiryValueInHrs, innerQueryProduct, productLastOfferedPrices, queryDate, requestQuery, requestsWhereOfferMade, sellerGeoPoint, startPrice, time24HoursAgo;
+        var currentDate, currentTimeStamp, endPrice, expiryValueInHrs, innerQueryProduct, lastOffers, productLastOfferedDeliveryTime, productLastOfferedPrices, queryDate, requestQuery, requestsWhereOfferMade, sellerGeoPoint, startPrice, time24HoursAgo;
         productLastOfferedPrices = {};
+        productLastOfferedDeliveryTime = {};
         requestsWhereOfferMade = [];
         _.each(offersMadeBySeller, function(offerMadeBySeller) {
-          var offerPrice, priceObj, productId, productObj, requestObj;
+          var lastDeliveryTime, offerPrice, priceObj, productId, productObj, requestObj;
           requestObj = offerMadeBySeller.get("request");
           productObj = requestObj.get("product");
           productId = productObj.id;
           priceObj = offerMadeBySeller.get("price");
           offerPrice = priceObj.get("value");
           productLastOfferedPrices[productId] = offerPrice;
+          lastDeliveryTime = offerMadeBySeller.get("deliveryTime");
+          productLastOfferedDeliveryTime[productId] = lastDeliveryTime;
           return requestsWhereOfferMade.push(offerMadeBySeller.get("request").id);
         });
+        lastOffers = [];
+        lastOffers[0] = productLastOfferedPrices;
+        lastOffers[1] = productLastOfferedDeliveryTime;
         requestQuery = new Parse.Query("Request");
         requestQuery.containedIn("category", sellerCategories);
         requestQuery.containedIn("brand", sellerBrands);
@@ -3042,7 +3054,7 @@
           };
           requestsQs = _.map(filteredRequests, function(filteredRequest) {
             var requestPromise;
-            return requestPromise = getRequestData(filteredRequest, sellerDetails, productLastOfferedPrices);
+            return requestPromise = getRequestData(filteredRequest, sellerDetails, lastOffers);
           });
           return Parse.Promise.when(requestsQs).then(function() {
             var individualReqResults, requestsResult;
@@ -3070,9 +3082,11 @@
     return promise;
   };
 
-  getRequestData = function(filteredRequest, seller, productLastOfferedPrices) {
-    var prodObj, product, productId, promise, sellerGeoPoint, sellerId;
+  getRequestData = function(filteredRequest, seller, lastOffers) {
+    var prodObj, product, productId, productLastOfferedDeliveryTime, productLastOfferedPrices, promise, sellerGeoPoint, sellerId;
     promise = new Parse.Promise();
+    productLastOfferedPrices = lastOffers[0];
+    productLastOfferedDeliveryTime = lastOffers[1];
     sellerId = seller.id;
     sellerGeoPoint = seller.geoPoint;
     prodObj = filteredRequest.get("product");
@@ -3085,7 +3099,7 @@
       "model_number": prodObj.get("model_number")
     };
     getOtherPricesForProduct(prodObj).then(function(productPrice) {
-      var brand, brandObj, category, categoryObj, innerQueryRequest, innerQuerySeller, lastOffered, productsWithLastOffered, queryNotification, radiusDiffInKm, requestObj, reuqestGeoPoint;
+      var brand, brandObj, category, categoryObj, innerQueryRequest, innerQuerySeller, lastOffered, lastOfferedDeliveryTime, productsWithLastOffered, productsWithLastOfferedDelivery, queryNotification, radiusDiffInKm, requestObj, reuqestGeoPoint;
       categoryObj = filteredRequest.get("category");
       category = {
         "id": categoryObj.id,
@@ -3105,6 +3119,12 @@
       } else {
         lastOffered = "";
       }
+      productsWithLastOfferedDelivery = _.keys(productLastOfferedDeliveryTime);
+      if (_.indexOf(productsWithLastOfferedDelivery, productId) > -1) {
+        lastOfferedDeliveryTime = productLastOfferedDeliveryTime[productId];
+      } else {
+        lastOfferedDeliveryTime = "";
+      }
       requestObj = {
         id: filteredRequest.id,
         radius: radiusDiffInKm,
@@ -3116,6 +3136,7 @@
         status: filteredRequest.get("status"),
         offerCount: filteredRequest.get("offerCount"),
         lastOfferPrice: lastOffered,
+        lastDeliveryTime: lastOfferedDeliveryTime,
         onlinePrice: productPrice["online"]["value"],
         platformPrice: productPrice["platform"]["value"]
       };
