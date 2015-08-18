@@ -174,7 +174,7 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
         })(this));
       },
       onSuccess: function(data, displayLimit) {
-        var requestsSize, _requests;
+        var _requests, requestsSize;
         this.display = 'noError';
         _requests = data;
         requestsSize = _.size(_requests);
@@ -224,8 +224,10 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
     $scope.$on('$ionicView.enter', function() {
       return $ionicPlatform.onHardwareBackButton(onDeviceBack);
     });
-    $scope.$on('$ionicView.leave', function() {
-      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
+    $scope.$on('$stateChangeSuccess', function(ev, to) {
+      if (to.name !== 'my-requests') {
+        return $ionicPlatform.offHardwareBackButton(onDeviceBack);
+      }
     });
     return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
       var cacheForStates;
