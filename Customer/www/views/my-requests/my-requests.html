@@ -38,14 +38,14 @@
 				<div class="row item border-none p-t-10" >
 			        <div class="col  p-t-0">
 			            <sm class="light-gray"> Local Price</sm><br>
-			            <h3 
+			            <h3
 			            	class="item-text-wrap margin-none big-txt"
 			            	ng-if="request.product.platformPrice !== ''">
 
 			            	<span class="WebRupee subdued">&#x20B9;</span>
 			            	{{App.toINR(request.product.platformPrice)}}
 			            </h3>
-			            <h3 
+			            <h3
 			            	class="item-text-wrap margin-none big-txt"
 			            	ng-if="request.product.platformPrice === ''">
 			            	N/A
@@ -104,18 +104,20 @@
 
 	<ion-footer-bar class="bar-stable">
 		<div class="row">
+			<!-- <div class="col col-25 border-right"></div> -->
 			<div
-				class="col-50 text-center "
+				class="col col-50 text-center p-t-0"
+				style="margin: 0 auto;"
 				ng-click="view.filter.openModal();">
 
 				<h5 class="margin-none normal filter-txt">
-					<i class="ion ion-funnel"></i>
+					<i class="ion ion-funnel" style="margin-left: 5px;"></i>
 			 		FILTER
 					<br>
 					<sm>{{view.filter.excerpt}}<sm>
 				</h5>
 			</div>
-			<div class="col col-50 border-left"></div>
+			<!-- <div class="col col-25 border-left"></div> -->
 		</div>
 	</ion-footer-bar>
 
