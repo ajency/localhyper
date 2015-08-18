@@ -281,7 +281,9 @@
 
 						<div
 							class="col align-center p-a-0 p-r-6"
-							ng-if="offer.deliveryTimeLeftStr !== '0'">
+							ng-if="offer.deliveryTimeLeftStr !== '0' 
+									&& view.request.status !== 'successful' 
+									&& view.request.status !== 'failed_delivery'">
 
 							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery in</p>
@@ -290,11 +292,39 @@
 
 						<div
 							class="col align-center p-a-0 p-r-6"
-							ng-if="offer.deliveryTimeLeftStr === '0'">
+							ng-if="offer.deliveryTimeLeftStr === '0' 
+									&& view.request.status !== 'successful' 
+									&& view.request.status !== 'failed_delivery'">
 
 							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery due</p>
-							<button class="button button-balanced call-support" ng-click="App.callSupport();">Call Support</button>
+							<button 
+								class="button button-balanced call-support" 
+								ng-click="App.callSupport();">
+								Call Support
+							</button>
+						</div>
+
+						<div
+							class="col align-center p-a-0 p-r-6"
+							ng-if="view.request.status === 'failed_delivery'">
+
+							<div class="vert-div pull-left"></div>
+							<p class="info">Delivery failed</p>
+							<button 
+								class="button button-balanced call-support" 
+								ng-click="App.callSupport();">
+								Call Support
+							</button>
+						</div>
+
+						<div
+							class="col align-center p-a-0 p-r-6"
+							ng-if="view.request.status === 'successful'">
+
+							<div class="vert-div pull-left"></div>
+							<p class="info">Product</p>
+							<h2>Delivered</h2>
 						</div>
 
 						<div class="col align-center p-a-0">
