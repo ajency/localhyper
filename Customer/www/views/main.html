@@ -16,7 +16,7 @@
 			</ion-nav-buttons>
 
 			<ion-nav-buttons side="right">
-				<button 
+				<button
 					ng-if="App.search.icon"
 					class="button button-icon ion-android-search"
 					ng-click="App.navigate('products-search', {categoryID: App.search.categoryID})">
@@ -53,12 +53,12 @@
 			<ion-list class="aj-menutext">
 
 				<ion-item ng-if="view.userProfile.display" class="userprofile">
-					<h2 style="color: #E2E2E2; font-size: 20px;"><i class="icon ion-person"></i> {{view.userProfile.name}}</h2>
+					<h2 style="color: #E2E2E2; font-size: 15px; font-weight: 700; margin-left: 2px;"><i class="icon ion-person"></i> {{view.userProfile.name}}</h2>
 					<h2 style="color: #989898;"><i class="icon ion-ios-telephone" style="margin-left: 3px;"></i> +91-{{view.userProfile.phone}}</h2>
 				</ion-item>
 
 				<ion-item ng-if="!view.userProfile.display" class="userprofile">
-					<h2 style="color: #E2E2E2; font-size: 20px;"><i class="icon ion-person"></i> Guest </h2>
+					<h2 style="color: #E2E2E2; font-size: 15px; font-weight: 700; margin-left: 2px;"><i class="icon ion-person"></i> Guest </h2>
 					<h2 style="color: #989898;"></i> Phone number not verified</h2>
 				</ion-item>
 
