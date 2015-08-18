@@ -17,27 +17,27 @@
 		</div>
 	</div>
 
-	<ion-content 
+	<ion-content
 		ng-switch="view.display"
 		class="has-credit-sub-header">
-		
+
 		<ion-refresher
-			on-refresh="view.onPullToRefresh();" 
+			on-refresh="view.onPullToRefresh();"
 			class="aj-refresher">
 		</ion-refresher>
 
-		<ion-list 
-			class="card-list list-inset margin-none" 
+		<ion-list
+			class="card-list list-inset margin-none"
 			ng-switch-when="noError">
 
-			<div 
-				class="card-box2" 
+			<div
+				class="card-box2"
 				ng-repeat="credit in view.creditHistoryData"
 				ng-controller="EachCreditRecordCtrl">
 
 				<div class="row">
 					<div class="col">
-						<div class="date"> 
+						<div class="date">
 							<span class="month">{{credit.date.month}}</span>
 							<span class="day">{{credit.date.day}}</span>
 							<span class="year">{{credit.date.year}}</span>
@@ -51,21 +51,21 @@
 
 						<div ng-if="credit.transactionType === 'minus'">
 							<h5 class="margin-none subdued text-left">{{credit.product.name}}</h5>
-						
+
 							<b ng-if="credit.transactionTowards === 'make_offer'" class="text-default uppercase"> Offer Made </b>
 							<b ng-if="credit.transactionTowards === 'accept_offer'" class="text-default uppercase"> Offer Accepted </b>
-						</div>	
+						</div>
 					</div>
-					
+
 					<div class="col col-20">
 						<div>
 							<p class="margin-none text-center">Points</p>
-							<h3 
+							<h3
 								class="normal margin-none text-success points"
 								ng-if="credit.transactionType === 'add'">
 								+{{credit.creditCount}}
 							</h3>
-							<h3 
+							<h3
 								class="normal margin-none text-primary points"
 								ng-if="credit.transactionType === 'minus'">
 								-{{credit.creditCount}}
@@ -84,13 +84,14 @@
 		</aj-error>
 
 		<div ng-if="view.gotAllRecords">
-			<h4 class="text-center subdued">That's all folks, no more records to display.</h4>
+			<h4 class="text-center subdued fin">That's all folks, no more records to display.</h4>
+			<div class="spacer-20"></div>
 		</div>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll();"
 			ng-if="view.canLoadMore"
-			distance="5%" 
+			distance="5%"
 			class="aj-refresher">
 		</ion-infinite-scroll>
 

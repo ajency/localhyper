@@ -1005,9 +1005,19 @@ button.button.button-assertive b {
   box-shadow: 0 0 0 #fff;
 }
 .rece-offer .user-details button.button.button-dark {
-  line-height: 21px;
+  display: inline-block;
+  line-height: 19px;
   min-height: 0;
+  padding: 2px 6px;
   padding: 0 6px;
+  border-color: #E4D41A;
+  background-color: #FFF046;
+  color: #4C4602;
+}
+.rece-offer .user-details button.button.button-dark.activated {
+  color: #E4D41A;
+  background-color: #444;
+  border-color: #222;
 }
 .rece-offer .user-wrap {
   width: 50px;
@@ -1025,20 +1035,26 @@ button.button.button-assertive b {
   text-align: left;
   margin-bottom: 3px;
   margin-top: 0;
+  padding-right: 35px;
 }
 .rece-offer h3 span {
   font-weight: 300;
   color: #5D5D5D;
+  margin-right: 2px;
 }
 .rece-offer p.time-rece {
   font-style: italic;
   color: #aaaaaa;
   margin-top: 1px;
+  margin-bottom: 0;
 }
 .rece-offer p.comment {
   color: #777777;
   opacity: .6;
   margin-bottom: 0;
+  position: absolute;
+  right: 15px;
+  top: 42px;
 }
 .rece-offer p.comment button.button.icon {
   padding: 1px 8px 0;
@@ -1076,7 +1092,7 @@ button.button.button-assertive b {
   margin-right: 6px;
 }
 .rece-offer .offer-vals {
-  padding-top: 10px;
+  padding-top: 6px;
 }
 .rece-offer .offer-vals .info {
   font-size: 13px;
@@ -1111,7 +1127,6 @@ button.button.button-assertive b {
 }
 .rece-offer .offer-vals .button.btn-phone {
   padding: 0 11px;
-  float: right;
   margin-top: 0;
   width: 40px;
   height: 40px;
@@ -1169,6 +1184,9 @@ button.button.button-assertive b {
 }
 .spacer-40 {
   height: 40px;
+}
+.spacer-20 {
+  height: 20px;
 }
 .fin {
   color: #969696;

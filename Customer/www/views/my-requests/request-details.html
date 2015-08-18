@@ -197,6 +197,12 @@
 
 								<h3>{{offer.seller.businessName}}
 									<span class="loc">{{offer.seller.address.city}}</span>
+									<button
+										class="button button-dark button-small pull-r ight rating-btn"
+										ng-if="!offer.seller.isSellerRated"
+										ng-click="view.offers.openRatePopup(offer.seller);">
+										Rate Seller
+									</button>
 								</h3>
 
 								<p
@@ -208,12 +214,12 @@
 									<span style="display: none" class="com">{{offer.comments}}</span>
 								</p>
 
-								<button
+								<!-- <button
 									class="button button-dark button-small pull-right rating-btn"
 									ng-if="!offer.seller.isSellerRated"
 									ng-click="view.offers.openRatePopup(offer.seller);">
 									Rate Seller
-								</button>
+								</button> -->
 							</div>
 						</div>
 					</div>
@@ -226,9 +232,9 @@
 
 							<p>{{offer.seller.address.full}}</p>
 						</div>
-						<div class="col-25">
+						<div class="col col-25 text-right p-r-0">
 							<button
-								class="button button-small button-balanced btn-phone pull-right"
+								class="button button-small button-balanced btn-phone pul l-right"
 								ng-click="view.callSeller(offer.seller.phoneNumber)">
 								<!-- CALL SELLER -->
 								<i class="icon ion-ios-telephone"></i>

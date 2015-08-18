@@ -75,10 +75,12 @@
 
 		<div ng-if="view.gotAllRequests && view.expiredRequests.length == 0">
 			<h5 class="text-center fin">There are no expired requests.</h5>
+			<div class="spacer-20"></div>
 		</div>
 
 		<div ng-if="view.gotAllRequests && view.expiredRequests.length > 0">
 			<h5 class="text-center fin">That's all folks. No more requests to display.</h5>
+			<div class="spacer-20"></div>
 		</div>
 
 		<ion-infinite-scroll

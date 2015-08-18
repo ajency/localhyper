@@ -994,9 +994,24 @@ button.button.button-assertive {
 .rece-offer {
 	.user-details {
 		button.button.button-dark {
-			line-height: 21px;
+			display: inline-block;
+			line-height: 19px; //was 21
 			min-height: 0;
+			padding: 2px 6px;
 			padding: 0 6px;
+			// position: absolute;
+			// right: 50px;
+			// top: 42px;
+
+			//remove this if yellow color isn't liked
+			border-color: #E4D41A;
+			background-color: #FFF046;
+			color: #4C4602;
+			&.activated {
+				color: #E4D41A;
+				background-color: #444;
+				border-color: #222;
+			}
 		}
 	}
 	.user-wrap {
@@ -1015,20 +1030,26 @@ button.button.button-assertive {
 		text-align: left;
 		margin-bottom: 3px;
 		margin-top: 0;
+		padding-right: 35px;
 		span {
-			    font-weight: 300;
-    			color: #5D5D5D;
+			font-weight: 300;
+    		color: #5D5D5D;
+    		margin-right: 2px;
 		}
 	}
 	p.time-rece {
 		font-style: italic;
 		color: #aaaaaa;
 		margin-top: 1px;
+		margin-bottom: 0;
 	}
 	p.comment {
 		color: #777777;
 		opacity: .6;
 		margin-bottom: 0;
+		position: absolute;
+		right: 15px;
+		top: 42px;
 		button.button.icon {
 			padding: 1px 8px 0;
 			min-height: 0;
@@ -1066,7 +1087,7 @@ button.button.button-assertive {
 		margin-right: 6px;
 	}
 	.offer-vals {
-		padding-top: 10px;
+		padding-top: 6px; //was 10
 		.info {
 			font-size: 13px;
 			color: #ababab;
@@ -1099,7 +1120,7 @@ button.button.button-assertive {
 			line-height: 35px;
 			&.btn-phone {
 				padding: 0 11px;
-				float: right;
+				// float: right;
 				margin-top: 0;
 				width: 40px;
 				height: 40px;
@@ -1155,6 +1176,9 @@ button.button.button-assertive {
 
 .spacer-40 {
 	height: 40px;
+}
+.spacer-20 {
+	height: 20px;
 }
 .fin {
     color: #969696;
