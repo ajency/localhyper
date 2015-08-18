@@ -528,13 +528,14 @@ Parse.Cloud.define 'getProductsNew', (request, response) ->
                         "mrp" : singleProduct.get("mrp")
                         "primaryAttributes" : singleProduct.get("primaryAttributes") 
                 ) 
-                
+                imageSizes = getImageSizes("product")
                 result =  
                     products: products
                     filters: displayFilters
                     supportedBrands: supported_brands
                     priceRange: price_range
                     sortableAttributes : ["mrp","popularity"]
+                    imageSizes : imageSizes
 
                 response.success result                
 
@@ -578,6 +579,32 @@ Parse.Cloud.job 'updateCategoryProductsKeywords', (request, response) ->
     , (error) ->
         response.error "Failure"
  
+getImageSizes = (type) =>
+
+    largePortraitImage = 
+        "retina" : "600 x 360"
+        "non_retina" : "300 x 180"
+
+    largeLandscapeImage = 
+        "retina" : "600 x 360"
+        "non_retina" : "300 x 180"
+
+    mediumImage = 
+        "retina" : "360 x 216"
+        "non_retina" : "180 x 108"
+
+    smallImage = 
+        "retina" : "300 x 180"
+        "non_retina" : "150 x 90"
+
+    imageSizes = 
+        "largeLandscape" : largeLandscapeImage
+        "largePortrait" : largePortraitImage
+        "medium" : mediumImage
+        "small" : smallImage        
+
+    imageSizes
+
 
 updateProductKeywords = (productObject) =>
     promise = new Parse.Promise()

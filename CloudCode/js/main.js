@@ -1,5 +1,5 @@
 (function() {
-  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getNewRequestsForSeller, getNotificationData, getOfferData, getOtherPricesForProduct, getRequestData, getRequestsWithPrice, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify, updateProductKeywords;
+  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getHoursDifference, getImageSizes, getNewRequestsForSeller, getNotificationData, getOfferData, getOtherPricesForProduct, getRequestData, getRequestsWithPrice, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isTimeInRange, isValidWorkDay, isValidWorkTime, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify, updateProductKeywords;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -2129,7 +2129,7 @@
           query.descending(sortBy);
         }
         return queryFindPromise = query.find().then(function(productsList) {
-          var products, result;
+          var imageSizes, products, result;
           products = [];
           products = _.map(productsList, function(singleProduct) {
             var brand, product;
@@ -2146,12 +2146,14 @@
               "primaryAttributes": singleProduct.get("primaryAttributes")
             };
           });
+          imageSizes = getImageSizes("product");
           result = {
             products: products,
             filters: displayFilters,
             supportedBrands: supported_brands,
             priceRange: price_range,
-            sortableAttributes: ["mrp", "popularity"]
+            sortableAttributes: ["mrp", "popularity"],
+            imageSizes: imageSizes
           };
           return response.success(result);
         }, function(error) {
@@ -2192,6 +2194,35 @@
       return response.error("Failure");
     });
   });
+
+  getImageSizes = (function(_this) {
+    return function(type) {
+      var imageSizes, largeLandscapeImage, largePortraitImage, mediumImage, smallImage;
+      largePortraitImage = {
+        "retina": "600 x 360",
+        "non_retina": "300 x 180"
+      };
+      largeLandscapeImage = {
+        "retina": "600 x 360",
+        "non_retina": "300 x 180"
+      };
+      mediumImage = {
+        "retina": "360 x 216",
+        "non_retina": "180 x 108"
+      };
+      smallImage = {
+        "retina": "300 x 180",
+        "non_retina": "150 x 90"
+      };
+      imageSizes = {
+        "largeLandscape": largeLandscapeImage,
+        "largePortrait": largePortraitImage,
+        "medium": mediumImage,
+        "small": smallImage
+      };
+      return imageSizes;
+    };
+  })(this);
 
   updateProductKeywords = (function(_this) {
     return function(productObject) {
