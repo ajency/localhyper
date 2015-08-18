@@ -1498,6 +1498,7 @@
       queryOffer.equalTo("objectId", offerId);
       queryOffer.include("request");
       queryOffer.include("seller");
+      queryOffer.include("price");
       return queryOffer.first().then(function(acceptedOffer) {
         var Transaction, sellerObj, transaction;
         sellerObj = acceptedOffer.get("seller");
@@ -1526,27 +1527,34 @@
             return acceptedOffer.save().then(function(offerWithDelivery) {
               requestObj.set("status", "pending_delivery");
               return requestObj.save().then(function(savedReq) {
-                var Notification, notification, notificationData;
-                notificationData = {
-                  hasSeen: false,
-                  recipientUser: sellerObj,
-                  channel: 'push',
-                  processed: false,
-                  type: "AcceptedOffer",
-                  offerObject: acceptedOffer
-                };
-                Notification = Parse.Object.extend("Notification");
-                notification = new Notification(notificationData);
-                return notification.save().then(function(notifObj) {
-                  var resultObj;
-                  resultObj = {
-                    offerId: acceptedOffer.id,
-                    offerStatus: acceptedOffer.get("status"),
-                    offerUpdatedAt: acceptedOffer.updatedAt,
-                    requestId: acceptedOffer.get("request").id,
-                    requestStatus: acceptedOffer.get("request").get("status")
+                var priceObj;
+                priceObj = acceptedOffer.get("price");
+                priceObj.set("type", "accepted_offer");
+                return priceObj.save().then(function(updatedPrice) {
+                  var Notification, notification, notificationData;
+                  notificationData = {
+                    hasSeen: false,
+                    recipientUser: sellerObj,
+                    channel: 'push',
+                    processed: false,
+                    type: "AcceptedOffer",
+                    offerObject: acceptedOffer
                   };
-                  return response.success(resultObj);
+                  Notification = Parse.Object.extend("Notification");
+                  notification = new Notification(notificationData);
+                  return notification.save().then(function(notifObj) {
+                    var resultObj;
+                    resultObj = {
+                      offerId: acceptedOffer.id,
+                      offerStatus: acceptedOffer.get("status"),
+                      offerUpdatedAt: acceptedOffer.updatedAt,
+                      requestId: acceptedOffer.get("request").id,
+                      requestStatus: acceptedOffer.get("request").get("status")
+                    };
+                    return response.success(resultObj);
+                  }, function(error) {
+                    return response.error(error);
+                  });
                 }, function(error) {
                   return response.error(error);
                 });
