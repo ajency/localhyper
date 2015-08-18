@@ -26,7 +26,7 @@ class JobsController extends Controller
 
         $autoBidSellers = $sellerQuery->find();
 
-        // dd( $autoBidSellers );
+        
         
         foreach ($autoBidSellers as $autoBidSeller) {
             /** get requests that are:
@@ -38,9 +38,18 @@ class JobsController extends Controller
 
             $openBidRequests = $this->getAutoBiddableRequests($openRequestsForSeller);
 
+            dd( $openBidRequests );
+
             foreach ($openBidRequests as $openRequest) {
-                $lastOfferPrice = $openRequest["lastOfferPrice"];
-                $lastOfferPrice = $openRequest["lastDeliveryTime"];
+
+                // make offer for the request on behalf of the seller
+                $offerData = []
+                $offerData["priceValue"] =  $openRequest["lastOfferPrice"];
+                $offerData["deliveryTime"] = $openRequest["lastDeliveryTime"];
+
+                $sellerId = $autoBidSeller->getObjectId();
+                $requestId = $openRequest['id'];
+                $result = $this->makeOffer( $sellerId, $requestId, $offerData );
             }
         }
 
@@ -77,6 +86,29 @@ class JobsController extends Controller
         return $response["result"]["requests"];
 
     }
+
+    public function makeOffer($sellerId, $requestId, offerData){
+        $makeOfferData = array (
+            "sellerId" => $sellerId,
+            "requestId" =>  $requestId,
+            "priceValue" =>  $offerData["priceValue"],
+            "deliveryTime" =>  $offerData["deliveryTime"],
+            "comments" =>  "",
+            "status" => "open" ,
+            "autoBid" =?true
+        );
+
+
+        $functionName = "makeOffer";
+
+        $resultjson = AttributeController::makeParseCurlRequest($functionName,$makeOfferData); 
+
+        $response =  json_encode($resultjson);
+        $response = json_decode($response,true); 
+
+        return $response;
+
+    }    
 
     public function getAutoBiddableRequests($openRequests){
 
@@ -116,7 +148,9 @@ class JobsController extends Controller
             // if the difference is more than or equal to 10minutes then add this request to array of biddableRequests
             $minutes10 = 10;
             if ($minutes>=$minutes10) {
-                $biddableRequests[] = $openRequest;
+                // check is lastOfferPrice is not empty
+                if($openRequest['lastOfferPrice']!= "") 
+                    $biddableRequests[] = $openRequest;
             }
         }
 
