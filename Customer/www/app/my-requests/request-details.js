@@ -42,9 +42,13 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         all: [],
         limitTo: 1,
         rate: {
+          star: '',
           score: 0,
           comment: '',
           setScore: function(score) {
+            var rateValue;
+            rateValue = ['', 'Poor', 'Average', 'Good', 'Very Good', 'Excellent'];
+            this.star = rateValue[score];
             return this.score = score;
           }
         },
@@ -100,6 +104,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           })(this));
         },
         openRatePopup: function(seller) {
+          this.rate.star = '';
           this.rate.score = 0;
           this.rate.comment = '';
           return $ionicPopup.show({
@@ -122,20 +127,24 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           });
         },
         rateSeller: function(seller) {
-          CSpinner.show('', 'Submitting your review...');
-          return RequestAPI.updateSellerRating({
-            "customerId": User.getId(),
-            "sellerId": seller.id,
-            "ratingInStars": this.rate.score,
-            "comments": this.rate.comment
-          }).then(function() {
-            seller.isSellerRated = true;
-            return CToast.show('Thanks for your feedback');
-          }, function(error) {
-            return CToast.show('An error occurred, please try again');
-          })["finally"](function() {
-            return CSpinner.hide();
-          });
+          if (this.rate.score === 0) {
+            return CToast.show('Please select stars');
+          } else {
+            CSpinner.show('', 'Submitting your review...');
+            return RequestAPI.updateSellerRating({
+              "customerId": User.getId(),
+              "sellerId": seller.id,
+              "ratingInStars": this.rate.score,
+              "comments": this.rate.comment
+            }).then(function() {
+              seller.isSellerRated = true;
+              return CToast.show('Thanks for your feedback');
+            }, function(error) {
+              return CToast.show('An error occurred, please try again');
+            })["finally"](function() {
+              return CSpinner.hide();
+            });
+          }
         }
       },
       init: function() {

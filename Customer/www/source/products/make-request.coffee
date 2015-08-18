@@ -16,8 +16,7 @@ angular.module 'LocalHyper.products'
 				displayCount: false
 				found: false
 
-			comments: 
-				text: ''
+			comments: text: ''
 
 			init : ->
 				@reset()
@@ -226,7 +225,7 @@ angular.module 'LocalHyper.products'
 						.finally ->
 							CSpinner.hide()
 
-
+		
 		$scope.$on '$ionicView.beforeEnter', ->
 			App.scrollTop()
 
