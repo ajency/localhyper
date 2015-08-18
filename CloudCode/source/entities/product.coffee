@@ -583,11 +583,11 @@ getImageSizes = (type) =>
 
     largePortraitImage = 
         "retina" : "600 x 360"
-        "non_retina" : "300 x 180"
+        "non_retina" : "400 x 240"
 
     largeLandscapeImage = 
         "retina" : "600 x 360"
-        "non_retina" : "300 x 180"
+        "non_retina" : "600 x 360"
 
     mediumImage = 
         "retina" : "360 x 216"
