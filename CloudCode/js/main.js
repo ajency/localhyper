@@ -893,8 +893,8 @@
     return notificationQuery.find().then(function(pendingNotifications) {
       var customerAppName, notificationQs, sellerAppName;
       notificationQs = [];
-      sellerAppName = "ShopOye Seller";
-      customerAppName = "ShopOye Customer";
+      sellerAppName = "Shopoye Seller";
+      customerAppName = "Shopoye";
       _.each(pendingNotifications, function(pendingNotification) {
         var channel, msg, notificationId, notificationPromise, obj, otherPushData, productName, pushOptions, recipientUser, title, type, userInstallationId;
         channel = pendingNotification.get("channel");
@@ -909,7 +909,8 @@
           msg = "New request for " + productName;
           otherPushData = {
             "id": obj.id,
-            "type": "new_request"
+            "type": "new_request",
+            "imageUrl": "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/LG%2BLWA5BP1A%2B1.5%2BTon%2B1%2BStar%2BWindow%2BAC(White)-800x480.jpg"
           };
         } else if (type === "Offer") {
           obj = pendingNotification.get("offerObject");

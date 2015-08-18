@@ -77,8 +77,8 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
     notificationQuery.find()
     .then (pendingNotifications) ->
         notificationQs = []
-        sellerAppName = "ShopOye Seller"
-        customerAppName = "ShopOye Customer"
+        sellerAppName = "Shopoye Seller"
+        customerAppName = "Shopoye"
         # for each pending notifications send get channel of notifications and send take action accordingly
         _.each pendingNotifications, (pendingNotification) ->
             channel = pendingNotification.get "channel"
@@ -98,6 +98,7 @@ Parse.Cloud.job 'processNotifications', (request, response) ->
                 otherPushData = 
                     "id": obj.id
                     "type": "new_request"
+                    "imageUrl" : "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/LG%2BLWA5BP1A%2B1.5%2BTon%2B1%2BStar%2BWindow%2BAC(White)-800x480.jpg" #url for product image
 
             else if type is "Offer"
                 obj = pendingNotification.get("offerObject")
