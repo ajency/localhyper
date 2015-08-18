@@ -1180,13 +1180,18 @@
   });
 
   Parse.Cloud.define('makeOffer', function(request, response) {
-    var Notification, Offer, Price, Request, acceptOfferCredits, comments, deliveryTime, makeOfferCredits, priceValue, requestId, requestQuery, sellerId, status;
+    var Notification, Offer, Price, Request, acceptOfferCredits, autoBid, comments, deliveryTime, makeOfferCredits, priceValue, requestId, requestQuery, sellerId, status;
     requestId = request.params.requestId;
     sellerId = request.params.sellerId;
     priceValue = parseInt(request.params.priceValue);
     deliveryTime = request.params.deliveryTime;
     comments = request.params.comments;
     status = request.params.status;
+    if (_.has(request.params, 'autoBid')) {
+      autoBid = request.params.autoBid;
+    } else {
+      autoBid = false;
+    }
     makeOfferCredits = 1;
     acceptOfferCredits = 5;
     Price = Parse.Object.extend("Price");
@@ -1220,6 +1225,7 @@
         offer.set("status", status);
         offer.set("deliveryTime", deliveryTime);
         offer.set("comments", comments);
+        offer.set("autoBid", autoBid);
         offer.set("requestDate", requestObject.createdAt);
         offer.set("offerPrice", priceValue);
         offer.set("requestGeoPoint", requestObject.get("addressGeoPoint"));

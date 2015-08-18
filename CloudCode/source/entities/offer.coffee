@@ -118,6 +118,11 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
     comments = request.params.comments
     status = request.params.status
 
+    if _.has(request.params, 'autoBid')
+        autoBid = request.params.autoBid
+    else
+        autoBid = false    
+
     makeOfferCredits = 1
     acceptOfferCredits = 5
 
@@ -169,6 +174,7 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
             offer.set "status" , status
             offer.set "deliveryTime" , deliveryTime
             offer.set "comments" , comments
+            offer.set "autoBid" , autoBid
             offer.set "requestDate", requestObject.createdAt #needed for sorting offers based on created date of requests  
             offer.set "offerPrice", priceValue #needed for sorting by price
             offer.set "requestGeoPoint", requestObject.get("addressGeoPoint") #needed for sorting by distance
