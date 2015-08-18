@@ -59,6 +59,7 @@ Parse.Cloud.define 'getAttribValueMapping', (request, response) ->
             query = new Parse.Query("AttributeValues")
             query.matchesQuery("attribute", innerQuery)
             query.include("attribute")
+            query.limit(500)
             query.find()
         )
 

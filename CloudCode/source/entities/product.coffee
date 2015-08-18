@@ -560,6 +560,7 @@ Parse.Cloud.job 'updateCategoryProductsKeywords', (request, response) ->
     queryProducts.include("brand")
     queryProducts.include("brand")
     queryProducts.ascending("updatedAt")
+    queryProducts.limit(500)
     
     queryProducts.find()
     .then (products) ->

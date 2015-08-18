@@ -53,6 +53,7 @@
           query = new Parse.Query("AttributeValues");
           query.matchesQuery("attribute", innerQuery);
           query.include("attribute");
+          query.limit(500);
           return query.find();
         });
         return Parse.Promise.when(findQs).then(function() {
@@ -2167,6 +2168,7 @@
     queryProducts.include("brand");
     queryProducts.include("brand");
     queryProducts.ascending("updatedAt");
+    queryProducts.limit(500);
     return queryProducts.find().then(function(products) {
       var updateKeywordQs;
       updateKeywordQs = [];
