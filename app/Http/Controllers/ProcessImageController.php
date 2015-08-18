@@ -48,19 +48,34 @@ class ProcessImageController extends Controller
             return;
         }
 
+        //Create temporary folder if not exist
+        if(!File::exists(public_path().'/tmp')) {
+            File::makeDirectory(public_path().'/tmp', 0777);
+        }
+
         foreach($pending_images as $pending){
 
             $images = unserialize($pending->images);
+            $error = array();
             foreach($images as $key=>$value){
 
             //Resize and upload the image to amazon s3
-                $this->processImage($value, $pending->object_type);
+                if (@getimagesize($value)) {
+                    $this->processImage($value, $pending->object_type);
+                }else{
+                    $error[] = 1;
+                }
+                
             }
 
-        //Change status when image processed successfully
+            //Change status when image processed successfully
+            if(count($error)<=0){
             DB::table('process_images')
             ->where('id', $pending->id)
             ->update(['status' => 1]);
+            }
+
+        unset($error);
         }
 
     }
@@ -139,6 +154,7 @@ class ProcessImageController extends Controller
 
     public function processImage($url, $object_type)
     {
+
         //Instantiate Amazon S3 client object
         $s3 = AWS::createClient('s3');
 
@@ -146,18 +162,12 @@ class ProcessImageController extends Controller
         $filename = $source['filename'];
         $extension = $source['extension'];
         $basename = $source['basename'];
-
-        //Create temporary folder if not exist
-        if(!File::exists(public_path().'/tmp')) {
-            File::makeDirectory(public_path().'/tmp', 0777);
-        }
-
+        
         //Temporary path to save images locally
         $destinationPath = public_path().'/tmp/';
-
-        //Fetch the image and save it temporarily
+        
         Image::make($url)->save($destinationPath.$basename);
-
+          
         //Instantiate the image object from local copy
         $image = Image::make($destinationPath.$basename);
 
@@ -203,6 +213,8 @@ class ProcessImageController extends Controller
         {
             File::delete($destinationPath.$basename);
         }
+
+    return true;
     }
 
 
