@@ -1,5 +1,5 @@
 angular.module('LocalHyper.common', []).factory('App', [
-  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', '$ionicScrollDelegate', '$cordovaInAppBrowser', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate, $cordovaInAppBrowser) {
+  '$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate', '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout', '$q', '$ionicScrollDelegate', '$cordovaInAppBrowser', 'User', 'CToast', 'UIMsg', '$rootScope', function($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate, $cordovaInAppBrowser, User, CToast, UIMsg, $rootScope) {
     var App;
     return App = {
       start: true,
@@ -11,6 +11,7 @@ angular.module('LocalHyper.common', []).factory('App', [
       },
       previousState: '',
       currentState: '',
+      autoBid: false,
       isAndroid: function() {
         return ionic.Platform.isAndroid();
       },
@@ -121,6 +122,32 @@ angular.module('LocalHyper.common', []).factory('App', [
           defer.resolve('DUMMY_INSTALLATION_ID');
         }
         return defer.promise;
+      },
+      setAutoBidSetting: function() {
+        var user;
+        user = User.getCurrent();
+        return this.autoBid = user.get('autoBid');
+      },
+      onAutoBidSettingChange: function() {
+        var user;
+        if (this.isOnline()) {
+          user = User.getCurrent();
+          return user.save({
+            'autoBid': this.autoBid
+          }).then(function() {
+            return console.log('Auto bid setting changed');
+          }, (function(_this) {
+            return function() {
+              return $rootScope.$apply(function() {
+                _this.autoBid = !_this.autoBid;
+                return CToast.show('An error occurred. Please check your network settings.');
+              });
+            };
+          })(this));
+        } else {
+          this.autoBid = !this.autoBid;
+          return CToast.show(UIMsg.noInternet);
+        }
       }
     };
   }

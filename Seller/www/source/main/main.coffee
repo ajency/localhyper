@@ -16,6 +16,7 @@ angular.module 'LocalHyper.main', []
 				if User.isLoggedIn()
 					@getNotifications()
 					@getCountOfAcceptedOffers()
+					App.setAutoBidSetting()
 				$ionicSideMenuDelegate.edgeDragThreshold true
 
 			getNotifications : ->
@@ -78,6 +79,7 @@ angular.module 'LocalHyper.main', []
 		$rootScope.$on '$user:registration:success', ->
 			App.notification.icon = true
 			$scope.view.getNotifications()
+			App.setAutoBidSetting()
 
 		$rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
