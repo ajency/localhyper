@@ -353,11 +353,20 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           }
         },
         onNotificationClick: function(requestId) {
-          var index, requests;
+          var index, onError, requests;
           requests = $scope.view.requests;
           index = _.findIndex(requests, function(val) {
             return val.id === requestId;
           });
+          onError = (function(_this) {
+            return function(msg) {
+              CSpinner.show('', msg);
+              return $timeout(function() {
+                _this.modal.hide();
+                return CSpinner.hide();
+              }, 2000);
+            };
+          })(this);
           if (index !== -1) {
             return this.show(requests[index]);
           } else {
@@ -368,15 +377,22 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
                 _this.makeOfferBtn = false;
                 _this.modal.show();
                 return RequestsAPI.getSingleRequest(requestId).then(function(request) {
+                  var reqIndex;
                   if (request.status === 'cancelled') {
-                    CSpinner.show('', 'Sorry, this request has been cancelled');
-                    return $timeout(function() {
-                      _this.modal.hide();
-                      return CSpinner.hide();
-                    }, 2000);
-                  } else {
+                    return onError('Sorry, this request has been cancelled');
+                  } else if (_.isEmpty(requests)) {
                     _this.display = 'noError';
                     return _this.data = request;
+                  } else {
+                    reqIndex = _.findIndex(requests, function(val) {
+                      return val.id === request.id;
+                    });
+                    if (reqIndex === -1) {
+                      return onError('You have already made an offer');
+                    } else {
+                      _this.display = 'noError';
+                      return _this.data = request;
+                    }
                   }
                 }, function(type) {
                   _this.display = 'error';
