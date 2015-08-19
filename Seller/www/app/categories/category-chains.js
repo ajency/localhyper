@@ -25,7 +25,9 @@ angular.module('LocalHyper.categories').controller('CategoryChainsCtrl', [
         });
         this.categoryChains.splice(spliceIndex, 1);
         CategoriesAPI.categoryChains('set', this.categoryChains);
-        return Storage.categoryChains('set', this.categoryChains);
+        return Storage.categoryChains('set', this.categoryChains).then(function() {
+          return App.resize();
+        });
       },
       onChainClick: function(chains) {
         CategoriesAPI.subCategories('set', chains.category.children);

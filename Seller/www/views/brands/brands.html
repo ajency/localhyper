@@ -5,6 +5,15 @@
     </ion-nav-title>
 
     <ion-nav-buttons side="right">
+    	<button
+			class="button button-outline button-assertive icon-btn"
+			ng-click="view.onSelectAll();">
+			<i 
+				class="icon" 
+				ng-class="(view.selectAll) ? 'ion-android-checkbox-outline' : 'ion-android-checkbox-outline-blank'">
+			</i>
+		</button>
+
 		<button
 			class="button button-outline button-assertive icon-btn"
 			ng-click="view.onDone();">
@@ -56,6 +65,7 @@
 
 				<ion-checkbox
 					ng-model="brand.selected"
+					ng-change="view.setSelectAll();"
 					class="item-check">
 				</ion-checkbox>
 			</div>

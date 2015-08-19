@@ -28,6 +28,8 @@ angular.module 'LocalHyper.categories'
 				
 				CategoriesAPI.categoryChains 'set', @categoryChains
 				Storage.categoryChains 'set', @categoryChains
+				.then ->
+					App.resize()
 
 			onChainClick : (chains)->
 				CategoriesAPI.subCategories 'set', chains.category.children

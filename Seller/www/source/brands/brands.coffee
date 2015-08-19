@@ -56,6 +56,19 @@ angular.module 'LocalHyper.brands', []
 					else
 						_.each @brands, (brand)-> brand.selected = false
 
+				@setSelectAll()
+
+			setSelectAll : ->
+				selected = _.pluck @brands, 'selected'
+				@selectAll = !_.contains selected, false
+
+			onSelectAll : ->
+				@selectAll = !@selectAll
+				if @selectAll
+					_.each @brands, (brand)-> brand.selected = true
+				else
+					_.each @brands, (brand)-> brand.selected = false
+
 			onDone : ->
 				CategoriesAPI.getAll()
 				.then (allCategories)=>
@@ -113,6 +126,7 @@ angular.module 'LocalHyper.brands', []
 
 		
 		$scope.$on '$ionicView.beforeEnter', ->
+			$scope.view.selectAll = false
 			if $scope.view.display is 'noError'
 				$scope.view.setBrandSelection() 
 ]

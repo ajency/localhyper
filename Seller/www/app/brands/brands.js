@@ -43,7 +43,7 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
       setBrandSelection: function() {
         var _brandIds, _brands, chain;
         if (this.isCategoryChainsEmpty()) {
-          return _.each(this.brands, function(brand) {
+          _.each(this.brands, function(brand) {
             return brand.selected = false;
           });
         } else {
@@ -53,14 +53,32 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
           if (!_.isEmpty(chain)) {
             _brands = chain[0].brands;
             _brandIds = _.pluck(_brands, 'objectId');
-            return _.each(this.brands, function(brand) {
+            _.each(this.brands, function(brand) {
               return brand.selected = _.contains(_brandIds, brand.objectId);
             });
           } else {
-            return _.each(this.brands, function(brand) {
+            _.each(this.brands, function(brand) {
               return brand.selected = false;
             });
           }
+        }
+        return this.setSelectAll();
+      },
+      setSelectAll: function() {
+        var selected;
+        selected = _.pluck(this.brands, 'selected');
+        return this.selectAll = !_.contains(selected, false);
+      },
+      onSelectAll: function() {
+        this.selectAll = !this.selectAll;
+        if (this.selectAll) {
+          return _.each(this.brands, function(brand) {
+            return brand.selected = true;
+          });
+        } else {
+          return _.each(this.brands, function(brand) {
+            return brand.selected = false;
+          });
         }
       },
       onDone: function() {
@@ -145,6 +163,7 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function() {
+      $scope.view.selectAll = false;
       if ($scope.view.display === 'noError') {
         return $scope.view.setBrandSelection();
       }
