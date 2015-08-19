@@ -31,7 +31,7 @@
          <div class="list margin-none">
             <div class="item item-details">
                <div class="row">
-                  <div class="col col-20 ">
+                  <div class="col col-25 ">
                      <div class="item-avatar">
                         <img ng-src="{{view.offerDetails.data.product.images[0].src}}">
                      </div>
@@ -52,15 +52,16 @@
                   </div>
                   <div class="col col-50">
                      <b class="text-left m-t-5 center-block">
-                        {{view.offerDetails.data.distanceFromCustomer.toFixed(2)}} 
+                        {{view.offerDetails.data.distanceFromCustomer.toFixed(2)}}
                         <sm>kms away</sm>
                      </b>
                      <h3 class="light-gray text-left">Distance from you</h3>
                   </div>
                   <div class="col status">
-                     <div 
-                        class="{{App.humanize(view.offerDetails.data.request.status)}}" 
+                     <div
+                        class="{{App.humanize(view.offerDetails.data.request.status)}}"
                         ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
+                        <span>Status</span>
                         {{App.humanize(view.offerDetails.data.request.status)}}
                      </div>
                   </div>
@@ -70,8 +71,8 @@
 
                <div class="row">
                   <div class="col">
-                     <h4 class="text-left subdued text-center margin-none"> 
-                        MRP  <br><span class="WebRupee subdued">&#x20B9;</span> 
+                     <h4 class="text-left subdued text-center margin-none">
+                        MRP  <br><span class="WebRupee subdued">&#x20B9;</span>
                         <b class="big-txt">{{App.toINR(view.offerDetails.data.product.mrp)}}</b>
                      </h4>
                   </div>
@@ -82,7 +83,7 @@
                   </div>
                   <div class="col border-right">
                      <h4 class="text-left subdued text-center margin-none">
-                        You offered <br> 
+                        You offered <br>
                         <sm class="WebRupee subdued">&#x20B9;</sm>
                         <b class="big-txt">{{App.toINR(view.offerDetails.data.offerPrice)}}</b>
                      </h4>
