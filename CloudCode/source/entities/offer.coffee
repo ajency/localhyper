@@ -711,6 +711,7 @@ getOfferData = (offerObject, customerId) ->
                 deliveryDate = ""
             
             seller["isSellerRated"] = isSellerRated
+            
             offer = 
                 "id" : offerObject.id
                 "product" : product
@@ -721,9 +722,34 @@ getOfferData = (offerObject, customerId) ->
                 "status" : offerObject.get("status")
                 "createdAt" : offerObject.createdAt
                 "updatedAt" : offerObject.updatedAt
-                "deliveryDate" : deliveryDate
-                
-            promise.resolve offer 
+                "deliveryDate" : deliveryDate            
+            
+            #  now query notification to get notificaton status of the offer
+            queryNotification = new Parse.Query("Notification")
+
+            innerQuerySeller = new Parse.Query(Parse.User)
+            innerQuerySeller.equalTo("objectId",customerId)
+
+            queryNotification.matchesQuery("recipientUser",innerQuerySeller)
+            
+            queryNotification.equalTo("type","Offer")
+
+            innerQueryOffer = new Parse.Query("Offer")
+            innerQueryOffer.equalTo("objectId", offerObject.id)
+
+            queryNotification.matchesQuery("offerObject",innerQueryOffer)
+
+            queryNotification.first()
+            .then (notificationObject) ->
+                notification = 
+                    "id" : notificationObject.id
+                    "hasSeen" : notificationObject.get("hasSeen")
+
+                offer['notification'] = notification   
+
+                promise.resolve offer 
+            , (error) ->
+                promise.resolve error
 
         , (error) ->
             promise.reject error 

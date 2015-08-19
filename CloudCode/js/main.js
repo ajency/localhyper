@@ -1673,7 +1673,7 @@
       queryRatings.matchesQuery("ratingFor", innerQuerySeller);
       queryRatings.equalTo("ratingForType", "seller");
       queryRatings.first().then(function(ratingByCustomerObj) {
-        var deliveryDate, isSellerRated, offer, priceObj;
+        var deliveryDate, innerQueryOffer, isSellerRated, offer, priceObj, queryNotification;
         if (!_.isEmpty(ratingByCustomerObj)) {
           isSellerRated = true;
         } else {
@@ -1698,7 +1698,25 @@
           "updatedAt": offerObject.updatedAt,
           "deliveryDate": deliveryDate
         };
-        return promise.resolve(offer);
+        queryNotification = new Parse.Query("Notification");
+        innerQuerySeller = new Parse.Query(Parse.User);
+        innerQuerySeller.equalTo("objectId", customerId);
+        queryNotification.matchesQuery("recipientUser", innerQuerySeller);
+        queryNotification.equalTo("type", "Offer");
+        innerQueryOffer = new Parse.Query("Offer");
+        innerQueryOffer.equalTo("objectId", offerObject.id);
+        queryNotification.matchesQuery("offerObject", innerQueryOffer);
+        return queryNotification.first().then(function(notificationObject) {
+          var notification;
+          notification = {
+            "id": notificationObject.id,
+            "hasSeen": notificationObject.get("hasSeen")
+          };
+          offer['notification'] = notification;
+          return promise.resolve(offer);
+        }, function(error) {
+          return promise.resolve(error);
+        });
       }, function(error) {
         return promise.reject(error);
       });
