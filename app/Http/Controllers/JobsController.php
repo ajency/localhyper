@@ -38,12 +38,10 @@ class JobsController extends Controller
 
             $openBidRequests = $this->getAutoBiddableRequests($openRequestsForSeller);
 
-            dd( $openBidRequests );
-
             foreach ($openBidRequests as $openRequest) {
 
                 // make offer for the request on behalf of the seller
-                $offerData = []
+                $offerData = [];
                 $offerData["priceValue"] =  $openRequest["lastOfferPrice"];
                 $offerData["deliveryTime"] = $openRequest["lastDeliveryTime"];
 
@@ -52,15 +50,6 @@ class JobsController extends Controller
                 $result = $this->makeOffer( $sellerId, $requestId, $offerData );
             }
         }
-
-    // currentDate = new Date()
-    // currentTimeStamp = currentDate.getTime()
-    // expiryValueInHrs = 24
-    // queryDate = new Date()
-    // time24HoursAgo = currentTimeStamp - (expiryValueInHrs * 60 * 60 * 1000)
-    // queryDate.setTime(time24HoursAgo) 
-    //     queryRequest.lessThanOrEqualTo( "createdAt", queryDate )                
-    //     }
 
     }
     public function getNewOpenRequests($sellerId){
@@ -75,7 +64,7 @@ class JobsController extends Controller
             "productMrp" =>  "default"
         );
 
-
+        
         $functionName = "getNewRequests";
 
         $resultjson = AttributeController::makeParseCurlRequest($functionName,$newOpenRequestsData); 
@@ -87,7 +76,7 @@ class JobsController extends Controller
 
     }
 
-    public function makeOffer($sellerId, $requestId, offerData){
+    public function makeOffer($sellerId, $requestId, $offerData){
         $makeOfferData = array (
             "sellerId" => $sellerId,
             "requestId" =>  $requestId,
@@ -95,9 +84,8 @@ class JobsController extends Controller
             "deliveryTime" =>  $offerData["deliveryTime"],
             "comments" =>  "",
             "status" => "open" ,
-            "autoBid" =?true
+            "autoBid" => true
         );
-
 
         $functionName = "makeOffer";
 
