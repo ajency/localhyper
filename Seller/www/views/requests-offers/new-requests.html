@@ -69,7 +69,7 @@
 				            </h3>
 				        </div>
 				        <div class="col p-t-0">
-				        	<div class="pull-right">
+				        	<div class="pull-right mi-wi-65">
 					            <div class="offer"> {{request.offerCount}} </div>
 					            <h4 class="offertxt light-gray"> No of offers</h4>
 				           	</div>
@@ -82,7 +82,7 @@
 
 				        <div class="pull-left text-primary">
 				        	<b class="light-gray">
-				        		<i class="ion-android-pin text-primary"></i> {{request.radius.toFixed(2)}} kms away
+				        		<i class="ion-android-pin text-primary"></i> {{request.radius.toFixed(2)}} km away
 				        	</b>
 				        </div>
 				    </div>
@@ -93,7 +93,7 @@
 			<aj-error
 				ng-switch-when="error"
 				error-type="view.errorType"
-				tap-to-retry="view.onTapToRetry();" 
+				tap-to-retry="view.onTapToRetry();"
 				class="error-wrapper">
 			</aj-error>
 

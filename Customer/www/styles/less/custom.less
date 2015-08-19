@@ -154,9 +154,20 @@ sm{
 .bar.bar-light .title {
 	left: 60px !important;
 	right: 60px !important;
+	span.nav-bar-title {
+		max-width: 150px;
+		display: block;
+		margin: 0 auto;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
 }
 button.button.button-assertive {
 	b {color: #fff;}
+}
+.mi-wi-65 {
+	min-width: 65px;
 }
 /************************************/
 /* HEADER */
@@ -885,6 +896,7 @@ button.button.button-assertive {
 	p.details {
 		color: #9b9b9b;
 		text-align: left;
+		margin-bottom: 0;
 		span {
 			color: #f65050;
 		}
@@ -1031,6 +1043,7 @@ button.button.button-assertive {
 		margin-bottom: 3px;
 		margin-top: 0;
 		padding-right: 35px;
+		line-height: 22px;
 		span {
 			font-weight: 300;
     		color: #5D5D5D;
@@ -1586,7 +1599,7 @@ label.status-label {
 			top: 0;
 			left: 0;
 			height: 100%;
-			background-color: @brand-primary;
+			background-color: @balanced;
 			color: #fff;
 			padding: 13px 20px;
 		}
@@ -1599,7 +1612,7 @@ label.status-label {
 		}
 		&.activated {
 			i {
-				background-color: desaturate(darken(@brand-primary, 25%), 25%);
+				background-color: desaturate(darken(@balanced, 25%), 25%);
 				// color: @brand-primary;
 			}
 			span {
@@ -1619,6 +1632,18 @@ label.status-label {
 		padding: 10px 12px 7px;
 		background-color: #ddd;
 	}
+	&.custom-offer-price {
+		.prefix {
+			padding: 12px 15px 11px;
+		}
+		input {
+			padding-right: 8px;
+			padding-left: 32px;
+		}
+	}
+}
+.list-inset .item.item-input.custom-offer-price input {
+	padding-right: 8px;
 }
 
 .small-let {
@@ -1972,8 +1997,9 @@ label.status-label {
 .b-r-1 {border-right: 1px solid #ddd;}
 
 .rating-section {
-	margin-bottom: 10px;
+	margin-bottom: 0; //was 10
 	margin-top: 5px;
+	text-align: center;
 	img {
 		margin-right: 5px;
 	}
@@ -1982,6 +2008,7 @@ label.status-label {
 	padding: 5px 8px;
 	line-height: normal;
 	border: 1px solid #ccc;
+	margin-top: 10px;
 }
 
 

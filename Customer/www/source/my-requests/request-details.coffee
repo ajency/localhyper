@@ -78,21 +78,27 @@ angular.module 'LocalHyper.myRequests'
 					console.log offers
 					@display = 'noError'
 					@all = offers
-					@markOffersAsSeen()
+					# @markOffersAsSeen()
 					$scope.view.cancelRequest.set()
 
 				onError : (type)->
 					@display = 'error'
 					@errorType = type
 
-				markOffersAsSeen : ->
-					RequestAPI.isNotificationSeen $scope.view.request.id
-					.then (obj)=>
-						if !obj.hasSeen
-							offerIds = _.pluck @all, 'id'
-							RequestAPI.updateNotificationStatus offerIds
-							.then =>
-								_.each @all, (offer)-> App.notification.decrement()
+				# markOffersAsSeen : ->
+				# 	RequestAPI.isOfferNotificationSeen $scope.view.request.id
+				# 	.then (obj)=>
+				# 		if !obj.hasSeen
+				# 			offerIds = _.pluck @all, 'id'
+				# 			RequestAPI.updateNotificationStatus offerIds
+				# 			.then =>
+				# 				_.each @all, (offer)-> App.notification.decrement()
+
+				markAsSeen : (offer)->
+					hasSeen = offer.notification.hasSeen
+					if !hasSeen
+						RequestAPI.updateNotificationStatus [offer.id]
+						.then -> App.notification.decrement()
 
 				openRatePopup : (seller)->
 					@rate.star = 'Poor'

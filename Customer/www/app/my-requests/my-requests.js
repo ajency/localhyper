@@ -238,7 +238,8 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
       if (!_.contains(cacheForStates, App.previousState)) {
         $scope.view.reFetch();
         $scope.view.filter.reset();
-        return $rootScope.$broadcast('re:fetch:expired:requests');
+        $rootScope.$broadcast('re:fetch:expired:requests');
+        return $rootScope.$broadcast('update:notifications:and:open:requests');
       }
     });
   }

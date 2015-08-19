@@ -8,6 +8,7 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
         if (User.isLoggedIn()) {
           this.getNotifications();
           this.getCountOfAcceptedOffers();
+          App.setAutoBidSetting();
         }
         return $ionicSideMenuDelegate.edgeDragThreshold(true);
       },
@@ -16,10 +17,8 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
           return function(requestIds) {
             var notifications;
             notifications = _.size(requestIds);
-            if (notifications > 0) {
-              App.notification.badge = true;
-              return App.notification.count = notifications;
-            }
+            App.notification.badge = notifications > 0;
+            return App.notification.count = notifications;
           };
         })(this));
       },
@@ -86,7 +85,8 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
     });
     $rootScope.$on('$user:registration:success', function() {
       App.notification.icon = true;
-      return $scope.view.getNotifications();
+      $scope.view.getNotifications();
+      return App.setAutoBidSetting();
     });
     $rootScope.$on('in:app:notification', function(e, obj) {
       var payload;

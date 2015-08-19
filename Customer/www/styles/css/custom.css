@@ -180,8 +180,19 @@ sm {
   left: 60px !important;
   right: 60px !important;
 }
+.bar.bar-light .title span.nav-bar-title {
+  max-width: 150px;
+  display: block;
+  margin: 0 auto;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
 button.button.button-assertive b {
   color: #fff;
+}
+.mi-wi-65 {
+  min-width: 65px;
 }
 /************************************/
 /* HEADER */
@@ -901,6 +912,7 @@ button.button.button-assertive b {
 .obj-title p.details {
   color: #9b9b9b;
   text-align: left;
+  margin-bottom: 0;
 }
 .obj-title p.details span {
   color: #f65050;
@@ -1036,6 +1048,7 @@ button.button.button-assertive b {
   margin-bottom: 3px;
   margin-top: 0;
   padding-right: 35px;
+  line-height: 22px;
 }
 .rece-offer h3 span {
   font-weight: 300;
@@ -1557,7 +1570,7 @@ label.status-label {
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #f45152;
+  background-color: #33cd5f;
   color: #fff;
   padding: 13px 20px;
 }
@@ -1569,7 +1582,7 @@ label.status-label {
   color: #444;
 }
 .maxAttempts-div .btn-casup.activated i {
-  background-color: #a12425;
+  background-color: #295736;
 }
 .maxAttempts-div .btn-casup.activated span {
   color: #fff;
@@ -1584,6 +1597,16 @@ label.status-label {
   left: 0;
   padding: 10px 12px 7px;
   background-color: #ddd;
+}
+.with-prefix.custom-offer-price .prefix {
+  padding: 12px 15px 11px;
+}
+.with-prefix.custom-offer-price input {
+  padding-right: 8px;
+  padding-left: 32px;
+}
+.list-inset .item.item-input.custom-offer-price input {
+  padding-right: 8px;
 }
 .small-let {
   text-transform: none;
@@ -1907,8 +1930,9 @@ label.status-label {
   border-right: 1px solid #ddd;
 }
 .rating-section {
-  margin-bottom: 10px;
+  margin-bottom: 0;
   margin-top: 5px;
+  text-align: center;
 }
 .rating-section img {
   margin-right: 5px;
@@ -1917,6 +1941,7 @@ label.status-label {
   padding: 5px 8px;
   line-height: normal;
   border: 1px solid #ccc;
+  margin-top: 10px;
 }
 .req-cards-c.card-list .card {
   -webkit-box-shadow: 0 0 0 rgba(0, 0, 0, 0);

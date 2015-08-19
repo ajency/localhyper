@@ -200,7 +200,8 @@ angular.module('LocalHyper.auth').factory('AuthAPI', [
             "addedCredit": parseFloat(defaultObj.get('value')),
             "subtractedCredit": 0,
             "ratingSum": 0,
-            "ratingCount": 0
+            "ratingCount": 0,
+            "autoBid": false
           });
           return user.signUp();
         };

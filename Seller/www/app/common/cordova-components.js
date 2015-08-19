@@ -1,8 +1,8 @@
 angular.module('LocalHyper.common').factory('CToast', [
-  '$cordovaToast', 'App', function($cordovaToast, App) {
+  '$cordovaToast', function($cordovaToast) {
     var CToast, webview;
     CToast = {};
-    webview = App.isWebView();
+    webview = ionic.Platform.isWebView();
     CToast.show = function(content) {
       if (webview) {
         return $cordovaToast.showShortBottom(content);
