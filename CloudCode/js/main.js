@@ -2224,24 +2224,33 @@
     });
   });
 
+  Parse.Cloud.define('getImageSizes', function(request, response) {
+    var result;
+    result = {
+      productSizes: getImageSizes('product'),
+      categorySizes: getImageSizes('category')
+    };
+    return response.success(result);
+  });
+
   getImageSizes = (function(_this) {
     return function(type) {
       var imageCategorySizes, imageSizes, largeLandscapeImage, largePortraitImage, medium, mediumImage, small, smallImage;
       largePortraitImage = {
-        "retina": "600 x 360",
-        "non_retina": "400 x 240"
+        "retina": "-600x360",
+        "non_retina": "-400x240"
       };
       largeLandscapeImage = {
-        "retina": "600 x 360",
-        "non_retina": "600 x 360"
+        "retina": "-600x360",
+        "non_retina": "-600x360"
       };
       mediumImage = {
-        "retina": "360 x 216",
-        "non_retina": "180 x 108"
+        "retina": "-360x216",
+        "non_retina": "-180x108"
       };
       smallImage = {
-        "retina": "300 x 180",
-        "non_retina": "150 x 90"
+        "retina": "-300x180",
+        "non_retina": "-150x90"
       };
       imageSizes = {
         "largeLandscape": largeLandscapeImage,
@@ -2250,12 +2259,12 @@
         "small": smallImage
       };
       medium = {
-        "retina": "367 x 220",
-        "non_retina": "183 x 110"
+        "retina": "-367x220",
+        "non_retina": "-183x110"
       };
       small = {
-        "retina": "300 x 180",
-        "non_retina": "150 x 90"
+        "retina": "-300x180",
+        "non_retina": "-150x90"
       };
       imageCategorySizes = {
         "medium": medium,
