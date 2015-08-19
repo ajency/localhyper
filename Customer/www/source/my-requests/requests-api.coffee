@@ -102,7 +102,7 @@ angular.module 'LocalHyper.myRequests'
 
 		defer.promise
 
-	RequestAPI.isNotificationSeen = (requestId)->
+	RequestAPI.isOfferNotificationSeen = (requestId)->
 		defer = $q.defer()
 
 		params = 
