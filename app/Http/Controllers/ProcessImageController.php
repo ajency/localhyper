@@ -236,11 +236,9 @@ class ProcessImageController extends Controller
                 array('name'=>'-150x90', 'width'=>'150', 'height'=>'90', 'ratio'=>'5:3'),
                 array('name'=>'-300x180', 'width'=>'300', 'height'=>'180', 'ratio'=>'5:3'),
                 array('name'=>'-400x240', 'width'=>'400', 'height'=>'240', 'ratio'=>'5:3'),
-                array('name'=>'-800x480', 'width'=>'800', 'height'=>'480', 'ratio'=>'5:3'),
+                array('name'=>'-600x360', 'width'=>'600', 'height'=>'360', 'ratio'=>'5:3'),
                 array('name'=>'-180x108', 'width'=>'180', 'height'=>'108', 'ratio'=>'5:3'),
-                array('name'=>'-360x216', 'width'=>'360', 'height'=>'216', 'ratio'=>'5:3'),
-                array('name'=>'-736x442', 'width'=>'736', 'height'=>'442', 'ratio'=>'5:3'),
-                array('name'=>'-1000x600', 'width'=>'1000', 'height'=>'600', 'ratio'=>'5:3')
+                array('name'=>'-360x216', 'width'=>'360', 'height'=>'216', 'ratio'=>'5:3')
                 );
 
         }
