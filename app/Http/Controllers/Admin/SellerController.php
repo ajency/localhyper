@@ -292,7 +292,7 @@ class SellerController extends Controller
                         'offerAmt'=>$priceObj->get("value"),
                         'creditUsed' => $creditUsed,
                         'status'=>$offer->get("status"),
-                        'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
+                        'date'=>convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s')),
                          ] ;
             
  

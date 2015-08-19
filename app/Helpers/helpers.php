@@ -25,3 +25,10 @@ function displayPagination($pageNo , $numOfPages , $link)
     
     return $html;
 }
+
+function convertToIST($dateTime)
+{
+    $date = new DateTime($dateTime, new DateTimeZone('UTC'));
+    $date->setTimezone(new DateTimeZone('IST'));
+    return $date->format('d-m-Y H:i:s');
+}
