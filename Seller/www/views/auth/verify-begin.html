@@ -2,7 +2,7 @@
 
 	<ion-content class="aj-text verify-first">
 		<br><br>
-		<img src="./img/verify_3.png" class="center-img verify-step-img"/>
+		<img src="./img/verify_3.png" class="center-img verify-step-img" style="position: relative; left: -20px;"/>
  		<div class="row">
 			<div class="center sm-text col subdued info-top">
 				Shopoye will send a one time SMS message to verify your phone number. Carrier SMS charges may apply.
@@ -23,7 +23,8 @@
 
 				</br>
 				<h5 class="norm al">Please enter your phone number</h5>
-				<label class=" item-input">
+				<label class=" item-input with-prefix">
+					<span class="prefix">+91</span>
 					<input
 						type="tel"
 						minlength="10"
@@ -33,17 +34,24 @@
 				</label>
 			</div>
 
-			<div class="padding">
+			<!-- <div class="padding">
 				<button
 					class="button button-assertive aj-btn"
 					type="submit">
 					Proceed
 				</button>
-			</div>
+			</div> -->
 
 		</form>
 
 		<br><br>
 	</ion-content>
 
+	<div class="verify-btm-bar bar bar-assertive bar-footer">
+		<button
+			class="button button-block button-assertive aj-btn"
+			type="submit">
+			Proceed
+		</button>
+	</div>
 </ion-view>

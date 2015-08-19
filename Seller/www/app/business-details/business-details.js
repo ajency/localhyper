@@ -240,16 +240,17 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
       onChangeLocation: function() {
         return this.isGoogleMapsScriptLoaded().then((function(_this) {
           return function(loaded) {
-            var mapHeight;
             if (loaded) {
               _this.location.modal.show();
-              mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10;
-              $('.aj-big-map').css({
-                'height': mapHeight
-              });
-              if (!_.isUndefined(_this.latitude)) {
-                return $timeout(function() {
-                  var latLng, loc;
+              return $timeout(function() {
+                var children, container, latLng, loc, mapHeight;
+                container = $('.map-content').height();
+                children = $('.address-inputs').height() + $('.tap-div').height();
+                mapHeight = container - children - 20;
+                $('.aj-big-map').css({
+                  'height': mapHeight
+                });
+                if (!_.isUndefined(_this.latitude)) {
                   loc = {
                     lat: _this.latitude,
                     long: _this.longitude
@@ -257,18 +258,15 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
                   latLng = _this.location.setMapCenter(loc);
                   _this.location.map.setZoom(15);
                   return _this.location.addMarker(latLng);
-                }, 200);
-              } else if (_.isNull(_this.location.latLng)) {
-                return $timeout(function() {
-                  var loc;
+                } else if (_.isNull(_this.location.latLng)) {
                   loc = {
                     lat: GEO_DEFAULT.lat,
                     long: GEO_DEFAULT.lng
                   };
                   _this.location.setMapCenter(loc);
                   return _this.location.getCurrent();
-                }, 200);
-              }
+                }
+              }, 300);
             }
           };
         })(this));

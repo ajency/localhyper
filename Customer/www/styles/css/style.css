@@ -10,6 +10,11 @@
 	background: #000!important;
 	background-image: none !important;
 }
+.platform-android .bar .title {
+      font-size: 16px;
+	  line-height: 44px;
+	  font-weight: 600;
+}
 .modal .bar .title {
   font-size: 16px !important;
   left: 0% !important;
@@ -143,6 +148,8 @@
   background: #fff;
   border-radius: 100%;
   padding: 5px;
+    -webkit-border-radius: 100%;
+   -moz-border-radius: 100%;
   box-shadow: 0px 2px 6px #B6B6B6;
 }
 .aj-refresher .spinner svg circle{
@@ -162,6 +169,8 @@
   fill: #ffffff;
   background: #fff;
   border-radius: 100%;
+  -webkit-border-radius: 100%;
+   -moz-border-radius: 100%;
   padding: 5px;
   box-shadow: 0px 2px 6px #B6B6B6;
 }
@@ -191,8 +200,9 @@
 .sort-popup{
 	overflow: hidden !important;
 	width: 70% !important;
-    height: 225px !important;
+    height: 191px !important;
 }
+
 
 /*card on phone verification */
 .cardTop {
@@ -219,4 +229,15 @@
 	color: #33cd5f;
 	font-weight: 400;
     text-transform: uppercase;
+}
+
+/* star rating */
+ul.rating li {
+  display: inline;
+  border: 0px;
+  background: none;
+  padding: 5px 10px;
+}
+ul.rating li i {
+  font-size: 20px;
 }

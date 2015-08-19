@@ -3,9 +3,10 @@ angular.module 'LocalHyper.common', []
 
 .factory 'App', ['$cordovaSplashscreen', '$state', '$ionicHistory', '$ionicSideMenuDelegate'
 	, '$window', '$cordovaStatusbar', '$cordovaKeyboard', '$cordovaNetwork', '$timeout'
-	, '$q', '$ionicScrollDelegate', '$cordovaInAppBrowser'
+	, '$q', '$ionicScrollDelegate', '$cordovaInAppBrowser', 'User', 'CToast', 'UIMsg', '$rootScope'
 	, ($cordovaSplashscreen, $state, $ionicHistory, $ionicSideMenuDelegate, $window
-	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate, $cordovaInAppBrowser)->
+	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate
+	, $cordovaInAppBrowser, User, CToast, UIMsg, $rootScope)->
 
 		App = 
 
@@ -15,6 +16,7 @@ angular.module 'LocalHyper.common', []
 			menuEnabled : left: false, right: false
 			previousState: ''
 			currentState: ''
+			autoBid: false
 
 			isAndroid : ->
 				ionic.Platform.isAndroid()
@@ -102,5 +104,23 @@ angular.module 'LocalHyper.common', []
 					defer.resolve 'DUMMY_INSTALLATION_ID'
 
 				defer.promise
+
+			setAutoBidSetting : ->
+				user = User.getCurrent()
+				@autoBid = user.get 'autoBid'
+
+			onAutoBidSettingChange : ->
+				if @isOnline()	
+					user = User.getCurrent()
+					user.save 'autoBid': @autoBid
+					.then ->
+						console.log 'Auto bid setting changed'
+					, =>
+						$rootScope.$apply =>
+							@autoBid = !@autoBid
+							CToast.show 'An error occurred. Please check your network settings.'
+				else
+					@autoBid = !@autoBid
+					CToast.show UIMsg.noInternet
 ]
 

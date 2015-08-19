@@ -24,13 +24,13 @@
 			class="card-list list-inset"
 			ng-switch-when="noError">
 
-			<h4
+			<h5
 				ng-if="view.noAcceptedOffers"
-				class="text-center subdued">
+				class="text-center fin">
 				You have no accepted offers.
-			</h4>
+			</h5>
 
-	       	<ion-item 
+	       	<ion-item
 
 	       		class="card-box"
 	       		ng-repeat="request in view.requests"
@@ -44,7 +44,7 @@
 
 				    <h2>{{request.product.name}}
 							<i class="ion-record " id="{{App.humanize(request.offerStatus)}}"></i>
-				    </h2> 
+				    </h2>
 
 				      <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms away</b>
 
@@ -71,14 +71,14 @@
 
 				<div class="row item border-none" >
 			        <div class="col p-t-0">
-			            <sm class="light-gray">Offer Price</sm><br>
+			            <sm class="light-gray">Your Offer Price</sm><br>
 			            <h3 class=" item-text-wrap margin-none big-txt ">
 			            	<span class="WebRupee subdued">&#x20B9;</span>
 			            	{{App.toINR(request.offerPrice)}}
 			            </h3>
 			        </div>
 			        <div class="col p-t-0">
-			        	<div class="pull-right">
+			        	<div class="pull-right mi-wi-65">
 				            <div class="offer"> {{request.request.offerCount}} </div>
 				            <h4 class="offertxt light-gray"> No of offers</h4>
 			           	</div>
@@ -115,9 +115,10 @@
 			tap-to-retry="view.onTapToRetry()" class="error-wrapper">
 		</aj-error>
 
-		<h4 class="text-center subdued" ng-if="view.gotAllOffers && view.requests.length !== 0">
+		<h5 class="text-center subdued fin" ng-if="view.gotAllOffers && view.requests.length !== 0">
 			That's all folks, no more offers to display.
-		</h4>
+			<div class="spacer-20"></div>
+		</h5>
 
 		<ion-infinite-scroll
 			on-infinite="view.onInfiniteScroll()"

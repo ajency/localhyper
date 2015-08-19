@@ -1,11 +1,12 @@
 angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
-  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup, User) {
+  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User', '$window', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup, User, $window) {
     var inAppNotificationEvent;
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
       display: 'loader',
       errorType: '',
       pushParams: null,
+      helpURL: $window.HELP_URL,
       address: {
         show: false,
         toggle: function() {
@@ -42,9 +43,14 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         all: [],
         limitTo: 1,
         rate: {
-          score: 0,
+          star: '',
+          score: 1,
+          max: 5,
           comment: '',
           setScore: function(score) {
+            var rateValue;
+            rateValue = ['', 'Poor', 'Average', 'Good', 'Very Good', 'Excellent'];
+            this.star = rateValue[score];
             return this.score = score;
           }
         },
@@ -77,30 +83,24 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           console.log(offers);
           this.display = 'noError';
           this.all = offers;
-          this.markOffersAsSeen();
           return $scope.view.cancelRequest.set();
         },
         onError: function(type) {
           this.display = 'error';
           return this.errorType = type;
         },
-        markOffersAsSeen: function() {
-          return RequestAPI.isNotificationSeen($scope.view.request.id).then((function(_this) {
-            return function(obj) {
-              var offerIds;
-              if (!obj.hasSeen) {
-                offerIds = _.pluck(_this.all, 'id');
-                return RequestAPI.updateNotificationStatus(offerIds).then(function() {
-                  return _.each(_this.all, function(offer) {
-                    return App.notification.decrement();
-                  });
-                });
-              }
-            };
-          })(this));
+        markAsSeen: function(offer) {
+          var hasSeen;
+          hasSeen = offer.notification.hasSeen;
+          if (!hasSeen) {
+            return RequestAPI.updateNotificationStatus([offer.id]).then(function() {
+              return App.notification.decrement();
+            });
+          }
         },
         openRatePopup: function(seller) {
-          this.rate.score = 0;
+          this.rate.star = 'Poor';
+          this.rate.score = 1;
           this.rate.comment = '';
           return $ionicPopup.show({
             templateUrl: 'views/my-requests/rate.html',

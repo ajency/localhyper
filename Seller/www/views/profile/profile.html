@@ -1,4 +1,4 @@
-<ion-view 
+<ion-view
 	view-title=""
 	ng-init="view.init();">
 	<ion-nav-title>
@@ -6,16 +6,16 @@
     </ion-nav-title>
 	<ion-content class="business-details">
 
-		<div class="row">
+		<div class="row p-b-0">
 			<div class="col-80 ">
 				<h5 class="text-left  title-with-icon text-primary upper-case h5 m-t-10">
 					<i class="icon ion-briefcase"></i>
 					Business details
 				</h5>
-				
+
 			</div>
 			<div class="col-20">
-				<button class="button button-block  button-clear button-assertive margin-none" ng-click="App.navigate('business-details');">
+				<button class="button button-block d-t-a-btn button-clear button-assertive margin-none" ng-click="App.navigate('business-details');">
 				 <i class="ion-compose"></i> Edit
 				</button>
 			</div>
@@ -41,19 +41,21 @@
 
 				<label class="item item-input item-stacked-label">
 				<i class="icon ion-ios-telephone ico-out"></i>
-					<span class="input-label">Phone Number</span>
-					<input
-						type="tel"
-						minlength="10"
-						maxlength="10"
-						ng-pattern="App.onlyNumbers"
-						ng-model="view.phone"
-						ng-readonly="view.myProfileState" disabled>
+					<span class="input-label">Mobile Number</span>
+					<span class="mob-holder">
+						<span>+91</span><input
+							type="tel"
+							minlength="10"
+							maxlength="10"
+							ng-pattern="App.onlyNumbers"
+							ng-model="view.phone"
+							ng-readonly="view.myProfileState" disabled>
+					</span>
 				</label>
 			</div>
 		</div>
 
-	
+
 			<div class=" card">
 				<div class=" item-text-wrap">
 					<div class="row">
@@ -68,10 +70,10 @@
 							</h3>
 							<span class="subdued">Available Credit Points</span>
 						</div>
-						
+
 					</div>
 				</div>
-			
+
 	<!-- 		<div class="col card col-33">
 				<div class=" item-text-wrap">
 					Auto Offer
@@ -85,16 +87,47 @@
 							</div>
 						</label>
 					</div>
-				</div>	
+				</div>
 			</div> -->
 		</div>
-<div class="row">
+		<div class="card auto-offer-profile">
+			<div class="row">
+				<div class="col">
+					<h4>Auto Offer</h4>
+				</div>
+				<div class="col">
+					<label class="toggle toggle-assertive pull-right">
+						<input 
+							type="checkbox"
+							ng-model="App.autoBid"
+							ng-change="App.onAutoBidSettingChange();">
+						<div class="track">
+							<div class="handle"></div>
+						</div>
+					</label>
+				</div>
+			</div>
+			<!-- <div class=" item-text-wrap">
+				Auto Offer
+			</div>
+			<div class="item-text-wrap">
+				<div class="pull-right">
+					<label class="toggle toggle-assertive">
+						<input type="checkbox">
+						<div class="track">
+							<div class="handle"></div>
+						</div>
+					</label>
+				</div>
+			</div> -->
+		</div>
+		<div class="row p-b-0">
 			<div class="col-67 ">
-				<h5 class="text-left  title-with-icon text-primary upper-case h5 m-t-10">
+				<h5 class="text-left  title-with-icon text-primary upper-case h5 m- t-10" style="margin-top: 6px;">
 					<i class="icon ion-pricetag"></i>
 					My Bussiness Categories
 				</h5>
-				
+
 			</div>
 			<div class="col-33">
 			<button
@@ -112,28 +145,28 @@
 		<div class="card m-t-0">
 
 			<ion-list show-delete="view.showDelete">
-				<ion-item 
-					class="item item-text-wrap cat-chain item-icon-left" 
+				<ion-item
+					class="item item-text-wrap cat-chain item-icon-left"
 					ng-repeat="chains in view.categoryChains track by $index"
 					ng-click="view.onChainClick(chains)">
 
-						<ion-delete-button 
+						<ion-delete-button
 						class="ion-trash-a"
 						ng-click="view.removeItemFromChains(chains.subCategory.id)">
 						</ion-delete-button>
 
 						<div class="lighter-nh">
-							{{chains.category.name}} <i class="ion-ios-arrow-forward"></i> 
+							{{chains.category.name}} <i class="ion-ios-arrow-forward"></i>
 							<span class="darker">{{chains.subCategory.name}}</span>
 						</div>
 						<div class="highlight">
 							{{view.getBrands(chains.brands)}}
 						</div>
-				
+
 				</ion-item>
-				
-				<h5 class="subdued item-text-wrap" ng-if="view.categoryChains.length == 0;">
-					Choose the categories and brands you deal with. 
+
+				<h5 class="subdued item-text-wrap" ng-if="view.categoryChains.length == 0;" style="padding: 0 5px;">
+					Choose the categories and brands you deal with.
 					You shall receive requests based on the categories you select.
 				</h5>
 			</ion-list>
@@ -141,24 +174,24 @@
 
 		<div class="list card">
 			<div class="row">
-				<div class="col-20"><img src="./img/info-icon.png" class="center-block m-t-10" width="35px"/></div>
+				<div class="col-20"><img src="./img/info-icon.png" class="center-block m-t-10" style="position: relative; left: -2px;" width="35px"/></div>
 				<div class="col-80">
 						<h5 class="text-left subdued ">
 							You receive request from customer for products under categories you added here
 						</h5>
 				</div>
 			</div>
-		
+
 		</div>
-<!-- 
-		<button 
-			class="button button-dark button-block" 
+<!--
+		<button
+			class="button button-dark button-block"
 			ng-click="App.navigate('business-details');">
  			Edit Bussiness Details
 		</button> -->
 
-	<!-- 	<button 
-			class="button button-assertive button-block" 
+	<!-- 	<button
+			class="button button-assertive button-block"
 			ng-click="view.saveDetails();"
 			ng-disabled="view.categoryChains.length == 0">
 			Save
@@ -167,8 +200,8 @@
 	</ion-content>
 		<ion-footer-bar class="bar-assertive">
 
-		<div 
-			class="title "  
+		<div
+			class="title "
 			ng-click="view.saveDetails();"
 			ng-disabled="view.categoryChains.length == 0">
 			Save Profile

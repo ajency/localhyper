@@ -2,15 +2,17 @@ angular.module 'LocalHyper.myRequests'
 
 
 .controller 'RequestDetailsCtrl', ['$scope', 'RequestAPI', '$interval', 'TimeString'
-	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User'
+	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup'
+	, 'User', '$window'
 	, ($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner
-	, CToast, $rootScope, CDialog, $ionicPopup, User)->
+	, CToast, $rootScope, CDialog, $ionicPopup, User, $window)->
 
 		$scope.view = 
 			request: RequestAPI.requestDetails 'get'
 			display: 'loader'
 			errorType: ''
 			pushParams: null
+			helpURL: $window.HELP_URL
 			
 			address: 
 				show: false
@@ -42,10 +44,16 @@ angular.module 'LocalHyper.myRequests'
 				errorType: ''
 				all: []
 				limitTo: 1
+
+			
 				rate:
-					score: 0
+					star : ''
+					score: 1
+					max: 5
 					comment: ''
 					setScore : (score)->
+						rateValue = ['','Poor', 'Average', 'Good', 'Very Good', 'Excellent']
+						@star = rateValue[score]
 						@score = score
 
 				showAll : ->
@@ -71,24 +79,31 @@ angular.module 'LocalHyper.myRequests'
 					console.log offers
 					@display = 'noError'
 					@all = offers
-					@markOffersAsSeen()
+					# @markOffersAsSeen()
 					$scope.view.cancelRequest.set()
 
 				onError : (type)->
 					@display = 'error'
 					@errorType = type
 
-				markOffersAsSeen : ->
-					RequestAPI.isNotificationSeen $scope.view.request.id
-					.then (obj)=>
-						if !obj.hasSeen
-							offerIds = _.pluck @all, 'id'
-							RequestAPI.updateNotificationStatus offerIds
-							.then =>
-								_.each @all, (offer)-> App.notification.decrement()
+				# markOffersAsSeen : ->
+				# 	RequestAPI.isOfferNotificationSeen $scope.view.request.id
+				# 	.then (obj)=>
+				# 		if !obj.hasSeen
+				# 			offerIds = _.pluck @all, 'id'
+				# 			RequestAPI.updateNotificationStatus offerIds
+				# 			.then =>
+				# 				_.each @all, (offer)-> App.notification.decrement()
+
+				markAsSeen : (offer)->
+					hasSeen = offer.notification.hasSeen
+					if !hasSeen
+						RequestAPI.updateNotificationStatus [offer.id]
+						.then -> App.notification.decrement()
 
 				openRatePopup : (seller)->
-					@rate.score = 0
+					@rate.star = 'Poor'
+					@rate.score = 1
 					@rate.comment = ''
 					$ionicPopup.show
 						templateUrl: 'views/my-requests/rate.html'
@@ -118,8 +133,7 @@ angular.module 'LocalHyper.myRequests'
 					.finally ->
 						CSpinner.hide()
 
-			
-
+				
 			init : ->
 				if _.has(@request, 'pushOfferId')
 					#When new offer

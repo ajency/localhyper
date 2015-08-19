@@ -1,29 +1,29 @@
 <ion-pane 
-	class="sort-model sort-popup"
+	class="sort-model sort-popup new-requests-sort"
 	aj-loading-back-drop>
 
 	<ul class="list">
-		<li class="item">SORT BY</li>
+		<li class="item item-title">SORT BY</li>
 
 		<li class="item"
 			ng-class="(view.sortBy === 'popularity') ? 'active' : ''"
 			ng-click="view.onSort('popularity', 'Popularity', false)">
 
-			<i class="i-popularity"></i>Popularity
+			<img src="./img/recent.png"/></i>Popularity
 		</li>
 
 		<li class="item"
 			ng-class="(view.sortBy === 'mrp' && view.ascending === false) ? 'active' : ''"
 			ng-click="view.onSort('mrp', 'Price - high to low', false)">
 
-			<i class="i-price-high"></i>Price - high to low
+			<img src="./img/ruppe-up.png"/>Price - high to low
 		</li>
 
 		<li class="item" 
 			ng-class="(view.sortBy === 'mrp' && view.ascending === true) ? 'active' : ''"
 			ng-click="view.onSort('mrp', 'Price - low to high', true)">
 
-			<i class="i-price-low"></i>Price - low to high
+			<img src="./img/ruppe-down.png"/>Price - low to high
 		</li>
 	</ul>
 	

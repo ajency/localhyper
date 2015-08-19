@@ -1,11 +1,10 @@
 <div>
-	<user-rating 
-		rate-click="view.offers.rate.setScore(score);">
-	</user-rating>
-	<br>
-	<input 
+	<rating ng-model="view.offers.rate.score" max="view.offers.rate.max" ng-click="view.offers.rate.setScore(view.offers.rate.score)"></rating>
+	{{view.offers.rate.star}} 
+	<input
 		type="textarea"
 		placeholder="Comments"
+		class="comments-input"
 		ng-model="view.offers.rate.comment">
 	<br>
 </div>

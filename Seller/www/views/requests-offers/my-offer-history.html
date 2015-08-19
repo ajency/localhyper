@@ -24,15 +24,14 @@
 			class="card-list list-inset"
 			ng-switch-when="noError">
 
-			<h4
+			<h5
 				ng-if="view.noOffersMade"
-				class="text-center subdued">
+				class="text-center fin">
 				You have not made any offers.
-			</h4>
+			</h5>
 
 	       	<ion-item
-	       		class="card-box "
-	       		
+	       		class="card-box"
 	       		ng-repeat="request in view.requests"
 	       		ng-click="view.offerDetails.show(request)">
 
@@ -42,37 +41,23 @@
 				    </div>
 				    <h2 class="">{{request.product.name}}
 					<i class="ion-record " id="{{App.humanize(request.offerStatus)}}"></i>
-				    </h2> 
+				    </h2>
 
-				    <b class="light-gray"><i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms away</b>
+				    <b class="light-gray">
+				    	<i class="ion-android-pin text-primary"></i> {{request.distanceFromCustomer.toFixed(2)}} kms away
+				    </b>
 				</div>
 
-					<!-- 	<div class="row">
-					  <div class="col col-50">
-					  	 <div ng-if="request.request.status == 'open' ">
-				            <sm class="light-gray text-left"> Claimed delivery :</sm>
-			            	<b>{{view.deliveryTime.humanize(request.offerDeliveryTime)}}</b>
-					   </div>
-					  </div>
-					  <div class="col col-50 text-right">
-					  	<sm
-						class="light-gray text-right"
-						ng-if="request.offerStatus != 'unaccepted'">
-						Request Status :
-					</sm><b>{{App.humanize(request.request.status)}}</b>
-					  </div>
-
-					</div> -->
 				<div class="row item border-none" >
 			        <div class="col p-t-0">
-			            <sm class="light-gray">Offer Price</sm><br>
+			            <sm class="light-gray">Your Offer Price</sm><br>
 			            <h3 class=" item-text-wrap margin-none big-txt ">
 			            	<span class="WebRupee subdued">&#x20B9;</span>
 			            	{{App.toINR(request.offerPrice)}}
 			            </h3>
 			        </div>
 			        <div class="col p-t-0">
-			        	<div class="pull-right">
+			        	<div class="pull-right mi-wi-65">
 				            <div class="offer"> {{request.request.offerCount}} </div>
 				            <h4 class="offertxt light-gray"> No of offers</h4>
 			           	</div>
@@ -80,26 +65,24 @@
 			    </div>
 
 			    <div class="item item-divider">
-			        <div class="pull-right ">
-			            <!-- <h3 class="margin-none"> Details &nbsp;<i class="ion ion-android-arrow-forward "></i></h3> -->
-			       <h3
-						class="light-gray text-right margin-none"
-						ng-if="request.offerStatus != 'unaccepted'">
-						Request Status :
-					<b>{{App.humanize(request.request.status)}}</b></h3>
+			        <div class="pull-right">
+			       		<h3
+							class="light-gray text-right margin-none"
+							ng-if="request.offerStatus != 'unaccepted'">
+							<b>Request {{App.humanize(request.request.status)}}</b>
+						</h3>
 			        </div>
 
 			        <div
 			        	class="pull-left"
 			        	ng-if="request.request.status === 'open'">
+
 			        	<i class="ion-android-stopwatch"></i>
-		            	 	<b class="text-primary"
-								aj-count-down
-								created-at="request.request.createdAt"
-								count-down-finish="view.onRequestExpiry(request)">
-							</b>
-			        	<!--   -->
-			          <!--   Offer status: <b>{{App.humanize(request.offerStatus)}}</b> -->
+	            	 	<b class="text-primary"
+							aj-count-down
+							created-at="request.request.createdAt"
+							count-down-finish="view.onRequestExpiry(request)">
+						</b>
 			        </div>
 			    </div>
 			</ion-item>
@@ -112,7 +95,8 @@
 		</aj-error>
 
 		<div ng-if="view.gotAllOffers && view.requests.length !== 0">
-			<h4 class="text-center subdued"> That's all folks, no more offers to display. </h4>
+			<h5 class="text-center subdued fin"> That's all folks, no more offers to display. </h5>
+			<div class="spacer-20"></div>
 		</div>
 
 		<ion-infinite-scroll

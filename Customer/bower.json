@@ -13,6 +13,6 @@
     "underscore.string": "~3.1.1",
     "jquery.countdown": "~2.0.4",
     "moment": "~2.10.3",
-    "raty": "~2.7.0"
+    "ionic-rating": "~0.1.0"
   }
 }

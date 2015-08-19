@@ -31,13 +31,13 @@
 						</label>
 					</div>
 
-					<div class="padding">
+					<!-- <div class="padding">
 						<button
 							class="button button-assertive aj-btn"
 							ng-click="view.onNext()">
 							Next
 						</button>
-					</div>
+					</div> -->
 
 					</br></br>
 					<h4 ng-click="view.isExistingUser()" class="button-border">Resend the code?</h4>
@@ -54,7 +54,7 @@
 				</div>
 				<br>
 				<div class="row">
-						<button class="button button-outline button-assertive center col subdued btn-casup" ng-click="view.callSupport()">
+						<button class="button button-outline button-balanced center col subdued btn-casup" ng-click="view.callSupport()">
 							Call Support
 							<i class="icon ion-android-call"></i>
 							<span>{{view.phone.SUPPORT_NUMBER}}</span>
@@ -68,13 +68,13 @@
 					<input type="tel" minlength="6" maxlength="6" ng-model="view.smsCode" class="input-border" placeholder="Code">
 				</label>
 				</br>
-				<div class="padding">
+				<!-- <div class="padding">
 						<button
 							class="button button-assertive aj-btn"
 							ng-click="view.onNext()">
 							Next
 						</button>
-					</div>
+					</div> -->
 			</div>
 
 			<aj-error
@@ -88,4 +88,12 @@
 		<br><br>
 
 	</ion-content>
+
+	<div class="verify-btm-bar bar bar-assertive bar-footer">
+		<button
+			class="button button-block button-assertive aj-btn"
+			ng-click="view.onNext()">
+			Next
+		</button>
+	</div>
 </ion-view>

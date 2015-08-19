@@ -5,7 +5,7 @@ angular.module 'LocalHyper.common'
 
 	UIMsg = 
 		noInternet : 'No internet available. Please check your network settings'
-		serverError: 'Count not connect to server. Please check your network settings' 
+		serverError: 'Could not connect to server. Please check your network settings' 
 		
 
 	UIMsg

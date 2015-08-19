@@ -29,10 +29,8 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
           return function(offerIds) {
             var notifications;
             notifications = _.size(offerIds);
-            if (notifications > 0) {
-              App.notification.badge = true;
-              return App.notification.count = notifications;
-            }
+            App.notification.badge = notifications > 0;
+            return App.notification.count = notifications;
           };
         })(this));
       },
@@ -103,6 +101,10 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
       return App.resize();
     });
     $rootScope.$on('make:request:success', function() {
+      return $scope.view.getOpenRequestCount();
+    });
+    $rootScope.$on('update:notifications:and:open:requests', function() {
+      $scope.view.getNotifications();
       return $scope.view.getOpenRequestCount();
     });
     $rootScope.$on('in:app:notification', function(e, obj) {

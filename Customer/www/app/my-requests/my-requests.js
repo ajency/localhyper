@@ -28,6 +28,10 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
             value: 'successful',
             selected: false
           }, {
+            name: 'Sent for delivery',
+            value: 'sent_for_delivery',
+            selected: false
+          }, {
             name: 'Pending delivery',
             value: 'pending_delivery',
             selected: false
@@ -220,8 +224,10 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
     $scope.$on('$ionicView.enter', function() {
       return $ionicPlatform.onHardwareBackButton(onDeviceBack);
     });
-    $scope.$on('$ionicView.leave', function() {
-      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
+    $scope.$on('$stateChangeSuccess', function(ev, to) {
+      if (to.name !== 'my-requests') {
+        return $ionicPlatform.offHardwareBackButton(onDeviceBack);
+      }
     });
     return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
       var cacheForStates;
@@ -232,7 +238,8 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
       if (!_.contains(cacheForStates, App.previousState)) {
         $scope.view.reFetch();
         $scope.view.filter.reset();
-        return $rootScope.$broadcast('re:fetch:expired:requests');
+        $rootScope.$broadcast('re:fetch:expired:requests');
+        return $rootScope.$broadcast('update:notifications:and:open:requests');
       }
     });
   }

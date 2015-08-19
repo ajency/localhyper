@@ -32,12 +32,15 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
           return this.getCurrent();
         }
       },
-      reset: function() {
+      reset: function(clearPlace) {
+        if (clearPlace == null) {
+          clearPlace = true;
+        }
         App.resize();
         if (this.userMarker) {
           this.userMarker.setMap(null);
         }
-        if (this.placeMarker) {
+        if (this.placeMarker && clearPlace) {
           this.placeMarker.setMap(null);
         }
         this.clearSellerMarkers();
@@ -112,6 +115,7 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
           return function(event) {
             return $scope.$apply(function() {
               _this.latLng = event.latLng;
+              _this.reset(false);
               _this.searchText = '';
               return _this.setAddress();
             });

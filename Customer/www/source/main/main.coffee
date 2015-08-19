@@ -35,9 +35,8 @@ angular.module 'LocalHyper.main', []
 				RequestAPI.getNotifications()
 				.then (offerIds)=>
 					notifications = _.size offerIds
-					if notifications > 0
-						App.notification.badge = true
-						App.notification.count = notifications
+					App.notification.badge = notifications > 0
+					App.notification.count = notifications
 
 			getOpenRequestCount : ->
 				RequestAPI.getOpenRequestCount()
@@ -95,6 +94,10 @@ angular.module 'LocalHyper.main', []
 			App.resize()
 
 		$rootScope.$on 'make:request:success', ->
+			$scope.view.getOpenRequestCount()
+
+		$rootScope.$on 'update:notifications:and:open:requests', ->
+			$scope.view.getNotifications()
 			$scope.view.getOpenRequestCount()
 
 		$rootScope.$on 'in:app:notification', (e, obj)->

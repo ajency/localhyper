@@ -280,6 +280,16 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
               }
             }
           },
+          plus: function() {
+            this.value++;
+            return this.setDuration();
+          },
+          minus: function() {
+            if (this.value > 1) {
+              this.value--;
+            }
+            return this.setDuration();
+          },
           done: function() {
             if (_.isNull(this.value)) {
               this.value = 1;

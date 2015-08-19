@@ -37,15 +37,17 @@
 
 				<label class="item item-input item-stacked-label">
 				<i class="icon ion-ios-telephone ico-out"></i>
-					<span class="input-label">Phone Number</span>
-					<input
-						type="tel"
-						placeholder=""
-						minlength="10"
-						maxlength="10"
-						ng-pattern="App.onlyNumbers"
-						ng-model="view.phone"
-						ng-disabled="view.myProfileState">
+					<span class="input-label">Mobile Number</span>
+					<span class="mob-holder">
+						<span>+91</span><input
+							type="tel"
+							placeholder=""
+							minlength="10"
+							maxlength="10"
+							ng-pattern="App.onlyNumbers"
+							ng-model="view.phone"
+							ng-disabled="view.myProfileState">
+					</span>
 				</label>
 			</div>
 		</div>
@@ -54,7 +56,7 @@
 			<div class="col p-b-0">
 				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
 					<i class="icon ion-location"></i>
-					Your Location
+					Your Shop Location
 				</h5>
 			</div>
 		</div>
@@ -68,7 +70,7 @@
 						<button
 							class="button button-outline button-assertive"
 							ng-click="view.onChangeLocation()">
-							<i class="icon ion-plus-round"></i> Add your Address
+							<i class="icon ion-plus-round"></i> Add Shop Address
 						</button>
 					</div>
 					<div class="col col-25">
@@ -165,7 +167,7 @@
 					</li>
 				</div>
 				<div class="col">
-		
+
 				</div>
 			</div>
 
@@ -175,7 +177,7 @@
 			<div class="col p-b-0">
 				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
 					<i class="icon ion-clock"></i>
-					Work Timings
+					Shop Timings
 				</h5>
 			</div>
 		</div>
@@ -183,10 +185,10 @@
 		<div class="card m-red">
 			<div class="row platop">
 				<div class="col">
-					<ion-item ng-click="view.addWorkTimings('start')">
+					<ion-item ng-click="view.addWorkTimings('start')" style="padding-top: 10px; padding-bottom: 12px;">
 						<i class="ion-clock"></i> Start Time: {{view.workTimings.start}}
 					</ion-item>
-					<ion-item ng-click="view.addWorkTimings('end')">
+					<ion-item ng-click="view.addWorkTimings('end')" style="padding-bottom: 5px;">
 						<i class="ion-clock"></i> End Time: {{view.workTimings.end}}
 					</ion-item>
 				</div>

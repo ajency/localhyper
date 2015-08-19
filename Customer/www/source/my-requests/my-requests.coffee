@@ -23,6 +23,7 @@ angular.module 'LocalHyper.myRequests'
 					{name: 'Open requests', value: 'open', selected: false}
 					{name: 'Cancelled requests', value: 'cancelled', selected: false}
 					{name: 'Successful delivery', value: 'successful', selected: false}
+					{name: 'Sent for delivery', value: 'sent_for_delivery', selected: false}
 					{name: 'Pending delivery', value: 'pending_delivery', selected: false}
 					{name: 'Failed delivery', value: 'failed_delivery', selected: false}]
 
@@ -172,8 +173,9 @@ angular.module 'LocalHyper.myRequests'
 		$scope.$on '$ionicView.enter', ->
 			$ionicPlatform.onHardwareBackButton onDeviceBack
 
-		$scope.$on '$ionicView.leave', ->
-			$ionicPlatform.offHardwareBackButton onDeviceBack
+		$scope.$on '$stateChangeSuccess', (ev, to)->
+			if to.name isnt 'my-requests'
+				$ionicPlatform.offHardwareBackButton onDeviceBack
 
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			if !viewData.enableBack
@@ -184,6 +186,7 @@ angular.module 'LocalHyper.myRequests'
 				$scope.view.reFetch()
 				$scope.view.filter.reset()
 				$rootScope.$broadcast 're:fetch:expired:requests'
+				$rootScope.$broadcast 'update:notifications:and:open:requests'
 ]
 
 

@@ -32,6 +32,7 @@
 
     	<google-map
 			class="aj-very-big-map"
+			style="margin: 0 10px; margin-top: 18px;"
 			on-create="view.onMapCreated(map);">
 		</google-map>
 
@@ -58,7 +59,7 @@
 
 		<div class="address-inputs">
 
-			<div class="row p-b-0">
+			<div class="row p-b-0 p-t-0">
 				<div class="col p-b-0">
 					<label class="item item-input">
 						<input
@@ -121,7 +122,7 @@
 		<!-- <br> -->
 
 		<div class="row row-fluid">
-			<div class="col ">
+			<div class="col p-b-0">
 				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
 					<i class="icon ion-chatbox-working"></i>
 					Add comments
@@ -157,8 +158,8 @@
 
 		<!-- <br> -->
 		<div class="row">
-			<div class="col">
-				<h5 class="fin text-center" style="margin-top: 15px;">Please enter the correct delivery address</h5>
+			<div class="col p-t-0">
+				<h5 class="fin text-center" style="margin-top: 10px;"><b>Note:</b> Please enter the correct delivery address</h5>
 			</div>
 		</div>
 
@@ -167,16 +168,16 @@
 	<ion-footer-bar class="bar-assertive">
 		<button
 			class="title button-block button-clear"
-			ng-hide="view.sellers.found"
+			ng-if="!view.sellers.found"
 			ng-click="view.findSellers();">
 			Find sellers
 		</button>
 
 		<button
 			class="title button-block button-clear"
-			ng-show="view.sellers.found"
+			ng-if="view.sellers.found"
 			ng-click="view.makeRequest();">
-			Make Request
+			Make request
 		</button>
 	</ion-footer-bar>
 

@@ -34,7 +34,7 @@
 
 				<div class="item item-details">
 					<div class="row">
-						<div class="col col-20">
+						<div class="col col-25">
 							<div class="item-avatar">
 								<img ng-src="{{view.requestDetails.data.product.image[0].src}}">
 							</div>
@@ -56,10 +56,11 @@
 							<b class="text-left margin-none ">
 								{{view.requestDetails.data.radius.toFixed(1)}} <sm>kms away</sm>
 							</b>
-							<h3 class="light-gray text-left">Distance from you</h3>
+							<h3 class="light-gray text-left">Distance from your shop</h3>
 						</div>
-						<div class="col status">
+						<div class="col col-33 status">
 							<div class="{{App.humanize(view.requestDetails.data.status)}}">
+								<span>Status</span>
 								{{App.humanize(view.requestDetails.data.status)}}
 							</div>
 						</div>
@@ -199,11 +200,13 @@
 				class="list margin-none"
 				ng-if="view.requestDetails.price === 'yourPrice'">
 					<div class="list list-inset m-t-0">
-					  <label class="item item-input">
+					  <label class="item item-input with-prefix custom-offer-price">
+					  	<span class="WebRupee prefix">&#x20B9;</span>
 					    <input type="number"
-			    		placeholder="Enter your offer price"
-			    		ng-pattern="App.onlyNumbers"
-			    		ng-model="view.requestDetails.offerPrice">
+						    style="font-weight: bold;"
+				    		placeholder="Enter your offer price"
+				    		ng-pattern="App.onlyNumbers"
+				    		ng-model="view.requestDetails.offerPrice">
 					  </label>
 					</div>
 			</div>
@@ -236,22 +239,31 @@
 			<div
 				class="list margin-none card m-red"
 				ng-show="view.requestDetails.deliveryTime.display">
+
 				<div class="row">
-					<div class="col "> <i class="ion-plus-circled big-icon pull-right"></i></div>
+					<div class="col">
+						<i
+							class="ion-minus-circled big-icon pull-right color-dark"
+							ng-click="view.requestDetails.deliveryTime.minus();">
+						</i>
+					</div>
 					<div class="col col-33">
-					<label class="single-input" >
-						<input class="text-center"
+						<label class="single-input" >
+							<input class="text-center"
 					    		type="number"
-					    		min="1" max="100"
 					    		ng-pattern="App.onlyNumbers"
 					    		ng-model="view.requestDetails.deliveryTime.value"
-					    		ng-change="view.requestDetails.deliveryTime.setDuration()">
-					</label>
+					    		ng-change="view.requestDetails.deliveryTime.setDuration();">
+						</label>
 					</div>
-					<div class="col "> <i class="ion-minus-circled big-icon pull-left"></i></div>
-
-
+					<div class="col">
+						<i
+							class="ion-plus-circled big-icon pull-left color-dark"
+							ng-click="view.requestDetails.deliveryTime.plus();">
+						</i>
+					</div>
 				</div>
+
 				<div class="row">
 					<div class="col col-67">
 							<label class="item item-input item-select">
@@ -259,6 +271,7 @@
 													Duration
 												</div>
 												<select
+													style="direction: ltr;"
 													ng-model="view.requestDetails.deliveryTime.unit"
 													ng-change="view.requestDetails.deliveryTime.setDuration()">
 													<option value="hr">Hour(s)</option>

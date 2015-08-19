@@ -157,9 +157,22 @@ angular.module 'LocalHyper.products', []
 					_.each @allAttributes, (attr, index)=>
 						filterNames.push(attr.name) if attr.selected > 0
 					@excerpt = filterNames.join ', '
-					
+
+				isNotNA: (name)->
+					name = name.replace /[^a-zA-Z ]/g, ""
+					name = name.toLowerCase()
+					name isnt 'na'
+
+				orderBy : ->
+					(obj)->
+						name = parseFloat obj.name
+						if _.isNaN name
+							obj.name
+						else name
 
 
+
+			
 			init : ->
 				@filter.loadModal()
 			
@@ -249,7 +262,7 @@ angular.module 'LocalHyper.products', []
 					sortBy: @sortBy
 					ascending: @ascending
 					selectedFilters: @filter.selectedFilters
-					displayLimit: 10
+					displayLimit: 24
 					searchKeywords: @getSearchKeyWords()
 
 				ProductsAPI.getAll options

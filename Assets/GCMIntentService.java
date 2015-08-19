@@ -10,11 +10,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
+import com.localhyper.customer.R;
 
 @SuppressLint("NewApi")
 public class GCMIntentService extends GCMBaseIntentService {
@@ -108,11 +111,10 @@ public class GCMIntentService extends GCMBaseIntentService {
 			//Common fields
 			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
 				.setDefaults(Notification.DEFAULT_ALL)
-				.setSmallIcon(context.getApplicationInfo().icon)
 				.setWhen(System.currentTimeMillis())
 				.setContentIntent(contentIntent)
 				.setAutoCancel(true);
-				
+			
 			String title = extrasJson.getString("header");
 			String alert = extrasJson.getString("message");
 			mBuilder
@@ -120,6 +122,17 @@ public class GCMIntentService extends GCMBaseIntentService {
 				.setTicker(title)
 				.setContentText(alert)
 				.setStyle(new NotificationCompat.BigTextStyle().bigText(alert));
+			
+			if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
+				Bitmap appIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon);
+				mBuilder
+					.setLargeIcon(appIcon)
+					.setColor(getResources().getColor(android.R.color.black))
+					.setSmallIcon(R.drawable.icon_lollipop);
+			}
+			else{
+				mBuilder.setSmallIcon(context.getApplicationInfo().icon);
+			}
 			
 			mNotificationManager.notify((String) appName, notId, mBuilder.build());
 		}

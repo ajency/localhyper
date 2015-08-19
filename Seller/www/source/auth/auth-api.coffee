@@ -181,6 +181,7 @@ angular.module 'LocalHyper.auth'
 					"subtractedCredit": 0
 					"ratingSum": 0
 					"ratingCount": 0
+					"autoBid": false
 				
 				user.signUp()
 			.then ->

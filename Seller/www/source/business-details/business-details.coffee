@@ -174,21 +174,22 @@ angular.module 'LocalHyper.businessDetails', []
 				@isGoogleMapsScriptLoaded().then (loaded)=>
 					if loaded
 						@location.modal.show()
-						mapHeight = $('.map-content').height() - $('.address-inputs').height() - 10
-						$('.aj-big-map').css 'height': mapHeight
-						if not _.isUndefined @latitude
-							$timeout =>
+						$timeout =>
+							container = $('.map-content').height()
+							children  = $('.address-inputs').height() + $('.tap-div').height()
+							mapHeight = container - children - 20
+							$('.aj-big-map').css 'height': mapHeight
+							
+							if not _.isUndefined @latitude
 								loc = lat: @latitude, long: @longitude
 								latLng = @location.setMapCenter loc
 								@location.map.setZoom 15
 								@location.addMarker latLng
-							, 200
-						else if _.isNull @location.latLng
-							$timeout =>
+							else if _.isNull @location.latLng
 								loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
 								@location.setMapCenter loc
 								@location.getCurrent()
-							, 200
+						, 300
 
 			onConfirmLocation : ->
 				if !_.isNull(@location.latLng) and @location.addressFetch

@@ -14,7 +14,7 @@
 		</ion-refresher>
 
 		<ion-list
-			class="card-list"
+			class="card-list req-cards-c"
 			ng-switch-when="noError">
 
 			<ion-item
@@ -35,24 +35,24 @@
 					</div>
 				</div>
 
-				<div class="row item border-none p-t-10" >
-			        <div class="col  p-t-0">
+				<div class="row item border-none" >
+			        <div class="col  p- t-0">
 			            <sm class="light-gray"> Local Price</sm><br>
-			            <h3 
+			            <h3
 			            	class="item-text-wrap margin-none big-txt"
 			            	ng-if="request.product.platformPrice !== ''">
 
 			            	<span class="WebRupee subdued">&#x20B9;</span>
 			            	{{App.toINR(request.product.platformPrice)}}
 			            </h3>
-			            <h3 
+			            <h3
 			            	class="item-text-wrap margin-none big-txt"
 			            	ng-if="request.product.platformPrice === ''">
 			            	N/A
 			            </h3>
 			        </div>
-			        <div class="col p-t-0">
-			        	<div class="pull-right">
+			        <div class="col p-t-0 p-r-0">
+			        	<div class="pull-right mi-wi-65">
 			            <div class="offer"> {{request.offerCount}} </div>
 			            <h4 class="offertxt light-gray"> No of offers</h4>
 			           	</div>
@@ -60,15 +60,16 @@
 		    	</div>
 
 			    <div class="row item item-divider" >
-			        <div class="col  col-25 ">
+			        <div class="col  col-25 p-t-0 p-b-0 ">
 			           <sm class="subdued ">
 			           		<i class="ion-ios-clock-outline"> </i>{{request.timeStr}}
 			           	</sm>
 			        </div>
-			        <div class="col col-75">
+			        <div class="col col-75 p-t-0 p-b-0">
 			         	<h3
 			         		class="margin-none text-right m-t-5"
-			         		ng-class="(request.status === 'cancelled') ? 'status' : 'success'">
+			         		ng-class="(request.status === 'cancelled'
+			         				|| request.status === 'failed_delivery') ? 'status' : 'success'">
 			         		<b>{{App.humanize(request.status)}}</b>
 			         	</h3>
 			        </div>
@@ -79,11 +80,13 @@
 
 		<div ng-if="view.gotAllRequests && view.openRequests.length == 0">
 			<h5 class="text-center fin">We could not find any requests.</h5>
+			<div class="spacer-20"></div>
 		</div>
 
 		<div ng-if="view.gotAllRequests && view.openRequests.length > 0">
 			<!-- <img src="./img/nomorerequests.png" alt="" class="req-img"> -->
 			<h5 class="text-center fin">That's all folks. No more requests to display.</h5>
+			<div class="spacer-20"></div>
 		</div>
 
 		<ion-infinite-scroll
@@ -103,17 +106,20 @@
 
 	<ion-footer-bar class="bar-stable">
 		<div class="row">
+			<!-- <div class="col col-25 border-right"></div> -->
 			<div
-				class="col text-center bor der-left"
+				class="col col-50 text-center p-t-0"
+				style="margin: 0 auto;"
 				ng-click="view.filter.openModal();">
 
 				<h5 class="margin-none normal filter-txt">
-					<i class="ion ion-funnel"></i>
+					<i class="ion ion-funnel" style="margin-left: 5px;"></i>
 			 		FILTER
 					<br>
 					<sm>{{view.filter.excerpt}}<sm>
 				</h5>
 			</div>
+			<!-- <div class="col col-25 border-left"></div> -->
 		</div>
 	</ion-footer-bar>
 
