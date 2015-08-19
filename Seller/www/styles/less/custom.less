@@ -1789,25 +1789,44 @@ input[disabled]~.radio-icon-show{
 	    color: #666666;
 }
 .status{
+	.Open, .Successful, .Expired, .Cancelled, .pending {
+		span {
+			display: block;
+			color: #aaa;
+			font-size: 13px;
+			text-transform: none;
+		}
+	}
 	.Open, .Successful{
 		border-radius: 5px;
-	    border-radius: 3px;
-	    border: 1px solid @success !important;
-	    text-align: center;
-	    padding: 6px;
-	    margin-top: 7px;
-	    color: @success!important;
-	    font-size: 13px;
+		border-radius: 3px;
+		/* border: 1px solid #5ab319 !important; */
+		background-color: #FBFBFB;
+		text-align: center;
+		padding: 6px;
+		/* margin-top: 7px; */
+		color: #5ab319 !important;
+		font-size: 16px; //was 13
+		text-transform: uppercase;
+		white-space: normal;
+		line-height: 16px;
 	}
 	.Expired, .Cancelled, .pending{
 		border-radius: 5px;
 	    border-radius: 3px;
-	    border: 1px solid @brand-primary;
+	    // border: 1px solid @brand-primary;
+	    background-color: #FBFBFB;
 	    text-align: center;
 	    padding: 6px;
-	    margin-top: 7px;
+	    // margin-top: 7px;
 	    color: @brand-primary;
-	    font-size: 13px;
+	    font-size: 16px; //was 13
+		text-transform: uppercase;
+		white-space: normal;
+		line-height: 16px;
+	}
+	.pending {
+		margin-top: -5px;
 	}
 }
 .border-right{
@@ -2025,5 +2044,51 @@ input[disabled]~.radio-icon-show{
 		padding-right: 15px;
 		position: relative;
 		top: 3px;
+	}
+}
+
+//Status DD
+.status-change-cont {
+	background-color: #E8E8E8;
+	.item.item-input.failure-item {
+		padding-left: 10px;
+	}
+	button.button.button-dark {
+		min-width: 72px;
+		text-align: center;
+	}
+	button.button.button-block {
+		margin: 0;
+		font-size: 14px;
+		line-height: 15px;
+	}
+}
+.status-dd {
+	height: 48px;
+	.status-dd-label {
+		position: relative;
+		z-index: 1;
+		top: -10px;
+		left: -4px;
+		font-size: 11px;
+		color: #aaa;
+		text-transform: uppercase;
+	}
+	select {
+		max-width: none;
+		width: 100%;
+		display: block;
+		padding: 13px 8px 0;
+		height: auto;
+		max-height: none;
+		text-align: left;
+		direction: ltr;
+		font-size: 16px;
+	}
+	&:after {
+		display: none;
+	}
+	&.change-active:after {
+		display: block;
 	}
 }

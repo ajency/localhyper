@@ -55,12 +55,13 @@
                   <div class="col ">
                      <b class="text-left m-t-5 center-block">
                         {{view.offerDetails.data.distanceFromCustomer.toFixed(2)}}
-                        <sm>kms away</sm>
+                        <sm>km away</sm>
                      </b>
-                     <h3 class="light-gray text-left">Distance from you</h3>
+                     <h3 class="light-gray text-left">Distance from your shop</h3>
                   </div>
-                  <div class="col status">
+                  <div class="col col-33 status">
                      <div class="{{App.humanize(view.offerDetails.data.request.status)}} pending" ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
+                        <span>Status</span>
                         {{App.humanize(view.offerDetails.data.request.status)}}
                      </div>
                   </div>
@@ -89,12 +90,12 @@
                </div>
             </div>
 
-            <div class="item-divider" ng-if="view.offerDetails.data.request.status !== 'successful'">
+            <div class="item-divider p-a-0 status-change-cont" ng-if="view.offerDetails.data.request.status !== 'successful'">
 
                <div class="row ">
-                  <div class="col col-75">
-                     <label class="item item-input item-select">
-                        <div class="input-label">
+                  <div class="col col-75 p-r-0">
+                     <label class="it em item-input item-select status-dd">
+                        <div class="inp ut-label status-dd-label">
                            Status
                         </div>
                         <select
@@ -115,16 +116,16 @@
                         </select>
                      </label>
                   </div>
-                  <div class="col" ng-if="view.offerDetails.showChange">
+                  <div class="col p-l-0" ng-if="view.offerDetails.showChange">
                      <button
-                        class="button button-assertive"
+                        class="button button-assertive button-block"
                         ng-click="view.offerDetails.showChange = false;">
                      Change
                      </button>
                   </div>
-                  <div class="col" ng-if="!view.offerDetails.showChange">
+                  <div class="col p-l-0" ng-if="!view.offerDetails.showChange">
                      <button
-                        class="button button-dark"
+                        class="button button-dark button-block"
                         ng-click="view.offerDetails.onUpdateCancel();">
                      Cancel
                      </button>
@@ -133,7 +134,7 @@
 
                <div class="row" ng-if="view.offerDetails.failedDelivery.display">
                   <div class="col">
-                     <label class="item item-input">
+                     <label class="item item-input failure-item">
                      <textarea
                         placeholder="Reason for failure"
                         ng-model="view.offerDetails.failedDelivery.reason"
@@ -146,17 +147,17 @@
          </div>
 
          <div>
-            <div class="row">
-               <div class="col col-25">
+            <div class="row p-t-0 p-b-0">
+               <div class="col col-25 p-b-0">
                   <h5 class=" subdued text-left">Offer Status:</h5>
                </div>
-               <div class="col  subdued">
+               <div class="col  subdued p-b-0">
                   <h5 class=" text-left bold {{App.humanize(view.offerDetails.data.offerStatus)}}">
                      <i class="ion-ribbon-b"> </i> {{App.humanize(view.offerDetails.data.offerStatus)}}
                   </h5>
                </div>
             </div>
-            <div class="row">
+            <div class="row p-b-0">
                <div class="col col-25 ">
                   <h5 class=" subdued text-left  margin-none">Category:</h5>
                </div>
