@@ -1,10 +1,10 @@
 angular.module 'LocalHyper.common'
 
 
-.factory 'CToast', ['$cordovaToast', 'App', ($cordovaToast, App)->
+.factory 'CToast', ['$cordovaToast', ($cordovaToast)->
 
 	CToast = {}
-	webview = App.isWebView()
+	webview = ionic.Platform.isWebView()
 
 	CToast.show = (content)->
 		if webview then $cordovaToast.showShortBottom content

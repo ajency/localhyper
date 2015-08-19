@@ -83,7 +83,10 @@
 				<ion-item>
 					<i class="i-auto"></i> Auto Offer
 					<label class="toggle toggle-assertive pull-right">
-						<input type="checkbox" value="on">
+						<input 
+							type="checkbox" 
+							ng-model="App.autoBid"
+							ng-change="App.onAutoBidSettingChange();">
 						<div class="track">
 							<div class="handle"></div>
 						</div>
