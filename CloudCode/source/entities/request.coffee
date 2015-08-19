@@ -550,7 +550,7 @@ Parse.Cloud.define 'getRequestDetails', (request, response) ->
                     "platformPrice" : otherPrice["platform"]["value"]
                 
 
-
+                imageSizes = getImageSizes("product")     
                 requestResult = 
                     "id" : requestObj.id
                     "product" : product
@@ -560,6 +560,7 @@ Parse.Cloud.define 'getRequestDetails', (request, response) ->
                     "createdAt" : requestObj.createdAt
                     "updatedAt" : requestObj.updatedAt
                     "offerCount" : requestObj.get("offerCount")
+                    "imageSizes" : imageSizes
 
                 response.success requestResult 
                            

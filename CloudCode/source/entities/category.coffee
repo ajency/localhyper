@@ -79,10 +79,11 @@ Parse.Cloud.define 'getCategories', (request, response) ->
 
     categoryHierarchyTree = treeify(list,'id','parent','children')
 
-
+    imageSizes = getImageSizes("category")
     responseData = 
       "success" : true
       "data" : _.sortBy categoryHierarchyTree, sortBy
+      "imageSizes" : imageSizes 
 
     response.success responseData
 

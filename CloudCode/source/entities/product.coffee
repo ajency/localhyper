@@ -355,7 +355,7 @@ Parse.Cloud.define 'getProduct', (request, response) ->
                     
                 specifications.push productSpec                     
 
-
+        imageSizes = getImageSizes("product")        
         productResult =
             id : ProductData.id
             name : ProductData.get "name"
@@ -367,6 +367,7 @@ Parse.Cloud.define 'getProduct', (request, response) ->
             primaryAttributes : ProductData.get "primaryAttributes"
             # attributeIdNames : attributeIdNames
             specifications : specifications
+            imageSizes : imageSizes
 
         getOtherPricesForProduct(ProductData)
         .then (productPrice) ->  
@@ -581,6 +582,7 @@ Parse.Cloud.job 'updateCategoryProductsKeywords', (request, response) ->
  
 getImageSizes = (type) =>
 
+    # product image sizes
     largePortraitImage = 
         "retina" : "600 x 360"
         "non_retina" : "400 x 240"
@@ -601,9 +603,26 @@ getImageSizes = (type) =>
         "largeLandscape" : largeLandscapeImage
         "largePortrait" : largePortraitImage
         "medium" : mediumImage
-        "small" : smallImage        
+        "small" : smallImage 
 
-    imageSizes
+    # category images
+    medium = 
+        "retina" : "367 x 220"
+        "non_retina" : "183 x 110"
+
+    small =
+        "retina" : "300 x 180"
+        "non_retina" : "150 x 90"
+
+    imageCategorySizes = 
+        "medium" : medium
+        "small" : small
+
+    if type is "category"
+        imageCategorySizes
+    else
+       imageSizes               
+
 
 
 updateProductKeywords = (productObject) =>

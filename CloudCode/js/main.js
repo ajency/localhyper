@@ -386,7 +386,7 @@
     queryFindPromise = queryCategory.find();
     queryFindPromise.done((function(_this) {
       return function(results) {
-        var categoryHierarchyTree, list, responseData;
+        var categoryHierarchyTree, imageSizes, list, responseData;
         list = [];
         _.each(results, function(resultobj) {
           var listObj, parentCat;
@@ -406,9 +406,11 @@
           return list.push(listObj);
         });
         categoryHierarchyTree = treeify(list, 'id', 'parent', 'children');
+        imageSizes = getImageSizes("category");
         responseData = {
           "success": true,
-          "data": _.sortBy(categoryHierarchyTree, sortBy)
+          "data": _.sortBy(categoryHierarchyTree, sortBy),
+          "imageSizes": imageSizes
         };
         return response.success(responseData);
       };
@@ -1955,7 +1957,7 @@
     queryProductItem.include("primaryAttributes");
     queryProductItem.include("primaryAttributes.attribute");
     return queryProductItem.first().then(function(ProductData) {
-      var attribId, attributeIdNames, brand, brandObj, category, categoryObj, prodgrp, productAttributes, productResult, productSpec, secondary_attributes, specifications, textAttributes;
+      var attribId, attributeIdNames, brand, brandObj, category, categoryObj, imageSizes, prodgrp, productAttributes, productResult, productSpec, secondary_attributes, specifications, textAttributes;
       categoryObj = ProductData.get("category");
       category = {
         id: categoryObj.id,
@@ -2025,6 +2027,7 @@
           }
         }
       }
+      imageSizes = getImageSizes("product");
       productResult = {
         id: ProductData.id,
         name: ProductData.get("name"),
@@ -2034,7 +2037,8 @@
         category: category,
         brand: brand,
         primaryAttributes: ProductData.get("primaryAttributes"),
-        specifications: specifications
+        specifications: specifications,
+        imageSizes: imageSizes
       };
       return getOtherPricesForProduct(ProductData).then(function(productPrice) {
         productResult["onlinePrice"] = productPrice["online"];
@@ -2222,7 +2226,7 @@
 
   getImageSizes = (function(_this) {
     return function(type) {
-      var imageSizes, largeLandscapeImage, largePortraitImage, mediumImage, smallImage;
+      var imageCategorySizes, imageSizes, largeLandscapeImage, largePortraitImage, medium, mediumImage, small, smallImage;
       largePortraitImage = {
         "retina": "600 x 360",
         "non_retina": "400 x 240"
@@ -2245,7 +2249,23 @@
         "medium": mediumImage,
         "small": smallImage
       };
-      return imageSizes;
+      medium = {
+        "retina": "367 x 220",
+        "non_retina": "183 x 110"
+      };
+      small = {
+        "retina": "300 x 180",
+        "non_retina": "150 x 90"
+      };
+      imageCategorySizes = {
+        "medium": medium,
+        "small": small
+      };
+      if (type === "category") {
+        return imageCategorySizes;
+      } else {
+        return imageSizes;
+      }
     };
   })(this);
 
@@ -2871,7 +2891,7 @@
         requestObj = offerObj.get("request");
         productObj = requestObj.get("product");
         return getOtherPricesForProduct(productObj).then(function(otherPrice) {
-          var product, requestResult;
+          var imageSizes, product, requestResult;
           product = {
             "name": productObj.get("name"),
             "images": productObj.get("images"),
@@ -2879,6 +2899,7 @@
             "onlinePrice": otherPrice["online"]["value"],
             "platformPrice": otherPrice["platform"]["value"]
           };
+          imageSizes = getImageSizes("product");
           requestResult = {
             "id": requestObj.id,
             "product": product,
@@ -2887,7 +2908,8 @@
             "comments": requestObj.get("comments"),
             "createdAt": requestObj.createdAt,
             "updatedAt": requestObj.updatedAt,
-            "offerCount": requestObj.get("offerCount")
+            "offerCount": requestObj.get("offerCount"),
+            "imageSizes": imageSizes
           };
           return response.success(requestResult);
         }, function(error) {
@@ -3165,7 +3187,8 @@
         lastOfferPrice: lastOffered,
         lastDeliveryTime: lastOfferedDeliveryTime,
         onlinePrice: productPrice["online"]["value"],
-        platformPrice: productPrice["platform"]["value"]
+        platformPrice: productPrice["platform"]["value"],
+        imageSizes: imageSizes
       };
       queryNotification = new Parse.Query("Notification");
       innerQuerySeller = new Parse.Query(Parse.User);
