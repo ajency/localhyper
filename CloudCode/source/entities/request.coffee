@@ -800,7 +800,7 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
 
                 Parse.Promise.when(requestsQs).then ->
                     individualReqResults = _.flatten(_.toArray(arguments)) 
-
+                    imageSizes = getImageSizes("product")
                     requestsResult = 
                         "city" : city
                         "area" : area
@@ -809,6 +809,7 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
                         "requests" : individualReqResults
                         "sellerCategories" : filterCategories
                         "sellerBrands" : filterBrands
+                        "imageSizes" : imageSizes
 
                     promise.resolve requestsResult
 
@@ -875,7 +876,7 @@ getRequestData =  (filteredRequest,seller,lastOffers ) ->
             lastOfferedDeliveryTime = ""
 
 
-
+        imageSizes = getImageSizes("product")    
         requestObj = 
             id : filteredRequest.id
             radius : radiusDiffInKm
@@ -889,7 +890,8 @@ getRequestData =  (filteredRequest,seller,lastOffers ) ->
             lastOfferPrice : lastOffered
             lastDeliveryTime : lastOfferedDeliveryTime
             onlinePrice: productPrice["online"]["value"] 
-            platformPrice : productPrice["platform"]["value"]         
+            platformPrice : productPrice["platform"]["value"]     
+            imageSizes : imageSizes    
 
         
         #  now query notification to get notificaton status

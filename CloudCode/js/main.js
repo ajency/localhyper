@@ -3081,8 +3081,9 @@
             return requestPromise = getRequestData(filteredRequest, sellerDetails, lastOffers);
           });
           return Parse.Promise.when(requestsQs).then(function() {
-            var individualReqResults, requestsResult;
+            var imageSizes, individualReqResults, requestsResult;
             individualReqResults = _.flatten(_.toArray(arguments));
+            imageSizes = getImageSizes("product");
             requestsResult = {
               "city": city,
               "area": area,
@@ -3090,7 +3091,8 @@
               "location": sellerLocation,
               "requests": individualReqResults,
               "sellerCategories": filterCategories,
-              "sellerBrands": filterBrands
+              "sellerBrands": filterBrands,
+              "imageSizes": imageSizes
             };
             return promise.resolve(requestsResult);
           });
@@ -3123,7 +3125,7 @@
       "model_number": prodObj.get("model_number")
     };
     getOtherPricesForProduct(prodObj).then(function(productPrice) {
-      var brand, brandObj, category, categoryObj, innerQueryRequest, innerQuerySeller, lastOffered, lastOfferedDeliveryTime, productsWithLastOffered, productsWithLastOfferedDelivery, queryNotification, radiusDiffInKm, requestObj, reuqestGeoPoint;
+      var brand, brandObj, category, categoryObj, imageSizes, innerQueryRequest, innerQuerySeller, lastOffered, lastOfferedDeliveryTime, productsWithLastOffered, productsWithLastOfferedDelivery, queryNotification, radiusDiffInKm, requestObj, reuqestGeoPoint;
       categoryObj = filteredRequest.get("category");
       category = {
         "id": categoryObj.id,
@@ -3149,6 +3151,7 @@
       } else {
         lastOfferedDeliveryTime = "";
       }
+      imageSizes = getImageSizes("product");
       requestObj = {
         id: filteredRequest.id,
         radius: radiusDiffInKm,
