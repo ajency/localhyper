@@ -45,44 +45,12 @@
            @endforeach
           </tbody>
          </table>
-       @if($numOfPages > 1)   
-        Page : <select name="number_of_pages" onchange="location.href='{{ url('admin/customer') }}?page='+this.value">
-            @for($i=1 ;$i<=$numOfPages ;$i++)
-           <option {{ ($i == $page)?'selected':'' }}  value="{{ $i }}">{{ $i }}</option>                         
-            @endfor
-        </select>
-      @endif        
-        
+ 
+          <?php echo displayPagination( $page, $numOfPages , 'admin/customer' ) ?> 
                 
                         </div>
 		</div>
     </div>
 
-<script type="text/javascript">
-   /* $( document ).ready(function() {
-         var str='';
-        var customerList = getCustomers().then(function(results) {
-                            _.each(results, function(customer) {
-  //return console.log(customer.get("displayName"));
-                                 str = '<tr>';
-                                  str += '<td>'+customer.get("displayName")+'</td>'; 
-                                  str += '<td>23-04-2014</td>';  
-                                  str += '</tr>';    
-                                  $('.customerList tbody').append(str);
-});
-                             //console.log(results);
-                          }, function(error) {
-                            return error;
-                          });
-       
-       
-       /* $.each(customerList, function( index, user ) { //alert(index);
-          str = '<tr>';
-          str += '<td></td>'; 
-          str += '<td>23-04-2014</td>';  
-          str += '</tr>';    
-          $('.customerList tbody').append(str);
-        });
-    });*/
-</script> 
+  
 @endsection

@@ -31,14 +31,8 @@
            @endforeach
           </tbody>
          </table>
-        
-        @if($numOfPages > 1)        
-            Page : <select name="number_of_pages" onchange="location.href='{{ url('admin/ratings') }}?page='+this.value">
-            @for($i=1 ;$i<=$numOfPages ;$i++)
-            <option {{ ($i == $page)?'selected':'' }}  value="{{ $i }}">{{ $i }}</option>                         
-            @endfor
-            </select>  
-        @endif    
+ 
+         <?php echo displayPagination( $page, $numOfPages , 'admin/ratings' ) ?>     
                         </div>
 		</div>
     </div> 

@@ -95,6 +95,7 @@ class SellerController extends Controller
             
              $balanceCredit = $seller->get("addedCredit") - $seller->get("subtractedCredit");
             
+            $avgRating = ($seller->get("ratingCount")) ? round(($seller->get("ratingSum") / $seller->get("ratingCount")),1) :0;
             if($type=='LIST')
             {
                 $sellerList[]= [ 'id' => $seller->getObjectId(),
@@ -104,7 +105,7 @@ class SellerController extends Controller
                               'categories' => implode(", ",$categories),
                               'offersCount' => $offerCount .'/'.$sellerRequestCount,
                               'successfullCount' => $offerSuccessfullCount,
-                              'avgRating' => 'N/A',
+                              'avgRating' => $avgRating,
                               'balanceCredit' => $balanceCredit,
                               'lastLogin' =>$seller->get("lastLogin")->format('d-m-Y'),
                               'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
@@ -119,7 +120,7 @@ class SellerController extends Controller
                               'categories' => implode(", ",$categories),
                               'offersCount' => $offerCount .'/'.$sellerRequestCount,
                               'successfullCount' => $offerSuccessfullCount,
-                              'avgRating' => 'N/A',
+                              'avgRating' => $avgRating,
                               'balanceCredit' => $balanceCredit,
                               'lastLogin' =>$seller->get("lastLogin")->format('d-m-Y'),
                               'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
@@ -292,7 +293,7 @@ class SellerController extends Controller
                         'offerAmt'=>$priceObj->get("value"),
                         'creditUsed' => $creditUsed,
                         'status'=>$offer->get("status"),
-                        'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
+                        'date'=>convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s')),
                          ] ;
             
  
