@@ -92,10 +92,13 @@
 
             <div class="item-divider p-a-0 status-change-cont" ng-if="view.offerDetails.data.request.status !== 'successful'">
 
-               <div class="row ">
+               <div class="row">
                   <div class="col col-75 p-r-0">
-                     <label class="it em item-input item-select status-dd">
-                        <div class="inp ut-label status-dd-label">
+                     <label 
+                        class="item item-input item-select status-dd"
+                        ng-class="(!view.offerDetails.showChange) ? 'change-active' : ''">
+
+                        <div class="input-label status-dd-label">
                            Status
                         </div>
                         <select
@@ -248,7 +251,7 @@
    </ion-content>
 
    <ion-footer-bar
-      ng-if="!view.offerDetails.showChange"
+      ng-show="!view.offerDetails.showChange"
       ng-click="view.offerDetails.updateDeliveryStatus();">
 
       <button class="button button-block button-assertive margin-none title">
