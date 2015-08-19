@@ -186,6 +186,7 @@ angular.module 'LocalHyper.myRequests'
 				$scope.view.reFetch()
 				$scope.view.filter.reset()
 				$rootScope.$broadcast 're:fetch:expired:requests'
+				$rootScope.$broadcast 'update:notifications:and:open:requests'
 ]
 
 

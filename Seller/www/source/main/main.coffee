@@ -23,9 +23,8 @@ angular.module 'LocalHyper.main', []
 				RequestsAPI.getNotifications()
 				.then (requestIds)=>
 					notifications = _.size requestIds
-					if notifications > 0
-						App.notification.badge = true
-						App.notification.count = notifications
+					App.notification.badge = notifications > 0
+					App.notification.count = notifications
 
 			getCountOfAcceptedOffers : ->
 				OffersAPI.getAcceptedOfferCount()

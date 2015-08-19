@@ -17,10 +17,8 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
           return function(requestIds) {
             var notifications;
             notifications = _.size(requestIds);
-            if (notifications > 0) {
-              App.notification.badge = true;
-              return App.notification.count = notifications;
-            }
+            App.notification.badge = notifications > 0;
+            return App.notification.count = notifications;
           };
         })(this));
       },

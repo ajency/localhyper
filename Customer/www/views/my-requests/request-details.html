@@ -182,6 +182,7 @@
 				ng-switch-when="noError"
 				class="card no-shadow rece-offer m-t-0"
 				ng-repeat="offer in view.offers.all | orderBy: ['status', '-createdAt.iso'] | limitTo: view.offers.limitTo"
+				ng-init="view.offers.markAsSeen(offer);"
 				ng-controller="EachOfferTimeCtrl">
 
 				<div class="item item-text-wrap">
