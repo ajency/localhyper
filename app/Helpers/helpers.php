@@ -34,6 +34,7 @@ function convertToIST($dateTime)
 }
 
 function runAutoBidOffers(){
+    echo "run crons";
     $JobsController = new JobsController();
     $JobsController->index();
 }
