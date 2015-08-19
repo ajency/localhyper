@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\JobsController;
 //*** PAGINATION
 
 function displayPagination($pageNo , $numOfPages , $link)
@@ -31,4 +31,9 @@ function convertToIST($dateTime)
     $date = new DateTime($dateTime, new DateTimeZone('UTC'));
     $date->setTimezone(new DateTimeZone('IST'));
     return $date->format('d-m-Y H:i:s');
+}
+
+function runAutoBidOffers(){
+    $JobsController = new JobsController();
+    $JobsController->index();
 }
