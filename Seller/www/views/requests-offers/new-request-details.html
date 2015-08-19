@@ -200,12 +200,13 @@
 				class="list margin-none"
 				ng-if="view.requestDetails.price === 'yourPrice'">
 					<div class="list list-inset m-t-0">
-					  <label class="item item-input">
+					  <label class="item item-input with-prefix custom-offer-price">
+					  	<span class="WebRupee prefix">&#x20B9;</span>
 					    <input type="number"
-					    style="font-weight: bold;"
-			    		placeholder="Enter your offer price"
-			    		ng-pattern="App.onlyNumbers"
-			    		ng-model="view.requestDetails.offerPrice">
+						    style="font-weight: bold;"
+				    		placeholder="Enter your offer price"
+				    		ng-pattern="App.onlyNumbers"
+				    		ng-model="view.requestDetails.offerPrice">
 					  </label>
 					</div>
 			</div>

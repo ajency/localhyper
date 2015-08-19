@@ -214,6 +214,14 @@ sm {
 .mi-wi-65 {
   min-width: 65px;
 }
+.bar.bar-footer.verify-btm-bar {
+  padding: 0;
+}
+.bar.bar-footer.verify-btm-bar button.button.aj-btn {
+  margin: 0;
+  font-size: 18px;
+  line-height: 42px;
+}
 /************************************/
 /* HEADER */
 /************************************/
@@ -1433,7 +1441,7 @@ h5.with-sep span {
   top: 0;
   left: 0;
   height: 100%;
-  background-color: #f35a59;
+  background-color: #33cd5f;
   color: #fff;
   padding: 13px 20px;
 }
@@ -1445,7 +1453,7 @@ h5.with-sep span {
   color: #444;
 }
 .maxAttempts-div .btn-casup.activated i {
-  background-color: #a52827;
+  background-color: #295736;
 }
 .maxAttempts-div .btn-casup.activated span {
   color: #fff;
@@ -1460,6 +1468,16 @@ h5.with-sep span {
   left: 0;
   padding: 10px 12px 7px;
   background-color: #ddd;
+}
+.with-prefix.custom-offer-price .prefix {
+  padding: 12px 15px 11px;
+}
+.with-prefix.custom-offer-price input {
+  padding-right: 8px;
+  padding-left: 32px;
+}
+.list-inset .item.item-input.custom-offer-price input {
+  padding-right: 8px;
 }
 .filter-txt {
   line-height: 12px;

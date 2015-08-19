@@ -281,8 +281,8 @@
 
 						<div
 							class="col align-center p-a-0 p-r-6"
-							ng-if="offer.deliveryTimeLeftStr !== '0' 
-									&& view.request.status !== 'successful' 
+							ng-if="offer.deliveryTimeLeftStr !== '0'
+									&& view.request.status !== 'successful'
 									&& view.request.status !== 'failed_delivery'">
 
 							<div class="vert-div pull-left"></div>
@@ -292,14 +292,14 @@
 
 						<div
 							class="col align-center p-a-0 p-r-6"
-							ng-if="offer.deliveryTimeLeftStr === '0' 
-									&& view.request.status !== 'successful' 
+							ng-if="offer.deliveryTimeLeftStr === '0'
+									&& view.request.status !== 'successful'
 									&& view.request.status !== 'failed_delivery'">
 
 							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery due</p>
-							<button 
-								class="button button-balanced call-support" 
+							<button
+								class="button button-balanced call-support"
 								ng-click="App.callSupport();">
 								Call Support
 							</button>
@@ -311,8 +311,8 @@
 
 							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery failed</p>
-							<button 
-								class="button button-balanced call-support" 
+							<button
+								class="button button-balanced call-support"
 								ng-click="App.callSupport();">
 								Call Support
 							</button>

@@ -196,6 +196,14 @@ sm{
 .mi-wi-65 {
 	min-width: 65px;
 }
+.bar.bar-footer.verify-btm-bar {
+	padding: 0;
+	button.button.aj-btn {
+		margin: 0;
+		font-size: 18px;
+		line-height: 42px;
+	}
+}
 /************************************/
 /* HEADER */
 /************************************/
@@ -1438,7 +1446,7 @@ h5.with-sep {
 			top: 0;
 			left: 0;
 			height: 100%;
-			background-color: @brand-primary;
+			background-color: @balanced;
 			color: #fff;
 			padding: 13px 20px;
 		}
@@ -1451,7 +1459,7 @@ h5.with-sep {
 		}
 		&.activated {
 			i {
-				background-color: desaturate(darken(@brand-primary, 25%), 25%);
+				background-color: desaturate(darken(@balanced, 25%), 25%);
 				// color: @brand-primary;
 			}
 			span {
@@ -1470,6 +1478,18 @@ h5.with-sep {
 		padding: 10px 12px 7px;
 		background-color: #ddd;
 	}
+	&.custom-offer-price {
+		.prefix {
+			padding: 12px 15px 11px;
+		}
+		input {
+			padding-right: 8px;
+			padding-left: 32px;
+		}
+	}
+}
+.list-inset .item.item-input.custom-offer-price input {
+	padding-right: 8px;
 }
 
 .filter-txt{
