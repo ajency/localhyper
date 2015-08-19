@@ -34,7 +34,7 @@
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['offersCount'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['successfullCount'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['avgRating'] }}</td>
-                <td><span class="balance-credit" data-seller-id="{{ $seller['id'] }}">{{ $seller['balanceCredit'] }}</span> <a class="edit-balance-credit">edit</a></td>
+                <td><span class="balance-credit" data-seller-id="{{ $seller['id'] }}">{{ $seller['balanceCredit'] }}</span> <a class="edit-balance-credit pull-right"><i class="fa fa-pencil"></i></a></td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['createdAt'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['lastLogin'] }}</td>
               </tr>

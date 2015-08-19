@@ -50,7 +50,7 @@
 		 <li class="dropdown"> <a id="main-menu-toggle" href="#main-menu"  class="" > <div class="iconset top-menu-toggle-white"></div> </a> </li>		 
 		</ul>
       <!-- BEGIN LOGO -->	
-      <a href="index.html"><img src="assets/img/logo.png" class="logo" alt=""  data-src="assets/img/logo.png" data-src-retina="assets/img/logo2x.png" width="106" height="21"/></a>
+      <a href="index.html"><img src="{{ asset('img/shop-oye-logo.png') }}" class="logo" alt=""  data-src="assets/img/shop-oye-logo.png" data-src-retina="assets/img/logo2x.png" width="106" height="21"/></a>
       
       </div>
       <!-- END RESPONSIVE MENU TOGGLER --> 

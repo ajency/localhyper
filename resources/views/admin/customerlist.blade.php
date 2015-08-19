@@ -12,16 +12,20 @@
          <table class="table table-bordered customerList">
           <thead>
             <tr>
+              <th colspan="3"></th>
+              <th colspan="7" style="text-align: center;border-left: 1px solid #E1E2E2 !important;"> No of Requests</th>
+            </tr>
+            <tr>
               <th>Customer Name</th>
               <th>Customer Registered Date</th>
               <th>Customer Last Login</th>
-              <th>No. Of Requests Created</th>
-              <th>No. Of Requests Expired</th>
-              <th>No. Of Requests Cancelled</th>
-              <th>No. Of Requests Successfull</th>
-              <th>No. Of Failed Delivery</th>
-              <th>No. Of Pending Delivery</th>
-              <th>No. Of Sent Delivery</th>    
+              <th style="border-left: 1px solid #E1E2E2 !important;">Created</th>
+              <th>Expired</th>
+              <th>Cancelled</th>
+              <th>Successfull</th>
+              <th>Failed Delivery</th>
+              <th>Pending Delivery</th>
+              <th>Sent Delivery</th>    
             </tr>
           </thead>
           <tbody>

@@ -27,17 +27,17 @@
                     <div class="row">
                       <div class="col-md-6">
                           <h4 class="semi-bold">Business Name :</h4>
-                          <p><strong>Contact Name : </strong></p>
-                          <p><strong>Email : </strong></p>
+                          <p><strong>Seller Name : </strong></p>
+                          <!-- <p><strong>Email : </strong></p> -->
                           <p><strong>Mobile : </strong></p>
-                          <p><strong>Deliverable Area : </strong></p>
+                          <p><strong>Delivery Area : </strong></p>
                       </div>
                       <div class="col-md-6">
                           <h4  class="semi-bold">{{ $seller['businessname']}}</h4>
                           <p>{{ $seller['name']}}</p>
-                          <p>{{ $seller['email']}}</p>
+                          <!-- <p>{{ $seller['email']}}</p> -->
                           <p>{{ $seller['mobile']}}</p>
-                          <p>{{ $seller['deliveryRadius']}}kms from seller location</p>
+                          <p>{{ $seller['deliveryRadius']}} kms from seller location</p>
                       </div>
                     </div>
                     
@@ -52,7 +52,7 @@
                   </div>-->
                 </div>
              </div>
-            <h5><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold text-info">ADDRESS DETAILS</span></h5>
+            <h5><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold text-info">SHOP LOCATION</span></h5>
                <div class="user-description-box">
                 <div class="row">
                 <div class="col-md-6">
