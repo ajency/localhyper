@@ -30,7 +30,9 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
                     runAutoBidOffers();
+                    // processImages();
                     $myfile = fopen("/var/www/html/newtest.txt", "w") or die("Unable to open file!");
-                })->everyMinute()->sendOutputTo("/var/www/html/logcron.txt");               
+
+                })->everyMinute();               
     }
 }

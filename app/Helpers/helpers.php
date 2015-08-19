@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\JobsController;
+use App\Http\Controllers\ProcessImageController;
 //*** PAGINATION
 
 function displayPagination($pageNo , $numOfPages , $link)
@@ -34,7 +35,12 @@ function convertToIST($dateTime)
 }
 
 function runAutoBidOffers(){
-    echo "run crons";
     $JobsController = new JobsController();
     $JobsController->index();
 }
+
+function processImages(){
+    $ProcessImageController = new ProcessImageController();
+    $ProcessImageController->index();
+}
+
