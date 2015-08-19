@@ -2,16 +2,17 @@ angular.module 'LocalHyper.myRequests'
 
 
 .controller 'RequestDetailsCtrl', ['$scope', 'RequestAPI', '$interval', 'TimeString'
-	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User'
+	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup'
+	, 'User', '$window'
 	, ($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner
-	, CToast, $rootScope, CDialog, $ionicPopup, User)->
+	, CToast, $rootScope, CDialog, $ionicPopup, User, $window)->
 
 		$scope.view = 
 			request: RequestAPI.requestDetails 'get'
 			display: 'loader'
 			errorType: ''
 			pushParams: null
-			
+			helpURL: $window.HELP_URL
 			
 			address: 
 				show: false

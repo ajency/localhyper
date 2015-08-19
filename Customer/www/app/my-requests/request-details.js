@@ -1,11 +1,12 @@
 angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
-  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup, User) {
+  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User', '$window', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup, User, $window) {
     var inAppNotificationEvent;
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
       display: 'loader',
       errorType: '',
       pushParams: null,
+      helpURL: $window.HELP_URL,
       address: {
         show: false,
         toggle: function() {
