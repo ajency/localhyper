@@ -77,7 +77,7 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
             case 'day':
               unitText = value === 1 ? 'Day' : 'Days';
           }
-          return value + " " + unitText;
+          return "" + value + " " + unitText;
         }
       },
       left: function(timeObj) {
@@ -91,13 +91,13 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
         minsLeft = parseInt(duration.asMinutes().toFixed(0));
         if (minsLeft < 60) {
           min = minsLeft === 1 ? 'min' : 'mins';
-          str = minsLeft >= 0 ? minsLeft + " " + min : "0";
+          str = minsLeft >= 0 ? "" + minsLeft + " " + min : "0";
         } else if (hoursLeft < 24) {
           hr = hoursLeft === 1 ? 'hr' : 'hrs';
-          str = hoursLeft + " " + hr;
+          str = "" + hoursLeft + " " + hr;
         } else {
           day = daysLeft === 1 ? 'day' : 'days';
-          str = daysLeft + " " + day;
+          str = "" + daysLeft + " " + day;
         }
         return str;
       }
@@ -123,16 +123,16 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
         timeStr = 'Just now';
       } else if (minutes < 60) {
         min = minutes === 1 ? 'min' : 'mins';
-        timeStr = minutes + " " + min + " ago";
+        timeStr = "" + minutes + " " + min + " ago";
       } else if (minutes >= 60 && minutes < 1440) {
         hr = hours === 1 ? 'hr' : 'hrs';
-        timeStr = hours + " " + hr + " ago";
+        timeStr = "" + hours + " " + hr + " ago";
       } else if (minutes >= 1440 && days < 7) {
         day = days === 1 ? 'day' : 'days';
-        timeStr = days + " " + day + " ago";
+        timeStr = "" + days + " " + day + " ago";
       } else if (days >= 7 && weeks <= 4) {
         week = weeks === 1 ? 'week' : 'weeks';
-        timeStr = weeks + " " + week + " ago";
+        timeStr = "" + weeks + " " + week + " ago";
       } else {
         timeStr = "On " + (moment(iso).format('DD-MM-YYYY'));
       }
