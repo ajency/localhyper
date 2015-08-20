@@ -56,9 +56,9 @@
                <div class="user-description-box">
                 <div class="row">
                 <div class="col-md-6">
-                <p>{{ $seller['address']['address_line1']}}</p>
-                <p>{{ $seller['address']['address_line2']}}</p>
-                <p>{{ $seller['address']['address_line3']}},</p>
+                <p>{{ (isset($seller['address']['address_line1']))?$seller['address']['address_line1'] :''}}</p>
+                <p>{{ (isset($seller['address']['address_line2']))?$seller['address']['address_line2'] :''}}</p>
+                <p>{{ (isset($seller['address']['address_line3']))?$seller['address']['address_line3'] :''}},</p>
                 <p>{{ $seller['address']['city']}},</p>
                 <p>{{ $seller['address']['postal_code']}}</p>
                 <strong>Area : </strong><span> {{ $seller['area']}}, {{ $seller['city']}}</span>

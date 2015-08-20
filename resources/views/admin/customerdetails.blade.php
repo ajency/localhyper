@@ -29,9 +29,9 @@
                <div class="user-description-box">
                 <div class="row">
                 <div class="col-md-6">
-                <p>{{ $customer['address']['address_line1']}}</p>
-                <p>{{ $customer['address']['address_line2']}}</p>
-                <p>{{ $customer['address']['address_line3']}},</p>
+                <p>{{ (isset($customer['address']['address_line1']))?$customer['address']['address_line1'] :''}}</p>
+                <p>{{ (isset($customer['address']['address_line2']))?$customer['address']['address_line2'] :''}}</p>
+                <p>{{ (isset($customer['address']['address_line3']))?$customer['address']['address_line3'] :''}},</p>
                 <p>{{ $customer['address']['city']}},</p>
                 <p>{{ $customer['address']['postal_code']}}</p>
                 <strong>Area : </strong><span> {{ $customer['area']}}, {{ $customer['city']}}</span>
