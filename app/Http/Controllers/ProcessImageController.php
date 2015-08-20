@@ -180,8 +180,7 @@ class ProcessImageController extends Controller
         
 
         foreach($this->productSizes as $size){
-            $origin_name =  $filename.$size['name'].'.'.$extension;
-            $name = str_replace('+', ' ', $origin_name);
+            $name =  $filename.$size['name'].'.'.$extension;
             $width = $size['width'];
             $height = $size['height'];
 
@@ -191,7 +190,7 @@ class ProcessImageController extends Controller
 
                 //make the image in actual size if the actual size is less than highest defined size
                 //$constraint->upsize();
-            })->save($destinationPath.$name);
+            })->save($destinationPath.$name , 100);
 
         //Upload the resized image to amazon s3
             $s3->putObject(array(
