@@ -177,12 +177,13 @@ class ProcessImageController extends Controller
         
 
         foreach($this->productSizes as $size){
-            $origin_name =  $filename.$size['name'].'.'.$extension;
-            $name = str_replace('+', ' ', $origin_name);
+            $name =  $filename.$size['name'].'.'.$extension;
             $width = $size['width'];
             $height = $size['height'];
 
+
             $this->resizeImage($destinationPath.$basename, $destinationPath.$name, $width, $height);
+
 
         //Upload the resized image to amazon s3
             $s3->putObject(array(
