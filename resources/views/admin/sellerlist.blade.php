@@ -9,7 +9,7 @@
       
 			<h4 class="grid-title">List Of Sellers</h4>
 			<div class="grid-body">
-         <table class="table table-bordered sellerList">
+         <table class="table table-bordered sellerList" id="example2">
           <thead>
             <tr>
               <th>Seller Name</th>
@@ -20,8 +20,8 @@
               <th>No. of Successfull Offers</th>
               <th>Avg Ratings</th>
               <th>Balance Credits</th>
-              <th>Registered Date</th>
-              <th>Last Login</th>
+              <th class="date-sort">Registered Date</th>
+              <th class="date-sort">Last Login</th>
             </tr>
           </thead>
           <tbody>
@@ -35,8 +35,8 @@
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['successfullCount'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['avgRating'] }}</td>
                 <td><span class="balance-credit" data-seller-id="{{ $seller['id'] }}">{{ $seller['balanceCredit'] }}</span> <a class="edit-balance-credit pull-right"><i class="fa fa-pencil"></i></a></td>
-                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['createdAt'] }}</td>
-                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['lastLogin'] }}</td>
+                <td class="center" onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['createdAt'] }}</td>
+                <td class="center" onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['lastLogin'] }}</td>
               </tr>
            @endforeach
           </tbody>

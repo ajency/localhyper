@@ -107,7 +107,7 @@ class OfferController extends Controller
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
-                        'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
+                        'date'=>$offer->getCreatedAt()->format('d-m-Y H:i:s'),
                          ] ;  
             }
             else
