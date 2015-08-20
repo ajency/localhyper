@@ -801,7 +801,7 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
 
                 Parse.Promise.when(requestsQs).then ->
                     individualReqResults = _.flatten(_.toArray(arguments)) 
-                    imageSizes = getImageSizes("product")
+                    
                     requestsResult = 
                         "city" : city
                         "area" : area
@@ -810,8 +810,7 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
                         "requests" : individualReqResults
                         "sellerCategories" : filterCategories
                         "sellerBrands" : filterBrands
-                        "imageSizes" : imageSizes
-
+                   
                     promise.resolve requestsResult
 
             , (error) ->

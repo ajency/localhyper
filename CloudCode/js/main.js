@@ -3112,9 +3112,8 @@
             return requestPromise = getRequestData(filteredRequest, sellerDetails, lastOffers);
           });
           return Parse.Promise.when(requestsQs).then(function() {
-            var imageSizes, individualReqResults, requestsResult;
+            var individualReqResults, requestsResult;
             individualReqResults = _.flatten(_.toArray(arguments));
-            imageSizes = getImageSizes("product");
             requestsResult = {
               "city": city,
               "area": area,
@@ -3122,8 +3121,7 @@
               "location": sellerLocation,
               "requests": individualReqResults,
               "sellerCategories": filterCategories,
-              "sellerBrands": filterBrands,
-              "imageSizes": imageSizes
+              "sellerBrands": filterBrands
             };
             return promise.resolve(requestsResult);
           });
