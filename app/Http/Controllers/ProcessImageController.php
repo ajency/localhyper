@@ -177,7 +177,8 @@ class ProcessImageController extends Controller
         
 
         foreach($this->productSizes as $size){
-            $name =  $filename.$size['name'].'.'.$extension;
+            $origin_name =  $filename.$size['name'].'.'.$extension;
+            $name =  str_replace('+',' ',$origin_name);
             $width = $size['width'];
             $height = $size['height'];
 
