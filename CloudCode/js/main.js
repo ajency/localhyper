@@ -2264,12 +2264,12 @@
         "small": smallImage
       };
       medium = {
-        "retina": "-367x220",
-        "non_retina": "-183x110"
+        "retina": "",
+        "non_retina": ""
       };
       small = {
-        "retina": "-300x180",
-        "non_retina": "-150x90"
+        "retina": "",
+        "non_retina": ""
       };
       imageCategorySizes = {
         "medium": medium,
