@@ -33,6 +33,6 @@ class Kernel extends ConsoleKernel
                     processImages();
                     $myfile = fopen("/var/www/html/newtest.txt", "w") or die("Unable to open file!");
 
-                })->everyMinute()->withoutOverlapping();               
+                })->everyMinute();               
     }
 }
