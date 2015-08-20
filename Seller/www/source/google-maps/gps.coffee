@@ -8,7 +8,7 @@ angular.module 'LocalHyper.googleMaps'
 	GPS.isLocationEnabled = ->
 		defer = $q.defer()
 		if App.isWebView()
-			cordova.plugins.diagnostic.isLocationEnabledSetting (enabled)->
+			cordova.plugins.diagnostic.isLocationEnabled (enabled)->
 				defer.resolve enabled
 			, (error)->
 				defer.reject error

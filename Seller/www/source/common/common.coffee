@@ -8,7 +8,7 @@ angular.module 'LocalHyper.common', []
 	, $cordovaStatusbar, $cordovaKeyboard, $cordovaNetwork, $timeout, $q, $ionicScrollDelegate
 	, $cordovaInAppBrowser, User, CToast, UIMsg, $rootScope)->
 
-		App = 
+		App =
 
 			start: true
 			validateEmail: /^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$/
@@ -122,5 +122,35 @@ angular.module 'LocalHyper.common', []
 				else
 					@autoBid = !@autoBid
 					CToast.show UIMsg.noInternet
+
+			getBestSize : (url, size)->
+				url
+				# if _.isUndefined url
+				# 	url
+				# else
+				# 	jpg  = url.split '.jpg'
+				# 	jpeg = url.split '.jpeg'
+				# 	png  = url.split '.png'
+					
+				# 	if _.size(jpg) > 1
+				# 		splitUrl  = jpg[0]
+				# 		extension = '.jpg'
+				# 	else if _.size(jpeg) > 1
+				# 		splitUrl  = jpeg[0]
+				# 		extension = '.jpeg'
+				# 	else if _.size(png) > 1
+				# 		splitUrl  = png[0]
+				# 		extension = '.png'
+
+				# 	if @isIOS()
+				# 		imageUrl = "#{splitUrl}#{size.retina}#{extension}"
+				# 	else if @isAndroid()
+				# 		dpr = window.devicePixelRatio
+				# 		if dpr >= 1.5
+				# 			imageUrl = "#{splitUrl}#{size.retina}#{extension}"
+				# 		else
+				# 			imageUrl = "#{splitUrl}#{size.non_retina}#{extension}"
+
+				# 	imageUrl
 ]
 
