@@ -14,7 +14,7 @@ angular.module 'LocalHyper.categories'
 		if _.isEmpty allCategories
 			$http.post 'functions/getCategories', "sortBy": "sort_order"
 			.then (data)->
-				defer.resolve allCategories = data.data.result.data
+				defer.resolve allCategories = data.data.result
 			, (error)->
 				defer.reject error
 		else

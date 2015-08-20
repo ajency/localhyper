@@ -300,9 +300,11 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
           };
         })(this));
       },
-      onSuccess: function(offerData, displayLimit) {
-        var offerDataSize;
+      onSuccess: function(data, displayLimit) {
+        var offerData, offerDataSize;
         this.display = 'noError';
+        this.imageSizes = data.imageSizes;
+        offerData = data.sellerOffers;
         offerDataSize = _.size(offerData);
         if (offerDataSize > 0) {
           if (offerDataSize < displayLimit) {

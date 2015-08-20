@@ -6,9 +6,10 @@ angular.module('LocalHyper.categories', []).controller('CategoriesCtrl', [
       parentCategories: [],
       getCategories: function() {
         return CategoriesAPI.getAll().then((function(_this) {
-          return function(data) {
-            console.log(data);
-            return _this.onSuccess(data);
+          return function(result) {
+            console.log(result);
+            _this.imageSizes = result.imageSizes;
+            return _this.onSuccess(result.data);
           };
         })(this), (function(_this) {
           return function(error) {

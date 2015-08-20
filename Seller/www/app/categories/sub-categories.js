@@ -2,7 +2,8 @@ angular.module('LocalHyper.categories').controller('SubCategoriesCtrl', [
   '$scope', 'SubCategory', function($scope, SubCategory) {
     return $scope.view = {
       title: SubCategory.parentTitle,
-      subCategories: SubCategory.data
+      subCategories: SubCategory.data,
+      imageSizes: SubCategory.imageSizes
     };
   }
 ]).config([
@@ -17,15 +18,16 @@ angular.module('LocalHyper.categories').controller('SubCategoriesCtrl', [
           resolve: {
             SubCategory: function($stateParams, CategoriesAPI) {
               return CategoriesAPI.getAll().then(function(categories) {
-                var children, parent;
-                parent = _.filter(categories, function(category) {
+                var children, parent, subCategory;
+                parent = _.filter(categories.data, function(category) {
                   return category.id === $stateParams.parentID;
                 });
                 children = parent[0].children;
                 CategoriesAPI.subCategories('set', children);
-                return {
+                return subCategory = {
                   parentTitle: parent[0].name,
-                  data: children
+                  data: children,
+                  imageSizes: categories.imageSizes
                 };
               });
             }

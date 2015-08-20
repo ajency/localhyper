@@ -11,9 +11,10 @@ angular.module 'LocalHyper.categories', []
 
 			getCategories : ->
 				CategoriesAPI.getAll()
-				.then (data)=>
-					console.log data
-					@onSuccess data
+				.then (result)=>
+					console.log result
+					@imageSizes = result.imageSizes
+					@onSuccess result.data
 				, (error)=>
 					@onError error
 

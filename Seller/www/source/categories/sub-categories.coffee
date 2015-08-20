@@ -6,6 +6,7 @@ angular.module 'LocalHyper.categories'
 	$scope.view = 
 		title: SubCategory.parentTitle
 		subCategories: SubCategory.data
+		imageSizes: SubCategory.imageSizes
 ]
 
 
@@ -24,10 +25,14 @@ angular.module 'LocalHyper.categories'
 						SubCategory: ($stateParams, CategoriesAPI)->
 							CategoriesAPI.getAll()
 							.then (categories)->
-								parent = _.filter categories, (category)->
+								parent = _.filter categories.data, (category)->
 									category.id is $stateParams.parentID
 
 								children = parent[0].children
 								CategoriesAPI.subCategories 'set', children
-								parentTitle: parent[0].name, data: children
+
+								subCategory =
+									parentTitle: parent[0].name
+									data: children
+									imageSizes: categories.imageSizes
 ]

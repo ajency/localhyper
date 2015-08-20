@@ -150,7 +150,35 @@ angular.module('LocalHyper.common', []).factory('App', [
         }
       },
       getBestSize: function(url, size) {
-        return url;
+        var dpr, extension, imageUrl, jpeg, jpg, png, splitUrl;
+        if (_.isUndefined(url)) {
+          return url;
+        } else {
+          jpg = url.split('.jpg');
+          jpeg = url.split('.jpeg');
+          png = url.split('.png');
+          if (_.size(jpg) > 1) {
+            splitUrl = jpg[0];
+            extension = '.jpg';
+          } else if (_.size(jpeg) > 1) {
+            splitUrl = jpeg[0];
+            extension = '.jpeg';
+          } else if (_.size(png) > 1) {
+            splitUrl = png[0];
+            extension = '.png';
+          }
+          if (this.isIOS()) {
+            imageUrl = "" + splitUrl + size.retina + extension;
+          } else if (this.isAndroid()) {
+            dpr = window.devicePixelRatio;
+            if (dpr >= 1.5) {
+              imageUrl = "" + splitUrl + size.retina + extension;
+            } else {
+              imageUrl = "" + splitUrl + size.non_retina + extension;
+            }
+          }
+          return imageUrl;
+        }
       }
     };
   }

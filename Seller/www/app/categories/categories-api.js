@@ -12,7 +12,7 @@ angular.module('LocalHyper.categories').factory('CategoriesAPI', [
         $http.post('functions/getCategories', {
           "sortBy": "sort_order"
         }).then(function(data) {
-          return defer.resolve(allCategories = data.data.result.data);
+          return defer.resolve(allCategories = data.data.result);
         }, function(error) {
           return defer.reject(error);
         });
