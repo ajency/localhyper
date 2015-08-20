@@ -284,7 +284,7 @@ function getCategoryProducts(pageNo)
             ]
         });
         var pageNo = parseInt(response.data.page);    
-        var prevPageLink = (pageNo > 1) ? 'onclick="getCategoryProducts('+ (pageNo - 1) +');" ':'' ;
+        var prevPageLink = (pageNo >= 1) ? 'onclick="getCategoryProducts('+ (pageNo - 1) +');" ':'' ;
         var nextPageLink = (pageNo < response.data.numOfPages) ? 'onclick="getCategoryProducts('+ (pageNo + 1) +');" ' :'' ;  
         
         var pagination = '<a '+prevPageLink+' href="#"> previous </a> ';
