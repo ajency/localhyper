@@ -263,6 +263,7 @@ class CustomerController extends Controller
                 $productPrice = new ParseQuery("Price");
                 $productPrice->equalTo("product", $productId);
                 $productPrice->equalTo("type", 'online_market_price');
+                $productPrice->ascending("value");
                 $onlinePriceData = $productPrice->first(); 
                 $onlinePrice = (!empty($onlinePriceData))?$onlinePriceData->get("value"):'N/A';
  

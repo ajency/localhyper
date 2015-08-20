@@ -62,20 +62,22 @@ class RequestController extends Controller
             {
                 $productPrice = new ParseQuery("Price");
                 $productPrice->equalTo("product", $productId);
+                $productPrice->ascending("value");
                 $productPriceData = $productPrice->find();
-                $priceArray = [];
+                $onlinePriceArray = $priceArray = [];
                 $onlinePrice = $platformPrice = '';
                 foreach($productPriceData as $price)
                 {
                     $priceType = $price->get("type");
                     if($priceType == 'online_market_price')
                     {
-                        $onlinePrice = $price->get("value");
+                        $onlinePriceArray[] = $price->get("value");
                     }
                     else{
                         $priceArray[] = $price->get("value");
                     }
                 }
+                $onlinePrice = (!empty($onlinePriceArray))? min($onlinePriceArray)  :''; 
                 $platformPrice = (!empty($priceArray))? min($priceArray).'/-' :'N/A'; 
                 
                 $productPriceArray[$productId]['OnlinePrice'] = ($onlinePrice!='')?$onlinePrice.'/-':''; 

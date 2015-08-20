@@ -76,6 +76,7 @@ class OfferController extends Controller
                 $productPrice = new ParseQuery("Price");
                 $productPrice->equalTo("type", "online_market_price");
                 $productPrice->equalTo("product", $productObj);
+                $productPrice->ascending("value");
                 $productPriceData = $productPrice->first();
                 
                 $onlinePrice = (!empty($productPriceData))? $productPriceData->get("value").'/-' :'';
