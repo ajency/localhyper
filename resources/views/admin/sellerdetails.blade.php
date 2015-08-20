@@ -74,10 +74,10 @@
             </div>
 </div>
 <div class="tab-pane  {{ ($showOffers)?'active':'' }}" id="tab4FollowUs">
-<table class="table table-bordered">
+<table class="table table-bordered" id="example2">
           <thead>
             <tr>
-              <th>Date</th>
+              <th class="date-sort">Date</th>
               <th>Product Name</th>
               <th>Category</th>
               <th>Offer Amount</th>
@@ -89,7 +89,7 @@
           <tbody>
               @foreach($selleroffers as $offer)
               <tr>
-                <td>{{ $offer['date'] }}</td>
+                <td class="center">{{ $offer['date'] }}</td>
                 <td>{{ $offer['productName'] }}</td>
                 <td>{{ $offer['category'] }}</td>
                 <td>{{ $offer['offerAmt'] }}</td>

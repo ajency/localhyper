@@ -42,7 +42,7 @@
             
 </div>
 <div class="tab-pane {{ ($showRequest)?'active':'' }}" id="tab4FollowUs">
-<table class="table table-bordered">
+<table class="table table-bordered" id="example2">
           <thead>
             <tr>
               <th>Product Name</th>
