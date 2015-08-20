@@ -196,4 +196,181 @@ $('.btn-import').click(function(){
     $(this).addClass("hidden");
 });
 
+function getCategoryProducts(pageNo)
+{
+ 
+    var department = $("select[name='department']").val(); 
+    var category = $("select[name='category']").val();
+
+    var error = false;
+    if(department =='')
+    {
+        alert('Please Select Department');
+        error = true;
+    }
+
+    if(category=='')
+    {
+        alert('Please Select Category');
+        error = true;
+    }
+    
+    if(!error){
+      
+        $.ajax({
+        async :true, 
+        url: "/admin/product/getproductprices/"+category,
+        type: "GET",
+        headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            "page" : pageNo,
+ 
+        },
+        dataType: "JSON",
+        success: function (response) {
+        var str ='';        
+        var products = response.data.productLists;
+        $.each(products, function (index, value) {
+            var prices = value.product_prices;
+            var amazonPrice = filpkartPrice = snapdealPrice = amazonPriceId = filpkartPriceId = snapdealPriceId = '';
+            
+            $.each(prices, function (index, value) {
+                if(index=='amazon')
+                {
+                    amazonPrice = value['VALUE'];
+                    amazonPriceId = value['ID'];
+                }
+                else if(index=='flipkart')
+                {
+                    filpkartPrice = value['VALUE'];
+                    filpkartPriceId = value['ID'];
+                }
+                else if(index=='snapdeal')
+                {
+                    snapdealPrice = value['VALUE'];  
+                    snapdealPriceId = value['ID'];
+                }
+            });
+            /*var amazonePrice = (typeof(prices.amazone) != "undefined" && prices.amazone !== null) ? prices.amazone : '';
+            var filpkartPrice =(typeof(prices.filpkart) != "undefined" && prices.filpkart !== null) ? prices.filpkart : '';
+            var snapdealPrice =(typeof(snapdeal['VALUE']) != "undefined" && prices.snapdeal !== null) ? prices.snapdeal : '';*/
+ 
+            str += '<tr>'; 
+            str += '<td>'+value.name+'</td>'; 
+            str += '<td>'+value.model_number+'</td>'; 
+            str += '<td data-type="amazon" data-type-id="'+amazonPriceId+'" >'+amazonPrice+'</td>'; 
+            str += '<td data-type="flipkart" data-type-id="'+filpkartPriceId+'">'+filpkartPrice+'</td>'; 
+            str += '<td data-type="snapdeal" data-type-id="'+snapdealPriceId+'">'+snapdealPrice+'</td>'; 
+            str += '<td data-product-id="'+value.id+'"> <a class="edit-product-price">edit</a> </td>'; 
+            str += '</tr>'; 
+        });
+            
+        $('.productPriceList').DataTable().destroy();     
+        $(".productPriceList tbody").html(str);
+        $(".productPriceList").dataTable({
+            "sDom": "<'row'<'col-md-6'l><'col-md-6'f>r>t<'row'<'col-md-12'p i>>",
+            "bPaginate": false,
+            "bFilter": false,
+            "bInfo":false,
+            "aaSorting": [],
+            "oLanguage": {
+                "sLengthMenu": "_MENU_ ",
+                "sInfo": "Showing <b>_START_ to _END_</b> of _TOTAL_ entries"
+            },
+            "aoColumnDefs": [
+                { "sType": "date-uk", "aTargets": ["date-sort"] }
+            ]
+        });
+        var pageNo = parseInt(response.data.page);    
+        var prevPageLink = (pageNo > 1) ? 'onclick="getCategoryProducts('+ (pageNo - 1) +');" ':'' ;
+        var nextPageLink = (pageNo < response.data.numOfPages) ? 'onclick="getCategoryProducts('+ (pageNo + 1) +');" ' :'' ;  
+        
+        var pagination = '<a '+prevPageLink+' href="#"> previous </a> ';
+        pagination += (pageNo + 1) +' of '+response.data.numOfPages ;
+        pagination += '<a '+nextPageLink+' href="#"> next </a> ';  
+  
+        $("#pagination").html(pagination);    
+        }
+    }); 
+        
+    }
+}
+
+$('.productPriceList').on('click', '.edit-product-price', function () { 
+    var amazonPrice = $(this).closest('tr').find('td[data-type="amazon"]');
+    var filpkartPrice =$(this).closest('tr').find('td[data-type="flipkart"]');
+    var snapdealPrice =$(this).closest('tr').find('td[data-type="snapdeal"]');
+    
+    amazonPrice.html('<input type="text" name="amazon_price" value="'+amazonPrice.text()+'">');
+    filpkartPrice.html('<input type="text" name="flipkar_price" value="'+filpkartPrice.text()+'">');
+    snapdealPrice.html('<input type="text" name="snadeal_price" value="'+snapdealPrice.text()+'">');
+    
+    $(this).addClass('hidden');
+    $(this).closest('td').append('<input type="button" class="save-product-price" value="save">');
+    
+    
+});
+
+$('.productPriceList').on('click', '.save-product-price', function () { 
+    
+    var obj = $(this);
+    
+    var productId = $(this).closest('td').attr('data-product-id');
+    var amazonPrice = $(this).closest('tr').find('td[data-type="amazon"]');
+    var filpkartPrice =$(this).closest('tr').find('td[data-type="flipkart"]');
+    var snapdealPrice =$(this).closest('tr').find('td[data-type="snapdeal"]');
+    
+    var amazonPriceValue =amazonPrice.find('input').val();
+    var amazonPriceId = amazonPrice.attr('data-type-id'); 
+    var filpkartPriceValue =filpkartPrice.find('input').val();
+    var filpkartPriceId = filpkartPrice.attr('data-type-id');
+    var snapdealPriceValue =snapdealPrice.find('input').val();
+    var snapdealPriceId = snapdealPrice.attr('data-type-id');
+    
+   
+    
+    $.ajax({
+        async :true, 
+        url: "/admin/product/"+productId+"/productonlineprice",
+        type: "POST",
+        headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            "amazonPrice" : amazonPriceValue,
+            "amazonPriceId" : amazonPriceId,
+            "filpkartPrice" : filpkartPriceValue,
+            "filpkartPriceId" : filpkartPriceId,
+            "snapdealPrice" : snapdealPriceValue,
+            "snapdealPriceId" : snapdealPriceId,
+        },
+        dataType: "JSON",
+        success: function (response) { 
+            
+            amazonPrice.attr('data-type-id',response.data.amazonPriceId); 
+            filpkartPrice.attr('data-type-id',response.data.filpkartPriceId); 
+            snapdealPrice.attr('data-type-id',response.data.snapdealPriceId); 
+            
+            amazonPrice.html(amazonPriceValue);
+            filpkartPrice.html(filpkartPriceValue);
+            snapdealPrice.html(snapdealPriceValue);
+            
+            
+            obj.closest('td').find('.edit-product-price').removeClass('hidden');
+            obj.remove();
+     
+        }
+    }); 
+     
+    
+     
+    
+    
+    
+});
+
+
+
 

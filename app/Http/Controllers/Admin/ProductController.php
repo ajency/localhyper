@@ -618,6 +618,7 @@ class ProductController extends Controller
                 
  
                 $products[]= [
+                              'id' => $productId,
                               'name' => $name,
                               'model_number' =>$modelNumber,
                               'product_prices' =>$prices,    
@@ -642,6 +643,97 @@ class ProductController extends Controller
             ], 201 );
          
         }
+    
+       public function productOnlinePrice($productId,Request $request)
+       {
+           
+           $productObj = new ParseObject("ProductItem", $productId); 
+           
+           $amazonPrice = intval($request->input('amazonPrice')); 
+           $amazonPriceId = $request->input('amazonPriceId'); 
+           $filpkartPrice = intval($request->input('filpkartPrice')); 
+           $filpkartPriceId = $request->input('filpkartPriceId'); 
+           $snapdealPrice = intval($request->input('snapdealPrice')); 
+           $snapdealPriceId = $request->input('snapdealPriceId'); 
+           
+           if($amazonPrice!='')
+           {
+               if($amazonPriceId)
+               {
+                    $amazonPriceObj = new ParseObject("Price", $amazonPriceId); 
+                    $amazonPriceObj->set("value", $amazonPrice);
+                    $amazonPriceObj->save();
+               }
+               else{
+                    $price = new ParseObject("Price");
+                    $price->set("product", $productObj);
+                    $price->set("source", "amazon");
+                    $price->set("type", "online_market_price");
+                    $price->set("value", $amazonPrice);
+                    $price->save();
+                    $amazonPriceId = $price->getObjectId();
+                    
+                  
+               
+               }
+           }
+           
+           if($filpkartPrice!='')
+           {
+               if($filpkartPriceId)
+               {
+                    $filpkartPriceObj = new ParseObject("Price", $filpkartPriceId); 
+                    $filpkartPriceObj->set("value", $filpkartPrice);
+                    $filpkartPriceObj->save();
+               }
+               else{
+                    $price = new ParseObject("Price");
+                    $price->set("product", $productObj);
+                    $price->set("source", "flipkart");
+                    $price->set("type", "online_market_price");
+                    $price->set("value", $filpkartPrice);
+                    $price->save();
+                    $filpkartPriceId = $price->getObjectId();
+                    
+                  
+               
+               }
+           }
+           
+           if($snapdealPrice!='')
+           {
+               if($snapdealPriceId)
+               {
+                    $snapdealPriceObj = new ParseObject("Price", $snapdealPriceId); 
+                    $snapdealPriceObj->set("value", $snapdealPrice);
+                    $snapdealPriceObj->save();
+               }
+               else{
+                    $price = new ParseObject("Price");
+                    $price->set("product", $productObj);
+                    $price->set("source", "snapdeal");
+                    $price->set("type", "online_market_price");
+                    $price->set("value", $snapdealPrice);
+                    $price->save();
+                    $snapdealPriceId = $price->getObjectId();
+                    
+                  
+               
+               }
+           }
+ 
+           
+             return response()->json( [
+                    'code' => 'products_price',
+                    'message' => 'Success',
+                    'data' => [
+                        'amazonPriceId' => $amazonPriceId,
+                        'filpkartPriceId' => $filpkartPriceId,
+                        'snapdealPriceId' => $snapdealPriceId,
+                    ]
+                    
+            ], 201 );
+       }
 
 		public function getCategoryProducts($categoryId, $page, $displayLimit){
 
@@ -676,11 +768,11 @@ class ProductController extends Controller
 
 						foreach ($attrs as $attr) {
 							 $productAttribute = array(
-																		'attributeId' => $attr->get("attribute")->getObjectId() , 
-																		'attributeName' => $attr->get("attribute")->get("name") , 
-																		'attributeValueId' => $attr->getObjectId()  , 
-																		'attributeValue' => $attr->get("value")
-																		);
+                                        'attributeId' => $attr->get("attribute")->getObjectId() , 
+                                        'attributeName' => $attr->get("attribute")->get("name") , 
+                                        'attributeValueId' => $attr->getObjectId()  , 
+                                        'attributeValue' => $attr->get("value")
+                                        );
 
 							 $productAttributes[] = $productAttribute;
 						}
@@ -855,6 +947,8 @@ class ProductController extends Controller
 			return $products;
 
 		}
+    
+      
 
 
 		public function getLatestProductPrice($productId, $price_type="online_market_price"){

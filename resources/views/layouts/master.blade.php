@@ -107,6 +107,7 @@
    </div>
   <!-- END MINI-PROFILE -->
     <p class="menu-title" onclick="location.href='{{ url('admin/attribute/categoryconfiguration') }}'">Category Configuration <span class="text-right"> @if($activeMenu=='categoryConfig')<i class="fa fa-check text-success"></i>@endif</span></p>
+    <p class="menu-title" onclick="location.href='{{ url('admin/product/onlineproductprices') }}'">Product Price Configuration <span class="text-right"> @if($activeMenu=='productprice')<i class="fa fa-check text-success"></i>@endif</span></p>   
   <p class="menu-title" onclick="location.href='{{ url('admin/seller') }}'">List of Sellers <span class="text-right">@if($activeMenu=='sellers')<i class="fa fa-check text-success"></i>@endif</span></p>
    
     <!--<li class=""> <a href="javascript:;"> <i class="fa fa fa-adjust"></i> <span class="title">Themes</span> <span class="arrow "></span> </a>
