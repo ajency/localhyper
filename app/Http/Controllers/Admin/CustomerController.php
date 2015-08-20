@@ -34,7 +34,7 @@ class CustomerController extends Controller
     { 
       $start_ts = strtotime($date1);
       $end_ts = strtotime($date2);
-      $diff = $end_ts - $start_ts;
+      $diff = $end_ts - $start_ts; 
       return round($diff / 86400); 
     }
     
@@ -68,23 +68,32 @@ class CustomerController extends Controller
             $request->equalTo("customerId", $customer);
             $requestData = $request->find();
             $requestMadeCount = count($requestData);
-            $deliverStatusCount = $requestSuccessfullCount = $requestCancelledCount = $requestExpiredCount = 0;
+            $deliverStatusCount = $requestSuccessfullCount = $requestCancelledCount = $requestExpiredCount = $requestPendingDelivery = $requestSentDelivery =0;
             foreach($requestData as $request)
             {   
-                $datetime1 = date('Y-m-d H:i:s');
-                $datetime2 = $request->getCreatedAt()->format('Y-m-d H:i:s');
-                $interval = $this->date_diff($datetime1, $datetime2);  
-                if($interval>=1)
-                    $requestExpiredCount = $requestExpiredCount+1;
+                if($request->get("status")=='open')
+                {
+                    $datetime1 = date('Y-m-d H:i:s');
+                    $datetime2 = $request->getCreatedAt()->format('Y-m-d H:i:s');
+                    $interval = $this->date_diff($datetime1, $datetime2);  
+                    if($interval>=1)
+                        $requestExpiredCount = $requestExpiredCount+1;
+                }
                 
                 if($request->get("status")=='cancelled')
                     $requestCancelledCount = $requestCancelledCount+1;
                 
-                if($request->get("status")=='successfull')
+                if($request->get("status")=='successful')
                     $requestSuccessfullCount = $requestSuccessfullCount+1;
                 
-                if($request->get("deliverStatus")=='failed')
+                if($request->get("status")=='failed_delivery')
                     $deliverStatusCount = $deliverStatusCount+1;
+                
+                if($request->get("status")=='pending_delivery')
+                    $requestPendingDelivery = $requestPendingDelivery+1;
+                
+                if($request->get("status")=='sent_for_delivery')
+                    $requestSentDelivery = $requestSentDelivery+1;
                 
             }
             
@@ -100,6 +109,8 @@ class CustomerController extends Controller
                               'requestCancelled' =>$requestCancelledCount,
                               'requestSuccessfull' =>$requestSuccessfullCount,
                               'deliveryStatus' =>$deliverStatusCount,
+                              'pendingDelivery' =>$requestPendingDelivery,
+                               'sentDelivery' =>$requestSentDelivery,
                               ]; 
             }
             else

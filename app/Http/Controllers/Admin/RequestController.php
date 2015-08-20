@@ -78,7 +78,7 @@ class RequestController extends Controller
                 }
                 $platformPrice = (!empty($priceArray))? min($priceArray).'/-' :'N/A'; 
                 
-                $productPriceArray[$productId]['OnlinePrice'] = $onlinePrice; 
+                $productPriceArray[$productId]['OnlinePrice'] = ($onlinePrice!='')?$onlinePrice.'/-':''; 
                 $productPriceArray[$productId]['PlatformPrice'] = $platformPrice; 
             }
             else
@@ -94,7 +94,7 @@ class RequestController extends Controller
                               'category' =>$request->get("category")->get("name"),    
                               'productName' =>$request->get("product")->get("name"),
                               'mrp' =>$request->get("product")->get("mrp").'/-',
-                              'onlinePrice' =>$onlinePrice.'/-',
+                              'onlinePrice' =>$onlinePrice,
                               'bestPlatformPrice' =>$platformPrice,
                               'area' =>$request->get("area"),
                               'offerCount' =>$request->get("offerCount"),

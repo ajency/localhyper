@@ -9,10 +9,10 @@
       
 			<h4 class="grid-title">List Of Ratings</h4>
 			<div class="grid-body">
-         <table class="table table-bordered sellerList">
+         <table class="table table-bordered sellerList" id="example2">
           <thead>
             <tr>
-              <th>DATE</th>				
+              <th class="date-sort">DATE</th>				
               <th>SELLER</th>
               <th>RATINGS</th>
               <th>COMMENTS</th>
@@ -22,7 +22,7 @@
           <tbody>
            @foreach($ratingsList as $rating)
               <tr>
-                <td>{{ $rating['date'] }}</td>
+                <td class="center">{{ $rating['date'] }}</td>
                 <td>{{ $rating['ratingFor'] }}</td>
                 <td>{{ $rating['count'] }}</td>
                 <td>{{ $rating['comments'] }}</td>
@@ -31,14 +31,8 @@
            @endforeach
           </tbody>
          </table>
-        
-        @if($numOfPages > 1)        
-            Page : <select name="number_of_pages" onchange="location.href='{{ url('admin/ratings') }}?page='+this.value">
-            @for($i=1 ;$i<=$numOfPages ;$i++)
-            <option {{ ($i == $page)?'selected':'' }}  value="{{ $i }}">{{ $i }}</option>                         
-            @endfor
-            </select>  
-        @endif    
+ 
+         <?php echo displayPagination( $page, $numOfPages , 'admin/ratings' ) ?>     
                         </div>
 		</div>
     </div> 

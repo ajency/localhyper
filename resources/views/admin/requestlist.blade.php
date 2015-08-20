@@ -9,11 +9,11 @@
       
 			<h4 class="grid-title">List Of Requests</h4>
 			<div class="grid-body">
-         <table class="table table-bordered sellerList">
+         <table class="table table-bordered sellerList" id="example2">
           <thead>
             <tr>
               <th>Customer Name</th>
-              <th>Category</th>      
+              <th>Category</th>       
               <th>Product Name</th>   
               <th>Mrp</th>    
               <th>Online Price</th> 
@@ -39,13 +39,8 @@
            @endforeach
           </tbody>
          </table>
-  @if($numOfPages > 1)                 
-Page : <select name="number_of_pages" onchange="location.href='{{ url('admin/offers') }}?page='+this.value">
-            @for($i=1 ;$i<=$numOfPages ;$i++)
-           <option {{ ($i == $page)?'selected':'' }}  value="{{ $i }}">{{ $i }}</option>                         
-            @endfor
-        </select> 
-  @endif              
+   
+ <?php echo displayPagination( $page, $numOfPages , 'admin/requests' ) ?>               
                         </div>
 		</div>
     </div> 

@@ -14,6 +14,7 @@
 Route::get( '/', 'WelcomeController@index' );
 
 Route::get( 'process-image', 'ProcessImageController@index' );
+Route::get( 'auto-bid-offers', 'JobsController@index' );
 
 /**
  * Auth and forgot password route

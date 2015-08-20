@@ -20,6 +20,8 @@
 <link href="{{ asset('plugins/jquery-scrollbar/jquery.scrollbar.css') }}" rel="stylesheet" type="text/css"/>
 <!-- END CORE CSS FRAMEWORK -->
 <!-- BEGIN CSS TEMPLATE -->
+<link href="{{ asset('bower_components/DataTables/media/css/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ asset('bower_components/datatables-responsive/css/dataTables.responsive.css') }}" rel="stylesheet" type="text/css" media="screen">    
 <link href="{{ asset('plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css" media="screen">    
 <link href="{{ asset('plugins/select2/select2_metro.min.css') }}" rel="stylesheet" type="text/css" media="screen">
 <link href="{{ asset('css/style.css') }}" rel="stylesheet" type="text/css"/>
@@ -50,7 +52,7 @@
 		 <li class="dropdown"> <a id="main-menu-toggle" href="#main-menu"  class="" > <div class="iconset top-menu-toggle-white"></div> </a> </li>		 
 		</ul>
       <!-- BEGIN LOGO -->	
-      <a href="index.html"><img src="assets/img/logo.png" class="logo" alt=""  data-src="assets/img/logo.png" data-src-retina="assets/img/logo2x.png" width="106" height="21"/></a>
+      <a href="index.html"><img src="{{ asset('img/shop-oye-logo.png') }}" class="logo" alt=""  data-src="assets/img/shop-oye-logo.png" data-src-retina="assets/img/logo2x.png" width="106" height="21"/></a>
       
       </div>
       <!-- END RESPONSIVE MENU TOGGLER --> 
@@ -154,7 +156,7 @@
 <script src="{{ asset('plugins/bootstrap-toggle/js/bootstrap-toggle.min.js') }}" type="text/javascript"></script>
 <!-- END CORE JS FRAMEWORK --> 
 <!-- BEGIN PAGE LEVEL JS --> 
- <script src="{{ asset('plugins/select2/select2.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('plugins/select2/select2.min.js') }}" type="text/javascript"></script>
 
 <script src="{{ asset('plugins/pace/pace.min.js') }}" type="text/javascript"></script>  
 <script src="{{ asset('plugins/jquery-numberAnimate/jquery.animateNumbers.js') }}" type="text/javascript"></script>
@@ -162,12 +164,17 @@
 <script src="{{ asset('js/tabs_accordian.js') }}" type="text/javascript"></script>    
 
 <script src="{{ asset('bower_components/underscore/underscore-min.js' ) }}" type="text/javascript"></script>    
+
+<script src="{{ asset('bower_components/DataTables/media/js/jquery.dataTables.js') }}" type="text/javascript"></script>
+<script src="{{ asset('bower_components/datatables-tabletools/js/dataTables.tableTools.js' ) }}" type="text/javascript"></script>
+<script src="{{ asset('bower_components/datatables-responsive/js/dataTables.responsive.js' ) }}" type="text/javascript"></script>
     
     
 <!-- BEGIN CORE TEMPLATE JS --> 
 <script src="{{ asset('js/core.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('js/chat.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('js/scripts.js') }}" type="text/javascript"></script>
+<script src="{{ asset('plugins/datatables.js') }}" type="text/javascript"></script>    
 
 <!-- END CORE TEMPLATE JS --> 
  

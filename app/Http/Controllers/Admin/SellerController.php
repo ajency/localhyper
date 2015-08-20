@@ -95,6 +95,7 @@ class SellerController extends Controller
             
              $balanceCredit = $seller->get("addedCredit") - $seller->get("subtractedCredit");
             
+            $avgRating = ($seller->get("ratingCount")) ? round(($seller->get("ratingSum") / $seller->get("ratingCount")),1) :0;
             if($type=='LIST')
             {
                 $sellerList[]= [ 'id' => $seller->getObjectId(),
@@ -104,7 +105,7 @@ class SellerController extends Controller
                               'categories' => implode(", ",$categories),
                               'offersCount' => $offerCount .'/'.$sellerRequestCount,
                               'successfullCount' => $offerSuccessfullCount,
-                              'avgRating' => 'N/A',
+                              'avgRating' => $avgRating,
                               'balanceCredit' => $balanceCredit,
                               'lastLogin' =>$seller->get("lastLogin")->format('d-m-Y'),
                               'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
@@ -119,7 +120,7 @@ class SellerController extends Controller
                               'categories' => implode(", ",$categories),
                               'offersCount' => $offerCount .'/'.$sellerRequestCount,
                               'successfullCount' => $offerSuccessfullCount,
-                              'avgRating' => 'N/A',
+                              'avgRating' => $avgRating,
                               'balanceCredit' => $balanceCredit,
                               'lastLogin' =>$seller->get("lastLogin")->format('d-m-Y'),
                               'createdAt' =>$seller->getCreatedAt()->format('d-m-Y')
@@ -258,7 +259,7 @@ class SellerController extends Controller
         $offers->includeKey('request');
         $offers->includeKey('request.product');
         $offers->includeKey('request.category');
-        $offers->includeKey('Price');
+        $offers->includeKey('price');
         
         $requestCount = $offers->count();          //Pagination
         $offers->limit($displayLimit);
@@ -274,7 +275,7 @@ class SellerController extends Controller
             $requestObj= $offer->get("request");
             $productObj = $requestObj->get('product');
             $categoryObj = $requestObj->get('category');
-            $priceObj = $offer->get('Price'); 
+            $priceObj =   $offer->get('price'); 
             
             $creditUsed =0;
             $transaction = new ParseQuery("Transaction");
@@ -289,10 +290,10 @@ class SellerController extends Controller
                         'id'=>$offer->getObjectId(),
                         'productName'=>$productObj->get("name"),
                         'category'=>$categoryObj->get("name"),
-                        'offerAmt'=>'',//$priceObj->get("amount"),
+                        'offerAmt'=>$priceObj->get("value"),
                         'creditUsed' => $creditUsed,
                         'status'=>$offer->get("status"),
-                        'date'=>$offer->getCreatedAt()->format('Y-m-d H:i:s'),
+                        'date'=>convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s')),
                          ] ;
             
  

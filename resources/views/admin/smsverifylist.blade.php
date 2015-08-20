@@ -9,7 +9,7 @@
       
 			<h4 class="grid-title">List Of SMS verify</h4>
 			<div class="grid-body">
-         <table class="table table-bordered sellerList">
+         <table class="table table-bordered sellerList" id="example2">
           <thead>
             <tr>
               <th>Name</th>
@@ -17,7 +17,7 @@
               <th>Phone</th>
               <th>Verification Code</th>
               <th>Attempt</th>
-              <th>Update At</th>
+              <th class="date-sort">Update At</th>
             </tr>
           </thead>
           <tbody>
@@ -28,19 +28,13 @@
                 <td>{{ $smsVerify['phone'] }}</td>
                 <td>{{ $smsVerify['verificationCode'] }}</td>
                 <td>{{ $smsVerify['attempts'] }}</td>
-                <td>{{ $smsVerify['updatedAt'] }}</td>
+                <td class="center">{{ $smsVerify['updatedAt'] }}</td>
               </tr>
            @endforeach
           </tbody>
          </table>
-        
-        @if($numOfPages > 1)        
-            Page : <select name="number_of_pages" onchange="location.href='{{ url('admin/smsverify') }}?page='+this.value">
-            @for($i=1 ;$i<=$numOfPages ;$i++)
-            <option {{ ($i == $page)?'selected':'' }}  value="{{ $i }}">{{ $i }}</option>                         
-            @endfor
-            </select>  
-        @endif    
+ 
+         <?php echo displayPagination( $page, $numOfPages , 'admin/smsverify' ) ?>       
                         </div>
 		</div>
     </div> 

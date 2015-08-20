@@ -9,72 +9,48 @@
       
 			<h4 class="grid-title">List Of Customers</h4>
 			<div class="grid-body">
-         <table class="table table-bordered customerList">
+         <table class="table table-bordered customerList" id="example2">
           <thead>
             <tr>
+              <th colspan="3"></th>
+              <th colspan="7" style="text-align: center;border-left: 1px solid #E1E2E2 !important;"> No of Requests</th>
+            </tr>
+            <tr>
               <th>Customer Name</th>
-              <th>Customer Registered Date</th>
-              <th>Customer Last Login</th>
-              <th>No. Of Requests Created</th>
-              <th>No. Of Requests Expired</th>
-              <th>No. Of Requests Cancelled</th>
-              <th>No. Of Requests Successfull</th>
-              <th>No. Of Failed Delivery</th>
+              <th class="date-sort">Customer Registered Date</th>
+              <th class="date-sort">Customer Last Login</th>
+              <th  style="border-left: 1px solid #E1E2E2 !important;">Created</th>
+              <th>Expired</th>
+              <th>Cancelled</th>
+              <th>Successfull</th>
+              <th>Failed Delivery</th>
+              <th>Pending Delivery</th>
+              <th>Sent Delivery</th>    
             </tr>
           </thead>
           <tbody>
            @foreach($customers as $customer)
               <tr onclick="location.href='{{ url('admin/customer/'.$customer['id']) }}'">
                 <td>{{ $customer['name'] }}</td>
-                <td>{{ $customer['createdAt'] }}</td>
-                <td>{{ $customer['lastLogin'] }}</td>
+                <td class="center">{{ $customer['createdAt'] }}</td>
+                <td class="center">{{ $customer['lastLogin'] }}</td>
                 <td>{{ $customer['numOfRequest'] }}</td>
                 <td>{{ $customer['requestExpired'] }}</td>
                 <td>{{ $customer['requestCancelled'] }}</td>  
                 <td>{{ $customer['requestSuccessfull'] }}</td>  
-                <td>{{ $customer['deliveryStatus'] }}</td>    
+                <td>{{ $customer['deliveryStatus'] }}</td> 
+                <td>{{ $customer['pendingDelivery'] }}</td> 
+                <td>{{ $customer['sentDelivery'] }}</td>   
               </tr>
            @endforeach
           </tbody>
          </table>
-       @if($numOfPages > 1)   
-        Page : <select name="number_of_pages" onchange="location.href='{{ url('admin/customer') }}?page='+this.value">
-            @for($i=1 ;$i<=$numOfPages ;$i++)
-           <option {{ ($i == $page)?'selected':'' }}  value="{{ $i }}">{{ $i }}</option>                         
-            @endfor
-        </select>
-      @endif        
-        
+ 
+          <?php echo displayPagination( $page, $numOfPages , 'admin/customer' ) ?> 
                 
                         </div>
 		</div>
     </div>
 
-<script type="text/javascript">
-   /* $( document ).ready(function() {
-         var str='';
-        var customerList = getCustomers().then(function(results) {
-                            _.each(results, function(customer) {
-  //return console.log(customer.get("displayName"));
-                                 str = '<tr>';
-                                  str += '<td>'+customer.get("displayName")+'</td>'; 
-                                  str += '<td>23-04-2014</td>';  
-                                  str += '</tr>';    
-                                  $('.customerList tbody').append(str);
-});
-                             //console.log(results);
-                          }, function(error) {
-                            return error;
-                          });
-       
-       
-       /* $.each(customerList, function( index, user ) { //alert(index);
-          str = '<tr>';
-          str += '<td></td>'; 
-          str += '<td>23-04-2014</td>';  
-          str += '</tr>';    
-          $('.customerList tbody').append(str);
-        });
-    });*/
-</script> 
+  
 @endsection

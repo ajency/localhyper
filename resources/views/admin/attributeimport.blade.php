@@ -42,8 +42,8 @@
 <span class="semi-bold">Attributes :</span> Configure your brands, attributes and attribute values
 </a>
 </h4>
-                    </div>
-                    <div id="collapseOne" class="panel-collapse collapse in" style="height: auto;">
+        </div>
+                    <div id="collapseOne" class="panel-collapse collapse" style="height: 0;">
                         <div class="panel-body">
                             <h4>Configure your <span class="semi-bold">brands, attributes</span> and <span class="semi-bold">attribute values</span></h4>
                             <h4><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold">Export</span></h4>
