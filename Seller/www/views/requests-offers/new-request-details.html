@@ -36,7 +36,7 @@
 					<div class="row">
 						<div class="col col-25">
 							<div class="item-avatar">
-								<img ng-src="{{view.requestDetails.data.product.image[0].src}}">
+								<img ng-src="{{App.getBestSize(view.requestDetails.data.product.image[0].src, view.requestDetails.data.imageSizes.small)}}">
 							</div>
 						</div>
 

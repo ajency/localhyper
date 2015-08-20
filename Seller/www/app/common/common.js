@@ -148,6 +148,9 @@ angular.module('LocalHyper.common', []).factory('App', [
           this.autoBid = !this.autoBid;
           return CToast.show(UIMsg.noInternet);
         }
+      },
+      getBestSize: function(url, size) {
+        return url;
       }
     };
   }
