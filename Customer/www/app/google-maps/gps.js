@@ -6,7 +6,7 @@ angular.module('LocalHyper.googleMaps').factory('GPS', [
       var defer;
       defer = $q.defer();
       if (App.isWebView()) {
-        cordova.plugins.diagnostic.isLocationEnabledSetting(function(enabled) {
+        cordova.plugins.diagnostic.isLocationEnabled(function(enabled) {
           return defer.resolve(enabled);
         }, function(error) {
           return defer.reject(error);
