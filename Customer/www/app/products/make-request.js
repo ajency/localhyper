@@ -12,10 +12,13 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       comments: {
         text: ''
       },
-      init: function() {
+      beforeInit: function() {
         this.reset();
         this.searchText = '';
         this.comments.text = '';
+        return this.address = null;
+      },
+      init: function() {
         if (_.isNull(this.latLng)) {
           return $timeout((function(_this) {
             return function() {
@@ -279,6 +282,7 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       }
     };
     $scope.$on('$ionicView.beforeEnter', function() {
+      $scope.view.beforeInit();
       return App.scrollTop();
     });
     return $scope.$on('$ionicView.afterEnter', function() {
