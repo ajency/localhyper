@@ -167,10 +167,7 @@ class ProcessImageController extends Controller
         $destinationPath = public_path().'/tmp/';
         
         Image::make($url)->save($destinationPath.$basename);
-          
-        //Instantiate the image object from local copy
-        $image = Image::make($destinationPath.$basename);
-
+           
         if($object_type == "product"){
             $available_sizes = $this->productSizes; 
         }
@@ -180,17 +177,14 @@ class ProcessImageController extends Controller
         
 
         foreach($this->productSizes as $size){
-            $name =  $filename.$size['name'].'.'.$extension;
+            $origin_name =  $filename.$size['name'].'.'.$extension;
+            $name =  str_replace('+',' ',$origin_name);
             $width = $size['width'];
             $height = $size['height'];
 
-            //Resize the image to each size ref@ getSizes() and save temporarily
-            $image->resize($width, $height, function ($constraint) {
-                $constraint->aspectRatio();
 
-                //make the image in actual size if the actual size is less than highest defined size
-                //$constraint->upsize();
-            })->save($destinationPath.$name);
+            $this->resizeImage($destinationPath.$basename, $destinationPath.$name, $width, $height);
+
 
         //Upload the resized image to amazon s3
             $s3->putObject(array(
@@ -243,6 +237,97 @@ class ProcessImageController extends Controller
 
         }
 
+    }
+
+
+
+
+
+
+
+
+
+
+    public function resizeImage($file, $destination, $w, $h) {
+        list($source_width, $source_height, $source_type) = getimagesize($file);
+
+        $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+        if ($ext == "jpg" || $ext == "jpeg") {
+            $source_gdim=imagecreatefromjpeg($file);
+        } elseif ($ext == "png") {
+            $source_gdim=imagecreatefrompng($file);
+        } elseif ($ext == "gif") {
+            $source_gdim=imagecreatefromgif($file);
+        } else {
+
+            return;
+        }
+
+        if ($w && !$h) {
+            $ratio = $w / $source_width;
+            $temp_width = $w;
+            $temp_height = $source_height * $ratio;
+
+            $desired_gdim = imagecreatetruecolor($temp_width, $temp_height);
+            imagecopyresampled(
+                $desired_gdim,
+                $source_gdim,
+                0, 0,
+                0, 0,
+                $temp_width, $temp_height,
+                $source_width, $source_height
+                );
+        } else {
+            $source_aspect_ratio = $source_width / $source_height;
+            $desired_aspect_ratio = $w / $h;
+
+            if ($source_aspect_ratio > $desired_aspect_ratio) {
+
+                $temp_height = $h;
+                $temp_width = ( int ) ($h * $source_aspect_ratio);
+            } else {
+
+                $temp_width = $w;
+                $temp_height = ( int ) ($w / $source_aspect_ratio);
+            }
+
+
+
+            $temp_gdim = imagecreatetruecolor($temp_width, $temp_height);
+            imagecopyresampled(
+                $temp_gdim,
+                $source_gdim,
+                0, 0,
+                0, 0,
+                $temp_width, $temp_height,
+                $source_width, $source_height
+                );
+
+
+
+            $x0 = ($temp_width - $w) / 2;
+            $y0 = ($temp_height - $h) / 2;
+            $desired_gdim = imagecreatetruecolor($w, $h);
+            imagecopy(
+                $desired_gdim,
+                $temp_gdim,
+                0, 0,
+                $x0, $y0,
+                $w, $h
+                );
+        }
+
+        if ($ext == "jpg" || $ext == "jpeg") {
+            ImageJpeg($desired_gdim,$destination,100);
+        } elseif ($ext == "png") {
+            ImagePng($desired_gdim,$destination);
+        } elseif ($ext == "gif") {
+            ImageGif($desired_gdim,$destination);
+        } else {
+            return;
+        }
+
+        ImageDestroy ($desired_gdim);
     }
 
 

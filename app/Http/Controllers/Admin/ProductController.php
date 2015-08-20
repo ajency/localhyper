@@ -536,7 +536,7 @@ class ProductController extends Controller
 									// insert image urls in process image table
 									$processImage = new ProcessImage();
 									$processImage->object_type = "product";
-									$processImage->images = $inputImageUrl;
+									$processImage->images = array($inputImageUrl);
 									$processImage->status = 0;
 
 									$processImage->save();
