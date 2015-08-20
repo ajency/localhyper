@@ -18,11 +18,14 @@ angular.module 'LocalHyper.products'
 
 			comments: text: ''
 
-			init : ->
+			
+			beforeInit : ->
 				@reset()
 				@searchText = ''
 				@comments.text = ''
+				@address = null
 
+			init : ->
 				if _.isNull @latLng
 					$timeout =>
 						loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
@@ -227,6 +230,7 @@ angular.module 'LocalHyper.products'
 
 		
 		$scope.$on '$ionicView.beforeEnter', ->
+			$scope.view.beforeInit()
 			App.scrollTop()
 
 		$scope.$on '$ionicView.afterEnter', ->
