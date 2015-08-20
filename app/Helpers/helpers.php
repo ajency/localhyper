@@ -1,5 +1,6 @@
 <?php
-
+use App\Http\Controllers\JobsController;
+use App\Http\Controllers\ProcessImageController;
 //*** PAGINATION
 
 function displayPagination($pageNo , $numOfPages , $link)
@@ -34,3 +35,14 @@ function convertToIST($dateTime)
     $date->setTimezone(new DateTimeZone('IST'));
     return $date->format('d-m-Y H:i:s');
 }
+
+function runAutoBidOffers(){
+    $JobsController = new JobsController();
+    $JobsController->index();
+}
+
+function processImages(){
+    $ProcessImageController = new ProcessImageController();
+    $ProcessImageController->index();
+}
+

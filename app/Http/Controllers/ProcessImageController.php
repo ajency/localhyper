@@ -224,10 +224,10 @@ class ProcessImageController extends Controller
 
         if($type == "category"){
             return  array(
-                array('name'=>'-160x110', 'width'=>'160', 'height'=>'110', 'ratio'=>'16:11'),
-                array('name'=>'-90x90', 'width'=>'90', 'height'=>'90', 'ratio'=>'1:1'),
-                array('name'=>'-320x220', 'width'=>'320', 'height'=>'220', 'ratio'=>'16:11'),
-                array('name'=>'-180x180', 'width'=>'800', 'height'=>'480', 'ratio'=>'1:1')
+                array('name'=>'-367x220', 'width'=>'367', 'height'=>'220', 'ratio'=>'5:3'),
+                array('name'=>'-300x180', 'width'=>'300', 'height'=>'180', 'ratio'=>'5:3'),
+                array('name'=>'-183x110', 'width'=>'183', 'height'=>'110', 'ratio'=>'5:3'),
+                array('name'=>'-150x90', 'width'=>'150', 'height'=>'90', 'ratio'=>'5:3')
                 );
 
         }
@@ -236,11 +236,9 @@ class ProcessImageController extends Controller
                 array('name'=>'-150x90', 'width'=>'150', 'height'=>'90', 'ratio'=>'5:3'),
                 array('name'=>'-300x180', 'width'=>'300', 'height'=>'180', 'ratio'=>'5:3'),
                 array('name'=>'-400x240', 'width'=>'400', 'height'=>'240', 'ratio'=>'5:3'),
-                array('name'=>'-800x480', 'width'=>'800', 'height'=>'480', 'ratio'=>'5:3'),
+                array('name'=>'-600x360', 'width'=>'600', 'height'=>'360', 'ratio'=>'5:3'),
                 array('name'=>'-180x108', 'width'=>'180', 'height'=>'108', 'ratio'=>'5:3'),
-                array('name'=>'-360x216', 'width'=>'360', 'height'=>'216', 'ratio'=>'5:3'),
-                array('name'=>'-736x442', 'width'=>'736', 'height'=>'442', 'ratio'=>'5:3'),
-                array('name'=>'-1000x600', 'width'=>'1000', 'height'=>'600', 'ratio'=>'5:3')
+                array('name'=>'-360x216', 'width'=>'360', 'height'=>'216', 'ratio'=>'5:3')
                 );
 
         }
