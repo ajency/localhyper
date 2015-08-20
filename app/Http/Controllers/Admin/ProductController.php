@@ -562,6 +562,86 @@ class ProductController extends Controller
 						// return redirect("/admin/attribute/categoryconfiguration");
 
 					}
+    
+        public function onlineProductPrices()
+        {
+            return view('admin.onlineproductprice')->with('activeMenu','productprice');
+        }
+    
+        public function getProductPrice($categoryId , Request $request)
+        {
+            $displayLimit = config('constants.page_limit'); 
+            $page =  $request->input('page');
+            //$categoryId = $request->input('categoryId');
+            $numOfPages = 0;
+
+            $productQuery = new ParseQuery("ProductItem");
+            
+            $categoryQuery = new ParseQuery("Category");
+            $categoryQuery->equalTo("objectId",$categoryId);
+ 
+            $productQuery->matchesQuery("category", $categoryQuery);
+            $productQuery->descending("createdAt");
+            
+            #count
+            $productCount = $productQuery->count();  
+            # pagination
+            $productQuery->limit($displayLimit);
+            $productQuery->skip($page * $displayLimit);
+
+            $results = $productQuery->find();
+            
+            $numOfPages = ceil($productCount/$displayLimit);
+            $products = [];
+ 
+            foreach($results as $result)
+            {  
+                $productId = $result->getObjectId();
+                $modelNumber = $result->get("model_number");
+                $name = $result->get("name");
+                
+                $productPrice = new ParseQuery("Price");
+                $productPrice->equalTo("type", "online_market_price");
+                $productPrice->equalTo("product", $result);
+                $productPriceData = $productPrice->find();
+                $prices =[];
+                foreach($productPriceData as $price)
+                {
+                    $priceId = $price->getObjectId();
+                    $source = $price->get("source");
+                    $value = $price->get("value");
+                    
+                    $prices [$source]['ID']=$priceId;
+                    $prices [$source]['VALUE']=$value;
+                }
+                
+                
+ 
+                $products[]= [
+                              'name' => $name,
+                              'model_number' =>$modelNumber,
+                              'product_prices' =>$prices,    
+                              ]; 
+                 
+
+
+            }
+
+             /*$data['list']=$products;
+             $data['numOfPages']=$numOfPages;
+             $data['page']=$page;*/
+             
+             return response()->json( [
+                    'code' => 'products_price',
+                    'message' => '',
+                    'data' => [
+                        'productLists' => $products,
+                        'numOfPages' => $numOfPages,
+                        'page' => $page,
+                    ]
+            ], 201 );
+         
+        }
 
 		public function getCategoryProducts($categoryId, $page, $displayLimit){
 
