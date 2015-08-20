@@ -26,6 +26,8 @@ function displayPagination($pageNo , $numOfPages , $link)
     return $html;
 }
 
+//***CONVERT UTC TO IST
+
 function convertToIST($dateTime)
 {
     $date = new DateTime($dateTime, new DateTimeZone('UTC'));

@@ -9,11 +9,11 @@
       
 			<h4 class="grid-title">List Of Requests</h4>
 			<div class="grid-body">
-         <table class="table table-bordered sellerList">
+         <table class="table table-bordered sellerList" id="example2">
           <thead>
             <tr>
               <th>Customer Name</th>
-              <th>Category</th>      
+              <th>Category</th>       
               <th>Product Name</th>   
               <th>Mrp</th>    
               <th>Online Price</th> 

@@ -9,7 +9,7 @@
       
 			<h4 class="grid-title">List Of Offers</h4>
 			<div class="grid-body">
-         <table class="table table-bordered sellerList">
+         <table class="table table-bordered sellerList" id="example2">
           <thead>
             <tr>
               <th>Product Name</th>
@@ -22,7 +22,7 @@
               <th>Request Status</th>
               <th>Offer Status</th>  
               <th>Delivery Reason Failure</th>      
-              <th>Created At</th>      
+              <th class="date-sort">Created At</th>      
             </tr>
           </thead>
           <tbody>
@@ -38,7 +38,7 @@
                 <td>{{ $offer['requestStatus'] }}</td>
                 <td>{{ $offer['offerStatus'] }}</td>  
                 <td>{{ $offer['deliveryReasonFailure'] }}</td>
-                <td>{{ $offer['date'] }}</td>
+                <td class="center">{{ $offer['date'] }}</td>
               </tr>
            @endforeach
           </tbody>

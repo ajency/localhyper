@@ -9,7 +9,7 @@
       
 			<h4 class="grid-title">List Of Customers</h4>
 			<div class="grid-body">
-         <table class="table table-bordered customerList">
+         <table class="table table-bordered customerList" id="example2">
           <thead>
             <tr>
               <th colspan="3"></th>
@@ -17,9 +17,9 @@
             </tr>
             <tr>
               <th>Customer Name</th>
-              <th>Customer Registered Date</th>
-              <th>Customer Last Login</th>
-              <th style="border-left: 1px solid #E1E2E2 !important;">Created</th>
+              <th class="date-sort">Customer Registered Date</th>
+              <th class="date-sort">Customer Last Login</th>
+              <th  style="border-left: 1px solid #E1E2E2 !important;">Created</th>
               <th>Expired</th>
               <th>Cancelled</th>
               <th>Successfull</th>
@@ -32,8 +32,8 @@
            @foreach($customers as $customer)
               <tr onclick="location.href='{{ url('admin/customer/'.$customer['id']) }}'">
                 <td>{{ $customer['name'] }}</td>
-                <td>{{ $customer['createdAt'] }}</td>
-                <td>{{ $customer['lastLogin'] }}</td>
+                <td class="center">{{ $customer['createdAt'] }}</td>
+                <td class="center">{{ $customer['lastLogin'] }}</td>
                 <td>{{ $customer['numOfRequest'] }}</td>
                 <td>{{ $customer['requestExpired'] }}</td>
                 <td>{{ $customer['requestCancelled'] }}</td>  
