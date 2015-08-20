@@ -388,9 +388,15 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 "updatedAt" : offerObj.updatedAt  
                 
             
-            sellerOffers.push sellerOffer                
+            sellerOffers.push sellerOffer  
 
-        response.success sellerOffers
+        imageSizes = getImageSizes("product") 
+
+        result =
+            "sellerOffers" : sellerOffers          
+            "imageSizes" : imageSizes          
+
+        response.success result
     , (error) ->
         response.error error  
     

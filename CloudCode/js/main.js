@@ -1344,7 +1344,7 @@
     queryOffers.include("request.category");
     queryOffers.include("request.category.parent_category");
     return queryOffers.find().then(function(offers) {
-      var sellerOffers;
+      var imageSizes, result, sellerOffers;
       sellerOffers = [];
       _.each(offers, function(offerObj) {
         var brand, brandObj, category, categoryObj, createdDate, currentDate, diff, differenceInDays, failedDeliveryReason, priceObj, product, productObj, requestGeoPoint, requestObj, requestStatus, sellerObj, sellerOffer, sellersDistancFromCustomer;
@@ -1415,7 +1415,12 @@
         };
         return sellerOffers.push(sellerOffer);
       });
-      return response.success(sellerOffers);
+      imageSizes = getImageSizes("product");
+      result = {
+        "sellerOffers": sellerOffers,
+        "imageSizes": imageSizes
+      };
+      return response.success(result);
     }, function(error) {
       return response.error(error);
     });
