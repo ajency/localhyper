@@ -250,6 +250,14 @@ angular.module 'LocalHyper.requestsOffers'
 				onNotificationClick : (requestId)->
 					requests = $scope.view.requests
 					index = _.findIndex requests, (val)-> val.id is requestId
+
+					onError = (msg)=>
+						CSpinner.show '', msg
+						$timeout =>
+							@modal.hide()
+							CSpinner.hide()
+						, 2000
+
 					if index isnt -1 
 						@show requests[index]
 					else
@@ -262,14 +270,17 @@ angular.module 'LocalHyper.requestsOffers'
 							RequestsAPI.getSingleRequest requestId
 							.then (request)=>
 								if request.status is 'cancelled'
-									CSpinner.show '', 'Sorry, this request has been cancelled'
-									$timeout =>
-										@modal.hide()
-										CSpinner.hide()
-									, 2000
-								else
+									onError 'Sorry, this request has been cancelled'
+								else if _.isEmpty requests
 									@display = 'noError'
 									@data = request
+								else
+									reqIndex = _.findIndex requests, (val)-> val.id is request.id
+									if reqIndex is -1
+										onError 'You have already made an offer'
+									else
+										@display = 'noError'
+										@data = request
 							, (type)=>
 								@display = 'error'
 								@errorType = type
