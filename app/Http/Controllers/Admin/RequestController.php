@@ -307,7 +307,7 @@ class RequestController extends Controller
                         'requestStatus'=>$request->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($request->get("failedDeliveryReason")!='')?$request->get("failedDeliveryReason"):'N/A',
-                        'date'=>$offer->getCreatedAt()->format('d-m-Y H:i:s'),
+                        'date'=>convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s')),
                          ] ;    
         }
         
