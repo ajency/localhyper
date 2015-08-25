@@ -82,6 +82,7 @@
               <th>Category</th>
               <th>Offer Amount</th>
               <th>Offer Status</th>
+              <th>Delivery Status</th>    
               <th>Credits Used</th>
               <!--<th>Auto Bid</th>-->
             </tr>
@@ -94,6 +95,7 @@
                 <td>{{ $offer['category'] }}</td>
                 <td>{{ $offer['offerAmt'] }}</td>
                 <td><span class="label label-info">{{ $offer['status'] }}</span></td>
+                <td>{{ $offer['deliverystatus'] }}</td>    
                   <td>{{ $offer['creditUsed'] }}</td>
                 <!--<td class="text-center">-</td>-->
               </tr>

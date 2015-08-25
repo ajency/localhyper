@@ -285,6 +285,8 @@ class SellerController extends Controller
             {
                $creditUsed += $transaction->get("creditCount");
             }
+            
+            $deliveryStatus = ($offer->get("status") == 'accepted')?$requestObj->get("status"):'N/A';
  
             $sellerOffers[] =[
                         'id'=>$offer->getObjectId(),
@@ -293,6 +295,7 @@ class SellerController extends Controller
                         'offerAmt'=>$priceObj->get("value"),
                         'creditUsed' => $creditUsed,
                         'status'=>$offer->get("status"),
+                        'deliverystatus'=>$deliveryStatus,
                         'date'=>convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s')),
                          ] ;
             

@@ -27,10 +27,10 @@
           </thead>
           <tbody>
            @foreach($offerList as $offer)
-              <tr >
+              <tr  onclick="location.href='{{ url('admin/requests/'.$offer['requestId']) }}'">
                 <td>{{ $offer['productName'] }}</td>
                 <td>{{ $offer['modelNo'] }}</td>
-                <td>{{ $offer['sellerName'] }}</td>
+                  <td><a href="{{ url('admin/seller/'.$offer['sellerId']) }}">{{ $offer['sellerName'] }}</a></td>
                 <td>{{ $offer['mrpOfProduct'] }}</td>
                 <td>{{ $offer['onlinePrice'] }}</td>
                 <td>{{ $offer['offerPrice'] }}</td>

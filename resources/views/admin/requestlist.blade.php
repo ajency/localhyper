@@ -20,13 +20,14 @@
               <th>Best Platform Price</th>      
               <th>Area</th>
               <th>Offer Count</th>  
-              <th>Status</th>      
+              <th>Status</th>   
+              <th>Delivery Status</th>       
             </tr>
           </thead>
           <tbody>
            @foreach($requestList as $request)
-              <tr>
-                <td>{{ $request['customerName'] }}</td>
+              <tr  onclick="location.href='{{ url('admin/requests/'.$request['id']) }}'">
+                  <td><a href="{{ url('admin/customer/'.$request['customerId']) }}">{{ $request['customerName'] }}</a></td>
                 <td>{{ $request['productName'] }}</td>
                 <td>{{ $request['category'] }}</td>
                 <td>{{ $request['mrp'] }}</td>
@@ -35,6 +36,7 @@
                 <td>{{ $request['area'] }}</td>
                 <td>{{ $request['offerCount'] }}</td>
                 <td>{{ $request['status'] }}</td>
+                <td>{{ $request['deliveryStatus'] }}</td>  
               </tr>
            @endforeach
           </tbody>

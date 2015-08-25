@@ -89,10 +89,18 @@ class RequestController extends Controller
                 $platformPrice = $productPriceArray[$productId]['PlatformPrice']; 
             }
             
+            $offers = new ParseQuery("Offer");
+            $offers->equalTo("request", $request);
+            $offers->equalTo("status", 'accepted');
+            $offersStatus = $offers->count();
+            
+            $deliveryStatus = ($offersStatus)?$request->get("status"):'N/A';
+            
             if($type=='LIST')
             {
                $requestList[]= [ 'id' => $request->getObjectId(),
                               'customerName' => $request->get("customerId")->get("displayName"),
+                              'customerId' => $request->get("customerId")->getObjectId(),    
                               'category' =>$request->get("category")->get("name"),    
                               'productName' =>$request->get("product")->get("name"),
                               'mrp' =>$request->get("product")->get("mrp").'/-',
@@ -101,6 +109,7 @@ class RequestController extends Controller
                               'area' =>$request->get("area"),
                               'offerCount' =>$request->get("offerCount"),
                               'status' =>$request->get("status"),
+                              'deliveryStatus' =>$deliveryStatus,    
                               ]; 
             }
             else
@@ -115,6 +124,7 @@ class RequestController extends Controller
                               'area' =>$request->get("area"),
                               'offerCount' =>$request->get("offerCount"),
                               'status' =>$request->get("status"),
+                              'deliveryStatus' =>$deliveryStatus,  
                               ]; 
             }
             
@@ -208,9 +218,102 @@ class RequestController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show($requestId)
     {
-        //
+        $requests = new ParseQuery("Request");
+        $requests->equalTo("objectId", $requestId);
+        $requests->includeKey('customerId');
+        $requests->includeKey('product');
+        $requests->includeKey('category');
+        $innerRequestQuery = $requests;
+        $request = $requests->first();
+        
+        $productObj = $request->get("product");
+        
+        $productId = $productObj->get("objectId");
+            
+        $productPrice = new ParseQuery("Price");
+        $productPrice->equalTo("product", $productId);
+        $productPrice->ascending("value");
+        $productPriceData = $productPrice->find();
+        $onlinePriceArray = $priceArray = [];
+        $onlinePrice = $platformPrice = '';
+        foreach($productPriceData as $price)
+        {
+            $priceType = $price->get("type");
+            if($priceType == 'online_market_price')
+            {
+                $onlinePriceArray[] = $price->get("value");
+            }
+            else{
+                $priceArray[] = $price->get("value");
+            }
+        }
+        $onlinePrice = (!empty($onlinePriceArray))? min($onlinePriceArray)  :''; 
+        $platformPrice = (!empty($priceArray))? min($priceArray).'/-' :'N/A'; 
+
+        $productPriceArray= ($onlinePrice!='')?$onlinePrice.'/-':''; 
+        $productPriceArray = $platformPrice; 
+        
+        $requestId = $request->getObjectId();
+   
+       $requestData= [  'id' => $requestId,
+                          'customerName' => $request->get("customerId")->get("displayName"),
+                          'category' =>$request->get("category")->get("name"),    
+                          'productName' =>$request->get("product")->get("name"),
+                          'mrp' =>$request->get("product")->get("mrp").'/-',
+                          'onlinePrice' =>$onlinePrice,
+                          'bestPlatformPrice' =>$platformPrice,
+                          'area' =>$request->get("area"),
+                          'offerCount' =>$request->get("offerCount"),
+                          'status' =>$request->get("status"),
+                      ]; 
+             
+        
+ 
+        $offers = new ParseQuery("Offer");
+        $offers->equalTo("request", $request);
+        $offers->includeKey('seller');
+        $offers->includeKey('price');
+        $offersData = $offers->find();
+  
+         
+        
+        $offersList = $productRequests= [];
+        
+        foreach($offersData as $offer)
+        {
+            $requestObj= $offer->get("request");
+            $priceObj = $offer->get('price');
+            
+            $requestsinnerQuery  = new ParseQuery("Request");
+            $requestsinnerQuery ->equalTo("product", $productObj);
+            
+            $lastSellerOffer = new ParseQuery("Offer");
+            $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
+            $lastSellerOffer->descending("CreatedAt");
+            $lastOfferBySeller = $lastSellerOffer->first(); 
+            
+          
+             $offersList[] =[
+                        'productName'=>$productObj->get("name"),
+                        'modelNo'=>$productObj->get("model_number"),
+                        'sellerName'=>$offer->get("seller")->get("displayName"),
+                        'area'=>$offer->get("area"),
+                        'mrpOfProduct'=>$productObj->get("mrp").'/-',   
+                        'onlinePrice'=>$onlinePrice,
+                        'offerPrice'=>$priceObj->get("value").'/-',
+                        'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice").'/-',
+                        'requestStatus'=>$request->get("status"),
+                        'offerStatus'=>$offer->get("status"),
+                        'deliveryReasonFailure'=>($request->get("failedDeliveryReason")!='')?$request->get("failedDeliveryReason"):'N/A',
+                        'date'=>$offer->getCreatedAt()->format('d-m-Y H:i:s'),
+                         ] ;    
+        }
+  
+        return view('admin.requestdetails')->with('request',$requestData)
+                                          ->with('offers',$offersList)
+                                          ->with('activeMenu','requests');
     }
 
     /**

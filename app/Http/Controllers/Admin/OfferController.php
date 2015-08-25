@@ -64,7 +64,8 @@ class OfferController extends Controller
             $productObj = $requestObj->get('product');
             $priceObj = $offer->get('price');  
             
-            $productId  = $productObj->getObjectId(); 
+            $requestId  = $requestObj->getObjectId(); 
+            $productId  = $productObj->getObjectId();
             
             if(!isset($productRequests[$productId]))
             {
@@ -96,10 +97,12 @@ class OfferController extends Controller
             if($type=='LIST')
             {
                 $offertList[] =[
-                        'id' => $productObj->getObjectId(),
+                        'id' => $offer->getObjectId(),
+                        'requestId'=>$requestId,
                         'productName'=>$productObj->get("name"),
                         'modelNo'=>$productObj->get("model_number"),
                         'sellerName'=>$offer->get("seller")->get("displayName"),
+                        'sellerId'=>$offer->get("seller")->getObjectId(),
                         'area'=>$offer->get("area"),
                         'mrpOfProduct'=>$productObj->get("mrp").'/-',   
                         'onlinePrice'=>$onlinePrice,
