@@ -262,6 +262,9 @@ button.button.button-assertive b {
 .aj-right-popover .item {
   padding: 20px 0px 0px 49px;
 }
+.aj-right-popover .item.item-icon-left {
+  padding: 20px 0px 0px 35px;
+}
 .aj-right-popover .item i {
   font-size: 22px;
   left: 0px;
@@ -1340,7 +1343,7 @@ label.status-label {
   color: #f45152;
 }
 .products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before {
-  content: "\f349";
+  content: "\f2aa";
   margin-bottom: 2px !important;
 }
 .products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
@@ -1353,6 +1356,7 @@ label.status-label {
   margin-bottom: 5px;
   font-family: "Ionicons";
   speak: none;
+  font-size: 18px;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
@@ -1973,4 +1977,10 @@ label.status-label {
   display: inline-block;
   vertical-align: middle;
   line-height: normal;
+}
+.errors {
+  padding-top: 65px;
+}
+.errors .errors h3 {
+  text-transform: uppercase;
 }

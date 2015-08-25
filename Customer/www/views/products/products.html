@@ -19,8 +19,8 @@
 				item-width="50%"
 				ng-click="App.navigate('single-product', {productID: product.objectId})">
 
-				<img 
-					ng-src="{{product.images[0].src}}" 
+				<img
+					ng-src="{{product.images[0].src}}"
 					class="center-block aj-img"
 					onerror="this.src='./img/gray-bg.png';">
 
@@ -39,17 +39,17 @@
 
 				<div class="row open-links">
                     <div class="col col-67">
-                		<h4 class="margin-none pull-left strike" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
+                		<h4 class="margin-none pull-left strike" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}} <span></span> </h4>
                 	</div>
                 	<div class="col">
-                		<h4 class="margin-none pull-right subdued"> <i class="ion-log-out"></i></h4>
+                		<h4 class="margin-none pull-right subdued"> <i class="icon ion-chevron-right"></i></h4>
                 	</div>
 				</div>
 			</div>
 
 		</ion-list>
 
-		<div 
+		<div
 			ng-if="view.gotAllProducts && view.products.length == 0" class="text-center">
 			<h5 class="bold fin">Sorry, we could not find any matched products.</h5>
 			<div class="spacer-40"></div>

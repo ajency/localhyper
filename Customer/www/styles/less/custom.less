@@ -238,9 +238,12 @@ button.button.button-assertive {
 	    height: 3px;
 	    background-color: @gray-dark;
 	}
-	.item{
-		      padding: 20px 0px 0px 49px;
-		i{
+	.item {
+		padding: 20px 0px 0px 49px;
+		&.item-icon-left {
+			padding: 20px 0px 0px 35px;
+		}
+		i {
 			font-size: 22px;
 			left: 0px;
   			top: 9px;
@@ -1345,7 +1348,7 @@ label.status-label {
 			color: @brand-primary;
 		}
 		input[value=brand] + .item-content.ng-binding:before {
-			content: "\f349";
+			content: "\f2aa";
 			margin-bottom: 2px !important;
 		}
 		input[value=price] + .item-content.ng-binding:before {
@@ -1359,6 +1362,7 @@ label.status-label {
 			// border: 1px solid #ddd;
 			font-family: "Ionicons";
 			speak: none;
+			font-size: 18px;
 			font-style: normal;
 			font-weight: normal;
 			font-variant: normal;
@@ -2043,5 +2047,13 @@ label.status-label {
 				line-height: normal;
 			}
 		}
+	}
+}
+
+
+.errors {
+    padding-top: 65px;
+    .errors h3 {
+	    text-transform: uppercase;
 	}
 }

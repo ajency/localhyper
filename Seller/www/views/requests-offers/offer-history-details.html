@@ -78,7 +78,7 @@
                   </div>
                   <div class="col border-right">
                      <h4 class="text-left subdued text-center margin-none">
-                        No of offers <br> <b class="big-txt">{{view.offerDetails.data.request.offerCount}}</b>
+                        Total offers <br> <b class="big-txt">{{view.offerDetails.data.request.offerCount}}</b>
                      </h4>
                   </div>
                   <div class="col border-right">
@@ -193,7 +193,7 @@
          </div>
       </ion-list>
 
-      <aj-error
+      <aj-error class="errors"
          ng-switch-when="error"
          error-type="view.errorType"
          tap-to-retry="view.onTapToRetry();">

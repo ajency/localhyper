@@ -8,8 +8,8 @@
     	<button
 			class="button button-outline button-assertive icon-btn"
 			ng-click="view.onSelectAll();">
-			<i 
-				class="icon" 
+			<i
+				class="icon"
 				ng-class="(view.selectAll) ? 'ion-android-checkbox-outline' : 'ion-android-checkbox-outline-blank'">
 			</i>
 		</button>
@@ -79,7 +79,7 @@
 			<div class="spacer-40"></div>
 		</div>
 
-		<aj-error
+		<aj-error class="errors"
 			ng-switch-when="error"
 			error-type="view.errorType"
 			tap-to-retry="view.onTapToRetry();">

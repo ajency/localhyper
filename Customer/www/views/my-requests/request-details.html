@@ -49,7 +49,7 @@
 									class="loca-wrap"
 									ng-click="view.address.toggle();">
 
-									<i class="icon ion-ios-location"></i> Address :
+									<i class="icon ion-ios-location"></i> My Delivery Address:
 									<span>{{view.request.address.city}}</span>
 									<a ng-if="!view.address.show">More</a>
 									<a ng-if="view.address.show">Less</a>
@@ -110,6 +110,7 @@
 			</div>
 
 			<aj-error
+				class="errors"
 				ng-switch-when="error"
 				error-type="view.errorType"
 				tap-to-retry="view.getRequestDetails();">
@@ -133,7 +134,7 @@
 
 					<div class="col">
 						<h4 class="align-left high-span rec-off">
-							Received Offers <b>({{view.offers.all.length}})</b>
+							Total received Offers <b>({{view.offers.all.length}})</b>
 						</h4>
 					</div>
 				</div>
@@ -384,7 +385,7 @@
 				</div>
 			</div>
 
-			<aj-error
+			<aj-error class="errors"
 				ng-switch-when="error"
 				error-type="view.offers.errorType"
 				tap-to-retry="view.offers.get()">
