@@ -21,7 +21,8 @@
               <th>Area</th>
               <th>Offer Count</th>  
               <th>Status</th>   
-              <th>Delivery Status</th>       
+              <th>Delivery Status</th>  
+              <th>Date</th>      
             </tr>
           </thead>
           <tbody>
@@ -36,7 +37,8 @@
                 <td>{{ $request['area'] }}</td>
                 <td>{{ $request['offerCount'] }}</td>
                 <td>{{ $request['status'] }}</td>
-                <td>{{ $request['deliveryStatus'] }}</td>  
+                <td>{{ $request['deliveryStatus'] }}</td> 
+                <td>{{ $request['date'] }}</td>   
               </tr>
            @endforeach
           </tbody>

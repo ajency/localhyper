@@ -35,18 +35,19 @@
                           <p><strong>Offer Count : </strong></p>
                           <p><strong>Status : </strong></p>
                           <p><strong>Delivery Status : </strong></p>
+                          <p><strong>Date : </strong></p>  
                       </div>
                       <div class="col-md-6">
                           <h4  class="semi-bold">{{ $request['customerName'] }}</h4>
-                          <p>{{ $request['productName'] }}</p>
                           <p>{{ $request['category'] }}</p>
+                          <p>{{ $request['productName'] }}</p>
                           <p>{{ $request['mrp'] }}</p>
-                          <p>{{ $request['onlinePrice'] }} </p>
                           <p>{{ $request['bestPlatformPrice']}}</p>
                           <p>{{ $request['area'] }}</p>
                           <p>{{ $request['offerCount'] }}</p>
                           <p>{{ $request['status'] }}</p>
-    
+                          <p>{{ $request['deliveryStatus'] }}</p>
+                          <p>{{ $request['date'] }}</p>    
                       </div>
                     </div>
                     

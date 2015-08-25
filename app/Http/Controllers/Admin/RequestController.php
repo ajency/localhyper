@@ -109,7 +109,8 @@ class RequestController extends Controller
                               'area' =>$request->get("area"),
                               'offerCount' =>$request->get("offerCount"),
                               'status' =>$request->get("status"),
-                              'deliveryStatus' =>$deliveryStatus,    
+                              'deliveryStatus' =>$deliveryStatus,
+                              'date'=>convertToIST($request->getCreatedAt()->format('d-m-Y H:i:s')),    
                               ]; 
             }
             else
@@ -256,20 +257,7 @@ class RequestController extends Controller
         $productPriceArray = $platformPrice; 
         
         $requestId = $request->getObjectId();
-   
-       $requestData= [  'id' => $requestId,
-                          'customerName' => $request->get("customerId")->get("displayName"),
-                          'category' =>$request->get("category")->get("name"),    
-                          'productName' =>$request->get("product")->get("name"),
-                          'mrp' =>$request->get("product")->get("mrp").'/-',
-                          'onlinePrice' =>$onlinePrice,
-                          'bestPlatformPrice' =>$platformPrice,
-                          'area' =>$request->get("area"),
-                          'offerCount' =>$request->get("offerCount"),
-                          'status' =>$request->get("status"),
-                      ]; 
-             
-        
+ 
  
         $offers = new ParseQuery("Offer");
         $offers->equalTo("request", $request);
@@ -279,7 +267,7 @@ class RequestController extends Controller
   
          
         
-        $offersList = $productRequests= [];
+        $offersList = $productRequests= $offerStatus =  [];
         
         foreach($offersData as $offer)
         {
@@ -293,6 +281,7 @@ class RequestController extends Controller
             $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
             $lastSellerOffer->descending("CreatedAt");
             $lastOfferBySeller = $lastSellerOffer->first(); 
+            $offerStatus[] = $offer->get("status");
             
           
              $offersList[] =[
@@ -310,7 +299,24 @@ class RequestController extends Controller
                         'date'=>$offer->getCreatedAt()->format('d-m-Y H:i:s'),
                          ] ;    
         }
-  
+        
+        $deliveryStatus = (in_array('accepted',$offerStatus))?$request->get("status"):'N/A';
+ 
+        
+        $requestData= [  'id' => $requestId,
+                          'customerName' => $request->get("customerId")->get("displayName"),
+                          'category' =>$request->get("category")->get("name"),    
+                          'productName' =>$request->get("product")->get("name"),
+                          'mrp' =>$request->get("product")->get("mrp").'/-',
+                          'onlinePrice' =>$onlinePrice,
+                          'bestPlatformPrice' =>$platformPrice,
+                          'area' =>$request->get("area"),
+                          'offerCount' =>$request->get("offerCount"),
+                          'status' =>$request->get("status"),
+                          'deliveryStatus' =>$deliveryStatus,
+                          'date'=>convertToIST($request->getCreatedAt()->format('d-m-Y H:i:s')),  
+                      ];     
+        
         return view('admin.requestdetails')->with('request',$requestData)
                                           ->with('offers',$offersList)
                                           ->with('activeMenu','requests');
