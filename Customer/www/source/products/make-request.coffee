@@ -24,6 +24,8 @@ angular.module 'LocalHyper.products'
 				@searchText = ''
 				@comments.text = ''
 				@address = null
+				@latLng = null
+
 
 			init : ->
 				if _.isNull @latLng
@@ -116,15 +118,20 @@ angular.module 'LocalHyper.products'
 				.then (address)=>
 					@address = address
 					@address.full = GoogleMaps.fullAddress(address)
+					@addressFetch = true
 				, (error)->
 					console.log 'Geocode error: '+error
-				.finally =>
-					@addressFetch = true
+				# .finally =>
+				# 	@addressFetch = true
 
 			isLocationReady : ->
 				ready = if (!_.isNull(@latLng) and @addressFetch) then true else false
 				if !ready
-					CToast.show 'Please wait, getting location details...'
+					GPS.isLocationEnabled()
+					.then (enabled)=>
+						if enabled then CToast.show 'Please wait, getting location details...'
+						else CToast.show 'Please search for location'
+					
 				ready
 
 			addSellerMarkers : (sellers)->
