@@ -188,9 +188,11 @@ angular.module 'LocalHyper.requestsOffers'
 					@page = @page + 1
 					$scope.$broadcast 'scroll.refreshComplete'
 
-			onSuccess : (offerData, displayLimit)->
+			onSuccess : (data, displayLimit)->
 				@display = 'noError'
-				offerDataSize = _.size(offerData)
+				@imageSizes = data.imageSizes
+				offerData = data.sellerOffers
+				offerDataSize = _.size offerData
 				if offerDataSize > 0
 					if offerDataSize < displayLimit
 						@canLoadMore = false

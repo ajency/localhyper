@@ -28,7 +28,7 @@
 						<div
 							class="item item-avatar border-none bg-none"
 							ng-click="view.onSubcategoryClick(category.children, subCategory.id)">
-							<img ng-src="{{subCategory.image.src}}">
+							<img ng-src="{{App.getBestSize(subCategory.image.src, view.imageSizes.small)}}">
 						</div>
 					</div>
 					<div class="col">
@@ -42,7 +42,7 @@
 				</div>
 			</div>
 			<br>
-				<img src="./img/upcoming.png" class="center-block" width="200px"/>
+			<img src="./img/upcoming.png" class="center-block" width="200px"/>
 		</ion-list>
 
 		<aj-error

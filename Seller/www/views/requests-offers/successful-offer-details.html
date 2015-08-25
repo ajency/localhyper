@@ -35,7 +35,7 @@
                <div class="row">
                   <div class="col col-25">
                      <div class="item-avatar">
-                        <img ng-src="{{view.offerDetails.data.product.images[0].src}}">
+                        <img ng-src="{{App.getBestSize(view.offerDetails.data.product.images[0].src, view.imageSizes.small)}}">
                      </div>
                   </div>
                   <div class="col col-60">
@@ -60,7 +60,9 @@
                      <h3 class="light-gray text-left">Distance from your shop</h3>
                   </div>
                   <div class="col col-33 status">
-                     <div class="{{App.humanize(view.offerDetails.data.request.status)}} pending" ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
+                     <div 
+                        class="{{App.humanize(view.offerDetails.data.request.status)}} pending" 
+                        ng-if="view.offerDetails.data.offerStatus != 'unaccepted'">
                         <span>Status</span>
                         {{App.humanize(view.offerDetails.data.request.status)}}
                      </div>
