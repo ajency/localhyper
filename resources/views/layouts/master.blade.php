@@ -20,7 +20,7 @@
 <link href="{{ asset('plugins/jquery-scrollbar/jquery.scrollbar.css') }}" rel="stylesheet" type="text/css"/>
 <!-- END CORE CSS FRAMEWORK -->
 <!-- BEGIN CSS TEMPLATE -->
-<link href="{{ asset('bower_components/dataTables/media/css/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ asset('bower_components/datatables/media/css/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ asset('bower_components/datatables-responsive/css/dataTables.responsive.css') }}" rel="stylesheet" type="text/css" media="screen">    
 <link href="{{ asset('plugins/bootstrap-toggle/css/bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css" media="screen">    
 <link href="{{ asset('plugins/select2/select2_metro.min.css') }}" rel="stylesheet" type="text/css" media="screen">
@@ -166,7 +166,7 @@
 
 <script src="{{ asset('bower_components/underscore/underscore-min.js' ) }}" type="text/javascript"></script>    
 
-<script src="{{ asset('bower_components/dataTables/media/js/jquery.dataTables.js') }}" type="text/javascript"></script>
+<script src="{{ asset('bower_components/datatables/media/js/jquery.dataTables.js') }}" type="text/javascript"></script>
 <script src="{{ asset('bower_components/datatables-tabletools/js/dataTables.tableTools.js' ) }}" type="text/javascript"></script>
 <script src="{{ asset('bower_components/datatables-responsive/js/dataTables.responsive.js' ) }}" type="text/javascript"></script>
     
