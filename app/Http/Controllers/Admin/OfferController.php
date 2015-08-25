@@ -32,7 +32,7 @@ class OfferController extends Controller
     }
     
     public function getOffers($type)
-    {
+    { 
         $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
         $numOfPages = 0;
         
@@ -53,8 +53,9 @@ class OfferController extends Controller
             
             $numOfPages = ceil($offersCount/$displayLimit);
         }
-        
+        $offers->descending("CreatedAt");
         $offersData = $offers->find(); 
+        
        
         $offertList = $productRequests= $onlinePriceArray=[];
         
@@ -94,6 +95,9 @@ class OfferController extends Controller
             $lastSellerOffer->descending("CreatedAt");
             $lastOfferBySeller = $lastSellerOffer->first();  
             
+           
+            $createdDate = convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s'));
+            
             if($type=='LIST')
             {
                 $offertList[] =[
@@ -111,7 +115,7 @@ class OfferController extends Controller
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
-                        'date'=>convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s')), 
+                        'date'=>$createdDate, 
                          ] ;  
             }
             else
@@ -128,13 +132,14 @@ class OfferController extends Controller
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
-                        'date'=>convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s')), 
+                        'date'=>$createdDate, 
                          ] ;  
             }
             
-            
+           
+          // echo $createdDate; 
         }
-        
+         
         $data['list']=$offertList;
         $data['numOfPages']=$numOfPages;
         $data['page']=$page;
