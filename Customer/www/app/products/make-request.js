@@ -17,7 +17,8 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         this.searchText = '';
         this.comments.text = '';
         this.address = null;
-        return this.latLng = null;
+        this.latLng = null;
+        return this.map.setZoom(5);
       },
       init: function() {
         if (_.isNull(this.latLng)) {

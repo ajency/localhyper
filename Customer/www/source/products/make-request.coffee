@@ -25,6 +25,7 @@ angular.module 'LocalHyper.products'
 				@comments.text = ''
 				@address = null
 				@latLng = null
+				@map.setZoom 5
 
 
 			init : ->
