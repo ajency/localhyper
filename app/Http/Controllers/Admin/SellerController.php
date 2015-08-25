@@ -82,14 +82,14 @@ class SellerController extends Controller
             
             $offer = new ParseQuery("Offer");
             $offer->equalTo("seller", $seller);
-            $offerCount = $offer->count();
             $offertData = $offer->find();
-            $offerSuccessfullCount =  0;
+            $offerCount = count($offertData);
+            $offerAcceptedCount =  0;
             
             foreach($offertData as $offer)
             {
-                if($offer->get("status")=='successfull')
-                    $offerSuccessfullCount = $offerSuccessfullCount+1;
+                if($offer->get("status")=='accepted')
+                    $offerAcceptedCount = $offerAcceptedCount+1;
  
             }
             
@@ -104,7 +104,7 @@ class SellerController extends Controller
                               'brands' => implode(", ",$brands),       
                               'categories' => implode(", ",$categories),
                               'offersCount' => $offerCount .'/'.$sellerRequestCount,
-                              'successfullCount' => $offerSuccessfullCount,
+                              'offerAcceptedCount' => $offerAcceptedCount,
                               'avgRating' => $avgRating,
                               'balanceCredit' => $balanceCredit,
                               'lastLogin' =>$seller->get("lastLogin")->format('d-m-Y'),

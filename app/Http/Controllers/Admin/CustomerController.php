@@ -29,15 +29,7 @@ class CustomerController extends Controller
                                          ->with('numOfPages',$numOfPages)
                                          ->with('activeMenu','customers');
     }
-    
-    public function date_diff($date2, $date1) 
-    { 
-      $start_ts = strtotime($date1);
-      $end_ts = strtotime($date2);
-      $diff = $end_ts - $start_ts; 
-      return round($diff / 86400); 
-    }
-    
+ 
     public function getCustomers($type)
     {
         $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
@@ -75,7 +67,7 @@ class CustomerController extends Controller
                 {
                     $datetime1 = date('Y-m-d H:i:s');
                     $datetime2 = $request->getCreatedAt()->format('Y-m-d H:i:s');
-                    $interval = $this->date_diff($datetime1, $datetime2);  
+                    $interval = dateDiffernce($datetime1, $datetime2);  
                     if($interval>=1)
                         $requestExpiredCount = $requestExpiredCount+1;
                 }

@@ -36,6 +36,14 @@ function convertToIST($dateTime)
     return $date->format('d-m-Y H:i:s');
 }
 
+function dateDiffernce($date2, $date1) 
+{ 
+  $start_ts = strtotime($date1);
+  $end_ts = strtotime($date2);
+  $diff = $end_ts - $start_ts; 
+  return round($diff / 86400); 
+}
+
 function runAutoBidOffers(){
     $JobsController = new JobsController();
     $JobsController->index();

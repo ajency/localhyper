@@ -94,7 +94,18 @@ class RequestController extends Controller
             $offers->equalTo("status", 'accepted');
             $offersStatus = $offers->count();
             
-            $deliveryStatus = ($offersStatus)?$request->get("status"):'N/A';
+            $requestStatus = $request->get("status");
+            $deliveryStatus = ($offersStatus)?$requestStatus:'N/A';
+            
+            
+            if($requestStatus=='open')
+            {
+                $datetime1 = date('Y-m-d H:i:s');
+                $datetime2 = $request->getCreatedAt()->format('Y-m-d H:i:s');
+                $interval = dateDiffernce($datetime1, $datetime2);  
+                if($interval>=1)
+                    $requestStatus = 'expired';
+            }
             
             if($type=='LIST')
             {
@@ -108,7 +119,7 @@ class RequestController extends Controller
                               'bestPlatformPrice' =>$platformPrice,
                               'area' =>$request->get("area"),
                               'offerCount' =>$request->get("offerCount"),
-                              'status' =>$request->get("status"),
+                              'status' =>$requestStatus,
                               'deliveryStatus' =>$deliveryStatus,
                               'date'=>convertToIST($request->getCreatedAt()->format('d-m-Y H:i:s')),    
                               ]; 
@@ -124,7 +135,7 @@ class RequestController extends Controller
                               'bestPlatformPrice' =>$platformPrice,
                               'area' =>$request->get("area"),
                               'offerCount' =>$request->get("offerCount"),
-                              'status' =>$request->get("status"),
+                              'status' =>$requestStatus,
                               'deliveryStatus' =>$deliveryStatus,  
                               ]; 
             }

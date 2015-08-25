@@ -17,7 +17,7 @@
               <th>Brands</th>
               <th>Category</th>    
               <th>Response Ratio</th>
-              <th>No. of Successfull Offers</th>
+              <th>No. of Accepted Offers</th>
               <th>Avg Ratings</th>
               <th>Balance Credits</th>
               <th class="date-sort">Registered Date</th>
@@ -32,7 +32,7 @@
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['brands'] }}</td>  
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['categories'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['offersCount'] }}</td>
-                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['successfullCount'] }}</td>
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['offerAcceptedCount'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['avgRating'] }}</td>
                 <td><span class="balance-credit" data-seller-id="{{ $seller['id'] }}">{{ $seller['balanceCredit'] }}</span> <a class="edit-balance-credit pull-right"><i class="fa fa-pencil"></i></a></td>
                 <td class="center" onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['createdAt'] }}</td>
