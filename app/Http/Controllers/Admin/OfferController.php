@@ -41,7 +41,7 @@ class OfferController extends Controller
         $offers->includeKey('request');
         $offers->includeKey('request.product');
         $offers->includeKey('price');
-        
+        $offers->descending("createdAt");
         if($type == 'LIST')
         {   //Pagination
             
@@ -53,7 +53,7 @@ class OfferController extends Controller
             
             $numOfPages = ceil($offersCount/$displayLimit);
         }
-        $offers->descending("CreatedAt");
+        
         $offersData = $offers->find(); 
         
        
@@ -92,7 +92,7 @@ class OfferController extends Controller
            
             $lastSellerOffer = new ParseQuery("Offer");
             $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
-            $lastSellerOffer->descending("CreatedAt");
+            $lastSellerOffer->descending("createdAt");
             $lastOfferBySeller = $lastSellerOffer->first();  
             
            

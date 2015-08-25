@@ -40,6 +40,7 @@ class RequestController extends Controller
         $requests->includeKey('customerId');
         $requests->includeKey('product');
         $requests->includeKey('category');
+        $requests->descending("createdAt");
         if($type == 'LIST')
         {   //Pagination
             
@@ -290,7 +291,7 @@ class RequestController extends Controller
             
             $lastSellerOffer = new ParseQuery("Offer");
             $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
-            $lastSellerOffer->descending("CreatedAt");
+            $lastSellerOffer->descending("createdAt");
             $lastOfferBySeller = $lastSellerOffer->first(); 
             $offerStatus[] = $offer->get("status");
             
