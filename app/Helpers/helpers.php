@@ -34,10 +34,6 @@ function convertToIST($dateTime)
     $date = new DateTime($dateTime, new DateTimeZone('UTC'));
     $date->setTimezone(new DateTimeZone('Asia/Calcutta'));
     return $date->format('d-m-Y H:i:s');
-    
-    /*$timestamp = strtotime($dateTime);
-    date_default_timezone_set("Asia/Calcutta");
-    return date('d-m-Y H:i:s', $timestamp);*/
 }
 
 function dateDiffernce($date2, $date1) 
