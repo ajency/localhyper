@@ -56,11 +56,13 @@ class CustomerController extends Controller
         {  
             $custId = $customer->getObjectId();
             
+            $deliverStatusCount = $requestSuccessfullCount = $requestCancelledCount = $requestExpiredCount = $requestPendingDelivery = $requestSentDelivery =0;
+            
             $request = new ParseQuery("Request");
             $request->equalTo("customerId", $customer);
             $requestData = $request->find();
             $requestMadeCount = count($requestData);
-            $deliverStatusCount = $requestSuccessfullCount = $requestCancelledCount = $requestExpiredCount = $requestPendingDelivery = $requestSentDelivery =0;
+            
             foreach($requestData as $request)
             {   
                 if($request->get("status")=='open')
