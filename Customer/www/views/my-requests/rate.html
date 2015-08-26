@@ -1,10 +1,10 @@
-<div>
+<div class="rating-wrap">
 	<rating ng-model="view.offers.rate.score" max="view.offers.rate.max" ng-click="view.offers.rate.setScore(view.offers.rate.score)"></rating>
-	{{view.offers.rate.star}} 
+	<p class="text-center">{{view.offers.rate.star}}</p>
 	<input
 		type="textarea"
 		placeholder="Comments"
 		class="comments-input"
 		ng-model="view.offers.rate.comment">
-	<br>
+	<!-- <br> -->
 </div>
