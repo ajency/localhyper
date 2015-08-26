@@ -67,6 +67,9 @@ hr {
 .text-primary {
   color: #f35a59;
 }
+h5.text-primary {
+  color: #191919;
+}
 .bold {
   font-weight: bold;
 }
@@ -83,7 +86,7 @@ hr {
   text-transform: uppercase;
 }
 .text-success {
-  color: #5ab319;
+  color: #33cd5f;
 }
 .spacer-40 {
   height: 40px;
@@ -624,7 +627,7 @@ sm {
 }
 #Open,
 #Accepted {
-  color: #5ab319;
+  color: #33cd5f;
   position: absolute;
   right: 10px;
   top: 10px;
@@ -813,7 +816,7 @@ sm {
 /* Forms  */
 /************************************/
 .form-field .input-label {
-  color: #c5c5c5;
+  color: #888888;
   font-size: 11px;
   text-transform: uppercase;
   padding-top: 0;
@@ -881,11 +884,16 @@ sm {
   height: auto;
   min-height: 0;
 }
+.business-details .start-n-end i.ion-clock {
+  margin-right: 10px;
+  margin-left: -5px;
+}
 .business-details .item-days {
   padding: 0px;
   text-align: center;
   display: block;
   text-transform: uppercase;
+  font-weight: bold;
 }
 .business-details .item-days .checkbox {
   display: block;
@@ -1553,7 +1561,7 @@ h5.with-sep span {
   color: #f35a59;
 }
 .products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before {
-  content: "\f349";
+  content: "\f2aa";
   margin-bottom: 2px !important;
 }
 .products-filter-view label.item-radio input[value=category] + .item-content.ng-binding:before {
@@ -1579,6 +1587,7 @@ h5.with-sep span {
   margin-bottom: 5px;
   font-family: "Ionicons";
   speak: none;
+  font-size: 18px;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
@@ -1657,7 +1666,8 @@ h5.with-sep span {
 }
 .subdued .Open,
 .subdued .Accepted {
-  color: #5ab319;
+  color: #33cd5f;
+  text-transform: uppercase;
 }
 .item-complex.item-icon-left .item-content {
   padding-left: 24px;
@@ -1776,11 +1786,9 @@ input[disabled] ~ .radio-icon-show {
   border-radius: 5px;
   border-radius: 3px;
   /* border: 1px solid #5ab319 !important; */
-  background-color: #FBFBFB;
   text-align: center;
-  padding: 6px;
-  /* margin-top: 7px; */
-  color: #5ab319 !important;
+  margin-top: 7px;
+  color: #33cd5f !important;
   font-size: 16px;
   text-transform: uppercase;
   white-space: normal;
@@ -1791,9 +1799,7 @@ input[disabled] ~ .radio-icon-show {
 .status .pending {
   border-radius: 5px;
   border-radius: 3px;
-  background-color: #FBFBFB;
   text-align: center;
-  padding: 6px;
   color: #f35a59;
   font-size: 16px;
   text-transform: uppercase;
@@ -1801,7 +1807,10 @@ input[disabled] ~ .radio-icon-show {
   line-height: 16px;
 }
 .status .pending {
-  margin-top: -5px;
+  margin-top: 0;
+}
+h4 .WebRupee.subdued {
+  font-size: 16px;
 }
 .border-right {
   border-left: 1px solid #ccc;
@@ -1810,7 +1819,7 @@ input[disabled] ~ .radio-icon-show {
 .offer-list li:first-child:before {
   content: "\f21b";
   display: inline-block;
-  color: #5ab319;
+  color: #33cd5f;
   font-family: Ionicons;
   speak: none;
   margin-right: 10px;
@@ -2061,4 +2070,10 @@ input[disabled] ~ .radio-icon-show {
 }
 .status-dd.change-active:after {
   display: block;
+}
+.errors {
+  padding-top: 65px;
+}
+.errors .errors h3 {
+  text-transform: uppercase;
 }
