@@ -24,7 +24,10 @@
 				ng-click="view.onRequestClick(request);">
 
 				<div class="row item border-none item-wrapper-nr">
-					<div class="col col-25">
+					<div 
+						class="col col-25" 
+						ng-click="view.onImageClick(request.product.id, $event);">
+
 						<div class="item-avatar border-none margin-none">
 							<img ng-src="{{request.product.images[0].src}}">
 						</div>

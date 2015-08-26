@@ -255,8 +255,11 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         return $scope.view.request.reFetch();
       }
     });
-    return $scope.$on('$ionicView.beforeEnter', function() {
-      if (_.contains(['products', 'verify-success', 'products-search'], App.previousState)) {
+    return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
+      if (_.contains(['products', 'verify-success', 'products-search', 'my-requests', 'requests-history'], App.previousState)) {
+        if (!viewData.enableBack) {
+          viewData.enableBack = true;
+        }
         $ionicScrollDelegate.$getByHandle('single-product-handle').scrollTop(true);
         return $scope.view.reset();
       }

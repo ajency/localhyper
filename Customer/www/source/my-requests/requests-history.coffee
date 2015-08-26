@@ -87,6 +87,10 @@ angular.module 'LocalHyper.myRequests'
 				RequestAPI.requestDetails 'set', request
 				App.navigate 'request-details'
 
+			onImageClick : (productID, e)->
+				e.stopPropagation()
+				App.navigate('single-product', {productID: productID})
+
 		
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			if !viewData.enableBack
