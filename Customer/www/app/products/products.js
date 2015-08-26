@@ -39,33 +39,47 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           prices = [];
           min = priceRange[0];
           max = priceRange[1];
-          if (max <= 1000) {
-            increment = 100;
-          } else if (max <= 5000) {
-            increment = 1000;
-          } else if (max <= 25000) {
-            increment = 5000;
-          } else if (max <= 50000) {
-            increment = 10000;
-          } else if (max <= 75000) {
-            increment = 15000;
-          } else if (max <= 100000) {
+          if (min > 55000) {
+            increment = 60000;
+          } else if (min > 45000) {
+            increment = 50000;
+          } else if (min > 35000) {
+            increment = 40000;
+          } else if (min > 25000) {
+            increment = 30000;
+          } else if (min > 15000) {
             increment = 20000;
+          } else if (min > 5000) {
+            increment = 15000;
+          } else if (min > 1000) {
+            increment = 1000;
           } else {
-            increment = 25000;
+            increment = 500;
           }
-          priceRange = _.range(min, max, increment);
+          priceRange = _.range(increment, max, increment);
+          priceRange = _.filter(priceRange, function(priceRange) {
+            return min < priceRange;
+          });
+          priceRange.unshift(0);
           _.each(priceRange, function(start, index) {
             var end;
             end = priceRange[index + 1];
             if (_.isUndefined(end)) {
-              end = max;
+              end = start + increment;
             }
-            return prices.push({
-              start: start,
-              end: end,
-              name: "Rs " + start + " - Rs " + end
-            });
+            if (start === 0) {
+              return prices.push({
+                start: start,
+                end: end,
+                name: "Below - Rs " + end
+              });
+            } else {
+              return prices.push({
+                start: start,
+                end: end,
+                name: "Rs " + start + " - Rs " + end
+              });
+            }
           });
           return prices;
         },

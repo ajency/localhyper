@@ -41,21 +41,43 @@ angular.module 'LocalHyper.products', []
 					prices = []
 					min = priceRange[0]
 					max = priceRange[1]
-					if max <= 1000 then increment = 100
-					else if max <= 5000 then increment = 1000
-					else if max <= 25000 then increment = 5000
-					else if max <= 50000 then increment = 10000
-					else if max <= 75000 then increment = 15000
-					else if max <= 100000 then increment = 20000
-					else increment = 25000
-					priceRange = _.range min, max, increment
+					# if max <= 1000 then increment = 100
+					# else if max <= 5000 then increment = 1000
+					# else if max <= 25000 then increment = 5000
+					# else if max <= 50000 then increment = 10000
+					# else if max <= 75000 then increment = 15000
+					# else if max <= 100000 then increment = 20000
+					# else increment = 25000
+
+					if min > 55000 then increment = 60000
+					else if min > 45000 then increment = 50000
+					else if min > 35000 then increment = 40000
+					else if min > 25000 then increment = 30000
+					else if min > 15000 then increment = 20000
+					else if min > 5000 then increment = 15000
+					else if min > 1000 then increment = 1000
+					else increment = 500
+
+					priceRange = _.range increment, max, increment
+					
+					priceRange = _.filter priceRange, (priceRange)->
+						min < priceRange
+
+					priceRange.unshift(0)
+
 					_.each priceRange, (start, index)->
 						end = priceRange[index+1]
-						end = max if _.isUndefined(end)
-						prices.push 
-							start: start
-							end: end
-							name: "Rs #{start} - Rs #{end}"
+						end = start + increment if _.isUndefined(end)
+						if(start == 0)
+							prices.push 
+								start: start
+								end: end
+								name: "Below - Rs #{end}"
+						else 	
+							prices.push 
+								start: start
+								end: end
+								name: "Rs #{start} - Rs #{end}"
 					prices
 
 				setAttrValues: ->
