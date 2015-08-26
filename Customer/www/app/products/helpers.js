@@ -20,21 +20,22 @@ angular.module('LocalHyper.products').directive('ajLoadingBackDrop', [
     var PrimaryAttribute;
     PrimaryAttribute = {};
     PrimaryAttribute.get = function(attrs) {
-      var unit, value;
+      var name, unit, value;
       if (_.isUndefined(attrs)) {
         return '';
       } else {
         attrs = attrs[0];
         if (_.contains(['N/A', 'NA'], attrs.value)) {
-          return '';
+          '';
         } else {
-          value = s.humanize(attrs.value);
-          unit = '';
-          if (_.has(attrs.attribute, 'unit')) {
-            unit = s.humanize(attrs.attribute.unit);
-          }
-          return "" + value + " " + unit;
+          name = attrs.attribute.name;
         }
+        value = s.humanize(attrs.value);
+        unit = '';
+        if (_.has(attrs.attribute, 'unit')) {
+          unit = s.humanize(attrs.attribute.unit);
+        }
+        return "" + name + " : " + value + " " + unit;
       }
     };
     return PrimaryAttribute;

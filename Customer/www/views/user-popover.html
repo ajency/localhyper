@@ -2,7 +2,8 @@
 
 	<ion-content class="aj-right-popover">
 
-		<div class="row">
+		<div class="row"
+			 ng-click="App.navigate('my-requests'); view.userPopover.hide();">
 			<div class="col">
 				<h2 class="margin-none number-count">{{App.notification.offers}}
 					<sm>/ OFFERS</sm>

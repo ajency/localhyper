@@ -24,11 +24,12 @@ angular.module 'LocalHyper.products'
 			attrs = attrs[0]
 			if _.contains(['N/A', 'NA'], attrs.value) then ''
 			else
+			    name = attrs.attribute.name
 				value = s.humanize attrs.value
 				unit = ''
 				if _.has attrs.attribute, 'unit'
 					unit = s.humanize attrs.attribute.unit
-				"#{value} #{unit}"
+				"#{name} : #{value} #{unit}"
 
 	PrimaryAttribute
 ]

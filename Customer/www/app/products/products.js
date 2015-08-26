@@ -39,28 +39,23 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           prices = [];
           min = priceRange[0];
           max = priceRange[1];
-          if (min > 55000) {
-            increment = 60000;
-          } else if (min > 45000) {
-            increment = 50000;
-          } else if (min > 35000) {
-            increment = 40000;
-          } else if (min > 25000) {
-            increment = 30000;
-          } else if (min > 15000) {
-            increment = 20000;
-          } else if (min > 5000) {
-            increment = 15000;
-          } else if (min > 1000) {
+          max = (10 - max % 10) + max;
+          if (max <= 1000) {
+            increment = 100;
+          } else if (max <= 5000) {
             increment = 1000;
+          } else if (max <= 25000) {
+            increment = 5000;
+          } else if (max <= 50000) {
+            increment = 10000;
+          } else if (max <= 75000) {
+            increment = 15000;
+          } else if (max <= 100000) {
+            increment = 20000;
           } else {
-            increment = 500;
+            increment = 25000;
           }
-          priceRange = _.range(increment, max, increment);
-          priceRange = _.filter(priceRange, function(priceRange) {
-            return min < priceRange;
-          });
-          priceRange.unshift(0);
+          priceRange = _.range(0, max, increment);
           _.each(priceRange, function(start, index) {
             var end;
             end = priceRange[index + 1];
