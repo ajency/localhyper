@@ -18,9 +18,9 @@ function displayPagination($pageNo , $numOfPages , $link)
         $prevPageLink = ($pageNo > 1) ? $url.'?page='.($pageNo -1) :'#' ;
         $nextPageLink = ($pageNo < $numOfPages) ? $url.'?page='.($pageNo +1) :'#' ;  
         
-        $html = '<a href="'.$prevPageLink.'"> previous </a> ';
+        $html = '<a href="'.$prevPageLink.'"> <i class="pagination fa fa-angle-left"></i> </a> ';
         $html .= $pageNo .' of '.$numOfPages ;
-        $html .= '<a href="'.$nextPageLink.'"> next </a> ';
+        $html .= '<a href="'.$nextPageLink.'"> <i class="pagination fa fa-angle-left"></i> </a> ';
  
     }
     
