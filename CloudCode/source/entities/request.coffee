@@ -974,6 +974,7 @@ getRequestsWithPrice = (requestObj) ->
     .then (otherPrice) ->
         
         product =
+            "id" : productObj.id
             "name": productObj.get("name")
             "images": productObj.get("images")
             "mrp": productObj.get("mrp")

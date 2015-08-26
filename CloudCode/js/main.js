@@ -3266,6 +3266,7 @@
     getOtherPricesForProduct(productObj).then(function(otherPrice) {
       var pastReq, product;
       product = {
+        "id": productObj.id,
         "name": productObj.get("name"),
         "images": productObj.get("images"),
         "mrp": productObj.get("mrp"),
