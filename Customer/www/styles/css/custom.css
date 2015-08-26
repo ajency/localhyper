@@ -808,10 +808,22 @@ button.button.button-assertive b {
 }
 .sing-pro h6.subdued {
   margin: 0;
-  padding-bottom: 8px;
+  padding-bottom: 0;
 }
 .sing-pro h4.margin-none.pull-right.subdued i.ion-log-out {
   display: none;
+}
+.sing-pro .open-links .mrp-products-list {
+  font-size: 11px;
+  display: block;
+  line-height: 14px;
+}
+.sing-pro .open-links h4 {
+  text-align: left;
+}
+.sing-pro .open-links .icon-right {
+  position: relative;
+  top: 14px;
 }
 .list-cont {
   position: relative;
@@ -1118,7 +1130,7 @@ button.button.button-assertive b {
   margin-top: 3px;
 }
 .rece-offer .offer-vals h2 {
-  font-size: 20px;
+  font-size: 19px;
   font-weight: bold;
 }
 .rece-offer .offer-vals h2 small {
@@ -1378,7 +1390,7 @@ label.status-label {
 }
 .products-filter-view .checkbox input:after,
 .products-filter-view .checkbox-icon:after {
-  top: 31%;
+  top: 22%;
   left: 21%;
   width: 14px;
   height: 7px;
@@ -1863,6 +1875,8 @@ label.status-label {
 .filter-txt {
   line-height: 12px;
   text-align: left;
+  top: -4px;
+  position: relative;
 }
 .filter-txt i {
   font-size: 21px;
