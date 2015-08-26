@@ -20,7 +20,7 @@ function displayPagination($pageNo , $numOfPages , $link)
         
         $html = '<a href="'.$prevPageLink.'"> <i class="pagination fa fa-angle-left"></i> </a> ';
         $html .= $pageNo .' of '.$numOfPages ;
-        $html .= '<a href="'.$nextPageLink.'"> <i class="pagination fa fa-angle-left"></i> </a> ';
+        $html .= '<a href="'.$nextPageLink.'"> <i class="pagination fa fa-angle-right"></i> </a> ';
  
     }
     
