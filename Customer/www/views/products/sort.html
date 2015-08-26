@@ -1,4 +1,4 @@
-<ion-pane 
+<ion-pane
 	class="sort-model sort-popup new-requests-sort"
 	aj-loading-back-drop>
 
@@ -9,7 +9,9 @@
 			ng-class="(view.sortBy === 'popularity') ? 'active' : ''"
 			ng-click="view.onSort('popularity', 'Popularity', false)">
 
-			<img src="./img/recent.png"/></i>Popularity
+			<!-- <img src="./img/recent.png"/></i> -->
+			<i class="icon ion-ios-bolt" style="font-size: 22px; margin-right: 13px;margin-left: 10px; position: relative;top: 2px;"></i>
+			Popularity
 		</li>
 
 		<li class="item"
@@ -19,12 +21,12 @@
 			<img src="./img/ruppe-up.png"/>Price - high to low
 		</li>
 
-		<li class="item" 
+		<li class="item"
 			ng-class="(view.sortBy === 'mrp' && view.ascending === true) ? 'active' : ''"
 			ng-click="view.onSort('mrp', 'Price - low to high', true)">
 
 			<img src="./img/ruppe-down.png"/>Price - low to high
 		</li>
 	</ul>
-	
+
 </ion-pane>

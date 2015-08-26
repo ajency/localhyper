@@ -751,7 +751,8 @@ button.button.button-assertive {
 	}
 	h6.subdued {
 		margin: 0;
-		padding-bottom: 8px;
+		padding-bottom: 0;
+		// padding-bottom: 8px;
 		// border-bottom: 1px solid #ddd;
 	}
 	h4.margin-none.pull-right.subdued i.ion-log-out {
@@ -759,6 +760,18 @@ button.button.button-assertive {
 	}
 	.open-links {
 		h6 {}
+		.mrp-products-list {
+			font-size: 11px;
+			display: block;
+			line-height: 14px;
+		}
+		h4 {
+			text-align: left;
+		}
+		.icon-right {
+			position: relative;
+			top: 14px;
+		}
 	}
 }
 
@@ -1112,7 +1125,7 @@ button.button.button-assertive {
 			margin-top: 3px;
 		}
 		h2 {
-			font-size: 20px;
+			font-size: 19px;
 			font-weight: bold;
 			small {
 				font-weight: normal;
@@ -1382,7 +1395,7 @@ label.status-label {
 		height: 24px;
 		top: 2px;
 		&:after {
-			top: 31%; //was 31
+			top: 22%; //was 31
 			left: 21%;
 			width: 14px;
 			height: 7px;
@@ -1952,6 +1965,8 @@ label.status-label {
 .filter-txt{
 	line-height: 12px;
 	text-align: left;
+	top: -4px;
+	position: relative;
 	i{
 		    font-size: 21px;
 		    float: left;
