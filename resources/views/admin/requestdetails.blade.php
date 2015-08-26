@@ -18,7 +18,7 @@
 <li  ><a href="#tab4FollowUs">View Request Offers</a></li>
 
 </ul>
-<div class="grid simple vertical purple">
+<div class="grid simple">
 <div class="tab-content">
 <div class="tab-pane active" id="tab4hellowWorld">
   <div class="user-description-box">

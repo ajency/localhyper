@@ -18,7 +18,7 @@
 <li  class="{{ ($showOffers)?'active':'' }}"><a href="#tab4FollowUs">View Offer History</a></li>
 
 </ul>
-<div class="grid simple vertical purple">
+<div class="grid simple">
 <div class="tab-content">
 <div class="tab-pane  {{ (!$showOffers)?'active':'' }}" id="tab4hellowWorld">
   <div class="user-description-box">

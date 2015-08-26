@@ -16,7 +16,7 @@
 <li class="{{ ($showRequest)?'active':'' }}"><a href="#tab4FollowUs">Customer Request History</a></li>
 
 </ul>
-<div class="grid simple vertical purple">
+<div class="grid simple">
 <div class="tab-content">
 <div class="tab-pane {{ (!$showRequest)?'active':'' }}" id="tab4hellowWorld">
   <div class="user-description-box">
