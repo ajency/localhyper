@@ -825,6 +825,25 @@ button.button.button-assertive b {
   position: relative;
   top: 14px;
 }
+.rating-wrap ul.rating {
+  text-align: center;
+}
+.rating-wrap ul.rating li {
+  padding: 5px 8px;
+}
+.rating-wrap ul.rating li i {
+  font-size: 24px;
+  color: #7B7B7B;
+}
+.rating-wrap ul.rating li i.icon.ion-ios-star {
+  color: #F3D20E;
+}
+.rating-wrap p {
+  font-size: 16px;
+  margin-bottom: 0;
+  margin-top: 7px;
+  text-transform: uppercase;
+}
 .list-cont {
   position: relative;
 }
