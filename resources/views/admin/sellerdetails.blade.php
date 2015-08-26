@@ -13,7 +13,7 @@
 
 
       
-<ul class="nav nav-pills" id="tab-4">
+<ul class="nav nav-tabs" id="tab-4">
 <li class="{{ (!$showOffers)?'active':'' }}"><a href="#tab4hellowWorld">View Seller Information</a></li>
 <li  class="{{ ($showOffers)?'active':'' }}"><a href="#tab4FollowUs">View Offer History</a></li>
 

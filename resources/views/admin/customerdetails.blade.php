@@ -11,7 +11,7 @@
 
 
       
-<ul class="nav nav-pills" id="tab-4">
+<ul class="nav nav-tabs" id="tab-4">
 <li class="{{ (!$showRequest)?'active':'' }}"><a href="#tab4hellowWorld">Customer Details</a></li>
 <li class="{{ ($showRequest)?'active':'' }}"><a href="#tab4FollowUs">Customer Request History</a></li>
 

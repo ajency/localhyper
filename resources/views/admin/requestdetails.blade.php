@@ -13,7 +13,7 @@
 
 
       
-<ul class="nav nav-pills" id="tab-4">
+<ul class="nav nav-tabs" id="tab-4">
 <li class="active"><a href="#tab4hellowWorld">View Request Information</a></li>
 <li  ><a href="#tab4FollowUs">View Request Offers</a></li>
 
