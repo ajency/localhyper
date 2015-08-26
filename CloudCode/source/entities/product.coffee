@@ -768,6 +768,7 @@ getOtherPricesForProduct = (productObject) ->
 
     queryPrice.matchesQuery("product" , innerQueryProduct)
     queryPrice.equalTo("type" , "online_market_price")
+    queryPrice.ascending("value")
 
     queryPrice.first()
     .then (onlinePriceObj) ->

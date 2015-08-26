@@ -2386,6 +2386,7 @@
     innerQueryProduct.equalTo("objectId", productId);
     queryPrice.matchesQuery("product", innerQueryProduct);
     queryPrice.equalTo("type", "online_market_price");
+    queryPrice.ascending("value");
     queryPrice.first().then(function(onlinePriceObj) {
       var flipkartUrl, snapdealUrl, srcUrl;
       if (_.isEmpty(onlinePriceObj)) {
