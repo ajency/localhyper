@@ -8132,3 +8132,15 @@ label {
 .faq.page-content {
   margin-left: 0;
 }
+.logo {
+  margin: 0 14px;
+}
+.header-seperation {
+  background-color: #FFFFFF;
+}
+.menu-title {
+  cursor: pointer;
+}
+.table tr {
+  cursor: pointer;
+}

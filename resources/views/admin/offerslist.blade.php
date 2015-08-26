@@ -9,7 +9,7 @@
       
 			<h4 class="grid-title">List Of Offers</h4>
 			<div class="grid-body">
-         <table class="table table-bordered sellerList" id="example2">
+         <table class="table table-bordered table-hover sellerList" id="example2">
           <thead>
             <tr>
               <th>Product Name</th>

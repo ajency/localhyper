@@ -8120,19 +8120,25 @@ body.rtl .footer-widget {
 label {
   font-size: 15px;
 }
-.panel-group .panel-heading.collapsed {
-  border: 1px solid #D0DEE8;
-  background: #fff;
+.logo {
+  margin: 0 14px;
 }
-.panel-default > .panel-heading {
-  margin-bottom: 10px;
-  border-radius: 0;
-  background-color: none;
+.header-seperation {
+  background-color: #FFFFFF;
 }
-.faq.page-content {
-  margin-left: 0;
+.menu-title,
+.table tr {
+  cursor: pointer;
 }
-
-.no-sidebar.page-content{
-    margin-left: 0;
+i.pagination {
+  font-weight: bold;
+  width: 20px;
+  height: 20px;
+  background-color: #736086;
+  text-align: center;
+  line-height: 20px;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 50%;
+  margin-top: 10px;
 }

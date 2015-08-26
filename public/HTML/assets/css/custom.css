@@ -3,10 +3,19 @@ label {
 }
 .panel-group .panel-heading.collapsed {
   border: 1px solid #D0DEE8;
-  background: none;
+  background: #fff;
 }
 .panel-default > .panel-heading {
   margin-bottom: 10px;
   border-radius: 0;
   background-color: none;
+}
+.faq.page-content {
+  margin-left: 0;
+}
+.logo {
+  margin: 0 14px;
+}
+.header-seperation {
+  background-color: #FFFFFF;
 }

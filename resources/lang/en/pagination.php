@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'previous' => '&laquo; Previous',
-    'next'     => 'Next &raquo;',
+    '<i class="pagination fa fa-angle-left"></i>' => '&laquo; Previous',
+    '<i class="pagination fa fa-angle-right"></i>'     => 'Next &raquo;',
 
 ];

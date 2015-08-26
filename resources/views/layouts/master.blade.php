@@ -52,7 +52,7 @@
 		 <li class="dropdown"> <a id="main-menu-toggle" href="#main-menu"  class="" > <div class="iconset top-menu-toggle-white"></div> </a> </li>		 
 		</ul>
       <!-- BEGIN LOGO -->	
-      <a href="index.html"><img src="{{ asset('img/shop-oye-logo.png') }}" class="logo" alt=""  data-src="assets/img/shop-oye-logo.png" data-src-retina="assets/img/logo2x.png" width="106" height="21"/></a>
+      <a href="index.html"><img src="{{ asset('img/shop-oye-logo.png') }}" class="logo" alt=""  data-src="assets/img/shop-oye-logo.png" data-src-retina="assets/img/logo2x.png" width="140" height="65"/></a>
       
       </div>
       <!-- END RESPONSIVE MENU TOGGLER --> 
