@@ -28,7 +28,7 @@
           <tbody>
            @foreach($requestList as $request)
               <tr  onclick="location.href='{{ url('admin/requests/'.$request['id']) }}'">
-                  <td><a href="{{ url('admin/customer/'.$request['customerId']) }}">{{ $request['customerName'] }}</a></td>
+                  <td><a href="{{ url('admin/customer/'.$request['customerId']) }}"><b>{{ $request['customerName'] }}</b></a></td>
                 <td>{{ $request['productName'] }}</td>
                 <td>{{ $request['category'] }}</td>
                 <td>{{ $request['mrp'] }}</td>
