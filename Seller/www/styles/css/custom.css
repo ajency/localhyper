@@ -1499,6 +1499,9 @@ h5.with-sep span {
   font-weight: 100;
   color: #f35a59;
 }
+.filter-txt i.ion-funnel {
+  font-size: 20px;
+}
 .filter-txt sm {
   font-weight: 100;
   display: -webkit-box;
@@ -1598,7 +1601,7 @@ h5.with-sep span {
   -moz-osx-font-smoothing: grayscale;
 }
 .products-filter-view .item-checkbox {
-  padding: 9px 60px;
+  padding: 9px 50px;
   padding-right: 9px;
 }
 .products-filter-view .checkbox input,
@@ -1706,9 +1709,9 @@ input[disabled] ~ .radio-icon-show {
   color: #1F1F1F;
   display: block;
   width: 100%;
-  padding: 4px 15px 2px 4px;
+  padding: 1px 15px 0px 4px;
   height: auto;
-  line-height: 26px;
+  line-height: 32px;
   font-size: 15px;
 }
 .search-brands-wrap button.button.button-small {

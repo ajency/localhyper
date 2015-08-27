@@ -201,22 +201,22 @@
 
 								<h3>{{offer.seller.businessName}}
 									<span class="loc">{{offer.seller.address.city}}</span>
-									<button
-										class="button button-dark button-small pull-r ight rating-btn"
-										ng-if="!offer.seller.isSellerRated"
-										ng-click="view.offers.openRatePopup(offer.seller);">
-										Rate Seller
-									</button>
+									<p
+										class="comment subdued pu ll-left"
+										ng-if="offer.comments !== ''"
+										ng-click="view.showComment('Seller Comment', offer.comments);">
+
+										<button class="button icon ion-chatbox-working button-small button-light"></button>
+										<span style="display: none" class="com">{{offer.comments}}</span>
+									</p>
 								</h3>
 
-								<p
-									class="comment subdued pull-left"
-									ng-if="offer.comments !== ''"
-									ng-click="view.showComment('Seller Comment', offer.comments);">
-
-									<button class="button icon ion-chatbox-working button-small button-light"></button>
-									<span style="display: none" class="com">{{offer.comments}}</span>
-								</p>
+								<button
+									class="button button-dark button-small pull-r ight rating-btn"
+									ng-if="!offer.seller.isSellerRated"
+									ng-click="view.offers.openRatePopup(offer.seller);">
+									Rate Seller
+								</button>
 
 								<!-- <button
 									class="button button-dark button-small pull-right rating-btn"
@@ -373,7 +373,7 @@
 			<ion-item
 				ng-if="view.offers.limitTo == 1 && view.offers.all.length > 1;"
 				ng-click="view.offers.showAll()" class="text-center show-all-req">
-				SHOW ALL OFFERS
+				Show all offers
 			</ion-item>
 
 			<div class="row">
