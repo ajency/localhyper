@@ -2,15 +2,21 @@ angular.module('LocalHyper.products').directive('ajLoadingBackDrop', [
   '$timeout', '$ionicLoading', function($timeout, $ionicLoading) {
     return {
       restrict: 'A',
+      scope: {
+        onHidden: '&'
+      },
       link: function(scope, el, attrs) {
+        var onContainerClick;
+        onContainerClick = function(event) {
+          if ($(event.target).hasClass('loading-container')) {
+            $('.loading-container').off('click', onContainerClick);
+            return scope.$apply(function() {
+              return scope.onHidden();
+            });
+          }
+        };
         return $timeout(function() {
-          return $('.loading-container').on('click', function(event) {
-            var isBackdrop;
-            isBackdrop = $(event.target).hasClass('loading-container');
-            if (isBackdrop) {
-              return $ionicLoading.hide();
-            }
-          });
+          return $('.loading-container').on('click', onContainerClick);
         });
       }
     };

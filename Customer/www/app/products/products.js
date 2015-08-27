@@ -424,6 +424,9 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
               return this.reFetch();
             }
         }
+      },
+      onIonicLoadingHide: function() {
+        return $ionicLoading.hide();
       }
     };
     onDeviceBack = function() {
