@@ -1817,7 +1817,7 @@
             primaryAttribObj = {
               "__type": "Pointer",
               "className": "AttributeValues",
-              "objectId": productAttributes[primeAttrib.id]
+              "objectId": productAttributes[primeAttrib.id]['id']
             };
             primaryAttributeValueArr.push(primaryAttribObj);
             productItem.set("primaryAttributes", primaryAttributeValueArr);
@@ -1855,7 +1855,7 @@
             attribObj = {
               "__type": "Pointer",
               "className": "AttributeValues",
-              "objectId": attrib
+              "objectId": attrib['id']
             };
             return attributeValueArr.push(attribObj);
           });

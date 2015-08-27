@@ -96,7 +96,7 @@ Parse.Cloud.define  'productImport', (request, response) ->
                     primaryAttribObj = 
                         "__type" : "Pointer",
                         "className":"AttributeValues",
-                        "objectId":productAttributes[primeAttrib.id]
+                        "objectId":productAttributes[primeAttrib.id]['id']
                         
                     primaryAttributeValueArr.push(primaryAttribObj) 
 
@@ -140,7 +140,7 @@ Parse.Cloud.define  'productImport', (request, response) ->
                     attribObj = 
                         "__type" : "Pointer",
                         "className":"AttributeValues",
-                        "objectId":attrib
+                        "objectId":attrib['id']
 
                     attributeValueArr.push(attribObj)
 
