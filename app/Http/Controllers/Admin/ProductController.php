@@ -275,7 +275,7 @@ class ProductController extends Controller
 				 while (true) {
 							$limit = 20;
 							$products = $this->getCategoryProducts($catId, $page, $limit) ;
-				 			dd($products);
+				  
 							if(empty($products))
 									break;
 	 
