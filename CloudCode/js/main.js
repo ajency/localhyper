@@ -1813,9 +1813,15 @@
           }
           productFilters = categoryObj.get("filterable_attributes");
           _.each(productFilters, function(productFilter) {
-            var AttributeValues, columnName, columnPosition, fattributeValues, filterAttribId, filterValueToSet;
+            var AttributeValues, columnName, columnPosition, fattributeValues, filterAttribId, filterName, filterType, filterValueToSet;
             columnPosition = productFilter.get("filterColumn");
-            columnName = "filter" + columnPosition;
+            filterType = productFilter.get("filterAttribute").type;
+            if (filterType === "range") {
+              filterName = "range";
+            } else {
+              filterName = "filter";
+            }
+            columnName = filterName + ("" + columnPosition);
             filterAttribId = productFilter.get("filterAttribute").id;
             filterValueToSet = productAttributes[filterAttribId];
             AttributeValues = Parse.Object.extend("AttributeValues");
@@ -2403,11 +2409,17 @@
 
   findAttribValues = (function(_this) {
     return function(filter) {
-      var attributeId, attributeName, filterColumn, innerAttributeQuery, promise, queryAttributeValues;
+      var attributeId, attributeName, filterColumn, filterName, filterType, innerAttributeQuery, promise, queryAttributeValues;
       promise = new Parse.Promise();
       filterColumn = filter.get('filterColumn');
       attributeId = filter.get('filterAttribute').id;
       attributeName = filter.get('filterAttribute').get("name");
+      filterType = filter.get('filterAttribute').get("type");
+      if (filterType === "range") {
+        filterName = "range";
+      } else {
+        filterName = "filter";
+      }
       queryAttributeValues = new Parse.Query("AttributeValues");
       innerAttributeQuery = new Parse.Query("Attributes");
       innerAttributeQuery.equalTo("objectId", attributeId);
@@ -2422,7 +2434,7 @@
           };
         });
         displayFilter = {
-          "filterName": "filter" + filterColumn,
+          "filterName": filterName + ("" + filterColumn),
           "attributeId": attributeId,
           "attributeName": attributeName,
           "values": attribValues

@@ -107,7 +107,13 @@ Parse.Cloud.define  'productImport', (request, response) ->
                 
                 _.each productFilters, (productFilter) ->
                     columnPosition = productFilter.get("filterColumn") 
-                    columnName = "filter#{columnPosition}"
+                    filterType = productFilter.get("filterAttribute").type
+                    if filterType is "range"
+                       filterName = "range"
+                    else
+                       filterName = "filter"
+
+                    columnName = filterName+"#{columnPosition}"
                     filterAttribId = productFilter.get("filterAttribute").id
 
             
@@ -788,6 +794,13 @@ findAttribValues = (filter) =>
     filterColumn = filter.get('filterColumn')
     attributeId = filter.get('filterAttribute').id
     attributeName = filter.get('filterAttribute').get("name")
+    filterType = filter.get('filterAttribute').get("type")
+
+    if filterType is "range" 
+        filterName = "range"
+    else
+        filterName = "filter" 
+
 
     queryAttributeValues = new Parse.Query("AttributeValues")
 
@@ -804,7 +817,7 @@ findAttribValues = (filter) =>
         )
         
         displayFilter =
-            "filterName": "filter#{filterColumn}"
+            "filterName": filterName+"#{filterColumn}"
             "attributeId": attributeId
             "attributeName": attributeName
             "values": attribValues
