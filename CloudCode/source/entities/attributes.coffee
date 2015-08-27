@@ -176,7 +176,9 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
                         filterableAttribArr = []
                         
                         _.each objs , (obj) ->
-                            if(obj.get "type" is "range")
+                            type = obj.get "type"
+                            console.log type
+                            if type is "range"
                                 productFilters = new ProductFilters()
                     
                                 productFilters.set "categoryId" , categoryId

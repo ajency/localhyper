@@ -146,8 +146,10 @@
               rangeColumn = 1;
               filterableAttribArr = [];
               _.each(objs, function(obj) {
-                var productFilters;
-                if (obj.get("type" === "range")) {
+                var productFilters, type;
+                type = obj.get("type");
+                console.log(type);
+                if (type === "range") {
                   productFilters = new ProductFilters();
                   productFilters.set("categoryId", categoryId);
                   productFilters.set("filterColumn", rangeColumn);
