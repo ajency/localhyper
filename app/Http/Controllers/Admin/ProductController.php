@@ -461,7 +461,7 @@ class ProductController extends Controller
 								
 								$data = $namedData;
 
-								$attributeIds = [];
+								$attributeIds = $rangeAttributeIds= [];
 								$text_attributes = [];
 
 								$naAttribValue = in_array("#N/A", $indexedData,TRUE);
@@ -485,8 +485,12 @@ class ProductController extends Controller
 										if($attribArr[$attributeId]['type'] == "text"){
 											$text_attributes[$attributeId] =  $indexedData[$key-1];
 										}
-										else{
-												
+										elseif($attribArr[$attributeId]['type'] == "range"){
+											$rangeAttributeIds[$attributeId] = ['id'=>$indexedData[$key],
+																										 'value'=>$indexedData[$key+1]];
+										}
+										else	
+										{
 											$attributeIds[$attributeId] = ['id'=>$indexedData[$key],
 																										 'value'=>$indexedData[$key+1]];
 										}
@@ -513,6 +517,7 @@ class ProductController extends Controller
 
 									$products[$i]['images'][] = ['src'=> $imageUrl];
 									$products[$i]['attrs']= $attributeIds;
+									$products[$i]['rangeattrs']= $rangeAttributeIds;
 									$products[$i]['text_attributes']= $text_attributes;
 									$products[$i]['mrp'] = $data['MRP'];
 									$products[$i]['brandId'] = $data['BrandID'];
