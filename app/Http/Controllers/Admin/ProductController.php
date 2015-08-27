@@ -474,7 +474,7 @@ class ProductController extends Controller
 									continue;
 								}
 								else{
-				 
+ 
 									foreach($attributeIdKeys as $key)
 									{
 										$attributeName = $headerData[$key]; 
@@ -488,11 +488,11 @@ class ProductController extends Controller
 										else	
 										{
 											$attributeIds[$attributeId] = ['id'=>$indexedData[$key],
-																										 'value'=>$indexedData[$key+1]];
+																										 'value'=>$indexedData[$key-1]];
 										}
 
 									}
-
+							 
 
 									$products[$i]['objectId'] = $data['ProductID'];
 									$products[$i]['name'] = $data['ProductName'];
