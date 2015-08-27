@@ -172,15 +172,25 @@ Parse.Cloud.define 'attributeImport', (request, response) ->
                     Parse.Object.destroyAll(oldCategoryFilters)
                     .then (destroyedObjs) ->
                         filterColumn = 1
+                        rangeColumn = 1
                         filterableAttribArr = []
                         
                         _.each objs , (obj) ->
-                            productFilters = new ProductFilters()
-                
-                            productFilters.set "categoryId" , categoryId
-                            productFilters.set "filterColumn" , filterColumn
-                            productFilters.set  "filterAttribute" , obj
-                            filterColumn++
+                            if(obj.get "type" is "range")
+                                productFilters = new ProductFilters()
+                    
+                                productFilters.set "categoryId" , categoryId
+                                productFilters.set "filterColumn" , rangeColumn
+                                productFilters.set  "filterAttribute" , obj
+                                rangeColumn++
+                            else
+                                productFilters = new ProductFilters()
+                    
+                                productFilters.set "categoryId" , categoryId
+                                productFilters.set "filterColumn" , filterColumn
+                                productFilters.set  "filterAttribute" , obj
+                                filterColumn++
+                                 
                             filterableAttribArr.push productFilters
                         
                         # save all the filters for the category

@@ -141,16 +141,25 @@
           queryProdFilters.equalTo("categoryId", categoryId);
           return queryProdFilters.find().then(function(oldCategoryFilters) {
             return Parse.Object.destroyAll(oldCategoryFilters).then(function(destroyedObjs) {
-              var filterColumn, filterableAttribArr;
+              var filterColumn, filterableAttribArr, rangeColumn;
               filterColumn = 1;
+              rangeColumn = 1;
               filterableAttribArr = [];
               _.each(objs, function(obj) {
                 var productFilters;
-                productFilters = new ProductFilters();
-                productFilters.set("categoryId", categoryId);
-                productFilters.set("filterColumn", filterColumn);
-                productFilters.set("filterAttribute", obj);
-                filterColumn++;
+                if (obj.get("type" === "range")) {
+                  productFilters = new ProductFilters();
+                  productFilters.set("categoryId", categoryId);
+                  productFilters.set("filterColumn", rangeColumn);
+                  productFilters.set("filterAttribute", obj);
+                  rangeColumn++;
+                } else {
+                  productFilters = new ProductFilters();
+                  productFilters.set("categoryId", categoryId);
+                  productFilters.set("filterColumn", filterColumn);
+                  productFilters.set("filterAttribute", obj);
+                  filterColumn++;
+                }
                 return filterableAttribArr.push(productFilters);
               });
               return Parse.Object.saveAll(filterableAttribArr).then(function(savedFilters) {
