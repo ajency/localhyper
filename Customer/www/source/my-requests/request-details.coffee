@@ -38,7 +38,7 @@ angular.module 'LocalHyper.myRequests'
 						@footer = true
 					else
 						@footer = false
-			
+						
 			offers:
 				display: 'none'
 				errorType: ''
