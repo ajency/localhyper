@@ -29,9 +29,9 @@
               <tr >
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['name'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['area'] }}</td>
-                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['brands'] }}</td><a type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+                <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['brands'] }}<a type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
   View More
-</a>  
+</a>  </td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['categories'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['offersCount'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['offerAcceptedCount'] }}</td>

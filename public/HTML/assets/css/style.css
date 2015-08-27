@@ -8138,9 +8138,19 @@ label {
 .header-seperation {
   background-color: #FFFFFF;
 }
-.menu-title {
-  cursor: pointer;
-}
+.menu-title,
 .table tr {
   cursor: pointer;
+}
+i.pagination {
+  font-weight: bold;
+  width: 20px;
+  height: 20px;
+  background-color: #736086;
+  text-align: center;
+  line-height: 20px;
+  color: #fff;
+  font-size: 16px;
+  border-radius: 50%;
+  margin-top: 10px;
 }

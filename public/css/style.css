@@ -8142,3 +8142,7 @@ i.pagination {
   border-radius: 50%;
   margin-top: 10px;
 }
+thead {
+  position: fixed;
+  z-index: 999;
+}
