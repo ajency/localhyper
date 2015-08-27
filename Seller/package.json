@@ -42,10 +42,6 @@
     "cordova-plugin-geolocation",
     "cordova-plugin-dialogs",
     {
-      "locator": "https://github.com/dpa99c/cordova-diagnostic-plugin",
-      "id": "cordova.plugins.diagnostic"
-    },
-    {
       "locator": "https://github.com/EddyVerbruggen/SocialSharing-PhoneGap-Plugin.git",
       "id": "nl.x-services.plugins.socialsharing"
     },
@@ -62,6 +58,10 @@
     {
       "locator": "https://github.com/VitaliiBlagodir/cordova-plugin-datepicker.git",
       "id": "cordova-plugin-datepicker"
+    },
+    {
+      "locator": "https://github.com/dpa99c/cordova-diagnostic-plugin",
+      "id": "cordova.plugins.diagnostic"
     }
   ],
   "cordovaPlatforms": []

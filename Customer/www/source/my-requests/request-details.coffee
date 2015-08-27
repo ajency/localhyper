@@ -236,6 +236,11 @@ angular.module 'LocalHyper.myRequests'
 				telURI = "tel:#{sellerNumber}"
 				document.location.href = telURI
 
+			checkStatus : (status)->
+				if (status == 'open')
+					true
+				else
+					false
 
 		inAppNotificationEvent = $rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload

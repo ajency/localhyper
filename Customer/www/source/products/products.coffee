@@ -338,6 +338,9 @@ angular.module 'LocalHyper.products', []
 							@ascending = ascending
 							@reFetch()
 
+			onIonicLoadingHide : ->
+				$ionicLoading.hide()
+
 		
 		onDeviceBack = ->
 			filter = $scope.view.filter

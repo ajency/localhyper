@@ -1,0 +1,33 @@
+<ion-pane
+	class="sort-model sort-popup-my-request"
+	aj-loading-back-drop
+	on-hidden="view.filter.onLoadingHidden();">
+
+	<ul class="list">
+		<li class="item item-title">Fliter By
+			<div class="text-right">
+				<button class="button button-dark button-stable" ng-click="view.filter.clearFilters();">
+					Clear
+				</button>
+				<button class="button button-assertive" ng-click="view.filter.onApply();">
+					Apply
+				</button>
+			</div>
+
+		 </li>
+
+		<li
+			class="item item-checkbox"
+			ng-repeat="attribute in view.filter.attributes track by $index">
+
+			<label class="checkbox checkbox-square">
+				<input
+					type="checkbox"
+					value="open"
+					ng-model="attribute.selected">
+			</label>
+			{{attribute.name}}
+		</li>
+	</ul>
+
+</ion-pane>

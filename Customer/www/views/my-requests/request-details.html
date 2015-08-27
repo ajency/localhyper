@@ -263,7 +263,9 @@
 							<h2>{{offer.deliveryTimeStr}}</h2>
 						</div>
 
-						<div class="col align-right p-a-0">
+						<div 
+							class="col align-right p-a-0"
+							ng-if="view.checkStatus(view.request.status);">
 							<div class="vert-div pull-left"></div>
 							<button
 								class="button button-outline button-balanced"
@@ -356,14 +358,14 @@
 							<h2>{{offer.deliveryTimeStr}}</h2>
 						</div>
 
-						<div class="col align-right p-a-0">
+						<!--div class="col align-right p-a-0">
 							<div class="vert-div pull-left"></div>
 							<!--button
 								class="button button-outline button-balanced"
 								ng-disabled="true">
 								Accept
-							</button-->
-						</div>
+							</button>
+						</div-->
 					</div>
 				</div>
 			</div>

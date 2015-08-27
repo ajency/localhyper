@@ -257,6 +257,13 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         var telURI;
         telURI = "tel:" + sellerNumber;
         return document.location.href = telURI;
+      },
+      checkStatus: function(status) {
+        if (status === 'open') {
+          return true;
+        } else {
+          return false;
+        }
       }
     };
     inAppNotificationEvent = $rootScope.$on('in:app:notification', function(e, obj) {
