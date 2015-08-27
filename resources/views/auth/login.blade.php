@@ -1,4 +1,4 @@
-@extends('app')
+<!-- @extends('app') -->
 
 @section('content')
 <div class="content col-md-offset-3 col-md-6">  
