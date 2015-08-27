@@ -275,7 +275,7 @@ class ProductController extends Controller
 				 while (true) {
 							$limit = 20;
 							$products = $this->getCategoryProducts($catId, $page, $limit) ;
-				 
+				 			dd($products);
 							if(empty($products))
 									break;
 	 
@@ -474,6 +474,7 @@ class ProductController extends Controller
 									continue;
 								}
 								else{
+				 
 									foreach($attributeIdKeys as $key)
 									{
 										$attributeName = $headerData[$key]; 
@@ -486,7 +487,8 @@ class ProductController extends Controller
 										}
 										else{
 												
-											$attributeIds[$attributeId] = $indexedData[$key];
+											$attributeIds[$attributeId] = ['id'=>$indexedData[$key],
+																										 'value'=>$indexedData[$key+1]];
 										}
 
 									}

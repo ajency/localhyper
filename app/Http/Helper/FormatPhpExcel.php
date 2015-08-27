@@ -198,7 +198,7 @@ class FormatPhpExcel
 						self::single_cell_dropdown($sheet, $cell, $label, $options);
 					}else if($value == 'type'){
 						$label = 'type';
-						$options = 'select,text';
+						$options = 'select,text,range';
 						self::single_cell_dropdown($sheet, $cell, $label, $options);
 					}
 				}else if($type == 'Price'){
