@@ -116,8 +116,6 @@ Parse.Cloud.define  'productImport', (request, response) ->
                     columnName = filterName+"#{columnPosition}"
                     filterAttribId = productFilter.get("filterAttribute").id
 
-            
-                    
 
                     if filterType is "range" 
                         filterValueToSet = productAttributes[filterAttribId]['value']                

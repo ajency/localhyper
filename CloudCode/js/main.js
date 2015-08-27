@@ -1823,12 +1823,19 @@
             }
             columnName = filterName + ("" + columnPosition);
             filterAttribId = productFilter.get("filterAttribute").id;
-            filterValueToSet = productAttributes[filterAttribId];
-            AttributeValues = Parse.Object.extend("AttributeValues");
-            fattributeValues = new AttributeValues();
-            fattributeValues.id = filterValueToSet;
-            if (!_.isUndefined(filterValueToSet)) {
-              return productItem.set(columnName, fattributeValues);
+            if (filterType === "range") {
+              filterValueToSet = productAttributes[filterAttribId]['value'];
+              if (!_.isUndefined(filterValueToSet)) {
+                return productItem.set(columnName, filterValueToSet);
+              }
+            } else {
+              filterValueToSet = productAttributes[filterAttribId]['id'];
+              AttributeValues = Parse.Object.extend("AttributeValues");
+              fattributeValues = new AttributeValues();
+              fattributeValues.id = filterValueToSet;
+              if (!_.isUndefined(filterValueToSet)) {
+                return productItem.set(columnName, fattributeValues);
+              }
             }
           });
           attributeValueArr = [];
