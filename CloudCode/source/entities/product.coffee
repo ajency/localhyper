@@ -107,7 +107,7 @@ Parse.Cloud.define  'productImport', (request, response) ->
                 
                 _.each productFilters, (productFilter) ->
                     columnPosition = productFilter.get("filterColumn") 
-                    filterType = productFilter.get("filterAttribute").type
+                    filterType = productFilter.get("filterAttribute").get "type"
 
                     if filterType is "range"
                        filterName = "range"
@@ -116,8 +116,7 @@ Parse.Cloud.define  'productImport', (request, response) ->
 
                     columnName = filterName+"#{columnPosition}"
                     filterAttribId = productFilter.get("filterAttribute").id
-                    
-
+ 
                     if filterType is "range" 
                         filterValueToSet = productAttributes[filterAttribId]['value']                
                         if !_.isUndefined(filterValueToSet)

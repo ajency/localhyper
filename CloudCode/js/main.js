@@ -1815,7 +1815,7 @@
           _.each(productFilters, function(productFilter) {
             var AttributeValues, columnName, columnPosition, fattributeValues, filterAttribId, filterName, filterType, filterValueToSet;
             columnPosition = productFilter.get("filterColumn");
-            filterType = productFilter.get("filterAttribute").type;
+            filterType = productFilter.get("filterAttribute").get("type");
             if (filterType === "range") {
               filterName = "range";
             } else {
