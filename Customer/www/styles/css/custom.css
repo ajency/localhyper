@@ -1166,7 +1166,7 @@ button.button.button-assertive b {
   border: 1px solid #33cd5f;
 }
 .rece-offer .offer-vals .button {
-  padding: 0 15px;
+  padding: 0 14px;
   margin-top: 6px;
   height: auto;
   min-height: 0;
@@ -1265,7 +1265,7 @@ button.button.button-assertive b {
   padding: 7px 8px;
 }
 .req-ca .status-label {
-  font-size: 18px;
+  font-size: 16px;
   padding-top: 0;
   white-space: normal;
   line-height: 19px;
@@ -1307,7 +1307,7 @@ label.status-label {
   text-transform: uppercase;
   padding: 2px 1px;
   display: block;
-  font-size: 14px;
+  font-size: 16px;
 }
 .status-assertive,
 .color-assertive {
@@ -1398,7 +1398,7 @@ label.status-label {
   -moz-osx-font-smoothing: grayscale;
 }
 .products-filter-view .item-checkbox {
-  padding: 9px 60px;
+  padding: 9px 50px;
   padding-right: 9px;
 }
 .products-filter-view .checkbox input,
@@ -1904,6 +1904,9 @@ label.status-label {
   margin-left: 20px;
   font-weight: 100;
   color: #f45152;
+}
+.filter-txt i.ion-funnel {
+  font-size: 20px;
 }
 .filter-txt sm {
   font-weight: 100;

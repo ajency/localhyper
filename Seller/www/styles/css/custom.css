@@ -1499,6 +1499,9 @@ h5.with-sep span {
   font-weight: 100;
   color: #f35a59;
 }
+.filter-txt i.ion-funnel {
+  font-size: 20px;
+}
 .filter-txt sm {
   font-weight: 100;
   display: -webkit-box;
@@ -1598,7 +1601,7 @@ h5.with-sep span {
   -moz-osx-font-smoothing: grayscale;
 }
 .products-filter-view .item-checkbox {
-  padding: 9px 60px;
+  padding: 9px 50px;
   padding-right: 9px;
 }
 .products-filter-view .checkbox input,
