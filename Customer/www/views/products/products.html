@@ -19,13 +19,13 @@
 				item-width="50%"
 				ng-click="App.navigate('single-product', {productID: product.objectId})">
 
-				<img 
-					ng-src="{{product.images[0].src}}" 
+				<img
+					ng-src="{{product.images[0].src}}"
 					class="center-block aj-img"
 					onerror="this.src='./img/gray-bg.png';">
 
 				<div class="row">
-					<div class="col">
+					<div class="col p-b-0">
 						<h5 class="text-left title">{{product.name}}</h5>
 					</div>
 				</div>
@@ -39,17 +39,18 @@
 
 				<div class="row open-links">
                     <div class="col col-67">
-                		<h4 class="margin-none pull-left strike" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}}</h4>
+                    	<span class="mrp-products-list">MRP</span>
+                		<h4 class="margin-none pull-left strike" ><span class="WebRupee subdued">&#x20B9;</span> {{product.mrp}} <span></span> </h4>
                 	</div>
                 	<div class="col">
-                		<h4 class="margin-none pull-right subdued"> <i class="ion-log-out"></i></h4>
+                		<h4 class="margin-none pull-right subdued icon-right"> <i class="icon ion-chevron-right"></i></h4>
                 	</div>
 				</div>
 			</div>
 
 		</ion-list>
 
-		<div 
+		<div
 			ng-if="view.gotAllProducts && view.products.length == 0" class="text-center">
 			<h5 class="bold fin">Sorry, we could not find any matched products.</h5>
 			<div class="spacer-40"></div>
@@ -79,7 +80,7 @@
 				<h5 class="margin-none normal filter-txt">
 					<i class="ion ion-arrow-swap"></i>
 					SORT<br>
-					<sm>{{view.sortName}}<sm>
+					<sm>By {{view.sortName}}<sm>
 				</h5>
 			</div>
 
@@ -89,7 +90,7 @@
 					<i class="ion ion-funnel"></i>
 			 		FILTER
 					<br>
-					<sm>{{view.filter.excerpt}}<sm>
+					<sm>By {{view.filter.excerpt}}<sm>
 				</h5>
 			</div>
 		</div>

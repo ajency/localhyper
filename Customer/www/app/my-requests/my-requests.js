@@ -210,6 +210,12 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
       onRequestClick: function(request) {
         RequestAPI.requestDetails('set', request);
         return App.navigate('request-details');
+      },
+      onImageClick: function(productID, e) {
+        e.stopPropagation();
+        return App.navigate('single-product', {
+          productID: productID
+        });
       }
     };
     onDeviceBack = function() {

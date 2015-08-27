@@ -3,13 +3,13 @@
 	<ion-header-bar style="height:55px;" no-tap-scroll="true">
 		<div class="row row-fluid filter-head">
 			<div class="col col-25 sm-text">
-				<h4 class="text-left m-t-6 text-light">Filter by</h4>
+				<h4 class="text-left m-t-6 text-light">Filter By</h4>
 			</div>
 			<div class="col text-right">
 				<button class="button button-clear button-stable" ng-click="view.filter.clearFilters();">
 					Clear
 				</button>
-				<button class="button button-balanced" ng-click="view.filter.onApply();">
+				<button class="button button-assertive" ng-click="view.filter.onApply();">
 					Apply
 				</button>
 				<button ng-click="view.filter.closeModal();" class="button button-clear text-right btn-close">
@@ -42,7 +42,7 @@
 				</div>
 			</div>
 
-			<div 
+			<div
 				class="col col-67 p-a-0"
 				ng-if="view.filter.attribute !== 'radius'">
 
@@ -50,8 +50,8 @@
 					<li
 						class="item item-text-wrap item-checkbox"
 						ng-repeat="value in view.filter.attrValues[view.filter.attribute] track by $index">
-						
-						
+
+
 						<label class="checkbox checkbox-square">
 							<input
 								type="checkbox"
@@ -64,7 +64,7 @@
 
 			</div>
 
-			<div 
+			<div
 				class="col col-67 p-a-0"
 				ng-if="view.filter.attribute === 'radius'">
 

@@ -24,7 +24,10 @@
 				ng-click="view.onRequestClick(request);">
 
 				<div class="row item border-none item-wrapper-nr">
-					<div class="col col-25">
+					<div
+						class="col col-25"
+						ng-click="view.onImageClick(request.product.id, $event);">
+
 						<div class="item-avatar border-none margin-none">
 							<img ng-src="{{request.product.images[0].src}}">
 						</div>
@@ -54,7 +57,7 @@
 			        <div class="col p-t-0 p-r-0">
 			        	<div class="pull-right mi-wi-65">
 			            <div class="offer"> {{request.offerCount}} </div>
-			            <h4 class="offertxt light-gray"> No of offers</h4>
+			            <h4 class="offertxt light-gray"> Total offers</h4>
 			           	</div>
 			        </div>
 		    	</div>
@@ -96,7 +99,7 @@
 			class="aj-refresher">
 		</ion-infinite-scroll>
 
-		<aj-error
+		<aj-error class="errors"
 			ng-switch-when="error"
 			error-type="view.errorType"
 			tap-to-retry="view.onTapToRetry();">
@@ -112,11 +115,11 @@
 				style="margin: 0 auto;"
 				ng-click="view.filter.openModal();">
 
-				<h5 class="margin-none normal filter-txt">
+				<h5 class="margin-none normal filter-txt" style="top: 0;">
 					<i class="ion ion-funnel" style="margin-left: 5px;"></i>
 			 		FILTER
 					<br>
-					<sm>{{view.filter.excerpt}}<sm>
+					<sm>By {{view.filter.excerpt}}<sm>
 				</h5>
 			</div>
 			<!-- <div class="col col-25 border-left"></div> -->

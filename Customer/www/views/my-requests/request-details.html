@@ -49,7 +49,7 @@
 									class="loca-wrap"
 									ng-click="view.address.toggle();">
 
-									<i class="icon ion-ios-location"></i> Address :
+									<i class="icon ion-ios-location"></i> My Delivery Address:
 									<span>{{view.request.address.city}}</span>
 									<a ng-if="!view.address.show">More</a>
 									<a ng-if="view.address.show">Less</a>
@@ -110,6 +110,7 @@
 			</div>
 
 			<aj-error
+				class="errors"
 				ng-switch-when="error"
 				error-type="view.errorType"
 				tap-to-retry="view.getRequestDetails();">
@@ -133,7 +134,7 @@
 
 					<div class="col">
 						<h4 class="align-left high-span rec-off">
-							Received Offers <b>({{view.offers.all.length}})</b>
+							Total received Offers <b>({{view.offers.all.length}})</b>
 						</h4>
 					</div>
 				</div>
@@ -200,22 +201,22 @@
 
 								<h3>{{offer.seller.businessName}}
 									<span class="loc">{{offer.seller.address.city}}</span>
-									<button
-										class="button button-dark button-small pull-r ight rating-btn"
-										ng-if="!offer.seller.isSellerRated"
-										ng-click="view.offers.openRatePopup(offer.seller);">
-										Rate Seller
-									</button>
+									<p
+										class="comment subdued pu ll-left"
+										ng-if="offer.comments !== ''"
+										ng-click="view.showComment('Seller Comment', offer.comments);">
+
+										<button class="button icon ion-chatbox-working button-small button-light"></button>
+										<span style="display: none" class="com">{{offer.comments}}</span>
+									</p>
 								</h3>
 
-								<p
-									class="comment subdued pull-left"
-									ng-if="offer.comments !== ''"
-									ng-click="view.showComment('Seller Comment', offer.comments);">
-
-									<button class="button icon ion-chatbox-working button-small button-light"></button>
-									<span style="display: none" class="com">{{offer.comments}}</span>
-								</p>
+								<button
+									class="button button-dark button-small pull-r ight rating-btn"
+									ng-if="!offer.seller.isSellerRated"
+									ng-click="view.offers.openRatePopup(offer.seller);">
+									Rate Seller
+								</button>
 
 								<!-- <button
 									class="button button-dark button-small pull-right rating-btn"
@@ -238,7 +239,7 @@
 						<div class="col col-25 text-right p-r-0">
 							<button
 								class="button button-small button-balanced btn-phone pul l-right"
-								ng-click="view.callSeller(offer.seller.phoneNumber)">
+								ng-click="view.callSeller('+91'+offer.seller.phoneNumber)">
 								<!-- CALL SELLER -->
 								<i class="icon ion-ios-telephone"></i>
 							</button>
@@ -334,7 +335,7 @@
 							<div class="vert-div pull-left"></div>
 							<p class="info">Offer Status</p>
 							<label
-								class="status-label status-assertive">
+								class="status-label status-balanced">
 								Accepted
 							</label>
 						</div>
@@ -357,11 +358,11 @@
 
 						<div class="col align-right p-a-0">
 							<div class="vert-div pull-left"></div>
-							<button
+							<!--button
 								class="button button-outline button-balanced"
 								ng-disabled="true">
 								Accept
-							</button>
+							</button-->
 						</div>
 					</div>
 				</div>
@@ -370,7 +371,7 @@
 			<ion-item
 				ng-if="view.offers.limitTo == 1 && view.offers.all.length > 1;"
 				ng-click="view.offers.showAll()" class="text-center show-all-req">
-				SHOW ALL OFFERS
+				Show all offers
 			</ion-item>
 
 			<div class="row">
@@ -384,7 +385,7 @@
 				</div>
 			</div>
 
-			<aj-error
+			<aj-error class="errors"
 				ng-switch-when="error"
 				error-type="view.offers.errorType"
 				tap-to-retry="view.offers.get()">

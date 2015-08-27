@@ -16,7 +16,9 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         this.reset();
         this.searchText = '';
         this.comments.text = '';
-        return this.address = null;
+        this.address = null;
+        this.latLng = null;
+        return this.map.setZoom(5);
       },
       init: function() {
         if (_.isNull(this.latLng)) {
@@ -139,21 +141,26 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         return GoogleMaps.getAddress(this.latLng).then((function(_this) {
           return function(address) {
             _this.address = address;
-            return _this.address.full = GoogleMaps.fullAddress(address);
+            _this.address.full = GoogleMaps.fullAddress(address);
+            return _this.addressFetch = true;
           };
         })(this), function(error) {
           return console.log('Geocode error: ' + error);
-        })["finally"]((function(_this) {
-          return function() {
-            return _this.addressFetch = true;
-          };
-        })(this));
+        });
       },
       isLocationReady: function() {
         var ready;
         ready = !_.isNull(this.latLng) && this.addressFetch ? true : false;
         if (!ready) {
-          CToast.show('Please wait, getting location details...');
+          GPS.isLocationEnabled().then((function(_this) {
+            return function(enabled) {
+              if (enabled) {
+                return CToast.show('Please wait, getting location details...');
+              } else {
+                return CToast.show('Please search for location');
+              }
+            };
+          })(this));
         }
         return ready;
       },

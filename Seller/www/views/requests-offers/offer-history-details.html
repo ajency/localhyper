@@ -78,7 +78,7 @@
                   </div>
                   <div class="col border-right">
                      <h4 class="text-left subdued text-center margin-none">
-                        No of offers <br> <b class="big-txt">{{view.offerDetails.data.request.offerCount}}</b>
+                        Total offers <br> <b class="big-txt">{{view.offerDetails.data.request.offerCount}}</b>
                      </h4>
                   </div>
                   <div class="col border-right">
@@ -93,11 +93,11 @@
             </div>
          </div>
 
-         <div class="row">
-            <div class="col col-25">
+         <div class="row p-b-0">
+            <div class="col col-25 p-b-0">
                <h5 class="subdued text-left">Offer Status:</h5>
             </div>
-            <div class="col  subdued">
+            <div class="col  subdued p-b-0">
                <h5 class=" text-left bold {{App.humanize(view.offerDetails.data.offerStatus)}}">
                   <i class="ion-ribbon-b"> </i> {{App.humanize(view.offerDetails.data.offerStatus)}}
                </h5>
@@ -193,7 +193,7 @@
          </div>
       </ion-list>
 
-      <aj-error
+      <aj-error class="errors"
          ng-switch-when="error"
          error-type="view.errorType"
          tap-to-retry="view.onTapToRetry();">

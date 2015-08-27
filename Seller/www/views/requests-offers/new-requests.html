@@ -71,7 +71,7 @@
 				        <div class="col p-t-0">
 				        	<div class="pull-right mi-wi-65">
 					            <div class="offer"> {{request.offerCount}} </div>
-					            <h4 class="offertxt light-gray"> No of offers</h4>
+					            <h4 class="offertxt light-gray"> Total offers</h4>
 				           	</div>
 				        </div>
 				    </div>
@@ -90,7 +90,7 @@
 				</ion-item>
 			</div>
 
-			<aj-error
+			<aj-error class="errors"
 				ng-switch-when="error"
 				error-type="view.errorType"
 				tap-to-retry="view.onTapToRetry();"
@@ -108,7 +108,7 @@
 				<h5 class="margin-none  normal filter-txt">
 					<i class="ion ion-arrow-swap"></i>
 					SORT<br>
-					<sm>{{view.sortName}}<sm>
+					<sm>By {{view.sortName}}<sm>
 				</h5>
 			</div>
 
@@ -118,7 +118,7 @@
 					<i class="ion ion-funnel"></i>
 			 		FILTER
 					<br>
-					<sm>{{view.filter.excerpt}}<sm>
+					<sm>By {{view.filter.excerpt}}<sm>
 				</h5>
 			</div>
 		</div>

@@ -161,6 +161,10 @@ angular.module 'LocalHyper.myRequests'
 				RequestAPI.requestDetails 'set', request
 				App.navigate 'request-details'
 
+			onImageClick : (productID, e)->
+				e.stopPropagation()
+				App.navigate('single-product', {productID: productID})
+
 
 		
 		onDeviceBack = ->
