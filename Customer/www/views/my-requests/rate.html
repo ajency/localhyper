@@ -1,6 +1,14 @@
 <div class="rating-wrap">
+
+	<h4>Congratulations for your purchase</h4>
+	<p class="seller-name">From seller Person Name</p>
+
+	<p class="seller-info">Tell us about yout buying experience</p>
+
+	<p class="">How would you rate this seller on a scale of 5?</p>
+
 	<rating ng-model="view.offers.rate.score" max="view.offers.rate.max" ng-click="view.offers.rate.setScore(view.offers.rate.score)"></rating>
-	<p class="text-center">{{view.offers.rate.star}}</p>
+	<p class="text-center rating-info">{{view.offers.rate.star}}</p>
 	<input
 		type="textarea"
 		placeholder="Comments"
