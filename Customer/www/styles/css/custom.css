@@ -1391,10 +1391,10 @@ label.status-label {
 }
 .products-filter-view label.item-radio .item-content .sel-count {
   float: right;
-  width: 19px;
-  height: 19px;
-  line-height: 21px;
-  font-size: 14px;
+  min-width: 18px;
+  height: 16px;
+  line-height: 18px;
+  font-size: 12px;
   color: #fff;
   background-color: #444;
   text-align: center;
@@ -1403,6 +1403,7 @@ label.status-label {
   position: absolute;
   right: 0;
   bottom: 0;
+  padding: 0 3px;
 }
 .products-filter-view label.item-radio input:checked ~ .item-content {
   background-color: #ffffff;
@@ -1410,7 +1411,6 @@ label.status-label {
 }
 .products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before {
   content: "\f2aa";
-  margin-bottom: 2px !important;
 }
 .products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
   content: "₹";
