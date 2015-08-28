@@ -1,7 +1,7 @@
-<!-- @extends('app') -->
+@extends('app')
 
 @section('content')
-<div class="content col-md-offset-3 col-md-6">  
+<div class="content col-md-offset-3 col-md-6 login">  
     
 		<div class="page-title m-l-5">	
 			<h3 class="inline"><span class="semi-bold">Login</span></h3>

@@ -184,6 +184,20 @@
   </script>
     <script type="text/javascript">
         $(".select2").select2();
-        </script>    
+        </script>  
+
+  <script type="text/javascript">
+    var win      = $(window),
+      fxel     = $('thead'),
+      eloffset = fxel.offset().top;
+
+    win.scroll(function() {
+      if (eloffset < win.scrollTop()) {
+          fxel.addClass("fixed");
+      } else {
+          fxel.removeClass("fixed");
+      }
+    });
+  </script>  
 </body>
 </html>
