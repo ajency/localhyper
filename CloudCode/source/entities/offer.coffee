@@ -460,6 +460,7 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
 Parse.Cloud.define 'acceptOffer', (request, response) ->
     offerId = request.params.offerId
     unacceptedOfferIds = request.params.unacceptedOfferIds
+    acceptedDateIST = new Date() #request.params.acceptedDateIST
 
     acceptOfferCredits = 5
     
@@ -524,16 +525,13 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
 
                     # @todo save delivery date correctly
                     claimedDelivery = acceptedOffer.get "deliveryTime"
-                    deliveryDuration = parseInt claimedDelivery.value
+                    deliveryDurationInDays = parseInt claimedDelivery.value # number of delivery days 
 
                     offerAcceptedDate = acceptedOffer.updatedAt
 
-                    sellerOffDays = ["Sunday","Monday"]
+                    sellerOffDays = sellerObj.get "offDays"
 
-                    sellerWorkTimings  = ["9:00:00", "18:00:00"]
-
-                    # deliveryDate = getDeliveryDate(claimedDelivery,offerAcceptedDate,sellerOffDays,sellerWorkTimings)
-                    deliveryDate = moment(offerAcceptedDate).add(deliveryDuration , "hours").toDate()
+                    deliveryDate = getDeliveryDate(acceptedDateIST,sellerOffDays,deliveryDurationInDays)
 
                     acceptedOffer.set("deliveryDate",deliveryDate)
                     acceptedOffer.save()
