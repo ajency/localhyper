@@ -5,14 +5,18 @@
 
 	<p class="seller-info">Tell us about yout buying experience</p>
 
-	<p class="">How would you rate this seller on a scale of 5?</p>
+	<p class="rate-scale">How would you rate this seller on a scale of 5?</p>
 
-	<rating ng-model="view.offers.rate.score" max="view.offers.rate.max" ng-click="view.offers.rate.setScore(view.offers.rate.score)"></rating>
-	<p class="text-center rating-info">{{view.offers.rate.star}}</p>
-	<input
-		type="textarea"
-		placeholder="Comments"
-		class="comments-input"
-		ng-model="view.offers.rate.comment">
+	<div class="rating-inner-wrap">
+		<rating ng-model="view.offers.rate.score" max="view.offers.rate.max" ng-click="view.offers.rate.setScore(view.offers.rate.score)"></rating>
+		<p class="text-center rating-info">{{view.offers.rate.star}}</p>
+		<!-- <input
+			type="textarea"
+			placeholder="Comments"
+			class="comments-input"
+			ng-model="view.offers.rate.comment"> -->
+		<!--Please convert the above input into a textarea-->
+		<textarea name="" id="" rows="4" placeholder="Your Comments"></textarea>
+	</div>
 	<!-- <br> -->
 </div>

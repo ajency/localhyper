@@ -828,15 +828,27 @@ button.button.button-assertive b {
 .rating-wrap h4 {
   font-size: 16px;
   margin-bottom: 2px;
+  font-weight: bold;
 }
 .rating-wrap p.seller-name {
   font-size: 12px;
   text-align: center;
-  margin-bottom: 0;
+  margin-bottom: 10px;
 }
 .rating-wrap p.seller-info {
   font-size: 13px;
   text-align: center;
+  margin-bottom: 2px;
+  padding-top: 10px;
+  border-top: 1px solid #ccc;
+}
+.rating-wrap p.rate-scale {
+  font-size: 13px;
+  text-align: center;
+}
+.rating-wrap .rating-inner-wrap {
+  background: #fff;
+  padding-top: 12px;
 }
 .rating-wrap ul.rating {
   text-align: center;
@@ -856,6 +868,11 @@ button.button.button-assertive b {
   margin-bottom: 0;
   margin-top: 7px;
   text-transform: uppercase;
+}
+.rating-wrap textarea {
+  border-top: 1px solid #ddd;
+  padding: 8px;
+  margin-top: 10px;
 }
 .list-cont {
   position: relative;
