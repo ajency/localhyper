@@ -260,10 +260,10 @@ Parse.Cloud.define 'getProducts', (request, response) ->
                         otherFilterColumnNames = _.keys(otherFilters)
                         
                         _.each otherFilterColumnNames , (otherFilterColumnName) ->
+                            #console.log otherFilterColumnName
                             specificFilterArr = otherFilters[otherFilterColumnName]
+                            #console.log specificFilterArr
                             if otherFilterColumnName.indexOf("filter") > -1   
-
-                                console.log specificFilterArr
 
                                 if specificFilterArr.length > 0
                                     attributeValuePointers = _.map(specificFilterArr, (attributeValueId) ->
@@ -275,7 +275,7 @@ Parse.Cloud.define 'getProducts', (request, response) ->
             
                                     query.containedIn(otherFilterColumnName,attributeValuePointers)
                             else
-                               # response.success otherFilterColumnName
+                                #response.success otherFilterColumnName
                                 if specificFilterArr.length is 2
                                     startRange = parseInt specificFilterArr[0]
                                     endRange = parseInt specificFilterArr[1]

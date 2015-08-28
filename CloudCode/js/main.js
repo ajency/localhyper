@@ -1959,7 +1959,6 @@
                 var attributeValuePointers, endRange, specificFilterArr, startRange;
                 specificFilterArr = otherFilters[otherFilterColumnName];
                 if (otherFilterColumnName.indexOf("filter") > -1) {
-                  console.log(specificFilterArr);
                   if (specificFilterArr.length > 0) {
                     attributeValuePointers = _.map(specificFilterArr, function(attributeValueId) {
                       var attributeValuePointer;
