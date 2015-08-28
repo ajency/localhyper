@@ -204,7 +204,7 @@ class FormatPhpExcel
 				}else if($type == 'Price'){
 					if($value == 'price_source'){
 						$label = 'price source';
-						$options = 'flipkart,snapdeal';
+						$options = 'flipkart,snapdeal,amazon';
 						self::single_cell_dropdown($sheet, $cell, $label, $options);
 					}
 				}else if($type == 'Products'){
