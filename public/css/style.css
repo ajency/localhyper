@@ -8120,6 +8120,9 @@ body.rtl .footer-widget {
 label {
   font-size: 15px;
 }
+.no-sidebar {
+  margin-left: 0;
+}
 .logo {
   margin: 0 14px;
 }
