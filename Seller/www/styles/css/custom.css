@@ -2077,6 +2077,11 @@ h4 .WebRupee.subdued {
 .errors {
   padding-top: 65px;
 }
-.errors .errors h3 {
+.errors h1,
+.errors h2,
+.errors h3,
+.errors h4,
+.errors h5,
+.errors h6 {
   text-transform: uppercase;
 }
