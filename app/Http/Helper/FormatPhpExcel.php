@@ -198,7 +198,7 @@ class FormatPhpExcel
 						self::single_cell_dropdown($sheet, $cell, $label, $options);
 					}else if($value == 'type'){
 						$label = 'type';
-						$options = 'select,text';
+						$options = 'select,text,range';
 						self::single_cell_dropdown($sheet, $cell, $label, $options);
 					}
 				}else if($type == 'Price'){
@@ -235,7 +235,7 @@ class FormatPhpExcel
 							$end_row = $at_column['count'];
 							$formula = 'Index!$'.$at_column['column'].'$2:$'.$at_column['column'].'$'.$end_row;
 							
-							if ($attributesArr[$attributeId]['type'] == "select") {
+							if ($attributesArr[$attributeId]['type'] == "select" || $attributesArr[$attributeId]['type'] == "range") {
 								self::single_cell_dropdown_from_list($sheet, $cell, $label, $formula);
 							}
 
@@ -249,7 +249,7 @@ class FormatPhpExcel
 							$next_cell = $nextColumn.$x;
 							$vlookup_formula = '=VLOOKUP('.$cell.',Index!'.$at_column['column'].'2:'.$at_nextColumn.$end_row.',2,0)';
 
-							if ($attributesArr[$attributeId]['type'] == "select") {
+							if ($attributesArr[$attributeId]['type'] == "select" || $attributesArr[$attributeId]['type'] == "range") {
 								$sheet->setCellValue($next_cell, $vlookup_formula);
 							}
 

@@ -852,7 +852,7 @@ class AttributeController extends Controller
 			  	if (isset($response["result"])) {
 			  		foreach ($response["result"]["attributes"] as $attributeArr) {
 
-			  			if ($attributeArr['type'] == "select") {
+			  			if ($attributeArr['type'] == "select" || $attributeArr['type'] == "range") {
 			  				$filteredAttrib[] = $attributeArr;
 			  			}
 
