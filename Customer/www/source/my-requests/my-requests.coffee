@@ -38,20 +38,8 @@ angular.module 'LocalHyper.myRequests'
 						templateUrl: 'views/my-requests/my-request-filter-popup.html'
 						hideOnStateChange: true
 
-				# loadModal : ->
-				# 	$ionicModal.fromTemplateUrl 'views/my-requests/my-requests-filter.html', 
-				# 		scope: $scope,
-				# 		animation: 'slide-in-up'
-				# 		hardwareBackButtonClose: false
-				# 	.then (modal)=>
-				# 		@modal = modal
-
 				noChangeInSelection : ->
 					_.isEqual _.sortBy(@originalAttrs), _.sortBy(@attributes)
-
-				# openModal : ->
-				# 	@originalAttrs = JSON.parse JSON.stringify(@attributes)
-					# @modal.show()
 
 				onLoadingHidden : ->
 					console.log('df')
@@ -61,7 +49,6 @@ angular.module 'LocalHyper.myRequests'
 				closeModal : ->
 					if @noChangeInSelection()
 						$ionicLoading.hide()
-						# @modal.hide()
 					else
 						msg = 'Your filter selection will go away'
 						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']
@@ -70,7 +57,6 @@ angular.module 'LocalHyper.myRequests'
 								when 1
 									@attributes = @originalAttrs
 									$ionicLoading.hide()
-									# @modal.hide()
 								when 2
 									@onApply()
 
@@ -88,7 +74,6 @@ angular.module 'LocalHyper.myRequests'
 					
 					@setExcerpt()
 					$ionicLoading.hide()
-					# @modal.hide()
 					$scope.view.reFetch()
 
 				setExcerpt : ->
@@ -101,7 +86,7 @@ angular.module 'LocalHyper.myRequests'
 			
 
 			init : ->
-				# @filter.loadModal()
+				
 
 			reFetch : ->
 				@display = 'loader'
@@ -188,11 +173,6 @@ angular.module 'LocalHyper.myRequests'
 				filter.closeModal() 
 			else
 				App.goBack -1
-
-			# if filter.modal.isShown()
-			# 	filter.closeModal() 
-			# else
-			# 	App.goBack -1
 
 		$scope.$on '$ionicView.enter', ->
 			$ionicPlatform.onHardwareBackButton onDeviceBack
