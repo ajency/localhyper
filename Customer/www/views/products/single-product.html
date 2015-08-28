@@ -16,7 +16,8 @@
 			<div ng-switch-when="noError" class="bg-white">
 				<img
 					class="aj-sp-img img-responsive"
-					ng-src="{{view.product.images[0].src}}">
+					ng-src="{{view.product.images[0].src}}"
+					onerror="this.src='./img/gray-bg.png';">
 
 				<div>
 					<div class="row">

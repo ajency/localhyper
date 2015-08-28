@@ -29,7 +29,9 @@
 						ng-click="view.onImageClick(request.product.id, $event);">
 
 						<div class="item-avatar border-none margin-none">
-							<img ng-src="{{request.product.images[0].src}}">
+							<img 
+								ng-src="{{request.product.images[0].src}}"
+								onerror="this.src='./img/gray-bg.png';">
 						</div>
 					</div>
 
