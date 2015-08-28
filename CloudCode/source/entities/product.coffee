@@ -164,7 +164,7 @@ Parse.Cloud.define  'productImport', (request, response) ->
     , (error) ->
         response.error error           
 
-Parse.Cloud.define 'getProducts', (request, response) ->
+Parse.Cloud.define 'getProductsNew', (request, response) ->
     categoryId = request.params.categoryId
     selectedFilters = request.params.selectedFilters # "all" / {"brand": "","price": "", "other_filters": [{"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}, {"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}]} 
     sortBy =  request.params.sortBy
@@ -458,7 +458,7 @@ Parse.Cloud.define 'getProduct', (request, response) ->
         response.error error    
 
 
-Parse.Cloud.define 'getProductsNew', (request, response) ->
+Parse.Cloud.define 'getProducts', (request, response) ->
     categoryId = request.params.categoryId
     selectedFilters = request.params.selectedFilters # "all" / {"brand": "","price": "", "other_filters": [{"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}, {"attribId": "sfd3354", "values": ["dsf455","asdsa34","asd356"]}]} 
     sortBy =  request.params.sortBy

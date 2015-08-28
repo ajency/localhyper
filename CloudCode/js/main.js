@@ -1878,7 +1878,7 @@
     });
   });
 
-  Parse.Cloud.define('getProducts', function(request, response) {
+  Parse.Cloud.define('getProductsNew', function(request, response) {
     var ascending, categoryId, categoryQuery, displayLimit, page, searchKeywords, selectedFilters, sortBy;
     categoryId = request.params.categoryId;
     selectedFilters = request.params.selectedFilters;
@@ -2139,7 +2139,7 @@
     });
   });
 
-  Parse.Cloud.define('getProductsNew', function(request, response) {
+  Parse.Cloud.define('getProducts', function(request, response) {
     var ascending, categoryId, categoryQuery, displayLimit, page, searchKeywords, selectedFilters, sortBy;
     categoryId = request.params.categoryId;
     selectedFilters = request.params.selectedFilters;
