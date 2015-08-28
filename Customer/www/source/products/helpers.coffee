@@ -4,13 +4,19 @@ angular.module 'LocalHyper.products'
 .directive 'ajLoadingBackDrop', ['$timeout', '$ionicLoading', ($timeout, $ionicLoading)->
 
 	restrict: 'A'
+	scope:
+		onHidden: '&'
+
 	link: (scope, el, attrs)->
+
+		onContainerClick = (event)->
+			if $(event.target).hasClass 'loading-container'
+				$('.loading-container').off 'click', onContainerClick
+				scope.$apply ->
+					scope.onHidden()
 		
 		$timeout ->
-			$('.loading-container').on 'click', (event)->
-				isBackdrop = $(event.target).hasClass 'loading-container'
-				if isBackdrop
-					$ionicLoading.hide()
+			$('.loading-container').on 'click', onContainerClick
 ]
 
 

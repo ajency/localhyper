@@ -241,3 +241,11 @@ ul.rating li {
 ul.rating li i {
   font-size: 20px;
 }
+
+/* myrequest popup */
+
+.sort-popup-my-request {
+    overflow: hidden !important;
+    width: 70% !important;
+    height: 343px !important;
+}

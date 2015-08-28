@@ -2,8 +2,8 @@ angular.module 'LocalHyper.myRequests'
 
 
 .controller 'MyRequestCtrl', ['$scope', 'App', 'RequestAPI', '$timeout', '$ionicModal'
-	, 'CDialog', '$ionicPlatform', '$rootScope'
-	, ($scope, App, RequestAPI, $timeout, $ionicModal, CDialog, $ionicPlatform, $rootScope)->
+	, 'CDialog', '$ionicPlatform', '$rootScope', '$ionicLoading'
+	, ($scope, App, RequestAPI, $timeout, $ionicModal, CDialog, $ionicPlatform, $rootScope, $ionicLoading)->
 
 		$scope.view = 
 			display: 'loader'
@@ -31,24 +31,37 @@ angular.module 'LocalHyper.myRequests'
 					@excerpt = ''
 					@clearFilters()
 
-				loadModal : ->
-					$ionicModal.fromTemplateUrl 'views/my-requests/my-requests-filter.html', 
-						scope: $scope,
-						animation: 'slide-in-up'
-						hardwareBackButtonClose: false
-					.then (modal)=>
-						@modal = modal
+				OpenFilterPopup : ->
+					@originalAttrs = JSON.parse JSON.stringify(@attributes)
+					$ionicLoading.show
+						scope: $scope
+						templateUrl: 'views/my-requests/my-request-filter-popup.html'
+						hideOnStateChange: true
+
+				# loadModal : ->
+				# 	$ionicModal.fromTemplateUrl 'views/my-requests/my-requests-filter.html', 
+				# 		scope: $scope,
+				# 		animation: 'slide-in-up'
+				# 		hardwareBackButtonClose: false
+				# 	.then (modal)=>
+				# 		@modal = modal
 
 				noChangeInSelection : ->
 					_.isEqual _.sortBy(@originalAttrs), _.sortBy(@attributes)
 
-				openModal : ->
-					@originalAttrs = JSON.parse JSON.stringify(@attributes)
-					@modal.show()
+				# openModal : ->
+				# 	@originalAttrs = JSON.parse JSON.stringify(@attributes)
+					# @modal.show()
+
+				onLoadingHidden : ->
+					console.log('df')
+					if App.currentState is 'my-requests'
+						@closeModal()
 
 				closeModal : ->
 					if @noChangeInSelection()
-						@modal.hide()
+						$ionicLoading.hide()
+						# @modal.hide()
 					else
 						msg = 'Your filter selection will go away'
 						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']
@@ -56,7 +69,8 @@ angular.module 'LocalHyper.myRequests'
 							switch btnIndex
 								when 1
 									@attributes = @originalAttrs
-									@modal.hide()
+									$ionicLoading.hide()
+									# @modal.hide()
 								when 2
 									@onApply()
 
@@ -73,7 +87,8 @@ angular.module 'LocalHyper.myRequests'
 							@selected = _.without @selected, attr.value
 					
 					@setExcerpt()
-					@modal.hide()
+					$ionicLoading.hide()
+					# @modal.hide()
 					$scope.view.reFetch()
 
 				setExcerpt : ->
@@ -86,7 +101,7 @@ angular.module 'LocalHyper.myRequests'
 			
 
 			init : ->
-				@filter.loadModal()
+				# @filter.loadModal()
 
 			reFetch : ->
 				@display = 'loader'
@@ -169,10 +184,15 @@ angular.module 'LocalHyper.myRequests'
 		
 		onDeviceBack = ->
 			filter = $scope.view.filter
-			if filter.modal.isShown()
-				filter.closeModal()
+			if $('.loading-container').hasClass 'active'
+				filter.closeModal() 
 			else
 				App.goBack -1
+
+			# if filter.modal.isShown()
+			# 	filter.closeModal() 
+			# else
+			# 	App.goBack -1
 
 		$scope.$on '$ionicView.enter', ->
 			$ionicPlatform.onHardwareBackButton onDeviceBack

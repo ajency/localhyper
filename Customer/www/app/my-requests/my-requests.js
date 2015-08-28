@@ -1,5 +1,5 @@
 angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
-  '$scope', 'App', 'RequestAPI', '$timeout', '$ionicModal', 'CDialog', '$ionicPlatform', '$rootScope', function($scope, App, RequestAPI, $timeout, $ionicModal, CDialog, $ionicPlatform, $rootScope) {
+  '$scope', 'App', 'RequestAPI', '$timeout', '$ionicModal', 'CDialog', '$ionicPlatform', '$rootScope', '$ionicLoading', function($scope, App, RequestAPI, $timeout, $ionicModal, CDialog, $ionicPlatform, $rootScope, $ionicLoading) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -45,28 +45,27 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
           this.excerpt = '';
           return this.clearFilters();
         },
-        loadModal: function() {
-          return $ionicModal.fromTemplateUrl('views/my-requests/my-requests-filter.html', {
+        OpenFilterPopup: function() {
+          this.originalAttrs = JSON.parse(JSON.stringify(this.attributes));
+          return $ionicLoading.show({
             scope: $scope,
-            animation: 'slide-in-up',
-            hardwareBackButtonClose: false
-          }).then((function(_this) {
-            return function(modal) {
-              return _this.modal = modal;
-            };
-          })(this));
+            templateUrl: 'views/my-requests/my-request-filter-popup.html',
+            hideOnStateChange: true
+          });
         },
         noChangeInSelection: function() {
           return _.isEqual(_.sortBy(this.originalAttrs), _.sortBy(this.attributes));
         },
-        openModal: function() {
-          this.originalAttrs = JSON.parse(JSON.stringify(this.attributes));
-          return this.modal.show();
+        onLoadingHidden: function() {
+          console.log('df');
+          if (App.currentState === 'my-requests') {
+            return this.closeModal();
+          }
         },
         closeModal: function() {
           var msg;
           if (this.noChangeInSelection()) {
-            return this.modal.hide();
+            return $ionicLoading.hide();
           } else {
             msg = 'Your filter selection will go away';
             return CDialog.confirm('Exit Filter?', msg, ['Exit Anyway', 'Apply & Exit']).then((function(_this) {
@@ -74,7 +73,7 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
                 switch (btnIndex) {
                   case 1:
                     _this.attributes = _this.originalAttrs;
-                    return _this.modal.hide();
+                    return $ionicLoading.hide();
                   case 2:
                     return _this.onApply();
                 }
@@ -101,7 +100,7 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
             };
           })(this));
           this.setExcerpt();
-          this.modal.hide();
+          $ionicLoading.hide();
           return $scope.view.reFetch();
         },
         setExcerpt: function() {
@@ -119,9 +118,7 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
           return this.excerpt = filterNames.join(', ');
         }
       },
-      init: function() {
-        return this.filter.loadModal();
-      },
+      init: function() {},
       reFetch: function() {
         this.display = 'loader';
         this.refresh = false;
@@ -174,7 +171,7 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
         })(this));
       },
       onSuccess: function(data, displayLimit) {
-        var requestsSize, _requests;
+        var _requests, requestsSize;
         this.display = 'noError';
         _requests = data;
         requestsSize = _.size(_requests);
@@ -221,7 +218,7 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
     onDeviceBack = function() {
       var filter;
       filter = $scope.view.filter;
-      if (filter.modal.isShown()) {
+      if ($('.loading-container').hasClass('active')) {
         return filter.closeModal();
       } else {
         return App.goBack(-1);

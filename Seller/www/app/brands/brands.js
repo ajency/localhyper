@@ -41,7 +41,7 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
         return empty;
       },
       setBrandSelection: function() {
-        var chain, _brandIds, _brands;
+        var _brandIds, _brands, chain;
         if (this.isCategoryChainsEmpty()) {
           _.each(this.brands, function(brand) {
             return brand.selected = false;
