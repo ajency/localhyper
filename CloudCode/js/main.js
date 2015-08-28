@@ -2959,21 +2959,33 @@
     queryDate.setTime(time24HoursAgo);
     queryRequests.greaterThanOrEqualTo("createdAt", queryDate);
     return queryRequests.find().then(function(requestObjects) {
-      var offerCount, requestCount, result;
+      var customerObj, offerCount, queryNotification, requestCount, result;
       requestCount = requestObjects.length;
       offerCount = 0;
       if (requestCount === 0) {
         offerCount = 0;
+        result = {
+          "requestCount": requestCount,
+          "offerCount": offerCount
+        };
+        return response.success(result);
       } else {
-        _.each(requestObjects, function(requestObject) {
-          return offerCount += requestObject.get("offerCount");
+        customerObj = new Parse.User();
+        customerObj.id = customerId;
+        queryNotification = new Parse.Query("Notification");
+        queryNotification.equalTo("type", "Offer");
+        queryNotification.equalTo("hasSeen", false);
+        queryNotification.equalTo("recipientUser", customerObj);
+        return queryNotification.count().then(function(count) {
+          result = {
+            "requestCount": requestCount,
+            "offerCount": count
+          };
+          return response.success(result);
+        }, function(error) {
+          return response.error(error);
         });
       }
-      result = {
-        "requestCount": requestCount,
-        "offerCount": offerCount
-      };
-      return response.success(result);
     }, function(error) {
       return response.error(error);
     });

@@ -511,15 +511,31 @@ Parse.Cloud.define 'getOpenRequestCount' , (request, response) ->
 
         if requestCount is 0 
             offerCount = 0
+            result = 
+                "requestCount" : requestCount
+                "offerCount" : offerCount    
+            response.success result
         else
-             _.each requestObjects , (requestObject) ->
-                offerCount += requestObject.get("offerCount")
+             # _.each requestObjects , (requestObject) ->
+             #    offerCount += requestObject.get("offerCount")
+            #Customer= Parse.Object.extend(Parse.User)
 
-        result = 
-            "requestCount" : requestCount
-            "offerCount" : offerCount
+            customerObj = new Parse.User()
+            customerObj.id = customerId
+            
+            queryNotification = new Parse.Query("Notification")
+            queryNotification.equalTo("type" , "Offer")
+            queryNotification.equalTo("hasSeen" , false)
+            queryNotification.equalTo("recipientUser" , customerObj)
+            queryNotification.count()
+            .then (count)->
+                result = 
+                    "requestCount" : requestCount
+                    "offerCount" : count    
+                response.success result
 
-        response.success result
+            , (error) ->
+                response.error error
 
 
     , (error) ->
