@@ -122,7 +122,7 @@ class SellerController extends Controller
                               'brands' => implode(", ",$brands),       
                               'categories' => implode(", ",$categories),
                               'offersCount' => $offerCount .'/'.$sellerRequestCount,
-                              'successfullCount' => $offerSuccessfullCount,
+                              'offerAcceptedCount' => $offerAcceptedCount,
                               'avgRating' => $avgRating,
                               'balanceCredit' => $balanceCredit,
                               'lastLogin' =>$seller->get("lastLogin")->format('d-m-Y'),
@@ -156,7 +156,7 @@ class SellerController extends Controller
         $headers []= 'Brands' ;
         $headers []= 'CATEGORY' ;
         $headers []= 'RESPONSE RATIO' ;
-        $headers []= 'NO. OF SUCCESSFULL OFFERS' ;
+        $headers []= 'NO. OF Accepted OFFERS' ;
         $headers []= 'AVG RATINGS' ;
         $headers []= 'BALANCE CREDITS' ;
         $headers []= 'REGISTERED DATE' ;
