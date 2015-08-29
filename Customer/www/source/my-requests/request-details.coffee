@@ -3,9 +3,9 @@ angular.module 'LocalHyper.myRequests'
 
 .controller 'RequestDetailsCtrl', ['$scope', 'RequestAPI', '$interval', 'TimeString'
 	, 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup'
-	, 'User', '$window'
+	, 'User', '$window', '$ionicLoading', '$ionicPlatform'
 	, ($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner
-	, CToast, $rootScope, CDialog, $ionicPopup, User, $window)->
+	, CToast, $rootScope, CDialog, $ionicPopup, User, $window , $ionicLoading, $ionicPlatform)->
 
 		$scope.view = 
 			request: RequestAPI.requestDetails 'get'
@@ -102,31 +102,27 @@ angular.module 'LocalHyper.myRequests'
 						.then -> App.notification.decrement()
 
 				openRatePopup : (seller)->
-					@rate.star = 'Poor'
-					@rate.score = 1
-					@rate.comment = ''
-					$ionicPopup.show
-						templateUrl: 'views/my-requests/rate.html'
-						title: 'Rate This Seller'
-						scope: $scope
-						buttons: [
-							{ text: 'Cancel' }
-							{
-								text: '<b>Submit</b>'
-								type: 'button-assertive'
-								onTap: (e)=>
-									@rateSeller seller
-							}]
+					if (seller.isSellerRated == false)
+						@rate.sellerId = seller.id
+						@rate.sellerName = seller.businessName
+						@rate.star = 'Poor'
+						@rate.score = 1
+						@rate.comment = ''
+						
+						$ionicLoading.show
+							scope: $scope
+							templateUrl: 'views/my-requests/rate.html'
+							hideOnStateChange: true
 
-				rateSeller : (seller)->
+				rateSeller : ()->
+					$ionicLoading.hide()
 					CSpinner.show '', 'Submitting your review...'
 					RequestAPI.updateSellerRating
 						"customerId": User.getId()
-						"sellerId": seller.id
+						"sellerId": @rate.sellerId
 						"ratingInStars": @rate.score
 						"comments": @rate.comment
 					.then ->
-						seller.isSellerRated = true
 						CToast.show 'Thanks for your feedback'
 					, (error)->
 						CToast.show 'An error occurred, please try again'
@@ -244,6 +240,10 @@ angular.module 'LocalHyper.myRequests'
 				else
 					false
 
+		onDeviceBack = ->
+				$ionicLoading.hide()
+				App.goBack -1	
+
 		inAppNotificationEvent = $rootScope.$on 'in:app:notification', (e, obj)->
 			payload = obj.payload
 			if payload.type is 'new_offer'
@@ -260,6 +260,12 @@ angular.module 'LocalHyper.myRequests'
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
 			if !viewData.enableBack
 				viewData.enableBack = true
+
+		$scope.$on '$ionicView.enter', ->
+			$ionicPlatform.onHardwareBackButton onDeviceBack
+
+		$scope.$on '$ionicView.leave', ->
+			$ionicPlatform.offHardwareBackButton onDeviceBack
 ]
 
 

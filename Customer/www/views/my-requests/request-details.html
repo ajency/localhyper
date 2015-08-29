@@ -214,19 +214,12 @@
 									</p>
 								</h3>
 
-								<button
+								<!--button
 									class="button button-dark button-small pull-r ight rating-btn"
 									ng-if="!offer.seller.isSellerRated"
 									ng-click="view.offers.openRatePopup(offer.seller);">
 									Rate Seller
-								</button>
-
-								<!-- <button
-									class="button button-dark button-small pull-right rating-btn"
-									ng-if="!offer.seller.isSellerRated"
-									ng-click="view.offers.openRatePopup(offer.seller);">
-									Rate Seller
-								</button> -->
+								</button-->
 							</div>
 						</div>
 					</div>
@@ -282,6 +275,11 @@
 					<div
 						class="row row-fluid offer-vals"
 						ng-if="offer.status === 'accepted'">
+
+						<div 
+							ng-if="view.request.status == 'successful'"
+							ng-init="view.offers.openRatePopup(offer.seller);">
+						</div>
 
 						<div class="col align-center p-a-0 p-r-6">
 							<p class="info">Price Offered</p>

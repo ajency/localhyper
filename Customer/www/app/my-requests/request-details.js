@@ -1,6 +1,6 @@
 angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
-  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User', '$window', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup, User, $window) {
-    var inAppNotificationEvent;
+  '$scope', 'RequestAPI', '$interval', 'TimeString', 'App', '$timeout', 'CSpinner', 'CToast', '$rootScope', 'CDialog', '$ionicPopup', 'User', '$window', '$ionicLoading', '$ionicPlatform', function($scope, RequestAPI, $interval, TimeString, App, $timeout, CSpinner, CToast, $rootScope, CDialog, $ionicPopup, User, $window, $ionicLoading, $ionicPlatform) {
+    var inAppNotificationEvent, onDeviceBack;
     $scope.view = {
       request: RequestAPI.requestDetails('get'),
       display: 'loader',
@@ -99,37 +99,28 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           }
         },
         openRatePopup: function(seller) {
-          this.rate.star = 'Poor';
-          this.rate.score = 1;
-          this.rate.comment = '';
-          return $ionicPopup.show({
-            templateUrl: 'views/my-requests/rate.html',
-            title: 'Rate This Seller',
-            scope: $scope,
-            buttons: [
-              {
-                text: 'Cancel'
-              }, {
-                text: '<b>Submit</b>',
-                type: 'button-assertive',
-                onTap: (function(_this) {
-                  return function(e) {
-                    return _this.rateSeller(seller);
-                  };
-                })(this)
-              }
-            ]
-          });
+          if (seller.isSellerRated === false) {
+            this.rate.sellerId = seller.id;
+            this.rate.sellerName = seller.businessName;
+            this.rate.star = 'Poor';
+            this.rate.score = 1;
+            this.rate.comment = '';
+            return $ionicLoading.show({
+              scope: $scope,
+              templateUrl: 'views/my-requests/rate.html',
+              hideOnStateChange: true
+            });
+          }
         },
-        rateSeller: function(seller) {
+        rateSeller: function() {
+          $ionicLoading.hide();
           CSpinner.show('', 'Submitting your review...');
           return RequestAPI.updateSellerRating({
             "customerId": User.getId(),
-            "sellerId": seller.id,
+            "sellerId": this.rate.sellerId,
             "ratingInStars": this.rate.score,
             "comments": this.rate.comment
           }).then(function() {
-            seller.isSellerRated = true;
             return CToast.show('Thanks for your feedback');
           }, function(error) {
             return CToast.show('An error occurred, please try again');
@@ -270,6 +261,10 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         }
       }
     };
+    onDeviceBack = function() {
+      $ionicLoading.hide();
+      return App.goBack(-1);
+    };
     inAppNotificationEvent = $rootScope.$on('in:app:notification', function(e, obj) {
       var payload;
       payload = obj.payload;
@@ -288,10 +283,16 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       inAppNotificationEvent();
       return $interval.cancel($scope.view.interval);
     });
-    return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
+    $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
       if (!viewData.enableBack) {
         return viewData.enableBack = true;
       }
+    });
+    $scope.$on('$ionicView.enter', function() {
+      return $ionicPlatform.onHardwareBackButton(onDeviceBack);
+    });
+    return $scope.$on('$ionicView.leave', function() {
+      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
     });
   }
 ]).controller('EachOfferTimeCtrl', [

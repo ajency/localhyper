@@ -249,3 +249,10 @@ ul.rating li i {
     width: 70% !important;
     height: 343px !important;
 }
+
+/* star rating  popup */
+.rating-popup {
+    overflow: hidden !important;
+    width: 70% !important;
+    height: 400px !important;
+}
