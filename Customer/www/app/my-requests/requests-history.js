@@ -61,7 +61,7 @@ angular.module('LocalHyper.myRequests').controller('RequestsHistoryCtrl', [
         })(this));
       },
       onSuccess: function(data, displayLimit) {
-        var _requests, requestsSize;
+        var requestsSize, _requests;
         this.display = 'noError';
         _requests = data;
         requestsSize = _.size(_requests);
