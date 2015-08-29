@@ -1386,7 +1386,7 @@
     var Offer, acceptOfferCredits, acceptedDateIST, acceptedOffer, offerId, offerSavedArr, offersToBeUpdated, unacceptedOfferIds;
     offerId = request.params.offerId;
     unacceptedOfferIds = request.params.unacceptedOfferIds;
-    acceptedDateIST = new Date();
+    acceptedDateIST = request.params.acceptedDateIST;
     acceptOfferCredits = 5;
     Offer = Parse.Object.extend('Offer');
     offersToBeUpdated = [];

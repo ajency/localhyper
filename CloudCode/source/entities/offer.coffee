@@ -460,7 +460,7 @@ Parse.Cloud.define 'getRequestOffers' , (request, response) ->
 Parse.Cloud.define 'acceptOffer', (request, response) ->
     offerId = request.params.offerId
     unacceptedOfferIds = request.params.unacceptedOfferIds
-    acceptedDateIST = new Date() #request.params.acceptedDateIST
+    acceptedDateIST = request.params.acceptedDateIST
 
     acceptOfferCredits = 5
     
