@@ -29,10 +29,11 @@
                 </div>
                 <div class="col-sm-4">
                     <button type="button" class="btn btn-info btn-cons m-t-25" onclick="getCategoryProducts(0);" ><i class="fa fa-send"></i> Go</button>
+                    <span class="loader hidden"></span>
                 </div>
             </div>
             <!--List products-->
-          <table class="table table-bordered productPriceList" id="example2">
+          <table class="table table-bordered productPriceList hidden" id="example2">
           <thead>
             <tr>
               <th>Product Name</th>
