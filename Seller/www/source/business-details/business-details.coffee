@@ -18,7 +18,7 @@ angular.module 'LocalHyper.businessDetails', []
 			delivery:
 				radius: 10
 				plus : ->
-					@radius++ if @radius < 100
+					@radius++ if @radius < 25
 				minus : ->
 					@radius-- if @radius > 1
 

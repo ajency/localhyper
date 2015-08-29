@@ -11,7 +11,7 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
       delivery: {
         radius: 10,
         plus: function() {
-          if (this.radius < 100) {
+          if (this.radius < 25) {
             return this.radius++;
           }
         },
