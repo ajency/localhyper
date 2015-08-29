@@ -406,7 +406,7 @@ button.button.button-assertive {
 	 		    border-left: 1px solid #FFF;
 	 		    border-bottom: 1px solid rgba(190, 190, 190, 0.63);
 	 		    &.activated {
-	 		    	background-color: #F5F4F4;
+	 		    	// background-color: #F5F4F4;
 	 		    }
  		    }
 
@@ -1402,20 +1402,19 @@ label.status-label {
 			// box-shadow: 0 0 0 #000;
 			.sel-count {
 				float: right;
-				width: 19px;
-				height: 19px;
-				line-height: 21px;
-				font-size: 14px;
+				min-width: 18px;
+				height: 16px;
+				line-height: 18px;
+				font-size: 12px;
 				color: #fff;
 				background-color: #444;
-				// border-radius: 50%;
 				text-align: center;
 				font-weight: bold;
 				margin-top: 0px;
-
 				position: absolute;
 				right: 0;
 				bottom: 0;
+				padding: 0 3px;
 			}
 		}
 		input:checked~.item-content {
@@ -1424,7 +1423,7 @@ label.status-label {
 		}
 		input[value=brand] + .item-content.ng-binding:before {
 			content: "\f2aa";
-			margin-bottom: 2px !important;
+			// margin-bottom: 2px !important;
 		}
 		input[value=price] + .item-content.ng-binding:before {
 			content:"₹";
@@ -2133,7 +2132,7 @@ label.status-label {
 
 .errors {
     padding-top: 65px;
-    .errors h3 {
+    h1, h2, h3, h4, h5, h6 {
 	    text-transform: uppercase;
 	}
 }

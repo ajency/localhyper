@@ -457,9 +457,6 @@ button.button.button-assertive b {
   border-left: 1px solid #FFF;
   border-bottom: 1px solid rgba(190, 190, 190, 0.63);
 }
-.sub-categories .border-card2.border-card.activated {
-  background-color: #F5F4F4;
-}
 .sub-categories .border-card {
   /*border-left: 1px solid @gray-lighter;*/
   border-right: 1px solid #cccccc;
@@ -1391,10 +1388,10 @@ label.status-label {
 }
 .products-filter-view label.item-radio .item-content .sel-count {
   float: right;
-  width: 19px;
-  height: 19px;
-  line-height: 21px;
-  font-size: 14px;
+  min-width: 18px;
+  height: 16px;
+  line-height: 18px;
+  font-size: 12px;
   color: #fff;
   background-color: #444;
   text-align: center;
@@ -1403,6 +1400,7 @@ label.status-label {
   position: absolute;
   right: 0;
   bottom: 0;
+  padding: 0 3px;
 }
 .products-filter-view label.item-radio input:checked ~ .item-content {
   background-color: #ffffff;
@@ -1410,7 +1408,6 @@ label.status-label {
 }
 .products-filter-view label.item-radio input[value=brand] + .item-content.ng-binding:before {
   content: "\f2aa";
-  margin-bottom: 2px !important;
 }
 .products-filter-view label.item-radio input[value=price] + .item-content.ng-binding:before {
   content: "₹";
@@ -2052,6 +2049,11 @@ label.status-label {
 .errors {
   padding-top: 65px;
 }
-.errors .errors h3 {
+.errors h1,
+.errors h2,
+.errors h3,
+.errors h4,
+.errors h5,
+.errors h6 {
   text-transform: uppercase;
 }
