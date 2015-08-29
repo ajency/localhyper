@@ -214,6 +214,8 @@ function getCategoryProducts(pageNo)
         alert('Please Select Category');
         error = true;
     }
+
+    $(".loader").removeClass('hidden');
     
     if(!error){
       
@@ -291,7 +293,10 @@ function getCategoryProducts(pageNo)
         pagination += (pageNo + 1) +' of '+response.data.numOfPages ;
         pagination += '<a '+nextPageLink+' href="#"> next </a> ';  
   
-        $("#pagination").html(pagination);    
+        $("#pagination").html(pagination);
+         
+        $(".productPriceList").removeClass('hidden'); 
+        $(".loader").addClass('hidden');   
         }
     }); 
         
