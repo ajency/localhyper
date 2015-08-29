@@ -207,7 +207,11 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         unacceptedOfferIds = _.without(offerIds, offerId);
         params = {
           "offerId": offerId,
-          "unacceptedOfferIds": unacceptedOfferIds
+          "unacceptedOfferIds": unacceptedOfferIds,
+          "acceptedDateIST": {
+            "__type": "Date",
+            "iso": new Date
+          }
         };
         return RequestAPI.acceptOffer(params).then((function(_this) {
           return function(data) {

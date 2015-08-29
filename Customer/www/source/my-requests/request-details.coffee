@@ -189,10 +189,12 @@ angular.module 'LocalHyper.myRequests'
 				offerId  = acceptedOffer.id
 				offerIds = _.pluck @offers.all, 'id'
 				unacceptedOfferIds = _.without offerIds, offerId
-
 				params = 
 					"offerId": offerId
 					"unacceptedOfferIds": unacceptedOfferIds
+					"acceptedDateIST" : 
+						"__type": "Date"
+						"iso": new Date 
 
 				RequestAPI.acceptOffer params
 				.then (data)=>
