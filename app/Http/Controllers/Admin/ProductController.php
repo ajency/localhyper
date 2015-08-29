@@ -583,7 +583,8 @@ class ProductController extends Controller
             $categoryQuery->equalTo("objectId",$categoryId);
  
             $productQuery->matchesQuery("category", $categoryQuery);
-            $productQuery->descending("createdAt");
+            #$productQuery->descending("createdAt");
+            $productQuery->ascending("name");
             
             #count
             $productCount = $productQuery->count();  

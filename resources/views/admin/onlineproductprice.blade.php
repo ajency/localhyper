@@ -30,7 +30,7 @@
                 <div class="col-sm-4">
                     <button type="button" class="btn btn-info btn-cons m-t-25" onclick="getCategoryProducts(0);" ><i class="fa fa-send"></i> Go</button>
 
-                    <span class="loader"></span>
+                    <span class="loader hidden"></span>
 
   
                 </div>
