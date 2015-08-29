@@ -324,6 +324,8 @@ class RequestController extends Controller
                           'bestPlatformPrice' =>$platformPrice,
                           'area' =>$request->get("area"),
                           'offerCount' =>$request->get("offerCount"),
+                          'comments' =>$request->get("comments"),
+                          'address' =>$request->get("address"),
                           'status' =>$request->get("status"),
                           'deliveryStatus' =>$deliveryStatus,
                           'date'=>convertToIST($request->getCreatedAt()->format('d-m-Y H:i:s')),  

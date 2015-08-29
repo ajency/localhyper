@@ -149,9 +149,16 @@ $(".update-search-keyword").click(function(){
 });
 
 $(".edit-balance-credit").click(function(){
-     var str = '<input type="text" name="balanceCredit" class="input-sm" ><button class="save-seller-credits btn btn-xs btn-mini btn-info m-t-5 pull-right">Save</button>';
+     var str = '<input type="text" name="balanceCredit" class="input-sm" ><button class="save-seller-credits btn btn-xs btn-mini btn-info m-t-5 pull-right">Save</button> <button class="cancel-seller-credits btn btn-xs btn-mini btn-info m-t-5 pull-right">Cancel</button>';
      $(this).closest('td').find(".balance-credit").append(str);
      $(this).closest('td').find(".edit-balance-credit").addClass("hidden");
+});
+
+
+$('.sellerList').on('click', '.cancel-seller-credits', function () { 
+    var container = $(this).closest('td');
+    container.find(".edit-balance-credit").removeClass("hidden"); 
+
 });
 
 $('.sellerList').on('click', '.save-seller-credits', function () { 

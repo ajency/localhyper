@@ -31,10 +31,12 @@
                           <p><strong>Product : </strong></p> 
                           <p><strong>Mrp : </strong></p>
                           <p><strong>Platform Price : </strong></p>
+                          <p><strong>Request Address : </strong></p>
                           <p><strong>Area : </strong></p>
                           <p><strong>Offer Count : </strong></p>
                           <p><strong>Status : </strong></p>
                           <p><strong>Delivery Status : </strong></p>
+                          <p><strong>Comments : </strong></p>
                           <p><strong>Date : </strong></p>  
                       </div>
                       <div class="col-md-6">
@@ -43,10 +45,13 @@
                           <p>{{ $request['productName'] }}</p>
                           <p>{{ $request['mrp'] }}</p>
                           <p>{{ $request['bestPlatformPrice']}}</p>
+                          <p>{{ $request['address']['full'] }} 
+                          </p>
                           <p>{{ $request['area'] }}</p>
                           <p>{{ $request['offerCount'] }}</p>
                           <p>{{ $request['status'] }}</p>
                           <p>{{ $request['deliveryStatus'] }}</p>
+                          <p>{{ $request['comments'] }}</p>
                           <p>{{ $request['date'] }}</p>    
                       </div>
                     </div>
