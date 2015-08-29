@@ -151,6 +151,7 @@
  
 <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.4.2.min.js"></script> 
 <script src="{{ asset('plugins/boostrapv3/js/bootstrap.min.js') }}" type="text/javascript"></script> 
+<script src="{{ asset('bower_components/notifyjs/dist/notify-combined.min.js') }}" type="text/javascript"></script>   
 <script src="{{ asset('plugins/breakpoints.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/jquery-unveil/jquery.unveil.min.js') }}" type="text/javascript"></script> 
 <script src="{{ asset('plugins/jquery-scrollbar/jquery.scrollbar.min.js') }}" type="text/javascript"></script> 
@@ -169,7 +170,7 @@
 <script src="{{ asset('bower_components/datatables/media/js/jquery.dataTables.js') }}" type="text/javascript"></script>
 <script src="{{ asset('bower_components/datatables-tabletools/js/dataTables.tableTools.js' ) }}" type="text/javascript"></script>
 <script src="{{ asset('bower_components/datatables-responsive/js/dataTables.responsive.js' ) }}" type="text/javascript"></script>
-    
+
     
 <!-- BEGIN CORE TEMPLATE JS --> 
 <script src="{{ asset('js/core.js') }}" type="text/javascript"></script> 

@@ -52,7 +52,7 @@ class RequestController extends Controller
             
             $numOfPages = ceil($offersCount/$displayLimit);
         }
-        $requestsData = $requests->find(); 
+        $requestsData = $requests->find();
         
         $requestList = $productPriceArray=[];
         
@@ -132,12 +132,13 @@ class RequestController extends Controller
                               'category' =>$request->get("category")->get("name"),    
                               'productName' =>$request->get("product")->get("name"),
                               'mrp' =>$request->get("product")->get("mrp").'/-',
-                              'onlinePrice' =>$onlinePrice.'/-',
+                              'onlinePrice' =>$onlinePrice,
                               'bestPlatformPrice' =>$platformPrice,
                               'area' =>$request->get("area"),
-                              'offerCount' =>$request->get("offerCount"),
+                              'offerCount' => $request->get("offerCount"),
                               'status' =>$requestStatus,
-                              'deliveryStatus' =>$deliveryStatus,  
+                              'deliveryStatus' =>$deliveryStatus,
+                              'date'=>convertToIST($request->getCreatedAt()->format('d-m-Y H:i:s')),  
                               ]; 
             }
             
@@ -155,7 +156,7 @@ class RequestController extends Controller
     { 
         $excel = new PHPExcel();
         $requestSheet = $excel->getSheet(0);
-		$requestSheet->setTitle('Request');
+		    $requestSheet->setTitle('Request');
  
         $requestsData = $this->getRequests('EXPORT');
         $requestList = $requestsData['list'];
@@ -170,10 +171,12 @@ class RequestController extends Controller
         $headers []= 'AREA' ;
         $headers []= 'OFFER COUNT' ;
         $headers []= 'STATUS' ;
+        $headers []= 'Delivery STATUS' ;
+        $headers []= 'Date' ;
         						
 
         $requestSheet->fromArray($headers, ' ', 'A1');
-        $requestSheet->fromArray($requestList, ' ','A2');
+        $requestSheet->fromArray($requestList, ' ','A2',true);
 
 
         //Headr row height

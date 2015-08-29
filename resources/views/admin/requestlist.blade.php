@@ -13,8 +13,8 @@
           <thead>
             <tr>
               <th>Customer Name</th>
-              <th>Category</th>       
               <th>Product Name</th>   
+              <th>Category</th>       
               <th>Mrp</th>    
               <th>Online Price</th> 
               <th>Best Platform Price</th>      

@@ -728,7 +728,7 @@ class ProductController extends Controller
            
              return response()->json( [
                     'code' => 'products_price',
-                    'message' => 'Success',
+                    'message' => 'Price successfully Updated',
                     'data' => [
                         'amazonPriceId' => $amazonPriceId,
                         'filpkartPriceId' => $filpkartPriceId,

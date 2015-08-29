@@ -3,6 +3,12 @@
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });*/
+
+$.notify.defaults({
+      globalPosition: 'bottom right'
+    });
+
+
 var categorieData;
 
 function getCategories()
@@ -192,6 +198,7 @@ $('.sellerList').on('click', '.save-seller-credits', function () {
             var balanceCredits = parseInt(response.result.addedCredit)-parseInt(response.result.subtractedCredit)
             container.find(".balance-credit").html(balanceCredits);
             container.find(".edit-balance-credit").removeClass("hidden"); 
+            $.notify("Balance Credit Successfully Added", 'success');
 
         }
     });
@@ -375,6 +382,7 @@ $('.productPriceList').on('click', '.save-product-price', function () {
             
             obj.closest('td').find('.edit-product-price').removeClass('hidden');
             obj.remove();
+            $.notify("Price Successfully Updated", 'success');
      
         }
     }); 
