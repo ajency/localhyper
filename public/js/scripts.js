@@ -149,7 +149,7 @@ $(".update-search-keyword").click(function(){
 });
 
 $(".edit-balance-credit").click(function(){
-     var str = '<input type="text" name="balanceCredit" class="input-sm" ><button class="save-seller-credits btn btn-xs btn-mini btn-info m-t-5 pull-right">Save</button> <button class="cancel-seller-credits btn btn-xs btn-mini btn-info m-t-5 pull-right">Cancel</button>';
+     var str = '<input type="text" name="balanceCredit" class="input-sm" ><button class="cancel-seller-credits btn btn-xs btn-mini btn-info m-t-5 pull-right">Cancel</button> <button class="save-seller-credits btn btn-xs btn-mini btn-info m-t-5 pull-right">Save</button> ';
      $(this).closest('td').find(".balance-credit").append(str);
      $(this).closest('td').find(".edit-balance-credit").addClass("hidden");
 });
@@ -157,6 +157,9 @@ $(".edit-balance-credit").click(function(){
 
 $('.sellerList').on('click', '.cancel-seller-credits', function () { 
     var container = $(this).closest('td');
+    container.find("input[name='balanceCredit']").remove(); 
+    container.find(".save-seller-credits").remove(); 
+    container.find(".cancel-seller-credits").remove(); 
     container.find(".edit-balance-credit").removeClass("hidden"); 
 
 });
@@ -320,7 +323,7 @@ $('.productPriceList').on('click', '.edit-product-price', function () {
     snapdealPrice.html('<input type="text" name="snadeal_price" value="'+snapdealPrice.text()+'">');
     
     $(this).addClass('hidden');
-    $(this).closest('td').append('<input type="button" class="save-product-price" value="save">');
+    $(this).closest('td').append('<input type="button" class="save-product-price  btn btn-xs btn-mini btn-info m-t-5 pull-right" value="save">');
     
     
 });
