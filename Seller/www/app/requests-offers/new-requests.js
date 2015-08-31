@@ -672,7 +672,25 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
   }
 ]).controller('EachRequestTimeCtrl', [
   '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
-    var interval, setTime;
+    var getLowestPrice, interval, setTime;
+    getLowestPrice = function() {
+      var mrp, onlinePrice, platformPrice, priceArray;
+      platformPrice = $scope.request.platformPrice;
+      mrp = $scope.request.product.mrp;
+      onlinePrice = $scope.request.onlinePrice;
+      priceArray = [];
+      if (platformPrice !== '') {
+        priceArray.push(platformPrice);
+      }
+      if (mrp !== '') {
+        priceArray.push(mrp);
+      }
+      if (onlinePrice !== '') {
+        priceArray.push(onlinePrice);
+      }
+      return _.min(priceArray);
+    };
+    $scope.request.lowestPrice = getLowestPrice();
     setTime = function() {
       return $scope.request.timeStr = TimeString.get($scope.request.createdAt);
     };

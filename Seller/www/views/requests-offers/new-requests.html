@@ -57,17 +57,13 @@
 
 					<div class="row item border-none" >
 				        <div class="col  p-t-0">
-				            <sm class="light-gray"> Local Price</sm><br>
+				            <sm class="light-gray"> Price</sm><br>
 				            <h3
-				            	class="item-text-wrap margin-none big-txt"
-				            	ng-if="request.platformPrice !== ''">
-				            	<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(request.platformPrice)}}
+				            	class="item-text-wrap margin-none big-txt">
+				            	<span class="WebRupee subdued">&#x20B9;</span> 
+				            	{{App.toINR(request.lowestPrice)}}
 				            </h3>
-				            <h3
-				            	class="item-text-wrap margin-none big-txt"
-				            	ng-if="request.platformPrice === ''">
-				            	N/A
-				            </h3>
+				           
 				        </div>
 				        <div class="col p-t-0">
 				        	<div class="pull-right mi-wi-65">

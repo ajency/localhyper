@@ -332,8 +332,6 @@ angular.module 'LocalHyper.requestsOffers'
 					$scope.view.requests.splice(spliceIndex, 1) if spliceIndex isnt -1
 					$scope.view.setRequestsCount()
 
-
-
 			init : ->
 				@filter.reset()
 				@filter.loadModal()
@@ -510,6 +508,18 @@ angular.module 'LocalHyper.requestsOffers'
 
 
 .controller 'EachRequestTimeCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
+
+	getLowestPrice = ->
+		platformPrice = $scope.request.platformPrice
+		mrp = $scope.request.product.mrp
+		onlinePrice = $scope.request.onlinePrice
+		priceArray = []
+		priceArray.push(platformPrice) if platformPrice isnt ''
+		priceArray.push(mrp) if mrp isnt '' 
+		priceArray.push(onlinePrice) if onlinePrice isnt '' 
+		_.min priceArray
+
+	$scope.request.lowestPrice = getLowestPrice()
 
 	#Request time
 	setTime = ->
