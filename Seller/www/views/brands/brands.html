@@ -53,7 +53,7 @@
 		<ion-list ng-switch-when="noError">
 			<div
 				class="col col-25 border-card relative all-brands-indi"
-				ng-repeat="brand in view.filteredBrands = (view.brands | filter:view.search)">
+				ng-repeat="brand in view.filteredBrands = (view.brands | orderBy:'name' | filter:view.search)">
 
 				<img
 					ng-src="{{brand.image.src}}"
