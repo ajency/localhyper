@@ -85,7 +85,7 @@ angular.module('LocalHyper.brands', []).controller('BrandsCtrl', [
         return CategoriesAPI.getAll().then((function(_this) {
           return function(allCategories) {
             var chain, chainIndex, data, minOneBrandSelected, parentCategory, selectedBrands;
-            parentCategory = _.filter(allCategories, function(category) {
+            parentCategory = _.filter(allCategories.data, function(category) {
               return category.id === SubCategory.parent;
             });
             selectedBrands = _.filter(_this.brands, function(brand) {

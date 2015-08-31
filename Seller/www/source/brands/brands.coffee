@@ -72,7 +72,7 @@ angular.module 'LocalHyper.brands', []
 			onDone : ->
 				CategoriesAPI.getAll()
 				.then (allCategories)=>
-					parentCategory = _.filter allCategories, (category)-> category.id is SubCategory.parent
+					parentCategory = _.filter allCategories.data, (category)-> category.id is SubCategory.parent
 					selectedBrands = _.filter @brands, (brand)-> brand.selected is true
 					minOneBrandSelected = if _.size(selectedBrands) is 0 then false else true
 
