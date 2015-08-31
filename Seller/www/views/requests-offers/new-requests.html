@@ -48,7 +48,8 @@
 
 					<div class="item-wrapper-nr">
 						<div class="item-avatar border-none margin-none">
-					        <img ng-src="{{App.getBestSize(request.product.image[0].src, request.imageSizes.small)}}">
+					        <img ng-src="{{App.getBestSize(request.product.image[0].src, request.imageSizes.small)}}"
+					        	 onerror="this.src='./img/gray-bg.png';">
 					    </div>
 					    <h2>{{request.product.name}} <i class="ion-android-notifications hidden"></i></h2>
 					    <p> <i class=" ion-ios-clock-outline" ></i> {{request.timeStr}}</p>

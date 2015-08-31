@@ -35,7 +35,8 @@
                <div class="row">
                   <div class="col col-25">
                      <div class="item-avatar">
-                        <img ng-src="{{App.getBestSize(view.offerDetails.data.product.images[0].src, view.imageSizes.small)}}">
+                        <img ng-src="{{App.getBestSize(view.offerDetails.data.product.images[0].src, view.imageSizes.small)}}"
+                             onerror="this.src='./img/gray-bg.png';">
                      </div>
                   </div>
                   <div class="col col-60">

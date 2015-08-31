@@ -37,7 +37,8 @@
 
 	       		<div class="item-wrapper-nr">
 					<div class="item-avatar border-none margin-none">
-				        <img ng-src="{{App.getBestSize(request.product.images[0].src, view.imageSizes.small)}}">
+				        <img ng-src="{{App.getBestSize(request.product.images[0].src, view.imageSizes.small)}}"
+				        	 onerror="this.src='./img/gray-bg.png';">
 				    </div>
 				    <h2 class="">{{request.product.name}}
 					<i class="ion-record " id="{{App.humanize(request.offerStatus)}}"></i>
