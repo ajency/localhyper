@@ -3,9 +3,9 @@ angular.module 'LocalHyper.products'
 
 .controller 'SingleProductCtrl', ['$scope', '$stateParams', 'ProductsAPI', 'User'
 	, 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI'
-	, '$ionicScrollDelegate', '$ionicPlatform', 'PrimaryAttribute'
+	, '$ionicScrollDelegate', '$ionicPlatform', 'PrimaryAttribute', '$cordovaNetwork'
 	, ($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps
-	, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform, PrimaryAttribute)->
+	, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform, PrimaryAttribute, $cordovaNetwork)->
 
 		$scope.view = 
 			display: 'loader'
@@ -178,6 +178,14 @@ angular.module 'LocalHyper.products'
 				@display = 'loader'
 				@getSingleProductDetails()
 
+
+			checkNetwork : ->
+				if App.isWebView() && !$cordovaNetwork.isOnline()
+						CToast.show 'Error loading content, please check your network settings' 
+					else 
+						@getBestPrices()
+
+
 			checkUserLogin : ->
 				if !User.isLoggedIn()
 					App.navigate 'verify-begin'
@@ -185,14 +193,14 @@ angular.module 'LocalHyper.products'
 					CSpinner.show '', 'Please wait, loading resources'
 					GoogleMaps.loadScript()
 					.then => 
-						@getBestPrices()
+						@checkNetwork()
 					,(error)-> 
 						CToast.show 'Error loading content, please check your network settings'
 					.finally -> 
 						CSpinner.hide()
 				else
-					@getBestPrices()
-
+					@checkNetwork()
+						
 			getBestPrices : ->
 				ProductsAPI.productDetails 'set', @product
 				App.navigate 'make-request'

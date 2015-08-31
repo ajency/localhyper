@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('SingleProductCtrl', [
-  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', '$ionicScrollDelegate', '$ionicPlatform', 'PrimaryAttribute', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform, PrimaryAttribute) {
+  '$scope', '$stateParams', 'ProductsAPI', 'User', 'CToast', 'App', '$ionicModal', 'GoogleMaps', 'CSpinner', '$rootScope', 'RequestAPI', '$ionicScrollDelegate', '$ionicPlatform', 'PrimaryAttribute', '$cordovaNetwork', function($scope, $stateParams, ProductsAPI, User, CToast, App, $ionicModal, GoogleMaps, CSpinner, $rootScope, RequestAPI, $ionicScrollDelegate, $ionicPlatform, PrimaryAttribute, $cordovaNetwork) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -196,6 +196,13 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
         this.display = 'loader';
         return this.getSingleProductDetails();
       },
+      checkNetwork: function() {
+        if (App.isWebView() && !$cordovaNetwork.isOnline()) {
+          return CToast.show('Error loading content, please check your network settings');
+        } else {
+          return this.getBestPrices();
+        }
+      },
       checkUserLogin: function() {
         if (!User.isLoggedIn()) {
           return App.navigate('verify-begin');
@@ -203,7 +210,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
           CSpinner.show('', 'Please wait, loading resources');
           return GoogleMaps.loadScript().then((function(_this) {
             return function() {
-              return _this.getBestPrices();
+              return _this.checkNetwork();
             };
           })(this), function(error) {
             return CToast.show('Error loading content, please check your network settings');
@@ -211,7 +218,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             return CSpinner.hide();
           });
         } else {
-          return this.getBestPrices();
+          return this.checkNetwork();
         }
       },
       getBestPrices: function() {
