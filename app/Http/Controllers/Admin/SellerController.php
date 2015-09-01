@@ -19,7 +19,9 @@ class SellerController extends Controller
      */
     public function index()
     {
-        $sellersData = $this->getSellers('LIST');
+        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+        $displayLimit = config('constants.page_limit');
+        $sellersData = $this->getSellers('LIST',$page ,$displayLimit);
         $sellerList = $sellersData['list'];
         $numOfPages = $sellersData['numOfPages'];
         $page = $sellersData['page'];
@@ -32,10 +34,9 @@ class SellerController extends Controller
     }
     
     
-    public function getSellers($type)
+    public function getSellers($type,$page ,$displayLimit)
     {
-        
-        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+
         $numOfPages = 0;
         
         $sellers = new ParseQuery("_User");
@@ -43,17 +44,13 @@ class SellerController extends Controller
         $sellers->includeKey('supportedCategories');
         $sellers->includeKey('supportedBrands');
         
-        if($type == 'LIST')
-        {   //Pagination
-            
-            $displayLimit = config('constants.page_limit'); 
- 
-            $sellersCount = $sellers->count();  
-            $sellers->limit($displayLimit);
-            $sellers->skip($page * $displayLimit);
-            
-            $numOfPages = ceil($sellersCount/$displayLimit);
-        }
+          //Pagination
+        $sellersCount = $sellers->count();  
+        $sellers->limit($displayLimit);
+        $sellers->skip($page * $displayLimit);
+        
+        $numOfPages = ceil($sellersCount/$displayLimit);
+        
         
         $sellerData = $sellers->find();   
         $sellerList =[];
@@ -145,10 +142,7 @@ class SellerController extends Controller
         $excel = new PHPExcel();
         $sellersSheet = $excel->getSheet(0);
 		$sellersSheet->setTitle('Sellers');
- 
-        $sellersData = $this->getSellers('EXPORT');
-        $sellerList = $sellersData['list'];
-        
+
         $headers = [];
  
         $headers []= 'SELLER NAME' ;
@@ -164,7 +158,24 @@ class SellerController extends Controller
  
         						 
         $sellersSheet->fromArray($headers, ' ', 'A1');
-        $sellersSheet->fromArray($sellerList, ' ','A2');
+
+        $page = 0; 
+        $limit = 50;
+        $sellers =[];
+        while (true) {
+ 
+          $sellersData = $this->getSellers('EXPORT',$page ,$limit);
+         
+          
+          if(empty($sellersData['list']))
+            break;
+
+          $sellers = array_merge($sellers,$sellersData['list']);   
+         
+          $page++; 
+         
+        }
+        $sellersSheet->fromArray($sellers, ' ','A2',true);
 
 
         //Headr row height

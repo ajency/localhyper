@@ -19,7 +19,9 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $customerData = $this->getCustomers('LIST');
+        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+        $displayLimit = config('constants.page_limit');
+        $customerData = $this->getCustomers('LIST',$page ,$displayLimit);
         $customerList = $customerData['list'];
         $numOfPages = $customerData['numOfPages'];
         $page = $customerData['page'];
@@ -30,25 +32,20 @@ class CustomerController extends Controller
                                          ->with('activeMenu','customers');
     }
  
-    public function getCustomers($type)
+    public function getCustomers($type,$page ,$displayLimit)
     {
-        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
         $numOfPages = 0;
         
         $customers = new ParseQuery("_User");
         $customers->equalTo("userType", "customer");
         
-        if($type == 'LIST')
-        {   //Pagination
-            
-            $displayLimit = config('constants.page_limit'); 
- 
-            $customersCount = $customers->count();  
-            $customers->limit($displayLimit);
-            $customers->skip($page * $displayLimit);
-            
-            $numOfPages = ceil($customersCount/$displayLimit);
-        }
+        //Pagination
+        $customersCount = $customers->count();  
+        $customers->limit($displayLimit);
+        $customers->skip($page * $displayLimit);
+        
+        $numOfPages = ceil($customersCount/$displayLimit);
+        
         
         $customerData = $customers->find();  
         $customerList =[];
@@ -135,12 +132,8 @@ class CustomerController extends Controller
     {
         $excel = new PHPExcel();
         $customersSheet = $excel->getSheet(0);
-		$customersSheet->setTitle('Customers');
-        
-        $customerData = $this->getCustomers('EXPORT');
-        $customerList = $customerData['list'];
-
-        
+		    $customersSheet->setTitle('Customers');
+ 
         $headers = [];
  
         $headers []= 'CUSTOMER NAME' ;
@@ -154,7 +147,23 @@ class CustomerController extends Controller
 		
  
         $customersSheet->fromArray($headers, ' ', 'A1');
-        $customersSheet->fromArray($customerList, ' ','A2');
+        $page = 0; 
+        $limit = 50;
+        $customers =[];
+        while (true) {
+ 
+          $customerData = $this->getCustomers('EXPORT',$page ,$limit);
+     
+          
+          if(empty($customerData['list']))
+            break;
+
+          $customers = array_merge($customers,$customerData['list']);   
+         
+          $page++; 
+         
+        }
+        $customersSheet->fromArray($customers, ' ','A2',true);
 
 
         //Headr row height

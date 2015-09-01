@@ -19,8 +19,9 @@ class SmsVerifyController extends Controller
      */
     public function index()
     {
-       
-        $smsVerifyData = $this->getSmsVerify('LIST');
+        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+        $displayLimit = config('constants.page_limit');
+        $smsVerifyData = $this->getSmsVerify('LIST',$page ,$displayLimit);
         $smsVerifyList = $smsVerifyData['list'];
         $numOfPages = $smsVerifyData['numOfPages'];
         $page = $smsVerifyData['page'];
@@ -32,24 +33,20 @@ class SmsVerifyController extends Controller
  
     }
     
-    public function getSmsVerify($type)
+    public function getSmsVerify($type, $page ,$displayLimit)
     {
-        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
         $numOfPages = 0;
         
         $smsVerify = new ParseQuery("SMSVerify");
         
-        if($type == 'LIST')
-        {   //Pagination
-            
-            $displayLimit = config('constants.page_limit'); 
+        //Pagination
  
-            $smsVerifyCount = $smsVerify->count();  
-            $smsVerify->limit($displayLimit);
-            $smsVerify->skip($page * $displayLimit);
-            
-            $numOfPages = ceil($smsVerifyCount/$displayLimit);
-        }
+        $smsVerifyCount = $smsVerify->count();  
+        $smsVerify->limit($displayLimit);
+        $smsVerify->skip($page * $displayLimit);
+        
+        $numOfPages = ceil($smsVerifyCount/$displayLimit);
+        
         
         $smsVerifyData = $smsVerify->find();   
         $smsVerifyList =[];
@@ -96,10 +93,6 @@ class SmsVerifyController extends Controller
         $smsVerifySheet = $excel->getSheet(0);
 		$smsVerifySheet->setTitle('SMS Verify');
         
- 
-        $smsVerifyData = $this->getSmsVerify('EXPORT');
-        $smsVerifyList = $smsVerifyData['list'];
-        
         $headers = [];
  
         $headers []= 'NAME' ;
@@ -112,7 +105,22 @@ class SmsVerifyController extends Controller
         										
 
         $smsVerifySheet->fromArray($headers, ' ', 'A1');
-        $smsVerifySheet->fromArray($smsVerifyList, ' ','A2');
+        $page = 0; 
+        $limit = 20;
+        $cell = 2;
+        $smsVerify =[];
+        while (true) {
+          $smsVerifyData = $this->getSmsVerify('EXPORT',$page ,$limit);
+          
+          if(empty($smsVerifyData['list']))
+            break;
+
+          $smsVerify = array_merge($smsVerify,$smsVerifyData['list']);   
+         
+          $page++; 
+         
+        }
+        $smsVerifySheet->fromArray($smsVerify, ' ','A2');
 
 
         //Headr row height

@@ -19,8 +19,9 @@ class RequestController extends Controller
      */
     public function index()
     {
-      
-        $requestsData = $this->getRequests('LIST');
+        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+        $displayLimit = config('constants.page_limit');
+        $requestsData = $this->getRequests('LIST',$page ,$displayLimit);
         $requestList = $requestsData['list'];
         $numOfPages = $requestsData['numOfPages'];
         $page = $requestsData['page'];
@@ -31,9 +32,8 @@ class RequestController extends Controller
                                          ->with('activeMenu','requests');
     }
     
-    public function getRequests($type)
+    public function getRequests($type ,$page ,$displayLimit)
     {
-        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
         $numOfPages = 0;
         
         $requests = new ParseQuery("Request");
@@ -41,17 +41,13 @@ class RequestController extends Controller
         $requests->includeKey('product');
         $requests->includeKey('category');
         $requests->descending("createdAt");
-        if($type == 'LIST')
-        {   //Pagination
-            
-            $displayLimit = config('constants.page_limit'); 
- 
-            $offersCount = $requests->count();  
-            $requests->limit($displayLimit);
-            $requests->skip($page * $displayLimit);
-            
-            $numOfPages = ceil($offersCount/$displayLimit);
-        }
+          //Pagination
+
+        $offersCount = $requests->count();  
+        $requests->limit($displayLimit);
+        $requests->skip($page * $displayLimit);
+        
+        $numOfPages = ceil($offersCount/$displayLimit);
         $requestsData = $requests->find();
         
         $requestList = $productPriceArray=[];
@@ -157,9 +153,7 @@ class RequestController extends Controller
         $excel = new PHPExcel();
         $requestSheet = $excel->getSheet(0);
 		    $requestSheet->setTitle('Request');
- 
-        $requestsData = $this->getRequests('EXPORT');
-        $requestList = $requestsData['list'];
+        
         $headers = [];
  
         $headers []= 'CUSTOMER NAME' ;
@@ -173,12 +167,26 @@ class RequestController extends Controller
         $headers []= 'STATUS' ;
         $headers []= 'Delivery STATUS' ;
         $headers []= 'Date' ;
-        						
 
         $requestSheet->fromArray($headers, ' ', 'A1');
-        $requestSheet->fromArray($requestList, ' ','A2',true);
 
+        $page = 0; 
+        $limit = 50;
+        $requests =[];
+        while (true) {
+          
+          $requestsData = $this->getRequests('EXPORT',$page ,$limit); //dd($requestsData);
+          
+          if(empty($requestsData['list']))
+            break;
 
+          $requests = array_merge($requests,$requestsData['list']);   
+         
+          $page++; 
+         
+        }
+        
+        $requestSheet->fromArray($requests, ' ','A2',true);
         //Headr row height
         $requestSheet->getRowDimension('1')->setRowHeight(20);
 

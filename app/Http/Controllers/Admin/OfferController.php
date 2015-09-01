@@ -19,7 +19,9 @@ class OfferController extends Controller
      */
     public function index()
     {
-        $offersData = $this->getOffers('LIST');
+        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+        $displayLimit = config('constants.page_limit');
+        $offersData = $this->getOffers('LIST',$page ,$displayLimit);
         $offertList = $offersData['list'];
         $numOfPages = $offersData['numOfPages'];
         $page = $offersData['page'];
@@ -31,9 +33,8 @@ class OfferController extends Controller
  
     }
     
-    public function getOffers($type)
-    { 
-        $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
+    public function getOffers($type,$page ,$displayLimit)
+    {  
         $numOfPages = 0;
         
         $offers = new ParseQuery("Offer");
@@ -42,17 +43,14 @@ class OfferController extends Controller
         $offers->includeKey('request.product');
         $offers->includeKey('price');
         $offers->descending("createdAt");
-        if($type == 'LIST')
-        {   //Pagination
-            
-            $displayLimit = config('constants.page_limit'); 
+            //Pagination
  
-            $offersCount = $offers->count();  
-            $offers->limit($displayLimit);
-            $offers->skip($page * $displayLimit);
-            
-            $numOfPages = ceil($offersCount/$displayLimit);
-        }
+        $offersCount = $offers->count();  
+        $offers->limit($displayLimit);
+        $offers->skip($page * $displayLimit);
+        
+        $numOfPages = ceil($offersCount/$displayLimit);
+         
         
         $offersData = $offers->find(); 
         
@@ -88,7 +86,7 @@ class OfferController extends Controller
             {
                $requestsinnerQuery = $productRequests[$productId];
                $onlinePrice = $onlinePriceArray[$productId]['OnlinePrice']; 
-            }
+            } 
            
             $lastSellerOffer = new ParseQuery("Offer");
             $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
@@ -126,7 +124,7 @@ class OfferController extends Controller
                         'sellerName'=>$offer->get("seller")->get("displayName"),
                         'area'=>$offer->get("area"),
                         'mrpOfProduct'=>$productObj->get("mrp").'/-',   
-                        'onlinePrice'=>$priceObj->get("value").'/-',
+                        'onlinePrice'=>$onlinePrice,
                         'offerPrice'=>$offer->get("offerPrice").'/-',
                         'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice").'/-',
                         'requestStatus'=>$requestObj->get("status"),
@@ -153,8 +151,6 @@ class OfferController extends Controller
         $offerSheet = $excel->getSheet(0);
 		$offerSheet->setTitle('Offers');
  
-        $offersData = $this->getOffers('EXPORT');
-        $offertList = $offersData['list'];
         
         $headers = [];
  
@@ -171,7 +167,23 @@ class OfferController extends Controller
         $headers []= 'CREATED AT' ;
  
         $offerSheet->fromArray($headers, ' ', 'A1');
-        $offerSheet->fromArray($offertList, ' ','A2');
+        $page = 0; 
+        $limit = 20;
+        $offers =[];
+        while (true) {
+          
+          $offersData = $this->getOffers('EXPORT',$page ,$limit); //dd($requestsData);
+          
+          if(empty($offersData['list']))
+            break;
+
+          $offers = array_merge($offers,$offersData['list']);   
+         
+          $page++; 
+         
+        }
+
+        $offerSheet->fromArray($offers, ' ','A2',true);
 
 
         //Headr row height
