@@ -824,6 +824,7 @@ findAttribValues = (filter) =>
         
         displayFilter =
             "filterName": filterName+"#{filterColumn}"
+            "filterType": filterType
             "attributeId": attributeId
             "attributeName": attributeName
             "values": attribValues
