@@ -502,6 +502,9 @@ class ProductController extends Controller
 
 									if ((strpos($data['Image'],'amazonaws') !== false)||(is_null($data['Image']))) {
 										$imageUrl = $data['Image']; //same as what is passed in the sheet
+										if($imageUrl=='')
+											$imageUrl ="https://placehold.it/350x150?text=".$namedData["Brand"];
+
 									}
 									else{
 										$image_slug = $this->stringSpaceToPlus($data['Image']);
