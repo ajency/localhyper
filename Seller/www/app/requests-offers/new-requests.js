@@ -268,8 +268,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         deliveryTime: {
           display: false,
           value: 1,
-          unit: 'hr',
-          unitText: 'Hour',
+          unit: 'day',
+          unitText: 'Day',
           setDuration: function() {
             if (!_.isNull(this.value)) {
               switch (this.unit) {
@@ -324,8 +324,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           this.offerPrice = '';
           this.deliveryTime.display = false;
           this.deliveryTime.value = 1;
-          this.deliveryTime.unit = 'hr';
-          this.deliveryTime.unitText = 'Hour';
+          this.deliveryTime.unit = 'day';
+          this.deliveryTime.unitText = 'Day';
           this.reply.button = true;
           this.reply.text = '';
           return $ionicScrollDelegate.$getByHandle('request-details').scrollTop();
@@ -431,7 +431,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             return CToast.show('Please select price');
           } else if (_.isNull(priceValue) || priceValue === '') {
             return CToast.show('Please enter your offer price');
-          } else if (_.isNull(this.deliveryTime.value)) {
+          } else if (_.isNull(this.deliveryTime.value) || this.deliveryTime.value === 0) {
             return CToast.show('Please enter delivery time');
           } else {
             CSpinner.show('', 'Please wait...');

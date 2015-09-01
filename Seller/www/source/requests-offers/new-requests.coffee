@@ -178,8 +178,8 @@ angular.module 'LocalHyper.requestsOffers'
 				deliveryTime:
 					display: false
 					value: 1
-					unit: 'hr'
-					unitText: 'Hour'
+					unit: 'day'
+					unitText: 'Day'
 
 					setDuration : ->
 						if !_.isNull @value
@@ -223,8 +223,8 @@ angular.module 'LocalHyper.requestsOffers'
 					@offerPrice = ''
 					@deliveryTime.display = false
 					@deliveryTime.value = 1
-					@deliveryTime.unit = 'hr'
-					@deliveryTime.unitText = 'Hour'
+					@deliveryTime.unit = 'day'
+					@deliveryTime.unitText = 'Day'
 					@reply.button = true
 					@reply.text = ''
 					$ionicScrollDelegate
@@ -310,7 +310,7 @@ angular.module 'LocalHyper.requestsOffers'
 						CToast.show 'Please select price'
 					else if _.isNull(priceValue) or priceValue is ''
 						CToast.show 'Please enter your offer price'
-					else if _.isNull @deliveryTime.value
+					else if _.isNull(@deliveryTime.value) || @deliveryTime.value == 0
 						CToast.show 'Please enter delivery time'
 					else
 						CSpinner.show '', 'Please wait...'
