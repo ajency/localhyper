@@ -75,9 +75,9 @@ class RequestController extends Controller
                     }
                 }
                 $onlinePrice = (!empty($onlinePriceArray))? min($onlinePriceArray)  :''; 
-                $platformPrice = (!empty($priceArray))? min($priceArray).'/-' :'N/A'; 
+                $platformPrice = (!empty($priceArray))? min($priceArray) :'N/A'; 
                 
-                $productPriceArray[$productId]['OnlinePrice'] = ($onlinePrice!='')?$onlinePrice.'/-':''; 
+                $productPriceArray[$productId]['OnlinePrice'] = ($onlinePrice!='')?$onlinePrice:''; 
                 $productPriceArray[$productId]['PlatformPrice'] = $platformPrice; 
             }
             else
@@ -111,7 +111,7 @@ class RequestController extends Controller
                               'customerId' => $request->get("customerId")->getObjectId(),    
                               'category' =>$request->get("category")->get("name"),    
                               'productName' =>$request->get("product")->get("name"),
-                              'mrp' =>$request->get("product")->get("mrp").'/-',
+                              'mrp' =>$request->get("product")->get("mrp"),
                               'onlinePrice' =>$onlinePrice,
                               'bestPlatformPrice' =>$platformPrice,
                               'area' =>$request->get("area"),
@@ -127,7 +127,7 @@ class RequestController extends Controller
                               'customerName' => $request->get("customerId")->get("displayName"),
                               'category' =>$request->get("category")->get("name"),    
                               'productName' =>$request->get("product")->get("name"),
-                              'mrp' =>$request->get("product")->get("mrp").'/-',
+                              'mrp' =>$request->get("product")->get("mrp"),
                               'onlinePrice' =>$onlinePrice,
                               'bestPlatformPrice' =>$platformPrice,
                               'area' =>$request->get("area"),

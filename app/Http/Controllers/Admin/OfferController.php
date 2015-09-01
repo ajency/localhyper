@@ -79,7 +79,7 @@ class OfferController extends Controller
                 $productPrice->ascending("value");
                 $productPriceData = $productPrice->first();
                 
-                $onlinePrice = (!empty($productPriceData))? $productPriceData->get("value").'/-' :'';
+                $onlinePrice = (!empty($productPriceData))? $productPriceData->get("value") :'';
                 $onlinePriceArray[$productId]['OnlinePrice'] = $onlinePrice; 
             }
             else
@@ -106,10 +106,10 @@ class OfferController extends Controller
                         'sellerName'=>$offer->get("seller")->get("displayName"),
                         'sellerId'=>$offer->get("seller")->getObjectId(),
                         'area'=>$offer->get("area"),
-                        'mrpOfProduct'=>$productObj->get("mrp").'/-',   
+                        'mrpOfProduct'=>$productObj->get("mrp"),   
                         'onlinePrice'=>$onlinePrice,
-                        'offerPrice'=>$priceObj->get("value").'/-',
-                        'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice").'/-',
+                        'offerPrice'=>$priceObj->get("value"),
+                        'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice"),
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
@@ -123,10 +123,10 @@ class OfferController extends Controller
                         'modelNo'=>$productObj->get("model_number"),
                         'sellerName'=>$offer->get("seller")->get("displayName"),
                         'area'=>$offer->get("area"),
-                        'mrpOfProduct'=>$productObj->get("mrp").'/-',   
+                        'mrpOfProduct'=>$productObj->get("mrp"),   
                         'onlinePrice'=>$onlinePrice,
-                        'offerPrice'=>$offer->get("offerPrice").'/-',
-                        'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice").'/-',
+                        'offerPrice'=>$offer->get("offerPrice"),
+                        'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice"),
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
