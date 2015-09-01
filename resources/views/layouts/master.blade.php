@@ -199,6 +199,11 @@
           fxel.removeClass("fixed");
       }
     });
-  </script>  
+  </script> 
+  <script type="text/javascript">
+  $(function () {
+  $('[data-toggle="popover"]').popover()
+})
+  </script> 
 </body>
 </html>
