@@ -54,31 +54,42 @@ getDeliveryDate = (accpetedDateIST,sellerOffDays,deliveryDurationInDays) ->
 
     incrementDayFlag = false
     pendingDays = 0
+    incrementedDay = 0
     newAcceptedDate = accpetedDateIST
+    if !isValidWorkDay(newAcceptedDate ,sellerOffDays)      #if non working day 
+        deliveryDurationInDays = deliveryDurationInDays-1 
 
-    deliveryDate = fetchAdjustedDelivery(newAcceptedDate,deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays)
+    deliveryDate = fetchAdjustedDelivery(newAcceptedDate,deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays,incrementedDay)
     deliveryDate
 
+# isValidDeliveryDate = (newAcceptedDate,sellerOffDays) ->
+#     if isValidWorkDay(newAcceptedDate ,sellerOffDays)
+#         deliveryDate = newAcceptedDate
+#     else
+#         deliveryDate = moment(newAcceptedDate).add(1 , 'days').toDate()
+#     return deliveryDate
 
-fetchAdjustedDelivery = (newAcceptedDate,deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays) ->
+
+fetchAdjustedDelivery = (newAcceptedDate,deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays,incrementedDay) ->
     if isValidWorkDay(newAcceptedDate ,sellerOffDays)
         endWorkTime = "14:00:00"
-        if deliveryDurationInDays is 0  and incrementDayFlag is false 
+        if deliveryDurationInDays is 0  and incrementDayFlag is false
             if isTimeBeforeWorkTime(newAcceptedDate, endWorkTime)
-                pendingDays = 0
-                
+                deliveryDate = newAcceptedDate
             else 
-                pendingDays = 1
-                
+                newAcceptedDate = incrementDateObject(newAcceptedDate)
+                newAcceptedDate = fetchAdjustedDelivery(newAcceptedDate,deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays,incrementedDay)
         else
-            pendingDays = deliveryDurationInDays
-
-        deliveryDate = moment(newAcceptedDate).add(pendingDays , "days").toDate()
+            if deliveryDurationInDays != incrementedDay
+                incrementedDay = incrementedDay+1
+                newAcceptedDate = incrementDateObject(newAcceptedDate)
+                newAcceptedDate = fetchAdjustedDelivery(newAcceptedDate,deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays,incrementedDay)
+            else  
+                deliveryDate = newAcceptedDate
     else
         incrementDayFlag = true
         newAcceptedDate = incrementDateObject(newAcceptedDate)
-        deliveryDate = fetchAdjustedDelivery(newAcceptedDate,deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays)
-
+        deliveryDate = fetchAdjustedDelivery(newAcceptedDate,deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays,incrementedDay)
 
 
 

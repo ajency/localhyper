@@ -593,32 +593,42 @@
   };
 
   getDeliveryDate = function(accpetedDateIST, sellerOffDays, deliveryDurationInDays) {
-    var deliveryDate, incrementDayFlag, newAcceptedDate, pendingDays;
+    var deliveryDate, incrementDayFlag, incrementedDay, newAcceptedDate, pendingDays;
     incrementDayFlag = false;
     pendingDays = 0;
+    incrementedDay = 0;
     newAcceptedDate = accpetedDateIST;
-    deliveryDate = fetchAdjustedDelivery(newAcceptedDate, deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays);
+    if (!isValidWorkDay(newAcceptedDate, sellerOffDays)) {
+      deliveryDurationInDays = deliveryDurationInDays - 1;
+    }
+    deliveryDate = fetchAdjustedDelivery(newAcceptedDate, deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays, incrementedDay);
     return deliveryDate;
   };
 
-  fetchAdjustedDelivery = function(newAcceptedDate, deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays) {
+  fetchAdjustedDelivery = function(newAcceptedDate, deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays, incrementedDay) {
     var deliveryDate, endWorkTime;
     if (isValidWorkDay(newAcceptedDate, sellerOffDays)) {
       endWorkTime = "14:00:00";
       if (deliveryDurationInDays === 0 && incrementDayFlag === false) {
         if (isTimeBeforeWorkTime(newAcceptedDate, endWorkTime)) {
-          pendingDays = 0;
+          return deliveryDate = newAcceptedDate;
         } else {
-          pendingDays = 1;
+          newAcceptedDate = incrementDateObject(newAcceptedDate);
+          return newAcceptedDate = fetchAdjustedDelivery(newAcceptedDate, deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays, incrementedDay);
         }
       } else {
-        pendingDays = deliveryDurationInDays;
+        if (deliveryDurationInDays !== incrementedDay) {
+          incrementedDay = incrementedDay + 1;
+          newAcceptedDate = incrementDateObject(newAcceptedDate);
+          return newAcceptedDate = fetchAdjustedDelivery(newAcceptedDate, deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays, incrementedDay);
+        } else {
+          return deliveryDate = newAcceptedDate;
+        }
       }
-      return deliveryDate = moment(newAcceptedDate).add(pendingDays, "days").toDate();
     } else {
       incrementDayFlag = true;
       newAcceptedDate = incrementDateObject(newAcceptedDate);
-      return deliveryDate = fetchAdjustedDelivery(newAcceptedDate, deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays);
+      return deliveryDate = fetchAdjustedDelivery(newAcceptedDate, deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays, incrementedDay);
     }
   };
 
