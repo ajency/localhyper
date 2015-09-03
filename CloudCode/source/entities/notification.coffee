@@ -298,6 +298,67 @@ Parse.Cloud.define 'updateNotificationStatus', (request, response) ->
     ,(error) ->
         response.error error
 
+Parse.Cloud.define 'updateUnseenRequestNotification', (request, response) ->
+    sellerId = request.params.sellerId
+    categoryId = request.params.categoryId
+    brandId = request.params.brandId
+    unseenNotificationObj = []
+    requestObjs = []
+
+    notificationQuery = new Parse.Query("Notification")
+    notificationQuery.equalTo("hasSeen",false)
+    notificationQuery.equalTo("type","Request")
+
+    innerQueryUser = new Parse.Query Parse.User
+    innerQueryUser.equalTo("objectId",sellerId)
+    notificationQuery.matchesQuery("recipientUser", innerQueryUser)
+
+    if !_.isEmpty(categoryId)
+        innerQueryCategory = new Parse.Query("Category")
+        innerQueryCategory.containedIn("objectId",categoryId)
+
+        innerQueryRequestCategory = new Parse.Query("Request")
+        innerQueryRequestCategory.matchesQuery("category",innerQueryCategory)
+        requestObjs = innerQueryRequestCategory
+        
+
+    if !_.isEmpty(brandId)
+        innerQueryBrand = new Parse.Query("Brand")
+        innerQueryBrand.containedIn("objectId",brandId)
+
+        innerQueryRequestBrand = new Parse.Query("Request")
+        innerQueryRequestBrand.matchesQuery("brand",innerQueryBrand)
+        requestObjs = innerQueryRequestBrand
+
+    if !_.isEmpty(categoryId) and !_.isEmpty(brandId)
+        requestObjs = Parse.Query.or(innerQueryRequestCategory, innerQueryRequestBrand)
+        
+    notificationQuery.matchesQuery("requestObject", requestObjs)
+
+    notificationQuery.find()
+    .then (notificationObjs) ->
+        saveQs = _.map( notificationObjs , (notificationObj) ->
+            notificationObj.set("hasSeen",true)
+            #notificationId = notificationResult.id
+            unseenNotificationObj.push notificationObj
+        )
+
+        Parse.Object.saveAll unseenNotificationObj
+          .then (objs) ->
+            result = 
+            sellerId : sellerId
+            categoryId : categoryId
+            brandId : brandId       
+
+            response.success result
+          , (error) ->
+                response.error "Failed to add products due to - #{error.message}" 
+
+        
+                    
+    ,(error) ->
+        response.error error
+
 
 
 

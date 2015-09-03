@@ -1017,6 +1017,59 @@
     });
   });
 
+  Parse.Cloud.define('updateUnseenRequestNotification', function(request, response) {
+    var brandId, categoryId, innerQueryBrand, innerQueryCategory, innerQueryRequestBrand, innerQueryRequestCategory, innerQueryUser, notificationQuery, requestObjs, sellerId, unseenNotificationObj;
+    sellerId = request.params.sellerId;
+    categoryId = request.params.categoryId;
+    brandId = request.params.brandId;
+    unseenNotificationObj = [];
+    requestObjs = [];
+    notificationQuery = new Parse.Query("Notification");
+    notificationQuery.equalTo("hasSeen", false);
+    notificationQuery.equalTo("type", "Request");
+    innerQueryUser = new Parse.Query(Parse.User);
+    innerQueryUser.equalTo("objectId", sellerId);
+    notificationQuery.matchesQuery("recipientUser", innerQueryUser);
+    if (!_.isEmpty(categoryId)) {
+      innerQueryCategory = new Parse.Query("Category");
+      innerQueryCategory.containedIn("objectId", categoryId);
+      innerQueryRequestCategory = new Parse.Query("Request");
+      innerQueryRequestCategory.matchesQuery("category", innerQueryCategory);
+      requestObjs = innerQueryRequestCategory;
+    }
+    if (!_.isEmpty(brandId)) {
+      innerQueryBrand = new Parse.Query("Brand");
+      innerQueryBrand.containedIn("objectId", brandId);
+      innerQueryRequestBrand = new Parse.Query("Request");
+      innerQueryRequestBrand.matchesQuery("brand", innerQueryBrand);
+      requestObjs = innerQueryRequestBrand;
+    }
+    if (!_.isEmpty(categoryId) && !_.isEmpty(brandId)) {
+      requestObjs = Parse.Query.or(innerQueryRequestCategory, innerQueryRequestBrand);
+    }
+    notificationQuery.matchesQuery("requestObject", requestObjs);
+    return notificationQuery.find().then(function(notificationObjs) {
+      var saveQs;
+      saveQs = _.map(notificationObjs, function(notificationObj) {
+        notificationObj.set("hasSeen", true);
+        return unseenNotificationObj.push(notificationObj);
+      });
+      return Parse.Object.saveAll(unseenNotificationObj).then(function(objs) {
+        var result;
+        result = {
+          sellerId: sellerId,
+          categoryId: categoryId,
+          brandId: brandId
+        };
+        return response.success(result);
+      }, function(error) {
+        return response.error("Failed to add products due to - " + error.message);
+      });
+    }, function(error) {
+      return response.error(error);
+    });
+  });
+
   Parse.Cloud.define('getNewOffers', function(request, response) {
     var customerId, innerCustomerQuery, innerProductQuery, productId, queryReq;
     productId = request.params.productId;
