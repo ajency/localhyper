@@ -94,13 +94,15 @@ class SellerController extends Controller
             
             $avgRating = ($seller->get("ratingCount")) ? round(($seller->get("ratingSum") / $seller->get("ratingCount")),1) :0;
             $firstFiveBrands = array_slice($brands, 0, 5);
+            $viewMoreFlag = (!empty($brands) && count($brands)>5) ? true :false;
 
             if($type=='LIST')
             {
                 $sellerList[]= [ 'id' => $seller->getObjectId(),
                               'name' => $seller->get("displayName"),
                               'area' => $seller->get("area"),
-                              'firstFiveBrands' => implode(", ",$firstFiveBrands),  
+                              'firstFiveBrands' => implode(", ",$firstFiveBrands), 
+                              'viewMoreFlag' => $viewMoreFlag,  
                               'brands' => implode(", ",$brands),       
                               'categories' => implode(", ",$categories),
                               'offersCount' => $offerCount .'/'.$sellerRequestCount,
