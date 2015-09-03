@@ -2057,3 +2057,31 @@ label.status-label {
 .errors h6 {
   text-transform: uppercase;
 }
+.sort-popup-my-request .item-title {
+  line-height: 35px;
+  background-color: #444444;
+  border-top: 0;
+  color: #fff;
+  font-weight: normal;
+}
+.sort-popup-my-request .item-title button.button {
+  min-height: 0;
+  min-width: 0;
+  max-height: none;
+  max-width: none;
+  line-height: 27px;
+  text-transform: uppercase;
+  font-weight: normal !important;
+  font-size: 14px;
+  padding: 1px 13px;
+  margin-top: 3px;
+}
+.sort-popup-my-request .item-title button.button.button-clear {
+  color: #fff;
+}
+.sort-popup-my-request .item-checkbox {
+  padding-left: 45px;
+}
+.sort-popup-my-request .item-checkbox .checkbox {
+  left: 4px;
+}

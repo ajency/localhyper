@@ -5,14 +5,14 @@
 
 	<ul class="list">
 		<li class="item item-title">Fliter By
-			<div class="text-right">
-				<button class="button button-dark button-stable" ng-click="view.filter.clearFilters();">
+			<span class="pull-right">
+				<button class="button button-clear" ng-click="view.filter.clearFilters();">
 					Clear
 				</button>
 				<button class="button button-assertive" ng-click="view.filter.onApply();">
 					Apply
 				</button>
-			</div>
+			</span>
 
 		 </li>
 
@@ -20,7 +20,7 @@
 			class="item item-checkbox"
 			ng-repeat="attribute in view.filter.attributes track by $index">
 
-			<label class="checkbox checkbox-square">
+			<label class="checkbox checkbox-square checkbox-assertive">
 				<input
 					type="checkbox"
 					value="open"
