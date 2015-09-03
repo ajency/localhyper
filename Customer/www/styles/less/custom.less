@@ -1479,7 +1479,7 @@ label.status-label {
 		height: 24px;
 		top: 2px;
 		&:after {
-			top: 22%; //was 31
+			top: 15%; //was 31 after that was 22
 			left: 21%;
 			width: 14px;
 			height: 7px;
@@ -2181,6 +2181,9 @@ label.status-label {
 		padding-left: 45px;
 		.checkbox {
 			left: 4px;
+			.checkbox input:before, .checkbox-icon:before {
+				border-color: #ddd;
+			}
 		}
 	}
 }

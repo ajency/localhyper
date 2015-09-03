@@ -1464,7 +1464,7 @@ label.status-label {
 }
 .products-filter-view .checkbox input:after,
 .products-filter-view .checkbox-icon:after {
-  top: 22%;
+  top: 15%;
   left: 21%;
   width: 14px;
   height: 7px;
@@ -2096,6 +2096,10 @@ label.status-label {
 }
 .sort-popup-my-request .item-checkbox .checkbox {
   left: 4px;
+}
+.sort-popup-my-request .item-checkbox .checkbox .checkbox input:before,
+.sort-popup-my-request .item-checkbox .checkbox .checkbox-icon:before {
+  border-color: #ddd;
 }
 .errors {
   padding-top: 65px;
