@@ -1,5 +1,5 @@
 angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', '$rootScope', '$ionicPlatform', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q, $rootScope, $ionicPlatform) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$q', '$rootScope', '$ionicPlatform', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $q, $rootScope, $ionicPlatform) {
     var onDeviceBack;
     $scope.view = {
       name: '',
@@ -52,10 +52,6 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           selected: false
         }
       ],
-      workTimings: {
-        start: '10:00:00',
-        end: '20:00:00'
-      },
       location: {
         modal: null,
         map: null,
@@ -172,7 +168,6 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           this.latitude = details.latitude;
           this.longitude = details.longitude;
           this.location.address = details.address;
-          this.workTimings = details.workTimings;
           return this.workingDays = details.workingDays;
         }
       },
@@ -216,26 +211,6 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           };
         })(this));
         return offDays;
-      },
-      addWorkTimings: function(type) {
-        var options;
-        if (App.isWebView()) {
-          options = {
-            date: new Date(),
-            mode: 'time',
-            is24Hour: true,
-            okText: 'Set',
-            androidTheme: 5
-          };
-          return $cordovaDatePicker.show(options).then((function(_this) {
-            return function(date) {
-              return _this.workTimings[type] = moment(date).format('HH:mm:ss');
-            };
-          })(this));
-        } else {
-          this.workTimings.start = '9:00:00';
-          return this.workTimings.end = '18:00:00';
-        }
       },
       onChangeLocation: function() {
         return this.isGoogleMapsScriptLoaded().then((function(_this) {
@@ -291,8 +266,6 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           return CToast.show('Please select your location');
         } else if (!this.areWorkingDaysSelected()) {
           return CToast.show('Please select your working days');
-        } else if (_.contains([this.workTimings.start, this.workTimings.end], '')) {
-          return CToast.show('Please select your work timings');
         } else {
           this.offDays = this.getNonWorkingDays();
           if (this.myProfileState) {
@@ -337,7 +310,6 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           delivery: {
             radius: this.delivery.radius
           },
-          workTimings: this.workTimings,
           workingDays: this.workingDays,
           offDays: this.getNonWorkingDays()
         });

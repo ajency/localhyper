@@ -3,9 +3,9 @@ angular.module 'LocalHyper.businessDetails', []
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
 	, 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails'
-	, 'AuthAPI', 'CSpinner', '$cordovaDatePicker', '$q', '$rootScope', '$ionicPlatform'
+	, 'AuthAPI', 'CSpinner', '$q', '$rootScope', '$ionicPlatform'
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout
-	, Storage, BusinessDetails, AuthAPI, CSpinner, $cordovaDatePicker, $q, $rootScope, $ionicPlatform)->
+	, Storage, BusinessDetails, AuthAPI, CSpinner, $q, $rootScope, $ionicPlatform)->
 	
 		$scope.view = 
 			name:''
@@ -30,8 +30,6 @@ angular.module 'LocalHyper.businessDetails', []
 				{name: 'Fri', value: 'Friday', selected: false}
 				{name: 'Sat', value: 'Saturday', selected: false}
 				{name: 'Sun', value: 'Sunday', selected: false}]
-
-			workTimings: start: '10:00:00', end: '20:00:00'
 
 			location:
 				modal: null
@@ -123,7 +121,6 @@ angular.module 'LocalHyper.businessDetails', []
 					@latitude =  details.latitude
 					@longitude =  details.longitude
 					@location.address = details.address
-					@workTimings = details.workTimings
 					@workingDays = details.workingDays
 
 			isGoogleMapsScriptLoaded : ->
@@ -154,21 +151,6 @@ angular.module 'LocalHyper.businessDetails', []
 				_.each @workingDays, (days)=>
 					offDays.push(days.value) if !days.selected
 				offDays
-
-			addWorkTimings : (type)->
-				if App.isWebView()
-					options = 
-						date: new Date()
-						mode: 'time'
-						is24Hour: true
-						okText: 'Set'
-						androidTheme: 5
-					$cordovaDatePicker.show options
-					.then (date)=>
-						@workTimings[type] = moment(date).format 'HH:mm:ss'
-				else
-					@workTimings.start = '9:00:00'
-					@workTimings.end = '18:00:00'
 
 			onChangeLocation : ->
 				@isGoogleMapsScriptLoaded().then (loaded)=>
@@ -210,8 +192,6 @@ angular.module 'LocalHyper.businessDetails', []
 					CToast.show 'Please select your location'
 				else if !@areWorkingDaysSelected()
 					CToast.show 'Please select your working days'
-				else if _.contains [@workTimings.start, @workTimings.end], ''
-					CToast.show 'Please select your work timings'
 				else
 					@offDays = @getNonWorkingDays()
 					
@@ -247,7 +227,6 @@ angular.module 'LocalHyper.businessDetails', []
 					deliveryRadius: @delivery.radius
 					location: address:@location.address
 					delivery: radius: @delivery.radius
-					workTimings: @workTimings
 					workingDays : @workingDays
 					offDays : @getNonWorkingDays()
 
