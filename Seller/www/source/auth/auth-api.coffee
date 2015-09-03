@@ -97,7 +97,6 @@ angular.module 'LocalHyper.auth'
 				supportedCategories: supportedCategories
 				supportedBrands: supportedBrands
 				offDays: user.offDays
-				workTimings: user.workTimings
 				
 			data
 
@@ -132,7 +131,6 @@ angular.module 'LocalHyper.auth'
 						"supportedBrands": info.supportedBrands
 						"lastLogin": new Date()
 						"offDays": info.offDays
-						"workTimings": info.workTimings
 			.then ->
 				Parse.User.logOut()
 			.then ->
@@ -176,7 +174,6 @@ angular.module 'LocalHyper.auth'
 					"supportedBrands": info.supportedBrands
 					"lastLogin": new Date()
 					"offDays": info.offDays
-					"workTimings": info.workTimings
 					"addedCredit": parseFloat defaultObj.get('value')
 					"subtractedCredit": 0
 					"ratingSum": 0
