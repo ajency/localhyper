@@ -53,25 +53,29 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
         });
       },
       saveDetails: function() {
-        return Storage.bussinessDetails('get').then((function(_this) {
-          return function(user) {
-            CSpinner.show('', 'Please wait...');
-            User.info('set', user);
-            return AuthAPI.isExistingUser(user).then(function(data) {
-              return AuthAPI.loginExistingUser(data.userObj);
-            }).then(function(success) {
-              return Storage.categoryChains('set', _this.categoryChains).then(function() {
-                CategoriesAPI.categoryChains('set', _this.categoryChains);
-                $rootScope.$broadcast('category:chain:updated');
-                CSpinner.hide();
-                return CToast.show('Saved profile details');
+        if (this.categoryChains.length === 0) {
+          return CToast.show('Please choose atleast one category');
+        } else {
+          return Storage.bussinessDetails('get').then((function(_this) {
+            return function(user) {
+              CSpinner.show('', 'Please wait...');
+              User.info('set', user);
+              return AuthAPI.isExistingUser(user).then(function(data) {
+                return AuthAPI.loginExistingUser(data.userObj);
+              }).then(function(success) {
+                return Storage.categoryChains('set', _this.categoryChains).then(function() {
+                  CategoriesAPI.categoryChains('set', _this.categoryChains);
+                  $rootScope.$broadcast('category:chain:updated');
+                  CSpinner.hide();
+                  return CToast.show('Saved profile details');
+                });
+              }, function(error) {
+                CToast.show('Could not connect to server, please try again.');
+                return CSpinner.hide();
               });
-            }, function(error) {
-              CToast.show('Could not connect to server, please try again.');
-              return CSpinner.hide();
-            });
-          };
-        })(this));
+            };
+          })(this));
+        }
       }
     };
     return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
