@@ -2079,9 +2079,24 @@ h4 .WebRupee.subdued {
 }
 .errors h1,
 .errors h2,
-.errors h3,
-.errors h4,
-.errors h5,
-.errors h6 {
+.errors h3 {
   text-transform: uppercase;
+}
+.errors-all .error-img {
+  display: block;
+  margin: 10px auto;
+  margin-top: 0;
+  opacity: 0.1;
+  height: 75px;
+}
+.errors-all h3 {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.errors-all h5 {
+  margin-top: 3px;
+}
+.errors-all button.button {
+  text-transform: uppercase;
+  font-weight: normal !important;
 }
