@@ -227,6 +227,7 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
               _this.data.request.status = _this.data.deliveryStatus;
               _this.data.request.failedDeliveryReason = _this.failedDelivery.reason;
               _this.showChange = true;
+              _this.modal.hide();
               return CToast.showLongBottom('Delivery status has been updated. ' + 'Customer will be notified about the status update.');
             };
           })(this), function(error) {
@@ -234,6 +235,24 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
           })["finally"](function() {
             return CSpinner.hide();
           });
+        },
+        closeSuccessfulOfferDetail: function() {
+          var msg;
+          if (this.showChange) {
+            return this.modal.hide();
+          } else {
+            msg = 'Your Changes are not update .Are you sure you want to exit ';
+            return CDialog.confirm('Exit Filter?', msg, ['Exit Anyway', 'Update & Exit']).then((function(_this) {
+              return function(btnIndex) {
+                switch (btnIndex) {
+                  case 1:
+                    return _this.modal.hide();
+                  case 2:
+                    return _this.updateDeliveryStatus();
+                }
+              };
+            })(this));
+          }
         }
       },
       init: function() {
@@ -386,7 +405,7 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
       } else if (filter.modal.isShown()) {
         return filter.closeModal();
       } else if (detailsModal.isShown()) {
-        return detailsModal.hide();
+        return $scope.view.offerDetails.closeSuccessfulOfferDetail();
       } else {
         return App.goBack(-1);
       }

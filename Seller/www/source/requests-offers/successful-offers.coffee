@@ -175,6 +175,7 @@ angular.module 'LocalHyper.requestsOffers'
 						@data.request.status = @data.deliveryStatus
 						@data.request.failedDeliveryReason = @failedDelivery.reason
 						@showChange = true
+						@modal.hide()
 						CToast.showLongBottom 'Delivery status has been updated. '+
 						'Customer will be notified about the status update.'
 					, (error)->
@@ -182,7 +183,19 @@ angular.module 'LocalHyper.requestsOffers'
 					.finally ->
 						CSpinner.hide()
 
-			
+				closeSuccessfulOfferDetail : ->
+					if @showChange
+						@modal.hide()
+					else
+						msg = 'Your Changes are not update .Are you sure you want to exit '
+						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Update & Exit']
+						.then (btnIndex)=>
+							switch btnIndex
+								when 1
+									@modal.hide()
+								when 2
+									@updateDeliveryStatus()
+
 			init : ->
 				@offerDetails.loadModal()
 				@filter.loadModal()
@@ -307,7 +320,7 @@ angular.module 'LocalHyper.requestsOffers'
 			else if filter.modal.isShown()
 				filter.closeModal()
 			else if detailsModal.isShown()
-				detailsModal.hide()
+				$scope.view.offerDetails.closeSuccessfulOfferDetail()
 			else
 				App.goBack -1
 

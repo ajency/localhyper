@@ -11,7 +11,7 @@
          </div>
          <div class="col col-20">
             <h2
-               ng-click="view.offerDetails.modal.hide();"
+               ng-click="view.offerDetails.closeSuccessfulOfferDetail();"
                class="text-right">
                <i class="ion ion-ios-close-outline text-light"></i>
             </h2>
@@ -141,12 +141,33 @@
 
                <div class="row" ng-if="view.offerDetails.failedDelivery.display">
                   <div class="col">
-                     <label class="item item-input failure-item">
-                     <textarea
-                        placeholder="Reason for failure"
-                        ng-model="view.offerDetails.failedDelivery.reason"
-                        ng-disabled="view.offerDetails.showChange">
-                     </textarea>
+                     <label
+                        class="item item-input item-select status-dd">
+                        <select
+                              ng-model="view.offerDetails.failedDelivery.reason"
+                              ng-disabled="view.offerDetails.showChange">
+                              <option value="">
+                                 Please select reason for failure
+                              </option>
+                              <option value="Customer not picking phone">
+                                 Customer not picking phone
+                              </option>
+                              <option value="Customer refused">
+                                 Customer refused
+                              </option>
+                              <option
+                                 value=" Customer not at home">
+                                 Customer not at home
+                              </option>
+                              <option
+                                 value="Customer negotiating">
+                                 Customer negotiating
+                              </option>
+                              <option
+                                 value="Wrong address">
+                                 Wrong address
+                              </option>
+                        </select>
                      </label>
                   </div>
                </div>
