@@ -822,30 +822,46 @@ button.button.button-assertive b {
   position: relative;
   top: 14px;
 }
+.sort-model.rating-popup.pane {
+  height: 379px !important;
+  background-color: #F5F5F5;
+}
 .rating-wrap h4 {
-  font-size: 16px;
-  margin-bottom: 2px;
+  font-size: 20px;
+  line-height: 22px;
+  margin: 0;
+  padding-top: 12px;
+  padding-bottom: 0px;
+  padding-left: 8px;
+  padding-right: 8px;
   font-weight: bold;
+  color: #f45152 !important;
+  background-color: #fff;
 }
 .rating-wrap p.seller-name {
-  font-size: 12px;
+  font-size: 16px;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 0;
+  padding: 5px 5px 8px;
+  background-color: #fff;
 }
 .rating-wrap p.seller-info {
   font-size: 13px;
   text-align: center;
-  margin-bottom: 2px;
-  padding-top: 10px;
+  margin-bottom: 0;
+  padding: 10px 5px 2px;
   border-top: 1px solid #ccc;
 }
 .rating-wrap p.rate-scale {
   font-size: 13px;
   text-align: center;
+  padding: 0 23px 10px;
+  margin-bottom: 0;
+  line-height: 18px;
 }
 .rating-wrap .rating-inner-wrap {
   background: #fff;
-  padding-top: 12px;
+  padding-top: 15px;
 }
 .rating-wrap ul.rating {
   text-align: center;
@@ -863,13 +879,20 @@ button.button.button-assertive b {
 .rating-wrap p.rating-info {
   font-size: 16px;
   margin-bottom: 0;
-  margin-top: 7px;
+  margin-top: 0;
   text-transform: uppercase;
 }
 .rating-wrap textarea {
+  border-top: 1px solid #E2DCDC;
+  background-color: #FBFBFB;
+  width: 100%;
   border-top: 1px solid #ddd;
   padding: 8px;
-  margin-top: 10px;
+  margin-top: 15px;
+}
+.rating-wrap button.button {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 .list-cont {
   position: relative;
