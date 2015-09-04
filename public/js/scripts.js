@@ -155,7 +155,7 @@ $(".update-search-keyword").click(function(){
 });
 
 $(".edit-balance-credit").click(function(){
-     var str = '<input type="text" name="balanceCredit" class="input-sm" ><button class="cancel-seller-credits btn btn-xs btn-mini btn-info m-t-5 pull-right">Cancel</button> <button class="save-seller-credits btn btn-xs btn-mini btn-info m-t-5 pull-right">Save</button> ';
+     var str = '<input type="text" name="balanceCredit" class="input-sm" ><button class="cancel-seller-credits btn btn-xs btn-mini btn-default m-t-5 pull-right m-l-5">Cancel</button> <button class="save-seller-credits btn btn-xs btn-mini btn-info m-t-5 pull-right">Save</button> ';
      $(this).closest('td').find(".balance-credit").append(str);
      $(this).closest('td').find(".edit-balance-credit").addClass("hidden");
 });
