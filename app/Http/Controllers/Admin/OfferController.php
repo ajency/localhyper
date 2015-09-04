@@ -96,6 +96,7 @@ class OfferController extends Controller
            
             $createdDate = convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s'));
             
+            $autoBid =   ($offer->get('autoBid'))?"Yes":"No"; 
             if($type=='LIST')
             {
                 $offertList[] =[
@@ -114,6 +115,7 @@ class OfferController extends Controller
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
                         'date'=>$createdDate, 
+                        'autoBid'=>$autoBid, 
                          ] ;  
             }
             else
@@ -130,7 +132,8 @@ class OfferController extends Controller
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
-                        'date'=>$createdDate, 
+                        'date'=>$createdDate,
+                        'autoBid'=>$autoBid,  
                          ] ;  
             }
             
@@ -165,6 +168,7 @@ class OfferController extends Controller
         $headers []= 'OFFER STATUS' ;
         $headers []= 'DELIVERY REASON FAILURE' ;
         $headers []= 'CREATED AT' ;
+        $headers []= 'Auto Bid' ;
  
         $offerSheet->fromArray($headers, ' ', 'A1');
         $page = 0; 

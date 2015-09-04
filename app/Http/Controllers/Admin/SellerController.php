@@ -257,6 +257,7 @@ class SellerController extends Controller
         $seller['address'] = $sellerData->get("address"); 
         $seller['area'] = $sellerData->get("area"); 
         $seller['city'] = $sellerData->get("city");
+        $seller['autoBid'] = $sellerData->get("autoBid");
         $seller['categories'] = $categories; 
         $showOffers = false;
         
@@ -292,6 +293,7 @@ class SellerController extends Controller
             $productObj = $requestObj->get('product');
             $categoryObj = $requestObj->get('category');
             $priceObj =   $offer->get('price'); 
+            $autoBid =   ($offer->get('autoBid'))?"Yes":"No"; 
             
             $creditUsed =0;
             $transaction = new ParseQuery("Transaction");
@@ -312,6 +314,7 @@ class SellerController extends Controller
                         'creditUsed' => $creditUsed,
                         'status'=>$offer->get("status"),
                         'deliverystatus'=>$deliveryStatus,
+                        'autoBid'=>$autoBid,
                         'date'=>convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s')),
                          ] ;
             

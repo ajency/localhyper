@@ -42,11 +42,11 @@
                     </div>
                     
                   </div>
-                  <!--<div class="col-md-2 text-center">
+                  <div class="col-md-2 text-center">
                      <h5 class="text-warning semi-bold m-b-30">Auto Bid</h5>  
-                     <input type="checkbox" checked data-toggle="toggle" data-size="mini">
+                     <input type="checkbox" {{ ($seller['autoBid']) ? "checked" :"" }} data-toggle="toggle" data-size="mini" disabled>
                   </div>
-                  <div class="col-md-4 text-right">
+                 <!-- <div class="col-md-4 text-right">
                     <h5 class="text-warning semi-bold">Credit Counts Left : -</h5>  
                      <button type="button" class="btn btn-primary btn-info m-t-20" data-toggle="modal" data-target="#myModal"><i class="fa fa-dollar"></i> Add Credits</button>
                   </div>-->
@@ -84,7 +84,7 @@
               <th>Offer Status</th>
               <th>Delivery Status</th>    
               <th>Credits Used</th>
-              <!--<th>Auto Bid</th>-->
+              <th>Auto Bid</th>
             </tr>
           </thead>
           <tbody>
@@ -97,7 +97,7 @@
                 <td><span class="label label-info">{{ $offer['status'] }}</span></td>
                 <td>{{ $offer['deliverystatus'] }}</td>    
                   <td>{{ $offer['creditUsed'] }}</td>
-                <!--<td class="text-center">-</td>-->
+                <td class="text-center">{{ $offer['autoBid'] }}</td>
               </tr>
               @endforeach
           </tbody>
