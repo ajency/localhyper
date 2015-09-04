@@ -67,12 +67,18 @@
 						</div>
 					</div>
 			<hr class="margin-none">
+
+			<!-- This is for the address that'll be added in the future -->
+			<!-- Remove the style "display: none;" when using this. thx -->
+			<p class="address-details" style="display: none;"><i class="icon ion-ios-location"></i> </p>
+
+
 				<div class="row">
 					<div class="col ">
 						<!-- <h5 class="text-left subdued text-center margin-none">
 							MRP  <br><span class="WebRupee subdued">&#x20B9;</span> -->
 						<h4 class="text-left subdued text-center margin-none">
-							{{view.requestDetails.data.lowestPriceLabel}}  
+							{{view.requestDetails.data.lowestPriceLabel}}
 								<br><span class="WebRupee subdued">&#x20B9;</span>
 							<b class="big-txt">
 								{{App.toINR(view.requestDetails.data.lowestPrice)}}
