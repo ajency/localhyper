@@ -36,7 +36,7 @@ function convertToIST($dateTime)
     return $date->format('d-m-Y H:i:s');
 }
 
-function dateDiffernceInHours($date2, $date1) 
+function dateDiffernceInHours($date1, $date2) 
 { 
   /*$start_ts = strtotime($date1);
   $end_ts = strtotime($date2);
