@@ -2114,3 +2114,16 @@ h4 .WebRupee.subdued {
   text-transform: uppercase;
   font-weight: normal !important;
 }
+.address-details {
+  padding: 0 10px;
+  padding-top: 10px;
+  padding-left: 45px;
+  position: relative;
+}
+.address-details i.icon {
+  position: absolute;
+  top: 13px;
+  left: 15px;
+  font-size: 30px;
+  color: #f35a59;
+}
