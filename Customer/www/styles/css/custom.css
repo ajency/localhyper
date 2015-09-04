@@ -2097,9 +2097,13 @@ label.status-label {
 .sort-popup-my-request .item-checkbox .checkbox {
   left: 4px;
 }
-.sort-popup-my-request .item-checkbox .checkbox .checkbox input:before,
+.sort-popup-my-request .item-checkbox .checkbox.checkbox-square.checkbox-assertive input:before,
 .sort-popup-my-request .item-checkbox .checkbox .checkbox-icon:before {
   border-color: #ddd;
+}
+.sort-popup-my-request .item-checkbox .checkbox.checkbox-square.checkbox-assertive input:checked:before,
+.sort-popup-my-request .item-checkbox .checkbox input:checked + .checkbox-icon:before {
+  border-color: #f45152;
 }
 .errors {
   padding-top: 65px;
