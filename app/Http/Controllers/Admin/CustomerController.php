@@ -31,6 +31,7 @@ class CustomerController extends Controller
                                          ->with('numOfPages',$numOfPages)
                                          ->with('activeMenu','customers');
     }
+
  
     public function getCustomers($type,$page ,$displayLimit)
     {
@@ -66,8 +67,8 @@ class CustomerController extends Controller
                 {
                     $datetime1 = date('Y-m-d H:i:s');
                     $datetime2 = $request->getCreatedAt()->format('Y-m-d H:i:s');
-                    $interval = dateDiffernce($datetime1, $datetime2);  
-                    if($interval>=1)
+                    $interval = dateDiffernceInHours($datetime1, $datetime2);  
+                    if($interval > 24)
                         $requestExpiredCount = $requestExpiredCount+1;
                 }
                 

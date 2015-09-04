@@ -34,6 +34,8 @@ Route::group( ['prefix' => 'admin', 'middleware' => ['auth']], function() {
     Route::get( 'seller/sellerexport', 'Admin\SellerController@sellersExport' );
     Route::get( 'smsverify/smsverifyexport', 'Admin\SmsVerifyController@smsVerifyExport' );
     Route::get( 'ratings/ratingsexport', 'Admin\RatingsController@ratingsExport' );
+
+    Route::get( 'customer/expiredoffer', 'Admin\CustomerController@expiredOffer' );
     
     Route::get( '/', 'Admin\AdminController@index' );
     Route::resource( 'customer', 'Admin\CustomerController' );
