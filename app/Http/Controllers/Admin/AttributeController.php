@@ -483,6 +483,8 @@ class AttributeController extends Controller
 				foreach ($brandsArr as $brand) {
 					
 					$brandExistingId = array_search(strtolower($brand['name']), $all_brands);
+					if($brand["imageUrl"]=='')
+						$brand["imageUrl"] ="https://placeholdit.imgix.net/~text?txtsize=85&txt=".$brand["name"]."&w=350&h=150&txttrack=1&txtclr=000000";
 					
 					// if $brand is present in $all_brands then update objecId for that $brand in brandsArr
 					if($brandExistingId !== false){

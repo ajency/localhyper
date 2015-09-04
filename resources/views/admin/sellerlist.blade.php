@@ -29,9 +29,9 @@
               <tr >
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['name'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['area'] }}</td>
-                <td>{{ $seller['firstFiveBrands'] }}<a type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="right" data-content="{{ $seller['brands'] }}">
+                <td>{{ $seller['firstFiveBrands'] }} @if($seller['viewMoreFlag'])<a type="button" class="btn btn-link" data-container="body" data-toggle="popover" data-placement="right" data-content="{{ $seller['brands'] }}">
   View More
-</a>  </td>
+</a> @endif </td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['categories'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['offersCount'] }}</td>
                 <td onclick="location.href='{{ url('admin/seller/'.$seller['id']) }}'">{{ $seller['offerAcceptedCount'] }}</td>
