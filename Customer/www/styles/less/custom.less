@@ -2181,8 +2181,11 @@ label.status-label {
 		padding-left: 45px;
 		.checkbox {
 			left: 4px;
-			.checkbox input:before, .checkbox-icon:before {
+			&.checkbox-square.checkbox-assertive input:before, .checkbox-icon:before {
 				border-color: #ddd;
+			}
+			&.checkbox-square.checkbox-assertive input:checked:before, input:checked+.checkbox-icon:before {
+				border-color: @brand-primary;
 			}
 		}
 	}
