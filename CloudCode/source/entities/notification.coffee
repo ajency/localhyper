@@ -298,66 +298,129 @@ Parse.Cloud.define 'updateNotificationStatus', (request, response) ->
     ,(error) ->
         response.error error
 
+
 Parse.Cloud.define 'updateUnseenRequestNotification', (request, response) ->
     sellerId = request.params.sellerId
-    categoryId = request.params.categoryId
-    brandId = request.params.brandId
+    changedData = request.params.changedData
     unseenNotificationObj = []
-    requestObjs = []
+    requestObjsArray = []
 
-    notificationQuery = new Parse.Query("Notification")
-    notificationQuery.equalTo("hasSeen",false)
-    notificationQuery.equalTo("type","Request")
-
-    innerQueryUser = new Parse.Query Parse.User
-    innerQueryUser.equalTo("objectId",sellerId)
-    notificationQuery.matchesQuery("recipientUser", innerQueryUser)
-
-    if !_.isEmpty(categoryId)
+    _.each changedData, (brandIds , categoryId) ->
+        #brandIds = _.values brandIdsObj 
         innerQueryCategory = new Parse.Query("Category")
-        innerQueryCategory.containedIn("objectId",categoryId)
+        innerQueryCategory.equalTo("objectId",categoryId)
 
-        innerQueryRequestCategory = new Parse.Query("Request")
-        innerQueryRequestCategory.matchesQuery("category",innerQueryCategory)
-        requestObjs = innerQueryRequestCategory
-        
-
-    if !_.isEmpty(brandId)
         innerQueryBrand = new Parse.Query("Brand")
-        innerQueryBrand.containedIn("objectId",brandId)
+        innerQueryBrand.containedIn("objectId",brandIds)
 
-        innerQueryRequestBrand = new Parse.Query("Request")
-        innerQueryRequestBrand.matchesQuery("brand",innerQueryBrand)
-        requestObjs = innerQueryRequestBrand
+        innerQueryRequest = new Parse.Query("Request")
+        innerQueryRequest.matchesQuery("category",innerQueryCategory)
+        requestObjsArray.push innerQueryRequest.find()
+    
 
-    if !_.isEmpty(categoryId) and !_.isEmpty(brandId)
-        requestObjs = Parse.Query.or(innerQueryRequestCategory, innerQueryRequestBrand)
+    Parse.Promise.when(requestObjsArray).then ->
+        updatedRequests = _.flatten(_.toArray(arguments)) 
+        console.log   arguments
+
+        notificationQuery = new Parse.Query("Notification")
+        notificationQuery.equalTo("hasSeen",false)
+        notificationQuery.equalTo("type","Request")
+
+        innerQueryUser = new Parse.Query Parse.User
+        innerQueryUser.equalTo("objectId",sellerId)
+
+        notificationQuery.matchesQuery("recipientUser", innerQueryUser)
+        notificationQuery.containedIn("requestObject", updatedRequests)
+        notificationQuery.find()
+        .then (notificationObjs) ->
+            console.log notificationObjs
+            saveQs = _.map( notificationObjs , (notificationObj) ->
+                notificationObj.set("hasSeen",true)
+                unseenNotificationObj.push notificationObj
+            )
+
+            Parse.Object.saveAll unseenNotificationObj
+                .then (objs) ->
+                    result = 
+                        sellerId : sellerId    
+
+                    response.success result
+                , (error) ->
+                    response.error "Failed to add products due to - #{error.message}"  
+
+
+        ,(error) ->
+            response.error error
+
+       
+    , (error) ->
+        response.error error
+
+
+
+
+
+
+# Parse.Cloud.define 'updateUnseenRequestNotification', (request, response) ->
+#     sellerId = request.params.sellerId
+#     categoryId = request.params.categoryId
+#     brandId = request.params.brandId
+#     unseenNotificationObj = []
+#     requestObjs = []
+
+#     notificationQuery = new Parse.Query("Notification")
+#     notificationQuery.equalTo("hasSeen",false)
+#     notificationQuery.equalTo("type","Request")
+
+#     innerQueryUser = new Parse.Query Parse.User
+#     innerQueryUser.equalTo("objectId",sellerId)
+#     notificationQuery.matchesQuery("recipientUser", innerQueryUser)
+
+#     if !_.isEmpty(categoryId)
+#         innerQueryCategory = new Parse.Query("Category")
+#         innerQueryCategory.containedIn("objectId",categoryId)
+
+#         innerQueryRequestCategory = new Parse.Query("Request")
+#         innerQueryRequestCategory.matchesQuery("category",innerQueryCategory)
+#         requestObjs = innerQueryRequestCategory
         
-    notificationQuery.matchesQuery("requestObject", requestObjs)
 
-    notificationQuery.find()
-    .then (notificationObjs) ->
-        saveQs = _.map( notificationObjs , (notificationObj) ->
-            notificationObj.set("hasSeen",true)
-            #notificationId = notificationResult.id
-            unseenNotificationObj.push notificationObj
-        )
+#     if !_.isEmpty(brandId)
+#         innerQueryBrand = new Parse.Query("Brand")
+#         innerQueryBrand.containedIn("objectId",brandId)
 
-        Parse.Object.saveAll unseenNotificationObj
-          .then (objs) ->
-            result = 
-            sellerId : sellerId
-            categoryId : categoryId
-            brandId : brandId       
+#         innerQueryRequestBrand = new Parse.Query("Request")
+#         innerQueryRequestBrand.matchesQuery("brand",innerQueryBrand)
+#         requestObjs = innerQueryRequestBrand
 
-            response.success result
-          , (error) ->
-                response.error "Failed to add products due to - #{error.message}" 
+#     if !_.isEmpty(categoryId) and !_.isEmpty(brandId)
+#         requestObjs = Parse.Query.or(innerQueryRequestCategory, innerQueryRequestBrand)
+        
+#     notificationQuery.matchesQuery("requestObject", requestObjs)
+
+#     notificationQuery.find()
+#     .then (notificationObjs) ->
+#         saveQs = _.map( notificationObjs , (notificationObj) ->
+#             notificationObj.set("hasSeen",true)
+#             #notificationId = notificationResult.id
+#             unseenNotificationObj.push notificationObj
+#         )
+
+#         Parse.Object.saveAll unseenNotificationObj
+#           .then (objs) ->
+#             result = 
+#             sellerId : sellerId
+#             categoryId : categoryId
+#             brandId : brandId       
+
+#             response.success result
+#           , (error) ->
+#                 response.error "Failed to add products due to - #{error.message}" 
 
         
                     
-    ,(error) ->
-        response.error error
+#     ,(error) ->
+#         response.error error
 
 
 

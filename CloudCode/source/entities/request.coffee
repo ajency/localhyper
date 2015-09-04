@@ -875,6 +875,7 @@ getRequestData =  (filteredRequest,seller,lastOffers ) ->
             "name": brandObj.get("name")  
 
         reuqestGeoPoint =  filteredRequest.get("addressGeoPoint")  
+        requestAddress = filteredRequest.get("address") 
         radiusDiffInKm =   reuqestGeoPoint.kilometersTo(sellerGeoPoint) 
 
         productsWithLastOffered = _.keys(productLastOfferedPrices)
@@ -899,6 +900,7 @@ getRequestData =  (filteredRequest,seller,lastOffers ) ->
             product: product
             category: category
             brand: brand
+            address: requestAddress
             createdAt: filteredRequest.createdAt
             comments: filteredRequest.get("comments")  
             status: filteredRequest.get("status")            

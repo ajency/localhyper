@@ -1018,52 +1018,50 @@
   });
 
   Parse.Cloud.define('updateUnseenRequestNotification', function(request, response) {
-    var brandId, categoryId, innerQueryBrand, innerQueryCategory, innerQueryRequestBrand, innerQueryRequestCategory, innerQueryUser, notificationQuery, requestObjs, sellerId, unseenNotificationObj;
+    var changedData, requestObjsArray, sellerId, unseenNotificationObj;
     sellerId = request.params.sellerId;
-    categoryId = request.params.categoryId;
-    brandId = request.params.brandId;
+    changedData = request.params.changedData;
     unseenNotificationObj = [];
-    requestObjs = [];
-    notificationQuery = new Parse.Query("Notification");
-    notificationQuery.equalTo("hasSeen", false);
-    notificationQuery.equalTo("type", "Request");
-    innerQueryUser = new Parse.Query(Parse.User);
-    innerQueryUser.equalTo("objectId", sellerId);
-    notificationQuery.matchesQuery("recipientUser", innerQueryUser);
-    if (!_.isEmpty(categoryId)) {
+    requestObjsArray = [];
+    _.each(changedData, function(brandIds, categoryId) {
+      var innerQueryBrand, innerQueryCategory, innerQueryRequest;
       innerQueryCategory = new Parse.Query("Category");
-      innerQueryCategory.containedIn("objectId", categoryId);
-      innerQueryRequestCategory = new Parse.Query("Request");
-      innerQueryRequestCategory.matchesQuery("category", innerQueryCategory);
-      requestObjs = innerQueryRequestCategory;
-    }
-    if (!_.isEmpty(brandId)) {
+      innerQueryCategory.equalTo("objectId", categoryId);
       innerQueryBrand = new Parse.Query("Brand");
-      innerQueryBrand.containedIn("objectId", brandId);
-      innerQueryRequestBrand = new Parse.Query("Request");
-      innerQueryRequestBrand.matchesQuery("brand", innerQueryBrand);
-      requestObjs = innerQueryRequestBrand;
-    }
-    if (!_.isEmpty(categoryId) && !_.isEmpty(brandId)) {
-      requestObjs = Parse.Query.or(innerQueryRequestCategory, innerQueryRequestBrand);
-    }
-    notificationQuery.matchesQuery("requestObject", requestObjs);
-    return notificationQuery.find().then(function(notificationObjs) {
-      var saveQs;
-      saveQs = _.map(notificationObjs, function(notificationObj) {
-        notificationObj.set("hasSeen", true);
-        return unseenNotificationObj.push(notificationObj);
-      });
-      return Parse.Object.saveAll(unseenNotificationObj).then(function(objs) {
-        var result;
-        result = {
-          sellerId: sellerId,
-          categoryId: categoryId,
-          brandId: brandId
-        };
-        return response.success(result);
+      innerQueryBrand.containedIn("objectId", brandIds);
+      innerQueryRequest = new Parse.Query("Request");
+      innerQueryRequest.matchesQuery("category", innerQueryCategory);
+      return requestObjsArray.push(innerQueryRequest.find());
+    });
+    return Parse.Promise.when(requestObjsArray).then(function() {
+      var innerQueryUser, notificationQuery, updatedRequests;
+      updatedRequests = _.flatten(_.toArray(arguments));
+      console.log(arguments);
+      notificationQuery = new Parse.Query("Notification");
+      notificationQuery.equalTo("hasSeen", false);
+      notificationQuery.equalTo("type", "Request");
+      innerQueryUser = new Parse.Query(Parse.User);
+      innerQueryUser.equalTo("objectId", sellerId);
+      notificationQuery.matchesQuery("recipientUser", innerQueryUser);
+      notificationQuery.containedIn("requestObject", updatedRequests);
+      return notificationQuery.find().then(function(notificationObjs) {
+        var saveQs;
+        console.log(notificationObjs);
+        saveQs = _.map(notificationObjs, function(notificationObj) {
+          notificationObj.set("hasSeen", true);
+          return unseenNotificationObj.push(notificationObj);
+        });
+        return Parse.Object.saveAll(unseenNotificationObj).then(function(objs) {
+          var result;
+          result = {
+            sellerId: sellerId
+          };
+          return response.success(result);
+        }, function(error) {
+          return response.error("Failed to add products due to - " + error.message);
+        });
       }, function(error) {
-        return response.error("Failed to add products due to - " + error.message);
+        return response.error(error);
       });
     }, function(error) {
       return response.error(error);
@@ -1172,60 +1170,72 @@
     requestQuery = new Parse.Query("Request");
     requestQuery.equalTo("objectId", requestId);
     return requestQuery.first().then(function(requestObject) {
-      var createdDateOfReq, price, product, requestGeoPoint, requestingCustomer, sellerObj;
-      requestingCustomer = requestObject.get("customerId");
-      createdDateOfReq = requestObject.createdAt;
-      requestGeoPoint = requestObject.get("addressGeoPoint");
-      price = new Price();
-      price.set("source", "seller");
+      var firstOfferQuery, sellerObj;
       sellerObj = new Parse.User();
       sellerObj.id = sellerId;
-      price.set("seller", sellerObj);
-      price.set("type", "open_offer");
-      price.set("value", priceValue);
-      product = requestObject.get("product");
-      price.set("product", product);
-      return price.save().then(function(priceObj) {
-        var offer, requestObj;
-        offer = new Offer();
-        requestObj = new Request();
-        requestObj.id = requestId;
-        offer.set("seller", sellerObj);
-        offer.set("request", requestObj);
-        offer.set("price", priceObj);
-        offer.set("status", status);
-        offer.set("deliveryTime", deliveryTime);
-        offer.set("comments", comments);
-        offer.set("autoBid", autoBid);
-        offer.set("requestDate", requestObject.createdAt);
-        offer.set("offerPrice", priceValue);
-        offer.set("requestGeoPoint", requestObject.get("addressGeoPoint"));
-        return offer.save().then(function(offerObj) {
-          var Transaction, transaction;
-          Transaction = Parse.Object.extend("Transaction");
-          transaction = new Transaction();
-          transaction.set("seller", sellerObj);
-          transaction.set("transactionType", "minus");
-          transaction.set("creditCount", makeOfferCredits);
-          transaction.set("towards", "make_offer");
-          transaction.set("offer", offerObj);
-          return transaction.save().then(function(savedTransaction) {
-            return sellerObj.fetch().then(function(sellerFetchedObj) {
-              var newSubtractedCredit, sellersCurrentSubtractedCredit;
-              sellersCurrentSubtractedCredit = sellerFetchedObj.get("subtractedCredit");
-              newSubtractedCredit = sellersCurrentSubtractedCredit + savedTransaction.get("creditCount");
-              sellerObj.set("subtractedCredit", newSubtractedCredit);
-              return sellerFetchedObj.save().then(function(updatedSellerCredit) {
-                var notification;
-                notification = new Notification();
-                notification.set("hasSeen", false);
-                notification.set("recipientUser", requestingCustomer);
-                notification.set("channel", "push");
-                notification.set("processed", false);
-                notification.set("type", "Offer");
-                notification.set("offerObject", offerObj);
-                return notification.save().then(function(notificationObj) {
-                  return response.success(notificationObj);
+      firstOfferQuery = new Parse.Query("Offer");
+      firstOfferQuery.equalTo("request", requestObject);
+      firstOfferQuery.equalTo("seller", sellerObj);
+      return firstOfferQuery.first().then(function(firstOfferObject) {
+        var createdDateOfReq, price, product, requestGeoPoint, requestingCustomer;
+        if (_.isEmpty(firstOfferObject)) {
+          requestingCustomer = requestObject.get("customerId");
+          createdDateOfReq = requestObject.createdAt;
+          requestGeoPoint = requestObject.get("addressGeoPoint");
+          price = new Price();
+          price.set("source", "seller");
+          price.set("seller", sellerObj);
+          price.set("type", "open_offer");
+          price.set("value", priceValue);
+          product = requestObject.get("product");
+          price.set("product", product);
+          return price.save().then(function(priceObj) {
+            var offer, requestObj;
+            offer = new Offer();
+            requestObj = new Request();
+            requestObj.id = requestId;
+            offer.set("seller", sellerObj);
+            offer.set("request", requestObj);
+            offer.set("price", priceObj);
+            offer.set("status", status);
+            offer.set("deliveryTime", deliveryTime);
+            offer.set("comments", comments);
+            offer.set("autoBid", autoBid);
+            offer.set("requestDate", requestObject.createdAt);
+            offer.set("offerPrice", priceValue);
+            offer.set("requestGeoPoint", requestObject.get("addressGeoPoint"));
+            return offer.save().then(function(offerObj) {
+              var Transaction, transaction;
+              Transaction = Parse.Object.extend("Transaction");
+              transaction = new Transaction();
+              transaction.set("seller", sellerObj);
+              transaction.set("transactionType", "minus");
+              transaction.set("creditCount", makeOfferCredits);
+              transaction.set("towards", "make_offer");
+              transaction.set("offer", offerObj);
+              return transaction.save().then(function(savedTransaction) {
+                return sellerObj.fetch().then(function(sellerFetchedObj) {
+                  var newSubtractedCredit, sellersCurrentSubtractedCredit;
+                  sellersCurrentSubtractedCredit = sellerFetchedObj.get("subtractedCredit");
+                  newSubtractedCredit = sellersCurrentSubtractedCredit + savedTransaction.get("creditCount");
+                  sellerObj.set("subtractedCredit", newSubtractedCredit);
+                  return sellerFetchedObj.save().then(function(updatedSellerCredit) {
+                    var notification;
+                    notification = new Notification();
+                    notification.set("hasSeen", false);
+                    notification.set("recipientUser", requestingCustomer);
+                    notification.set("channel", "push");
+                    notification.set("processed", false);
+                    notification.set("type", "Offer");
+                    notification.set("offerObject", offerObj);
+                    return notification.save().then(function(notificationObj) {
+                      return response.success(notificationObj);
+                    }, function(error) {
+                      return response.error(error);
+                    });
+                  }, function(error) {
+                    return response.error(error);
+                  });
                 }, function(error) {
                   return response.error(error);
                 });
@@ -1238,9 +1248,9 @@
           }, function(error) {
             return response.error(error);
           });
-        }, function(error) {
-          return response.error(error);
-        });
+        } else {
+          return response.error("Offer already made for this request");
+        }
       }, function(error) {
         return response.error(error);
       });
@@ -1380,7 +1390,8 @@
           "offerDeliveryDate": offerObj.get("deliveryDate"),
           "offerComments": offerObj.get("comments"),
           "createdAt": offerObj.createdAt,
-          "updatedAt": offerObj.updatedAt
+          "updatedAt": offerObj.updatedAt,
+          "autoBid": offerObj.get("autoBid")
         };
         return sellerOffers.push(sellerOffer);
       });
@@ -3219,7 +3230,7 @@
       "model_number": prodObj.get("model_number")
     };
     getOtherPricesForProduct(prodObj).then(function(productPrice) {
-      var brand, brandObj, category, categoryObj, imageSizes, innerQueryRequest, innerQuerySeller, lastOffered, lastOfferedDeliveryTime, productsWithLastOffered, productsWithLastOfferedDelivery, queryNotification, radiusDiffInKm, requestObj, reuqestGeoPoint;
+      var brand, brandObj, category, categoryObj, imageSizes, innerQueryRequest, innerQuerySeller, lastOffered, lastOfferedDeliveryTime, productsWithLastOffered, productsWithLastOfferedDelivery, queryNotification, radiusDiffInKm, requestAddress, requestObj, reuqestGeoPoint;
       categoryObj = filteredRequest.get("category");
       category = {
         "id": categoryObj.id,
@@ -3232,6 +3243,7 @@
         "name": brandObj.get("name")
       };
       reuqestGeoPoint = filteredRequest.get("addressGeoPoint");
+      requestAddress = filteredRequest.get("address");
       radiusDiffInKm = reuqestGeoPoint.kilometersTo(sellerGeoPoint);
       productsWithLastOffered = _.keys(productLastOfferedPrices);
       if (_.indexOf(productsWithLastOffered, productId) > -1) {
@@ -3252,6 +3264,7 @@
         product: product,
         category: category,
         brand: brand,
+        address: requestAddress,
         createdAt: filteredRequest.createdAt,
         comments: filteredRequest.get("comments"),
         status: filteredRequest.get("status"),

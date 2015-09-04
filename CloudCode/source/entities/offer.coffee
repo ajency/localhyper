@@ -138,88 +138,100 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
 
     requestQuery.first()
     .then (requestObject) ->
-        requestingCustomer = requestObject.get("customerId")
-
-        createdDateOfReq = requestObject.createdAt
-
-        requestGeoPoint = requestObject.get("addressGeoPoint")
-
-        price = new Price()
-
-        price.set "source" , "seller"
-        
         sellerObj = new Parse.User()
         sellerObj.id = sellerId
 
-        price.set "seller" , sellerObj
+        firstOfferQuery = new Parse.Query("Offer")
+        firstOfferQuery.equalTo("request",requestObject)
+        firstOfferQuery.equalTo("seller",sellerObj)
+        firstOfferQuery.first()
+        .then (firstOfferObject) ->
+            if _.isEmpty(firstOfferObject)
+                requestingCustomer = requestObject.get("customerId")
 
-        price.set "type" , "open_offer"
-        
-        price.set "value" , priceValue
+                createdDateOfReq = requestObject.createdAt
 
-        product = requestObject.get("product")
-        price.set "product" , product
+                requestGeoPoint = requestObject.get("addressGeoPoint")
 
-        price.save()
-        .then (priceObj) ->
-            # make an entry in offer class
-            offer = new Offer()
+                price = new Price()
 
-            requestObj = new Request()
-            requestObj.id = requestId
+                price.set "source" , "seller"
 
-            offer.set "seller" , sellerObj
-            offer.set "request", requestObj 
-            offer.set "price", priceObj
-            offer.set "status" , status
-            offer.set "deliveryTime" , deliveryTime
-            offer.set "comments" , comments
-            offer.set "autoBid" , autoBid
-            offer.set "requestDate", requestObject.createdAt #needed for sorting offers based on created date of requests  
-            offer.set "offerPrice", priceValue #needed for sorting by price
-            offer.set "requestGeoPoint", requestObject.get("addressGeoPoint") #needed for sorting by distance
+                price.set "seller" , sellerObj
 
-            offer.save()
-            .then (offerObj) ->
+                price.set "type" , "open_offer"
+                
+                price.set "value" , priceValue
 
-                # make a transaction for the offer i.e deducted at the  time of making offer
-                Transaction = Parse.Object.extend("Transaction")
-                transaction = new Transaction()
-                transaction.set "seller" , sellerObj
-                transaction.set "transactionType" , "minus"
-                transaction.set "creditCount" , makeOfferCredits
-                transaction.set "towards" , "make_offer"
-                transaction.set "offer" , offerObj
+                product = requestObject.get("product")
+                price.set "product" , product
 
-                transaction.save()
-                .then (savedTransaction) ->
-                    # on successful transaction
+                price.save()
+                .then (priceObj) ->
+                    # make an entry in offer class
+                    offer = new Offer()
 
-                    # update seller creditBalance
-                    sellerObj.fetch()
-                    .then (sellerFetchedObj) ->
+                    requestObj = new Request()
+                    requestObj.id = requestId
 
-                        sellersCurrentSubtractedCredit = sellerFetchedObj.get("subtractedCredit")
-                        newSubtractedCredit = sellersCurrentSubtractedCredit + savedTransaction.get("creditCount")
-                        sellerObj.set "subtractedCredit" , newSubtractedCredit 
+                    offer.set "seller" , sellerObj
+                    offer.set "request", requestObj 
+                    offer.set "price", priceObj
+                    offer.set "status" , status
+                    offer.set "deliveryTime" , deliveryTime
+                    offer.set "comments" , comments
+                    offer.set "autoBid" , autoBid
+                    offer.set "requestDate", requestObject.createdAt #needed for sorting offers based on created date of requests  
+                    offer.set "offerPrice", priceValue #needed for sorting by price
+                    offer.set "requestGeoPoint", requestObject.get("addressGeoPoint") #needed for sorting by distance
 
-                        sellerFetchedObj.save()
-                        .then (updatedSellerCredit) ->
+                    offer.save()
+                    .then (offerObj) ->
 
-                            notification = new Notification()
+                        # make a transaction for the offer i.e deducted at the  time of making offer
+                        Transaction = Parse.Object.extend("Transaction")
+                        transaction = new Transaction()
+                        transaction.set "seller" , sellerObj
+                        transaction.set "transactionType" , "minus"
+                        transaction.set "creditCount" , makeOfferCredits
+                        transaction.set "towards" , "make_offer"
+                        transaction.set "offer" , offerObj
 
-                            notification.set "hasSeen" , false
-                            notification.set "recipientUser" , requestingCustomer
-                            notification.set "channel" , "push"
-                            notification.set "processed" , false
-                            notification.set "type" , "Offer"
-                            notification.set "offerObject" , offerObj
-                            
-                            notification.save()
-                            .then (notificationObj) ->
-                                response.success(notificationObj)
+                        transaction.save()
+                        .then (savedTransaction) ->
+                            # on successful transaction
+
+                            # update seller creditBalance
+                            sellerObj.fetch()
+                            .then (sellerFetchedObj) ->
+
+                                sellersCurrentSubtractedCredit = sellerFetchedObj.get("subtractedCredit")
+                                newSubtractedCredit = sellersCurrentSubtractedCredit + savedTransaction.get("creditCount")
+                                sellerObj.set "subtractedCredit" , newSubtractedCredit 
+
+                                sellerFetchedObj.save()
+                                .then (updatedSellerCredit) ->
+
+                                    notification = new Notification()
+
+                                    notification.set "hasSeen" , false
+                                    notification.set "recipientUser" , requestingCustomer
+                                    notification.set "channel" , "push"
+                                    notification.set "processed" , false
+                                    notification.set "type" , "Offer"
+                                    notification.set "offerObject" , offerObj
+                                    
+                                    notification.save()
+                                    .then (notificationObj) ->
+                                        response.success(notificationObj)
+                                    , (error) ->
+                                        response.error error
+                                , (error) ->
+                                    response.error error
+
                             , (error) ->
                                 response.error error
+
                         , (error) ->
                             response.error error
 
@@ -229,11 +241,11 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
                 , (error) ->
                     response.error error
 
-            , (error) ->
-                response.error error
+            else
+                response.error "Offer already made for this request"
 
         , (error) ->
-            response.error error
+            response.error error 
 
     , (error) ->
         response.error error
@@ -386,6 +398,7 @@ Parse.Cloud.define 'getSellerOffers' , (request, response) ->
                 "offerComments" : offerObj.get("comments")   
                 "createdAt" : offerObj.createdAt  
                 "updatedAt" : offerObj.updatedAt  
+                "autoBid" : offerObj.get("autoBid") 
                 
             
             sellerOffers.push sellerOffer  
