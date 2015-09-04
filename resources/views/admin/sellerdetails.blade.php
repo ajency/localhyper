@@ -42,14 +42,14 @@
                     </div>
                     
                   </div>
-                  <!--<div class="col-md-2 text-center">
-                     <h5 class="text-warning semi-bold m-b-30">Auto Bid</h5>  
+                  <div class="col-md-6 text-right">
+                     <h5 class="text-warning semi-bold m-b-15">Auto Bid</h5>  
                      <input type="checkbox" checked data-toggle="toggle" data-size="mini">
                   </div>
-                  <div class="col-md-4 text-right">
+                  <!-- <div class="col-md-4 text-right">
                     <h5 class="text-warning semi-bold">Credit Counts Left : -</h5>  
                      <button type="button" class="btn btn-primary btn-info m-t-20" data-toggle="modal" data-target="#myModal"><i class="fa fa-dollar"></i> Add Credits</button>
-                  </div>-->
+                  </div> -->
                 </div>
              </div>
             <h5><i class="fa fa-angle-double-right text-muted"> </i> <span class="semi-bold text-info">SHOP LOCATION</span></h5>

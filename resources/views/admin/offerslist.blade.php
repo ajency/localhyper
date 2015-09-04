@@ -22,7 +22,8 @@
               <th>Request Status</th>
               <th>Offer Status</th>  
               <th>Delivery Reason Failure</th>      
-              <th class="date-sort">Created At</th>      
+              <th class="date-sort">Created At</th>
+              <th >Auto Offer</th>       
             </tr>
           </thead>
           <tbody>
@@ -38,7 +39,8 @@
                 <td>{{ $offer['requestStatus'] }}</td>
                 <td>{{ $offer['offerStatus'] }}</td>  
                 <td>{{ $offer['deliveryReasonFailure'] }}</td>
-                <td class="center">{{ $offer['date'] }}</td>
+                <td >{{ $offer['date'] }}</td>
+                <td class="center"> </td>
               </tr>
            @endforeach
           </tbody>
