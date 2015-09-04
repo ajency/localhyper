@@ -612,27 +612,27 @@ sm{
 }
 .card-list{
 
-		.activated{
+	.activated{
 		background: @white !important;
 		background-color: @white !important;
 		.item{
-		background: @white !important;
-		background-color: @white !important;
+			background: @white !important;
+			background-color: @white !important;
+		}
 	}
-}
-.status{
-	b{
-		color: @brand-primary;
-		font-weight: 400;
-    	text-transform: uppercase;
+	.status{
+		b{
+			color: @brand-primary;
+			font-weight: 400;
+	    	text-transform: uppercase;
+		}
 	}
-}
-.card-box2{
-	    padding: 0px;
-	    margin: 10px;
-	    border-bottom: 2px solid #ccc;
-	    background: #fff;
-}
+	.card-box2{
+		    padding: 0px;
+		    margin: 10px;
+		    border-bottom: 2px solid #ccc;
+		    background: #fff;
+	}
 		.card-box{
 			padding: 0px;
 			margin: 10px;
@@ -656,6 +656,13 @@ sm{
 				span{
 					font-size: 20px;
 				}
+			}
+			.autooffer-icon {
+			    font-size: 20px;
+			    color: #F15A59;
+			    position: absolute;
+			    right: 8px;
+			    top: 28px;
 			}
 		}
 	.btn-danger{
@@ -1508,14 +1515,19 @@ h5.with-sep {
 	line-height: 12px;
 	text-align: left;
 	i{
-		font-size: 21px;
+		// font-size: 21px;
 		float: left;
 		margin-right: 10px;
 		margin-left: 20px;
 		font-weight: 100;
 		color: @brand-primary;
+		font-size: 28px;
+		position: relative;
+		top: -2px;
 		&.ion-funnel {
-			font-size: 20px;
+			// font-size: 28px;
+			// position: relative;
+			// top: -2px;
 		}
 	}
 	sm{
@@ -1601,7 +1613,7 @@ h5.with-sep {
 			content: "\f2aa";
 		}
 		input[value=radius] + .item-content.ng-binding:before {
-			content:"\f270";
+			content:"\f456";
 		}
 		input[value=mrp] + .item-content.ng-binding:before {
 			content:"₹";
@@ -2062,8 +2074,15 @@ h4 .WebRupee.subdued {
 		color: #848484;
 		text-transform: uppercase;
 	}
+	i.icon {
+		font-size: 32px;
+	    display: inline-block;
+	    vertical-align: middle;
+	    width: 30px;
+	    text-align: center;
+	    opacity: 0.8;
+	}
 }
-
 //auto offer in profile
 .auto-offer-profile {
 	h4 {

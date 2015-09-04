@@ -692,6 +692,13 @@ sm {
 .card-list .card-box .big-txt span {
   font-size: 20px;
 }
+.card-list .card-box .autooffer-icon {
+  font-size: 20px;
+  color: #F15A59;
+  position: absolute;
+  right: 8px;
+  top: 28px;
+}
 .card-list .btn-danger {
   color: #f35a59;
 }
@@ -1492,15 +1499,14 @@ h5.with-sep span {
   text-align: left;
 }
 .filter-txt i {
-  font-size: 21px;
   float: left;
   margin-right: 10px;
   margin-left: 20px;
   font-weight: 100;
   color: #f35a59;
-}
-.filter-txt i.ion-funnel {
-  font-size: 20px;
+  font-size: 28px;
+  position: relative;
+  top: -2px;
 }
 .filter-txt sm {
   font-weight: 100;
@@ -1575,7 +1581,7 @@ h5.with-sep span {
   content: "\f2aa";
 }
 .products-filter-view label.item-radio input[value=radius] + .item-content.ng-binding:before {
-  content: "\f270";
+  content: "\f456";
 }
 .products-filter-view label.item-radio input[value=mrp] + .item-content.ng-binding:before {
   content: "₹";
@@ -2017,6 +2023,14 @@ h4 .WebRupee.subdued {
   margin-top: 10px;
   color: #848484;
   text-transform: uppercase;
+}
+.aj-menu-bg i.icon {
+  font-size: 32px;
+  display: inline-block;
+  vertical-align: middle;
+  width: 30px;
+  text-align: center;
+  opacity: 0.8;
 }
 .auto-offer-profile h4 {
   margin: 0;

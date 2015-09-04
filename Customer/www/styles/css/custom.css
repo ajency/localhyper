@@ -1953,15 +1953,14 @@ label.status-label {
   position: relative;
 }
 .filter-txt i {
-  font-size: 21px;
   float: left;
   margin-right: 10px;
   margin-left: 20px;
   font-weight: 100;
   color: #f45152;
-}
-.filter-txt i.ion-funnel {
-  font-size: 20px;
+  font-size: 28px;
+  position: relative;
+  top: -2px;
 }
 .filter-txt sm {
   font-weight: 100;
