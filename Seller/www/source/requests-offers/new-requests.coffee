@@ -514,12 +514,22 @@ angular.module 'LocalHyper.requestsOffers'
 		mrp = $scope.request.product.mrp
 		onlinePrice = $scope.request.onlinePrice
 		priceArray = []
-		priceArray.push(platformPrice) if platformPrice isnt ''
-		priceArray.push(mrp) if mrp isnt '' 
-		priceArray.push(onlinePrice) if onlinePrice isnt '' 
-		_.min priceArray
-
-	$scope.request.lowestPrice = getLowestPrice()
+		priceLabel = []
+		if platformPrice isnt ''
+			priceArray.push(platformPrice) 
+			priceLabel.push('Platform price')
+		if mrp isnt '' 
+			priceArray.push(mrp) 
+			priceLabel.push('Mrp')
+		if onlinePrice isnt '' 
+			priceArray.push(onlinePrice)
+			priceLabel.push('Online price')
+		minPrice = _.min priceArray
+		return [minPrice, priceLabel[priceArray.indexOf(minPrice)]]
+		
+	LowestPrice = 	getLowestPrice()
+	$scope.request.lowestPrice = LowestPrice[0]
+	$scope.request.lowestPriceLabel = LowestPrice[1]
 
 	#Request time
 	setTime = ->
