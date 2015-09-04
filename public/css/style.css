@@ -8129,12 +8129,7 @@ label {
 .header-seperation {
   background-color: #FFFFFF;
 }
-.menu-title {
-  cursor: pointer;
-}
-.menu-title i {
-  font-size: 15px;
-}
+.menu-title,
 .table tr {
   cursor: pointer;
 }
@@ -8251,12 +8246,4 @@ i.pagination {
     -moz-transform: rotateZ(0deg);
     -o-transform: rotateZ(0deg);
   }
-}
-/* Popover */
-.popover {
-  color: #4A4A4A;
-  background-color: #B7BCC1;
-}
-.popover.right > .arrow:after {
-  border-right-color: #B7BCC1;
 }
