@@ -304,6 +304,7 @@ Parse.Cloud.define 'updateUnseenRequestNotification', (request, response) ->
     changedData = request.params.changedData
     unseenNotificationObj = []
     requestObjsArray = []
+    updatedNotificationIds = []
 
     _.each changedData, (brandIds , categoryId) ->
         #brandIds = _.values brandIdsObj 
@@ -315,6 +316,7 @@ Parse.Cloud.define 'updateUnseenRequestNotification', (request, response) ->
 
         innerQueryRequest = new Parse.Query("Request")
         innerQueryRequest.matchesQuery("category",innerQueryCategory)
+        innerQueryRequest.matchesQuery("brand",innerQueryBrand)
         requestObjsArray.push innerQueryRequest.find()
     
 
@@ -337,12 +339,13 @@ Parse.Cloud.define 'updateUnseenRequestNotification', (request, response) ->
             saveQs = _.map( notificationObjs , (notificationObj) ->
                 notificationObj.set("hasSeen",true)
                 unseenNotificationObj.push notificationObj
+                updatedNotificationIds.push notificationObj.id
             )
 
             Parse.Object.saveAll unseenNotificationObj
                 .then (objs) ->
                     result = 
-                        sellerId : sellerId    
+                        updatedNotificationIds : updatedNotificationIds    
 
                     response.success result
                 , (error) ->

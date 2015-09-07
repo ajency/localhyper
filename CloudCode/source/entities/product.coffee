@@ -864,13 +864,16 @@ getOtherPricesForProduct = (productObject) ->
                 sourceUrl : ""
                 updatedAt : ""
         else
-            flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/Flipkart+logo.jpg"
-            snapdealUrl = " https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/sd.png"
+            flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/Flipkart+logo.jpg"
+            snapdealUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/snapdeal-icon.jpg"
+            amazonUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/amazon+icon.png"
 
             if onlinePriceObj.get("source") is "flipkart"
                 srcUrl =  flipkartUrl
+            else if onlinePriceObj.get("source") is "snapdeal"
+                srcUrl =  snapdealUrl
             else
-                srcUrl =  snapdealUrl    
+                srcUrl =  amazonUrl    
             
 
             productPrice["online"] = 

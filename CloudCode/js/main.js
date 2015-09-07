@@ -1018,11 +1018,12 @@
   });
 
   Parse.Cloud.define('updateUnseenRequestNotification', function(request, response) {
-    var changedData, requestObjsArray, sellerId, unseenNotificationObj;
+    var changedData, requestObjsArray, sellerId, unseenNotificationObj, updatedNotificationIds;
     sellerId = request.params.sellerId;
     changedData = request.params.changedData;
     unseenNotificationObj = [];
     requestObjsArray = [];
+    updatedNotificationIds = [];
     _.each(changedData, function(brandIds, categoryId) {
       var innerQueryBrand, innerQueryCategory, innerQueryRequest;
       innerQueryCategory = new Parse.Query("Category");
@@ -1031,6 +1032,7 @@
       innerQueryBrand.containedIn("objectId", brandIds);
       innerQueryRequest = new Parse.Query("Request");
       innerQueryRequest.matchesQuery("category", innerQueryCategory);
+      innerQueryRequest.matchesQuery("brand", innerQueryBrand);
       return requestObjsArray.push(innerQueryRequest.find());
     });
     return Parse.Promise.when(requestObjsArray).then(function() {
@@ -1049,12 +1051,13 @@
         console.log(notificationObjs);
         saveQs = _.map(notificationObjs, function(notificationObj) {
           notificationObj.set("hasSeen", true);
-          return unseenNotificationObj.push(notificationObj);
+          unseenNotificationObj.push(notificationObj);
+          return updatedNotificationIds.push(notificationObj.id);
         });
         return Parse.Object.saveAll(unseenNotificationObj).then(function(objs) {
           var result;
           result = {
-            sellerId: sellerId
+            updatedNotificationIds: updatedNotificationIds
           };
           return response.success(result);
         }, function(error) {
@@ -2446,7 +2449,7 @@
     queryPrice.equalTo("type", "online_market_price");
     queryPrice.ascending("value");
     queryPrice.first().then(function(onlinePriceObj) {
-      var flipkartUrl, snapdealUrl, srcUrl;
+      var amazonUrl, flipkartUrl, snapdealUrl, srcUrl;
       if (_.isEmpty(onlinePriceObj)) {
         productPrice["online"] = {
           value: "",
@@ -2455,12 +2458,15 @@
           updatedAt: ""
         };
       } else {
-        flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/Flipkart+logo.jpg";
-        snapdealUrl = " https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/products+/sd.png";
+        flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/Flipkart+logo.jpg";
+        snapdealUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/snapdeal-icon.jpg";
+        amazonUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/amazon+icon.png";
         if (onlinePriceObj.get("source") === "flipkart") {
           srcUrl = flipkartUrl;
-        } else {
+        } else if (onlinePriceObj.get("source") === "snapdeal") {
           srcUrl = snapdealUrl;
+        } else {
+          srcUrl = amazonUrl;
         }
         productPrice["online"] = {
           value: onlinePriceObj.get("value"),
