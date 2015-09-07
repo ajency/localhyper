@@ -35,47 +35,57 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           })(this));
         },
         getPriceRange: function(priceRange) {
-          var increment, max, min, prices;
+          var divideValue, firstDigit, i, increment, intervalValue, intervalValueCharacter, max, min, prices, range, _i, _ref;
           prices = [];
           min = priceRange[0];
           max = priceRange[1];
-          max = (10 - max % 10) + max;
-          if (max <= 1000) {
-            increment = 100;
-          } else if (max <= 5000) {
-            increment = 1000;
-          } else if (max <= 25000) {
-            increment = 5000;
-          } else if (max <= 50000) {
-            increment = 10000;
-          } else if (max <= 75000) {
-            increment = 15000;
-          } else if (max <= 100000) {
-            increment = 20000;
+          range = max / min;
+          divideValue = Math.round(range);
+          if (divideValue > 1) {
+            if (divideValue > 10) {
+              divideValue = 10;
+            }
+            intervalValue = Math.round((max - min) / divideValue);
+            if (intervalValue < min) {
+              intervalValue = min;
+            }
+            intervalValueCharacter = intervalValue.toString();
+            firstDigit = intervalValueCharacter.substring(0, 1);
+            firstDigit = parseInt(firstDigit) + 1;
+            firstDigit = firstDigit.toString();
+            for (i = _i = 0, _ref = intervalValueCharacter.length - 1; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+              firstDigit += '0';
+            }
+            increment = parseInt(firstDigit);
+            priceRange = _.range(0, max, increment);
+            _.each(priceRange, function(start, index) {
+              var end;
+              end = priceRange[index + 1];
+              if (_.isUndefined(end)) {
+                end = start + increment;
+              }
+              if (start === 0) {
+                return prices.push({
+                  start: start,
+                  end: end,
+                  name: "Below - Rs " + end
+                });
+              } else {
+                return prices.push({
+                  start: start,
+                  end: end,
+                  name: "Rs " + start + " - Rs " + end
+                });
+              }
+            });
           } else {
-            increment = 25000;
+            max = (10 - max % 10) + max;
+            prices.push({
+              start: 0,
+              end: max,
+              name: "Below - Rs " + max
+            });
           }
-          priceRange = _.range(0, max, increment);
-          _.each(priceRange, function(start, index) {
-            var end;
-            end = priceRange[index + 1];
-            if (_.isUndefined(end)) {
-              end = start + increment;
-            }
-            if (start === 0) {
-              return prices.push({
-                start: start,
-                end: end,
-                name: "Below - Rs " + end
-              });
-            } else {
-              return prices.push({
-                start: start,
-                end: end,
-                name: "Rs " + start + " - Rs " + end
-              });
-            }
-          });
           return prices;
         },
         setAttrValues: function() {

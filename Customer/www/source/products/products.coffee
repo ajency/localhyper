@@ -42,31 +42,54 @@ angular.module 'LocalHyper.products', []
 					min = priceRange[0]
 					max = priceRange[1]
 
-					max =  (10 - max % 10 ) + max
-
-					if max <= 1000 then increment = 100
-					else if max <= 5000 then increment = 1000
-					else if max <= 25000 then increment = 5000
-					else if max <= 50000 then increment = 10000
-					else if max <= 75000 then increment = 15000
-					else if max <= 100000 then increment = 20000
-					else increment = 25000
-
-					priceRange = _.range 0, max, increment
+					range = max / min 
 					
-					_.each priceRange, (start, index)->
-						end = priceRange[index+1]
-						end = start + increment if _.isUndefined(end)
-						if(start == 0)
-							prices.push 
-								start: start
-								end: end
-								name: "Below - Rs #{end}"
-						else 	
-							prices.push 
-								start: start
-								end: end
-								name: "Rs #{start} - Rs #{end}"
+					divideValue = Math.round(range)
+
+					if divideValue > 1
+					
+						if divideValue > 10
+							divideValue = 10 
+							
+						intervalValue = Math.round(( max - min ) / divideValue)
+
+						if intervalValue < min
+							intervalValue = min
+
+						intervalValueCharacter = intervalValue.toString()
+
+						firstDigit = intervalValueCharacter.substring(0, 1)
+
+						firstDigit = parseInt(firstDigit) + 1
+
+						firstDigit = firstDigit.toString()
+
+						for i in [0...intervalValueCharacter.length-1]
+								firstDigit +='0'
+
+						increment = parseInt(firstDigit)
+
+						priceRange = _.range 0, max, increment
+						
+						_.each priceRange, (start, index)->
+							end = priceRange[index+1]
+							end = start + increment if _.isUndefined(end)
+							if(start == 0)
+								prices.push 
+									start: start
+									end: end
+									name: "Below - Rs #{end}"
+							else 	
+								prices.push 
+									start: start
+									end: end
+									name: "Rs #{start} - Rs #{end}"
+					else
+						max =  (10 - max % 10 ) + max
+						prices.push 
+							start: 0
+							end: max
+							name: "Below - Rs #{max}"
 					prices
 
 				setAttrValues: ->
