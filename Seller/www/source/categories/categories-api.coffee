@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.categories'
 
 
-.factory 'CategoriesAPI', ['$q', '$http', ($q, $http)->
+.factory 'CategoriesAPI', ['$q', '$http', 'User', ($q, $http, User)->
 
 	CategoriesAPI = {}
 	allCategories = []
@@ -35,6 +35,22 @@ angular.module 'LocalHyper.categories'
 				categoryChains = data
 			when 'get'
 				categoryChains
+
+	CategoriesAPI.updateUnseenRequestNotification = (param)->
+		defer = $q.defer()
+		user = User.getCurrent()
+
+		params = 
+			"sellerId": user.id
+			"changedData" : param.changedData
+
+		$http.post 'functions/updateUnseenRequestNotification', params
+		.then (success)->
+			defer.resolve success
+		, (error)->
+			defer.reject error
+		
+		defer.promise
 
 	CategoriesAPI
 ]

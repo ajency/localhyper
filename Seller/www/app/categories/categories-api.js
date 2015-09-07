@@ -1,5 +1,5 @@
 angular.module('LocalHyper.categories').factory('CategoriesAPI', [
-  '$q', '$http', function($q, $http) {
+  '$q', '$http', 'User', function($q, $http, User) {
     var CategoriesAPI, allCategories, categoryChains, subCategories;
     CategoriesAPI = {};
     allCategories = [];
@@ -42,6 +42,21 @@ angular.module('LocalHyper.categories').factory('CategoriesAPI', [
         case 'get':
           return categoryChains;
       }
+    };
+    CategoriesAPI.updateUnseenRequestNotification = function(param) {
+      var defer, params, user;
+      defer = $q.defer();
+      user = User.getCurrent();
+      params = {
+        "sellerId": user.id,
+        "changedData": param.changedData
+      };
+      $http.post('functions/updateUnseenRequestNotification', params).then(function(success) {
+        return defer.resolve(success);
+      }, function(error) {
+        return defer.reject(error);
+      });
+      return defer.promise;
     };
     return CategoriesAPI;
   }

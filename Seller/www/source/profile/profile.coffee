@@ -45,7 +45,45 @@ angular.module 'LocalHyper.profile', []
 			onChainClick : (chains)->
 				CategoriesAPI.subCategories 'set', chains.category.children
 				App.navigate 'brands', categoryID: chains.subCategory.id
-				
+
+			updatedCategoryChain : ->
+				defer = $q.defer()
+				changedData = {}
+				Storage.categoryChains 'get'
+				.then (storedChains) ->
+					categoryChains = CategoriesAPI.categoryChains 'get'
+					_.each categoryChains, (categoryChains) ->
+
+						storagedChains = _.filter storedChains, (category)-> 
+							category.subCategory.id is  categoryChains.subCategory.id 
+
+						console.log storagedChains
+						if storagedChains.length >0 	
+							_storagedBrandId = storagedChains[0].brands
+							_storagedBrandId = _.pluck _storagedBrandId, 'objectId'
+							
+							_catApibrands = categoryChains.brands
+							_catApibrands = _.pluck _catApibrands, 'objectId'
+							
+							diffArray = _.difference(_storagedBrandId, _catApibrands)
+							
+							if diffArray.length > 0
+								changedData[categoryChains.subCategory.id] = diffArray
+
+					if !_.isEmpty changedData
+						param = 
+							changedData: changedData
+							
+						CategoriesAPI.updateUnseenRequestNotification param
+						.then ->
+							defer.resolve()
+						, (error)->
+							defer.reject error
+					else
+						defer.resolve()
+					
+					defer.promise
+						
 			saveDetails : ->
 				if @categoryChains.length == 0
 					CToast.show 'Please choose atleast one category'
@@ -57,6 +95,8 @@ angular.module 'LocalHyper.profile', []
 						AuthAPI.isExistingUser user
 						.then (data)->
 							AuthAPI.loginExistingUser data.userObj
+						.then (data)=>
+							@updatedCategoryChain()
 						.then (success)=>
 							Storage.categoryChains 'set', @categoryChains
 							.then =>

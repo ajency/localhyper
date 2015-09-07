@@ -52,6 +52,45 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
           categoryID: chains.subCategory.id
         });
       },
+      updatedCategoryChain: function() {
+        var changedData, defer;
+        defer = $q.defer();
+        changedData = {};
+        return Storage.categoryChains('get').then(function(storedChains) {
+          var categoryChains, param;
+          categoryChains = CategoriesAPI.categoryChains('get');
+          _.each(categoryChains, function(categoryChains) {
+            var diffArray, storagedChains, _catApibrands, _storagedBrandId;
+            storagedChains = _.filter(storedChains, function(category) {
+              return category.subCategory.id === categoryChains.subCategory.id;
+            });
+            console.log(storagedChains);
+            if (storagedChains.length > 0) {
+              _storagedBrandId = storagedChains[0].brands;
+              _storagedBrandId = _.pluck(_storagedBrandId, 'objectId');
+              _catApibrands = categoryChains.brands;
+              _catApibrands = _.pluck(_catApibrands, 'objectId');
+              diffArray = _.difference(_storagedBrandId, _catApibrands);
+              if (diffArray.length > 0) {
+                return changedData[categoryChains.subCategory.id] = diffArray;
+              }
+            }
+          });
+          if (!_.isEmpty(changedData)) {
+            param = {
+              changedData: changedData
+            };
+            CategoriesAPI.updateUnseenRequestNotification(param).then(function() {
+              return defer.resolve();
+            }, function(error) {
+              return defer.reject(error);
+            });
+          } else {
+            defer.resolve();
+          }
+          return defer.promise;
+        });
+      },
       saveDetails: function() {
         if (this.categoryChains.length === 0) {
           return CToast.show('Please choose atleast one category');
@@ -62,6 +101,8 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
               User.info('set', user);
               return AuthAPI.isExistingUser(user).then(function(data) {
                 return AuthAPI.loginExistingUser(data.userObj);
+              }).then(function(data) {
+                return _this.updatedCategoryChain();
               }).then(function(success) {
                 return Storage.categoryChains('set', _this.categoryChains).then(function() {
                   CategoriesAPI.categoryChains('set', _this.categoryChains);
