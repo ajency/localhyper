@@ -88,6 +88,77 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           }
           return prices;
         },
+        getfilterRange: function(value) {
+          var arr, divideValue, firstDigit, i, increment, intervalValue, intervalValueCharacter, max, maxValue, min, minValue, range, rangeArray, valueArray, valueRange, _i, _ref;
+          valueArray = _.pluck(value, 'name');
+          arr = [];
+          _.each(valueArray, function(valueArray) {
+            return arr.push(parseInt(valueArray));
+          });
+          console.log(arr);
+          minValue = _.min(arr);
+          maxValue = _.max(arr);
+          rangeArray = [];
+          min = minValue;
+          max = maxValue;
+          range = max / min;
+          divideValue = Math.round(range);
+          if (divideValue > 1) {
+            if (divideValue > 10) {
+              divideValue = 10;
+            }
+            intervalValue = Math.round((max - min) / divideValue);
+            if (intervalValue < min) {
+              intervalValue = min;
+            }
+            intervalValueCharacter = intervalValue.toString();
+            firstDigit = intervalValueCharacter.substring(0, 1);
+            firstDigit = parseInt(firstDigit) + 1;
+            firstDigit = firstDigit.toString();
+            for (i = _i = 0, _ref = intervalValueCharacter.length - 1; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+              firstDigit += '0';
+            }
+            increment = parseInt(firstDigit);
+            if (increment < 10) {
+              increment = 10;
+            } else if (increment < 25) {
+              increment = 25;
+            } else if (increment < 50) {
+              increment = 50;
+            } else if (increment < 100) {
+              increment = 100;
+            }
+            valueRange = _.range(0, max, increment);
+            _.each(valueRange, function(start, index) {
+              var end;
+              end = valueRange[index + 1];
+              if (_.isUndefined(end)) {
+                end = start + increment;
+              }
+              if (start === 0) {
+                return rangeArray.push({
+                  start: start,
+                  end: end,
+                  name: "Below - " + end
+                });
+              } else {
+                return rangeArray.push({
+                  start: start,
+                  end: end,
+                  name: "" + start + " - " + end
+                });
+              }
+            });
+          } else {
+            max = (10 - max % 10) + max;
+            rangeArray.push({
+              start: 0,
+              end: max,
+              name: "Below - " + max
+            });
+          }
+          return rangeArray;
+        },
         setAttrValues: function() {
           var other;
           other = $scope.view.other;
@@ -107,12 +178,21 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             return function(filter) {
               var value;
               value = filter.filterName;
-              _this.attrValues[value] = filter.values;
-              return _this.allAttributes.push({
-                value: value,
-                name: s.humanize(filter.attributeName),
-                selected: 0
-              });
+              if (filter.filterType === 'select') {
+                _this.attrValues[value] = filter.values;
+                return _this.allAttributes.push({
+                  value: value,
+                  name: s.humanize(filter.attributeName),
+                  selected: 0
+                });
+              } else {
+                _this.attrValues[value] = _this.getfilterRange(filter.values);
+                return _this.allAttributes.push({
+                  value: value,
+                  name: s.humanize(filter.attributeName),
+                  selected: 0
+                });
+              }
             };
           })(this));
           return _.each(this.attrValues, function(values) {
@@ -213,13 +293,29 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
                   });
                   return _this.selectedFilters.brands = selected;
                 default:
-                  selected = [];
-                  _.each(_values, function(attr) {
-                    if (attr.selected) {
-                      return selected.push(attr.id);
+                  if ('r' !== attribute.substring(0, 1)) {
+                    selected = [];
+                    _.each(_values, function(attr) {
+                      if (attr.selected) {
+                        return selected.push(attr.id);
+                      }
+                    });
+                    return _this.selectedFilters.otherFilters[attribute] = selected;
+                  } else {
+                    start = [];
+                    end = [];
+                    _.each(_values, function(val) {
+                      if (val.selected) {
+                        start.push(val.start);
+                        return end.push(val.end);
+                      }
+                    });
+                    if (_.isEmpty(start)) {
+                      return _this.selectedFilters.otherFilters[attribute] = [];
+                    } else {
+                      return _this.selectedFilters.otherFilters[attribute] = [_.min(start), _.max(end)];
                     }
-                  });
-                  return _this.selectedFilters.otherFilters[attribute] = selected;
+                  }
               }
             };
           })(this));
@@ -249,7 +345,11 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             var name;
             name = parseFloat(obj.name);
             if (_.isNaN(name)) {
-              return obj.name;
+              if (s.contains(obj.name, "Below")) {
+                return obj.start;
+              } else {
+                return obj.name;
+              }
             } else {
               return name;
             }

@@ -92,6 +92,80 @@ angular.module 'LocalHyper.products', []
 							name: "Below - Rs #{max}"
 					prices
 
+				getfilterRange : (value)->
+					valueArray  = _.pluck(value, 'name')
+					arr = []
+					_.each valueArray, (valueArray) ->
+						arr.push parseInt(valueArray)
+
+					console.log arr
+					minValue = _.min(arr)
+					maxValue = _.max(arr) 
+
+					rangeArray = []
+					min = minValue
+					max = maxValue
+
+					range = max / min 
+					
+					divideValue = Math.round(range)
+
+					if divideValue > 1
+						if divideValue > 10
+							divideValue = 10 
+							
+						intervalValue = Math.round(( max - min ) / divideValue)
+
+						if intervalValue < min
+							intervalValue = min
+
+						intervalValueCharacter = intervalValue.toString()
+
+						firstDigit = intervalValueCharacter.substring(0, 1)
+
+						firstDigit = parseInt(firstDigit) + 1
+
+						firstDigit = firstDigit.toString()
+
+						for i in [0...intervalValueCharacter.length-1]
+								firstDigit +='0'
+
+						increment = parseInt(firstDigit)
+
+						if increment < 10
+							increment = 10
+						else if increment < 25
+							increment = 25
+						else if increment < 50
+							increment = 50
+						else if increment < 100
+							increment = 100
+
+						valueRange = _.range 0, max, increment
+						
+						_.each valueRange, (start, index)->
+							end = valueRange[index+1]
+							end = start + increment if _.isUndefined(end)
+							if(start == 0)
+								rangeArray.push 
+									start: start
+									end: end
+									name: "Below - #{end}"
+							else 	
+								rangeArray.push 
+									start: start
+									end: end
+									name: "#{start} - #{end}"
+					else
+						max =  (10 - max % 10 ) + max
+						rangeArray.push 
+							start: 0
+							end: max
+							name: "Below - #{max}"
+
+					rangeArray
+
+
 				setAttrValues: ->
 					other = $scope.view.other
 					@attrValues['brand'] = other.supportedBrands
@@ -101,11 +175,19 @@ angular.module 'LocalHyper.products', []
 
 					_.each other.filters, (filter)=>
 						value = filter.filterName
-						@attrValues[value] = filter.values
-						@allAttributes.push
-							value: value
-							name: s.humanize(filter.attributeName)
-							selected: 0
+						if filter.filterType is 'select'
+							@attrValues[value] = filter.values
+							@allAttributes.push
+								value: value
+								name: s.humanize(filter.attributeName)
+								selected: 0
+						else
+							@attrValues[value] = @getfilterRange filter.values
+							@allAttributes.push
+								value: value
+								name: s.humanize(filter.attributeName)
+								selected: 0
+
 
 					# De-select all attr values
 					_.each @attrValues, (values)->
@@ -177,10 +259,21 @@ angular.module 'LocalHyper.products', []
 							
 							else
 								# When other filters
-								selected = []
-								_.each _values, (attr)=>
-									selected.push(attr.id) if attr.selected
-								@selectedFilters.otherFilters[attribute] = selected
+								#if it is not a refiregrator
+								if 'r' != attribute.substring(0, 1)
+									selected = []
+									_.each _values, (attr)=>
+										selected.push(attr.id) if attr.selected
+									@selectedFilters.otherFilters[attribute] = selected
+								else
+									start = []
+									end = []
+									_.each _values, (val)=>
+										if val.selected
+											start.push val.start
+											end.push val.end
+									if _.isEmpty(start) then @selectedFilters.otherFilters[attribute] = []
+									else @selectedFilters.otherFilters[attribute] = [_.min(start), _.max(end)]
 					
 					@setExcerpt()
 					@modal.hide()
@@ -201,7 +294,10 @@ angular.module 'LocalHyper.products', []
 					(obj)->
 						name = parseFloat obj.name
 						if _.isNaN name
-							obj.name
+							if s.contains(obj.name, "Below")
+								obj.start
+							else
+								obj.name
 						else name
 
 
