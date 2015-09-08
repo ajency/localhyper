@@ -434,6 +434,7 @@ sm {
   height: 30px;
   display: inline-block;
   margin-bottom: -10px;
+  width: 32px;
   background-position: -9px -408px;
 }
 .i-history {
@@ -697,7 +698,13 @@ sm {
   color: #F15A59;
   position: absolute;
   right: 8px;
-  top: 28px;
+  top: 30px;
+  width: 17px;
+  height: 16px;
+}
+.card-list .card-box .autooffer-icon.i-auto {
+  background: url(../../img/auto-offer.png) center;
+  background-size: cover;
 }
 .card-list .btn-danger {
   color: #f35a59;
