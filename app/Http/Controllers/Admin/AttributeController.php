@@ -140,26 +140,25 @@ class AttributeController extends Controller
 										$headers[]=$attributeValue['attributeName'].' Id';            
 										$headerFlag[$attributeId]=$attributeId;
 								}*/
-                                $headerFlag[$attributeId]=[];
+                //$headerFlag[$attributeId]=[];
 								$attributeValues[$attributeId][] = [$attributeValue['value'],$attributeValue['valueId']];  
 						}
-                 
-                        foreach($attributeValueData['result']['attributes'] as $attribute)
+              //dd($attributeValueData['result']['attributes']);   
+             foreach($attributeValueData['result']['attributes'] as $attribute)
 						{
-                            $attributeId = $attribute['id'];
-                            $headerFlag[$attributeId] = $attribute;            	
+              $attributeId = $attribute['id'];
+              $headerFlag[$attributeId] = $attribute;            	
 						}
 
-						
-                    
-                        foreach($headerFlag as $attribute)
+             //dd($headerFlag);       
+            foreach($headerFlag as $attribute)
 						{
-                            $attributeId = $attribute['id'];
-                            $attributeName = $attribute['name'];
-                            $headers[]=$attributeName."(".$attributeId.")";
-                            $headers[]=$attributeName.' Id';
-                            $attributes_label[] = $attributeName;
-                            $attributes_label[] = '';            	
+                $attributeId = $attribute['id'];
+                $attributeName = $attribute['name'];
+                $headers[]=$attributeName."(".$attributeId.")";
+                $headers[]=$attributeName.' Id';
+                $attributes_label[] = $attributeName;
+                $attributes_label[] = '';            	
 						}
                     
                         
