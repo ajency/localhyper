@@ -122,7 +122,7 @@
 	border: none;
 }
 
-.aj-refresher .spinner, .aj-spinner svg{
+.aj-refresher .spinner, .aj-spinner {
   display: block;
   margin: 65% auto;
   stroke: #F8585C;
@@ -132,27 +132,41 @@
   background: #fff;
   border-radius: 100%;
   padding: 5px;
+    -webkit-border-radius: 100%;
+   -moz-border-radius: 100%;
   box-shadow: 0px 2px 6px #B6B6B6;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.aj-refresher .spinner svg, .aj-spinner svg, .aj-verify-spinner svg {
+  width: 28px;
+  height: 28px;
 }
 .aj-refresher .spinner svg circle{
 	stroke: #F8585C;
 }
 
 .aj-refresher .spinner{
-	margin: 0% auto !important;
+	margin: 0 auto !important;
 }
 
-.aj-verify-spinner svg{
+.aj-verify-spinner{
   display: block;
-  margin: 0% auto;
+  margin: 0 auto;
   stroke: #F8585C;
   width: 40px;
   height: 40px;
   fill: #ffffff;
   background: #fff;
   border-radius: 100%;
+  -webkit-border-radius: 100%;
+   -moz-border-radius: 100%;
   padding: 5px;
   box-shadow: 0px 2px 6px #B6B6B6;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 /* Single product css*/
@@ -164,7 +178,7 @@
 /* maps */
 .aj-big-map {
 	height: 200px;
-	margin: 0; 
+	margin: 0;
 	padding: 0;
 }
 
