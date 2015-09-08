@@ -134,11 +134,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 				setDeliveryStatus : ->
 					deliveryStatus = @data.request.status
-					switch deliveryStatus
-						when 'pending_delivery'
-							@data.deliveryStatus = 'sent_for_delivery'
-						else
-							@data.deliveryStatus = deliveryStatus
+					@data.deliveryStatus = deliveryStatus
 					
 					@originalStatus = @data.deliveryStatus
 
@@ -159,6 +155,10 @@ angular.module 'LocalHyper.requestsOffers'
 					@showChange = true
 
 				updateDeliveryStatus : ->
+					if @data.deliveryStatus is @originalStatus
+						CToast.show 'Please Change status of delivery'
+						return
+
 					if @data.deliveryStatus is 'failed_delivery'
 						if @failedDelivery.reason is ''
 							CToast.show 'Please provide reason for delivery failure'

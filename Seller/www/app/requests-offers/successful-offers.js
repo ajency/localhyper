@@ -182,13 +182,7 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         setDeliveryStatus: function() {
           var deliveryStatus;
           deliveryStatus = this.data.request.status;
-          switch (deliveryStatus) {
-            case 'pending_delivery':
-              this.data.deliveryStatus = 'sent_for_delivery';
-              break;
-            default:
-              this.data.deliveryStatus = deliveryStatus;
-          }
+          this.data.deliveryStatus = deliveryStatus;
           return this.originalStatus = this.data.deliveryStatus;
         },
         onDeliveryStatusChange: function() {
@@ -210,6 +204,10 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
         },
         updateDeliveryStatus: function() {
           var params;
+          if (this.data.deliveryStatus === this.originalStatus) {
+            CToast.show('Please Change status of delivery');
+            return;
+          }
           if (this.data.deliveryStatus === 'failed_delivery') {
             if (this.failedDelivery.reason === '') {
               CToast.show('Please provide reason for delivery failure');

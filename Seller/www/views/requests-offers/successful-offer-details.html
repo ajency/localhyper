@@ -109,7 +109,9 @@
                            ng-model="view.offerDetails.data.deliveryStatus"
                            ng-change="view.offerDetails.onDeliveryStatusChange();"
                            ng-disabled="view.offerDetails.showChange">
-
+                            <option value="pending_delivery">
+                              Pending delivery
+                           </option>
                            <option value="sent_for_delivery">
                               Sent for delivery
                            </option>
