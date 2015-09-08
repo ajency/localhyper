@@ -441,14 +441,13 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
   }
 ]).controller('EachSuccessfulOfferCtrl', [
   '$scope', '$interval', 'DeliveryTime', function($scope, $interval, DeliveryTime) {
-    var interval, setTime;
+    var setTime;
     setTime = function() {
-      return $scope.request.leftDeliveryTimeStr = DeliveryTime.left($scope.request.offerDeliveryDate);
+      var deliveryDate, format;
+      format = 'DD/MM/YYYY';
+      deliveryDate = moment($scope.request.offerDeliveryDate.iso).format(format);
+      return $scope.request.leftDeliveryTimeStr = deliveryDate;
     };
-    setTime();
-    interval = $interval(setTime, 60000);
-    return $scope.$on('$destroy', function() {
-      return $interval.cancel(interval);
-    });
+    return setTime();
   }
 ]);

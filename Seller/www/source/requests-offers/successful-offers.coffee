@@ -354,10 +354,10 @@ angular.module 'LocalHyper.requestsOffers'
 
 	#Left delivery time
 	setTime = ->
-		$scope.request.leftDeliveryTimeStr = DeliveryTime.left $scope.request.offerDeliveryDate
+		format    = 'DD/MM/YYYY'
+		deliveryDate = moment($scope.request.offerDeliveryDate.iso).format format
+		$scope.request.leftDeliveryTimeStr = deliveryDate
 
 	setTime()
-	interval = $interval setTime, 60000
-	$scope.$on '$destroy', ->
-		$interval.cancel interval
+	
 ]
