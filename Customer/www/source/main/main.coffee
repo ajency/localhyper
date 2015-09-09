@@ -93,6 +93,9 @@ angular.module 'LocalHyper.main', []
 			$scope.view.getNotifications()
 			App.resize()
 
+		$rootScope.$on 'get:open:request:count', ->
+			$scope.view.getOpenRequestCount()
+
 		$rootScope.$on 'make:request:success', ->
 			$scope.view.getOpenRequestCount()
 

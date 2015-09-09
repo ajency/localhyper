@@ -100,6 +100,9 @@ angular.module('LocalHyper.main', []).controller('SideMenuCtrl', [
       $scope.view.getNotifications();
       return App.resize();
     });
+    $rootScope.$on('get:open:request:count', function() {
+      return $scope.view.getOpenRequestCount();
+    });
     $rootScope.$on('make:request:success', function() {
       return $scope.view.getOpenRequestCount();
     });

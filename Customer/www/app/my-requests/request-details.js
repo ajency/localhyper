@@ -94,7 +94,8 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           hasSeen = offer.notification.hasSeen;
           if (!hasSeen) {
             return RequestAPI.updateNotificationStatus([offer.id]).then(function() {
-              return App.notification.decrement();
+              App.notification.decrement();
+              return $rootScope.$broadcast('get:open:request:count');
             });
           }
         },
@@ -127,6 +128,12 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           })["finally"](function() {
             return CSpinner.hide();
           });
+        },
+        DeliveryDate: function(date) {
+          var deliveryDate, format;
+          format = 'DD/MM/YYYY';
+          deliveryDate = moment(date).format(format);
+          return deliveryDate;
         }
       },
       init: function() {
@@ -208,6 +215,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           return function(data) {
             _.each(_this.offers.all, function(offer) {
               if (offer.id === offerId) {
+                offer.deliveryDate = data.deliveryDate;
                 offer.status = 'accepted';
                 return offer.updatedAt = data.offerUpdatedAt;
               } else {

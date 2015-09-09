@@ -99,7 +99,9 @@ angular.module 'LocalHyper.myRequests'
 					hasSeen = offer.notification.hasSeen
 					if !hasSeen
 						RequestAPI.updateNotificationStatus [offer.id]
-						.then -> App.notification.decrement()
+						.then -> 
+							App.notification.decrement()
+							$rootScope.$broadcast 'get:open:request:count'
 
 				openRatePopup : (seller)->
 					if (seller.isSellerRated == false)
@@ -128,6 +130,11 @@ angular.module 'LocalHyper.myRequests'
 						CToast.show 'An error occurred, please try again'
 					.finally ->
 						CSpinner.hide()
+
+				DeliveryDate :(date)->
+					format    = 'DD/MM/YYYY'
+					deliveryDate = moment(date).format format
+					deliveryDate
 
 				
 			init : ->
@@ -196,6 +203,7 @@ angular.module 'LocalHyper.myRequests'
 				.then (data)=>
 					_.each @offers.all, (offer)=>
 						if offer.id is offerId
+							offer.deliveryDate = data.deliveryDate
 							offer.status = 'accepted'
 							offer.updatedAt = data.offerUpdatedAt
 						else 
