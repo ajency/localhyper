@@ -614,6 +614,7 @@
           return deliveryDate = newAcceptedDate;
         } else {
           newAcceptedDate = incrementDateObject(newAcceptedDate);
+          incrementDayFlag = true;
           return newAcceptedDate = fetchAdjustedDelivery(newAcceptedDate, deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays, incrementedDay);
         }
       } else {
@@ -1546,6 +1547,7 @@
                       offerStatus: acceptedOffer.get("status"),
                       offerUpdatedAt: acceptedOffer.updatedAt,
                       requestId: acceptedOffer.get("request").id,
+                      deliveryDate: acceptedOffer.get("deliveryDate"),
                       requestStatus: acceptedOffer.get("request").get("status")
                     };
                     return response.success(resultObj);

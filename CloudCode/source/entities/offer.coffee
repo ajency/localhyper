@@ -577,6 +577,7 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
                                         offerStatus : acceptedOffer.get("status")
                                         offerUpdatedAt : acceptedOffer.updatedAt
                                         requestId : acceptedOffer.get("request").id
+                                        deliveryDate : acceptedOffer.get("deliveryDate")
                                         requestStatus : acceptedOffer.get("request").get("status")
                                     response.success resultObj    
                                 , (error) ->

@@ -56,6 +56,7 @@ getDeliveryDate = (accpetedDateIST,sellerOffDays,deliveryDurationInDays) ->
     pendingDays = 0
     incrementedDay = 0
     newAcceptedDate = accpetedDateIST
+
     if !isValidWorkDay(newAcceptedDate ,sellerOffDays)      #if non working day 
         deliveryDurationInDays = deliveryDurationInDays-1 
 
@@ -76,8 +77,9 @@ fetchAdjustedDelivery = (newAcceptedDate,deliveryDurationInDays, sellerOffDays, 
         if deliveryDurationInDays is 0  and incrementDayFlag is false
             if isTimeBeforeWorkTime(newAcceptedDate, endWorkTime)
                 deliveryDate = newAcceptedDate
-            else 
+            else
                 newAcceptedDate = incrementDateObject(newAcceptedDate)
+                incrementDayFlag = true
                 newAcceptedDate = fetchAdjustedDelivery(newAcceptedDate,deliveryDurationInDays, sellerOffDays, incrementDayFlag, pendingDays,incrementedDay)
         else
             if deliveryDurationInDays != incrementedDay
