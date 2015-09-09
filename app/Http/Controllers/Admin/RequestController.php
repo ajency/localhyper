@@ -19,6 +19,7 @@ class RequestController extends Controller
      */
     public function index()
     {
+
         $page = (isset($_GET['page']))? ($_GET['page']-1) :0; 
         $displayLimit = config('constants.page_limit');
         $requestsData = $this->getRequests('LIST',$page ,$displayLimit);
@@ -97,10 +98,9 @@ class RequestController extends Controller
             
             if($requestStatus=='open')
             {
-                $datetime1 = date('Y-m-d H:i:s');
-                $datetime2 = $request->getCreatedAt()->format('Y-m-d H:i:s');
-                $interval = dateDiffernceInHours($datetime1, $datetime2);  
-                if($interval>=1)
+                $startDateTime = $request->getCreatedAt()->format('Y-m-d H:i:s'); 
+                $interval = dateDiffernce($startDateTime);  
+                if($interval)
                     $requestStatus = 'expired';
             }
             

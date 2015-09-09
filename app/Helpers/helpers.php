@@ -36,15 +36,24 @@ function convertToIST($dateTime)
     return $date->format('d-m-Y H:i:s');
 }
 
-function dateDiffernceInHours($date1, $date2) 
+function dateDiffernce($date1) 
 { 
   /*$start_ts = strtotime($date1);
   $end_ts = strtotime($date2);
   $diff = $end_ts - $start_ts; 
   return round($diff / 86400); */
-  $hourdiff = round((strtotime($date1) - strtotime($date2))/3600, 1);
+  //$hourdiff = round((strtotime($date1) - strtotime($date2))/3600, 1);
 
-  return $hourdiff;
+  $startime = $date1; 
+  $starttime = strtotime($startime); 
+  $oneday = 60*60*24; 
+  if( $starttime < (time()-$oneday) ) { 
+     $return = 1; 
+  } else { 
+     $return = 0; 
+  } 
+
+  return $return;
 }
 
 function runAutoBidOffers(){

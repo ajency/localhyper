@@ -65,10 +65,9 @@ class CustomerController extends Controller
             {   
                 if($request->get("status")=='open')
                 {
-                    $datetime1 = date('Y-m-d H:i:s');
-                    $datetime2 = $request->getCreatedAt()->format('Y-m-d H:i:s');
-                    $interval = dateDiffernceInHours($datetime1, $datetime2);  
-                    if($interval > 24)
+                    $startDateTime = $request->getCreatedAt()->format('Y-m-d H:i:s');
+                    $interval = dateDiffernce($startDateTime);  
+                    if($interval)
                         $requestExpiredCount = $requestExpiredCount+1;
                 }
                 
