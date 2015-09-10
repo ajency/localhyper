@@ -37,7 +37,7 @@ angular.module 'LocalHyper.requestsOffers'
 					@selectedRadius = 'default'
 
 				plus : ->
-					@attrValues['radius']++ if @attrValues['radius'] < 100
+					@attrValues['radius']++ if @attrValues['radius'] < 25
 				minus : ->
 					@attrValues['radius']-- if @attrValues['radius'] > 1
 

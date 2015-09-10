@@ -28,7 +28,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           return this.selectedRadius = 'default';
         },
         plus: function() {
-          if (this.attrValues['radius'] < 100) {
+          if (this.attrValues['radius'] < 25) {
             return this.attrValues['radius']++;
           }
         },
