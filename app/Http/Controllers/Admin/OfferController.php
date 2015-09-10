@@ -91,9 +91,10 @@ class OfferController extends Controller
             $lastSellerOffer = new ParseQuery("Offer");
             $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
             $lastSellerOffer->descending("createdAt");
+            $lastSellerOfferCount = $lastSellerOffer->count(); 
             $lastOfferBySeller = $lastSellerOffer->first();  
             
-           
+            $lastOfferPrice = ($lastSellerOfferCount > 1)? $lastOfferBySeller->get("offerPrice") :'-';
             $createdDate = convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s'));
             
             $autoBid =   ($offer->get('autoBid'))?"Yes":"No"; 
@@ -110,7 +111,7 @@ class OfferController extends Controller
                         'mrpOfProduct'=>$productObj->get("mrp"),   
                         'onlinePrice'=>$onlinePrice,
                         'offerPrice'=>$priceObj->get("value"),
-                        'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice"),
+                        'lastOfferBySeller'=>$lastOfferPrice,
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
@@ -128,7 +129,7 @@ class OfferController extends Controller
                         'mrpOfProduct'=>$productObj->get("mrp"),   
                         'onlinePrice'=>$onlinePrice,
                         'offerPrice'=>$offer->get("offerPrice"),
-                        'lastOfferBySeller'=>$lastOfferBySeller->get("offerPrice"),
+                        'lastOfferBySeller'=>$lastOfferPrice,
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
