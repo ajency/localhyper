@@ -248,6 +248,10 @@ angular.module 'LocalHyper.myRequests'
 				else
 					false
 
+			onImageClick : (productID, e)->
+				e.stopPropagation()
+				App.navigate('single-product', {productID: productID})
+
 		onDeviceBack = ->
 				$ionicLoading.hide()
 				App.goBack -1	

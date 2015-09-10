@@ -20,7 +20,8 @@
 				<div class="col">
 
 					<div class="row">
-						<div class="col-20">
+						<div class="col-20"
+							 ng-click="view.onImageClick(view.request.product.id, $event);" >
 							<div class="item-avatar">
 								<img 
 								 	ng-src="{{view.request.product.images[0].src}}" 

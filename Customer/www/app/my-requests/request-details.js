@@ -267,6 +267,12 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         } else {
           return false;
         }
+      },
+      onImageClick: function(productID, e) {
+        e.stopPropagation();
+        return App.navigate('single-product', {
+          productID: productID
+        });
       }
     };
     onDeviceBack = function() {

@@ -149,8 +149,11 @@ angular.module 'LocalHyper.products'
 			getSingleProductDetails : ->
 				ProductsAPI.getSingleProduct @productID
 				.then (productData)=>
-					console.log productData
 					@product = productData
+					App.search.icon = true
+					App.search.categoryID = @product.category.id
+					App.search.categoryName = @product.category.name
+
 					ProductsAPI.getNewOffers @productID
 				.then (details)=>
 					_.each details, (val, key)=>
@@ -240,7 +243,8 @@ angular.module 'LocalHyper.products'
 				$scope.view.request.reFetch()
 		
 		$scope.$on '$ionicView.beforeEnter', (event, viewData)->
-			if _.contains ['products', 'verify-success', 'products-search', 'my-requests', 'requests-history'], App.previousState
+			if _.contains ['products', 'verify-success', 'products-search', 'my-requests', 'requests-history', 'request-details']
+					, App.previousState
 				if !viewData.enableBack
 					viewData.enableBack = true
 

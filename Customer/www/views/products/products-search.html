@@ -44,7 +44,7 @@
 				<div class="row">
 					<div class="col">
 						<h6 class="subdued">
-							{{view.getPrimaryAttrs(product.primaryAttributes)}}
+							{{view.primaryAttribute.get(product.primaryAttributes)}}
 						</h6>
 					</div>
 				</div>
@@ -80,10 +80,5 @@
 		</ion-infinite-scroll>
 
 	</ion-content>
-
-	<ion-footer-bar
-		ng-show="view.footer"
-		class="bar-light">
-	</ion-footer-bar>
 
 </ion-view>

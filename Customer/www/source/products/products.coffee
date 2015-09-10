@@ -78,7 +78,7 @@ angular.module 'LocalHyper.products', []
 								prices.push 
 									start: start
 									end: end
-									name: "Below - Rs #{end}"
+									name: "Below Rs #{end}"
 							else 	
 								prices.push 
 									start: start
@@ -98,7 +98,6 @@ angular.module 'LocalHyper.products', []
 					_.each valueArray, (valueArray) ->
 						arr.push parseInt(valueArray)
 
-					console.log arr
 					minValue = _.min(arr)
 					maxValue = _.max(arr) 
 
@@ -150,7 +149,7 @@ angular.module 'LocalHyper.products', []
 								rangeArray.push 
 									start: start
 									end: end
-									name: "Below - #{end}"
+									name: "Below #{end}"
 							else 	
 								rangeArray.push 
 									start: start
@@ -472,10 +471,11 @@ angular.module 'LocalHyper.products', []
 
 		$scope.$on '$ionicView.beforeEnter', ->
 			App.search.categoryID = $stateParams.categoryID
+			App.search.categoryName = Product.subCategoryTitle
 			if App.currentState is 'products-search'
 				$scope.view.forSearch()
-				if App.previousState isnt 'single-product'
-					$scope.view.products = []
+				# if App.previousState isnt 'single-product'
+				$scope.view.products = []
 					
 			else if _.contains ['categories', 'sub-categories'], App.previousState
 				$scope.view.reset()
@@ -515,10 +515,6 @@ angular.module 'LocalHyper.products', []
 					templateUrl: 'views/products/products-search.html'
 					controller: 'ProductsCtrl'
 					resolve:
-						Product: ($stateParams, CategoriesAPI)->
-							subCategories = CategoriesAPI.subCategories 'get'
-							childCategory = _.filter subCategories, (category)->
-								category.id is $stateParams.categoryID
-							
-							subCategoryTitle: childCategory[0].name 
+						Product: (App)->
+							subCategoryTitle: App.search.categoryName
 ]

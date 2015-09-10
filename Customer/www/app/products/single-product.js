@@ -128,7 +128,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             if (_.isNull(specs.unit)) {
               str = App.humanize(specs.value);
             } else {
-              str = (App.humanize(specs.value)) + " " + (App.humanize(specs.unit));
+              str = "" + (App.humanize(specs.value)) + " " + (App.humanize(specs.unit));
             }
             return generalSpecs.push(str);
           });
@@ -159,8 +159,10 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       getSingleProductDetails: function() {
         return ProductsAPI.getSingleProduct(this.productID).then((function(_this) {
           return function(productData) {
-            console.log(productData);
             _this.product = productData;
+            App.search.icon = true;
+            App.search.categoryID = _this.product.category.id;
+            App.search.categoryName = _this.product.category.name;
             return ProductsAPI.getNewOffers(_this.productID);
           };
         })(this)).then((function(_this) {
@@ -263,7 +265,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
       }
     });
     return $scope.$on('$ionicView.beforeEnter', function(event, viewData) {
-      if (_.contains(['products', 'verify-success', 'products-search', 'my-requests', 'requests-history'], App.previousState)) {
+      if (_.contains(['products', 'verify-success', 'products-search', 'my-requests', 'requests-history', 'request-details'], App.previousState)) {
         if (!viewData.enableBack) {
           viewData.enableBack = true;
         }
