@@ -131,6 +131,34 @@ angular.module 'LocalHyper.requestsOffers', []
 ]
 
 
+.factory 'LowestPrice', [->
+
+	LowestPrice = {}
+
+	LowestPrice.get = (request)->
+		platformPrice = request.platformPrice
+		mrp = request.product.mrp
+		onlinePrice = request.onlinePrice
+		priceArray = []
+		priceLabel = []
+		if platformPrice isnt ''
+			priceArray.push(platformPrice) 
+			priceLabel.push('Platform price')
+		if mrp isnt '' 
+			priceArray.push(mrp) 
+			priceLabel.push('Mrp')
+		if onlinePrice isnt '' 
+			priceArray.push(onlinePrice)
+			priceLabel.push('Online price')
+		
+		minPrice = _.min priceArray
+		request.lowestPrice = minPrice
+		request.lowestPriceLabel = priceLabel[priceArray.indexOf(minPrice)]
+
+	LowestPrice
+]
+
+
 .config ['$stateProvider', ($stateProvider)->
 
 	$stateProvider

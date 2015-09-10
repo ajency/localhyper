@@ -140,6 +140,35 @@ angular.module('LocalHyper.requestsOffers', []).directive('ajRemoveBoxShadow', [
     };
     return TimeString;
   }
+]).factory('LowestPrice', [
+  function() {
+    var LowestPrice;
+    LowestPrice = {};
+    LowestPrice.get = function(request) {
+      var minPrice, mrp, onlinePrice, platformPrice, priceArray, priceLabel;
+      platformPrice = request.platformPrice;
+      mrp = request.product.mrp;
+      onlinePrice = request.onlinePrice;
+      priceArray = [];
+      priceLabel = [];
+      if (platformPrice !== '') {
+        priceArray.push(platformPrice);
+        priceLabel.push('Platform price');
+      }
+      if (mrp !== '') {
+        priceArray.push(mrp);
+        priceLabel.push('Mrp');
+      }
+      if (onlinePrice !== '') {
+        priceArray.push(onlinePrice);
+        priceLabel.push('Online price');
+      }
+      minPrice = _.min(priceArray);
+      request.lowestPrice = minPrice;
+      return request.lowestPriceLabel = priceLabel[priceArray.indexOf(minPrice)];
+    };
+    return LowestPrice;
+  }
 ]).config([
   '$stateProvider', function($stateProvider) {
     return $stateProvider.state('tabs', {

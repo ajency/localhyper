@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
-  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout', '$ionicLoading', '$ionicPlatform', 'CDialog', function($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform, CDialog) {
+  '$scope', 'App', 'RequestsAPI', '$rootScope', '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate', '$q', '$timeout', '$ionicLoading', '$ionicPlatform', 'CDialog', 'LowestPrice', function($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform, CDialog, LowestPrice) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -382,6 +382,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
                     return onError('Sorry, this request has been cancelled');
                   } else if (_.isEmpty(requests)) {
                     _this.display = 'noError';
+                    LowestPrice.get(request);
                     return _this.data = request;
                   } else {
                     reqIndex = _.findIndex(requests, function(val) {
@@ -391,6 +392,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
                       return onError('You have already made an offer');
                     } else {
                       _this.display = 'noError';
+                      LowestPrice.get(request);
                       return _this.data = request;
                     }
                   }
@@ -671,33 +673,9 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
     });
   }
 ]).controller('EachRequestTimeCtrl', [
-  '$scope', '$interval', 'TimeString', function($scope, $interval, TimeString) {
-    var LowestPrice, getLowestPrice, interval, setTime;
-    getLowestPrice = function() {
-      var minPrice, mrp, onlinePrice, platformPrice, priceArray, priceLabel;
-      platformPrice = $scope.request.platformPrice;
-      mrp = $scope.request.product.mrp;
-      onlinePrice = $scope.request.onlinePrice;
-      priceArray = [];
-      priceLabel = [];
-      if (platformPrice !== '') {
-        priceArray.push(platformPrice);
-        priceLabel.push('Platform price');
-      }
-      if (mrp !== '') {
-        priceArray.push(mrp);
-        priceLabel.push('Mrp');
-      }
-      if (onlinePrice !== '') {
-        priceArray.push(onlinePrice);
-        priceLabel.push('Online price');
-      }
-      minPrice = _.min(priceArray);
-      return [minPrice, priceLabel[priceArray.indexOf(minPrice)]];
-    };
-    LowestPrice = getLowestPrice();
-    $scope.request.lowestPrice = LowestPrice[0];
-    $scope.request.lowestPriceLabel = LowestPrice[1];
+  '$scope', '$interval', 'TimeString', 'LowestPrice', function($scope, $interval, TimeString, LowestPrice) {
+    var interval, setTime;
+    LowestPrice.get($scope.request);
     setTime = function() {
       return $scope.request.timeStr = TimeString.get($scope.request.createdAt);
     };

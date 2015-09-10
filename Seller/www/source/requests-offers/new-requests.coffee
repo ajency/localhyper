@@ -3,9 +3,9 @@ angular.module 'LocalHyper.requestsOffers'
 
 .controller 'NewRequestCtrl', ['$scope', 'App', 'RequestsAPI', '$rootScope'
 	, '$ionicModal', 'User', 'CToast', 'OffersAPI', 'CSpinner', '$ionicScrollDelegate'
-	, '$q', '$timeout', '$ionicLoading', '$ionicPlatform', 'CDialog'
+	, '$q', '$timeout', '$ionicLoading', '$ionicPlatform', 'CDialog', 'LowestPrice'
 	, ($scope, App, RequestsAPI, $rootScope, $ionicModal, User, CToast, OffersAPI
-	, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform, CDialog)->
+	, CSpinner, $ionicScrollDelegate, $q, $timeout, $ionicLoading, $ionicPlatform, CDialog, LowestPrice)->
 
 		$scope.view = 
 			display: 'loader'
@@ -273,6 +273,7 @@ angular.module 'LocalHyper.requestsOffers'
 									onError 'Sorry, this request has been cancelled'
 								else if _.isEmpty requests
 									@display = 'noError'
+									LowestPrice.get request
 									@data = request
 								else
 									reqIndex = _.findIndex requests, (val)-> val.id is request.id
@@ -280,6 +281,7 @@ angular.module 'LocalHyper.requestsOffers'
 										onError 'You have already made an offer'
 									else
 										@display = 'noError'
+										LowestPrice.get request
 										@data = request
 							, (type)=>
 								@display = 'error'
@@ -507,37 +509,18 @@ angular.module 'LocalHyper.requestsOffers'
 ]
 
 
-.controller 'EachRequestTimeCtrl', ['$scope', '$interval', 'TimeString', ($scope, $interval, TimeString)->
-
-	getLowestPrice = ->
-		platformPrice = $scope.request.platformPrice
-		mrp = $scope.request.product.mrp
-		onlinePrice = $scope.request.onlinePrice
-		priceArray = []
-		priceLabel = []
-		if platformPrice isnt ''
-			priceArray.push(platformPrice) 
-			priceLabel.push('Platform price')
-		if mrp isnt '' 
-			priceArray.push(mrp) 
-			priceLabel.push('Mrp')
-		if onlinePrice isnt '' 
-			priceArray.push(onlinePrice)
-			priceLabel.push('Online price')
-		minPrice = _.min priceArray
-		return [minPrice, priceLabel[priceArray.indexOf(minPrice)]]
+.controller 'EachRequestTimeCtrl', ['$scope', '$interval', 'TimeString', 'LowestPrice'
+	, ($scope, $interval, TimeString, LowestPrice)->
 		
-	LowestPrice = 	getLowestPrice()
-	$scope.request.lowestPrice = LowestPrice[0]
-	$scope.request.lowestPriceLabel = LowestPrice[1]
+		LowestPrice.get $scope.request
 
-	#Request time
-	setTime = ->
-		$scope.request.timeStr = TimeString.get $scope.request.createdAt
+		#Request time
+		setTime = ->
+			$scope.request.timeStr = TimeString.get $scope.request.createdAt
 
-	setTime()
-	interval = $interval setTime, 60000
-	$scope.$on '$destroy', ->
-		$interval.cancel interval
+		setTime()
+		interval = $interval setTime, 60000
+		$scope.$on '$destroy', ->
+			$interval.cancel interval
 ]
 
