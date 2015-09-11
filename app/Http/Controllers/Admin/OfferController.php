@@ -55,7 +55,7 @@ class OfferController extends Controller
         $offersData = $offers->find(); 
         
        
-        $offertList = $productRequests= $onlinePriceArray= $lastOfferPriceArray=[];
+        $offertList = $productRequests= $onlinePriceArray= $lastOfferedPriceArray= [];
         
         foreach($offersData as $offer)
         {
@@ -69,8 +69,17 @@ class OfferController extends Controller
             if(!isset($productRequests[$productId]))
             {
                 $requestsinnerQuery  = new ParseQuery("Request");
-                $requestsinnerQuery ->equalTo("product", $productObj);  
+                $requestsinnerQuery ->equalTo("product", $productObj); 
+
+                $lastOfferedPrice = new ParseQuery("Offer");
+                $lastOfferedPrice->matchesQuery("request",$requestsinnerQuery);
+                $lastOfferedPrice->descending("createdAt");
+                $lastOfferedPriceCount = $lastOfferedPrice->count(); 
+                $lastOfferedPriceData = $lastOfferedPrice->first();  
                 
+                $lastOfferedProductPrice = ($lastOfferedPriceCount > 1)? $lastOfferedPriceData->get("offerPrice") :'-'; 
+                $lastOfferedPriceArray[$productId]['lastOfferedProductPrice'] = $lastOfferedProductPrice; 
+
                 #$productRequests[$productId] = $requestsinnerQuery;
                 
                 $productPrice = new ParseQuery("Price");
@@ -78,26 +87,18 @@ class OfferController extends Controller
                 $productPrice->equalTo("product", $productObj);
                 $productPrice->ascending("value");
                 $productPriceData = $productPrice->first();
-
-                $lastSellerOffer = new ParseQuery("Offer");
-                $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
-                $lastSellerOffer->descending("createdAt");
-                $lastSellerOfferCount = $lastSellerOffer->count(); 
-                $lastOfferBySeller = $lastSellerOffer->first();  
-                
-                $lastOfferPrice = ($lastSellerOfferCount > 1)? $lastOfferBySeller->get("offerPrice") :'-';
                 
                 $onlinePrice = (!empty($productPriceData))? $productPriceData->get("value") :'';
                 $onlinePriceArray[$productId]['OnlinePrice'] = $onlinePrice; 
-                $lastOfferPriceArray[$productId]['lastOfferPrice'] = $lastOfferPrice; 
             }
             else
             {
                #$requestsinnerQuery = $productRequests[$productId];
                $onlinePrice = $onlinePriceArray[$productId]['OnlinePrice']; 
-               $lastOfferPrice = $lastOfferPriceArray[$productId]['lastOfferPrice'];
+               $lastOfferedProductPrice = $lastOfferedPriceArray[$productId]['lastOfferedProductPrice']; 
             } 
-
+           
+            
             $createdDate = convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s'));
             
             $autoBid =   ($offer->get('autoBid'))?"Yes":"No"; 
@@ -114,7 +115,7 @@ class OfferController extends Controller
                         'mrpOfProduct'=>$productObj->get("mrp"),   
                         'onlinePrice'=>$onlinePrice,
                         'offerPrice'=>$priceObj->get("value"),
-                        'lastOfferBySeller'=>$lastOfferPrice,
+                        'lastOfferBySeller'=>$lastOfferedProductPrice,
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
@@ -132,7 +133,7 @@ class OfferController extends Controller
                         'mrpOfProduct'=>$productObj->get("mrp"),   
                         'onlinePrice'=>$onlinePrice,
                         'offerPrice'=>$offer->get("offerPrice"),
-                        'lastOfferBySeller'=>$lastOfferPrice,
+                        'lastOfferBySeller'=>$lastOfferedProductPrice,
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',

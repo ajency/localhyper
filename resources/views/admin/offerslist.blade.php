@@ -18,7 +18,7 @@
               <th>Mrp of Product</th>    
               <th>Online Price</th> 
               <th>Offer Price</th>    
-              <th>Last Offer By Seller</th>      
+              <th>Last Offered Price</th>      
               <th>Request Status</th>
               <th>Offer Status</th>  
               <th>Delivery Reason Failure</th>      
