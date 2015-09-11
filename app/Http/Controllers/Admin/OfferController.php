@@ -55,7 +55,7 @@ class OfferController extends Controller
         $offersData = $offers->find(); 
         
        
-        $offertList = $productRequests= $onlinePriceArray=[];
+        $offertList = $productRequests= $onlinePriceArray= $lastOfferPriceArray=[];
         
         foreach($offersData as $offer)
         {
@@ -71,30 +71,33 @@ class OfferController extends Controller
                 $requestsinnerQuery  = new ParseQuery("Request");
                 $requestsinnerQuery ->equalTo("product", $productObj);  
                 
-                $productRequests[$productId] = $requestsinnerQuery;
+                #$productRequests[$productId] = $requestsinnerQuery;
                 
                 $productPrice = new ParseQuery("Price");
                 $productPrice->equalTo("type", "online_market_price");
                 $productPrice->equalTo("product", $productObj);
                 $productPrice->ascending("value");
                 $productPriceData = $productPrice->first();
+
+                $lastSellerOffer = new ParseQuery("Offer");
+                $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
+                $lastSellerOffer->descending("createdAt");
+                $lastSellerOfferCount = $lastSellerOffer->count(); 
+                $lastOfferBySeller = $lastSellerOffer->first();  
+                
+                $lastOfferPrice = ($lastSellerOfferCount > 1)? $lastOfferBySeller->get("offerPrice") :'-';
                 
                 $onlinePrice = (!empty($productPriceData))? $productPriceData->get("value") :'';
                 $onlinePriceArray[$productId]['OnlinePrice'] = $onlinePrice; 
+                $lastOfferPriceArray[$productId]['lastOfferPrice'] = $lastOfferPrice; 
             }
             else
             {
-               $requestsinnerQuery = $productRequests[$productId];
+               #$requestsinnerQuery = $productRequests[$productId];
                $onlinePrice = $onlinePriceArray[$productId]['OnlinePrice']; 
+               $lastOfferPrice = $lastOfferPriceArray[$productId]['lastOfferPrice'];
             } 
-           
-            $lastSellerOffer = new ParseQuery("Offer");
-            $lastSellerOffer->matchesQuery("request",$requestsinnerQuery);
-            $lastSellerOffer->descending("createdAt");
-            $lastSellerOfferCount = $lastSellerOffer->count(); 
-            $lastOfferBySeller = $lastSellerOffer->first();  
-            
-            $lastOfferPrice = ($lastSellerOfferCount > 1)? $lastOfferBySeller->get("offerPrice") :'-';
+
             $createdDate = convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s'));
             
             $autoBid =   ($offer->get('autoBid'))?"Yes":"No"; 
