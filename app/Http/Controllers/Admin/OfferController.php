@@ -77,19 +77,19 @@ class OfferController extends Controller
                 $lastOfferedPriceCount = $lastOfferedPrice->count(); 
                 $lastOfferedPriceData = $lastOfferedPrice->first();  
                 
-                $lastOfferedProductPrice = ($lastOfferedPriceCount > 1)? $lastOfferedPriceData->get("offerPrice") :'-'; 
-                $lastOfferedPriceArray[$productId]['lastOfferedProductPrice'] = $lastOfferedProductPrice; 
+                 $lastOfferedProductPrice = ($lastOfferedPriceCount > 1)? $lastOfferedPriceData->get("offerPrice") :'-'; 
+                 $lastOfferedPriceArray[$productId]['lastOfferedProductPrice'] = $lastOfferedProductPrice; 
 
-                #$productRequests[$productId] = $requestsinnerQuery;
+                // #$productRequests[$productId] = $requestsinnerQuery;
                 
-                $productPrice = new ParseQuery("Price");
-                $productPrice->equalTo("type", "online_market_price");
-                $productPrice->equalTo("product", $productObj);
-                $productPrice->ascending("value");
-                $productPriceData = $productPrice->first();
+                // $productPrice = new ParseQuery("Price");
+                // $productPrice->equalTo("type", "online_market_price");
+                // $productPrice->equalTo("product", $productObj);
+                // $productPrice->ascending("value");
+                // $productPriceData = $productPrice->first();
                 
-                $onlinePrice = (!empty($productPriceData))? $productPriceData->get("value") :'';
-                $onlinePriceArray[$productId]['OnlinePrice'] = $onlinePrice; 
+                $onlinePrice = '';//(!empty($productPriceData))? $productPriceData->get("value") :'';
+                $onlinePriceArray[$productId]['OnlinePrice'] =  $onlinePrice; 
             }
             else
             {
