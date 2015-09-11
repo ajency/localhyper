@@ -799,6 +799,38 @@ button.button.button-assertive b {
   border-color: #f45152;
   color: #fff;
 }
+.customer-popover .new-adjust {
+  margin-bottom: 0 !important;
+}
+.customer-popover .new-adjust span {
+  float: left;
+}
+.customer-popover .new-adjust sm {
+  float: left;
+  margin-top: 5px;
+  margin-left: 7px;
+  font-size: 11px;
+}
+.customer-popover .new-adjust:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.customer-popover .new-adjust-down {
+  margin-top: 1px;
+  position: relative;
+}
+.customer-popover .new-adjust-top {
+  margin-top: 28px;
+  display: block;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 10%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 10%;
+  -ms-flex: 0 0 10%;
+  flex: 0 0 10%;
+  max-width: 10%;
+}
 .sing-pro h5 {
   margin-top: 5px;
   margin-bottom: 0;
