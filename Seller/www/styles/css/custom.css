@@ -886,6 +886,35 @@ sm {
 .b-r-1 {
   border-right: 1px solid #ddd;
 }
+.business-details .form-field .item {
+  position: relative;
+}
+.business-details .form-field .item:after {
+  content: "\f2bf";
+  font-family: "Ionicons";
+  position: absolute;
+  right: 13px;
+  bottom: 9px;
+  color: #ccc;
+}
+.business-details .title-with-icon i {
+  margin-right: 3px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.business-details.seller-profile .form-field .item {
+  border-color: #E2E2E2;
+  background-color: #FBFBFB;
+}
+.business-details.seller-profile .form-field .item:after {
+  display: none;
+}
+.business-details.seller-profile .form-field .input-label {
+  color: #333;
+}
+.business-details.seller-profile input[disabled] {
+  background: transparent;
+}
 .business-details .card {
   margin-top: 10px;
   margin-bottom: 10px;

@@ -806,6 +806,9 @@ button.button.button-assertive b {
 .sing-pro h6.subdued {
   margin: 0;
   padding-bottom: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .sing-pro h4.margin-none.pull-right.subdued i.ion-log-out {
   display: none;

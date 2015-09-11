@@ -49,7 +49,7 @@
 								ng-if="view.product.platformPrice.value === ''">
 								N/A
 							</h4>
-							<div class="sm-text">Local  <br>
+							<div class="sm-text">Local Price  <br>
 								<span ng-if="view.product.platformPrice.value !== ''">
 									as on {{view.getDate(view.product.platformPrice.updatedAt)}}
 								</span>
@@ -68,7 +68,7 @@
 								ng-if="view.product.onlinePrice.value === ''">
 								N/A
 							</h4>
-							<div class="sm-text">Online
+							<div class="sm-text">Online Price
 								<img
 									ng-if="view.product.onlinePrice.value !== ''"
 									ng-src="{{view.product.onlinePrice.sourceUrl}}"/><br>
