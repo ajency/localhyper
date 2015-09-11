@@ -23,8 +23,8 @@
 						<div class="col-20"
 							 ng-click="view.onImageClick(view.request.product.id, $event);" >
 							<div class="item-avatar">
-								<img 
-								 	ng-src="{{view.request.product.images[0].src}}" 
+								<img
+								 	ng-src="{{view.request.product.images[0].src}}"
 								 	alt=""
 								 	onerror="this.src='./img/gray-bg.png';">
 							</div>
@@ -139,6 +139,7 @@
 					<div class="col">
 						<h4 class="align-left high-span rec-off">
 							Total received Offers <b>({{view.offers.all.length}})</b>
+							<span class="pull-right icon ion-ios-information-outline" style="font-size: 22px;"></span>
 						</h4>
 					</div>
 				</div>
@@ -260,7 +261,7 @@
 							<h2>{{offer.deliveryTimeStr}}</h2>
 						</div>
 
-						<div 
+						<div
 							class="col align-right p-a-0"
 							ng-if="view.checkStatus(view.request.status);">
 							<div class="vert-div pull-left"></div>
@@ -277,7 +278,7 @@
 						class="row row-fluid offer-vals"
 						ng-if="offer.status === 'accepted'">
 
-						<div 
+						<div
 							ng-if="view.request.status == 'successful'"
 							ng-init="view.offers.openRatePopup(offer.seller);">
 						</div>

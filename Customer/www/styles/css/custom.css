@@ -1997,6 +1997,17 @@ label.status-label {
   position: relative;
   top: -2px;
 }
+.filter-txt i.ion-funnel {
+  background-image: url(../../img/filter.png);
+  background-size: auto 23px;
+  width: 25px;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 27px;
+}
+.filter-txt i.ion-funnel:before {
+  display: none;
+}
 .filter-txt sm {
   font-weight: 100;
   display: -webkit-box;
