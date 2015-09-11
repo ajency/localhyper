@@ -143,10 +143,10 @@ angular.module 'LocalHyper.requestsOffers', []
 		priceLabel = []
 		if platformPrice isnt ''
 			priceArray.push(platformPrice) 
-			priceLabel.push('Platform price')
+			priceLabel.push('Local price')
 		if mrp isnt '' 
 			priceArray.push(mrp) 
-			priceLabel.push('Mrp')
+			priceLabel.push('MRP')
 		if onlinePrice isnt '' 
 			priceArray.push(onlinePrice)
 			priceLabel.push('Online price')
