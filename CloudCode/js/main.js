@@ -1200,6 +1200,7 @@
             requestObj.id = requestId;
             offer.set("seller", sellerObj);
             offer.set("request", requestObj);
+            offer.set("product", product);
             offer.set("price", priceObj);
             offer.set("status", status);
             offer.set("deliveryTime", deliveryTime);
@@ -1208,6 +1209,7 @@
             offer.set("requestDate", requestObject.createdAt);
             offer.set("offerPrice", priceValue);
             offer.set("requestGeoPoint", requestObject.get("addressGeoPoint"));
+            console.log("makeOffer");
             return offer.save().then(function(offerObj) {
               var Transaction, transaction;
               Transaction = Parse.Object.extend("Transaction");

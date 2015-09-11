@@ -176,6 +176,7 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
 
                     offer.set "seller" , sellerObj
                     offer.set "request", requestObj 
+                    offer.set "product", product
                     offer.set "price", priceObj
                     offer.set "status" , status
                     offer.set "deliveryTime" , deliveryTime
@@ -184,7 +185,7 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
                     offer.set "requestDate", requestObject.createdAt #needed for sorting offers based on created date of requests  
                     offer.set "offerPrice", priceValue #needed for sorting by price
                     offer.set "requestGeoPoint", requestObject.get("addressGeoPoint") #needed for sorting by distance
-
+                    console.log "makeOffer"
                     offer.save()
                     .then (offerObj) ->
 
