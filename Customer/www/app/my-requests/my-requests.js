@@ -213,6 +213,19 @@ angular.module('LocalHyper.myRequests').controller('MyRequestCtrl', [
         return App.navigate('single-product', {
           productID: productID
         });
+      },
+      displayFooter: function() {
+        if (this.display === 'error') {
+          return false;
+        } else if (this.filter.excerpt === '') {
+          if (this.openRequests.length > 0) {
+            return true;
+          }
+        } else if (this.filter.excerpt !== '') {
+          return true;
+        } else {
+          return false;
+        }
       }
     };
     onDeviceBack = function() {

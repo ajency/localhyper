@@ -165,8 +165,18 @@ angular.module 'LocalHyper.myRequests'
 				e.stopPropagation()
 				App.navigate('single-product', {productID: productID})
 
+			displayFooter : ->
+				if @display == 'error'
+					return false
+				else if @filter.excerpt == '' 
+						if @openRequests.length > 0
+							return true
+				else if @filter.excerpt != '' 
+					return true
+				else
+					false
 
-		
+				
 		onDeviceBack = ->
 			filter = $scope.view.filter
 			if $('.loading-container').hasClass 'active'
