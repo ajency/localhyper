@@ -40,8 +40,11 @@ class OfferController extends Controller
         $offers = new ParseQuery("Offer");
         $offers->includeKey('seller');
         $offers->includeKey('request');
-        $offers->includeKey('request.product');
+        $offers->includeKey('request');
+        $offers->includeKey('product');
+        $offers->includeKey('product.category');
         $offers->includeKey('price');
+
         $offers->descending("createdAt");
             //Pagination
  
@@ -50,55 +53,18 @@ class OfferController extends Controller
         $offers->skip($page * $displayLimit);
         
         $numOfPages = ceil($offersCount/$displayLimit);
-         
-        
         $offersData = $offers->find(); 
-        
        
-        $offertList = $productRequests= $onlinePriceArray= $lastOfferedPriceArray= [];
+        $offertList = [];
         
         foreach($offersData as $offer)
         {
             $requestObj= $offer->get("request");
-            $productObj = $requestObj->get('product');
+            $productObj = $offer->get('product');
+            $productCategoryObj = $productObj->get('category');
             $priceObj = $offer->get('price');  
-            
             $requestId  = $requestObj->getObjectId(); 
             $productId  = $productObj->getObjectId();
-            
-            if(!isset($productRequests[$productId]))
-            {
-                $requestsinnerQuery  = new ParseQuery("Request");
-                $requestsinnerQuery ->equalTo("product", $productObj); 
-
-                $lastOfferedPrice = new ParseQuery("Offer");
-                $lastOfferedPrice->matchesQuery("request",$requestsinnerQuery);
-                $lastOfferedPrice->descending("createdAt");
-                $lastOfferedPriceCount = $lastOfferedPrice->count(); 
-                $lastOfferedPriceData = $lastOfferedPrice->first();  
-                
-                 $lastOfferedProductPrice = ($lastOfferedPriceCount > 1)? $lastOfferedPriceData->get("offerPrice") :'-'; 
-                 $lastOfferedPriceArray[$productId]['lastOfferedProductPrice'] = $lastOfferedProductPrice; 
-
-                // #$productRequests[$productId] = $requestsinnerQuery;
-                
-                // $productPrice = new ParseQuery("Price");
-                // $productPrice->equalTo("type", "online_market_price");
-                // $productPrice->equalTo("product", $productObj);
-                // $productPrice->ascending("value");
-                // $productPriceData = $productPrice->first();
-                
-                $onlinePrice = '';//(!empty($productPriceData))? $productPriceData->get("value") :'';
-                $onlinePriceArray[$productId]['OnlinePrice'] =  $onlinePrice; 
-            }
-            else
-            {
-               #$requestsinnerQuery = $productRequests[$productId];
-               $onlinePrice = $onlinePriceArray[$productId]['OnlinePrice']; 
-               $lastOfferedProductPrice = $lastOfferedPriceArray[$productId]['lastOfferedProductPrice']; 
-            } 
-           
-            
             $createdDate = convertToIST($offer->getCreatedAt()->format('d-m-Y H:i:s'));
             
             $autoBid =   ($offer->get('autoBid'))?"Yes":"No"; 
@@ -108,32 +74,32 @@ class OfferController extends Controller
                         'id' => $offer->getObjectId(),
                         'requestId'=>$requestId,
                         'productName'=>$productObj->get("name"),
+                        'category'=>$productCategoryObj->get("name"),
                         'modelNo'=>$productObj->get("model_number"),
                         'sellerName'=>$offer->get("seller")->get("displayName"),
                         'sellerId'=>$offer->get("seller")->getObjectId(),
                         'area'=>$offer->get("area"),
                         'mrpOfProduct'=>$productObj->get("mrp"),   
-                        'onlinePrice'=>$onlinePrice,
                         'offerPrice'=>$priceObj->get("value"),
-                        'lastOfferBySeller'=>$lastOfferedProductPrice,
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
                         'date'=>$createdDate, 
                         'autoBid'=>$autoBid, 
-                         ] ;  
+                         ] ; 
             }
             else
             {
                 $offertList[] =[
                         'productName'=>$productObj->get("name"),
+                        'productId'=>$productObj->getObjectId(),
+                        'category'=>$productCategoryObj->get("name"),
+                        'category'=>$productCategoryObj->getObjectId(),
                         'modelNo'=>$productObj->get("model_number"),
                         'sellerName'=>$offer->get("seller")->get("displayName"),
                         'area'=>$offer->get("area"),
                         'mrpOfProduct'=>$productObj->get("mrp"),   
-                        'onlinePrice'=>$onlinePrice,
                         'offerPrice'=>$offer->get("offerPrice"),
-                        'lastOfferBySeller'=>$lastOfferedProductPrice,
                         'requestStatus'=>$requestObj->get("status"),
                         'offerStatus'=>$offer->get("status"),
                         'deliveryReasonFailure'=>($requestObj->get("failedDeliveryReason")!='')?$requestObj->get("failedDeliveryReason"):'N/A',
@@ -161,8 +127,11 @@ class OfferController extends Controller
  
         
         $headers = [];
- 
+        
+        $headers []= 'PRODUCT ID' ;
         $headers []= 'PRODUCT NAME' ;
+        $headers []= 'CATEGORY ID' ;
+        $headers []= 'CATEGORY NAME' ;
         $headers []= 'MODEL NO' ;
         $headers []= 'SELLER NAME' ;
         $headers []= 'MRP OF PRODUCT' ;

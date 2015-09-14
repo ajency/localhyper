@@ -13,12 +13,11 @@
           <thead>
             <tr>
               <th>Product Name</th>
+              <th>Category</th> 
               <th>Model No</th>      
               <th>Seller Name</th>   
               <th>Mrp of Product</th>    
-              <th>Online Price</th> 
-              <th>Offer Price</th>    
-              <th>Last Offered Price</th>      
+              <th>Offer Price</th>       
               <th>Request Status</th>
               <th>Offer Status</th>  
               <th>Delivery Reason Failure</th>      
@@ -30,12 +29,11 @@
            @foreach($offerList as $offer)
               <tr  onclick="location.href='{{ url('admin/requests/'.$offer['requestId']) }}'">
                 <td>{{ $offer['productName'] }}</td>
+                <td>{{ $offer['category'] }}</td>
                 <td>{{ $offer['modelNo'] }}</td>
                   <td><a href="{{ url('admin/seller/'.$offer['sellerId']) }}"><b>{{ $offer['sellerName'] }}</b></a></td>
                 <td>{{ $offer['mrpOfProduct'] }}</td>
-                <td>{{ $offer['onlinePrice'] }}</td>
                 <td>{{ $offer['offerPrice'] }}</td>
-                <td>{{ $offer['lastOfferBySeller'] }}</td>
                 <td>{{ $offer['requestStatus'] }}</td>
                 <td>{{ $offer['offerStatus'] }}</td>  
                 <td>{{ $offer['deliveryReasonFailure'] }}</td>
