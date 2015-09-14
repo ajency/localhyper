@@ -91,13 +91,12 @@ class OfferController extends Controller
             else
             {
                 $offertList[] =[
-                        'productName'=>$productObj->get("name"),
                         'productId'=>$productObj->getObjectId(),
+                        'productName'=>$productObj->get("name"),
+                        'categoryId'=>$productCategoryObj->getObjectId(),
                         'category'=>$productCategoryObj->get("name"),
-                        'category'=>$productCategoryObj->getObjectId(),
                         'modelNo'=>$productObj->get("model_number"),
                         'sellerName'=>$offer->get("seller")->get("displayName"),
-                        'area'=>$offer->get("area"),
                         'mrpOfProduct'=>$productObj->get("mrp"),   
                         'offerPrice'=>$offer->get("offerPrice"),
                         'requestStatus'=>$requestObj->get("status"),
@@ -119,13 +118,12 @@ class OfferController extends Controller
         
     }
     
-    public function offersExport()
+    /*public function offersExport()
     { 
         $excel = new PHPExcel();
-        $offerSheet = $excel->getSheet(0);
-		$offerSheet->setTitle('Offers');
- 
-        
+        $offersSheet = $excel->getSheet(0);
+        $offersSheet->setTitle('Request');
+
         $headers = [];
         
         $headers []= 'PRODUCT ID' ;
@@ -135,16 +133,15 @@ class OfferController extends Controller
         $headers []= 'MODEL NO' ;
         $headers []= 'SELLER NAME' ;
         $headers []= 'MRP OF PRODUCT' ;
-        $headers []= 'ONLINE PRICE' ;
         $headers []= 'OFFER PRICE' ;
-        $headers []= 'LAST OFFER BY SELLER' ;
         $headers []= 'REQUEST STATUS' ;
         $headers []= 'OFFER STATUS' ;
         $headers []= 'DELIVERY REASON FAILURE' ;
         $headers []= 'CREATED AT' ;
         $headers []= 'Auto Bid' ;
  
-        $offerSheet->fromArray($headers, ' ', 'A1');
+        $offersSheet->fromArray($headers, ' ', 'A1');
+
         $page = 0; 
         $limit = 20;
         $offers =[];
@@ -160,15 +157,13 @@ class OfferController extends Controller
           $page++; 
          
         }
-
-        $offerSheet->fromArray($offers, ' ','A2',true);
-
-
+ 
+        $offersSheet->fromArray($offers, ' ','A2',true);
         //Headr row height
-        $offerSheet->getRowDimension('1')->setRowHeight(20);
+        $offersSheet->getRowDimension('1')->setRowHeight(20);
 
         //Format header row
-        FormatPhpExcel::format_header_row($offerSheet, array(
+        FormatPhpExcel::format_header_row($offersSheet, array(
             'background_color'=>'FFFF00',
             'border_color'=>'000000',
             'font_size'=>'9',
@@ -190,8 +185,60 @@ class OfferController extends Controller
         header ('Pragma: public'); // HTTP/1.0
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
         $objWriter->save('php://output'); 
-    
+    }*/
+
+    public function offersExport()
+    { 
+ 
+        $headers = [];
+        
+        $headers []= 'PRODUCT ID' ;
+        $headers []= 'PRODUCT NAME' ;
+        $headers []= 'CATEGORY ID' ;
+        $headers []= 'CATEGORY NAME' ;
+        $headers []= 'MODEL NO' ;
+        $headers []= 'SELLER NAME' ;
+        $headers []= 'MRP OF PRODUCT' ;
+        $headers []= 'OFFER PRICE' ;
+        $headers []= 'REQUEST STATUS' ;
+        $headers []= 'OFFER STATUS' ;
+        $headers []= 'DELIVERY REASON FAILURE' ;
+        $headers []= 'CREATED AT' ;
+        $headers []= 'Auto Bid' ;
+ 
+
+        $page = 0; 
+        $limit = 20;
+        $offers =[];
+        while (true) {
+          
+          $offersData = $this->getOffers('EXPORT',$page ,$limit); //dd($requestsData);
+          
+          if(empty($offersData['list']))
+            break;
+
+          $offers = array_merge($offers,$offersData['list']);   
+         
+          $page++; 
+         
+        }
+ 
+        $filename = "offers-export.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, $headers);
+        foreach ($offers as $offer) {
+          fputcsv($handle, $offer);
+        }
+        fclose($handle);
+
+        $headers = array(
+        'Content-Type' => 'text/csv',
+        );
+
+        return response()->download($filename, 'offers-export.csv', $headers);
     }
+
+
 
 
     /**
