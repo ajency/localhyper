@@ -881,6 +881,39 @@ sm{
 .b-r-1 {border-right: 1px solid #ddd;}
 
 .business-details {
+	.form-field .item {
+		position: relative;
+		&:after {
+			content: "\f2bf";
+			font-family: "Ionicons";
+			position: absolute;
+			right: 13px;
+			bottom: 9px;
+			color: #ccc;
+		}
+	}
+	.title-with-icon {
+		i {
+			margin-right: 3px;
+			display: inline-block;
+			vertical-align: middle;
+		}
+	}
+	&.seller-profile {
+		.form-field .item {
+			border-color: #E2E2E2;
+			background-color: #FBFBFB;
+			&:after {
+				display: none;
+			}
+		}
+		.form-field .input-label {
+			color: #333;
+		}
+		input[disabled] {
+			background: transparent;
+		}
+	}
 	.card {
 		margin-top: 10px;
 		margin-bottom: 10px;
@@ -1030,6 +1063,7 @@ sm{
 		// margin-left: 10px;
 	}
 }
+
 .item-input-inset {
 	.item-input-wrapper {
 		padding: 2px 8px;
@@ -1532,6 +1566,15 @@ h5.with-sep {
 		position: relative;
 		top: -2px;
 		&.ion-funnel {
+			background-image: url(../../img/filter.png);
+			background-size: auto 23px;
+			width: 25px;
+			background-repeat: no-repeat;
+			background-position: center;
+			height: 27px;
+			&:before {
+				display: none;
+			}
 			// font-size: 28px;
 			// position: relative;
 			// top: -2px;

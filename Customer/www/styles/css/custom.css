@@ -799,6 +799,38 @@ button.button.button-assertive b {
   border-color: #f45152;
   color: #fff;
 }
+.customer-popover .new-adjust {
+  margin-bottom: 0 !important;
+}
+.customer-popover .new-adjust span {
+  float: left;
+}
+.customer-popover .new-adjust sm {
+  float: left;
+  margin-top: 5px;
+  margin-left: 7px;
+  font-size: 11px;
+}
+.customer-popover .new-adjust:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.customer-popover .new-adjust-down {
+  margin-top: 1px;
+  position: relative;
+}
+.customer-popover .new-adjust-top {
+  margin-top: 28px;
+  display: block;
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 10%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 10%;
+  -ms-flex: 0 0 10%;
+  flex: 0 0 10%;
+  max-width: 10%;
+}
 .sing-pro h5 {
   margin-top: 5px;
   margin-bottom: 0;
@@ -806,6 +838,9 @@ button.button.button-assertive b {
 .sing-pro h6.subdued {
   margin: 0;
   padding-bottom: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .sing-pro h4.margin-none.pull-right.subdued i.ion-log-out {
   display: none;
@@ -1961,6 +1996,17 @@ label.status-label {
   font-size: 28px;
   position: relative;
   top: -2px;
+}
+.filter-txt i.ion-funnel {
+  background-image: url(../../img/filter.png);
+  background-size: auto 23px;
+  width: 25px;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 27px;
+}
+.filter-txt i.ion-funnel:before {
+  display: none;
 }
 .filter-txt sm {
   font-weight: 100;

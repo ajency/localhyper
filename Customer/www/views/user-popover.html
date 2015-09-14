@@ -1,23 +1,27 @@
 <ion-popover-view>
 
-	<ion-content class="aj-right-popover">
+	<ion-content class="aj-right-popover customer-popover">
 
-		<div class="row"
+		<div class="row p-l-0 p-r-0"
 			 ng-click="App.navigate('my-requests'); view.userPopover.hide();">
-			<div class="col">
-				<h2 class="margin-none number-count">{{App.notification.offers}}
-					<sm>/ OFFERS</sm>
+			<div class="col p-l-0 p-t-0">
+				<sm class="subdued new-adjust-down">You have</sm>
+				<h2 class="margin-none number-count new-adjust">
+					<span>{{App.notification.offers}}</span>
+					<sm>NEW<br>OFFERS</sm>
 				</h2>
-				<sm class="subdued">You have</sm>
+				<!-- <sm class="subdued new-adjust-down">You have</sm> -->
 			</div>
 
-			<div class="col col-20"><br><i class="ion-arrow-swap subdued"></i></div>
+			<div class="col col-20 p-t-0 new-adjust-top"><!-- <br> --><i class="ion-arrow-swap subdued"></i></div>
 
-			<div class="col ">
-				<h2 class="margin-none number-count">{{App.notification.openRequests}}
-					<sm>/ REQUEST</sm>
+			<div class="col p-r-0 p-t-0">
+				<sm class="subdued new-adjust-down">For</sm>
+				<h2 class="margin-none number-count new-adjust">
+					<span>{{App.notification.openRequests}}</span>
+					<sm><!-- TOTAL --><br>REQUEST</sm>
 				</h2>
-				<sm class="subdued">For</sm>
+				<!-- <sm class="subdued new-adjust-down">For</sm> -->
 			</div>
 		</div>
 
