@@ -40,6 +40,8 @@ class RequestController extends Controller
         $requests = new ParseQuery("Request");
         $requests->includeKey('customerId');
         $requests->includeKey('product');
+        $requests->includeKey('product.onlinePrice');
+        $requests->includeKey('product.bestPlatformPrice');
         $requests->includeKey('category');
         $requests->descending("createdAt");
           //Pagination
@@ -55,45 +57,18 @@ class RequestController extends Controller
         
         foreach($requestsData as $request)
         {
-            $productId = $request->get("product")->get("objectId");
-            if(!isset($productPriceArray[$productId]))
-            {
-                $productPrice = new ParseQuery("Price");
-                $productPrice->equalTo("product", $productId);
-                $productPrice->ascending("value");
-                $productPriceData = $productPrice->find();
-                $onlinePriceArray = $priceArray = [];
-                $onlinePrice = $platformPrice = '';
-                foreach($productPriceData as $price)
-                {
-                    $priceType = $price->get("type");
-                    if($priceType == 'online_market_price')
-                    {
-                        $onlinePriceArray[] = $price->get("value");
-                    }
-                    else{
-                        $priceArray[] = $price->get("value");
-                    }
-                }
-                $onlinePrice = (!empty($onlinePriceArray))? min($onlinePriceArray)  :''; 
-                $platformPrice = (!empty($priceArray))? min($priceArray) :'N/A'; 
-                
-                $productPriceArray[$productId]['OnlinePrice'] = ($onlinePrice!='')?$onlinePrice:''; 
-                $productPriceArray[$productId]['PlatformPrice'] = $platformPrice; 
-            }
-            else
-            {
-                $onlinePrice = $productPriceArray[$productId]['OnlinePrice']; 
-                $platformPrice = $productPriceArray[$productId]['PlatformPrice']; 
-            }
+            $productObj = $request->get("product");
+            $onlinePriceObj = $productObj->get("onlinePrice");
+            $platformPriceObj = $productObj->get("bestPlatformPrice");
             
-            $offers = new ParseQuery("Offer");
-            $offers->equalTo("request", $request);
-            $offers->equalTo("status", 'accepted');
-            $offersStatus = $offers->count();
+            $productId = $productObj->getObjectId();
+            $onlinePrice = (!empty($onlinePriceObj)) ? $onlinePriceObj->get("value") :'';
+            $platformPrice =(!empty($platformPriceObj)) ? $platformPriceObj->get("value") :'';
+            
             
             $requestStatus = $request->get("status");
-            $deliveryStatus = ($offersStatus)?$requestStatus:'N/A';
+            $deliveryStatus = $request->get("deliveryStatus");
+            $deliveryStatus = ($deliveryStatus != '')?$requestStatus:'N/A';
             
             
             if($requestStatus=='open')
