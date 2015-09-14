@@ -943,3 +943,173 @@ getBestPlatformPrice = (productObject) ->
     promise
 
 
+getMinPricesForProduct = (productObject) ->
+
+    promise = new Parse.Promise()
+
+    productPrice = {}
+
+    productId = productObject.id
+
+    # query Price class 
+
+    queryPrice = new Parse.Query("Price")
+
+    innerQueryProduct = new Parse.Query("ProductItem")
+    innerQueryProduct.equalTo("objectId" , productId)
+
+    queryPrice.matchesQuery("product" , innerQueryProduct)
+    queryPrice.equalTo("type" , "online_market_price")
+    queryPrice.ascending("value")
+
+    queryPrice.first()
+    .then (onlinePriceObj) ->
+        if _.isEmpty(onlinePriceObj)
+            productPrice["online"] = 
+                value : ""
+                source : ""
+                sourceUrl : ""
+                updatedAt : ""
+        else
+            flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/Flipkart+logo.jpg"
+            snapdealUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/snapdeal-icon.jpg"
+            amazonUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/amazon+icon.png"
+
+            if onlinePriceObj.get("source") is "flipkart"
+                srcUrl =  flipkartUrl
+            else if onlinePriceObj.get("source") is "snapdeal"
+                srcUrl =  snapdealUrl
+            else
+                srcUrl =  amazonUrl    
+            
+
+            productPrice["online"] = 
+                id: onlinePriceObj.id
+                value : onlinePriceObj.get("value")
+                source : onlinePriceObj.get("source")
+                srcUrl : srcUrl
+                updatedAt : onlinePriceObj.updatedAt           
+            
+
+        # now find best platform price
+        getBestPlatformPriceForProduct(productObject)
+        .then (platformPrice) ->
+            productPrice["platform"] = platformPrice
+            promise.resolve productPrice
+
+        , (error) ->
+            promise.reject error
+    , (error) ->
+        promise.reject error
+
+    promise
+
+
+getBestPlatformPriceForProduct = (productObject) ->
+    promise = new Parse.Promise()
+
+    # get all prices entered in price table for type other than "open_offer" in price class
+
+    queryPrice = new Parse.Query("Price")
+    productId = productObject.id
+
+    innerQueryProduct = new Parse.Query("ProductItem")
+    innerQueryProduct.equalTo("objectId" , productId)
+    queryPrice.matchesQuery("product",innerQueryProduct)
+    queryPrice.notEqualTo("type","online_market_price")
+    queryPrice.equalTo("type","accepted_offer")
+
+    queryPrice.find()
+    .then (platformPrices) ->
+        if platformPrices.length is 0 
+            minPriceObj =  
+                id : ""
+                value : ""
+                updatedAt : ""
+            promise.resolve minPriceObj
+        else
+            priceValues = []
+            priceObjArr = []
+
+            _.each platformPrices , (platformPriceObj) ->
+                pricObj = 
+                    "id" : platformPriceObj.id
+                    "value" : parseInt(platformPriceObj.get("value"))
+                    "updatedAt" : platformPriceObj.updatedAt   
+
+                priceObjArr.push pricObj
+
+                priceValues.push parseInt(platformPriceObj.get("value"))
+
+            minPrice = _.min(priceValues)
+
+            minPriceObj = _.where priceObjArr, value: minPrice
+
+            promise.resolve minPriceObj[0]
+
+
+    , (error) ->
+        promise.reject error 
+
+    promise
+
+Parse.Cloud.afterSave "Price", (request)->
+    priceObject = request.object
+    productId = priceObject.get("product").id
+
+    ProductClass = Parse.Object.extend("ProductItem")
+    productItem = new ProductClass()
+    productItem.id = productId
+   
+    getMinPricesForProduct(productItem)
+    .then (productPrice) ->   
+        onlinePriceId = productPrice["online"]['id'] 
+        platformPriceId = productPrice["platform"]['id'] 
+        console.log "onlinePriceId : "+onlinePriceId
+        console.log "platformPriceId : "+platformPriceId
+        
+        OnlinePriceClass = Parse.Object.extend("Price")
+        onlinePriceObj = new OnlinePriceClass()
+        onlinePriceObj.id= onlinePriceId
+
+        PlatformPriceClass = Parse.Object.extend("Price")
+        platformPriceObj = new PlatformPriceClass()
+        platformPriceObj.id= platformPriceId
+
+        productItem.set "onlinePrice" , onlinePriceObj
+        productItem.set "bestPlatformPrice" , platformPriceObj 
+        productItem.save()
+        .then (savedProduct) ->
+            console.log "product updated " + productItem.id
+        , (error) ->
+            console.log "Got an error while updating product " + error.code + " : " + error.message
+
+    ,(error) ->
+        console.log "Got an error for getMinPricesForProduct " + error.code + " : " + error.message
+
+   
+
+ # Parse.Cloud.afterSave "Price", (request)->
+ #    priceObject = request.object
+ #    productObj =  priceObject.get "product"
+
+ #    getMinPricesForProduct(priceObject)
+ #    .then (productPrice) ->  
+ #        onlinePrice = productPrice["online"] 
+ #        platformPrice = productPrice["platform"]
+ #        console.log "PRICE OBJ" 
+ #        console.log productObj
+ #        productObj.set "onlinePrice" , onlinePrice
+ #        productObj.set "bestPlatformPrice" , platformPrice
+ #        productObj.save()
+ #    ,(error) ->
+ #        console.log "Got an error " + error.code + " : " + error.message
+
+
+
+
+    
+
+    
+
+

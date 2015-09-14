@@ -1,5 +1,5 @@
 (function() {
-  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getCategoryBasedSellers, getDeliveryDate, getImageSizes, getNewRequestsForSeller, getNotificationData, getOfferData, getOtherPricesForProduct, getRequestData, getRequestsWithPrice, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isValidWorkDay, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify, updateProductKeywords;
+  var _, fetchAdjustedDelivery, findAttribValues, getAreaBoundSellers, getBestPlatformPrice, getBestPlatformPriceForProduct, getCategoryBasedSellers, getDeliveryDate, getImageSizes, getMinPricesForProduct, getNewRequestsForSeller, getNotificationData, getOfferData, getOtherPricesForProduct, getRequestData, getRequestsWithPrice, getWordsFromSentence, incrementDateObject, isTimeBeforeWorkTime, isValidWorkDay, moment, processPushNotifications, resetRequestOfferCount, setPrimaryAttribute, toLowerCase, treeify, updateProductKeywords;
 
   Parse.Cloud.define('getAttribValueMapping', function(request, response) {
     var AttributeValues, Attributes, Category, categoryId, categoryQuery, filterableAttributes, findCategoryPromise, secondaryAttributes;
@@ -2530,6 +2530,132 @@
     });
     return promise;
   };
+
+  getMinPricesForProduct = function(productObject) {
+    var innerQueryProduct, productId, productPrice, promise, queryPrice;
+    promise = new Parse.Promise();
+    productPrice = {};
+    productId = productObject.id;
+    queryPrice = new Parse.Query("Price");
+    innerQueryProduct = new Parse.Query("ProductItem");
+    innerQueryProduct.equalTo("objectId", productId);
+    queryPrice.matchesQuery("product", innerQueryProduct);
+    queryPrice.equalTo("type", "online_market_price");
+    queryPrice.ascending("value");
+    queryPrice.first().then(function(onlinePriceObj) {
+      var amazonUrl, flipkartUrl, snapdealUrl, srcUrl;
+      if (_.isEmpty(onlinePriceObj)) {
+        productPrice["online"] = {
+          value: "",
+          source: "",
+          sourceUrl: "",
+          updatedAt: ""
+        };
+      } else {
+        flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/Flipkart+logo.jpg";
+        snapdealUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/snapdeal-icon.jpg";
+        amazonUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/amazon+icon.png";
+        if (onlinePriceObj.get("source") === "flipkart") {
+          srcUrl = flipkartUrl;
+        } else if (onlinePriceObj.get("source") === "snapdeal") {
+          srcUrl = snapdealUrl;
+        } else {
+          srcUrl = amazonUrl;
+        }
+        productPrice["online"] = {
+          id: onlinePriceObj.id,
+          value: onlinePriceObj.get("value"),
+          source: onlinePriceObj.get("source"),
+          srcUrl: srcUrl,
+          updatedAt: onlinePriceObj.updatedAt
+        };
+      }
+      return getBestPlatformPriceForProduct(productObject).then(function(platformPrice) {
+        productPrice["platform"] = platformPrice;
+        return promise.resolve(productPrice);
+      }, function(error) {
+        return promise.reject(error);
+      });
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
+
+  getBestPlatformPriceForProduct = function(productObject) {
+    var innerQueryProduct, productId, promise, queryPrice;
+    promise = new Parse.Promise();
+    queryPrice = new Parse.Query("Price");
+    productId = productObject.id;
+    innerQueryProduct = new Parse.Query("ProductItem");
+    innerQueryProduct.equalTo("objectId", productId);
+    queryPrice.matchesQuery("product", innerQueryProduct);
+    queryPrice.notEqualTo("type", "online_market_price");
+    queryPrice.equalTo("type", "accepted_offer");
+    queryPrice.find().then(function(platformPrices) {
+      var minPrice, minPriceObj, priceObjArr, priceValues;
+      if (platformPrices.length === 0) {
+        minPriceObj = {
+          id: "",
+          value: "",
+          updatedAt: ""
+        };
+        return promise.resolve(minPriceObj);
+      } else {
+        priceValues = [];
+        priceObjArr = [];
+        _.each(platformPrices, function(platformPriceObj) {
+          var pricObj;
+          pricObj = {
+            "id": platformPriceObj.id,
+            "value": parseInt(platformPriceObj.get("value")),
+            "updatedAt": platformPriceObj.updatedAt
+          };
+          priceObjArr.push(pricObj);
+          return priceValues.push(parseInt(platformPriceObj.get("value")));
+        });
+        minPrice = _.min(priceValues);
+        minPriceObj = _.where(priceObjArr, {
+          value: minPrice
+        });
+        return promise.resolve(minPriceObj[0]);
+      }
+    }, function(error) {
+      return promise.reject(error);
+    });
+    return promise;
+  };
+
+  Parse.Cloud.afterSave("Price", function(request) {
+    var ProductClass, priceObject, productId, productItem;
+    priceObject = request.object;
+    productId = priceObject.get("product").id;
+    ProductClass = Parse.Object.extend("ProductItem");
+    productItem = new ProductClass();
+    productItem.id = productId;
+    return getMinPricesForProduct(productItem).then(function(productPrice) {
+      var OnlinePriceClass, PlatformPriceClass, onlinePriceId, onlinePriceObj, platformPriceId, platformPriceObj;
+      onlinePriceId = productPrice["online"]['id'];
+      platformPriceId = productPrice["platform"]['id'];
+      console.log("onlinePriceId : " + onlinePriceId);
+      console.log("platformPriceId : " + platformPriceId);
+      OnlinePriceClass = Parse.Object.extend("Price");
+      onlinePriceObj = new OnlinePriceClass();
+      onlinePriceObj.id = onlinePriceId;
+      PlatformPriceClass = Parse.Object.extend("Price");
+      platformPriceObj = new PlatformPriceClass();
+      platformPriceObj.id = platformPriceId;
+      productItem.set("onlinePrice", onlinePriceObj);
+      productItem.set("bestPlatformPrice", platformPriceObj);
+      return productItem.save().then(function(savedProduct) {
+        return console.log("product updated " + productItem.id);
+      }, function(error) {
+        return console.log("Got an error while updating product " + error.code + " : " + error.message);
+      });
+    }, function(error) {
+      return console.log("Got an error for getMinPricesForProduct " + error.code + " : " + error.message);
+    });
+  });
 
   Parse.Cloud.define('makeRequest', function(request, response) {
     var Request, address, area, brandId, brandObj, categoryId, categoryObj, city, comments, customerId, customerObj, location, point, productId, productObj, status;
