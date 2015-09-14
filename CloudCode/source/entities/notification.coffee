@@ -335,7 +335,6 @@ Parse.Cloud.define 'updateUnseenRequestNotification', (request, response) ->
         notificationQuery.containedIn("requestObject", updatedRequests)
         notificationQuery.find()
         .then (notificationObjs) ->
-            console.log notificationObjs
             saveQs = _.map( notificationObjs , (notificationObj) ->
                 notificationObj.set("hasSeen",true)
                 unseenNotificationObj.push notificationObj
@@ -349,7 +348,7 @@ Parse.Cloud.define 'updateUnseenRequestNotification', (request, response) ->
 
                     response.success result
                 , (error) ->
-                    response.error "Failed to add products due to - #{error.message}"  
+                    response.error "Failed to add Notification due to - #{error.message}"  
 
 
         ,(error) ->

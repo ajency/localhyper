@@ -779,3 +779,31 @@ getOfferData = (offerObject, customerId) ->
         promise.reject error
 
     promise
+
+# Parse.Cloud.define 'updateOfferProducts', (request, response) ->
+    
+
+#     offersQuery = new Parse.Query("Offer")
+#     offersQuery.include("request")
+#     offersQuery.find()
+#     .then (offers) ->
+#         offerDataObj = []
+#         _.each offers, (offerObj) ->
+
+#             requestObj = offerObj.get("request")           
+#             productObj = requestObj.get("product")
+#             offerObj.set("product",productObj)
+#             offerDataObj.push offerObj
+        
+#         Parse.Object.saveAll offerDataObj
+#             .then (objs) ->
+#                 result = 
+#                     "MSG" : "UPDATED"    
+
+#                 response.success result
+#             , (error) ->
+#                 response.error "Failed to add Offers"  
+
+
+#     ,(error) ->
+#         response.error error

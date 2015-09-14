@@ -1049,7 +1049,6 @@
       notificationQuery.containedIn("requestObject", updatedRequests);
       return notificationQuery.find().then(function(notificationObjs) {
         var saveQs;
-        console.log(notificationObjs);
         saveQs = _.map(notificationObjs, function(notificationObj) {
           notificationObj.set("hasSeen", true);
           unseenNotificationObj.push(notificationObj);
@@ -1062,7 +1061,7 @@
           };
           return response.success(result);
         }, function(error) {
-          return response.error("Failed to add products due to - " + error.message);
+          return response.error("Failed to add Notification due to - " + error.message);
         });
       }, function(error) {
         return response.error(error);
