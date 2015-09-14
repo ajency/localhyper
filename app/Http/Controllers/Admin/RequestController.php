@@ -125,7 +125,9 @@ class RequestController extends Controller
             {
                 $requestList[]= [ 
                               'customerName' => $request->get("customerId")->get("displayName"),
+                              'categoryId' =>$request->get("category")->getObjectId(),
                               'category' =>$request->get("category")->get("name"),    
+                              'productId' =>$request->get("product")->getObjectId(),
                               'productName' =>$request->get("product")->get("name"),
                               'mrp' =>$request->get("product")->get("mrp"),
                               'onlinePrice' =>$onlinePrice,
@@ -148,7 +150,7 @@ class RequestController extends Controller
         
     }
     
-    public function requestExport()
+    /*public function requestExport()
     { 
         $excel = new PHPExcel();
         $requestSheet = $excel->getSheet(0);
@@ -213,6 +215,57 @@ class RequestController extends Controller
         header ('Pragma: public'); // HTTP/1.0
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
         $objWriter->save('php://output'); 
+    
+    }*/
+
+    public function requestExport()
+    { 
+       
+        $headers = [];
+ 
+        $headers []= 'CUSTOMER NAME' ;
+        $headers []= 'CATEGORY ID' ;
+        $headers []= 'CATEGORY' ;
+        $headers []= 'PRODUCT ID' ;
+        $headers []= 'PRODUCT NAME' ;
+        $headers []= 'MRP' ;
+        $headers []= 'ONLINE PRICE' ;
+        $headers []= 'BEST PLATFORM PRICE' ;
+        $headers []= 'AREA' ;
+        $headers []= 'OFFER COUNT' ;
+        $headers []= 'STATUS' ;
+        $headers []= 'Delivery STATUS' ;
+        $headers []= 'Date' ;
+
+        $page = 0; 
+        $limit = 50;
+        $requests =[];
+        while (true) {
+          
+          $requestsData = $this->getRequests('EXPORT',$page ,$limit); //dd($requestsData);
+          
+          if(empty($requestsData['list']))
+            break;
+
+          $requests = array_merge($requests,$requestsData['list']);   
+         
+          $page++; 
+         
+        }
+        
+        $filename = "requests-export.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, $headers);
+        foreach ($requests as $request) {
+          fputcsv($handle, $request);
+        }
+        fclose($handle);
+
+        $headers = array(
+        'Content-Type' => 'text/csv',
+        );
+
+        return response()->download($filename, 'requests-export.csv', $headers); 
     
     }
 
