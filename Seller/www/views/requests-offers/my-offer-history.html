@@ -110,7 +110,8 @@
 
 	</ion-content>
 
-	<ion-footer-bar class="bar-light" ng-if="view.requests.length > 0 && view.display == 'noError'">
+	<ion-footer-bar class="bar-light"
+		ng-if = "view.displayFooter()">
 		<div class="row">
 			<div class="col col-50 text-center" ng-click="view.showSortOptions()">
 

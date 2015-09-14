@@ -310,6 +310,17 @@ angular.module 'LocalHyper.requestsOffers'
 							@sortName = sortName
 							@descending = descending
 							@reFetch()
+							
+			displayFooter : ->
+					if @display == 'error'
+						return false
+					else if @filter.excerpt == '' 
+							if @requests.length > 0
+								return true
+					else if @filter.excerpt != '' 
+						return true
+					else
+						false
 
 
 		onDeviceBack = ->

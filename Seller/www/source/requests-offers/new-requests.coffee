@@ -454,6 +454,17 @@ angular.module 'LocalHyper.requestsOffers'
 							@sortBy = 'offerCount'
 							@sortName = sortName
 							@simulateFetch()
+							
+			displayFooter : ->
+				if @display == 'error'
+					return false
+				else if @filter.excerpt == '' 
+						if @requests.length > 0
+							return true
+				else if @filter.excerpt != '' 
+					return true
+				else
+					false
 
 
 		
