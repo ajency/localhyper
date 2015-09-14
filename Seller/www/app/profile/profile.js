@@ -107,6 +107,7 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
                 return Storage.categoryChains('set', _this.categoryChains).then(function() {
                   CategoriesAPI.categoryChains('set', _this.categoryChains);
                   $rootScope.$broadcast('category:chain:updated');
+                  $rootScope.$broadcast('get:unseen:notifications');
                   CSpinner.hide();
                   return CToast.show('Saved profile details');
                 });

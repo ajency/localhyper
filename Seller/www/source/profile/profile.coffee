@@ -102,6 +102,7 @@ angular.module 'LocalHyper.profile', []
 							.then =>
 								CategoriesAPI.categoryChains 'set', @categoryChains
 								$rootScope.$broadcast 'category:chain:updated'
+								$rootScope.$broadcast 'get:unseen:notifications'
 								CSpinner.hide()
 								CToast.show 'Saved profile details'
 						, (error)->
