@@ -2018,6 +2018,8 @@
     queryProductItem.include("category.secondary_attributes");
     queryProductItem.include("primaryAttributes");
     queryProductItem.include("primaryAttributes.attribute");
+    queryProductItem.include("onlinePrice");
+    queryProductItem.include("bestPlatformPrice");
     return queryProductItem.first().then(function(ProductData) {
       var attribId, attributeIdNames, brand, brandObj, category, categoryObj, imageSizes, prodgrp, productAttributes, productResult, productSpec, secondary_attributes, specifications, textAttributes;
       categoryObj = ProductData.get("category");
@@ -2441,49 +2443,39 @@
   })(this);
 
   getOtherPricesForProduct = function(productObject) {
-    var innerQueryProduct, productId, productPrice, promise, queryPrice;
+    var amazonUrl, flipkartUrl, onlinePriceObj, productId, productPrice, promise, snapdealUrl, srcUrl;
     promise = new Parse.Promise();
     productPrice = {};
     productId = productObject.id;
-    queryPrice = new Parse.Query("Price");
-    innerQueryProduct = new Parse.Query("ProductItem");
-    innerQueryProduct.equalTo("objectId", productId);
-    queryPrice.matchesQuery("product", innerQueryProduct);
-    queryPrice.equalTo("type", "online_market_price");
-    queryPrice.ascending("value");
-    queryPrice.first().then(function(onlinePriceObj) {
-      var amazonUrl, flipkartUrl, snapdealUrl, srcUrl;
-      if (_.isEmpty(onlinePriceObj)) {
-        productPrice["online"] = {
-          value: "",
-          source: "",
-          sourceUrl: "",
-          updatedAt: ""
-        };
+    onlinePriceObj = productObject.get("onlinePrice");
+    if (_.isEmpty(onlinePriceObj)) {
+      productPrice["online"] = {
+        value: "",
+        source: "",
+        sourceUrl: "",
+        updatedAt: ""
+      };
+    } else {
+      flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/Flipkart+logo.jpg";
+      snapdealUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/snapdeal-icon.jpg";
+      amazonUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/amazon+icon.png";
+      if (onlinePriceObj.get("source") === "flipkart") {
+        srcUrl = flipkartUrl;
+      } else if (onlinePriceObj.get("source") === "snapdeal") {
+        srcUrl = snapdealUrl;
       } else {
-        flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/Flipkart+logo.jpg";
-        snapdealUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/snapdeal-icon.jpg";
-        amazonUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/amazon+icon.png";
-        if (onlinePriceObj.get("source") === "flipkart") {
-          srcUrl = flipkartUrl;
-        } else if (onlinePriceObj.get("source") === "snapdeal") {
-          srcUrl = snapdealUrl;
-        } else {
-          srcUrl = amazonUrl;
-        }
-        productPrice["online"] = {
-          value: onlinePriceObj.get("value"),
-          source: onlinePriceObj.get("source"),
-          srcUrl: srcUrl,
-          updatedAt: onlinePriceObj.updatedAt
-        };
+        srcUrl = amazonUrl;
       }
-      return getBestPlatformPrice(productObject).then(function(platformPrice) {
-        productPrice["platform"] = platformPrice;
-        return promise.resolve(productPrice);
-      }, function(error) {
-        return promise.reject(error);
-      });
+      productPrice["online"] = {
+        value: onlinePriceObj.get("value"),
+        source: onlinePriceObj.get("source"),
+        srcUrl: srcUrl,
+        updatedAt: onlinePriceObj.updatedAt
+      };
+    }
+    getBestPlatformPrice(productObject).then(function(platformPrice) {
+      productPrice["platform"] = platformPrice;
+      return promise.resolve(productPrice);
     }, function(error) {
       return promise.reject(error);
     });
@@ -2491,43 +2483,23 @@
   };
 
   getBestPlatformPrice = function(productObject) {
-    var innerQueryProduct, productId, promise, queryPrice;
+    var minPriceObj, platformPriceObj, productId, promise, queryPrice;
     promise = new Parse.Promise();
     queryPrice = new Parse.Query("Price");
     productId = productObject.id;
-    innerQueryProduct = new Parse.Query("ProductItem");
-    innerQueryProduct.equalTo("objectId", productId);
-    queryPrice.matchesQuery("product", innerQueryProduct);
-    queryPrice.notEqualTo("type", "online_market_price");
-    queryPrice.find().then(function(platformPrices) {
-      var minPrice, minPriceObj, priceObjArr, priceValues;
-      if (platformPrices.length === 0) {
-        minPriceObj = {
-          value: "",
-          updatedAt: ""
-        };
-        return promise.resolve(minPriceObj);
-      } else {
-        priceValues = [];
-        priceObjArr = [];
-        _.each(platformPrices, function(platformPriceObj) {
-          var pricObj;
-          pricObj = {
-            "value": parseInt(platformPriceObj.get("value")),
-            "updatedAt": platformPriceObj.updatedAt
-          };
-          priceObjArr.push(pricObj);
-          return priceValues.push(parseInt(platformPriceObj.get("value")));
-        });
-        minPrice = _.min(priceValues);
-        minPriceObj = _.where(priceObjArr, {
-          value: minPrice
-        });
-        return promise.resolve(minPriceObj[0]);
-      }
-    }, function(error) {
-      return promise.reject(error);
-    });
+    platformPriceObj = productObject.get("bestPlatformPrice");
+    if (!_.isEmpty(platformPriceObj)) {
+      minPriceObj = {
+        value: platformPriceObj.get("value"),
+        updatedAt: platformPriceObj.updatedAt
+      };
+    } else {
+      minPriceObj = {
+        value: "",
+        updatedAt: ""
+      };
+    }
+    promise.resolve(minPriceObj);
     return promise;
   };
 
@@ -2590,7 +2562,6 @@
     innerQueryProduct = new Parse.Query("ProductItem");
     innerQueryProduct.equalTo("objectId", productId);
     queryPrice.matchesQuery("product", innerQueryProduct);
-    queryPrice.notEqualTo("type", "online_market_price");
     queryPrice.equalTo("type", "accepted_offer");
     queryPrice.find().then(function(platformPrices) {
       var minPrice, minPriceObj, priceObjArr, priceValues;
@@ -2606,6 +2577,7 @@
         priceObjArr = [];
         _.each(platformPrices, function(platformPriceObj) {
           var pricObj;
+          console.log("platformPriceObj : " + platformPriceObj);
           pricObj = {
             "id": platformPriceObj.id,
             "value": parseInt(platformPriceObj.get("value")),
@@ -2637,16 +2609,18 @@
       var OnlinePriceClass, PlatformPriceClass, onlinePriceId, onlinePriceObj, platformPriceId, platformPriceObj;
       onlinePriceId = productPrice["online"]['id'];
       platformPriceId = productPrice["platform"]['id'];
-      console.log("onlinePriceId : " + onlinePriceId);
-      console.log("platformPriceId : " + platformPriceId);
-      OnlinePriceClass = Parse.Object.extend("Price");
-      onlinePriceObj = new OnlinePriceClass();
-      onlinePriceObj.id = onlinePriceId;
-      PlatformPriceClass = Parse.Object.extend("Price");
-      platformPriceObj = new PlatformPriceClass();
-      platformPriceObj.id = platformPriceId;
-      productItem.set("onlinePrice", onlinePriceObj);
-      productItem.set("bestPlatformPrice", platformPriceObj);
+      if (onlinePriceId !== "") {
+        OnlinePriceClass = Parse.Object.extend("Price");
+        onlinePriceObj = new OnlinePriceClass();
+        onlinePriceObj.id = onlinePriceId;
+        productItem.set("onlinePrice", onlinePriceObj);
+      }
+      if (platformPriceId !== "") {
+        PlatformPriceClass = Parse.Object.extend("Price");
+        platformPriceObj = new PlatformPriceClass();
+        platformPriceObj.id = platformPriceId;
+        productItem.set("bestPlatformPrice", platformPriceObj);
+      }
       return productItem.save().then(function(savedProduct) {
         return console.log("product updated " + productItem.id);
       }, function(error) {

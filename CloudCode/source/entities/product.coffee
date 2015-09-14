@@ -358,6 +358,8 @@ Parse.Cloud.define 'getProduct', (request, response) ->
     queryProductItem.include("category.secondary_attributes")
     queryProductItem.include("primaryAttributes")
     queryProductItem.include("primaryAttributes.attribute")
+    queryProductItem.include("onlinePrice")
+    queryProductItem.include("bestPlatformPrice")
 
     queryProductItem.first()
     .then (ProductData)->
@@ -836,6 +838,113 @@ findAttribValues = (filter) =>
 
     promise   
 
+# getOtherPricesForProduct = (productObject) ->
+
+#     promise = new Parse.Promise()
+
+#     productPrice = {}
+
+#     productId = productObject.id
+
+#     # query Price class 
+
+#     queryPrice = new Parse.Query("Price")
+
+#     innerQueryProduct = new Parse.Query("ProductItem")
+#     innerQueryProduct.equalTo("objectId" , productId)
+
+#     queryPrice.matchesQuery("product" , innerQueryProduct)
+#     queryPrice.equalTo("type" , "online_market_price")
+#     queryPrice.ascending("value")
+
+#     queryPrice.first()
+#     .then (onlinePriceObj) ->
+#         if _.isEmpty(onlinePriceObj)
+#             productPrice["online"] = 
+#                 value : ""
+#                 source : ""
+#                 sourceUrl : ""
+#                 updatedAt : ""
+#         else
+#             flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/Flipkart+logo.jpg"
+#             snapdealUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/snapdeal-icon.jpg"
+#             amazonUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/amazon+icon.png"
+
+#             if onlinePriceObj.get("source") is "flipkart"
+#                 srcUrl =  flipkartUrl
+#             else if onlinePriceObj.get("source") is "snapdeal"
+#                 srcUrl =  snapdealUrl
+#             else
+#                 srcUrl =  amazonUrl    
+            
+
+#             productPrice["online"] = 
+#                 value : onlinePriceObj.get("value")
+#                 source : onlinePriceObj.get("source")
+#                 srcUrl : srcUrl
+#                 updatedAt : onlinePriceObj.updatedAt           
+            
+
+#         # now find best platform price
+#         getBestPlatformPrice(productObject)
+#         .then (platformPrice) ->
+#             productPrice["platform"] = platformPrice
+#             promise.resolve productPrice
+
+#         , (error) ->
+#             promise.reject error
+#     , (error) ->
+#         promise.reject error
+
+#     promise
+
+
+# getBestPlatformPrice = (productObject) ->
+#     promise = new Parse.Promise()
+
+#     # get all prices entered in price table for type other than "open_offer" in price class
+
+#     queryPrice = new Parse.Query("Price")
+#     productId = productObject.id
+
+#     innerQueryProduct = new Parse.Query("ProductItem")
+#     innerQueryProduct.equalTo("objectId" , productId)
+#     queryPrice.matchesQuery("product",innerQueryProduct)
+#     queryPrice.notEqualTo("type","online_market_price")
+
+#     queryPrice.find()
+#     .then (platformPrices) ->
+#         if platformPrices.length is 0 
+#             minPriceObj =  
+#                 value : ""
+#                 updatedAt : ""
+#             promise.resolve minPriceObj
+#         else
+#             priceValues = []
+#             priceObjArr = []
+
+#             _.each platformPrices , (platformPriceObj) ->
+#                 pricObj = 
+#                     "value" : parseInt(platformPriceObj.get("value"))
+#                     "updatedAt" : platformPriceObj.updatedAt   
+
+#                 priceObjArr.push pricObj
+
+#                 priceValues.push parseInt(platformPriceObj.get("value"))
+
+#             minPrice = _.min(priceValues)
+
+#             minPriceObj = _.where priceObjArr, value: minPrice
+
+#             promise.resolve minPriceObj[0]
+
+
+#     , (error) ->
+#         promise.reject error 
+
+#     promise
+
+
 getOtherPricesForProduct = (productObject) ->
 
     promise = new Parse.Promise()
@@ -843,54 +952,42 @@ getOtherPricesForProduct = (productObject) ->
     productPrice = {}
 
     productId = productObject.id
+    onlinePriceObj = productObject.get "onlinePrice"
 
     # query Price class 
 
-    queryPrice = new Parse.Query("Price")
+    if _.isEmpty(onlinePriceObj)
+        productPrice["online"] = 
+            value : ""
+            source : ""
+            sourceUrl : ""
+            updatedAt : ""
+    else
+        flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/Flipkart+logo.jpg"
+        snapdealUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/snapdeal-icon.jpg"
+        amazonUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/amazon+icon.png"
 
-    innerQueryProduct = new Parse.Query("ProductItem")
-    innerQueryProduct.equalTo("objectId" , productId)
-
-    queryPrice.matchesQuery("product" , innerQueryProduct)
-    queryPrice.equalTo("type" , "online_market_price")
-    queryPrice.ascending("value")
-
-    queryPrice.first()
-    .then (onlinePriceObj) ->
-        if _.isEmpty(onlinePriceObj)
-            productPrice["online"] = 
-                value : ""
-                source : ""
-                sourceUrl : ""
-                updatedAt : ""
+        if onlinePriceObj.get("source") is "flipkart"
+            srcUrl =  flipkartUrl
+        else if onlinePriceObj.get("source") is "snapdeal"
+            srcUrl =  snapdealUrl
         else
-            flipkartUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/Flipkart+logo.jpg"
-            snapdealUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/snapdeal-icon.jpg"
-            amazonUrl = "https://s3-ap-southeast-1.amazonaws.com/aj-shopoye/images-product/amazon+icon.png"
+            srcUrl =  amazonUrl    
+        
 
-            if onlinePriceObj.get("source") is "flipkart"
-                srcUrl =  flipkartUrl
-            else if onlinePriceObj.get("source") is "snapdeal"
-                srcUrl =  snapdealUrl
-            else
-                srcUrl =  amazonUrl    
-            
+        productPrice["online"] = 
+            value : onlinePriceObj.get("value")
+            source : onlinePriceObj.get("source")
+            srcUrl : srcUrl
+            updatedAt : onlinePriceObj.updatedAt           
+        
 
-            productPrice["online"] = 
-                value : onlinePriceObj.get("value")
-                source : onlinePriceObj.get("source")
-                srcUrl : srcUrl
-                updatedAt : onlinePriceObj.updatedAt           
-            
+    # now find best platform price
+    getBestPlatformPrice(productObject)
+    .then (platformPrice) ->
+        productPrice["platform"] = platformPrice
+        promise.resolve productPrice
 
-        # now find best platform price
-        getBestPlatformPrice(productObject)
-        .then (platformPrice) ->
-            productPrice["platform"] = platformPrice
-            promise.resolve productPrice
-
-        , (error) ->
-            promise.reject error
     , (error) ->
         promise.reject error
 
@@ -904,44 +1001,20 @@ getBestPlatformPrice = (productObject) ->
 
     queryPrice = new Parse.Query("Price")
     productId = productObject.id
+    platformPriceObj = productObject.get "bestPlatformPrice"
 
-    innerQueryProduct = new Parse.Query("ProductItem")
-    innerQueryProduct.equalTo("objectId" , productId)
-    queryPrice.matchesQuery("product",innerQueryProduct)
-    queryPrice.notEqualTo("type","online_market_price")
+    if !_.isEmpty(platformPriceObj)
+        minPriceObj =  
+            value : platformPriceObj.get("value")
+            updatedAt : platformPriceObj.updatedAt
+    else
+        minPriceObj =  
+            value : ""
+            updatedAt : ""    
 
-    queryPrice.find()
-    .then (platformPrices) ->
-        if platformPrices.length is 0 
-            minPriceObj =  
-                value : ""
-                updatedAt : ""
-            promise.resolve minPriceObj
-        else
-            priceValues = []
-            priceObjArr = []
-
-            _.each platformPrices , (platformPriceObj) ->
-                pricObj = 
-                    "value" : parseInt(platformPriceObj.get("value"))
-                    "updatedAt" : platformPriceObj.updatedAt   
-
-                priceObjArr.push pricObj
-
-                priceValues.push parseInt(platformPriceObj.get("value"))
-
-            minPrice = _.min(priceValues)
-
-            minPriceObj = _.where priceObjArr, value: minPrice
-
-            promise.resolve minPriceObj[0]
-
-
-    , (error) ->
-        promise.reject error 
+    promise.resolve  minPriceObj
 
     promise
-
 
 getMinPricesForProduct = (productObject) ->
 
@@ -1016,7 +1089,6 @@ getBestPlatformPriceForProduct = (productObject) ->
     innerQueryProduct = new Parse.Query("ProductItem")
     innerQueryProduct.equalTo("objectId" , productId)
     queryPrice.matchesQuery("product",innerQueryProduct)
-    queryPrice.notEqualTo("type","online_market_price")
     queryPrice.equalTo("type","accepted_offer")
 
     queryPrice.find()
@@ -1032,6 +1104,7 @@ getBestPlatformPriceForProduct = (productObject) ->
             priceObjArr = []
 
             _.each platformPrices , (platformPriceObj) ->
+                console.log "platformPriceObj : "+ platformPriceObj
                 pricObj = 
                     "id" : platformPriceObj.id
                     "value" : parseInt(platformPriceObj.get("value"))
@@ -1065,19 +1138,19 @@ Parse.Cloud.afterSave "Price", (request)->
     .then (productPrice) ->   
         onlinePriceId = productPrice["online"]['id'] 
         platformPriceId = productPrice["platform"]['id'] 
-        console.log "onlinePriceId : "+onlinePriceId
-        console.log "platformPriceId : "+platformPriceId
         
-        OnlinePriceClass = Parse.Object.extend("Price")
-        onlinePriceObj = new OnlinePriceClass()
-        onlinePriceObj.id= onlinePriceId
+        if onlinePriceId != ""
+            OnlinePriceClass = Parse.Object.extend("Price")
+            onlinePriceObj = new OnlinePriceClass()
+            onlinePriceObj.id= onlinePriceId
+            productItem.set "onlinePrice" , onlinePriceObj
 
-        PlatformPriceClass = Parse.Object.extend("Price")
-        platformPriceObj = new PlatformPriceClass()
-        platformPriceObj.id= platformPriceId
+        if platformPriceId != ""
+            PlatformPriceClass = Parse.Object.extend("Price")
+            platformPriceObj = new PlatformPriceClass()
+            platformPriceObj.id= platformPriceId
+            productItem.set "bestPlatformPrice" , platformPriceObj 
 
-        productItem.set "onlinePrice" , onlinePriceObj
-        productItem.set "bestPlatformPrice" , platformPriceObj 
         productItem.save()
         .then (savedProduct) ->
             console.log "product updated " + productItem.id
