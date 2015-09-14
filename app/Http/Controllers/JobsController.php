@@ -134,7 +134,7 @@ class JobsController extends Controller
             echo "</pre>";
 
             // if the difference is more than or equal to 10minutes then add this request to array of biddableRequests
-            $minutes10 = 10;
+            $minutes10 = 1;
             if ($minutes>=$minutes10) {
                 // check is lastOfferPrice is not empty
                 if($openRequest['lastOfferPrice']!= "") 
