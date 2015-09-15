@@ -383,7 +383,9 @@ Parse.Cloud.define 'getCustomerRequests' , (request, response) ->
             innerQueryProduct.equalTo("objectId", productId)
             queryRequest.matchesQuery("product", innerQueryProduct)         
 
-    queryRequest.include("product") 
+    queryRequest.include("product")
+    queryRequest.include("product.onlinePrice") 
+    queryRequest.include("product.bestPlatformPrice") 
 
     if descending is true
         queryRequest.descending("updatedAt")
@@ -553,11 +555,13 @@ Parse.Cloud.define 'getRequestDetails', (request, response) ->
         queryOffer.select("request")
         queryOffer.include("request")
         queryOffer.include("request.product")
+        queryOffer.include("request.product.onlinePrice")
+        queryOffer.include("request.product.bestPlatformPrice")
         queryOffer.first()
         .then (offerObj) ->
             requestObj = offerObj.get("request")
             productObj = requestObj.get("product")  
-            getOtherPricesForProduct(productObj)
+            getOtherPricesForProduct(productObj)#
             .then (otherPrice) ->
                 product = 
                     "name" :productObj.get("name")
@@ -591,10 +595,12 @@ Parse.Cloud.define 'getRequestDetails', (request, response) ->
         queryRequest = new Parse.Query("Request")
         queryRequest.equalTo("objectId", requestId)
         queryRequest.include("product")
+        queryRequest.include("product.onlinePrice")
+        queryRequest.include("product.bestPlatformPrice")
         queryRequest.first()
         .then (requestObj) ->
             productObj = requestObj.get("product")  
-            getOtherPricesForProduct(productObj)
+            getOtherPricesForProduct(productObj)#
             .then (otherPrice) ->
                 product = 
                     "name" :productObj.get("name")
@@ -992,7 +998,7 @@ getRequestsWithPrice = (requestObj) ->
 
     productObj = requestObj.get("product")
 
-    getOtherPricesForProduct(productObj)
+    getOtherPricesForProduct(productObj)#
     .then (otherPrice) ->
         
         product =

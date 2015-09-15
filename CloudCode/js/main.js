@@ -2941,6 +2941,8 @@
       }
     }
     queryRequest.include("product");
+    queryRequest.include("product.onlinePrice");
+    queryRequest.include("product.bestPlatformPrice");
     if (descending === true) {
       queryRequest.descending("updatedAt");
     } else {
@@ -3081,6 +3083,8 @@
       queryOffer.select("request");
       queryOffer.include("request");
       queryOffer.include("request.product");
+      queryOffer.include("request.product.onlinePrice");
+      queryOffer.include("request.product.bestPlatformPrice");
       return queryOffer.first().then(function(offerObj) {
         var productObj, requestObj;
         requestObj = offerObj.get("request");
@@ -3117,6 +3121,8 @@
       queryRequest = new Parse.Query("Request");
       queryRequest.equalTo("objectId", requestId);
       queryRequest.include("product");
+      queryRequest.include("product.onlinePrice");
+      queryRequest.include("product.bestPlatformPrice");
       return queryRequest.first().then(function(requestObj) {
         var productObj;
         productObj = requestObj.get("product");
