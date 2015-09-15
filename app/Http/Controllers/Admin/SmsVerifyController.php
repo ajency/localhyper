@@ -89,6 +89,51 @@ class SmsVerifyController extends Controller
     
     public function smsVerifyExport()
     { 
+        
+        $headers = [];
+ 
+        $headers []= 'NAME' ;
+        $headers []= 'USER TYPE' ;
+        $headers []= 'PHONE' ;
+        $headers []= 'VERIFICATION CODE' ;
+        $headers []= 'ATTEMPT' ;
+        $headers []= 'UPDATED AT' ;
+
+ 
+        $page = 0; 
+        $limit = 20;
+        $cell = 2;
+        $smsVerify =[];
+        while (true) {
+          $smsVerifyData = $this->getSmsVerify('EXPORT',$page ,$limit);
+          
+          if(empty($smsVerifyData['list']))
+            break;
+
+          $smsVerifyLists = array_merge($smsVerify,$smsVerifyData['list']);   
+         
+          $page++; 
+         
+        }
+        
+        $filename = "exports/sms-verify-export.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, $headers);
+
+        foreach ($smsVerifyLists as $smsVerify) {
+          fputcsv($handle, $smsVerify);
+        }
+        fclose($handle);
+
+        $headers = array(
+        'Content-Type' => 'text/csv',
+        );
+
+        return response()->download($filename, 'sms-verify-export.csv', $headers)->deleteFileAfterSend(true);
+    }
+
+    /*public function smsVerifyExport()
+    { 
         $excel = new PHPExcel();
         $smsVerifySheet = $excel->getSheet(0);
 		$smsVerifySheet->setTitle('SMS Verify');
@@ -150,7 +195,7 @@ class SmsVerifyController extends Controller
         $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
         $objWriter->save('php://output'); 
     
-    }
+    }*/
 
     /**
      * Show the form for creating a new resource.

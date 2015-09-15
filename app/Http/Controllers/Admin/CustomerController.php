@@ -128,12 +128,75 @@ class CustomerController extends Controller
          return $data;
     }
     
+    // public function customersExport()
+    // {
+    //     $excel = new PHPExcel();
+    //     $customersSheet = $excel->getSheet(0);
+		  //   $customersSheet->setTitle('Customers');
+ 
+    //     $headers = [];
+ 
+    //     $headers []= 'CUSTOMER NAME' ;
+    //     $headers []= 'CUSTOMER REGISTERED DATE' ;
+    //     $headers []= 'CUSTOMER LAST LOGIN' ;
+    //     $headers []= 'NO. OF REQUESTS CREATED' ;
+    //     $headers []= 'NO. OF REQUESTS EXPIRED' ;
+    //     $headers []= 'NO. OF REQUESTS CANCELLED' ;
+    //     $headers []= 'NO. OF REQUESTS SUCCESSFULL' ;
+    //     $headers []= 'NO. OF FAILED DELIVERY' ;
+		
+ 
+    //     $customersSheet->fromArray($headers, ' ', 'A1');
+    //     $page = 0; 
+    //     $limit = 50;
+    //     $customers =[];
+    //     while (true) {
+ 
+    //       $customerData = $this->getCustomers('EXPORT',$page ,$limit);
+     
+          
+    //       if(empty($customerData['list']))
+    //         break;
+
+    //       $customers = array_merge($customers,$customerData['list']);   
+         
+    //       $page++; 
+         
+    //     }
+    //     $customersSheet->fromArray($customers, ' ','A2',true);
+
+
+    //     //Headr row height
+    //     $customersSheet->getRowDimension('1')->setRowHeight(20);
+
+    //     //Format header row
+    //     FormatPhpExcel::format_header_row($customersSheet, array(
+    //         'background_color'=>'FFFF00',
+    //         'border_color'=>'000000',
+    //         'font_size'=>'9',
+    //         'font_color'=>'000000',
+    //         'vertical_alignment'=>'VERTICAL_CENTER',
+    //         'font-weight'=>'bold'
+    //         ), '1'
+    //     );
+        
+    //     header('Content-Type: application/vnd.ms-excel');
+    //     header('Content-Disposition: attachment;filename="customers-export.xls"');
+    //     header('Cache-Control: max-age=0');
+    //     // If you're serving to IE 9, then the following may be needed
+    //     header('Cache-Control: max-age=1');
+    //     // If you're serving to IE over SSL, then the following may be needed
+    //     header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+    //     header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+    //     header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+    //     header ('Pragma: public'); // HTTP/1.0
+    //     $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+    //     $objWriter->save('php://output');
+    // }
+
     public function customersExport()
     {
-        $excel = new PHPExcel();
-        $customersSheet = $excel->getSheet(0);
-		    $customersSheet->setTitle('Customers');
- 
+       
         $headers = [];
  
         $headers []= 'CUSTOMER NAME' ;
@@ -144,9 +207,7 @@ class CustomerController extends Controller
         $headers []= 'NO. OF REQUESTS CANCELLED' ;
         $headers []= 'NO. OF REQUESTS SUCCESSFULL' ;
         $headers []= 'NO. OF FAILED DELIVERY' ;
-		
  
-        $customersSheet->fromArray($headers, ' ', 'A1');
         $page = 0; 
         $limit = 50;
         $customers =[];
@@ -163,35 +224,23 @@ class CustomerController extends Controller
           $page++; 
          
         }
-        $customersSheet->fromArray($customers, ' ','A2',true);
-
-
-        //Headr row height
-        $customersSheet->getRowDimension('1')->setRowHeight(20);
-
-        //Format header row
-        FormatPhpExcel::format_header_row($customersSheet, array(
-            'background_color'=>'FFFF00',
-            'border_color'=>'000000',
-            'font_size'=>'9',
-            'font_color'=>'000000',
-            'vertical_alignment'=>'VERTICAL_CENTER',
-            'font-weight'=>'bold'
-            ), '1'
-        );
         
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="customers-export.xls"');
-        header('Cache-Control: max-age=0');
-        // If you're serving to IE 9, then the following may be needed
-        header('Cache-Control: max-age=1');
-        // If you're serving to IE over SSL, then the following may be needed
-        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-        header ('Pragma: public'); // HTTP/1.0
-        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
-        $objWriter->save('php://output');
+        $filename = "exports/customers-export.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, $headers);
+
+        foreach ($customers as $customer) {
+          fputcsv($handle, $customer);
+        }
+        fclose($handle);
+
+        $headers = array(
+        'Content-Type' => 'text/csv',
+        );
+
+        return response()->download($filename, 'customers-export.csv', $headers)->deleteFileAfterSend(true); 
+
+
     }
 
     /**

@@ -139,12 +139,79 @@ class SellerController extends Controller
  
     }
     
+  //   public function sellersExport()
+  //   { 
+  //       $excel = new PHPExcel();
+  //       $sellersSheet = $excel->getSheet(0);
+		// $sellersSheet->setTitle('Sellers');
+
+  //       $headers = [];
+ 
+  //       $headers []= 'SELLER NAME' ;
+  //       $headers []= 'AREA' ;
+  //       $headers []= 'Brands' ;
+  //       $headers []= 'CATEGORY' ;
+  //       $headers []= 'RESPONSE RATIO' ;
+  //       $headers []= 'NO. OF Accepted OFFERS' ;
+  //       $headers []= 'AVG RATINGS' ;
+  //       $headers []= 'BALANCE CREDITS' ;
+  //       $headers []= 'REGISTERED DATE' ;
+  //       $headers []= 'LAST LOGIN' ;
+ 
+        						 
+  //       $sellersSheet->fromArray($headers, ' ', 'A1');
+
+  //       $page = 0; 
+  //       $limit = 50;
+  //       $sellers =[];
+  //       while (true) {
+ 
+  //         $sellersData = $this->getSellers('EXPORT',$page ,$limit);
+         
+          
+  //         if(empty($sellersData['list']))
+  //           break;
+
+  //         $sellers = array_merge($sellers,$sellersData['list']);   
+         
+  //         $page++; 
+         
+  //       }
+  //       $sellersSheet->fromArray($sellers, ' ','A2',true);
+
+
+  //       //Headr row height
+  //       $sellersSheet->getRowDimension('1')->setRowHeight(20);
+
+  //       //Format header row
+  //       FormatPhpExcel::format_header_row($sellersSheet, array(
+  //           'background_color'=>'FFFF00',
+  //           'border_color'=>'000000',
+  //           'font_size'=>'9',
+  //           'font_color'=>'000000',
+  //           'vertical_alignment'=>'VERTICAL_CENTER',
+  //           'font-weight'=>'bold'
+  //           ), '1'
+  //       );
+        
+  //       header('Content-Type: application/vnd.ms-excel');
+  //       header('Content-Disposition: attachment;filename="sellers-export.xls"');
+  //       header('Cache-Control: max-age=0');
+  //       // If you're serving to IE 9, then the following may be needed
+  //       header('Cache-Control: max-age=1');
+  //       // If you're serving to IE over SSL, then the following may be needed
+  //       header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+  //       header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+  //       header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+  //       header ('Pragma: public'); // HTTP/1.0
+  //       $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+  //       $objWriter->save('php://output'); 
+    
+  //   }
+
+
     public function sellersExport()
     { 
-        $excel = new PHPExcel();
-        $sellersSheet = $excel->getSheet(0);
-		$sellersSheet->setTitle('Sellers');
-
         $headers = [];
  
         $headers []= 'SELLER NAME' ;
@@ -158,8 +225,6 @@ class SellerController extends Controller
         $headers []= 'REGISTERED DATE' ;
         $headers []= 'LAST LOGIN' ;
  
-        						 
-        $sellersSheet->fromArray($headers, ' ', 'A1');
 
         $page = 0; 
         $limit = 50;
@@ -177,36 +242,22 @@ class SellerController extends Controller
           $page++; 
          
         }
-        $sellersSheet->fromArray($sellers, ' ','A2',true);
 
+        $filename = "exports/sellers-export.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, $headers);
 
-        //Headr row height
-        $sellersSheet->getRowDimension('1')->setRowHeight(20);
+        foreach ($sellers as $seller) {
+          fputcsv($handle, $seller);
+        }
+        fclose($handle);
 
-        //Format header row
-        FormatPhpExcel::format_header_row($sellersSheet, array(
-            'background_color'=>'FFFF00',
-            'border_color'=>'000000',
-            'font_size'=>'9',
-            'font_color'=>'000000',
-            'vertical_alignment'=>'VERTICAL_CENTER',
-            'font-weight'=>'bold'
-            ), '1'
+        $headers = array(
+        'Content-Type' => 'text/csv',
         );
-        
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="sellers-export.xls"');
-        header('Cache-Control: max-age=0');
-        // If you're serving to IE 9, then the following may be needed
-        header('Cache-Control: max-age=1');
-        // If you're serving to IE over SSL, then the following may be needed
-        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-        header ('Pragma: public'); // HTTP/1.0
-        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
-        $objWriter->save('php://output'); 
-    
+
+        return response()->download($filename, 'sellers-export.csv', $headers)->deleteFileAfterSend(true);
+         
     }
 
     /**

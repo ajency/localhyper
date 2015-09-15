@@ -92,15 +92,61 @@ class RatingsController extends Controller
         return $data;
     }
     
-    public function ratingsExport()
-    { 
-        $excel = new PHPExcel();
-        $ratingSheet = $excel->getSheet(0);
-		$ratingSheet->setTitle('Ratings');
+  //   public function ratingsExport()
+  //   { 
+  //       $excel = new PHPExcel();
+  //       $ratingSheet = $excel->getSheet(0);
+		// $ratingSheet->setTitle('Ratings');
         
+        
+  //       $ratingsData = $this->getRatings('EXPORT');
+  //       $ratingsList = $ratingsData['list'];  
+  //       $headers = [];
+ 
+  //       $headers []= 'Date' ;
+  //       $headers []= 'Seller' ;
+  //       $headers []= 'Rating' ;
+  //       $headers []= 'Comments' ;
+  //       $headers []= 'Seller' ;
+ 
+  //       $ratingSheet->fromArray($headers, ' ', 'A1');
+  //       $ratingSheet->fromArray($ratingsList, ' ','A2');
+
+
+  //       //Headr row height
+  //       $ratingSheet->getRowDimension('1')->setRowHeight(20);
+
+  //       //Format header row
+  //       FormatPhpExcel::format_header_row($ratingSheet, array(
+  //           'background_color'=>'FFFF00',
+  //           'border_color'=>'000000',
+  //           'font_size'=>'9',
+  //           'font_color'=>'000000',
+  //           'vertical_alignment'=>'VERTICAL_CENTER',
+  //           'font-weight'=>'bold'
+  //           ), '1'
+  //       );
+        
+  //       header('Content-Type: application/vnd.ms-excel');
+  //       header('Content-Disposition: attachment;filename="ratings-export.xls"');
+  //       header('Cache-Control: max-age=0');
+  //       // If you're serving to IE 9, then the following may be needed
+  //       header('Cache-Control: max-age=1');
+  //       // If you're serving to IE over SSL, then the following may be needed
+  //       header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+  //       header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+  //       header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+  //       header ('Pragma: public'); // HTTP/1.0
+  //       $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
+  //       $objWriter->save('php://output'); 
+    
+  //   }
+
+    public function ratingsExport()
+    {      
         
         $ratingsData = $this->getRatings('EXPORT');
-        $ratingsList = $ratingsData['list'];  
+        $ratings = $ratingsData['list'];  
         $headers = [];
  
         $headers []= 'Date' ;
@@ -109,36 +155,21 @@ class RatingsController extends Controller
         $headers []= 'Comments' ;
         $headers []= 'Seller' ;
  
-        $ratingSheet->fromArray($headers, ' ', 'A1');
-        $ratingSheet->fromArray($ratingsList, ' ','A2');
+        $filename = "exports/ratings-export.csv";
+        $handle = fopen($filename, 'w+');
+        fputcsv($handle, $headers);
 
+        foreach ($ratings as $rating) {
+          fputcsv($handle, $rating);
+        }
+        fclose($handle);
 
-        //Headr row height
-        $ratingSheet->getRowDimension('1')->setRowHeight(20);
-
-        //Format header row
-        FormatPhpExcel::format_header_row($ratingSheet, array(
-            'background_color'=>'FFFF00',
-            'border_color'=>'000000',
-            'font_size'=>'9',
-            'font_color'=>'000000',
-            'vertical_alignment'=>'VERTICAL_CENTER',
-            'font-weight'=>'bold'
-            ), '1'
+        $headers = array(
+        'Content-Type' => 'text/csv',
         );
-        
-        header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="ratings-export.xls"');
-        header('Cache-Control: max-age=0');
-        // If you're serving to IE 9, then the following may be needed
-        header('Cache-Control: max-age=1');
-        // If you're serving to IE over SSL, then the following may be needed
-        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-        header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-        header ('Pragma: public'); // HTTP/1.0
-        $objWriter = \PHPExcel_IOFactory::createWriter($excel, 'Excel5');
-        $objWriter->save('php://output'); 
+
+        return response()->download($filename, 'ratings-export.csv', $headers)->deleteFileAfterSend(true);
+         
     
     }
 
