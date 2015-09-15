@@ -462,19 +462,7 @@ angular.module 'LocalHyper.requestsOffers'
 							@sortName = sortName
 							@simulateFetch()
 							
-			displayFooter : ->
-				if @display == 'error'
-					return false
-				else if @filter.excerpt == '' 
-						if @requests.length > 0
-							return true
-				else if @filter.excerpt != '' 
-					return true
-				else
-					false
-
-
-		
+			
 		onDeviceBack = ->
 			filter = $scope.view.filter
 			detailsModal = $scope.view.requestDetails.modal

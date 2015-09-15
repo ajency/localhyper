@@ -392,19 +392,6 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
               return this.reFetch();
             }
         }
-      },
-      displayFooter: function() {
-        if (this.display === 'error') {
-          return false;
-        } else if (this.filter.excerpt === '') {
-          if (this.requests.length > 0) {
-            return true;
-          }
-        } else if (this.filter.excerpt !== '') {
-          return true;
-        } else {
-          return false;
-        }
       }
     };
     onDeviceBack = function() {
