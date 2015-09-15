@@ -1254,7 +1254,7 @@
             return response.error(error);
           });
         } else {
-          return response.error("Offer already made for this request");
+          return response.error("auto_offer_made");
         }
       }, function(error) {
         return response.error(error);
@@ -1525,6 +1525,7 @@
             acceptedOffer.set("deliveryDate", deliveryDate);
             return acceptedOffer.save().then(function(offerWithDelivery) {
               requestObj.set("status", "pending_delivery");
+              requestObj.set("deliveryStatus", "pending_delivery");
               return requestObj.save().then(function(savedReq) {
                 var priceObj;
                 priceObj = acceptedOffer.get("price");
@@ -2779,6 +2780,7 @@
       request = new Request();
       request.id = requestId;
       request.set("status", status);
+      request.set("deliveryStatus", status);
       if (status === "failed_delivery") {
         request.set("failedDeliveryReason", failedDeliveryReason);
       }

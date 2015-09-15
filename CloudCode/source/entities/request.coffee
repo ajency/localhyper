@@ -188,6 +188,7 @@ Parse.Cloud.define 'updateRequestStatus' , (request, response) ->
         request.id = requestId
 
         request.set "status", status
+        request.set "deliveryStatus" , status
 
         if status is "failed_delivery"
             request.set "failedDeliveryReason", failedDeliveryReason

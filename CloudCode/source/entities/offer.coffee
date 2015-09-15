@@ -243,7 +243,7 @@ Parse.Cloud.define 'makeOffer', (request, response) ->
                     response.error error
 
             else
-                response.error "Offer already made for this request"
+                response.error "auto_offer_made"
 
         , (error) ->
             response.error error 
@@ -551,6 +551,7 @@ Parse.Cloud.define 'acceptOffer', (request, response) ->
                     acceptedOffer.save()
                     .then (offerWithDelivery) ->
                         requestObj.set "status" , "pending_delivery"
+                        requestObj.set "deliveryStatus" , "pending_delivery"
                         requestObj.save()
                         .then (savedReq)->
 
