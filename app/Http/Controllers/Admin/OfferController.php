@@ -223,7 +223,7 @@ class OfferController extends Controller
          
         }
  
-        $filename = "offers-export.csv";
+        $filename = "exports/offers-export.csv";
         $handle = fopen($filename, 'w+');
         fputcsv($handle, $headers);
         foreach ($offers as $offer) {
@@ -235,7 +235,7 @@ class OfferController extends Controller
         'Content-Type' => 'text/csv',
         );
 
-        return response()->download($filename, 'offers-export.csv', $headers);
+        return response()->download($filename, 'offers-export.csv', $headers)->deleteFileAfterSend(true);
     }
 
 

@@ -68,7 +68,7 @@ class RequestController extends Controller
             
             $requestStatus = $request->get("status");
             $deliveryStatus = $request->get("deliveryStatus");
-            $deliveryStatus = ($deliveryStatus != '')?$requestStatus:'N/A';
+            $deliveryStatus = ($deliveryStatus != '')? $deliveryStatus:'N/A';
             
             
             if($requestStatus=='open')
@@ -228,7 +228,7 @@ class RequestController extends Controller
          
         }
         
-        $filename = "requests-export.csv";
+        $filename = "exports/requests-export.csv";
         $handle = fopen($filename, 'w+');
         fputcsv($handle, $headers);
         foreach ($requests as $request) {
@@ -240,7 +240,7 @@ class RequestController extends Controller
         'Content-Type' => 'text/csv',
         );
 
-        return response()->download($filename, 'requests-export.csv', $headers); 
+        return response()->download($filename, 'requests-export.csv', $headers)->deleteFileAfterSend(true);
     
     }
 
