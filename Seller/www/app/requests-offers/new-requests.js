@@ -447,7 +447,16 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
               };
             })(this), (function(_this) {
               return function(type) {
-                return CToast.show('Failed to make offer, please try again');
+                if (!_.isUndefined(type.data)) {
+                  if (type.data.error === 'auto_offer_made') {
+                    _this.removeRequestCard(requestId);
+                    return CToast.show('You have made an offer through auto offer');
+                  } else {
+                    return CToast.show('Failed to make offer, please try again');
+                  }
+                } else {
+                  return CToast.show('Failed to make offer, please try again');
+                }
               };
             })(this))["finally"](function() {
               return CSpinner.hide();

@@ -324,7 +324,14 @@ angular.module 'LocalHyper.requestsOffers'
 							CToast.showLongBottom 'Your offer has been made. For more details, please check your offer history.'
 							$rootScope.$broadcast 'make:offer:success'
 						, (type)=>
-							CToast.show 'Failed to make offer, please try again'
+							if !_.isUndefined(type.data) 
+								if type.data.error == 'auto_offer_made'
+									@removeRequestCard requestId
+									CToast.show 'You have made an offer through auto offer'
+								else
+									CToast.show 'Failed to make offer, please try again'
+							else
+								CToast.show 'Failed to make offer, please try again'
 						.finally ->
 							CSpinner.hide()
 
