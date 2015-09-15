@@ -999,11 +999,10 @@ getBestPlatformPrice = (productObject) ->
 
     # get all prices entered in price table for type other than "open_offer" in price class
 
-    queryPrice = new Parse.Query("Price")
     productId = productObject.id
     platformPriceObj = productObject.get "bestPlatformPrice"
 
-    if !_.isEmpty(platformPriceObj)
+    if !_.isUndefined(platformPriceObj)
         minPriceObj =  
             value : platformPriceObj.get("value")
             updatedAt : platformPriceObj.updatedAt
@@ -1012,7 +1011,7 @@ getBestPlatformPrice = (productObject) ->
             value : ""
             updatedAt : ""    
 
-    promise.resolve  minPriceObj
+    promise.resolve minPriceObj
 
     promise
 

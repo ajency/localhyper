@@ -792,6 +792,8 @@ getNewRequestsForSeller = (sellerId,requestFilters) ->
                 requestQuery.matchesQuery("product", innerQueryProduct)
 
             requestQuery.include("product")
+            requestQuery.include("product.onlinePrice")
+            requestQuery.include("product.bestPlatformPrice")
             requestQuery.include("category")
             requestQuery.include("category.parent_category")
             requestQuery.include("brand")
@@ -852,6 +854,7 @@ getRequestData =  (filteredRequest,seller,lastOffers ) ->
 
     # prepare the output without notification status
     prodObj = filteredRequest.get("product")
+    console.log "prodObj" + prodObj
     
     productId = prodObj.id
     product =

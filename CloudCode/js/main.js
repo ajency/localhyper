@@ -2484,12 +2484,11 @@
   };
 
   getBestPlatformPrice = function(productObject) {
-    var minPriceObj, platformPriceObj, productId, promise, queryPrice;
+    var minPriceObj, platformPriceObj, productId, promise;
     promise = new Parse.Promise();
-    queryPrice = new Parse.Query("Price");
     productId = productObject.id;
     platformPriceObj = productObject.get("bestPlatformPrice");
-    if (!_.isEmpty(platformPriceObj)) {
+    if (!_.isUndefined(platformPriceObj)) {
       minPriceObj = {
         value: platformPriceObj.get("value"),
         updatedAt: platformPriceObj.updatedAt
@@ -3284,6 +3283,8 @@
           requestQuery.matchesQuery("product", innerQueryProduct);
         }
         requestQuery.include("product");
+        requestQuery.include("product.onlinePrice");
+        requestQuery.include("product.bestPlatformPrice");
         requestQuery.include("category");
         requestQuery.include("category.parent_category");
         requestQuery.include("brand");
@@ -3332,6 +3333,7 @@
     sellerId = seller.id;
     sellerGeoPoint = seller.geoPoint;
     prodObj = filteredRequest.get("product");
+    console.log("prodObj" + prodObj);
     productId = prodObj.id;
     product = {
       "id": prodObj.id,
