@@ -861,8 +861,8 @@ class ProductController extends Controller
 
 
 			$headers = array(
-				array('productId','priceId','Name','Model Number','Price','Price Source'),
-				array('productId','priceId','name','model_number','price','price_source'),
+				array('productId','priceId','Name','Model Number','MRP','Price','Price Source'),
+				array('productId','priceId','name','model_number','MRP','price','price_source'),
 				);
 
 			$priceSheet->fromArray($headers, ' ', 'A1');
@@ -942,6 +942,7 @@ class ProductController extends Controller
 								'priceId' => $onlinePrice['id'],
 								'name' => $parseProduct->get("name"),
 								'model_number' => $parseProduct->get("model_number"),
+								'mrp' => $parseProduct->get("mrp"),
 								'price' => $onlinePrice['value'],
 								'price_source' => $onlinePrice['source'],
 								);
