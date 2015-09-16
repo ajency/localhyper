@@ -2577,7 +2577,6 @@
         priceObjArr = [];
         _.each(platformPrices, function(platformPriceObj) {
           var pricObj;
-          console.log("platformPriceObj : " + platformPriceObj);
           pricObj = {
             "id": platformPriceObj.id,
             "value": parseInt(platformPriceObj.get("value")),
@@ -3339,7 +3338,6 @@
     sellerId = seller.id;
     sellerGeoPoint = seller.geoPoint;
     prodObj = filteredRequest.get("product");
-    console.log("prodObj" + prodObj);
     productId = prodObj.id;
     product = {
       "id": prodObj.id,

@@ -860,7 +860,6 @@ getRequestData =  (filteredRequest,seller,lastOffers ) ->
 
     # prepare the output without notification status
     prodObj = filteredRequest.get("product")
-    console.log "prodObj" + prodObj
     
     productId = prodObj.id
     product =

@@ -1103,7 +1103,6 @@ getBestPlatformPriceForProduct = (productObject) ->
             priceObjArr = []
 
             _.each platformPrices , (platformPriceObj) ->
-                console.log "platformPriceObj : "+ platformPriceObj
                 pricObj = 
                     "id" : platformPriceObj.id
                     "value" : parseInt(platformPriceObj.get("value"))
@@ -1134,7 +1133,7 @@ Parse.Cloud.afterSave "Price", (request)->
     productItem.id = productId
    
     getMinPricesForProduct(productItem)
-    .then (productPrice) ->   
+    .then (productPrice) ->
         onlinePriceId = productPrice["online"]['id'] 
         platformPriceId = productPrice["platform"]['id'] 
         
