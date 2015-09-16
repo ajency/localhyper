@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Log;
 use Exception;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -38,7 +39,13 @@ class Handler extends ExceptionHandler
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $e)
-    {
+    { 
+         if ($e->getCode()==6) {
+             Log::error($e->getMessage());
+             abort(404);
+         }
+            
+
         return parent::render($request, $e);
     }
 }

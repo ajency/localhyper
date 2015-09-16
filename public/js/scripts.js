@@ -282,7 +282,7 @@ function getCategoryProducts(pageNo)
             str += '<td data-type="amazon" data-type-id="'+amazonPriceId+'" >'+amazonPrice+'</td>'; 
             str += '<td data-type="flipkart" data-type-id="'+filpkartPriceId+'">'+filpkartPrice+'</td>'; 
             str += '<td data-type="snapdeal" data-type-id="'+snapdealPriceId+'">'+snapdealPrice+'</td>'; 
-            str += '<td data-product-id="'+value.id+'"> <a class="edit-product-price">edit</a> </td>'; 
+            str += '<td data-product-id="'+value.id+'"> <a class="edit-product-price">edit</a></td>'; 
             str += '</tr>'; 
         });
             
@@ -306,9 +306,9 @@ function getCategoryProducts(pageNo)
         var prevPageLink = (pageNo >= 1) ? 'onclick="getCategoryProducts('+ (pageNo - 1) +');" ':'' ;
         var nextPageLink = (pageNo < response.data.numOfPages) ? 'onclick="getCategoryProducts('+ (pageNo + 1) +');" ' :'' ;  
         
-        var pagination = '<a '+prevPageLink+' href="#"> previous </a> ';
+        var pagination = '<a '+prevPageLink+' href="#"> <i class="pagination fa fa-angle-left"></i> </a> ';
         pagination += (pageNo + 1) +' of '+response.data.numOfPages ;
-        pagination += '<a '+nextPageLink+' href="#"> next </a> ';  
+        pagination += '<a '+nextPageLink+' href="#"> <i class="pagination fa fa-angle-right"></i> </a> ';  
   
         $("#pagination").html(pagination);
          
@@ -330,7 +330,7 @@ $('.productPriceList').on('click', '.edit-product-price', function () {
     snapdealPrice.html('<input type="text" name="snadeal_price" value="'+snapdealPrice.text()+'">');
     
     $(this).addClass('hidden');
-    $(this).closest('td').append('<input type="button" class="save-product-price  btn btn-xs btn-mini btn-info m-t-5 pull-right" value="save">');
+    $(this).closest('td').append('<input type="button" class="save-product-price  btn btn-xs btn-mini btn-info m-t-5 pull-right" value="save"><span class="loader hidden"></span>');
     
     
 });
@@ -350,7 +350,7 @@ $('.productPriceList').on('click', '.save-product-price', function () {
     var filpkartPriceId = filpkartPrice.attr('data-type-id');
     var snapdealPriceValue =snapdealPrice.find('input').val();
     var snapdealPriceId = snapdealPrice.attr('data-type-id');
-    
+    obj.closest('td').find('.loader').removeClass('hidden');
    
     
     $.ajax({
@@ -381,6 +381,7 @@ $('.productPriceList').on('click', '.save-product-price', function () {
             
             
             obj.closest('td').find('.edit-product-price').removeClass('hidden');
+            obj.closest('td').find('.loader').remove();
             obj.remove();
             $.notify("Price Successfully Updated", 'success');
      
