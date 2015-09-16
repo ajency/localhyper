@@ -1137,13 +1137,13 @@ Parse.Cloud.afterSave "Price", (request)->
         onlinePriceId = productPrice["online"]['id'] 
         platformPriceId = productPrice["platform"]['id'] 
         
-        if onlinePriceId != ""
+        if !_.isUndefined(onlinePriceId) and onlinePriceId != ""
             OnlinePriceClass = Parse.Object.extend("Price")
             onlinePriceObj = new OnlinePriceClass()
             onlinePriceObj.id= onlinePriceId
             productItem.set "onlinePrice" , onlinePriceObj
 
-        if platformPriceId != ""
+        if !_.isUndefined(platformPriceId) and platformPriceId != ""
             PlatformPriceClass = Parse.Object.extend("Price")
             platformPriceObj = new PlatformPriceClass()
             platformPriceObj.id= platformPriceId
