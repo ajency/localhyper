@@ -8,11 +8,15 @@ angular.module('LocalHyper.products').directive('ajLoadingBackDrop', [
       link: function(scope, el, attrs) {
         var onContainerClick;
         onContainerClick = function(event) {
-          if ($(event.target).hasClass('loading-container')) {
+          var target;
+          target = $(event.target);
+          if (target.hasClass('loading-container')) {
             $('.loading-container').off('click', onContainerClick);
             return scope.$apply(function() {
               return scope.onHidden();
             });
+          } else if (target.hasClass('button-assertive')) {
+            return $('.loading-container').off('click', onContainerClick);
           }
         };
         return $timeout(function() {

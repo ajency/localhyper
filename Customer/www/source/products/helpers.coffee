@@ -10,10 +10,13 @@ angular.module 'LocalHyper.products'
 	link: (scope, el, attrs)->
 
 		onContainerClick = (event)->
-			if $(event.target).hasClass 'loading-container'
+			target = $(event.target)
+			if target.hasClass 'loading-container'
 				$('.loading-container').off 'click', onContainerClick
 				scope.$apply ->
 					scope.onHidden()
+			else if target.hasClass 'button-assertive'
+				$('.loading-container').off 'click', onContainerClick
 		
 		$timeout ->
 			$('.loading-container').on 'click', onContainerClick
