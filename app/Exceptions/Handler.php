@@ -40,12 +40,17 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     { 
-         if ($e->getCode()==6) {
+        if($e instanceof \Parse\ParseException){
+            Log::error($e->getMessage());
+            abort(400);
+        
+        } 
+        /* if ($e->getCode()==6) {
              Log::error($e->getMessage());
-             abort(404);
-         }
-            
-
+            abort(400);
+             
+         }*/
+           
         return parent::render($request, $e);
     }
 }
