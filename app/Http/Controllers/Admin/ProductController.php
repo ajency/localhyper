@@ -1052,11 +1052,11 @@ class ProductController extends Controller
 			foreach ($productPriceArr as $product) {
 			 
 				$productId = $product['productId'];
-				$flipkartPrice = $product['flipkart'];
+				$flipkartPrice = intval($product['flipkart']);
 				$flipkartPriceId = $product['flipkart_id'];
-				$amazonPrice = $product['amazon'];
+				$amazonPrice = intval($product['amazon']);
 				$amazonPriceId = $product['amazon_id'];
-				$snapdealPrice = $product['snapdeal'];
+				$snapdealPrice = intval($product['snapdeal']);
 				$snapdealPriceId = $product['snapdeal_id'];
 				
 				if(is_null($productId)){
