@@ -1065,102 +1065,19 @@ class ProductController extends Controller
 				else{
 
 					//FLIPKART
-					if (!is_null($flipkartPriceId)){
-							$query = new ParseQuery("Price");
-							
-							try {
-							  $existingPriceObj = $query->get($flipkartPriceId);
-							  // The object was retrieved successfully.
-							  $existingPriceObj->set('value', $flipkartPrice);
-							  $existingPriceObj->save();
-
-							} catch (ParseException $ex) {
-							  // The object was not retrieved successfully.
-							  // error is a ParseException with an error code and message.
-							  echo 'Failed to update object, with error message: ' . $ex->getMessage();
-							}
-
-					}
-					elseif($flipkartPrice!='')
-					{ 
-						$priceInstance = new ParseObject("Price");
-						$productPointer = array('__type' => 'Pointer', 'className' => 'ProductItem', 'objectId' => $productId);
-						$priceInstance->setAssociativeArray("product", $productPointer);
-
-						$priceInstance->set("value", $flipkartPrice);
-						$priceInstance->set("source", 'flipkart');
-						$priceInstance->set("type", "online_market_price");
-
-						$bulkPriceInstances[] = $priceInstance;
-						 
-					}
+					$bulkPriceInstances = $this->updateOnlinePricePrice($productId ,$flipkartPriceId ,$flipkartPrice,'flipkart',$bulkPriceInstances);
 
 					//AMAZON
-					if (!is_null($amazonPriceId)){
-						$query = new ParseQuery("Price");
-						
-						try {
-						  $existingPriceObj = $query->get($amazonPriceId);
-						  // The object was retrieved successfully.
-						  $existingPriceObj->set('value', $amazonPrice);
-						  $existingPriceObj->save();
-
-						} catch (ParseException $ex) {
-						  // The object was not retrieved successfully.
-						  // error is a ParseException with an error code and message.
-						  echo 'Failed to update object, with error message: ' . $ex->getMessage();
-						}
-
-					}
-					elseif($amazonPrice!='')
-					{	
-						$priceInstance = new ParseObject("Price");
-						$productPointer = array('__type' => 'Pointer', 'className' => 'ProductItem', 'objectId' => $productId);
-						$priceInstance->setAssociativeArray("product", $productPointer);
-
-						$priceInstance->set("value", $amazonPrice);
-						$priceInstance->set("source", 'amazon');
-						$priceInstance->set("type", "online_market_price");
-
-						$bulkPriceInstances[] = $priceInstance;
-						 
-					}
+					$bulkPriceInstances = $this->updateOnlinePricePrice($productId ,$amazonPriceId ,$amazonPrice,'amazon',$bulkPriceInstances);
 
 					//SNAPDEAL
-					if (!is_null($snapdealPriceId)){
-						$query = new ParseQuery("Price");
-						
-						try {
-						  $existingPriceObj = $query->get($snapdealPriceId);
-						  // The object was retrieved successfully.
-						  $existingPriceObj->set('value', $snapdealPrice);
-						  $existingPriceObj->save();
-
-						} catch (ParseException $ex) {
-						  // The object was not retrieved successfully.
-						  // error is a ParseException with an error code and message.
-						  echo 'Failed to update object, with error message: ' . $ex->getMessage();
-						}
-
-					}
-					elseif($snapdealPrice!='')
-					{	
-						$priceInstance = new ParseObject("Price");
-						$productPointer = array('__type' => 'Pointer', 'className' => 'ProductItem', 'objectId' => $productId);
-						$priceInstance->setAssociativeArray("product", $productPointer);
-
-						$priceInstance->set("value", $snapdealPrice);
-						$priceInstance->set("source", 'snapdeal');
-						$priceInstance->set("type", "online_market_price");
-
-						$bulkPriceInstances[] = $priceInstance;
-						 
-					}
+					$bulkPriceInstances = $this->updateOnlinePricePrice($productId ,$snapdealPriceId ,$snapdealPrice,'snapdeal',$bulkPriceInstances);
 
 				}
 				
           
 			}
+			 
 				try {
 					ParseObject::saveAll($bulkPriceInstances);
 				} catch (ParseException $ex) {  
@@ -1170,6 +1087,40 @@ class ProductController extends Controller
 				}
 
 
+		}
+
+		public function updateOnlinePricePrice($productId ,$priceId ,$priceValue,$priceSource,$bulkPriceInstances)
+		{
+			if (!is_null($priceId)){
+				$query = new ParseQuery("Price");
+				
+				try {
+				  $existingPriceObj = $query->get($priceId);
+				  // The object was retrieved successfully.
+				  $existingPriceObj->set('value', $priceValue);
+				  $existingPriceObj->save();
+
+				} catch (ParseException $ex) {
+				  // The object was not retrieved successfully.
+				  // error is a ParseException with an error code and message.
+				  echo 'Failed to update object, with error message: ' . $ex->getMessage();
+				}
+
+			}
+			elseif($priceValue!='')
+			{ 
+				$priceInstance = new ParseObject("Price");
+				$productPointer = array('__type' => 'Pointer', 'className' => 'ProductItem', 'objectId' => $productId);
+				$priceInstance->setAssociativeArray("product", $productPointer);
+
+				$priceInstance->set("value", $priceValue);
+				$priceInstance->set("source", $priceSource);
+				$priceInstance->set("type", "online_market_price");
+
+				$bulkPriceInstances[] = $priceInstance;
+				 
+			}
+			return $bulkPriceInstances;
 		}
 
  
