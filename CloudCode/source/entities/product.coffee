@@ -1158,27 +1158,38 @@ Parse.Cloud.afterSave "Price", (request)->
     ,(error) ->
         console.log "Got an error for getMinPricesForProduct " + error.code + " : " + error.message
 
-   
 
- # Parse.Cloud.afterSave "Price", (request)->
- #    priceObject = request.object
- #    productObj =  priceObject.get "product"
+# Parse.Cloud.define 'getCategoryProducts', (request, response) ->
+#     categoryId = request.params.categoryId
 
- #    getMinPricesForProduct(priceObject)
- #    .then (productPrice) ->  
- #        onlinePrice = productPrice["online"] 
- #        platformPrice = productPrice["platform"]
- #        console.log "PRICE OBJ" 
- #        console.log productObj
- #        productObj.set "onlinePrice" , onlinePrice
- #        productObj.set "bestPlatformPrice" , platformPrice
- #        productObj.save()
- #    ,(error) ->
- #        console.log "Got an error " + error.code + " : " + error.message
+#     categoryQuery = new Parse.Query("Category")
+#     categoryQuery.equalTo("objectId",categoryId)
+#     categoryQuery.first()
+#     .then (categoryObj) ->
+#         categoryName = categoryObj.get "name"
+#         getProductDetails(categoryObj)
+#         .then (products) ->
+#             response.success products
+#         ,(error) ->
+#             response.error error
+#     ,(error) ->
+#         response.error error
 
+# getProductDetails = (categoryObj) ->
+#     promise = new Parse.Promise()
+    
+#     productQuery = new Parse.Query("ProductItem")
+#     productQuery.include("onlinePrice")
+#     productQuery.include("bestPlatformPrice")
+#     productQuery.matchesQuery("category",categoryObj)
+#     productQuery.find()
+#     .then (productObjs) ->
+#         console.log productObjs
+#         promise.resolve productObjs
+#     ,(error) ->
+#         promise.reject error
 
-
-
+#     promise 
     
 
     
