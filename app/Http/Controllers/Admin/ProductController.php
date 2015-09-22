@@ -850,14 +850,16 @@ class ProductController extends Controller
 
 
 			$headers = array(
-				array('productId','priceId','Name','Model Number','MRP','Price','Price Source'),
-				array('productId','priceId','name','model_number','MRP','price','price_source'),
+				array('productId','Name','Model Number','MRP','Flipkart Price','','Amazon Price','' ,'Snapdeal Price',''),
+				array('productId','name','model_number','MRP','flipkart','flipkart_id','amazon','amazon_id','snapdeal','snapdeal_id'),
 				);
 
 			$priceSheet->fromArray($headers, ' ', 'A1');
 			$priceSheet->fromArray($categoryProductPrice, ' ', 'A3');
 			$priceSheet->getColumnDimension('A')->setVisible(false);
-			$priceSheet->getColumnDimension('B')->setVisible(false);
+			$priceSheet->getColumnDimension('F')->setVisible(false);
+			$priceSheet->getColumnDimension('H')->setVisible(false);
+			$priceSheet->getColumnDimension('J')->setVisible(false);
 
 			//Headr row height
 				$priceSheet->getRowDimension('1')->setRowHeight(20);
@@ -928,12 +930,15 @@ class ProductController extends Controller
 
 						$product = array(
 								'productId' => $parseProduct->getObjectId(), 
-								'priceId' => $onlinePrice['id'],
 								'name' => $parseProduct->get("name"),
 								'model_number' => $parseProduct->get("model_number"),
 								'mrp' => $parseProduct->get("mrp"),
-								'price' => $onlinePrice['value'],
-								'price_source' => $onlinePrice['source'],
+								'flipkart' => (isset($onlinePrice['flipkart']['value']))?$onlinePrice['flipkart']['value']:'',
+								'flipkart_id' => (isset($onlinePrice['flipkart']['id']))?$onlinePrice['flipkart']['id']:'',
+								'amazon' => (isset($onlinePrice['amazon']['value']))?$onlinePrice['amazon']['value']:'',
+								'amazon_id' => (isset($onlinePrice['amazon']['id']))?$onlinePrice['amazon']['id']:'',
+								'snapdeal' => (isset($onlinePrice['snapdeal']['value']))?$onlinePrice['snapdeal']['value']:'',
+								'snapdeal_id' => (isset($onlinePrice['snapdeal']['id']))?$onlinePrice['snapdeal']['id']:'',
 								);
 						$products[] = $product;
 			}  
@@ -960,17 +965,20 @@ class ProductController extends Controller
 			
 			$priceQuery->descending("createdAt");
 			$priceQuery->equalTo("type", $price_type);    
-			$priceQuery->descending("createdAt");    
+			//$priceQuery->descending("createdAt");    
+			//$priceResult = $priceQuery->first();
+			$priceResults= $priceQuery->find();
 
-			$priceResult = $priceQuery->first();
-
-
-			if (!empty($priceResult)) {
-			$price = array(
+			if (!empty($priceResults)) {
+				foreach ($priceResults as $priceResult) {
+					$source = $priceResult->get("source");
+					$price[$source] = array(
 								'id' => $priceResult->getObjectId(), 
 								'value' => $priceResult->get("value"), 
-								'source' => $priceResult->get("source"), 
+								'source' => $source, 
 								);
+				}
+			
 			}
 			else {
 							$price = array(
@@ -980,7 +988,7 @@ class ProductController extends Controller
 								);
 			}
 
-
+			
 			return $price;
 
 		}
@@ -1030,7 +1038,7 @@ class ProductController extends Controller
 				}
 
 			}
-
+			//dd($productPriceArr);
 			$this->parseProductPriceImport($productPriceArr);
 
 			return redirect("/admin/attribute/categoryconfiguration");
@@ -1042,36 +1050,61 @@ class ProductController extends Controller
 			$bulkPriceInstances = [];
 			
 			foreach ($productPriceArr as $product) {
-				
+			 
 				$productId = $product['productId'];
-				$priceValue = $product['price'];
-				$priceSource = $product['price_source'];
+				$flipkartPrice = $product['flipkart'];
+				$flipkartPriceId = $product['flipkart_id'];
+				$amazonPrice = $product['amazon'];
+				$amazonPriceId = $product['amazon_id'];
+				$snapdealPrice = $product['snapdeal'];
+				$snapdealPriceId = $product['snapdeal_id'];
 				
-				if(is_null($priceValue)|| is_null($productId) || is_null($priceSource)){
+				if(is_null($productId)){
 					continue;
 				}
 				else{
-					$priceInstance = new ParseObject("Price");
 
-					if (!is_null($product['priceId'])){
+					//FLIPKART
+					if (!is_null($flipkartPriceId)){
+							$query = new ParseQuery("Price");
+							
+							try {
+							  $existingPriceObj = $query->get($flipkartPriceId);
+							  // The object was retrieved successfully.
+							  $existingPriceObj->set('value', $flipkartPrice);
+							  $existingPriceObj->save();
 
+							} catch (ParseException $ex) {
+							  // The object was not retrieved successfully.
+							  // error is a ParseException with an error code and message.
+							  echo 'Failed to update object, with error message: ' . $ex->getMessage();
+							}
+
+					}
+					elseif($flipkartPrice!='')
+					{ 
+						$priceInstance = new ParseObject("Price");
+						$productPointer = array('__type' => 'Pointer', 'className' => 'ProductItem', 'objectId' => $productId);
+						$priceInstance->setAssociativeArray("product", $productPointer);
+
+						$priceInstance->set("value", $flipkartPrice);
+						$priceInstance->set("source", 'flipkart');
+						$priceInstance->set("type", "online_market_price");
+
+						$bulkPriceInstances[] = $priceInstance;
+						 
+					}
+
+					//AMAZON
+					if (!is_null($amazonPriceId)){
 						$query = new ParseQuery("Price");
 						
 						try {
-						  $existingPriceObj = $query->get($product['priceId']);
+						  $existingPriceObj = $query->get($amazonPriceId);
 						  // The object was retrieved successfully.
+						  $existingPriceObj->set('value', $amazonPrice);
+						  $existingPriceObj->save();
 
-						  if ($existingPriceObj->get('source') != $priceSource) {
-						  	$existingPriceObj->set('source', $priceSource);
-						  	$existingPriceObj->set('value', $priceValue);
-						  	$existingPriceObj->save();
-						  }
-						  else if($existingPriceObj->get('source') == $priceSource){
-						  	if ($existingPriceObj->get('value') != $priceValue) {
-						  		$existingPriceObj->set('value', $priceValue);
-						  		$existingPriceObj->save();
-						  	}
-						  }
 						} catch (ParseException $ex) {
 						  // The object was not retrieved successfully.
 						  // error is a ParseException with an error code and message.
@@ -1079,21 +1112,55 @@ class ProductController extends Controller
 						}
 
 					}
-
-					else{
+					elseif($amazonPrice!='')
+					{	
+						$priceInstance = new ParseObject("Price");
 						$productPointer = array('__type' => 'Pointer', 'className' => 'ProductItem', 'objectId' => $productId);
 						$priceInstance->setAssociativeArray("product", $productPointer);
 
-						$priceInstance->set("value", $priceValue);
-						$priceInstance->set("source", $priceSource);
+						$priceInstance->set("value", $amazonPrice);
+						$priceInstance->set("source", 'amazon');
 						$priceInstance->set("type", "online_market_price");
 
 						$bulkPriceInstances[] = $priceInstance;
+						 
 					}
 
+					//SNAPDEAL
+					if (!is_null($snapdealPriceId)){
+						$query = new ParseQuery("Price");
+						
+						try {
+						  $existingPriceObj = $query->get($snapdealPriceId);
+						  // The object was retrieved successfully.
+						  $existingPriceObj->set('value', $snapdealPrice);
+						  $existingPriceObj->save();
+
+						} catch (ParseException $ex) {
+						  // The object was not retrieved successfully.
+						  // error is a ParseException with an error code and message.
+						  echo 'Failed to update object, with error message: ' . $ex->getMessage();
+						}
+
+					}
+					elseif($snapdealPrice!='')
+					{	
+						$priceInstance = new ParseObject("Price");
+						$productPointer = array('__type' => 'Pointer', 'className' => 'ProductItem', 'objectId' => $productId);
+						$priceInstance->setAssociativeArray("product", $productPointer);
+
+						$priceInstance->set("value", $snapdealPrice);
+						$priceInstance->set("source", 'snapdeal');
+						$priceInstance->set("type", "online_market_price");
+
+						$bulkPriceInstances[] = $priceInstance;
+						 
+					}
 
 				}
 				
+          
+			}
 				try {
 					ParseObject::saveAll($bulkPriceInstances);
 				} catch (ParseException $ex) {  
@@ -1101,12 +1168,11 @@ class ProductController extends Controller
 				  // error is a ParseException object with an error code and message.
 					echo 'Failed to create new object, with error message: ' . $ex->getMessage();
 				}
-                    
-			}
-
 
 
 		}
+
+ 
 
 		public function stringSpaceToPlus($string){
 			return str_replace(" ", "+", $string);

@@ -98,13 +98,13 @@ class AttributeController extends Controller
 
 				//$excelFormat = new FormatPhpExcel();
 				$excel->getProperties()
-													 ->setCreator('Prajay Verenkar')
-													 ->setTitle('PHPExcel Attributes')
-													 ->setLastModifiedBy('Prajay Verenkar')
-													 ->setDescription('A demo to show how to use PHPExcel to manipulate an Excel file')
-													 ->setSubject('PHP Excel manipulation')
-													 ->setKeywords('excel php office phpexcel lakers')
-													 ->setCategory('programming');
+													 ->setCreator('Ajency')
+													 ->setTitle('Attributes')
+													 ->setLastModifiedBy('Ajency')
+													 ->setDescription('Brand ,Attributes, Attribute values List')
+													 ->setSubject('Attributes')
+													 ->setKeywords('Brand ,Attributes, Attribute values')
+													 ->setCategory('Attributes');
 				
 				/***
 				*
