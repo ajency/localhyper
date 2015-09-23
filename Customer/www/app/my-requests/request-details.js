@@ -24,6 +24,14 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           okType: 'button-assertive'
         });
       },
+      showInfo: function() {
+        return $ionicPopup.alert({
+          title: 'Info',
+          template: 'Delivery date gets calculate based on customer request accepted and your working days',
+          okText: 'Close',
+          okType: 'button-assertive'
+        });
+      },
       cancelRequest: {
         footer: false,
         set: function() {

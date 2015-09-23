@@ -29,6 +29,13 @@ angular.module 'LocalHyper.myRequests'
 					okText: 'Close'
 					okType: 'button-assertive'
 
+			showInfo : ()->
+				$ionicPopup.alert
+					title: 'Info'
+					template: 'Delivery date gets calculate based on customer request accepted and your working days'
+					okText: 'Close'
+					okType: 'button-assertive'
+
 			cancelRequest: 
 				footer: false
 				set : ->
