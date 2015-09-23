@@ -1,5 +1,5 @@
 angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
-  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform', '$ionicLoading', 'CDialog', 'DeliveryTime', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner, RequestsAPI, $ionicPlatform, $ionicLoading, CDialog, DeliveryTime) {
+  '$scope', 'App', 'OffersAPI', '$ionicModal', '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform', '$ionicLoading', 'CDialog', 'DeliveryTime', '$ionicPopup', function($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner, RequestsAPI, $ionicPlatform, $ionicLoading, CDialog, DeliveryTime, $ionicPopup) {
     var onDeviceBack;
     $scope.view = {
       display: 'loader',
@@ -341,6 +341,14 @@ angular.module('LocalHyper.requestsOffers').controller('MyOfferHistoryCtrl', [
               return this.reFetch();
             }
         }
+      },
+      showInfo: function() {
+        return $ionicPopup.alert({
+          title: 'Info',
+          template: 'Delivery date gets calculate based on customer request accepted and your working days',
+          okText: 'Close',
+          okType: 'button-assertive'
+        });
       }
     };
     onDeviceBack = function() {

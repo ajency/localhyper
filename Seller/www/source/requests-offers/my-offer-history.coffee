@@ -3,9 +3,9 @@ angular.module 'LocalHyper.requestsOffers'
 
 .controller 'MyOfferHistoryCtrl', ['$scope', 'App', 'OffersAPI', '$ionicModal'
 	, '$timeout', '$rootScope', 'CSpinner', 'RequestsAPI', '$ionicPlatform'
-	, '$ionicLoading', 'CDialog', 'DeliveryTime'
+	, '$ionicLoading', 'CDialog', 'DeliveryTime', '$ionicPopup'
 	, ($scope, App, OffersAPI, $ionicModal, $timeout, $rootScope, CSpinner
-	, RequestsAPI, $ionicPlatform, $ionicLoading, CDialog, DeliveryTime)->
+	, RequestsAPI, $ionicPlatform, $ionicLoading, CDialog, DeliveryTime, $ionicPopup)->
 
 		$scope.view = 
 			display: 'loader'
@@ -272,6 +272,13 @@ angular.module 'LocalHyper.requestsOffers'
 							@sortName = sortName
 							@descending = descending
 							@reFetch()
+
+			showInfo : ()->
+				$ionicPopup.alert
+					title: 'Info'
+					template: 'Delivery date gets calculate based on customer request accepted and your working days'
+					okText: 'Close'
+					okType: 'button-assertive'
 
 
 		onDeviceBack = ->
