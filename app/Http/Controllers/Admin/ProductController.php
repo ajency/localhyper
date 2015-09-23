@@ -832,7 +832,7 @@ class ProductController extends Controller
 
 		public function exportProductOnlinePrice( $catId ){
 
-			$categoryProductPrice = $this->getCategoryProductPrice($catId);
+			
 
 			$excel = new PHPExcel(); 
 			$excel->getProperties()
@@ -854,7 +854,23 @@ class ProductController extends Controller
 				array('productId','name','model_number','MRP','flipkart','flipkart_id','amazon','amazon_id','snapdeal','snapdeal_id'),
 				);
 
+
 			$priceSheet->fromArray($headers, ' ', 'A1');
+			$categoryProductPrice = [];
+
+			$page = 0; 
+			$limit = 20;
+				while (true) {
+				 		$productPrice = $this->getCategoryProductPrice($catId, $page, $limit);
+				 	
+				 	if(empty($productPrice))
+							break;
+
+					$categoryProductPrice = array_merge($categoryProductPrice,$productPrice);   
+
+				 	$page ++;
+				 }
+							
 			$priceSheet->fromArray($categoryProductPrice, ' ', 'A3');
 			$priceSheet->getColumnDimension('A')->setVisible(false);
 			$priceSheet->getColumnDimension('F')->setVisible(false);
@@ -903,7 +919,7 @@ class ProductController extends Controller
 
 
 
-		public function getCategoryProductPrice($categoryId){
+		public function getCategoryProductPrice($categoryId, $page, $displayLimit){
 			// query products table to get all product ids that have given category id 
 			// for each such product query the price class to get the latest price entry for that product 
 			//  return array of product details + price for each
@@ -917,7 +933,9 @@ class ProductController extends Controller
 			$productQuery->matchesQuery("category", $innerCategoryQuery);
 
 			// $productQuery->select("name" , "model_number" ) ;
-
+			# pagination
+			$productQuery->limit($displayLimit);
+			$productQuery->skip($page * $displayLimit);
 			$parseProducts = $productQuery->find();
 
 			$products = [];
