@@ -27,7 +27,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
       showInfo: function() {
         return $ionicPopup.alert({
           title: 'Info',
-          template: 'Delivery date gets calculate based on customer request accepted and your working days',
+          template: 'Delivery date gets calculate based on your request accepted time and seller working days',
           okText: 'Close',
           okType: 'button-assertive'
         });

@@ -32,7 +32,7 @@ angular.module 'LocalHyper.myRequests'
 			showInfo : ()->
 				$ionicPopup.alert
 					title: 'Info'
-					template: 'Delivery date gets calculate based on customer request accepted and your working days'
+					template: 'Delivery date gets calculate based on your request accepted time and seller working days'
 					okText: 'Close'
 					okType: 'button-assertive'
 
