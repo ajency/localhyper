@@ -2513,7 +2513,7 @@
     innerQueryProduct.equalTo("objectId", productId);
     queryPrice.matchesQuery("product", innerQueryProduct);
     queryPrice.equalTo("type", "online_market_price");
-    queryPrice.greaterThan("value", "0");
+    queryPrice.greaterThan("value", 0);
     queryPrice.ascending("value");
     queryPrice.first().then(function(onlinePriceObj) {
       var amazonUrl, flipkartUrl, snapdealUrl, srcUrl;

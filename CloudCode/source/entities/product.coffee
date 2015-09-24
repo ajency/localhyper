@@ -1032,7 +1032,7 @@ getMinPricesForProduct = (productObject) ->
 
     queryPrice.matchesQuery("product" , innerQueryProduct)
     queryPrice.equalTo("type" , "online_market_price")
-    queryPrice.greaterThan("value","0")
+    queryPrice.greaterThan("value",0)
     queryPrice.ascending("value")
 
     queryPrice.first()
@@ -1132,7 +1132,7 @@ Parse.Cloud.afterSave "Price", (request)->
     ProductClass = Parse.Object.extend("ProductItem")
     productItem = new ProductClass()
     productItem.id = productId
-   
+
     getMinPricesForProduct(productItem)
     .then (productPrice) ->
         onlinePriceId = productPrice["online"]['id'] 
