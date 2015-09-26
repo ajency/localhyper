@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
-  '$scope', 'App', 'GPS', 'CToast', 'CDialog', '$timeout', 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope', function($scope, App, GPS, CToast, CDialog, $timeout, GoogleMaps, UIMsg, CSpinner, User, ProductsAPI, $ionicPopup, $rootScope) {
+  '$scope', 'App', 'GPS', 'CToast', 'CDialog', '$timeout', 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope', '$q', '$ionicModal', function($scope, App, GPS, CToast, CDialog, $timeout, GoogleMaps, UIMsg, CSpinner, User, ProductsAPI, $ionicPopup, $rootScope, $q, $ionicModal) {
     $scope.view = {
       latLng: null,
       addressFetch: true,
@@ -12,45 +12,152 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       comments: {
         text: ''
       },
-      beforeInit: function() {
-        this.reset();
-        this.searchText = '';
-        this.comments.text = '';
-        this.address = null;
-        this.latLng = null;
-        return this.map.setZoom(5);
+      latitude: '',
+      longitude: '',
+      city: null,
+      userInfo: '',
+      user: {
+        full: ''
       },
-      init: function() {
-        if (_.isNull(this.latLng)) {
-          return $timeout((function(_this) {
-            return function() {
-              var loc;
-              loc = {
-                lat: GEO_DEFAULT.lat,
-                long: GEO_DEFAULT.lng
+      addressObj: '',
+      display: 'loader',
+      errorType: '',
+      locationSet: true,
+      location: {
+        modal: null,
+        map: null,
+        marker: null,
+        latLng: null,
+        address: null,
+        addressFetch: true,
+        loadModal: function() {
+          var defer;
+          defer = $q.defer();
+          if (_.isNull(this.modal)) {
+            $ionicModal.fromTemplateUrl('views/products/location.html', {
+              scope: $scope,
+              animation: 'slide-in-up',
+              hardwareBackButtonClose: false
+            }).then((function(_this) {
+              return function(modal) {
+                return defer.resolve(_this.modal = modal);
               };
-              _this.map.setCenter(_this.toLatLng(loc));
-              return _this.getCurrent();
+            })(this));
+          } else {
+            defer.resolve();
+          }
+          return defer.promise;
+        },
+        showAlert: function() {
+          var positiveBtn;
+          positiveBtn = App.isAndroid() ? 'Open Settings' : 'Ok';
+          return CDialog.confirm('Use location?', 'Please enable location settings', [positiveBtn, 'Cancel']).then(function(btnIndex) {
+            if (btnIndex === 1) {
+              return GPS.switchToLocationSettings();
+            }
+          });
+        },
+        onMapCreated: function(map) {
+          this.map = map;
+          return google.maps.event.addListener(this.map, 'click', (function(_this) {
+            return function(event) {
+              return _this.addMarker(event.latLng);
             };
-          })(this), 200);
-        } else {
-          return this.getCurrent();
+          })(this));
+        },
+        setMapCenter: function(loc) {
+          var latLng;
+          latLng = new google.maps.LatLng(loc.lat, loc.long);
+          this.map.setCenter(latLng);
+          return latLng;
+        },
+        getCurrent: function() {
+          return GPS.isLocationEnabled().then((function(_this) {
+            return function(enabled) {
+              if (!enabled) {
+                return _this.showAlert();
+              } else {
+                CToast.show('Getting current location');
+                return GPS.getCurrentLocation().then(function(loc) {
+                  var latLng;
+                  latLng = _this.setMapCenter(loc);
+                  _this.map.setZoom(15);
+                  return _this.addMarker(latLng);
+                }, function(error) {
+                  return CToast.show('Error locating your position');
+                });
+              }
+            };
+          })(this));
+        },
+        addMarker: function(latLng) {
+          this.latLng = latLng;
+          this.setAddress();
+          if (this.marker) {
+            this.marker.setMap(null);
+          }
+          this.marker = new google.maps.Marker({
+            position: latLng,
+            map: this.map,
+            draggable: true
+          });
+          this.marker.setMap(this.map);
+          return google.maps.event.addListener(this.marker, 'dragend', (function(_this) {
+            return function(event) {
+              _this.latLng = event.latLng;
+              return _this.setAddress();
+            };
+          })(this));
+        },
+        setAddress: function() {
+          this.addressFetch = false;
+          return GoogleMaps.getAddress(this.latLng).then((function(_this) {
+            return function(address) {
+              _this.address = address;
+              console.log('--107--');
+              return console.log(_this.address);
+            };
+          })(this), function(error) {
+            return console.log('Geocode error: ' + error);
+          })["finally"]((function(_this) {
+            return function() {
+              return _this.addressFetch = true;
+            };
+          })(this));
         }
       },
-      reset: function(clearPlace) {
-        if (clearPlace == null) {
-          clearPlace = true;
+      beforeInit: function() {},
+      init: function() {
+        var userInfo;
+        userInfo = User.getCurrent();
+        this.userInfo = userInfo.attributes;
+        if (_.isEmpty(this.userInfo.address)) {
+          console.log('if user is not register');
+          if (_.isNull(this.latLng)) {
+            return $timeout((function(_this) {
+              return function() {
+                var loc;
+                loc = {
+                  lat: GEO_DEFAULT.lat,
+                  long: GEO_DEFAULT.lng
+                };
+                return _this.getCurrent();
+              };
+            })(this), 200);
+          } else {
+            return this.getCurrent();
+          }
+        } else {
+          this.locationSet = true;
+          console.log('if user is register');
+          this.display = 'noError';
+          this.latitude = this.userInfo.addressGeoPoint._latitude;
+          this.longitude = this.userInfo.addressGeoPoint._longitude;
+          this.city = this.userInfo.address.city;
+          this.user.full = this.userInfo.address.full;
+          this.addressObj = this.userInfo.address;
+          return this.loadSeller();
         }
-        App.resize();
-        if (this.userMarker) {
-          this.userMarker.setMap(null);
-        }
-        if (this.placeMarker && clearPlace) {
-          this.placeMarker.setMap(null);
-        }
-        this.clearSellerMarkers();
-        this.sellers.found = false;
-        return this.sellers.displayCount = false;
       },
       toLatLng: function(loc) {
         var latLng;
@@ -58,166 +165,88 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         return latLng;
       },
       onMapCreated: function(map) {
-        this.map = map;
-        return google.maps.event.addListener(this.map, 'click', (function(_this) {
-          return function(event) {
-            return $scope.$apply(function() {
-              _this.searchText = '';
-              return _this.addPlaceMarker(event.latLng);
-            });
-          };
-        })(this));
-      },
-      onPlaceChange: function(latLng) {
-        this.latLng = latLng;
-        this.map.setCenter(latLng);
-        this.map.setZoom(15);
-        return this.addPlaceMarker(latLng);
+        return this.map = map;
       },
       getCurrent: function() {
         return GPS.isLocationEnabled().then((function(_this) {
           return function(enabled) {
             if (!enabled) {
-              return _this.showAlert();
+              _this.locationSet = false;
+              return _this.display = 'noError';
             } else {
               CToast.show('Getting current location');
               return GPS.getCurrentLocation().then(function(loc) {
                 var latLng;
+                console.log(loc);
                 latLng = _this.toLatLng(loc);
-                _this.searchText = '';
-                _this.map.setCenter(latLng);
-                _this.map.setZoom(15);
-                return _this.addUserLocationMarker(latLng);
+                _this.latLng = latLng;
+                _this.addressFetch = false;
+                return GoogleMaps.getAddress(_this.latLng).then(function(address) {
+                  console.log('--197---');
+                  console.log(address);
+                  _this.addressObj = address;
+                  _this.address = address;
+                  _this.address.full = GoogleMaps.fullAddress(address);
+                  console.log('full');
+                  console.log(_this.address.full);
+                  _this.addressFetch = true;
+                  _this.latitude = _this.latLng.H;
+                  _this.longitude = _this.latLng.L;
+                  _this.city = _this.address.city;
+                  _this.user.full = _this.address.full;
+                  return _this.loadSeller();
+                }, function(error) {
+                  this.locationSet = false;
+                  this.display = 'noError';
+                  return console.log('Geocode error: ' + error);
+                });
               }, function(error) {
+                _this.locationSet = false;
+                _this.display = 'noError';
                 return CToast.show('Error locating your position');
               });
             }
           };
         })(this));
       },
-      addUserLocationMarker: function(latLng) {
-        this.latLng = latLng;
-        this.reset();
-        this.setAddress();
-        this.userMarker = new google.maps.Marker({
-          position: latLng,
-          map: this.map,
-          icon: 'img/current-location.png'
-        });
-        return this.userMarker.setMap(this.map);
-      },
-      addPlaceMarker: function(latLng) {
-        this.latLng = latLng;
-        this.reset();
-        this.setAddress();
-        this.placeMarker = new google.maps.Marker({
-          position: latLng,
-          map: this.map,
-          draggable: true
-        });
-        this.placeMarker.setMap(this.map);
-        return google.maps.event.addListener(this.placeMarker, 'dragend', (function(_this) {
-          return function(event) {
-            return $scope.$apply(function() {
-              _this.latLng = event.latLng;
-              _this.reset(false);
-              _this.searchText = '';
-              return _this.setAddress();
-            });
-          };
-        })(this));
-      },
-      showAlert: function() {
-        var positiveBtn;
-        positiveBtn = App.isAndroid() ? 'Open Settings' : 'Ok';
-        return CDialog.confirm('Use location?', 'Please enable location settings', [positiveBtn, 'Cancel']).then(function(btnIndex) {
-          if (btnIndex === 1) {
-            return GPS.switchToLocationSettings();
-          }
-        });
-      },
-      setAddress: function() {
-        this.addressFetch = false;
-        return GoogleMaps.getAddress(this.latLng).then((function(_this) {
-          return function(address) {
-            _this.address = address;
-            _this.address.full = GoogleMaps.fullAddress(address);
-            return _this.addressFetch = true;
-          };
-        })(this), function(error) {
-          return console.log('Geocode error: ' + error);
-        });
-      },
       isLocationReady: function() {
         var ready;
-        ready = !_.isNull(this.latLng) && this.addressFetch ? true : false;
-        if (!ready) {
-          GPS.isLocationEnabled().then((function(_this) {
-            return function(enabled) {
-              if (enabled) {
-                return CToast.show('Please wait, getting location details...');
-              } else {
-                return CToast.show('Please search for location');
-              }
-            };
-          })(this));
-        }
+        ready = this.latitude !== '' && this.longitude !== '' ? true : false;
         return ready;
       },
-      addSellerMarkers: function(sellers) {
-        this.sellers.count = _.size(sellers);
-        this.sellers.displayCount = true;
-        this.sellers.found = true;
-        return _.each(sellers, (function(_this) {
-          return function(seller) {
-            var geoPoint, loc;
-            geoPoint = seller.sellerGeoPoint;
-            loc = {
-              lat: geoPoint.latitude,
-              long: geoPoint.longitude
-            };
-            return _this.sellerMarkers.push(new google.maps.Marker({
-              position: _this.toLatLng(loc),
-              map: _this.map,
-              icon: 'img/shop.png'
-            }));
+      loadSeller: function() {
+        var params, product, sellers;
+        sellers = [];
+        console.log(this.userInfo);
+        console.log(this.latitude);
+        console.log(this.longitude);
+        CSpinner.show('', 'Please wait as we find sellers for your location');
+        product = ProductsAPI.productDetails('get');
+        params = {
+          "location": {
+            latitude: this.latitude,
+            longitude: this.longitude
+          },
+          "categoryId": product.category.id,
+          "brandId": product.brand.id,
+          "city": this.city,
+          "area": this.city
+        };
+        return ProductsAPI.findSellers(params).then((function(_this) {
+          return function(sellers) {
+            console.log(sellers);
+            _this.sellers.count = sellers.length;
+            return _this.display = 'noError';
           };
-        })(this));
-      },
-      clearSellerMarkers: function() {
-        return _.each(this.sellerMarkers, function(marker) {
-          return marker.setMap(null);
+        })(this), (function(_this) {
+          return function(error) {
+            CToast.show('Request failed, please try again');
+            return _this.display = 'error';
+          };
+        })(this))["finally"](function() {
+          App.resize();
+          return CSpinner.hide();
         });
-      },
-      findSellers: function() {
-        var params, product;
-        if (this.isLocationReady()) {
-          this.sellers.displayCount = false;
-          this.clearSellerMarkers();
-          CSpinner.show('', 'Please wait as we find sellers for your location');
-          product = ProductsAPI.productDetails('get');
-          params = {
-            "location": {
-              latitude: this.latLng.lat(),
-              longitude: this.latLng.lng()
-            },
-            "categoryId": product.category.id,
-            "brandId": product.brand.id,
-            "city": this.address.city,
-            "area": this.address.city
-          };
-          return ProductsAPI.findSellers(params).then((function(_this) {
-            return function(sellers) {
-              _this.addSellerMarkers(sellers);
-              return App.scrollTop();
-            };
-          })(this), function(error) {
-            return CToast.show('Request failed, please try again');
-          })["finally"](function() {
-            App.resize();
-            return CSpinner.hide();
-          });
-        }
       },
       addComments: function() {
         this.comments.temp = this.comments.text;
@@ -242,50 +271,132 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       },
       makeRequest: function() {
         var params, product;
-        if (this.isLocationReady()) {
-          if (!App.isOnline()) {
-            return CToast.show(UIMsg.noInternet);
-          } else {
-            product = ProductsAPI.productDetails('get');
-            CSpinner.show('', 'Please wait...');
-            params = {
-              "customerId": User.getId(),
-              "productId": product.id,
-              "categoryId": product.category.id,
-              "brandId": product.brand.id,
-              "comments": this.comments.text,
-              "status": "open",
-              "deliveryStatus": "",
-              "location": {
-                latitude: this.latLng.lat(),
-                longitude: this.latLng.lng()
-              },
-              "address": this.address,
-              "city": this.address.city,
-              "area": this.address.city
+        console.log('make request button');
+        console.log(this.addressObj);
+        if (!this.isLocationReady()) {
+          return CToast.show('Please select your location');
+        } else {
+          product = ProductsAPI.productDetails('get');
+          CSpinner.show('', 'Please wait...');
+          params = {
+            "customerId": User.getId(),
+            "productId": product.id,
+            "categoryId": product.category.id,
+            "brandId": product.brand.id,
+            "comments": this.comments.text,
+            "status": "open",
+            "deliveryStatus": "",
+            "location": {
+              latitude: this.latitude,
+              longitude: this.longitude
+            },
+            "address": this.addressObj,
+            "city": this.city,
+            "area": this.city
+          };
+          console.log(params);
+          console.log('update');
+          return User.update({
+            "address": params.address,
+            "addressGeoPoint": new Parse.GeoPoint(params.location),
+            "area": params.area,
+            "city": params.city
+          }).then(function() {
+            return ProductsAPI.makeRequest(params);
+          }).then((function(_this) {
+            return function() {
+              CToast.show('Your request has been made');
+              $rootScope.$broadcast('make:request:success');
+              return $timeout(function() {
+                return App.goBack(-1);
+              }, 500);
             };
-            return User.update({
-              "address": params.address,
-              "addressGeoPoint": new Parse.GeoPoint(params.location),
-              "area": params.area,
-              "city": params.city
-            }).then(function() {
-              return ProductsAPI.makeRequest(params);
-            }).then((function(_this) {
-              return function() {
-                CToast.show('Your request has been made');
-                $rootScope.$broadcast('make:request:success');
-                return $timeout(function() {
-                  return App.goBack(-1);
-                }, 500);
-              };
-            })(this), function(error) {
-              return CToast.show('Request failed, please try again');
-            })["finally"](function() {
-              return CSpinner.hide();
-            });
-          }
+          })(this), function(error) {
+            return CToast.show('Request failed, please try again');
+          })["finally"](function() {
+            return CSpinner.hide();
+          });
         }
+      },
+      isGoogleMapsScriptLoaded: function() {
+        var defer;
+        defer = $q.defer();
+        if (typeof google === 'undefined') {
+          CSpinner.show('', 'Please wait, loading resources...');
+          GoogleMaps.loadScript().then((function(_this) {
+            return function() {
+              return _this.location.loadModal();
+            };
+          })(this)).then(function() {
+            return defer.resolve(true);
+          }, function(error) {
+            CToast.show('Could not connect to server. Please try again');
+            return defer.resolve(false);
+          })["finally"](function() {
+            return CSpinner.hide();
+          });
+        } else {
+          this.location.loadModal().then(function() {
+            return defer.resolve(true);
+          });
+        }
+        return defer.promise;
+      },
+      onChangeLocation: function() {
+        return this.isGoogleMapsScriptLoaded().then((function(_this) {
+          return function(loaded) {
+            if (loaded) {
+              _this.location.modal.show();
+              return $timeout(function() {
+                var children, container, latLng, loc, mapHeight;
+                container = $('.map-content').height();
+                children = $('.address-inputs').height() + $('.tap-div').height();
+                mapHeight = container - children - 20;
+                $('.aj-big-map').css({
+                  'height': mapHeight
+                });
+                if (_this.latitude !== '') {
+                  loc = {
+                    lat: _this.latitude,
+                    long: _this.longitude
+                  };
+                  latLng = _this.location.setMapCenter(loc);
+                  _this.location.map.setZoom(15);
+                  return _this.location.addMarker(latLng);
+                } else {
+                  loc = {
+                    lat: GEO_DEFAULT.lat,
+                    long: GEO_DEFAULT.lng
+                  };
+                  _this.location.setMapCenter(loc);
+                  return _this.location.getCurrent();
+                }
+              }, 300);
+            }
+          };
+        })(this));
+      },
+      onConfirmLocation: function() {
+        var k;
+        if (!_.isNull(this.location.latLng) && this.location.addressFetch) {
+          k = GoogleMaps.fullAddress(this.location.address);
+          this.address = k;
+          console.log(this.address);
+          this.addressObj = this.location.address;
+          this.user.full = GoogleMaps.fullAddress(this.location.address);
+          this.confirmedAddress = this.location.address.full;
+          this.latitude = this.location.latLng.lat();
+          this.longitude = this.location.latLng.lng();
+          this.city = this.location.address.city;
+          this.loadSeller();
+          this.location.modal.hide();
+          return this.locationSet = true;
+        } else {
+          return CToast.show('Please wait, getting location details...');
+        }
+      },
+      onTapToRetry: function() {
+        return this.init();
       }
     };
     $scope.$on('$ionicView.beforeEnter', function() {

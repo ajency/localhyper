@@ -4,178 +4,95 @@
 		Make Request
 	</ion-nav-title>
 
-	<div class="bar bar-subheader item-input-inset get-price-head">
-		<i
-			class="icon ion-android-locate placeholder-icon icon-input"
-			ng-click="view.getCurrent();">
-		</i>
 
-		<label class="item-input-wrapper">
-			<input
-				id="locationSearch"
-				type="text"
-				placeholder="Search for location"
-				data-tap-disabled="true"
-				google-map-search
-				on-place-change="view.onPlaceChange(location);"
-				ng-model="view.searchText">
-		</label>
+	<ion-content ng-switch="view.display" class="my-requests-glob">
 
-		<button
-			class="button button-clear"
-			ng-click="view.searchText = ''">
-			<i class="icon ion-android-close"></i>
-		</button>
-	</div>
+			<ion-spinner
+				class="aj-spinner"
+				ng-switch-when="loader">
+			</ion-spinner>
 
-    <ion-content class="has-subheader map-content">
+			<ion-list ng-switch-when="noError">
+				<div class="card m-red">
 
-    	<google-map
-			class="aj-very-big-map"
-			style="margin: 0 10px; margin-top: 18px;"
-			on-create="view.onMapCreated(map);">
-		</google-map>
+					<div class="the-loation" ng-if="view.user.full==='';">
+						<div class="row">
+							<div class="col-75">
+								<i class="icon ion-location ico-loc"></i>
+								<button
+									class="button button-outline button-assertive"
+									ng-click="view.onChangeLocation()">
+									<i class="icon ion-plus-round"></i> Add  Address
+								</button>
+							</div>
+							<div class="col col-25">
 
-		<!-- <br> -->
+							</div>
+						</div>
+					</div>
 
-		<div ng-if="view.sellers.displayCount" class="count-sellers">
-			<h4 ng-show="view.sellers.count == 0;">
-				Since there are no sellers who serve your area, the number of offers received might be less or take longer.
-			</h4>
-
-			<h4 ng-hide="view.sellers.count == 0;">
-				Found {{view.sellers.count}} sellers in your area
-			</h4>
-		</div>
-
-		<div class="row row-fluid">
-			<div class="col p-b-0">
-				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
-					<i class="icon ion-ios-location"></i>
-					Delivery Details
-				</h5>
-			</div>
-		</div>
-
-		<div class="address-inputs">
-
-			<div class="row p-b-0 p-t-0">
-				<div class="col p-b-0">
-					<label class="item item-input">
-						<input
-							type="text"
-							placeholder="Address Line 1"
-							ng-model="view.address.address_line1">
-					</label>
+					<div class="the-loation" ng-if="view.user.full!=='';">
+						<div class="row">
+							<div class="col-75">
+								<i class="icon ion-location ico-loc"></i>
+								<p>{{view.user.full}}</p>
+							</div>
+							<div class="col col-25">
+								<button
+									class="button button-outline button-assertive"
+									ng-click="view.onChangeLocation()">
+									Change
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
-			</div>
+				
+				<h4 ng-if="view.locationSet ===  true && view.sellers.count > 0">
+						Found {{view.sellers.count}} sellers in your area .
+				</h4>
 
-			<div class="row p-b-0">
-				<div class="col p-b-0">
-					<label class="item item-input">
-						<input
-							type="text"
-							placeholder="Address Line 2"
-							ng-model="view.address.address_line2">
-					</label>
+				<h4 ng-if="view.locationSet === true && view.sellers.count === 0">
+						Since there are no seller in your area , the number of offere received may be less or take little longer.
+				</h4>
+				
+
+				<h4 ng-if="view.locationSet !== true ">
+						Could not find your location please Add your location
+				</h4>
+
+				<div class="card m-red">
+					<div class="item item-text-wrap">
+						Seller will send their offer price once you make request.
+					</div>
+					
+					<div class="item item-text-wrap">
+						Your address is taken so that seller can send their delivery duration
+					</div>	
+					
+					<div class="item item-text-wrap">
+						The request will expire if no offer is acceoted in 24 hrs
+					</div>	
+					
+					<div class="item item-text-wrap">
+							You can make new request once the request expires
+					</div>
 				</div>
-			</div>
+				
+			</ion-list>
+			
+			<aj-error class="errors"
+				ng-switch-when="error"
+				error-type="view.errorType"
+				tap-to-retry="view.onTapToRetry();">
+			</aj-error>
 
-			<div class="row p-b-0">
-				<div class="col">
-					<label class="item item-input">
-						<input
-							type="text"
-							placeholder="Address Line 3"
-							ng-model="view.address.address_line3">
-					</label>
-				</div>
-			</div>
-
-			<div class="row p-b-0">
-				<div class="col p-b-0 p-r-0">
-					<label class="item item-input no-input">
-						City: {{view.address.city}}
-					</label>
-				</div>
-				<div class="col p-b-0 p-l-0">
-					<label class="item item-input no-input">
-						Pincode: {{view.address.postal_code}}
-					</label>
-				</div>
-			</div>
-
-			<div class="row p-b-0">
-				<div class="col p-r-0">
-					<label class="item item-input no-input">
-						State: {{view.address.state}}
-					</label>
-				</div>
-				<div class="col p-l-0">
-					<label class="item item-input no-input">
-						Country: {{view.address.country}}
-					</label>
-				</div>
-			</div>
-		</div>
-
-		<!-- <br> -->
-
-		<div class="row row-fluid">
-			<div class="col p-b-0">
-				<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
-					<i class="icon ion-chatbox-working"></i>
-					Add comments
-				</h5>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="col co l-80">
-				<div class="list popup-comments">
-					<i
-						class="icon ion-chatbox-working"
-						ng-click="view.addComments();">
-					</i>
-					<label class="item item-input item-stacked-label">
-						<input
-							class="comment"
-							readonly
-							type="text"
-							placeholder="Enter comments if any"
-							ng-model="view.comments.text">
-
-						<!-- <span class="icon"> -->
-
-						<!-- </span> -->
-					</label>
-				</div>
-			</div>
-			<!-- <div class="col col-20">
-
-			</div> -->
-		</div>
-
-		<!-- <br> -->
-		<div class="row">
-			<div class="col p-t-0">
-				<h5 class="fin text-center" style="margin-top: 10px;"><b>Note:</b> Please enter the correct delivery address</h5>
-			</div>
-		</div>
-
-    </ion-content>
+	</ion-content>
+	
 
 	<ion-footer-bar class="bar-assertive">
 		<button
 			class="title button-block button-clear"
-			ng-if="!view.sellers.found"
-			ng-click="view.findSellers();">
-			Find sellers
-		</button>
-
-		<button
-			class="title button-block button-clear"
-			ng-if="view.sellers.found"
 			ng-click="view.makeRequest();">
 			Make request
 		</button>

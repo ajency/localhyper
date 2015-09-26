@@ -2,9 +2,9 @@ angular.module 'LocalHyper.products'
 
 
 .controller 'MakeRequestCtrl', ['$scope', 'App', 'GPS', 'CToast', 'CDialog', '$timeout'
-	, 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope'
+	, 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope', '$q', '$ionicModal'
 	, ($scope, App, GPS, CToast, CDialog, $timeout, GoogleMaps, UIMsg, CSpinner
-	, User, ProductsAPI, $ionicPopup, $rootScope)->
+	, User, ProductsAPI, $ionicPopup, $rootScope, $q, $ionicModal)->
 
 		$scope.view =
 			latLng: null
@@ -18,162 +18,206 @@ angular.module 'LocalHyper.products'
 
 			comments: text: ''
 
-			
-			beforeInit : ->
-				@reset()
-				@searchText = ''
-				@comments.text = ''
-				@address = null
-				@latLng = null
-				@map.setZoom 5
+			latitude : ''
+			longitude: ''
+			city : null
 
+			userInfo: ''
+
+			user :
+				full : ''
+
+			addressObj : ''
+
+			display: 'loader'
+			errorType: ''
+			locationSet: true
+
+			location:
+				modal: null
+				map: null
+				marker: null
+				latLng: null
+				address: null
+				addressFetch: true
+
+				loadModal : ->
+					defer = $q.defer()
+					if _.isNull @modal
+						$ionicModal.fromTemplateUrl 'views/products/location.html', 
+							scope: $scope,
+							animation: 'slide-in-up'
+							hardwareBackButtonClose: false
+						.then (modal)=> 
+							defer.resolve @modal = modal
+					else defer.resolve()
+					defer.promise
+
+				showAlert : ->
+					positiveBtn = if App.isAndroid() then 'Open Settings' else 'Ok'
+					CDialog.confirm 'Use location?', 'Please enable location settings', [positiveBtn, 'Cancel']
+					.then (btnIndex)->
+						if btnIndex is 1
+							GPS.switchToLocationSettings()
+
+				onMapCreated : (map)->
+					@map = map
+					google.maps.event.addListener @map, 'click', (event)=>
+						@addMarker event.latLng
+
+				setMapCenter : (loc)->
+					latLng = new google.maps.LatLng loc.lat, loc.long
+					@map.setCenter latLng
+					latLng
+
+				getCurrent : ->
+					GPS.isLocationEnabled()
+					.then (enabled)=>
+						if !enabled
+							@showAlert()
+						else
+							CToast.show 'Getting current location'
+							GPS.getCurrentLocation()
+							.then (loc)=>
+								latLng = @setMapCenter loc
+								@map.setZoom 15
+								@addMarker latLng
+							, (error)->
+								CToast.show 'Error locating your position'
+
+				addMarker : (latLng)->
+					@latLng = latLng
+					@setAddress()
+					@marker.setMap null if @marker
+					@marker = new google.maps.Marker
+						position: latLng
+						map: @map
+						draggable: true
+
+					@marker.setMap @map
+					google.maps.event.addListener @marker, 'dragend', (event)=>
+						@latLng = event.latLng
+						@setAddress()
+
+				setAddress : ->
+					@addressFetch = false
+					GoogleMaps.getAddress @latLng
+					.then (address)=>
+						@address = address
+						console.log '--107--'
+						console.log @address
+					, (error)->
+						console.log 'Geocode error: '+error
+					.finally =>
+						@addressFetch = true
+
+			beforeInit : ->
+				
 
 			init : ->
-				if _.isNull @latLng
-					$timeout =>
-						loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
-						@map.setCenter @toLatLng(loc)
+
+				userInfo = User.getCurrent()
+				@userInfo = userInfo.attributes
+				if  _.isEmpty(@userInfo.address)
+					console.log 'if user is not register'
+					if _.isNull @latLng
+						$timeout =>
+							loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
+							# @map.setCenter @toLatLng(loc)
+							@getCurrent()
+						, 200
+					else
 						@getCurrent()
-					, 200
 				else
-					@getCurrent()
+					@locationSet = true
+					console.log 'if user is register'
+					@display = 'noError'
+					@latitude = @userInfo.addressGeoPoint._latitude
+					@longitude = @userInfo.addressGeoPoint._longitude
+					@city = @userInfo.address.city
+					@user.full = @userInfo.address.full
+					@addressObj = @userInfo.address
+					@loadSeller()
 
-			reset : (clearPlace = true)->
-				App.resize()
-				@userMarker.setMap null if @userMarker
-				@placeMarker.setMap null if @placeMarker and clearPlace
-				@clearSellerMarkers()
-				@sellers.found = false
-				@sellers.displayCount = false
-
+		
 			toLatLng : (loc)->
 				latLng = new google.maps.LatLng loc.lat, loc.long
 				latLng
 
 			onMapCreated : (map)->
 				@map = map
-				google.maps.event.addListener @map, 'click', (event)=>
-					$scope.$apply =>
-						@searchText = ''
-						@addPlaceMarker event.latLng
-
-			onPlaceChange : (latLng)->
-				@latLng = latLng
-				@map.setCenter latLng
-				@map.setZoom 15
-				@addPlaceMarker latLng
-
+				
 			getCurrent : ->
 				GPS.isLocationEnabled()
 				.then (enabled)=>
-					if !enabled then @showAlert()
+					if !enabled 
+						@locationSet = false
+						@display = 'noError'
 					else
 						CToast.show 'Getting current location'
 						GPS.getCurrentLocation()
 						.then (loc)=>
+							console.log loc
 							latLng = @toLatLng(loc)
-							@searchText = ''
-							@map.setCenter latLng
-							@map.setZoom 15
-							@addUserLocationMarker latLng
-						, (error)->
+							@latLng = latLng
+
+							@addressFetch = false
+							GoogleMaps.getAddress @latLng
+							.then (address)=>
+								console.log '--197---'
+								console.log address
+								@addressObj = address
+								@address = address
+								@address.full = GoogleMaps.fullAddress(address)
+								console.log 'full'
+								console.log @address.full
+								@addressFetch = true
+
+								@latitude = @latLng.H
+								@longitude = @latLng.L
+								@city = @address.city
+								@user.full = @address.full
+								@loadSeller()
+							, (error)->
+								@locationSet = false
+								@display = 'noError'
+								console.log 'Geocode error: '+error
+						, (error)=>
+							@locationSet = false
+							@display = 'noError'
 							CToast.show 'Error locating your position'
 
-			addUserLocationMarker : (latLng)->
-				@latLng = latLng
-				@reset()
-				@setAddress()
-				@userMarker = new google.maps.Marker
-					position: latLng
-					map: @map
-					icon: 'img/current-location.png'
-
-				@userMarker.setMap @map
-
-			addPlaceMarker : (latLng)->
-				@latLng = latLng
-				@reset()
-				@setAddress()
-				@placeMarker = new google.maps.Marker
-					position: latLng
-					map: @map
-					draggable: true
-
-				@placeMarker.setMap @map
-				google.maps.event.addListener @placeMarker, 'dragend', (event)=>
-					$scope.$apply =>
-						@latLng = event.latLng
-						@reset false
-						@searchText = ''
-						@setAddress()
-
-			showAlert : ->
-				positiveBtn = if App.isAndroid() then 'Open Settings' else 'Ok'
-				CDialog.confirm 'Use location?', 'Please enable location settings', [positiveBtn, 'Cancel']
-				.then (btnIndex)->
-					if btnIndex is 1 then GPS.switchToLocationSettings()
-
-			setAddress : ->
-				@addressFetch = false
-				GoogleMaps.getAddress @latLng
-				.then (address)=>
-					@address = address
-					@address.full = GoogleMaps.fullAddress(address)
-					@addressFetch = true
-				, (error)->
-					console.log 'Geocode error: '+error
-				# .finally =>
-				# 	@addressFetch = true
-
 			isLocationReady : ->
-				ready = if (!_.isNull(@latLng) and @addressFetch) then true else false
-				if !ready
-					GPS.isLocationEnabled()
-					.then (enabled)=>
-						if enabled then CToast.show 'Please wait, getting location details...'
-						else CToast.show 'Please search for location'
-					
+				ready = if (@latitude != '' and @longitude != '') then true else false
 				ready
 
-			addSellerMarkers : (sellers)->
-				@sellers.count = _.size sellers
-				@sellers.displayCount = true
-				@sellers.found = true #if @sellers.count > 0 then true else false
+			loadSeller : ->
+				sellers = []
+				console.log @userInfo
+				console.log @latitude
+				console.log @longitude
+				CSpinner.show '', 'Please wait as we find sellers for your location'
+				product = ProductsAPI.productDetails 'get'
+				params = 
+					"location": 
+						latitude: @latitude
+						longitude: @longitude
+					"categoryId": product.category.id
+					"brandId": product.brand.id 
+					"city":  @city
+					"area":  @city
+				ProductsAPI.findSellers params
+				.then (sellers)=>
+					console.log sellers
+					@sellers.count = sellers.length
+					@display = 'noError'
+				, (error)=>
+					CToast.show 'Request failed, please try again'
+					@display = 'error'
+				.finally ->
+					App.resize()
+					CSpinner.hide()
 
-				_.each sellers, (seller)=>
-					geoPoint = seller.sellerGeoPoint
-					loc = lat: geoPoint.latitude, long: geoPoint.longitude
-					@sellerMarkers.push new google.maps.Marker
-						position: @toLatLng loc
-						map: @map
-						icon: 'img/shop.png'
-
-			clearSellerMarkers : ->
-				_.each @sellerMarkers, (marker)-> marker.setMap null
-
-			findSellers : ->
-				if @isLocationReady()
-					@sellers.displayCount = false
-					@clearSellerMarkers()
-					CSpinner.show '', 'Please wait as we find sellers for your location'
-					product = ProductsAPI.productDetails 'get'
-					params = 
-						"location": 
-							latitude: @latLng.lat()
-							longitude: @latLng.lng()
-						"categoryId": product.category.id
-						"brandId": product.brand.id 
-						"city": @address.city
-						"area": @address.city
-					ProductsAPI.findSellers params
-					.then (sellers)=>
-						@addSellerMarkers sellers
-						App.scrollTop()
-					, (error)->
-						CToast.show 'Request failed, please try again'
-					.finally ->
-						App.resize()
-						CSpinner.hide()
 
 			addComments : ->
 				@comments.temp = @comments.text
@@ -197,44 +241,108 @@ angular.module 'LocalHyper.products'
 						}]
 
 			makeRequest : ->
-				if @isLocationReady()
-					if !App.isOnline()
-						CToast.show UIMsg.noInternet
-					else
-						product = ProductsAPI.productDetails 'get'
-						CSpinner.show '', 'Please wait...'
-						params =  
-							"customerId": User.getId()
-							"productId": product.id
-							"categoryId": product.category.id
-							"brandId": product.brand.id
-							"comments": @comments.text
-							"status": "open"
-							"deliveryStatus": ""
-							"location": 
-								latitude: @latLng.lat()
-								longitude: @latLng.lng()
-							"address": @address
-							"city": @address.city
-							"area": @address.city
+				console.log 'make request button'
+				console.log @addressObj
+				if !@isLocationReady()
+					CToast.show 'Please select your location'
+				else
+					product = ProductsAPI.productDetails 'get'
+					CSpinner.show '', 'Please wait...'
+					params =  
+						"customerId": User.getId()
+						"productId": product.id
+						"categoryId": product.category.id
+						"brandId": product.brand.id
+						"comments": @comments.text
+						"status": "open"
+						"deliveryStatus": ""
+						"location": 
+							latitude: @latitude
+							longitude: @longitude
+						"address": @addressObj
+						"city": @city
+						"area": @city
 
-						User.update 
-							"address": params.address
-							"addressGeoPoint": new Parse.GeoPoint params.location
-							"area": params.area
-							"city": params.city
-						.then ->
-							ProductsAPI.makeRequest params
-						.then =>
-							CToast.show 'Your request has been made'
-							$rootScope.$broadcast 'make:request:success'
-							$timeout =>
-								App.goBack -1
-							, 500
-						, (error)->
-							CToast.show 'Request failed, please try again'
-						.finally ->
-							CSpinner.hide()
+					console.log params
+					console.log 'update'
+
+					User.update 
+						"address": params.address
+						"addressGeoPoint": new Parse.GeoPoint params.location
+						"area": params.area
+						"city": params.city
+					.then ->
+						ProductsAPI.makeRequest params
+					.then =>
+						CToast.show 'Your request has been made'
+						$rootScope.$broadcast 'make:request:success'
+						$timeout =>
+							App.goBack -1
+						, 500
+					, (error)->
+						CToast.show 'Request failed, please try again'
+					.finally ->
+						CSpinner.hide()
+
+			isGoogleMapsScriptLoaded : ->
+				defer = $q.defer()
+				if typeof google is 'undefined'
+					CSpinner.show '', 'Please wait, loading resources...'
+					GoogleMaps.loadScript()
+					.then =>
+						@location.loadModal()
+					.then ->
+						defer.resolve true
+					, (error)->
+						CToast.show 'Could not connect to server. Please try again'
+						defer.resolve false
+					.finally ->
+						CSpinner.hide()
+				else
+					@location.loadModal().then ->
+						defer.resolve true
+				defer.promise
+
+			onChangeLocation : ->
+				@isGoogleMapsScriptLoaded().then (loaded)=>
+					if loaded
+						@location.modal.show()
+						$timeout =>
+							container = $('.map-content').height()
+							children  = $('.address-inputs').height() + $('.tap-div').height()
+							mapHeight = container - children - 20
+							$('.aj-big-map').css 'height': mapHeight
+							
+							if @latitude != ''
+								loc = lat: @latitude, long: @longitude
+								latLng = @location.setMapCenter loc
+								@location.map.setZoom 15
+								@location.addMarker latLng
+							else 
+								loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
+								@location.setMapCenter loc
+								@location.getCurrent()
+						, 300
+
+			onConfirmLocation : ->
+				if !_.isNull(@location.latLng) and @location.addressFetch
+					k = GoogleMaps.fullAddress(@location.address) 
+					@address = k
+					console.log @address
+					@addressObj = @location.address
+					@user.full = GoogleMaps.fullAddress(@location.address)
+					@confirmedAddress = @location.address.full
+					@latitude = @location.latLng.lat()
+					@longitude = @location.latLng.lng()
+					@city = @location.address.city
+					@loadSeller()
+					@location.modal.hide()
+					@locationSet = true
+				else
+					CToast.show 'Please wait, getting location details...'
+
+			onTapToRetry : ->
+				@init()
 
 		
 		$scope.$on '$ionicView.beforeEnter', ->
