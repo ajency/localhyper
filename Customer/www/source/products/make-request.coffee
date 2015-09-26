@@ -112,6 +112,9 @@ angular.module 'LocalHyper.products'
 						@addressFetch = true
 
 			beforeInit : ->
+				@user.full = ''
+				@latitude = ''
+				@longitude = ''
 				
 
 			init : ->
@@ -319,6 +322,8 @@ angular.module 'LocalHyper.products'
 								@location.map.setZoom 15
 								@location.addMarker latLng
 							else 
+								@location.marker.setMap null if @location.marker
+								@location.map.setZoom 5
 								loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
 								@location.setMapCenter loc
 								@location.getCurrent()

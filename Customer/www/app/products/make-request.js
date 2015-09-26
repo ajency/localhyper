@@ -126,7 +126,11 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
           })(this));
         }
       },
-      beforeInit: function() {},
+      beforeInit: function() {
+        this.user.full = '';
+        this.latitude = '';
+        return this.longitude = '';
+      },
       init: function() {
         var userInfo;
         userInfo = User.getCurrent();
@@ -364,6 +368,10 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
                   _this.location.map.setZoom(15);
                   return _this.location.addMarker(latLng);
                 } else {
+                  if (_this.location.marker) {
+                    _this.location.marker.setMap(null);
+                  }
+                  _this.location.map.setZoom(5);
                   loc = {
                     lat: GEO_DEFAULT.lat,
                     long: GEO_DEFAULT.lng
