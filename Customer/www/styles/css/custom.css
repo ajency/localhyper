@@ -571,6 +571,63 @@ button.button.button-assertive b {
 .model-view .has-header {
   background: #ffffff;
 }
+.the-loation {
+  background-image: url(../../img/mapbg.jpg);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  min-height: 55px;
+}
+.the-loation .ico-loc.icon {
+  font-size: 22px;
+  color: #f45152;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  width: 35px;
+  height: 36px;
+  line-height: 35px;
+  text-align: center;
+  border: 1px solid #f45152;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+}
+.the-loation h4 {
+  padding-left: 52px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.the-loation p {
+  padding-right: 5px;
+  padding-left: 52px;
+  text-align: left;
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 20px;
+}
+.the-loation .button {
+  bottom: 10px;
+  right: 10px;
+  line-height: 32px;
+  font-size: 14px;
+  min-height: 0;
+  position: absolute;
+}
+.the-loation .button .icon {
+  margin-right: 5px;
+}
+.the-loation .button .icon:before {
+  font-size: 16px;
+  line-height: 32px;
+}
+h4.info-make-request {
+  padding: 10px;
+  font-size: 15px;
+  line-height: 20px;
+  margin-bottom: 0;
+}
 /************************************/
 /* TABS  */
 /************************************/
@@ -2175,4 +2232,25 @@ label.status-label {
 .errors-all button.button {
   text-transform: uppercase;
   font-weight: normal !important;
+}
+.helper-info {
+  margin-top: 0;
+}
+.helper-info .item.item-text-wrap {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.helper-info p {
+  width: 90%;
+  margin: 0 auto;
+  padding: 8px 10px;
+  text-align: center;
+  border-bottom: 1px solid #D6D6D6;
+}
+.helper-info p:last-child {
+  border-bottom: 0;
+}
+.make-req-comm label.item.item-input,
+.make-req-comm input.comment {
+  background-color: #f7f7f7 !important;
 }
