@@ -47,40 +47,40 @@
 						</div>
 					</div>
 				</div>
-				
-				<h4 ng-if="view.locationSet ===  true && view.sellers.count > 0">
-						Found {{view.sellers.count}} sellers in your area .
+
+				<h4 class="info-make-request" ng-if="view.locationSet ===  true && view.sellers.count > 0">
+					Found {{view.sellers.count}} sellers in your area .
 				</h4>
 
-				<h4 ng-if="view.locationSet === true && view.sellers.count === 0">
-						Since there are no seller in your area , the number of offere received may be less or take little longer.
+				<h4 class="info-make-request" ng-if="view.locationSet === true && view.sellers.count === 0">
+					Since there are no sellers in your area, the number of offers received may be less or may take a little longer.
 				</h4>
-				
 
-				<h4 ng-if="view.locationSet !== true ">
-						Could not find your location please Add your location
+
+				<h4 class="info-make-request" ng-if="view.locationSet !== true ">
+					Could not find your location please Add your location
 				</h4>
 
 				<div class="card m-red">
 					<div class="item item-text-wrap">
 						Seller will send their offer price once you make request.
 					</div>
-					
+
 					<div class="item item-text-wrap">
 						Your address is taken so that seller can send their delivery duration
-					</div>	
-					
+					</div>
+
 					<div class="item item-text-wrap">
 						The request will expire if no offer is acceoted in 24 hrs
-					</div>	
-					
+					</div>
+
 					<div class="item item-text-wrap">
 							You can make new request once the request expires
 					</div>
 				</div>
-				
+
 			</ion-list>
-			
+
 			<aj-error class="errors"
 				ng-switch-when="error"
 				error-type="view.errorType"
@@ -88,7 +88,7 @@
 			</aj-error>
 
 	</ion-content>
-	
+
 
 	<ion-footer-bar class="bar-assertive">
 		<button

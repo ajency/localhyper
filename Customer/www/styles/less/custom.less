@@ -537,6 +537,64 @@ button.button.button-assertive {
 	  }
 }
 
+.the-loation {
+	background-image: url(../../img/mapbg.jpg);
+	background-size: cover;
+	background-position: center;
+	position: relative;
+	min-height: 55px; //was 75
+	.ico-loc.icon {
+		font-size: 22px;
+		color: @brand-primary;
+		position: absolute;
+		left: 10px;
+		top: 10px;
+		width: 35px;
+		height: 36px;
+		line-height: 35px;
+		text-align: center;
+		border: 1px solid @brand-primary;
+		-webkit-border-radius: 50%;
+		-moz-border-radius: 50%;
+		-o-border-radius: 50%;
+		border-radius: 50%;
+	}
+	h4 {
+		padding-left: 52px;
+		text-align: left;
+		margin-bottom: 5px;
+	}
+	p {
+		padding-right: 5px;
+		padding-left: 52px;
+		text-align: left;
+		margin-top: 8px;
+		font-size: 14px;
+		line-height: 20px;
+	}
+	.button {
+		bottom: 10px;
+		right: 10px;
+		line-height: 32px;
+		font-size: 14px;
+		min-height: 0;
+		position: absolute;
+		.icon {
+			margin-right: 5px;
+			&:before {
+				font-size: 16px;
+				line-height: 32px;
+			}
+		}
+	}
+}
+h4.info-make-request {
+	padding: 10px;
+	font-size: 15px;
+	line-height: 20px;
+	margin-bottom: 0;
+}
+
 /************************************/
 /* TABS  */
 /************************************/
