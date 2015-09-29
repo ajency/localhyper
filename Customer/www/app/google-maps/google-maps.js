@@ -1,7 +1,8 @@
 angular.module('LocalHyper.googleMaps', []).factory('GoogleMaps', [
   '$q', function($q) {
-    var GoogleMaps;
+    var GoogleMaps, cordinates;
     GoogleMaps = {};
+    cordinates = {};
     GoogleMaps.loadScript = function() {
       var defer, script;
       defer = $q.defer();
@@ -85,6 +86,19 @@ angular.module('LocalHyper.googleMaps', []).factory('GoogleMaps', [
         }
       });
       return string;
+    };
+    GoogleMaps.setCordinates = function(action, data) {
+      if (data == null) {
+        data = {};
+      }
+      switch (action) {
+        case 'set':
+          return _.each(data, function(val, index) {
+            return cordinates[index] = val;
+          });
+        case 'get':
+          return cordinates;
+      }
     };
     return GoogleMaps;
   }

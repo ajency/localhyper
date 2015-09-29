@@ -79,6 +79,33 @@
 					</div>
 				</div>
 
+				<div class="row row-fluid">
+					<div class="col p-b-0">
+						<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+							<i class="icon ion-chatbox-working"></i>
+							Add comments
+						</h5>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col co l-80">
+						<div class="list popup-comments">
+							<i
+								class="icon ion-chatbox-working"
+								ng-click="view.addComments();">
+							</i>
+							<label class="item item-input item-stacked-label">
+								<input
+									class="comment"
+									readonly
+									type="text"
+									placeholder="Enter comments if any"
+									ng-model="view.comments.text">
+							</label>
+						</div>
+					</div>
+				</div>
+
 			</ion-list>
 
 			<aj-error class="errors"

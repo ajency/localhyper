@@ -2,9 +2,9 @@ angular.module 'LocalHyper.products'
 
 
 .controller 'MakeRequestCtrl', ['$scope', 'App', 'GPS', 'CToast', 'CDialog', '$timeout'
-	, 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope', '$q', '$ionicModal'
+	, 'GoogleMaps', 'UIMsg', 'CSpinner', 'User', 'ProductsAPI', '$ionicPopup', '$rootScope', '$q'
 	, ($scope, App, GPS, CToast, CDialog, $timeout, GoogleMaps, UIMsg, CSpinner
-	, User, ProductsAPI, $ionicPopup, $rootScope, $q, $ionicModal)->
+	, User, ProductsAPI, $ionicPopup, $rootScope, $q)->
 
 		$scope.view =
 			latLng: null
@@ -33,116 +33,50 @@ angular.module 'LocalHyper.products'
 			errorType: ''
 			locationSet: true
 
-			location:
-				modal: null
-				map: null
-				marker: null
-				latLng: null
-				address: null
-				addressFetch: true
-
-				loadModal : ->
-					defer = $q.defer()
-					if _.isNull @modal
-						$ionicModal.fromTemplateUrl 'views/products/location.html', 
-							scope: $scope,
-							animation: 'slide-in-up'
-							hardwareBackButtonClose: false
-						.then (modal)=> 
-							defer.resolve @modal = modal
-					else defer.resolve()
-					defer.promise
-
-				showAlert : ->
-					positiveBtn = if App.isAndroid() then 'Open Settings' else 'Ok'
-					CDialog.confirm 'Use location?', 'Please enable location settings', [positiveBtn, 'Cancel']
-					.then (btnIndex)->
-						if btnIndex is 1
-							GPS.switchToLocationSettings()
-
-				onMapCreated : (map)->
-					@map = map
-					google.maps.event.addListener @map, 'click', (event)=>
-						@addMarker event.latLng
-
-				setMapCenter : (loc)->
-					latLng = new google.maps.LatLng loc.lat, loc.long
-					@map.setCenter latLng
-					latLng
-
-				getCurrent : ->
-					GPS.isLocationEnabled()
-					.then (enabled)=>
-						if !enabled
-							@showAlert()
-						else
-							CToast.show 'Getting current location'
-							GPS.getCurrentLocation()
-							.then (loc)=>
-								latLng = @setMapCenter loc
-								@map.setZoom 15
-								@addMarker latLng
-							, (error)->
-								CToast.show 'Error locating your position'
-
-				addMarker : (latLng)->
-					@latLng = latLng
-					@setAddress()
-					@marker.setMap null if @marker
-					@marker = new google.maps.Marker
-						position: latLng
-						map: @map
-						draggable: true
-
-					@marker.setMap @map
-					google.maps.event.addListener @marker, 'dragend', (event)=>
-						@latLng = event.latLng
-						@setAddress()
-
-				setAddress : ->
-					@addressFetch = false
-					GoogleMaps.getAddress @latLng
-					.then (address)=>
-						@address = address
-						console.log '--107--'
-						console.log @address
-					, (error)->
-						console.log 'Geocode error: '+error
-					.finally =>
-						@addressFetch = true
-
 			beforeInit : ->
 				@user.full = ''
 				@latitude = ''
 				@longitude = ''
 				
-
 			init : ->
-
-				userInfo = User.getCurrent()
-				@userInfo = userInfo.attributes
-				if  _.isEmpty(@userInfo.address)
-					console.log 'if user is not register'
-					if _.isNull @latLng
-						$timeout =>
-							loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
-							# @map.setCenter @toLatLng(loc)
+				if App.previousState != 'choose-location'
+					userInfo = User.getCurrent()
+					@userInfo = userInfo.attributes
+					if  _.isEmpty(@userInfo.address)
+						console.log 'if user is not register'
+						if _.isNull @latLng
+							$timeout =>
+								loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
+								# @map.setCenter @toLatLng(loc)
+								@getCurrent()
+							, 200
+						else
 							@getCurrent()
-						, 200
 					else
-						@getCurrent()
+						@locationSet = true
+						console.log 'if user is register'
+						@display = 'noError'
+						@latitude = @userInfo.addressGeoPoint._latitude
+						@longitude = @userInfo.addressGeoPoint._longitude
+						@city = @userInfo.address.city
+						@user.full = @userInfo.address.full
+						@addressObj = @userInfo.address
+						@loadSeller()
 				else
-					@locationSet = true
-					console.log 'if user is register'
-					@display = 'noError'
-					@latitude = @userInfo.addressGeoPoint._latitude
-					@longitude = @userInfo.addressGeoPoint._longitude
-					@city = @userInfo.address.city
-					@user.full = @userInfo.address.full
-					@addressObj = @userInfo.address
-					@loadSeller()
+						console.log 'choose-location'
+						cordinates = GoogleMaps.setCordinates 'get'
+						@latitude = cordinates.lat
+						@longitude = cordinates.long
+						loc = lat: @latitude, long: @longitude
+						@locationSet = true
+						@display = 'noError'
+						@latitude = cordinates.lat
+						@longitude = cordinates.long
+						@city = cordinates.addressObj.city
+						@user.full = cordinates.addressObj.full
+						@addressObj = cordinates.addressObj
+						@loadSeller()
 
-		
 			toLatLng : (loc)->
 				latLng = new google.maps.LatLng loc.lat, loc.long
 				latLng
@@ -163,19 +97,14 @@ angular.module 'LocalHyper.products'
 							console.log loc
 							latLng = @toLatLng(loc)
 							@latLng = latLng
-
 							@addressFetch = false
 							GoogleMaps.getAddress @latLng
 							.then (address)=>
-								console.log '--197---'
-								console.log address
 								@addressObj = address
 								@address = address
 								@address.full = GoogleMaps.fullAddress(address)
-								console.log 'full'
 								console.log @address.full
 								@addressFetch = true
-
 								@latitude = @latLng.H
 								@longitude = @latLng.L
 								@city = @address.city
@@ -265,10 +194,8 @@ angular.module 'LocalHyper.products'
 						"address": @addressObj
 						"city": @city
 						"area": @city
-
 					console.log params
 					console.log 'update'
-
 					User.update 
 						"address": params.address
 						"addressGeoPoint": new Parse.GeoPoint params.location
@@ -287,69 +214,15 @@ angular.module 'LocalHyper.products'
 					.finally ->
 						CSpinner.hide()
 
-			isGoogleMapsScriptLoaded : ->
-				defer = $q.defer()
-				if typeof google is 'undefined'
-					CSpinner.show '', 'Please wait, loading resources...'
-					GoogleMaps.loadScript()
-					.then =>
-						@location.loadModal()
-					.then ->
-						defer.resolve true
-					, (error)->
-						CToast.show 'Could not connect to server. Please try again'
-						defer.resolve false
-					.finally ->
-						CSpinner.hide()
-				else
-					@location.loadModal().then ->
-						defer.resolve true
-				defer.promise
-
 			onChangeLocation : ->
-				@isGoogleMapsScriptLoaded().then (loaded)=>
-					if loaded
-						@location.modal.show()
-						$timeout =>
-							container = $('.map-content').height()
-							children  = $('.address-inputs').height() + $('.tap-div').height()
-							mapHeight = container - children - 20
-							$('.aj-big-map').css 'height': mapHeight
-							
-							if @latitude != ''
-								loc = lat: @latitude, long: @longitude
-								latLng = @location.setMapCenter loc
-								@location.map.setZoom 15
-								@location.addMarker latLng
-							else 
-								@location.marker.setMap null if @location.marker
-								@location.map.setZoom 5
-								loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
-								@location.setMapCenter loc
-								@location.getCurrent()
-						, 300
-
-			onConfirmLocation : ->
-				if !_.isNull(@location.latLng) and @location.addressFetch
-					k = GoogleMaps.fullAddress(@location.address) 
-					@address = k
-					console.log @address
-					@addressObj = @location.address
-					@user.full = GoogleMaps.fullAddress(@location.address)
-					@confirmedAddress = @location.address.full
-					@latitude = @location.latLng.lat()
-					@longitude = @location.latLng.lng()
-					@city = @location.address.city
-					@loadSeller()
-					@location.modal.hide()
-					@locationSet = true
-				else
-					CToast.show 'Please wait, getting location details...'
+				loc = lat: @latitude, long: @longitude , addressObj : @addressObj
+				# App.navigate 'choose-location'
+				GoogleMaps.setCordinates 'set' , loc 
+				App.navigate 'choose-location'
 
 			onTapToRetry : ->
 				@init()
 
-		
 		$scope.$on '$ionicView.beforeEnter', ->
 			$scope.view.beforeInit()
 			App.scrollTop()
@@ -357,8 +230,6 @@ angular.module 'LocalHyper.products'
 		$scope.$on '$ionicView.afterEnter', ->
 			$scope.view.init()
 ]
-
-
 
 .config ['$stateProvider', ($stateProvider)->
 
