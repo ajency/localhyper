@@ -212,3 +212,15 @@
 .has-credit-sub-header{
 	top: 125px !important;
 }
+
+/* choose location */
+.c-l-footer.bar-assertive .button{
+	width: 50%;
+    margin: 0;
+}
+
+.c-l-footer.bar-assertive.bar>.button.pull-right{
+	top: 0;
+	right: 0;
+	bottom: 0;
+}

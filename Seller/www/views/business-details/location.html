@@ -46,6 +46,16 @@
 					</label>
 				</div>
 			</div>
+			<label class="item-input-wrapper">
+			<input
+				id="locationSearch"
+				type="text"
+				placeholder="Search for location"
+				data-tap-disabled="true"
+				google-map-search
+				on-place-change="view.onPlaceChange(location);"
+				ng-model="view.searchText">
+		</label>
 
 			<div class="row p-b-0">
 				<div class="col p-b-0 p-r-0 b-r-1">
