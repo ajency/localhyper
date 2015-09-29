@@ -2233,3 +2233,24 @@ label.status-label {
   text-transform: uppercase;
   font-weight: normal !important;
 }
+.helper-info {
+  margin-top: 0;
+}
+.helper-info .item.item-text-wrap {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.helper-info p {
+  width: 90%;
+  margin: 0 auto;
+  padding: 8px 10px;
+  text-align: center;
+  border-bottom: 1px solid #D6D6D6;
+}
+.helper-info p:last-child {
+  border-bottom: 0;
+}
+.make-req-comm label.item.item-input,
+.make-req-comm input.comment {
+  background-color: #f7f7f7 !important;
+}
