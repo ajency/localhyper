@@ -26,7 +26,8 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       beforeInit: function() {
         this.user.full = '';
         this.latitude = '';
-        return this.longitude = '';
+        this.longitude = '';
+        return this.comments.text = '';
       },
       init: function() {
         var cordinates, loc, userInfo;
@@ -158,7 +159,8 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         })(this), (function(_this) {
           return function(error) {
             CToast.show('Request failed, please try again');
-            return _this.display = 'error';
+            _this.display = 'error';
+            return _this.errorType = error;
           };
         })(this))["finally"](function() {
           App.resize();

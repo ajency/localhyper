@@ -37,6 +37,7 @@ angular.module 'LocalHyper.products'
 				@user.full = ''
 				@latitude = ''
 				@longitude = ''
+				@comments.text = ''
 				
 			init : ->
 				if App.previousState != 'choose-location'
@@ -146,6 +147,7 @@ angular.module 'LocalHyper.products'
 				, (error)=>
 					CToast.show 'Request failed, please try again'
 					@display = 'error'
+					@errorType = error
 				.finally ->
 					App.resize()
 					CSpinner.hide()

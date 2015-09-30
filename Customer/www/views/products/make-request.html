@@ -117,7 +117,7 @@
 	</ion-content>
 
 
-	<ion-footer-bar class="bar-assertive">
+	<ion-footer-bar class="bar-assertive" ng-if="view.display == 'noError'">
 		<button
 			class="title button-block button-clear"
 			ng-click="view.makeRequest();">
