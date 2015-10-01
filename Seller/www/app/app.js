@@ -23,7 +23,7 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
       small: true
     };
     return $rootScope.$on('$stateChangeSuccess', function(ev, to, toParams, from, fromParams) {
-      var bool, brands, business_details, categories, hideForStates, sub_categories;
+      var bool, brands, business_details, categories, choose_location, hideForStates, sub_categories;
       App.previousState = from.name;
       App.currentState = to.name;
       switch (App.currentState) {
@@ -38,8 +38,11 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'LocalHyper.common', 'LocalH
           break;
         case 'sub-categories':
           sub_categories = User.isLoggedIn() ? '' : 'sub-categories';
+          break;
+        case 'choose-location':
+          choose_location = User.isLoggedIn() ? '' : 'choose-location';
       }
-      hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual', 'category-chains', categories, sub_categories, business_details, brands];
+      hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual', 'category-chains', categories, sub_categories, business_details, brands, choose_location];
       bool = !_.contains(hideForStates, App.currentState);
       App.menuEnabled.left = bool;
       return App.notification.icon = bool;

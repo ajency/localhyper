@@ -45,7 +45,7 @@ angular.module('LocalHyper.products').directive('ajLoadingBackDrop', [
         if (_.has(attrs.attribute, 'unit')) {
           unit = s.humanize(attrs.attribute.unit);
         }
-        return name + " : " + value + " " + unit;
+        return "" + name + " : " + value + " " + unit;
       }
     };
     return PrimaryAttribute;

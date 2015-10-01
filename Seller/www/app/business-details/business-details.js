@@ -1,5 +1,5 @@
 angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$ionicModal', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$q', '$rootScope', '$ionicPlatform', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $ionicModal, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $q, $rootScope, $ionicPlatform) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$q', '$rootScope', '$ionicPlatform', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $q, $rootScope, $ionicPlatform) {
     var onDeviceBack;
     $scope.view = {
       name: '',
@@ -7,7 +7,7 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
       businessName: '',
       confirmedAddress: '',
       terms: false,
-      myProfileState: App.previousState === 'my-profile',
+      myProfileState: User.isLoggedIn() ? true : false,
       delivery: {
         radius: 10,
         plus: function() {
@@ -58,106 +58,13 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         marker: null,
         latLng: null,
         address: null,
-        addressFetch: true,
-        loadModal: function() {
-          var defer;
-          defer = $q.defer();
-          if (_.isNull(this.modal)) {
-            $ionicModal.fromTemplateUrl('views/business-details/location.html', {
-              scope: $scope,
-              animation: 'slide-in-up',
-              hardwareBackButtonClose: false
-            }).then((function(_this) {
-              return function(modal) {
-                return defer.resolve(_this.modal = modal);
-              };
-            })(this));
-          } else {
-            defer.resolve();
-          }
-          return defer.promise;
-        },
-        showAlert: function() {
-          var positiveBtn;
-          positiveBtn = App.isAndroid() ? 'Open Settings' : 'Ok';
-          return CDialog.confirm('Use location?', 'Please enable location settings', [positiveBtn, 'Cancel']).then(function(btnIndex) {
-            if (btnIndex === 1) {
-              return GPS.switchToLocationSettings();
-            }
-          });
-        },
-        onMapCreated: function(map) {
-          this.map = map;
-          return google.maps.event.addListener(this.map, 'click', (function(_this) {
-            return function(event) {
-              return _this.addMarker(event.latLng);
-            };
-          })(this));
-        },
-        setMapCenter: function(loc) {
-          var latLng;
-          latLng = new google.maps.LatLng(loc.lat, loc.long);
-          this.map.setCenter(latLng);
-          return latLng;
-        },
-        getCurrent: function() {
-          return GPS.isLocationEnabled().then((function(_this) {
-            return function(enabled) {
-              if (!enabled) {
-                return _this.showAlert();
-              } else {
-                CToast.show('Getting current location');
-                return GPS.getCurrentLocation().then(function(loc) {
-                  var latLng;
-                  latLng = _this.setMapCenter(loc);
-                  _this.map.setZoom(15);
-                  return _this.addMarker(latLng);
-                }, function(error) {
-                  return CToast.show('Error locating your position');
-                });
-              }
-            };
-          })(this));
-        },
-        addMarker: function(latLng) {
-          this.latLng = latLng;
-          this.setAddress();
-          if (this.marker) {
-            this.marker.setMap(null);
-          }
-          this.marker = new google.maps.Marker({
-            position: latLng,
-            map: this.map,
-            draggable: true
-          });
-          this.marker.setMap(this.map);
-          return google.maps.event.addListener(this.marker, 'dragend', (function(_this) {
-            return function(event) {
-              _this.latLng = event.latLng;
-              return _this.setAddress();
-            };
-          })(this));
-        },
-        setAddress: function() {
-          this.addressFetch = false;
-          return GoogleMaps.getAddress(this.latLng).then((function(_this) {
-            return function(address) {
-              return _this.address = address;
-            };
-          })(this), function(error) {
-            return console.log('Geocode error: ' + error);
-          })["finally"]((function(_this) {
-            return function() {
-              return _this.addressFetch = true;
-            };
-          })(this));
-        }
+        addressFetch: true
       },
       init: function() {
         return this.getStoredBusinessDetails();
       },
       getStoredBusinessDetails: function() {
-        var details;
+        var cordinates, details, userInfo, value;
         details = BusinessDetails;
         if (!_.isNull(details)) {
           this.name = details.name;
@@ -168,32 +75,43 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
           this.latitude = details.latitude;
           this.longitude = details.longitude;
           this.location.address = details.address;
-          return this.workingDays = details.workingDays;
-        }
-      },
-      isGoogleMapsScriptLoaded: function() {
-        var defer;
-        defer = $q.defer();
-        if (typeof google === 'undefined') {
-          CSpinner.show('', 'Please wait, loading resources...');
-          GoogleMaps.loadScript().then((function(_this) {
-            return function() {
-              return _this.location.loadModal();
+          this.workingDays = details.workingDays;
+          if (App.previousState === 'choose-location') {
+            cordinates = GoogleMaps.setCordinates('get');
+            if (!_.isEmpty(cordinates)) {
+              this.latitude = cordinates.latitude;
+              this.longitude = cordinates.longitude;
+              if (!_.isUndefined(cordinates.addressObj)) {
+                this.confirmedAddress = cordinates.addressObj.full;
+              }
+              return this.location.address = cordinates.addressObj;
+            }
+          } else {
+            value = {
+              latitude: this.latitude,
+              longitude: this.longitude
             };
-          })(this)).then(function() {
-            return defer.resolve(true);
-          }, function(error) {
-            CToast.show('Could not connect to server. Please try again');
-            return defer.resolve(false);
-          })["finally"](function() {
-            return CSpinner.hide();
-          });
+            return GoogleMaps.setCordinates('set', value);
+          }
         } else {
-          this.location.loadModal().then(function() {
-            return defer.resolve(true);
-          });
+          userInfo = User.info('get');
+          if (!_.isUndefined(userInfo.name)) {
+            this.name = userInfo.name;
+          }
+          if (!_.isUndefined(userInfo.phone)) {
+            this.phone = userInfo.phone;
+          }
+          if (!_.isUndefined(userInfo.businessName)) {
+            this.businessName = userInfo.businessName;
+          }
+          cordinates = GoogleMaps.setCordinates('get');
+          if (!_.isEmpty(cordinates)) {
+            this.latitude = cordinates.latitude;
+            this.longitude = cordinates.longitude;
+            this.confirmedAddress = cordinates.addressObj.full;
+            return this.location.address = cordinates.addressObj;
+          }
         }
-        return defer.promise;
       },
       areWorkingDaysSelected: function() {
         var selected;
@@ -213,49 +131,17 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         return offDays;
       },
       onChangeLocation: function() {
-        return this.isGoogleMapsScriptLoaded().then((function(_this) {
-          return function(loaded) {
-            if (loaded) {
-              _this.location.modal.show();
-              return $timeout(function() {
-                var children, container, latLng, loc, mapHeight;
-                container = $('.map-content').height();
-                children = $('.address-inputs').height() + $('.tap-div').height();
-                mapHeight = container - children - 20;
-                $('.aj-big-map').css({
-                  'height': mapHeight
-                });
-                if (!_.isUndefined(_this.latitude)) {
-                  loc = {
-                    lat: _this.latitude,
-                    long: _this.longitude
-                  };
-                  latLng = _this.location.setMapCenter(loc);
-                  _this.location.map.setZoom(15);
-                  return _this.location.addMarker(latLng);
-                } else if (_.isNull(_this.location.latLng)) {
-                  loc = {
-                    lat: GEO_DEFAULT.lat,
-                    long: GEO_DEFAULT.lng
-                  };
-                  _this.location.setMapCenter(loc);
-                  return _this.location.getCurrent();
-                }
-              }, 300);
-            }
+        User.info('set', $scope.view);
+        CSpinner.show('', 'Please wait, loading resources');
+        return GoogleMaps.loadScript().then((function(_this) {
+          return function() {
+            return App.navigate('choose-location');
           };
-        })(this));
-      },
-      onConfirmLocation: function() {
-        if (!_.isNull(this.location.latLng) && this.location.addressFetch) {
-          this.location.address.full = GoogleMaps.fullAddress(this.location.address);
-          this.confirmedAddress = this.location.address.full;
-          this.latitude = this.location.latLng.lat();
-          this.longitude = this.location.latLng.lng();
-          return this.location.modal.hide();
-        } else {
-          return CToast.show('Please wait, getting location details...');
-        }
+        })(this), function(error) {
+          return CToast.show('Error loading content, please check your network settings');
+        })["finally"](function() {
+          return CSpinner.hide();
+        });
       },
       onNext: function() {
         if (_.contains([this.businessName, this.name, this.phone], '')) {
@@ -316,21 +202,10 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
       }
     };
     onDeviceBack = function() {
-      var locationModal;
-      locationModal = $scope.view.location.modal;
-      if (!_.isNull(locationModal) && locationModal.isShown()) {
-        return locationModal.hide();
-      } else {
-        return App.goBack(-1);
-      }
+      return App.goBack(-1);
     };
     $scope.$on('$destroy', function() {
-      var locationModal;
-      $ionicPlatform.offHardwareBackButton(onDeviceBack);
-      locationModal = $scope.view.location.modal;
-      if (!_.isNull(locationModal)) {
-        return locationModal.remove();
-      }
+      return $ionicPlatform.offHardwareBackButton(onDeviceBack);
     });
     return $scope.$on('$ionicView.enter', function() {
       $ionicPlatform.onHardwareBackButton(onDeviceBack);

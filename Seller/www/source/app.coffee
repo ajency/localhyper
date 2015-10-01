@@ -45,10 +45,12 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova'
 					categories = if User.isLoggedIn() then '' else 'categories'
 				when 'sub-categories'
 					sub_categories = if User.isLoggedIn() then '' else 'sub-categories'
+				when 'choose-location'
+					choose_location = if User.isLoggedIn() then '' else 'choose-location'
 
 			#Enable/disable menu & show/hide notification icon
 			hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual'
-							, 'category-chains', categories, sub_categories, business_details, brands]
+							, 'category-chains', categories, sub_categories, business_details, brands, choose_location]
 			
 			bool = !_.contains(hideForStates, App.currentState)
 			App.menuEnabled.left  = bool

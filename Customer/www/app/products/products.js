@@ -35,7 +35,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           })(this));
         },
         getPriceRange: function(priceRange) {
-          var divideValue, firstDigit, i, increment, intervalValue, intervalValueCharacter, j, max, min, prices, range, ref;
+          var divideValue, firstDigit, i, increment, intervalValue, intervalValueCharacter, max, min, prices, range, _i, _ref;
           prices = [];
           min = priceRange[0];
           max = priceRange[1];
@@ -53,7 +53,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             firstDigit = intervalValueCharacter.substring(0, 1);
             firstDigit = parseInt(firstDigit) + 1;
             firstDigit = firstDigit.toString();
-            for (i = j = 0, ref = intervalValueCharacter.length - 1; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+            for (i = _i = 0, _ref = intervalValueCharacter.length - 1; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
               firstDigit += '0';
             }
             increment = parseInt(firstDigit);
@@ -89,7 +89,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
           return prices;
         },
         getfilterRange: function(value) {
-          var arr, divideValue, firstDigit, i, increment, intervalValue, intervalValueCharacter, j, max, maxValue, min, minValue, range, rangeArray, ref, valueArray, valueRange;
+          var arr, divideValue, firstDigit, i, increment, intervalValue, intervalValueCharacter, max, maxValue, min, minValue, range, rangeArray, valueArray, valueRange, _i, _ref;
           valueArray = _.pluck(value, 'name');
           arr = [];
           _.each(valueArray, function(valueArray) {
@@ -114,7 +114,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
             firstDigit = intervalValueCharacter.substring(0, 1);
             firstDigit = parseInt(firstDigit) + 1;
             firstDigit = firstDigit.toString();
-            for (i = j = 0, ref = intervalValueCharacter.length - 1; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
+            for (i = _i = 0, _ref = intervalValueCharacter.length - 1; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
               firstDigit += '0';
             }
             increment = parseInt(firstDigit);
@@ -144,7 +144,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
                 return rangeArray.push({
                   start: start,
                   end: end,
-                  name: start + " - " + end
+                  name: "" + start + " - " + end
                 });
               }
             });
@@ -482,7 +482,7 @@ angular.module('LocalHyper.products', []).controller('ProductsCtrl', [
         return this.canLoadMore = false;
       },
       onSuccess: function(data, displayLimit) {
-        var _products, productsSize;
+        var productsSize, _products;
         this.other = data;
         if (_.isEmpty(this.filter.attrValues['brand'])) {
           this.filter.setAttrValues();

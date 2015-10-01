@@ -4,6 +4,7 @@ angular.module 'LocalHyper.googleMaps', []
 .factory 'GoogleMaps', ['$q', ($q)->
 
 	GoogleMaps = {}
+	cordinates = {}
 
 	GoogleMaps.loadScript = ->
 		defer = $q.defer()
@@ -72,6 +73,14 @@ angular.module 'LocalHyper.googleMaps', []
 			if key isnt 'full'
 				string += if key is 'postal_code' then "#{val}" else "#{val}, "
 		string
+
+	GoogleMaps.setCordinates = (action, data={})->
+		switch action
+			when 'set'
+				_.each data, (val, index)->
+					cordinates[index] = val
+			when 'get'
+				cordinates
 
 	GoogleMaps
 ]
