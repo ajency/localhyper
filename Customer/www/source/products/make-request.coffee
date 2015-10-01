@@ -38,36 +38,42 @@ angular.module 'LocalHyper.products'
 				@latitude = ''
 				@longitude = ''
 				@comments.text = ''
+
+			getDetails : ->
+				userInfo = User.getCurrent()
+				@userInfo = userInfo.attributes
+				if  _.isEmpty(@userInfo.address)
+					console.log 'if user is not register'
+					if _.isNull @latLng
+						$timeout =>
+							loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
+							# @map.setCenter @toLatLng(loc)
+							@getCurrent()
+						, 200
+					else
+						@getCurrent()
+				else
+					@locationSet = true
+					console.log 'if user is register'
+					@display = 'noError'
+					@latitude = @userInfo.addressGeoPoint._latitude
+					@longitude = @userInfo.addressGeoPoint._longitude
+					@city = @userInfo.address.city
+					@user.full = @userInfo.address.full
+					@addressObj = @userInfo.address
+					@loadSeller()
+
 				
 			init : ->
 				if App.previousState != 'choose-location'
-					userInfo = User.getCurrent()
-					@userInfo = userInfo.attributes
-					if  _.isEmpty(@userInfo.address)
-						console.log 'if user is not register'
-						if _.isNull @latLng
-							$timeout =>
-								loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
-								# @map.setCenter @toLatLng(loc)
-								@getCurrent()
-							, 200
-						else
-							@getCurrent()
-					else
-						@locationSet = true
-						console.log 'if user is register'
-						@display = 'noError'
-						@latitude = @userInfo.addressGeoPoint._latitude
-						@longitude = @userInfo.addressGeoPoint._longitude
-						@city = @userInfo.address.city
-						@user.full = @userInfo.address.full
-						@addressObj = @userInfo.address
-						@loadSeller()
+					@getDetails()
 				else
-						console.log 'choose-location'
-						cordinates = GoogleMaps.setCordinates 'get'
-						@latitude = cordinates.lat
-						@longitude = cordinates.long
+					console.log 'choose-location'
+					cordinates = GoogleMaps.setCordinates 'get'
+					@latitude = cordinates.lat
+					@longitude = cordinates.long
+					console.log @latitude
+					if @latitude != '' && @longitude != ''
 						loc = lat: @latitude, long: @longitude
 						@locationSet = true
 						@display = 'noError'
@@ -77,6 +83,9 @@ angular.module 'LocalHyper.products'
 						@user.full = cordinates.addressObj.full
 						@addressObj = cordinates.addressObj
 						@loadSeller()
+					else
+						@getDetails() 
+
 
 			toLatLng : (loc)->
 				latLng = new google.maps.LatLng loc.lat, loc.long
@@ -160,7 +169,7 @@ angular.module 'LocalHyper.products'
 									<label class="item item-input">
 										<textarea 
 											placeholder="Comments"
-											ng-model="view.comments.temp">
+											ng-model="view.comments.temp" rows="5">
 										</textarea>
 									</label>
 								</div>'
@@ -175,8 +184,6 @@ angular.module 'LocalHyper.products'
 						}]
 
 			makeRequest : ->
-				console.log 'make request button'
-				console.log @addressObj
 				if !@isLocationReady()
 					CToast.show 'Please select your location'
 				else
@@ -196,8 +203,7 @@ angular.module 'LocalHyper.products'
 						"address": @addressObj
 						"city": @city
 						"area": @city
-					console.log params
-					console.log 'update'
+
 					User.update 
 						"address": params.address
 						"addressGeoPoint": new Parse.GeoPoint params.location

@@ -34,12 +34,6 @@ angular.module 'LocalHyper.products'
 
 			init : ->
 				cordinates = GoogleMaps.setCordinates 'get'
-				console.log '---38--'
-				console.log cordinates 
-				# @latLng.lat = 15.4875245
-				# @latLng.long = 73.8325512
-				# @onPlaceChange(@latLng)
-
 				
 				@latitude = cordinates.lat
 				@longitude = cordinates.long
@@ -76,8 +70,6 @@ angular.module 'LocalHyper.products'
 						@addPlaceMarker event.latLng
 
 			onPlaceChange : (latLng)->
-				console.log '--69--'
-				console.log latLng
 				@latLng = latLng
 				@map.setCenter latLng
 				@map.setZoom 15
@@ -157,15 +149,12 @@ angular.module 'LocalHyper.products'
 
 
 			confirmLocation :->
-				console.log 'add full'
-				console.log @address
-				console.log @address.city
-				console.log @address.full
-				loc = lat: @latLng.lat(), long: @latLng.lng(), addressObj : @address
-				GoogleMaps.setCordinates 'set' , loc 
-				user = GoogleMaps.setCordinates 'get'
-				console.log user
-				App.navigate 'make-request'
+				if @isLocationReady()
+					loc = lat: @latLng.lat(), long: @latLng.lng(), addressObj : @address
+					GoogleMaps.setCordinates 'set' , loc 
+					user = GoogleMaps.setCordinates 'get'
+					console.log user
+					App.navigate 'make-request'
 
 		
 		$scope.$on '$ionicView.beforeEnter', ->

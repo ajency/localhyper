@@ -29,55 +29,64 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         this.longitude = '';
         return this.comments.text = '';
       },
-      init: function() {
-        var cordinates, loc, userInfo;
-        if (App.previousState !== 'choose-location') {
-          userInfo = User.getCurrent();
-          this.userInfo = userInfo.attributes;
-          if (_.isEmpty(this.userInfo.address)) {
-            console.log('if user is not register');
-            if (_.isNull(this.latLng)) {
-              return $timeout((function(_this) {
-                return function() {
-                  var loc;
-                  loc = {
-                    lat: GEO_DEFAULT.lat,
-                    long: GEO_DEFAULT.lng
-                  };
-                  return _this.getCurrent();
+      getDetails: function() {
+        var userInfo;
+        userInfo = User.getCurrent();
+        this.userInfo = userInfo.attributes;
+        if (_.isEmpty(this.userInfo.address)) {
+          console.log('if user is not register');
+          if (_.isNull(this.latLng)) {
+            return $timeout((function(_this) {
+              return function() {
+                var loc;
+                loc = {
+                  lat: GEO_DEFAULT.lat,
+                  long: GEO_DEFAULT.lng
                 };
-              })(this), 200);
-            } else {
-              return this.getCurrent();
-            }
+                return _this.getCurrent();
+              };
+            })(this), 200);
           } else {
-            this.locationSet = true;
-            console.log('if user is register');
-            this.display = 'noError';
-            this.latitude = this.userInfo.addressGeoPoint._latitude;
-            this.longitude = this.userInfo.addressGeoPoint._longitude;
-            this.city = this.userInfo.address.city;
-            this.user.full = this.userInfo.address.full;
-            this.addressObj = this.userInfo.address;
-            return this.loadSeller();
+            return this.getCurrent();
           }
+        } else {
+          this.locationSet = true;
+          console.log('if user is register');
+          this.display = 'noError';
+          this.latitude = this.userInfo.addressGeoPoint._latitude;
+          this.longitude = this.userInfo.addressGeoPoint._longitude;
+          this.city = this.userInfo.address.city;
+          this.user.full = this.userInfo.address.full;
+          this.addressObj = this.userInfo.address;
+          return this.loadSeller();
+        }
+      },
+      init: function() {
+        var cordinates, loc;
+        if (App.previousState !== 'choose-location') {
+          return this.getDetails();
         } else {
           console.log('choose-location');
           cordinates = GoogleMaps.setCordinates('get');
           this.latitude = cordinates.lat;
           this.longitude = cordinates.long;
-          loc = {
-            lat: this.latitude,
-            long: this.longitude
-          };
-          this.locationSet = true;
-          this.display = 'noError';
-          this.latitude = cordinates.lat;
-          this.longitude = cordinates.long;
-          this.city = cordinates.addressObj.city;
-          this.user.full = cordinates.addressObj.full;
-          this.addressObj = cordinates.addressObj;
-          return this.loadSeller();
+          console.log(this.latitude);
+          if (this.latitude !== '' && this.longitude !== '') {
+            loc = {
+              lat: this.latitude,
+              long: this.longitude
+            };
+            this.locationSet = true;
+            this.display = 'noError';
+            this.latitude = cordinates.lat;
+            this.longitude = cordinates.long;
+            this.city = cordinates.addressObj.city;
+            this.user.full = cordinates.addressObj.full;
+            this.addressObj = cordinates.addressObj;
+            return this.loadSeller();
+          } else {
+            return this.getDetails();
+          }
         }
       },
       toLatLng: function(loc) {
@@ -170,7 +179,7 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       addComments: function() {
         this.comments.temp = this.comments.text;
         return $ionicPopup.show({
-          template: '<div class="list"> <label class="item item-input"> <textarea placeholder="Comments" ng-model="view.comments.temp"> </textarea> </label> </div>',
+          template: '<div class="list"> <label class="item item-input"> <textarea placeholder="Comments" ng-model="view.comments.temp" rows="5"> </textarea> </label> </div>',
           title: 'Add comments',
           scope: $scope,
           buttons: [
@@ -190,8 +199,6 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       },
       makeRequest: function() {
         var params, product;
-        console.log('make request button');
-        console.log(this.addressObj);
         if (!this.isLocationReady()) {
           return CToast.show('Please select your location');
         } else {
@@ -213,8 +220,6 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
             "city": this.city,
             "area": this.city
           };
-          console.log(params);
-          console.log('update');
           return User.update({
             "address": params.address,
             "addressGeoPoint": new Parse.GeoPoint(params.location),

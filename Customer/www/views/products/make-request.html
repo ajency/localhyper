@@ -62,34 +62,43 @@
 				</h4>
 
 				<div class="row">
-					<div class="col p-b-0">
-						<h5 class="text-left margin-none title-with-icon text-primary upper-case h5">
+					<div class="col p-b-0"
+						ng-click="view.addComments();">
+
+
+						<h5 class="text-left margin-none title-with-icon text-primary upper-case h5"
+							ng-if ="view.comments.text != ''" >
 							<i class="icon ion-chatbox-working"></i>
-							Add comments
+							Change comments
+						</h5>
+						<h5 class="text-left margin-none title-with-icon text-primary upper-case h5"
+							ng-if ="view.comments.text == ''">
+							<i class="icon ion-chatbox-working"></i>
+							Add comments 
 						</h5>
 					</div>
 				</div>
+
 				<div class="row">
-					<div class="col co l-80">
+					<div class="col co l-80" ng-if ="view.comments.text != ''">
 						<div class="list popup-comments make-req-comm">
-							<i
-								class="icon ion-chatbox-working"
-								ng-click="view.addComments();">
+							<i class="icon ion-chatbox-working">
 							</i>
-							<label class="item item-input item-stacked-label">
-								<input
+							<!-- <label class="item item-input item-stacked-label"> -->
+								{{view.comments.text}}
+								<!-- <input
 									class="comment"
 									readonly
 									type="text"
 									placeholder="Enter comments if any"
-									ng-model="view.comments.text">
-							</label>
+									ng-model="view.comments.text"> -->
+							<!-- </label> -->
 						</div>
 					</div>
 				</div>
 
 				<div class="card m-red helper-info">
-					<div class="item item-text-wrap">
+					<!-- <div class="item item-text-wrap"> -->
 						<p>Seller will send their offer price once you make request.</p>
 					<!-- </div>
 
@@ -103,9 +112,16 @@
 
 					<div class="item item-text-wrap"> -->
 						<p>You can make new request once the request expires</p>
-					</div>
+					<!-- </div> -->
 				</div>
-
+				<div class="row">
+					<button 
+						class="button button-block button-assertive"
+						ng-click="view.makeRequest();"
+						>
+	  					Make request
+					</button>
+				</div>
 			</ion-list>
 
 			<aj-error class="errors"
@@ -117,13 +133,13 @@
 	</ion-content>
 
 
-	<ion-footer-bar class="bar-assertive" ng-if="view.display == 'noError'">
+	<!--ion-footer-bar class="bar-assertive" ng-if="view.display == 'noError'">
 		<button
 			class="title button-block button-clear"
 			ng-click="view.makeRequest();">
 			Make request
 		</button>
-	</ion-footer-bar>
+	</ion-footer-bar-->
 
 </ion-view>
 

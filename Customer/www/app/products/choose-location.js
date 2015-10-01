@@ -29,8 +29,6 @@ angular.module('LocalHyper.products').controller('ChooseLocationCtrl', [
       init: function() {
         var cordinates, latLng, loc;
         cordinates = GoogleMaps.setCordinates('get');
-        console.log('---38--');
-        console.log(cordinates);
         this.latitude = cordinates.lat;
         this.longitude = cordinates.long;
         if (this.latitude === '') {
@@ -86,8 +84,6 @@ angular.module('LocalHyper.products').controller('ChooseLocationCtrl', [
         })(this));
       },
       onPlaceChange: function(latLng) {
-        console.log('--69--');
-        console.log(latLng);
         this.latLng = latLng;
         this.map.setCenter(latLng);
         this.map.setZoom(15);
@@ -185,19 +181,17 @@ angular.module('LocalHyper.products').controller('ChooseLocationCtrl', [
       },
       confirmLocation: function() {
         var loc, user;
-        console.log('add full');
-        console.log(this.address);
-        console.log(this.address.city);
-        console.log(this.address.full);
-        loc = {
-          lat: this.latLng.lat(),
-          long: this.latLng.lng(),
-          addressObj: this.address
-        };
-        GoogleMaps.setCordinates('set', loc);
-        user = GoogleMaps.setCordinates('get');
-        console.log(user);
-        return App.navigate('make-request');
+        if (this.isLocationReady()) {
+          loc = {
+            lat: this.latLng.lat(),
+            long: this.latLng.lng(),
+            addressObj: this.address
+          };
+          GoogleMaps.setCordinates('set', loc);
+          user = GoogleMaps.setCordinates('get');
+          console.log(user);
+          return App.navigate('make-request');
+        }
       }
     };
     $scope.$on('$ionicView.beforeEnter', function() {
