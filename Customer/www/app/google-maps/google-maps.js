@@ -82,7 +82,7 @@ angular.module('LocalHyper.googleMaps', []).factory('GoogleMaps', [
       string = '';
       _.each(address, function(val, key) {
         if (key !== 'full') {
-          return string += key === 'postal_code' ? "" + val : "" + val + ", ";
+          return string += key === 'postal_code' ? "" + val : val + ", ";
         }
       });
       return string;

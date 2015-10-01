@@ -60,7 +60,7 @@ angular.module('LocalHyper.profile', []).controller('ProfileCtrl', [
           var categoryChains, param;
           categoryChains = CategoriesAPI.categoryChains('get');
           _.each(categoryChains, function(categoryChains) {
-            var diffArray, storagedChains, _catApibrands, _storagedBrandId;
+            var _catApibrands, _storagedBrandId, diffArray, storagedChains;
             storagedChains = _.filter(storedChains, function(category) {
               return category.subCategory.id === categoryChains.subCategory.id;
             });

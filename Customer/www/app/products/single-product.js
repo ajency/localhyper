@@ -128,7 +128,7 @@ angular.module('LocalHyper.products').controller('SingleProductCtrl', [
             if (_.isNull(specs.unit)) {
               str = App.humanize(specs.value);
             } else {
-              str = "" + (App.humanize(specs.value)) + " " + (App.humanize(specs.unit));
+              str = (App.humanize(specs.value)) + " " + (App.humanize(specs.unit));
             }
             return generalSpecs.push(str);
           });
