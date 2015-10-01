@@ -2233,19 +2233,65 @@ label.status-label {
   text-transform: uppercase;
   font-weight: normal !important;
 }
+.view-add-comm-wrap {
+  position: relative;
+  padding: 5px 48px;
+  min-height: 45px;
+  border: 1px solid #CECECE;
+}
+.view-add-comm-wrap i.icon {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  width: 35px;
+  height: 34px;
+  text-align: center;
+  line-height: 43px;
+}
+.view-add-comm-wrap i.icon:before {
+  font-size: 18px;
+}
+.view-add-comm-wrap span {
+  line-height: 36px;
+}
+.view-add-comm-wrap p {
+  line-height: normal;
+  padding-top: 8px;
+  margin-bottom: 0;
+}
+.view-add-comm-wrap button.btn-comm {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  height: auto;
+  min-height: 0;
+  line-height: 38px;
+}
 .helper-info {
-  margin-top: 0;
+  margin-top: 20px;
 }
 .helper-info .item.item-text-wrap {
   padding-top: 5px;
   padding-bottom: 5px;
 }
+.helper-info i.icon {
+  font-size: 14px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #696969;
+  margin: 10px auto;
+  display: block;
+  text-align: center;
+  line-height: 30px;
+  color: #696969;
+}
 .helper-info p {
   width: 90%;
   margin: 0 auto;
-  padding: 8px 10px;
+  padding: 4px 10px;
   text-align: center;
-  border-bottom: 1px solid #D6D6D6;
+  line-height: 18px;
 }
 .helper-info p:last-child {
   border-bottom: 0;

@@ -65,21 +65,40 @@
 					<div class="col p-b-0"
 						ng-click="view.addComments();">
 
+						<div class="view-add-comm-wrap">
+							<i class="icon ion-chatbox-working"></i>
 
-						<h5 class="text-left margin-none title-with-icon text-primary upper-case h5"
-							ng-if ="view.comments.text != ''" >
-							<i class="icon ion-chatbox-working"></i>
-							Change comments
-						</h5>
-						<h5 class="text-left margin-none title-with-icon text-primary upper-case h5"
-							ng-if ="view.comments.text == ''">
-							<i class="icon ion-chatbox-working"></i>
-							Add comments 
-						</h5>
+							<!-- <h5 class="text-left margin-none title-with-icon text-primary upper-case h5"
+								ng-if ="view.comments.text != ''" >
+								<i class="icon ion-chatbox-working"></i>
+								Change comments
+							</h5> -->
+							<p class="viewcomm" ng-if ="view.comments.text != ''">
+								{{view.comments.text}}
+							</p>
+							<span class="viewcomm" ng-if ="view.comments.text == ''">
+								No comments yet.
+							</span>
+							<!-- <h5 class="text-left margin-none title-with-icon text-primary upper-case h5"
+								ng-if ="view.comments.text == ''">
+								<i class="icon ion-chatbox-working"></i>
+								Add comments
+							</h5> -->
+							<button class="button button-assertive button-clear btn-comm"
+								ng-if ="view.comments.text == ''">
+								<i class="ion-edit"></i>
+							</button>
+							<button class="button button-assertive button-clear btn-comm"
+								ng-if ="view.comments.text != ''" >
+								<!-- <i class="icon ion-chatbox-working"></i> -->
+								<i class="ion-edit"></i>
+							</button>
+						</div>
+
 					</div>
 				</div>
 
-				<div class="row">
+				<div class="row" style="display: none;">
 					<div class="col co l-80" ng-if ="view.comments.text != ''">
 						<div class="list popup-comments make-req-comm">
 							<i class="icon ion-chatbox-working">
@@ -97,7 +116,8 @@
 					</div>
 				</div>
 
-				<div class="card m-red helper-info">
+				<div class="car d m-red helper-info">
+					<i class="icon ion-information"></i>
 					<!-- <div class="item item-text-wrap"> -->
 						<p>Seller will send their offer price once you make request.</p>
 					<!-- </div>
@@ -115,12 +135,14 @@
 					<!-- </div> -->
 				</div>
 				<div class="row">
-					<button 
-						class="button button-block button-assertive"
-						ng-click="view.makeRequest();"
-						>
-	  					Make request
-					</button>
+					<div class="col">
+						<button
+							class="button button-block button-assertive"
+							ng-click="view.makeRequest();"
+							>
+		  					Make request
+						</button>
+					</div>
 				</div>
 			</ion-list>
 
