@@ -20,7 +20,7 @@
 	</ion-header-bar>
 
 	<ion-content
-		class="has-footer"
+		
 		delegate-handle="request-details">
 
 		<ion-spinner
@@ -237,12 +237,13 @@
 								class="big">
 								{{view.requestDetails.deliveryTime.value}} {{view.requestDetails.deliveryTime.unitText}}
 							</span>
-							<span
+							
+						<!--	<span
 								class="change text-primary"
 								ng-if="!view.requestDetails.deliveryTime.display"
 								ng-click="view.requestDetails.deliveryTime.display=true; App.resize();">
 								(Change)
-							</span>
+							</span>-->
 						</span>
 						</p>
 					</div>
@@ -250,9 +251,7 @@
 			</div>
 
 			<div
-				class="list margin-none card m-red"
-				ng-show="view.requestDetails.deliveryTime.display">
-
+				class="list margin-none card m-red">
 				<div class="row">
 					<div class="col">
 						<i
@@ -277,63 +276,6 @@
 					</div>
 				</div>
 
-				<!--div class="row">
-					<div class="col col-67">
-							<label class="item item-input item-select">
-												<div class="input-label">
-													Duration
-												</div>
-												<select
-													style="direction: ltr;"
-													ng-model="view.requestDetails.deliveryTime.unit"
-													ng-change="view.requestDetails.deliveryTime.setDuration()">
-													<option value="hr">Hour(s)</option>
-													<option value="day">Day(s)</option>
-												</select>
-						</label>
-					</div>
-					<div class="col col-33">
-							<button
-							class="button  button-block  margin-none button-clear button-assertive"
-							ng-click="view.requestDetails.deliveryTime.done();">
-							Update
-						</button>
-					</div>
-				</div-->
-
-
-			<!-- 	<div class="row">
-					<div class="col col-20">
-						<label class="item item-input" style="width: 70px; height:49px;">
-							<input
-					    		type="number"
-					    		min="1" max="100"
-					    		ng-pattern="App.onlyNumbers"
-					    		ng-model="view.requestDetails.deliveryTime.value"
-					    		ng-change="view.requestDetails.deliveryTime.setDuration()">
-						</label>
-					</div>
-					<div class="col col-60">
-						<label class="item item-input item-select">
-							<div class="input-label">
-								Duration
-							</div>
-							<select
-								ng-model="view.requestDetails.deliveryTime.unit"
-								ng-change="view.requestDetails.deliveryTime.setDuration()">
-								<option value="hr">Hour(s)</option>
-								<option value="day">Day(s)</option>
-							</select>
-						</label>
-					</div>
-					<div class="col col-20">
-						<button
-							class="button button-big button-black"
-							ng-click="view.requestDetails.deliveryTime.done();">
-							Done
-						</button>
-					</div>
-				</div> -->
 			</div>
 
 			<div ng-if="view.requestDetails.data.comments!==''">
@@ -380,15 +322,26 @@
 			tap-to-retry="view.requestDetails.get()" class="error-wrapper">
 		</aj-error>
 
+		<ion-item 
+			class="nobg border-none"
+			ng-switch-when="noError">
+			<button
+				class="title button button-block button-assertive"
+				ng-click="view.requestDetails.makeOffer();"
+				ng-disabled="view.requestDetails.makeOfferBtn">
+				Make offer
+			</button>
+		</ion-item>
+
 	</ion-content>
 
-	<ion-footer-bar ng-switch-when="noError">
+	<!-- <ion-footer-bar ng-hide='true' ng-switch-when="noError">
 		<button
 			class="button button-block button-assertive margin-none title"
 			ng-click="view.requestDetails.makeOffer();"
 			ng-disabled="view.requestDetails.makeOfferBtn">
 			Make offer
 		</button>
-	</ion-footer-bar>
+	</ion-footer-bar>  -->
 
 </ion-modal-view>
