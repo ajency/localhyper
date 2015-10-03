@@ -1,5 +1,5 @@
 angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl', [
-  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$q', '$rootScope', '$ionicPlatform', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $q, $rootScope, $ionicPlatform) {
+  '$scope', 'CToast', 'App', 'GPS', 'GoogleMaps', 'CDialog', 'User', '$timeout', 'Storage', 'BusinessDetails', 'AuthAPI', 'CSpinner', '$q', '$rootScope', '$ionicPlatform', 'UIMsg', function($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $timeout, Storage, BusinessDetails, AuthAPI, CSpinner, $q, $rootScope, $ionicPlatform, UIMsg) {
     var onDeviceBack;
     $scope.view = {
       name: '',
@@ -130,18 +130,29 @@ angular.module('LocalHyper.businessDetails', []).controller('BusinessDetailsCtrl
         })(this));
         return offDays;
       },
+      checkNetwork: function() {
+        if (App.isOnline()) {
+          return App.navigate('choose-location');
+        } else {
+          return CToast.show(UIMsg.noInternet);
+        }
+      },
       onChangeLocation: function() {
         User.info('set', $scope.view);
-        CSpinner.show('', 'Please wait, loading resources');
-        return GoogleMaps.loadScript().then((function(_this) {
-          return function() {
-            return App.navigate('choose-location');
-          };
-        })(this), function(error) {
-          return CToast.show('Error loading content, please check your network settings');
-        })["finally"](function() {
-          return CSpinner.hide();
-        });
+        if (_.isUndefined(window.google)) {
+          CSpinner.show('', 'Please wait, loading resources');
+          return GoogleMaps.loadScript().then((function(_this) {
+            return function() {
+              return _this.checkNetwork();
+            };
+          })(this), function(error) {
+            return CToast.show('Error loading content, please check your network settings');
+          })["finally"](function() {
+            return CSpinner.hide();
+          });
+        } else {
+          return this.checkNetwork();
+        }
       },
       onNext: function() {
         if (_.contains([this.businessName, this.name, this.phone], '')) {

@@ -3,9 +3,10 @@ angular.module 'LocalHyper.businessDetails', []
 
 .controller 'BusinessDetailsCtrl', ['$scope', 'CToast', 'App', 'GPS', 'GoogleMaps'
 	, 'CDialog', 'User', '$timeout', 'Storage', 'BusinessDetails'
-	, 'AuthAPI', 'CSpinner', '$q', '$rootScope', '$ionicPlatform'
+	, 'AuthAPI', 'CSpinner', '$q', '$rootScope', '$ionicPlatform', 'UIMsg'
 	, ($scope, CToast, App, GPS, GoogleMaps, CDialog, User, $timeout
-	, Storage, BusinessDetails, AuthAPI, CSpinner, $q, $rootScope, $ionicPlatform)->
+	, Storage, BusinessDetails, AuthAPI, CSpinner, $q, $rootScope, $ionicPlatform
+	, UIMsg)->
 	
 		$scope.view = 
 			name:''
@@ -90,19 +91,26 @@ angular.module 'LocalHyper.businessDetails', []
 					offDays.push(days.value) if !days.selected
 				offDays
 
+			checkNetwork : ->
+				if App.isOnline()
+					App.navigate 'choose-location'
+				else
+					CToast.show UIMsg.noInternet
+
 			onChangeLocation : ->
 				User.info 'set', $scope.view
-				# if _.isUndefined window.google
-				CSpinner.show '', 'Please wait, loading resources'
-				GoogleMaps.loadScript()
-				.then => 
-					App.navigate 'choose-location'
-				,(error)-> 
-					CToast.show 'Error loading content, please check your network settings'
-				.finally -> 
-					CSpinner.hide()
-				# else
-				# 	App.navigate 'choose-location'
+				if _.isUndefined window.google
+					CSpinner.show '', 'Please wait, loading resources'
+					GoogleMaps.loadScript()
+					.then => 
+						@checkNetwork()
+					,(error)-> 
+						CToast.show 'Error loading content, please check your network settings'
+					.finally -> 
+						CSpinner.hide()
+				else
+					@checkNetwork()
+					
 
 			onNext : ->
 				if _.contains [@businessName, @name, @phone], ''

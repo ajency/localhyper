@@ -174,6 +174,7 @@ angular.module('LocalHyper.businessDetails').controller('ChooseLocationCtrl', [
     return $stateProvider.state('choose-location', {
       url: '/choose-location',
       parent: 'main',
+      cache: false,
       views: {
         "appContent": {
           templateUrl: 'views/business-details/choose-location.html',
