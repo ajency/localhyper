@@ -24,17 +24,18 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       errorType: '',
       locationSet: true,
       beforeInit: function() {
-        this.user.full = '';
-        this.latitude = '';
-        this.longitude = '';
-        return this.comments.text = '';
+        if (App.previousState !== 'choose-location') {
+          this.user.full = '';
+          this.latitude = '';
+          this.longitude = '';
+          return this.comments.text = '';
+        }
       },
       getDetails: function() {
         var userInfo;
         userInfo = User.getCurrent();
         this.userInfo = userInfo.attributes;
         if (_.isEmpty(this.userInfo.address)) {
-          console.log('if user is not register');
           if (_.isNull(this.latLng)) {
             return $timeout((function(_this) {
               return function() {
@@ -51,7 +52,6 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
           }
         } else {
           this.locationSet = true;
-          console.log('if user is register');
           this.display = 'noError';
           this.latitude = this.userInfo.addressGeoPoint._latitude;
           this.longitude = this.userInfo.addressGeoPoint._longitude;
@@ -66,12 +66,10 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         if (App.previousState !== 'choose-location') {
           return this.getDetails();
         } else {
-          console.log('choose-location');
           cordinates = GoogleMaps.setCordinates('get');
           this.latitude = cordinates.lat;
           this.longitude = cordinates.long;
-          console.log(this.latitude);
-          if (this.latitude !== '' && this.longitude !== '') {
+          if (cordinates.changeLocation === 1) {
             loc = {
               lat: this.latitude,
               long: this.longitude
@@ -84,8 +82,6 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
             this.user.full = cordinates.addressObj.full;
             this.addressObj = cordinates.addressObj;
             return this.loadSeller();
-          } else {
-            return this.getDetails();
           }
         }
       },
@@ -107,7 +103,6 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
               CToast.show('Getting current location');
               return GPS.getCurrentLocation().then(function(loc) {
                 var latLng;
-                console.log(loc);
                 latLng = _this.toLatLng(loc);
                 _this.latLng = latLng;
                 _this.addressFetch = false;
@@ -115,7 +110,6 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
                   _this.addressObj = address;
                   _this.address = address;
                   _this.address.full = GoogleMaps.fullAddress(address);
-                  console.log(_this.address.full);
                   _this.addressFetch = true;
                   _this.latitude = _this.latLng.H;
                   _this.longitude = _this.latLng.L;
@@ -144,9 +138,6 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       loadSeller: function() {
         var params, product, sellers;
         sellers = [];
-        console.log(this.userInfo);
-        console.log(this.latitude);
-        console.log(this.longitude);
         CSpinner.show('', 'Please wait as we find sellers for your location');
         product = ProductsAPI.productDetails('get');
         params = {
@@ -161,7 +152,6 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
         };
         return ProductsAPI.findSellers(params).then((function(_this) {
           return function(sellers) {
-            console.log(sellers);
             _this.sellers.count = sellers.length;
             return _this.display = 'noError';
           };
@@ -244,13 +234,18 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       },
       onChangeLocation: function() {
         var loc;
-        loc = {
-          lat: this.latitude,
-          long: this.longitude,
-          addressObj: this.addressObj
-        };
-        GoogleMaps.setCordinates('set', loc);
-        return App.navigate('choose-location');
+        if (App.isOnline()) {
+          loc = {
+            lat: this.latitude,
+            long: this.longitude,
+            addressObj: this.addressObj,
+            changeLocation: 0
+          };
+          GoogleMaps.setCordinates('set', loc);
+          return App.navigate('choose-location');
+        } else {
+          return CToast.show(UIMsg.noInternet);
+        }
       },
       onTapToRetry: function() {
         return this.init();

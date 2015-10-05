@@ -34,27 +34,27 @@ angular.module 'LocalHyper.products'
 			locationSet: true
 
 			beforeInit : ->
-				@user.full = ''
-				@latitude = ''
-				@longitude = ''
-				@comments.text = ''
+				if App.previousState != 'choose-location'
+					@user.full = ''
+					@latitude = ''
+					@longitude = ''
+					@comments.text = ''
 
 			getDetails : ->
 				userInfo = User.getCurrent()
 				@userInfo = userInfo.attributes
 				if  _.isEmpty(@userInfo.address)
-					console.log 'if user is not register'
+					#user is not register
 					if _.isNull @latLng
 						$timeout =>
 							loc = lat: GEO_DEFAULT.lat, long: GEO_DEFAULT.lng
-							# @map.setCenter @toLatLng(loc)
 							@getCurrent()
 						, 200
 					else
 						@getCurrent()
 				else
+					#user is register
 					@locationSet = true
-					console.log 'if user is register'
 					@display = 'noError'
 					@latitude = @userInfo.addressGeoPoint._latitude
 					@longitude = @userInfo.addressGeoPoint._longitude
@@ -68,12 +68,10 @@ angular.module 'LocalHyper.products'
 				if App.previousState != 'choose-location'
 					@getDetails()
 				else
-					console.log 'choose-location'
 					cordinates = GoogleMaps.setCordinates 'get'
 					@latitude = cordinates.lat
 					@longitude = cordinates.long
-					console.log @latitude
-					if @latitude != '' && @longitude != ''
+					if cordinates.changeLocation == 1
 						loc = lat: @latitude, long: @longitude
 						@locationSet = true
 						@display = 'noError'
@@ -83,10 +81,7 @@ angular.module 'LocalHyper.products'
 						@user.full = cordinates.addressObj.full
 						@addressObj = cordinates.addressObj
 						@loadSeller()
-					else
-						@getDetails() 
-
-
+					
 			toLatLng : (loc)->
 				latLng = new google.maps.LatLng loc.lat, loc.long
 				latLng
@@ -104,7 +99,6 @@ angular.module 'LocalHyper.products'
 						CToast.show 'Getting current location'
 						GPS.getCurrentLocation()
 						.then (loc)=>
-							console.log loc
 							latLng = @toLatLng(loc)
 							@latLng = latLng
 							@addressFetch = false
@@ -113,7 +107,6 @@ angular.module 'LocalHyper.products'
 								@addressObj = address
 								@address = address
 								@address.full = GoogleMaps.fullAddress(address)
-								console.log @address.full
 								@addressFetch = true
 								@latitude = @latLng.H
 								@longitude = @latLng.L
@@ -135,9 +128,6 @@ angular.module 'LocalHyper.products'
 
 			loadSeller : ->
 				sellers = []
-				console.log @userInfo
-				console.log @latitude
-				console.log @longitude
 				CSpinner.show '', 'Please wait as we find sellers for your location'
 				product = ProductsAPI.productDetails 'get'
 				params = 
@@ -150,7 +140,6 @@ angular.module 'LocalHyper.products'
 					"area":  @city
 				ProductsAPI.findSellers params
 				.then (sellers)=>
-					console.log sellers
 					@sellers.count = sellers.length
 					@display = 'noError'
 				, (error)=>
@@ -223,10 +212,16 @@ angular.module 'LocalHyper.products'
 						CSpinner.hide()
 
 			onChangeLocation : ->
-				loc = lat: @latitude, long: @longitude , addressObj : @addressObj
-				# App.navigate 'choose-location'
-				GoogleMaps.setCordinates 'set' , loc 
-				App.navigate 'choose-location'
+				if App.isOnline()
+					loc = 
+						lat: @latitude
+						long: @longitude 
+						addressObj : @addressObj
+						changeLocation : 0
+					GoogleMaps.setCordinates 'set' , loc 
+					App.navigate 'choose-location'
+				else
+					CToast.show UIMsg.noInternet
 
 			onTapToRetry : ->
 				@init()

@@ -9,19 +9,10 @@ angular.module 'LocalHyper.products'
 		$scope.view =
 			latLng: null
 			addressFetch: true
-			sellerMarkers: []
 
-			sellers:
-				count: 0
-				displayCount: false
-				found: false
-
-			comments: text: ''
-			
 			beforeInit : ->
 				@reset()
 				@searchText = ''
-				@comments.text = ''
 				@address = null
 				@latLng = null
 				@map.setZoom 5
@@ -31,10 +22,8 @@ angular.module 'LocalHyper.products'
 				@map.setCenter latLng
 				latLng
 
-
 			init : ->
 				cordinates = GoogleMaps.setCordinates 'get'
-				
 				@latitude = cordinates.lat
 				@longitude = cordinates.long
 
@@ -52,11 +41,7 @@ angular.module 'LocalHyper.products'
 
 			reset : (clearPlace = true)->
 				App.resize()
-				@userMarker.setMap null if @userMarker
 				@placeMarker.setMap null if @placeMarker and clearPlace
-				
-				@sellers.found = false
-				@sellers.displayCount = false
 
 			toLatLng : (loc)->
 				latLng = new google.maps.LatLng loc.lat, loc.long
@@ -90,17 +75,6 @@ angular.module 'LocalHyper.products'
 							@addPlaceMarker latLng
 						, (error)->
 							CToast.show 'Error locating your position'
-
-			addUserLocationMarker : (latLng)->
-				@latLng = latLng
-				@reset()
-				@setAddress()
-				@userMarker = new google.maps.Marker
-					position: latLng
-					map: @map
-					icon: 'img/current-location.png'
-
-				@userMarker.setMap @map
 
 			addPlaceMarker : (latLng)->
 				@latLng = latLng
@@ -144,19 +118,19 @@ angular.module 'LocalHyper.products'
 					.then (enabled)=>
 						if enabled then CToast.show 'Please wait, getting location details...'
 						else CToast.show 'Please search for location'
-					
 				ready
-
 
 			confirmLocation :->
 				if @isLocationReady()
-					loc = lat: @latLng.lat(), long: @latLng.lng(), addressObj : @address
+					loc = 
+						lat: @latLng.lat()
+						long: @latLng.lng()
+						addressObj : @address
+						changeLocation : 1
+
 					GoogleMaps.setCordinates 'set' , loc 
-					user = GoogleMaps.setCordinates 'get'
-					console.log user
 					App.navigate 'make-request'
 
-		
 		$scope.$on '$ionicView.beforeEnter', ->
 			$scope.view.beforeInit()
 			App.scrollTop()
@@ -174,6 +148,7 @@ angular.module 'LocalHyper.products'
 		.state 'choose-location',
 			url: '/choose-location'
 			parent: 'main'
+			cache: false
 			views: 
 				"appContent":
 					templateUrl: 'views/products/choose-location.html'

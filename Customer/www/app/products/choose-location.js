@@ -3,19 +3,9 @@ angular.module('LocalHyper.products').controller('ChooseLocationCtrl', [
     $scope.view = {
       latLng: null,
       addressFetch: true,
-      sellerMarkers: [],
-      sellers: {
-        count: 0,
-        displayCount: false,
-        found: false
-      },
-      comments: {
-        text: ''
-      },
       beforeInit: function() {
         this.reset();
         this.searchText = '';
-        this.comments.text = '';
         this.address = null;
         this.latLng = null;
         return this.map.setZoom(5);
@@ -58,14 +48,9 @@ angular.module('LocalHyper.products').controller('ChooseLocationCtrl', [
           clearPlace = true;
         }
         App.resize();
-        if (this.userMarker) {
-          this.userMarker.setMap(null);
-        }
         if (this.placeMarker && clearPlace) {
-          this.placeMarker.setMap(null);
+          return this.placeMarker.setMap(null);
         }
-        this.sellers.found = false;
-        return this.sellers.displayCount = false;
       },
       toLatLng: function(loc) {
         var latLng;
@@ -109,17 +94,6 @@ angular.module('LocalHyper.products').controller('ChooseLocationCtrl', [
             }
           };
         })(this));
-      },
-      addUserLocationMarker: function(latLng) {
-        this.latLng = latLng;
-        this.reset();
-        this.setAddress();
-        this.userMarker = new google.maps.Marker({
-          position: latLng,
-          map: this.map,
-          icon: 'img/current-location.png'
-        });
-        return this.userMarker.setMap(this.map);
       },
       addPlaceMarker: function(latLng) {
         this.latLng = latLng;
@@ -180,16 +154,15 @@ angular.module('LocalHyper.products').controller('ChooseLocationCtrl', [
         return ready;
       },
       confirmLocation: function() {
-        var loc, user;
+        var loc;
         if (this.isLocationReady()) {
           loc = {
             lat: this.latLng.lat(),
             long: this.latLng.lng(),
-            addressObj: this.address
+            addressObj: this.address,
+            changeLocation: 1
           };
           GoogleMaps.setCordinates('set', loc);
-          user = GoogleMaps.setCordinates('get');
-          console.log(user);
           return App.navigate('make-request');
         }
       }
@@ -207,6 +180,7 @@ angular.module('LocalHyper.products').controller('ChooseLocationCtrl', [
     return $stateProvider.state('choose-location', {
       url: '/choose-location',
       parent: 'main',
+      cache: false,
       views: {
         "appContent": {
           templateUrl: 'views/products/choose-location.html',

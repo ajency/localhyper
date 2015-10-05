@@ -270,6 +270,16 @@
          </div>
       </ion-list>
 
+      <ion-item 
+         class="nobg border-none">
+         <button
+            class="title button button-block button-assertive"
+            ng-show="!view.offerDetails.showChange"
+            ng-click="view.offerDetails.updateDeliveryStatus();">
+             Update
+         </button>
+      </ion-item>
+
       <aj-error class="errors" class="errors"
          ng-switch-when="error"
          error-type="view.errorType"
@@ -278,14 +288,14 @@
 
    </ion-content>
 
-   <ion-footer-bar
+   <!-- <ion-footer-bar
       ng-show="!view.offerDetails.showChange"
       ng-click="view.offerDetails.updateDeliveryStatus();">
 
       <button class="button button-block button-assertive margin-none title">
          Update
       </button>
-   </ion-footer-bar>
+   </ion-footer-bar> -->
 
 </ion-modal-view>
 
