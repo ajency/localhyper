@@ -174,9 +174,6 @@ angular.module 'LocalHyper.requestsOffers'
 				errorType: ''
 				offerPrice: ''
 				reply: button: true, text: ''
-				selectedText : ''
-				setReadOnly : true
-				setValue : false
 				
 				deliveryTime:
 					display: false
@@ -230,9 +227,6 @@ angular.module 'LocalHyper.requestsOffers'
 					@deliveryTime.unitText = 'Day'
 					@reply.button = true
 					@reply.text = ''
-					@setReadOnly = true
-					@setValue = false
-					@selectedText = ''
 					$ionicScrollDelegate
 						.$getByHandle 'request-details'
 						.scrollTop()
@@ -295,17 +289,14 @@ angular.module 'LocalHyper.requestsOffers'
 
 				makeOffer : ->
 					requestId = @data.id
-					# priceValue = ''
-					# switch @price
-					# 	when 'localPrice'
-					# 		priceValue = @data.platformPrice
-					# 	when 'onlinePrice'
-					# 		priceValue = @data.onlinePrice
-					# 	when 'yourPrice'
-					# 		priceValue = @offerPrice
-
-					@price = @offerPrice
-					priceValue = @offerPrice
+					priceValue = ''
+					switch @price
+						when 'localPrice'
+							priceValue = @data.platformPrice
+						when 'onlinePrice'
+							priceValue = @data.onlinePrice
+						when 'yourPrice'
+							priceValue = @offerPrice
 
 					params = 
 						"sellerId": User.getId()
@@ -349,15 +340,6 @@ angular.module 'LocalHyper.requestsOffers'
 						request.id is requestId
 					$scope.view.requests.splice(spliceIndex, 1) if spliceIndex isnt -1
 					$scope.view.setRequestsCount()
-
-				setPrice :(price,typeOfPrice)->
-					@offerPrice = price
-					@setValue = true
-					@selectedText = typeOfPrice
-					if typeOfPrice != 'Your Price'
-						@setReadOnly = true
-					else
-						@setReadOnly = false
 
 			init : ->
 				@filter.reset()

@@ -265,9 +265,6 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           button: true,
           text: ''
         },
-        selectedText: '',
-        setReadOnly: true,
-        setValue: false,
         deliveryTime: {
           display: false,
           value: 1,
@@ -331,9 +328,6 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           this.deliveryTime.unitText = 'Day';
           this.reply.button = true;
           this.reply.text = '';
-          this.setReadOnly = true;
-          this.setValue = false;
-          this.selectedText = '';
           return $ionicScrollDelegate.$getByHandle('request-details').scrollTop();
         },
         show: function(request) {
@@ -413,8 +407,17 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         makeOffer: function() {
           var params, priceValue, requestId;
           requestId = this.data.id;
-          this.price = this.offerPrice;
-          priceValue = this.offerPrice;
+          priceValue = '';
+          switch (this.price) {
+            case 'localPrice':
+              priceValue = this.data.platformPrice;
+              break;
+            case 'onlinePrice':
+              priceValue = this.data.onlinePrice;
+              break;
+            case 'yourPrice':
+              priceValue = this.offerPrice;
+          }
           params = {
             "sellerId": User.getId(),
             "requestId": requestId,
@@ -469,16 +472,6 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             $scope.view.requests.splice(spliceIndex, 1);
           }
           return $scope.view.setRequestsCount();
-        },
-        setPrice: function(price, typeOfPrice) {
-          this.offerPrice = price;
-          this.setValue = true;
-          this.selectedText = typeOfPrice;
-          if (typeOfPrice !== 'Your Price') {
-            return this.setReadOnly = true;
-          } else {
-            return this.setReadOnly = false;
-          }
         }
       },
       init: function() {
