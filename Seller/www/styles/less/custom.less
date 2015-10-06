@@ -1092,8 +1092,8 @@ sm{
 	}
 }
 
-.make-an-offer {
-	margin-top: 2px;
+.row.make-an-offer {
+	margin-top: 6px;
 	.item-radio {
 		-webkit-border-radius: 2px;
 		-moz-border-radius: 2px;
@@ -1122,6 +1122,19 @@ sm{
 			visibility: visible;
 		}
 	}
+	label.with-rupee {
+		position: relative;
+		padding: 12px;
+		padding-left: 35px;
+		span.WebRupee {
+			position: absolute;
+			top: 19px;
+			left: 14px;
+		}
+		input[type=text] {
+			background-color: #fff;
+		}
+	}
 	.item-content {
 		padding: 5px 8px;
 		padding-bottom: 35px;
@@ -1130,6 +1143,41 @@ sm{
 	}
 	.radio-icon-hide {
 		visibility: hidden;
+	}
+
+	& > .col {
+		position: relative;
+		.prices-wrap {
+			position: absolute;
+			width: 60%;
+			top: 4px;
+			bottom: 6px;
+			right: 3px;
+			z-index: 2;
+		}
+	}
+	// request details - local price/online price
+	button.button.btn-prices {
+		margin: 0;
+		padding: 5px;
+		height: auto;
+		min-height: 0;
+		border-color: transparent;
+		background: #F3F3F3;
+		h4 {
+			font-size: 13px;
+			margin: 0;
+			// color: #1f1f1f;
+			color: @brand-primary;
+		}
+		&.activated {
+			h4 {
+				color: #fff;
+			}
+		}
+	}
+	.your-offer-info {
+		text-align: center;
 	}
 }
 .deli-tim {
@@ -1160,6 +1208,31 @@ sm{
 		.change {
 			font-size: 11px;
 		}
+	}
+}
+.deli-dura {
+	h4.delivery-time {
+		margin-top: 0;
+		margin-bottom: 8px;
+		font-size: 11px;
+	}
+	i.big-icon {
+		padding-top: 23px;
+		padding-bottom: 4px;
+		display: block;
+		line-height: 0;
+	}
+	.single-input input {
+		padding-left: 15px;
+	}
+}
+.item-details h5.category-list {
+	font-size: 14px;
+    margin-bottom: 7px;
+	b {
+		font-size: 14px;
+		position: relative;
+		bottom: -2px;
 	}
 }
 

@@ -1074,10 +1074,10 @@ sm {
 .header-item .button.button-assertive {
   padding: 0 10px;
 }
-.make-an-offer {
-  margin-top: 2px;
+.row.make-an-offer {
+  margin-top: 6px;
 }
-.make-an-offer .item-radio {
+.row.make-an-offer .item-radio {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   -o-border-radius: 2px;
@@ -1085,7 +1085,7 @@ sm {
   border-right: 1px solid #ddd;
   border-left: 1px solid #ddd;
 }
-.make-an-offer .item-radio input ~ .rad-ico {
+.row.make-an-offer .item-radio input ~ .rad-ico {
   position: absolute;
   left: 50%;
   bottom: 8px;
@@ -1093,26 +1093,69 @@ sm {
   z-index: 5;
   color: #f35a59;
 }
-.make-an-offer .item-radio input ~ .radio-icon-show {
+.row.make-an-offer .item-radio input ~ .radio-icon-show {
   visibility: visible;
 }
-.make-an-offer .item-radio input ~ .radio-icon-hide {
+.row.make-an-offer .item-radio input ~ .radio-icon-hide {
   visibility: hidden;
 }
-.make-an-offer .item-radio input:checked ~ .radio-icon-show {
+.row.make-an-offer .item-radio input:checked ~ .radio-icon-show {
   visibility: hidden;
 }
-.make-an-offer .item-radio input:checked ~ .radio-icon-hide {
+.row.make-an-offer .item-radio input:checked ~ .radio-icon-hide {
   visibility: visible;
 }
-.make-an-offer .item-content {
+.row.make-an-offer label.with-rupee {
+  position: relative;
+  padding: 12px;
+  padding-left: 35px;
+}
+.row.make-an-offer label.with-rupee span.WebRupee {
+  position: absolute;
+  top: 19px;
+  left: 14px;
+}
+.row.make-an-offer label.with-rupee input[type=text] {
+  background-color: #fff;
+}
+.row.make-an-offer .item-content {
   padding: 5px 8px;
   padding-bottom: 35px;
   text-align: center;
   height: 70px;
 }
-.make-an-offer .radio-icon-hide {
+.row.make-an-offer .radio-icon-hide {
   visibility: hidden;
+}
+.row.make-an-offer > .col {
+  position: relative;
+}
+.row.make-an-offer > .col .prices-wrap {
+  position: absolute;
+  width: 60%;
+  top: 4px;
+  bottom: 6px;
+  right: 3px;
+  z-index: 2;
+}
+.row.make-an-offer button.button.btn-prices {
+  margin: 0;
+  padding: 5px;
+  height: auto;
+  min-height: 0;
+  border-color: transparent;
+  background: #F3F3F3;
+}
+.row.make-an-offer button.button.btn-prices h4 {
+  font-size: 13px;
+  margin: 0;
+  color: #f35a59;
+}
+.row.make-an-offer button.button.btn-prices.activated h4 {
+  color: #fff;
+}
+.row.make-an-offer .your-offer-info {
+  text-align: center;
 }
 .deli-tim {
   /*max-width: 250px;*/
@@ -1143,6 +1186,29 @@ sm {
 }
 .deli-tim p .change {
   font-size: 11px;
+}
+.deli-dura h4.delivery-time {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+.deli-dura i.big-icon {
+  padding-top: 23px;
+  padding-bottom: 4px;
+  display: block;
+  line-height: 0;
+}
+.deli-dura .single-input input {
+  padding-left: 15px;
+}
+.item-details h5.category-list {
+  font-size: 14px;
+  margin-bottom: 7px;
+}
+.item-details h5.category-list b {
+  font-size: 14px;
+  position: relative;
+  bottom: -2px;
 }
 .modal-offer-header {
   border-bottom-color: transparent;
