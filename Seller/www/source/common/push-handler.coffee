@@ -37,9 +37,11 @@ angular.module 'LocalHyper.common'
 	Push.handlePayload = (payload)->
 
 		inAppNotification = ->
+			console.log 'inAppNotification'
 			$rootScope.$broadcast 'in:app:notification', payload: payload
 
 		notificationClick = ->
+			console.log 'notificationClick'
 			$rootScope.$broadcast 'push:notification:click', payload: payload
 
 		if App.isAndroid()
@@ -54,6 +56,15 @@ angular.module 'LocalHyper.common'
 		
 		else if App.isIOS()
 			console.log 'ios'
+			console.log '----'
+			console.log payload
+			console.log '----'
+			if payload.foreground
+				inAppNotification()
+			else if !payload.foreground
+				notificationClick()
+
+
 
 	Push
 ]

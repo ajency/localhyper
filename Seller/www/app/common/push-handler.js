@@ -44,11 +44,13 @@ angular.module('LocalHyper.common').factory('Push', [
     Push.handlePayload = function(payload) {
       var inAppNotification, notificationClick;
       inAppNotification = function() {
+        console.log('inAppNotification');
         return $rootScope.$broadcast('in:app:notification', {
           payload: payload
         });
       };
       notificationClick = function() {
+        console.log('notificationClick');
         return $rootScope.$broadcast('push:notification:click', {
           payload: payload
         });
@@ -64,7 +66,15 @@ angular.module('LocalHyper.common').factory('Push', [
           return inAppNotification();
         }
       } else if (App.isIOS()) {
-        return console.log('ios');
+        console.log('ios');
+        console.log('----');
+        console.log(payload);
+        console.log('----');
+        if (payload.foreground) {
+          return inAppNotification();
+        } else if (!payload.foreground) {
+          return notificationClick();
+        }
       }
     };
     return Push;

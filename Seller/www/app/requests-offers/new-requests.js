@@ -679,6 +679,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
       payload = obj.payload;
       switch (payload.type) {
         case 'new_request':
+          console.log('new-request-coffee-527');
           App.navigate('new-requests');
           return $scope.view.requestDetails.onNotificationClick(payload.id);
         case 'cancelled_request':

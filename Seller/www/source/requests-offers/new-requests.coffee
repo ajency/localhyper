@@ -524,6 +524,7 @@ angular.module 'LocalHyper.requestsOffers'
 			payload = obj.payload
 			switch payload.type
 				when 'new_request'
+					console.log 'new-request-coffee-527'
 					App.navigate 'new-requests'
 					$scope.view.requestDetails.onNotificationClick payload.id
 				when 'cancelled_request'
