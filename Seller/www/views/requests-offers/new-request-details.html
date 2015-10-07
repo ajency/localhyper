@@ -42,6 +42,11 @@
 
 						<div class="col col-60">
 							<h2 class="text-left product-item">{{view.requestDetails.data.product.name}}</h2>
+							<h5 class="category-list subdued text-left">
+								{{view.requestDetails.data.category.parent}} &nbsp;<b><i class="ion-arrow-right-b subdued"></i></b>
+								&nbsp;{{view.requestDetails.data.category.name}} &nbsp;<b><i class="ion-arrow-right-b subdued"></i></b>
+								&nbsp;{{view.requestDetails.data.brand.name}}
+							</h5>
 							<h3 class="text-left subdued">
 								Model No : {{view.requestDetails.data.product.model_number}}
 							</h3>
@@ -70,7 +75,7 @@
 			<!-- This is for the address that'll be added in the future -->
 			<!-- Remove the style "display: none;" when using this. thx -->
 			<p class="address-details" >
-				<i class="icon ion-ios-location"></i> 
+				<i class="icon ion-ios-location"></i>
 				{{view.requestDetails.data.address.full}}
 			</p>
 
@@ -123,7 +128,7 @@
 			</div>
 
 
-				<div class="row">
+				<div class="row" style="display: none;">
 					<div class="col col-100">
 						<h4 class=" subdued text-center margin-none">Category</h4>
 
@@ -138,46 +143,56 @@
 <!----------- -->
 			<div class="row make-an-offer">
 				<div class="col">
-					<label 
-						class="item item-input">
-						 	<input ng-model="view.requestDetails.offerPrice" 
+					<label
+						class="item item-input with-rupee">
+							<span class="WebRupee subdued">&#x20B9;</span>
+						 	<input ng-model="view.requestDetails.offerPrice"
 						 		type="text"
-						 		ng-click = "view.requestDetails.edit()" 
+						 		style="padding-right: 0;"
+						 		ng-click = "view.requestDetails.edit()"
 						 		placeholder="Your price"
 						 		ng-readonly="view.requestDetails.setReadOnly"
 						 		>
 					</label>
-					<div>{{ view.requestDetails.selectedText}}</div>
-				</div>
-				<div class="col">
-					<button class="button button-outline button-small button-assertive"
-							ng-disabled="view.requestDetails.data.platformPrice === ''"
-							ng-click="view.requestDetails.setPrice(view.requestDetails.data.platformPrice,'Local Price')">
-  							<h4 class="subdued"> Local Price </h4>
-							<h4 class ="bold" ng-if="view.requestDetails.data.platformPrice !== ''">
-								<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.requestDetails.data.platformPrice)}}
-							</h4>
-							<h4 class ="bold" ng-if="view.requestDetails.data.platformPrice === ''">
-								N/A
-							</h4>
-					</button>
-				</div>
-				<div class="col">
-					<button class="button button-outline button-small button-assertive"
-							ng-disabled="view.requestDetails.data.onlinePrice === ''"
-							ng-click="view.requestDetails.setPrice(view.requestDetails.data.onlinePrice,'Online Price')">
-  							<h4 class="subdued"> Online Price </h4>
-							<h4 class ="bold" ng-if="view.requestDetails.data.onlinePrice !== ''">
-								<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.requestDetails.data.onlinePrice)}}
-							</h4>
-							<h4 class ="bold" ng-if="view.requestDetails.data.onlinePrice === ''">
-								N/A
-							</h4>
-					</button>
+					<div><b>{{ view.requestDetails.selectedText}}</b></div>
+
+					<div class="row prices-wrap">
+						<div class="col">
+							<button class="button button-outline button-block button-assertive btn-prices"
+									ng-disabled="view.requestDetails.data.platformPrice === ''"
+									ng-click="view.requestDetails.setPrice(view.requestDetails.data.platformPrice,'Local Price')">
+		  							<h4 class="subdued"> Local Price </h4>
+									<h4 class ="bold" ng-if="view.requestDetails.data.platformPrice !== ''">
+										<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.requestDetails.data.platformPrice)}}
+									</h4>
+									<h4 class ="bold" ng-if="view.requestDetails.data.platformPrice === ''">
+										N/A
+									</h4>
+							</button>
+						</div>
+						<div class="col">
+							<button class="button button-outline button-block button-assertive btn-prices"
+									ng-disabled="view.requestDetails.data.onlinePrice === ''"
+									ng-click="view.requestDetails.setPrice(view.requestDetails.data.onlinePrice,'Online Price')">
+		  							<h4 class="subdued"> Online Price </h4>
+									<h4 class ="bold" ng-if="view.requestDetails.data.onlinePrice !== ''">
+										<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.requestDetails.data.onlinePrice)}}
+									</h4>
+									<h4 class ="bold" ng-if="view.requestDetails.data.onlinePrice === ''">
+										N/A
+									</h4>
+							</button>
+						</div>
+					</div>
 				</div>
 		    </div>
+
+		    <!-- <div class="row your-offer-info">
+		    	<div class="col">
+		    	</div>
+		    </div> -->
 <!----------- -->
-<!-- 
+<!--
 			<div class="row make-an-offer">
 				<div class="col">
 					<label class="item item-radio">
@@ -265,7 +280,7 @@
 					</div>
 			</div>
 
-			<div class="row">
+			<!-- <div class="row">
 				<div class="col">
 					<div class="deli-tim">
 						<i class="icon-img icon-cust-cal bigger">
@@ -277,22 +292,22 @@
 							<span
 								class="big">
 								{{view.requestDetails.deliveryTime.value}} {{view.requestDetails.deliveryTime.unitText}}
-							</span>
-							
+							</span> -->
+
 						<!--	<span
 								class="change text-primary"
 								ng-if="!view.requestDetails.deliveryTime.display"
 								ng-click="view.requestDetails.deliveryTime.display=true; App.resize();">
 								(Change)
 							</span>-->
-						</span>
+						<!-- </span>
 						</p>
 					</div>
 				</div>
-			</div>
+			</div> -->
 
 			<div
-				class="list margin-none card m-red">
+				class="list margin-none card m-red deli-dura">
 				<div class="row">
 					<div class="col">
 						<i
@@ -301,6 +316,7 @@
 						</i>
 					</div>
 					<div class="col col-33">
+						<h4 class="text-center delivery-time">Delivery Time</h4>
 						<label class="single-input" >
 							<input class="text-center"
 					    		type="number"
@@ -363,7 +379,7 @@
 			tap-to-retry="view.requestDetails.get()" class="error-wrapper">
 		</aj-error>
 
-		<ion-item 
+		<ion-item
 			class="nobg border-none"
 			ng-switch-when="noError">
 			<button
