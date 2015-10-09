@@ -532,8 +532,10 @@ angular.module 'LocalHyper.requestsOffers'
 			payload = obj.payload
 			switch payload.type
 				when 'new_request'
-					console.log 'new-request-coffee-527'
 					App.navigate 'new-requests'
+					# if statement added since in ios App.navigate 'new-requests' desnt reintialize the controller
+					if App.isIOS()
+						$scope.view.getRequests()
 					$scope.view.requestDetails.onNotificationClick payload.id
 				when 'cancelled_request'
 					RequestsAPI.cancelledRequestId 'set', payload.id
