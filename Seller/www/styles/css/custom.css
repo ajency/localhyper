@@ -1188,9 +1188,10 @@ sm {
   font-size: 11px;
 }
 .deli-dura h4.delivery-time {
-  margin-top: 0;
-  margin-bottom: 8px;
-  font-size: 11px;
+  margin-top: 5px;
+  margin-bottom: 0px;
+  font-size: 12px;
+  color: #666;
 }
 .deli-dura i.big-icon {
   padding-top: 23px;
@@ -1200,6 +1201,11 @@ sm {
 }
 .deli-dura .single-input input {
   padding-left: 15px;
+}
+.deli-dura button.button-assertive.col {
+  margin: 5px;
+  line-height: 33px;
+  min-height: 0;
 }
 .item-details h5.category-list {
   font-size: 14px;

@@ -156,7 +156,7 @@
 					</label>
 					<div><b>{{ view.requestDetails.selectedText}}</b></div>
 
-					<div class="row prices-wrap"> 
+					<div class="row prices-wrap">
 						<div class="col">
 							<button class="button button-outline button-block button-assertive btn-prices"
 									ng-disabled="view.requestDetails.data.platformPrice === ''"
@@ -170,7 +170,7 @@
 									</h4>
 							</button>
 						</div>
-						<div class="col"> 
+						<div class="col">
 							<button class="button button-outline button-block button-assertive btn-prices"
 									ng-disabled="view.requestDetails.data.onlinePrice === ''"
 									ng-click="view.requestDetails.setPrice(view.requestDetails.data.onlinePrice,'Online Price')">
@@ -308,6 +308,27 @@
 
 			<div
 				class="list margin-none card m-red deli-dura">
+				<div class="row">
+					<div class="col">
+						<h4 class="text-center delivery-time">Delivery Time</h4>
+					</div>
+				</div>
+				<div class="row">
+					<!-- <div class="col"> -->
+						<button class="button button-assertive button-outline col">Today</button>
+					<!-- </div> -->
+					<!-- <div class="col"> -->
+						<button class="button button-assertive button-outline col">Tomorrow</button>
+					<!-- </div> -->
+					<!-- <div class="col"> -->
+						<button class="button button-assertive button-outline col">3 Days</button>
+					<!-- </div> -->
+				</div>
+			</div>
+
+			<div
+				class="list margin-none card m-red deli-dura"
+				style="display: none;">
 				<div class="row">
 					<div class="col">
 						<i
