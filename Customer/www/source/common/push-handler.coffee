@@ -55,6 +55,13 @@ angular.module 'LocalHyper.common'
 			
 			else if App.isIOS()
 				console.log 'ios'
+				console.log '----'
+				console.log payload
+				console.log '----'
+				if payload.foreground
+					inAppNotification()
+				else if !payload.foreground
+					notificationClick()
 
 		Push
 ]

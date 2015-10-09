@@ -64,7 +64,15 @@ angular.module('LocalHyper.common').factory('Push', [
           return inAppNotification();
         }
       } else if (App.isIOS()) {
-        return console.log('ios');
+        console.log('ios');
+        console.log('----');
+        console.log(payload);
+        console.log('----');
+        if (payload.foreground) {
+          return inAppNotification();
+        } else if (!payload.foreground) {
+          return notificationClick();
+        }
       }
     };
     return Push;

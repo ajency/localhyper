@@ -263,8 +263,12 @@ angular.module 'LocalHyper.requestsOffers'
 							@modal.hide()
 							CSpinner.hide()
 						, 2000
+					console.log '---index value--'	
+					console.log index
 
 					if index isnt -1 
+						console.log 'in index'
+						console.log requests[index]
 						@show requests[index]
 					else
 						#When request not present in list
@@ -275,6 +279,8 @@ angular.module 'LocalHyper.requestsOffers'
 							@modal.show()
 							RequestsAPI.getSingleRequest requestId
 							.then (request)=>
+								console.log 'afeter getSingleRequest request api'
+								console.log request
 								if request.status is 'cancelled'
 									onError 'Sorry, this request has been cancelled'
 								else if _.isEmpty requests
@@ -282,13 +288,13 @@ angular.module 'LocalHyper.requestsOffers'
 									LowestPrice.get request
 									@data = request
 								else
-									reqIndex = _.findIndex requests, (val)-> val.id is request.id
-									if reqIndex is -1
-										onError 'You have already made an offer'
-									else
-										@display = 'noError'
-										LowestPrice.get request
-										@data = request
+									# reqIndex = _.findIndex requests, (val)-> val.id is request.id
+									# if reqIndex is -1
+									# 	onError 'You have already made an offer'
+									# else
+									@display = 'noError'
+									LowestPrice.get request
+									@data = request
 							, (type)=>
 								@display = 'error'
 								@errorType = type
@@ -336,7 +342,7 @@ angular.module 'LocalHyper.requestsOffers'
 							if !_.isUndefined(type.data) 
 								if type.data.error == 'auto_offer_made'
 									@removeRequestCard requestId
-									CToast.show 'You have made an offer through auto offer'
+									CToast.show 'You have already made an offer'
 								else
 									CToast.show 'Failed to make offer, please try again'
 							else
@@ -397,6 +403,8 @@ angular.module 'LocalHyper.requestsOffers'
 					App.resize()
 
 			onSuccess : (data)->
+				# alert('in sucess')
+				console.log 'sucess called'
 				@display = 'noError'
 				@requests = data.requests
 				@filter.other['sellerBrands']     = data.sellerBrands

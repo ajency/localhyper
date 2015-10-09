@@ -373,7 +373,11 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
               }, 2000);
             };
           })(this);
+          console.log('---index value--');
+          console.log(index);
           if (index !== -1) {
+            console.log('in index');
+            console.log(requests[index]);
             return this.show(requests[index]);
           } else {
             return this.loadModal().then((function(_this) {
@@ -383,7 +387,8 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
                 _this.makeOfferBtn = false;
                 _this.modal.show();
                 return RequestsAPI.getSingleRequest(requestId).then(function(request) {
-                  var reqIndex;
+                  console.log('afeter getSingleRequest request api');
+                  console.log(request);
                   if (request.status === 'cancelled') {
                     return onError('Sorry, this request has been cancelled');
                   } else if (_.isEmpty(requests)) {
@@ -391,16 +396,9 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
                     LowestPrice.get(request);
                     return _this.data = request;
                   } else {
-                    reqIndex = _.findIndex(requests, function(val) {
-                      return val.id === request.id;
-                    });
-                    if (reqIndex === -1) {
-                      return onError('You have already made an offer');
-                    } else {
-                      _this.display = 'noError';
-                      LowestPrice.get(request);
-                      return _this.data = request;
-                    }
+                    _this.display = 'noError';
+                    LowestPrice.get(request);
+                    return _this.data = request;
                   }
                 }, function(type) {
                   _this.display = 'error';
@@ -447,7 +445,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
                 if (!_.isUndefined(type.data)) {
                   if (type.data.error === 'auto_offer_made') {
                     _this.removeRequestCard(requestId);
-                    return CToast.show('You have made an offer through auto offer');
+                    return CToast.show('You have already made an offer');
                   } else {
                     return CToast.show('Failed to make offer, please try again');
                   }
@@ -524,6 +522,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         });
       },
       onSuccess: function(data) {
+        console.log('sucess called');
         this.display = 'noError';
         this.requests = data.requests;
         this.filter.other['sellerBrands'] = data.sellerBrands;
