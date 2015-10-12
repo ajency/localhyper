@@ -229,9 +229,31 @@
 			class="aj-refresher">
 		</ion-infinite-scroll>
 
+		<div class="row" 
+			 style="margin-top: 25px;"
+			 ng-show="view.footer">
+			<div class="col"
+				 ng-hide="view.request.active">
+				<button
+					class="button button-block button-assertive"
+					ng-click="view.checkUserLogin();"
+					>
+  					Get best prices from your local sellers
+				</button>
+			</div>
+			<div class="col"
+				 ng-show="view.request.active">
+				<button
+					class="button button-block button-assertive"
+					>
+  					You currently have an open request
+				</button>
+			</div>
+		</div>
+
 	</ion-content>
 
-	<ion-footer-bar ng-show="view.footer" class="bar-assertive" >
+<!-- 	<ion-footer-bar ng-show="view.footer" class="bar-assertive" >
 		<div
 			class="title"
 			ng-hide="view.request.active"
@@ -243,6 +265,6 @@
 			ng-show="view.request.active">
 			You currently have an open request
 		</div>
-	</ion-footer-bar>
+	</ion-footer-bar> -->
 
 </ion-view>

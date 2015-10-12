@@ -399,22 +399,31 @@
 			</aj-error>
 		</ion-list>
 
+		<div class="row" style="margin-top: 25px;"
+			 ng-if="view.cancelRequest.footer">
+			<div class="col">
+				<button
+					class="button button-block button-assertive"
+					ng-click="view.onCancelRequest();"
+					>
+  					Cancel Request
+				</button>
+			</div>
+		</div>
+
 	</ion-content>
 
-	<ion-footer-bar
+	<!-- <ion-footer-bar
 		class="bar-assertive bar no-shadow can cel-req-btn"
 		ng-if="view.cancelRequest.footer">
 
-		<!-- <div class="row">
-			<div class="col"> -->
 				<div
 					class="title no-shadow"
 					ng-click="view.onCancelRequest();">
-					Cancel Request
+					Cancel Request123
 				</div>
-			<!-- </div>
-		</div> -->
-	</ion-footer-bar>
+
+	</ion-footer-bar> -->
 
 </ion-view>
 
