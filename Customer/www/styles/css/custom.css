@@ -1724,11 +1724,16 @@ label.status-label {
 }
 .bar.bar-footer.verify-btm-bar {
   padding: 0;
+  background-color: transparent !important;
+  padding: 5px;
+  height: 55px;
+  box-shadow: 0 0 0 #fff;
 }
 .bar.bar-footer.verify-btm-bar button.button.aj-btn {
   margin: 0;
   font-size: 18px;
   line-height: 42px;
+  position: relative;
 }
 .info-top {
   padding: 10px 25px;

@@ -32,13 +32,13 @@
 				ng-repeat="chains in view.categoryChains track by $index"
 				ng-click="view.onChainClick(chains)">
 
-				<ion-delete-button 
+				<ion-delete-button
 					class="ion-trash-a"
 					ng-click="view.removeItemFromChains(chains.subCategory.id)">
 				</ion-delete-button>
 
 				<div class="lighter-nh">
-					{{chains.category.name}} <i class="ion-ios-arrow-forward"></i> 
+					{{chains.category.name}} <i class="ion-ios-arrow-forward"></i>
 					<span class="darker">{{chains.subCategory.name}}</span>
 				</div>
 
@@ -51,18 +51,18 @@
 
 		</br>
 
-		<h5 
-			class="subdued" 
+		<h5
+			class="subdued"
 			ng-if="view.categoryChains.length == 0;">
-			Choose the categories and brands you deal with. 
+			Choose the categories and brands you deal with.
 			You shall receive requests based on the categories you select.
 		</h5>
 
 	</ion-content>
 
-	<ion-footer-bar class="bar bar-footer with-btn">
+	<ion-footer-bar class="bar bar-footer with-btn verify-btm-bar">
 		<button
-			class="title button button-block button-assertive"
+			class="title button button-block button-assertive aj-btn"
 			ng-disabled="view.categoryChains.length == 0;"
 			ng-click="App.navigate('verify-begin')">
 			Next
