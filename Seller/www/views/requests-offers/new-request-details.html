@@ -108,22 +108,6 @@
 					</div>
 				</div>
 
-
-			<!-- 	<div
-					class="row"
-					ng-if="view.requestDetails.data.lastOfferPrice !== ''">
-
-					<div class="col col-100">
-						<h5
-							class="margin-none subdued text-left"
-							ng-if="view.requestDetails.data.lastOfferPrice !== ''">
-
-							Your last offer price :  <span class="WebRupee subdued">&#x20B9;</span>
-							{{App.toINR(view.requestDetails.data.lastOfferPrice)}}  <i class="ion-ios-help-outline"></i>
-						</h5>
-					</div>
-				</div> -->
-
 				</div>
 			</div>
 
@@ -140,7 +124,6 @@
 
 				</div>
 			</div>
-<!----------- -->
 			<div class="row make-an-offer">
 				<div class="col">
 					<label
@@ -187,84 +170,6 @@
 				</div>
 		    </div>
 
-		    <!-- <div class="row your-offer-info">
-		    	<div class="col">
-		    	</div>
-		    </div> -->
-<!----------- -->
-<!--
-			<div class="row make-an-offer">
-				<div class="col">
-					<label class="item item-radio">
-						<input
-							type="radio"
-							name="group"
-							value="localPrice"
-							ng-model="view.requestDetails.price"
-							ng-change="App.resize();"
-							ng-disabled="view.requestDetails.data.platformPrice === ''">
-
-						<div class="item-content item-text-wrap">
-							<h4 class="subdued"> Local Price </h4>
-							<h4 class ="bold" ng-if="view.requestDetails.data.platformPrice !== ''">
-								<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.requestDetails.data.platformPrice)}}
-							</h4>
-
-							<h4 class ="bold" ng-if="view.requestDetails.data.platformPrice === ''">
-								N/A
-							</h4>
-						</div>
-
-						<i class="radio-icon-hide rad-ico ion-android-radio-button-on"></i>
-						<i class="radio-icon-show rad-ico ion-android-radio-button-off"></i>
-					</label>
-				</div>
-
-				<div class="col">
-					<label class="item item-radio">
-						<input
-							type="radio"
-							name="group"
-							value="onlinePrice"
-							ng-model="view.requestDetails.price"
-							ng-change="App.resize();"
-							ng-disabled="view.requestDetails.data.onlinePrice === ''">
-
-						<div class="item-content">
-							<h4 class="subdued"> Online Price </h4>
-							<h4 class ="bold" ng-if="view.requestDetails.data.onlinePrice !== ''">
-								<span class="WebRupee subdued">&#x20B9;</span> {{App.toINR(view.requestDetails.data.onlinePrice)}}
-							</h4>
-
-							<h4 class ="bold" ng-if="view.requestDetails.data.onlinePrice === ''">
-								N/A
-							</h4>
-						</div>
-
-						<i class="radio-icon-hide rad-ico ion-android-radio-button-on"></i>
-						<i class="radio-icon-show rad-ico ion-android-radio-button-off"></i>
-					</label>
-				</div>
-
-				<div class="col">
-					<label class="item item-radio">
-						<input
-							type="radio"
-							name="group"
-							value="yourPrice"
-							ng-model="view.requestDetails.price"
-							ng-change="App.resize();">
-
-						<div class="item-content">
-							<h4 class="subdued"> Your Price </h4>
-						</div>
-
-						<i class="radio-icon-hide rad-ico ion-android-radio-button-on"></i>
-						<i class="radio-icon-show rad-ico ion-android-radio-button-off"></i>
-					</label>
-				</div>
-		    </div>
- -->
 			<div
 				class="list margin-none"
 				ng-if="view.requestDetails.price === 'yourPrice'">
@@ -280,49 +185,32 @@
 					</div>
 			</div>
 
-			<!-- <div class="row">
-				<div class="col">
-					<div class="deli-tim">
-						<i class="icon-img icon-cust-cal bigger">
-							<img src="./img/cal.png" alt="">
-						</i>
-						<p>
-						<span class="ti">Delivery Time</span>
-						<span class="ac-ti">
-							<span
-								class="big">
-								{{view.requestDetails.deliveryTime.value}} {{view.requestDetails.deliveryTime.unitText}}
-							</span> -->
-
-						<!--	<span
-								class="change text-primary"
-								ng-if="!view.requestDetails.deliveryTime.display"
-								ng-click="view.requestDetails.deliveryTime.display=true; App.resize();">
-								(Change)
-							</span>-->
-						<!-- </span>
-						</p>
-					</div>
-				</div>
-			</div> -->
-
 			<div
 				class="list margin-none card m-red deli-dura">
 				<div class="row">
 					<div class="col">
-						<h4 class="text-center delivery-time">Delivery on or within: <b>12/08/2015</b></h4>
+						<h4 class="text-center delivery-time">Delivered 
+							<b ng-if="view.requestDetails.deliveryTime.value === 0 ">Today</b>
+							<b ng-if="view.requestDetails.deliveryTime.value === 1 ">Next Day</b>
+							<b ng-if="view.requestDetails.deliveryTime.value === 2 ">3 days</b>
+						</h4>
 					</div>
 				</div>
 				<div class="row">
-					<!-- <div class="col"> -->
-						<button class="button button-assertive button-outline col">Today</button>
-					<!-- </div> -->
-					<!-- <div class="col"> -->
-						<button class="button button-assertive button-outline col">Tomorrow</button>
-					<!-- </div> -->
-					<!-- <div class="col"> -->
-						<button class="button button-assertive button-outline col">3 Days</button>
-					<!-- </div> -->
+						<button 
+							class="button button-assertive button-outline col"
+							ng-click="view.requestDetails.setDeliveryDays(0)">Today
+						</button>
+						<button 
+							class="button button-assertive button-outline col"
+							ng-click="view.requestDetails.setDeliveryDays(1)">
+							Next day
+						</button>
+						<button 
+							class="button button-assertive button-outline col"
+							ng-click="view.requestDetails.setDeliveryDays(2)">
+							3 Days
+						</button>
 				</div>
 			</div>
 

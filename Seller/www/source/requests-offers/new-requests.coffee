@@ -180,7 +180,7 @@ angular.module 'LocalHyper.requestsOffers'
 				
 				deliveryTime:
 					display: false
-					value: 1
+					value: 0
 					unit: 'day'
 					unitText: 'Day'
 
@@ -202,7 +202,7 @@ angular.module 'LocalHyper.requestsOffers'
 
 					done : ->
 						if _.isNull(@value)
-							@value = 1
+							@value = 0
 							@unit = 'hr'
 							@unitText = 'Hour'
 						@display = false
@@ -225,7 +225,7 @@ angular.module 'LocalHyper.requestsOffers'
 					@price = null
 					@offerPrice = ''
 					@deliveryTime.display = false
-					@deliveryTime.value = 1
+					@deliveryTime.value = 0
 					@deliveryTime.unit = 'day'
 					@deliveryTime.unitText = 'Day'
 					@reply.button = true
@@ -327,7 +327,7 @@ angular.module 'LocalHyper.requestsOffers'
 						CToast.show 'Please select price'
 					else if _.isNull(priceValue) or priceValue is ''
 						CToast.show 'Please enter your offer price'
-					else if _.isNull(@deliveryTime.value) || @deliveryTime.value == 0
+					else if _.isNull(@deliveryTime.value) 
 						CToast.show 'Please enter delivery time'
 					else
 						CSpinner.show '', 'Please wait...'
@@ -369,6 +369,11 @@ angular.module 'LocalHyper.requestsOffers'
 					@setReadOnly =  false
 					@selectedText = 'Your Price'
 					@offerPrice = ''
+
+				setDeliveryDays :(value)->
+					@deliveryTime.value = value 
+					@deliveryTime.unit = 'day'
+
 
 			init : ->
 				@filter.reset()

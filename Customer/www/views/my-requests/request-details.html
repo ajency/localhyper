@@ -259,7 +259,8 @@
 						<div class="col align-center p-a-0 p-r-6">
 							<div class="vert-div pull-left"></div>
 							<p class="info">Delivery time</p>
-							<h2>{{offer.deliveryTimeStr}}</h2>
+							<h2 ng-if= "offer.deliveryTimeStr === '0 Days'">Today</h2>
+							<h2 ng-if= "offer.deliveryTimeStr !== '0 Days'">{{offer.deliveryTimeStr}}</h2>
 						</div>
 
 						<div

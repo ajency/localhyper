@@ -270,7 +270,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
         setValue: false,
         deliveryTime: {
           display: false,
-          value: 1,
+          value: 0,
           unit: 'day',
           unitText: 'Day',
           setDuration: function() {
@@ -295,7 +295,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           },
           done: function() {
             if (_.isNull(this.value)) {
-              this.value = 1;
+              this.value = 0;
               this.unit = 'hr';
               this.unitText = 'Hour';
             }
@@ -326,7 +326,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           this.price = null;
           this.offerPrice = '';
           this.deliveryTime.display = false;
-          this.deliveryTime.value = 1;
+          this.deliveryTime.value = 0;
           this.deliveryTime.unit = 'day';
           this.deliveryTime.unitText = 'Day';
           this.reply.button = true;
@@ -428,7 +428,7 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
             return CToast.show('Please select price');
           } else if (_.isNull(priceValue) || priceValue === '') {
             return CToast.show('Please enter your offer price');
-          } else if (_.isNull(this.deliveryTime.value) || this.deliveryTime.value === 0) {
+          } else if (_.isNull(this.deliveryTime.value)) {
             return CToast.show('Please enter delivery time');
           } else {
             CSpinner.show('', 'Please wait...');
@@ -482,6 +482,10 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
           this.setReadOnly = false;
           this.selectedText = 'Your Price';
           return this.offerPrice = '';
+        },
+        setDeliveryDays: function(value) {
+          this.deliveryTime.value = value;
+          return this.deliveryTime.unit = 'day';
         }
       },
       init: function() {
