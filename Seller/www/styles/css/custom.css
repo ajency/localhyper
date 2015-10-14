@@ -2253,3 +2253,9 @@ h4 .WebRupee.subdued {
   font-size: 30px;
   color: #f35a59;
 }
+
+.get-price-head i.icon.placeholder-icon:before {
+    font-size: 26px;
+    margin-right: 6px;
+    margin-left: 2px;
+}
