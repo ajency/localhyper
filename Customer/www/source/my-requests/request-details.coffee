@@ -196,6 +196,8 @@ angular.module 'LocalHyper.myRequests'
 
 			onAcceptOffer : (acceptedOffer)->
 				CSpinner.show '', 'Please wait...'
+				todaysDate = moment().toDate()
+				todaysDate = moment().utc(todaysDate)._d
 				offerId  = acceptedOffer.id
 				offerIds = _.pluck @offers.all, 'id'
 				unacceptedOfferIds = _.without offerIds, offerId
@@ -204,7 +206,7 @@ angular.module 'LocalHyper.myRequests'
 					"unacceptedOfferIds": unacceptedOfferIds
 					"acceptedDateIST" : 
 						"__type": "Date"
-						"iso": new Date 
+						"iso": todaysDate
 
 				RequestAPI.acceptOffer params
 				.then (data)=>

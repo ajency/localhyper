@@ -5,6 +5,11 @@
 	</ion-nav-title>
 
 	<div class="bar bar-subheader item-input-inset get-price-head">
+		<i
+			class="icon ion-android-locate placeholder-icon icon-input"
+			ng-click="view.getCurrent();">
+		</i>
+
 		<label class="item-input-wrapper">
 			<input
 				id="locationSearch"
@@ -108,9 +113,18 @@
 			</div>
 		</div>
 
+		<ion-item
+			class="nobg border-none">
+			<button
+				class="button button-full button-assertive"
+				ng-click="view.confirmLocation()">
+				Confirm Location
+			</button>
+		</ion-item>
+
     </ion-content>
 
-	<ion-footer-bar class="bar-assertive p-a-0 c-l-footer">
+	<!-- <ion-footer-bar class="bar-assertive p-a-0 c-l-footer">
 		<button
 			class="button button-dark btn-clear pull-left"
 			ng-click="view.getCurrent()">
@@ -123,7 +137,7 @@
 			ng-click="view.confirmLocation()">
 			Confirm Location
 		</button>
-	</ion-footer-bar>
+	</ion-footer-bar> -->
 
 </ion-view>
 

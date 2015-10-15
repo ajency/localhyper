@@ -206,8 +206,10 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
         return this.cancelRequest.set();
       },
       onAcceptOffer: function(acceptedOffer) {
-        var offerId, offerIds, params, unacceptedOfferIds;
+        var offerId, offerIds, params, todaysDate, unacceptedOfferIds;
         CSpinner.show('', 'Please wait...');
+        todaysDate = moment().toDate();
+        todaysDate = moment().utc(todaysDate)._d;
         offerId = acceptedOffer.id;
         offerIds = _.pluck(this.offers.all, 'id');
         unacceptedOfferIds = _.without(offerIds, offerId);
@@ -216,7 +218,7 @@ angular.module('LocalHyper.myRequests').controller('RequestDetailsCtrl', [
           "unacceptedOfferIds": unacceptedOfferIds,
           "acceptedDateIST": {
             "__type": "Date",
-            "iso": new Date
+            "iso": todaysDate
           }
         };
         return RequestAPI.acceptOffer(params).then((function(_this) {
