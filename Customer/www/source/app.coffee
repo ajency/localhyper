@@ -1,6 +1,6 @@
 #App - ShopOye Customer App
 
-angular.module 'LocalHyper', ['ionic', 'ngCordova'
+angular.module 'LocalHyper', ['ionic', 'ngCordova', 'ngIOS9UIWebViewPatch'
 	, 'LocalHyper.common', 'LocalHyper.init', 'LocalHyper.storage'
 	, 'LocalHyper.auth', 'LocalHyper.main', 'LocalHyper.categories', 'LocalHyper.products'
 	, 'LocalHyper.aboutUs', 'LocalHyper.googleMaps','LocalHyper.suggestProduct', 'LocalHyper.myRequests','ionic.rating']
