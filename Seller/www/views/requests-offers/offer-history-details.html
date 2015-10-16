@@ -138,11 +138,20 @@
                   <img src="./img/cal.png" alt="">
                   </i>
                   <p>
-                     <span class="ti">Delivery Time</span>
+                     <span class="ti">Delivered On</span>
                      <span class="ac-ti">
-                     <span class="big">
-                     {{view.deliveryTime.humanize(view.offerDetails.data.offerDeliveryTime)}}
+                     <span 
+                        class="big" 
+                        ng-if="view.offerDetails.data.offerDeliveryTime.value !== 0 " >
+                        {{view.deliveryTime.humanize(view.offerDetails.data.offerDeliveryTime)}}
                      </span>
+
+                      <span 
+                        class="big"
+                        ng-if="view.offerDetails.data.offerDeliveryTime.value === 0 ">
+                        Same Day
+                     </span>
+
                      </span>
                   </p>
                </div>
