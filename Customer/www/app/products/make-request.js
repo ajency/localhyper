@@ -4,6 +4,7 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       latLng: null,
       addressFetch: true,
       sellerMarkers: [],
+      changeLocation: 0,
       sellers: {
         count: 0,
         displayCount: false,
@@ -24,17 +25,42 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
       errorType: '',
       locationSet: true,
       beforeInit: function() {
-        if (App.previousState !== 'choose-location') {
-          this.user.full = '';
+        var cordinates, loc, userInfo;
+        this.previousState = App.previousState;
+        if (this.previousState === 'single-product') {
+          this.locationSet = true;
+          this.display = 'loader';
+          userInfo = User.getCurrent();
+          this.userInfo = userInfo.attributes;
+          if (!_.isEmpty(this.userInfo.address)) {
+            this.user.full = this.userInfo.address.full;
+          } else {
+            this.user.full = '';
+          }
           this.latitude = '';
           this.longitude = '';
           return this.comments.text = '';
+        } else if (this.previousState === 'choose-location') {
+          cordinates = GoogleMaps.setCordinates('get');
+          this.latitude = cordinates.lat;
+          this.longitude = cordinates.long;
+          this.changeLocation = cordinates.changeLocation;
+          if (this.changeLocation === 1) {
+            loc = {
+              lat: this.latitude,
+              long: this.longitude
+            };
+            this.locationSet = true;
+            this.display = 'noError';
+            this.latitude = cordinates.lat;
+            this.longitude = cordinates.long;
+            this.city = cordinates.addressObj.city;
+            this.user.full = cordinates.addressObj.full;
+            return this.addressObj = cordinates.addressObj;
+          }
         }
       },
       getDetails: function() {
-        var userInfo;
-        userInfo = User.getCurrent();
-        this.userInfo = userInfo.attributes;
         if (_.isEmpty(this.userInfo.address)) {
           if (_.isNull(this.latLng)) {
             return $timeout((function(_this) {
@@ -56,32 +82,18 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
           this.latitude = this.userInfo.addressGeoPoint._latitude;
           this.longitude = this.userInfo.addressGeoPoint._longitude;
           this.city = this.userInfo.address.city;
-          this.user.full = this.userInfo.address.full;
           this.addressObj = this.userInfo.address;
           return this.loadSeller();
         }
       },
       init: function() {
-        var cordinates, loc;
-        if (App.previousState !== 'choose-location') {
+        if (this.previousState === 'single-product') {
           return this.getDetails();
         } else {
-          cordinates = GoogleMaps.setCordinates('get');
-          this.latitude = cordinates.lat;
-          this.longitude = cordinates.long;
-          if (cordinates.changeLocation === 1) {
-            loc = {
-              lat: this.latitude,
-              long: this.longitude
-            };
-            this.locationSet = true;
-            this.display = 'noError';
-            this.latitude = cordinates.lat;
-            this.longitude = cordinates.long;
-            this.city = cordinates.addressObj.city;
-            this.user.full = cordinates.addressObj.full;
-            this.addressObj = cordinates.addressObj;
-            return this.loadSeller();
+          if (this.previousState === 'choose-location') {
+            if (this.changeLocation === 1) {
+              return this.loadSeller();
+            }
           }
         }
       },
@@ -111,8 +123,8 @@ angular.module('LocalHyper.products').controller('MakeRequestCtrl', [
                   _this.address = address;
                   _this.address.full = GoogleMaps.fullAddress(address);
                   _this.addressFetch = true;
-                  _this.latitude = _this.latLng.H;
-                  _this.longitude = _this.latLng.L;
+                  _this.latitude = _this.latLng.lat();
+                  _this.longitude = _this.latLng.lng();
                   _this.city = _this.address.city;
                   _this.user.full = _this.address.full;
                   return _this.loadSeller();
