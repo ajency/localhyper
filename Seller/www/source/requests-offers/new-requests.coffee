@@ -535,6 +535,9 @@ angular.module 'LocalHyper.requestsOffers'
 		
 		$rootScope.$on 'push:notification:click', (e, obj)->
 			payload = obj.payload
+			# if modal is aleready open when the app is in bckg,it closes the modal if exists.
+			if $('.modal-backdrop').hasClass 'active'
+				$('.modal-backdrop').addClass 'hide'
 			switch payload.type
 				when 'new_request'
 					App.navigate 'new-requests'

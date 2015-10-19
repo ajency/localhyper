@@ -680,6 +680,9 @@ angular.module('LocalHyper.requestsOffers').controller('NewRequestCtrl', [
     $rootScope.$on('push:notification:click', function(e, obj) {
       var payload;
       payload = obj.payload;
+      if ($('.modal-backdrop').hasClass('active')) {
+        $('.modal-backdrop').addClass('hide');
+      }
       switch (payload.type) {
         case 'new_request':
           App.navigate('new-requests');
