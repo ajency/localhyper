@@ -1130,6 +1130,9 @@ sm {
 .row.make-an-offer label.with-rupee input[type=text] {
   background-color: #fff !important;
 }
+.row.make-an-offer label.with-rupee input[type=number] {
+  background-color: #fff !important;
+}
 .row.make-an-offer .item-content {
   padding: 5px 8px;
   padding-bottom: 35px;
