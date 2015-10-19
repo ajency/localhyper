@@ -212,9 +212,17 @@
                   <p>
                      <span class="ti">Promised Delivery</span>
                      <span class="ac-ti">
-                        <span class="big">
-                        {{view.deliveryTime.humanize(view.offerDetails.data.offerDeliveryTime)}}
+                        <span 
+                           class="big"
+                           ng-if="view.offerDetails.data.offerDeliveryTime.value !== 0 ">
+                           {{view.deliveryTime.humanize(view.offerDetails.data.offerDeliveryTime)}}
                         </span>
+                        <span 
+                           class="big"
+                           ng-if="view.offerDetails.data.offerDeliveryTime.value === 0 ">
+                           Same Day
+                        </span>
+
                      </span>
                   </p>
                </div>

@@ -138,9 +138,13 @@
 
 					<div class="col">
 						<h4 class="align-left high-span rec-off">
-							Total received Offers <b>({{view.offers.all.length}})</b>
-							<span class="pull-right icon ion-ios-information-outline" style="font-size: 22px;" 
-								ng-click ="view.showInfo();"></span>
+							Total received Offers 12<b>({{view.offers.all.length}})</b>
+							<span 
+								class="pull-right icon ion-ios-information-outline" 
+								style="font-size: 22px;" 
+								ng-if="view.request.status !== 'expired';"
+								ng-click ="view.showInfo();">
+							</span>
 						</h4>
 					</div>
 				</div>
@@ -258,8 +262,8 @@
 
 						<div class="col align-center p-a-0 p-r-6">
 							<div class="vert-div pull-left"></div>
-							<p class="info">Delivery time</p>
-							<h2 ng-if= "offer.deliveryTimeStr === '0 Days'">Today</h2>
+							<p class="info">Deliverey</p>
+							<h2 ng-if= "offer.deliveryTimeStr === '0 Days'">Same Day</h2>
 							<h2 ng-if= "offer.deliveryTimeStr !== '0 Days'">{{offer.deliveryTimeStr}}</h2>
 						</div>
 

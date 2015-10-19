@@ -85,10 +85,12 @@
 						<!-- <h5 class="text-left subdued text-center margin-none">
 							MRP  <br><span class="WebRupee subdued">&#x20B9;</span> -->
 						<h4 class="text-left subdued text-center margin-none">
-							{{view.requestDetails.data.lowestPriceLabel}}
+							MRP
+							<!-- {{view.requestDetails.data.lowestPriceLabel}} -->
 								<br><span class="WebRupee subdued">&#x20B9;</span>
 							<b class="big-txt">
-								{{App.toINR(view.requestDetails.data.lowestPrice)}}
+									{{App.toINR(view.requestDetails.data.product.mrp)}} 
+									<!-- {{App.toINR(view.requestDetails.data.lowestPrice)}} -->
 							</b>
 						</h4>
 					</div>
@@ -130,8 +132,9 @@
 						class="item item-input with-rupee">
 							<span class="WebRupee subdued">&#x20B9;</span>
 						 	<input ng-model="view.requestDetails.offerPrice"
-						 		type="text"
-						 		style="padding-right: 0;"
+						 		type="number"
+						 		ng-pattern="App.onlyNumbers"
+						 		style="font-weight: bold;"
 						 		ng-click = "view.requestDetails.edit()"
 						 		placeholder="Your price"
 						 		ng-readonly="view.requestDetails.setReadOnly"
@@ -169,21 +172,6 @@
 					</div>
 				</div>
 		    </div>
-
-			<div
-				class="list margin-none"
-				ng-if="view.requestDetails.price === 'yourPrice'">
-					<div class="list list-inset m-t-0">
-					  <label class="item item-input with-prefix custom-offer-price">
-					  	<span class="WebRupee prefix">&#x20B9;</span>
-					    <input type="number"
-						    style="font-weight: bold;"
-				    		placeholder="Enter your offer price"
-				    		ng-pattern="App.onlyNumbers"
-				    		ng-model="view.requestDetails.offerPrice">
-					  </label>
-					</div>
-			</div>
 
 			<div
 				class="list margin-none card m-red deli-dura">
