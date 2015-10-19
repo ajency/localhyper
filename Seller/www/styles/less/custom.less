@@ -1102,6 +1102,9 @@ sm{
 
 .row.make-an-offer {
 	margin-top: 6px;
+	h4 .WebRupee.subdued {
+		font-size: 11px;
+	}
 	.item-radio {
 		-webkit-border-radius: 2px;
 		-moz-border-radius: 2px;
@@ -1138,9 +1141,10 @@ sm{
 			position: absolute;
 			top: 19px;
 			left: 14px;
+			line-height: 25px;
 		}
 		input[type=text] {
-			background-color: #fff;
+			background-color: #fff !important;
 		}
 	}
 	.item-content {
@@ -1180,8 +1184,9 @@ sm{
 		}
 		&.activated {
 			h4 {
-				color: #fff;
+				color: #444;
 			}
+			color: #444;
 		}
 	}
 	.your-offer-info {
@@ -2337,4 +2342,29 @@ h4 .WebRupee.subdued {
     font-size: 26px;
     margin-right: 6px;
     margin-left: 2px;
+}
+
+
+// for iOS
+.platform-ios {
+	.item-avatar, .item-avatar .item-content, .item-avatar-left, .item-avatar-left .item-content {
+		width: 50px;
+		height: 50px;
+		line-height: 36px;
+		.more-link {
+			i {
+				font-size: 24px;
+				padding-top: 11px;
+			}
+			span {
+				font-size: 11px;
+			}
+		}
+	}
+	.modal-offer-header {
+		h4.text-light {
+			line-height: 36px;
+			margin: 0;
+		}
+	}
 }
