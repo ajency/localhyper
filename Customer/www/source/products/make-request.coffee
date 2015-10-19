@@ -10,6 +10,7 @@ angular.module 'LocalHyper.products'
 			latLng: null
 			addressFetch: true
 			sellerMarkers: []
+			changeLocation : 0
 
 			sellers:
 				count: 0
@@ -34,15 +35,33 @@ angular.module 'LocalHyper.products'
 			locationSet: true
 
 			beforeInit : ->
-				if App.previousState != 'choose-location'
-					@user.full = ''
+				@previousState = App.previousState
+				if @previousState == 'single-product'
+					@locationSet = true
+					@display = 'loader'
+					userInfo = User.getCurrent()
+					@userInfo = userInfo.attributes
+					if  !_.isEmpty(@userInfo.address) then @user.full = @userInfo.address.full 
+					else @user.full = ''
 					@latitude = ''
 					@longitude = ''
 					@comments.text = ''
+				else if @previousState == 'choose-location'
+					cordinates = GoogleMaps.setCordinates 'get'
+					@latitude = cordinates.lat
+					@longitude = cordinates.long
+					@changeLocation = cordinates.changeLocation
+					if @changeLocation == 1 
+						loc = lat: @latitude, long: @longitude
+						@locationSet = true
+						@display = 'noError'
+						@latitude = cordinates.lat
+						@longitude = cordinates.long
+						@city = cordinates.addressObj.city
+						@user.full = cordinates.addressObj.full
+						@addressObj = cordinates.addressObj
 
 			getDetails : ->
-				userInfo = User.getCurrent()
-				@userInfo = userInfo.attributes
 				if  _.isEmpty(@userInfo.address)
 					#user is not register
 					if _.isNull @latLng
@@ -59,28 +78,30 @@ angular.module 'LocalHyper.products'
 					@latitude = @userInfo.addressGeoPoint._latitude
 					@longitude = @userInfo.addressGeoPoint._longitude
 					@city = @userInfo.address.city
-					@user.full = @userInfo.address.full
 					@addressObj = @userInfo.address
 					@loadSeller()
 
 				
 			init : ->
-				if App.previousState != 'choose-location'
+				if @previousState == 'single-product'
 					@getDetails()
 				else
-					cordinates = GoogleMaps.setCordinates 'get'
-					@latitude = cordinates.lat
-					@longitude = cordinates.long
-					if cordinates.changeLocation == 1
-						loc = lat: @latitude, long: @longitude
-						@locationSet = true
-						@display = 'noError'
-						@latitude = cordinates.lat
-						@longitude = cordinates.long
-						@city = cordinates.addressObj.city
-						@user.full = cordinates.addressObj.full
-						@addressObj = cordinates.addressObj
-						@loadSeller()
+					# cordinates = GoogleMaps.setCordinates 'get'
+					# console.log '--73--'
+					# console.log cordinates.changeLocation
+					# @latitude = cordinates.lat
+					# @longitude = cordinates.long
+					if @previousState == 'choose-location'
+						if @changeLocation == 1 
+							# loc = lat: @latitude, long: @longitude
+							# @locationSet = true
+							# @display = 'noError'
+							# @latitude = cordinates.lat
+							# @longitude = cordinates.long
+							# @city = cordinates.addressObj.city
+							# @user.full = cordinates.addressObj.full
+							# @addressObj = cordinates.addressObj
+							@loadSeller()
 					
 			toLatLng : (loc)->
 				latLng = new google.maps.LatLng loc.lat, loc.long
@@ -108,8 +129,8 @@ angular.module 'LocalHyper.products'
 								@address = address
 								@address.full = GoogleMaps.fullAddress(address)
 								@addressFetch = true
-								@latitude = @latLng.H
-								@longitude = @latLng.L
+								@latitude = @latLng.lat()
+								@longitude = @latLng.lng()
 								@city = @address.city
 								@user.full = @address.full
 								@loadSeller()
