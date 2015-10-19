@@ -1361,6 +1361,14 @@ h4.info-make-request {
   margin-top: 8px;
   margin-bottom: 5px;
 }
+.high-span.rec-off span.icon {
+  font-size: 22px;
+  width: 44px;
+  height: 44px;
+  margin-top: -15px;
+  text-align: right;
+  line-height: 53px;
+}
 .no-offs-det {
   padding-top: 25px;
 }
