@@ -45,6 +45,7 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'ngIOS9UIWebViewPatch', 'Loc
   }
 ]).config([
   '$ionicConfigProvider', function($ionicConfigProvider) {
+    $ionicConfigProvider.views.swipeBackEnabled(false);
     $ionicConfigProvider.views.forwardCache(true);
     $ionicConfigProvider.backButton.previousTitleText(false).text('');
     $ionicConfigProvider.navBar.alignTitle('center');
