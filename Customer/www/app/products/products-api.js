@@ -37,6 +37,11 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
       }).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
+        var params;
+        params = {
+          "productId": productId
+        };
+        App.erro(error, params, 'getProduct');
         return defer.reject(error);
       });
       return defer.promise;

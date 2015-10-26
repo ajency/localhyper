@@ -40,6 +40,8 @@ angular.module 'LocalHyper.products'
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->
+			params = "productId": productId 
+			App.erro(error,params,'getProduct')
 			defer.reject error
 
 		defer.promise
