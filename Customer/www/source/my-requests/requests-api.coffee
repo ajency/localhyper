@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.myRequests'
 
 
-.factory 'RequestAPI', ['$q', '$http', 'User', ($q, $http, User)->
+.factory 'RequestAPI', ['$q', '$http', 'User', 'App', ($q, $http, User, App)->
 
 	RequestAPI = {}
 	requestDetails = {}
@@ -26,6 +26,7 @@ angular.module 'LocalHyper.myRequests'
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->
+			App.erro(error,params,'getCustomerRequests')
 			defer.reject error
 
 		defer.promise

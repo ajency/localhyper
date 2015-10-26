@@ -1,5 +1,5 @@
 angular.module('LocalHyper.products').factory('ProductsAPI', [
-  '$q', '$http', 'User', function($q, $http, User) {
+  '$q', '$http', 'User', 'App', function($q, $http, User, App) {
     var ProductsAPI, productDetails;
     ProductsAPI = {};
     productDetails = {};
@@ -86,6 +86,7 @@ angular.module('LocalHyper.products').factory('ProductsAPI', [
       $http.post('functions/getLocationBasedSellers', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
+        App.erro(error, params, 'getLocationBasedSellers');
         return defer.reject(error);
       });
       return defer.promise;

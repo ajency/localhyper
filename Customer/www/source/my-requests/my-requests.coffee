@@ -86,7 +86,6 @@ angular.module 'LocalHyper.myRequests'
 			
 
 			init : ->
-				
 
 			reFetch : ->
 				@display = 'loader'

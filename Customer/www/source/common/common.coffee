@@ -106,5 +106,16 @@ angular.module 'LocalHyper.common', []
 					defer.resolve 'DUMMY_INSTALLATION_ID'
 
 				defer.promise
+
+			erro : (error, params, functionName)->
+				val = _.contains(['offline', 'server_error', 'session_expired'], error)
+				if !val
+					ErrorLog = Parse.Object.extend('ErrorLog')
+					ErrorLog = new ErrorLog()
+					ErrorLog.set "type", error.data.error
+					ErrorLog.set "funName", functionName
+					ErrorLog.set "params", params
+					ErrorLog.save()
+
 ]
 
