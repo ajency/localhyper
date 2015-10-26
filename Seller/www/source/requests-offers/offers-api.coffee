@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.factory 'OffersAPI', ['$q', '$http', 'User', ($q, $http, User)->
+.factory 'OffersAPI', ['$q', '$http', 'User', 'App', ($q, $http, User, App)->
 
 	OffersAPI = {}
 	acceptedOfferId = ''
@@ -35,6 +35,7 @@ angular.module 'LocalHyper.requestsOffers'
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->
+			App.erro(error,params,'getSellerOffers')
 			defer.reject error
 
 		defer.promise

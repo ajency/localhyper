@@ -1,7 +1,7 @@
 angular.module 'LocalHyper.requestsOffers'
 
 
-.factory 'RequestsAPI', ['$q', '$http', 'User', '$timeout', ($q, $http, User, $timeout)->
+.factory 'RequestsAPI', ['$q', '$http', 'User', '$timeout', 'App', ($q, $http, User, $timeout, App)->
 
 	RequestsAPI = {}
 	cancelledRequestId = ''
@@ -23,6 +23,7 @@ angular.module 'LocalHyper.requestsOffers'
 		.then (data)->
 			defer.resolve data.data.result
 		, (error)->
+			App.erro(error,params,'getNewRequests')
 			defer.reject error
 
 		defer.promise

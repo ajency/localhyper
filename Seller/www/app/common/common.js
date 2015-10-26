@@ -179,6 +179,18 @@ angular.module('LocalHyper.common', []).factory('App', [
           }
           return imageUrl;
         }
+      },
+      erro: function(error, params, functionName) {
+        var ErrorLog, val;
+        val = _.contains(['offline', 'server_error', 'session_expired'], error);
+        if (!val) {
+          ErrorLog = Parse.Object.extend('ErrorLog');
+          ErrorLog = new ErrorLog();
+          ErrorLog.set("type", error.data.error);
+          ErrorLog.set("funName", functionName);
+          ErrorLog.set("params", params);
+          return ErrorLog.save();
+        }
       }
     };
   }
