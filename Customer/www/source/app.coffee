@@ -43,7 +43,7 @@ angular.module 'LocalHyper', ['ionic', 'ngCordova', 'ngIOS9UIWebViewPatch'
 		bool = !_.contains(hideForStates, App.currentState)
 		App.menuEnabled.left  = bool
 
-		showSearchForStates = ['products']
+		showSearchForStates = ['products', 'single-product']
 		#Temporary work around for issue #105
 		if _.contains showSearchForStates, App.currentState
 			$timeout ->

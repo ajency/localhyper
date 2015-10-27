@@ -33,7 +33,7 @@ angular.module('LocalHyper', ['ionic', 'ngCordova', 'ngIOS9UIWebViewPatch', 'Loc
       hideForStates = ['tutorial', 'verify-begin', 'verify-auto', 'verify-manual'];
       bool = !_.contains(hideForStates, App.currentState);
       App.menuEnabled.left = bool;
-      showSearchForStates = ['products'];
+      showSearchForStates = ['products', 'single-product'];
       if (_.contains(showSearchForStates, App.currentState)) {
         return $timeout(function() {
           return App.search.icon = true;
