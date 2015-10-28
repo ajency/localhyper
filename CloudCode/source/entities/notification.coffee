@@ -19,7 +19,7 @@ getNotificationData = (notificationId, installationId, pushOptions)->
                 title: pushOptions.title
                 alert: pushOptions.alert
                 data: pushOptions.notificationData
-                badge: 'Increment'
+                # badge: 'Increment'
 
         notificationObj = 
             pushData: pushData

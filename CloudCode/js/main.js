@@ -754,8 +754,7 @@
         pushData = {
           title: pushOptions.title,
           alert: pushOptions.alert,
-          data: pushOptions.notificationData,
-          badge: 'Increment'
+          data: pushOptions.notificationData
         };
       }
       notificationObj = {
@@ -2977,6 +2976,8 @@
     queryRequest = new Parse.Query("Request");
     queryRequest.equalTo("objectId", requestId);
     queryRequest.include("product");
+    queryRequest.include("product.onlinePrice");
+    queryRequest.include("product.bestPlatformPrice");
     queryRequest.include("category");
     queryRequest.include("category.parent_category");
     queryRequest.include("brand");
@@ -2989,6 +2990,8 @@
       offerQuery.matchesQuery("seller", innerQuerySellers);
       offerQuery.include("request");
       offerQuery.include("request.product");
+      offerQuery.include("request.product.onlinePrice");
+      offerQuery.include("request.product.bestPlatformPrice");
       offerQuery.include("request.category");
       offerQuery.include("request.category.parent_category");
       offerQuery.include("price");
@@ -3092,6 +3095,7 @@
         return getOtherPricesForProduct(productObj).then(function(otherPrice) {
           var imageSizes, product, requestResult;
           product = {
+            "id": productObj.id,
             "name": productObj.get("name"),
             "images": productObj.get("images"),
             "mrp": productObj.get("mrp"),

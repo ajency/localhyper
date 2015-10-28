@@ -426,6 +426,8 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
     # queryRequest.select("address,addressGeoPoint,category,brand,product,comments,customerId,status")
 
     queryRequest.include("product")
+    queryRequest.include("product.onlinePrice")
+    queryRequest.include("product.bestPlatformPrice")
     queryRequest.include("category")
     queryRequest.include("category.parent_category")
     queryRequest.include("brand")    
@@ -443,6 +445,8 @@ Parse.Cloud.define 'getSingleRequest' , (request, response) ->
         # offerQuery.select("request")
         offerQuery.include("request")
         offerQuery.include("request.product")
+        offerQuery.include("request.product.onlinePrice")
+        offerQuery.include("request.product.bestPlatformPrice")
         offerQuery.include("request.category")
         offerQuery.include("request.category.parent_category")
         offerQuery.include("price")
@@ -563,7 +567,8 @@ Parse.Cloud.define 'getRequestDetails', (request, response) ->
             productObj = requestObj.get("product")  
             getOtherPricesForProduct(productObj)#
             .then (otherPrice) ->
-                product = 
+                product =
+                    "id" :productObj.id 
                     "name" :productObj.get("name")
                     "images" :productObj.get("images")
                     "mrp" :productObj.get("mrp")
