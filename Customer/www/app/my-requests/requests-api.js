@@ -1,5 +1,5 @@
 angular.module('LocalHyper.myRequests').factory('RequestAPI', [
-  '$q', '$http', 'User', function($q, $http, User) {
+  '$q', '$http', 'User', 'App', function($q, $http, User, App) {
     var RequestAPI, requestDetails;
     RequestAPI = {};
     requestDetails = {};
@@ -21,6 +21,7 @@ angular.module('LocalHyper.myRequests').factory('RequestAPI', [
       $http.post('functions/getCustomerRequests', params).then(function(data) {
         return defer.resolve(data.data.result);
       }, function(error) {
+        App.erro(error, params, 'getCustomerRequests');
         return defer.reject(error);
       });
       return defer.promise;

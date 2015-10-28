@@ -239,8 +239,8 @@ angular.module('LocalHyper.requestsOffers').controller('SuccessfulOffersCtrl', [
           if (this.showChange) {
             return this.modal.hide();
           } else {
-            msg = 'Your Changes are not update .Are you sure you want to exit ';
-            return CDialog.confirm('Exit Filter?', msg, ['Exit Anyway', 'Update & Exit']).then((function(_this) {
+            msg = 'Your changes are not updated. Are you sure you want to exit?';
+            return CDialog.confirm('Exit Details', msg, ['Exit Anyway', 'Update & Exit']).then((function(_this) {
               return function(btnIndex) {
                 switch (btnIndex) {
                   case 1:

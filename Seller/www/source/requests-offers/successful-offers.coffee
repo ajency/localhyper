@@ -187,8 +187,8 @@ angular.module 'LocalHyper.requestsOffers'
 					if @showChange
 						@modal.hide()
 					else
-						msg = 'Your Changes are not update .Are you sure you want to exit '
-						CDialog.confirm 'Exit Filter?', msg, ['Exit Anyway', 'Update & Exit']
+						msg = 'Your changes are not updated. Are you sure you want to exit?'
+						CDialog.confirm 'Exit Details', msg, ['Exit Anyway', 'Update & Exit']
 						.then (btnIndex)=>
 							switch btnIndex
 								when 1
