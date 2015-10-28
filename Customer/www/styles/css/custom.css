@@ -2324,6 +2324,9 @@ label.status-label {
 .make-req-comm input.comment {
   background-color: #f7f7f7 !important;
 }
+.platform-ios .filters-white-bg .bar.bar-header {
+  height: 64px !important;
+}
 .platform-ios .item-avatar,
 .platform-ios .item-avatar .item-content,
 .platform-ios .item-avatar-left,
