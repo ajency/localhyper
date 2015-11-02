@@ -41,7 +41,7 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
     };
   }
 ]).directive('googleMapSearch', [
-  function() {
+  '$timeout', function($timeout) {
     return {
       restrict: 'A',
       replace: true,
@@ -58,7 +58,7 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
             }
           };
           autoComplete = new google.maps.places.Autocomplete(el[0], options);
-          return google.maps.event.addListener(autoComplete, 'place_changed', function() {
+          google.maps.event.addListener(autoComplete, 'place_changed', function() {
             return scope.$apply(function() {
               var place;
               place = autoComplete.getPlace();
@@ -66,6 +66,11 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
                 location: place.geometry.location
               });
             });
+          });
+          return $(document).delegate(".pac-container .pac-item", "click", function() {
+            return $timeout(function() {
+              return $('#locationSearch').blur();
+            }, 500);
           });
         };
         if (document.readyState === "complete") {
@@ -80,11 +85,7 @@ angular.module('LocalHyper.googleMaps').directive('googleMap', [
   '$timeout', function($timeout) {
     return {
       link: function() {
-        return $timeout(function() {
-          return $('.pac-container').attr('data-tap-disabled', 'true').click(function() {
-            return $('#locationSearch').blur();
-          });
-        }, 500);
+        return $timeout(function() {});
       }
     };
   }

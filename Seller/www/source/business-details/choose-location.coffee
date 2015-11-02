@@ -9,6 +9,12 @@ angular.module 'LocalHyper.businessDetails'
 		$scope.view =
 			latLng: null
 			addressFetch: true
+
+			disableTap :->
+				container = document.getElementsByClassName('pac-container')
+				angular.element(container).attr('data-tap-disabled', 'true')
+				return
+
 			beforeInit : ->
 				@reset()
 				@searchText = ''
@@ -49,6 +55,8 @@ angular.module 'LocalHyper.businessDetails'
 						@addPlaceMarker event.latLng
 
 			onPlaceChange : (latLng)->
+				console.log 'place channge'
+				$('#locationSearch').blur()
 				@latLng = latLng
 				@map.setCenter latLng
 				@map.setZoom 15

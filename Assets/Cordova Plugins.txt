@@ -19,3 +19,4 @@ List of cordova plugins used:
 17) ionic plugin add https://github.com/whiteoctober/cordova-plugin-app-version.git
 18) ionic plugin add https://github.com/VitaliiBlagodir/cordova-plugin-datepicker.git
 19) ionic plugin add cordova-plugin-inappbrowser
+20 ) ionic plugin add https://github.com/phonegap/phonegap-facebook-plugin.git --variable APP_ID="642632715879604" --variable APP_NAME="ShopOye"

@@ -35,7 +35,7 @@ angular.module 'LocalHyper.googleMaps'
 			google.maps.event.addDomListener window, 'load', initialize
 ]
 
-.directive 'googleMapSearch', [->
+.directive 'googleMapSearch', ['$timeout', ($timeout)->
 
 	restrict: 'A'
 	replace: true
@@ -53,6 +53,13 @@ angular.module 'LocalHyper.googleMaps'
 					place = autoComplete.getPlace()
 					scope.onPlaceChange location: place.geometry.location
 
+			$(document).delegate ".pac-container .pac-item","click",() ->
+				$timeout ->
+						$('#locationSearch').blur()
+				,500
+
+		
+
 		if document.readyState is "complete"
 			initialize()
 		else 
@@ -64,11 +71,16 @@ angular.module 'LocalHyper.googleMaps'
 
 	link: ->
 		$timeout ->
-			$ '.pac-container'
-				.attr 'data-tap-disabled', 'true'
-				.click ->
-					$('#locationSearch').blur()
-		, 500
+			# $ '.pac-container'
+			# 	.click ->
+			# 		console.log 'h'
+			# 		# $('#locationSearch').blur()
+
+			# $(document).delegate ".pac-container .pac-item .pac-selected","click",() ->
+			# 	console.log 'hi'
+
+
+		# , 500
 ]
 
 

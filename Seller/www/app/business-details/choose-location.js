@@ -3,6 +3,11 @@ angular.module('LocalHyper.businessDetails').controller('ChooseLocationCtrl', [
     $scope.view = {
       latLng: null,
       addressFetch: true,
+      disableTap: function() {
+        var container;
+        container = document.getElementsByClassName('pac-container');
+        angular.element(container).attr('data-tap-disabled', 'true');
+      },
       beforeInit: function() {
         this.reset();
         this.searchText = '';
@@ -62,6 +67,8 @@ angular.module('LocalHyper.businessDetails').controller('ChooseLocationCtrl', [
         })(this));
       },
       onPlaceChange: function(latLng) {
+        console.log('place channge');
+        $('#locationSearch').blur();
         this.latLng = latLng;
         this.map.setCenter(latLng);
         this.map.setZoom(15);
