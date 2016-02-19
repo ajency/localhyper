@@ -188,7 +188,7 @@ class ProcessImageController extends Controller
 
         //Upload the resized image to amazon s3
             $s3->putObject(array(
-                'Bucket'     => 'aj-shopoye',
+                'Bucket'     => 'aj-lfastshop',
                 'Key'        => 'images-product/'.$name,
                 'SourceFile' => $destinationPath.$name,
                 'ACL'        => 'public-read',

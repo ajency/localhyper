@@ -6,8 +6,8 @@ use Illuminate\Foundation\Application;
 return [
 
      'credentials' => [
-        'key'    => 'AKIAJXHKH7UTGZATWDPQ',
-        'secret' => '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',
+        'key'    => 'AKIAIHDK23CUMBFCF7JQ',
+        'secret' => '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',
     ],
     'region' => 'ap-southeast-1',
     'version' => 'latest',
